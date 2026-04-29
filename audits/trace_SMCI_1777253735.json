@@ -1,0 +1,3118 @@
+[
+  {
+    "timestamp": "2026-04-26T21:35:38.595238",
+    "agent": "Librarian",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [],
+      "financial_data": {},
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:35:55.020939",
+    "agent": "Forensic",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:09.510101",
+    "agent": "ValueChain",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 4.0,
+        "power_ratio": 5.0,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "SMCI is heavily dependent on Nvidia (and to a lesser extent AMD and Intel) for critical GPU and CPU components. Nvidia acts as a severe upstream bottleneck, capturing the vast majority of the value chain's profit pool with gross margins exceeding 70%, compared to SMCI's historical gross margins of roughly 14-17%.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "Dell Technologies, Hewlett Packard Enterprise (HPE), Lenovo, and Taiwanese ODMs (e.g., Quanta, Wistron, Foxconn).",
+        "pricing_power_assessment": "SMCI operates in a low-margin hardware sector. While they can pass through the high costs of GPUs to end customers due to current AI infrastructure demand, their ability to expand margins is limited by fierce competition from legacy OEMs and direct-to-cloud ODMs. They are primarily price takers regarding component costs.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": -0.01,
+        "analysis_summary": "SMCI benefits from a first-to-market advantage and engineering expertise in AI servers and liquid cooling. However, its strategic leverage is weak due to extreme reliance on a monopolistic supplier (Nvidia) that extracts most of the economic value (Power Ratio ~ 5.0). Furthermore, SMCI faces high substitution risk from well-capitalized OEMs like Dell and HPE, limiting long-term pricing power and warranting a negative adjustment to terminal growth."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 4.0/10. Terminal Adj: -0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:23.090444",
+    "agent": "StrategicContext",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 4.0/10. Terminal Adj: -0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 4.0,
+        "power_ratio": 5.0,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "SMCI is heavily dependent on Nvidia (and to a lesser extent AMD and Intel) for critical GPU and CPU components. Nvidia acts as a severe upstream bottleneck, capturing the vast majority of the value chain's profit pool with gross margins exceeding 70%, compared to SMCI's historical gross margins of roughly 14-17%.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "Dell Technologies, Hewlett Packard Enterprise (HPE), Lenovo, and Taiwanese ODMs (e.g., Quanta, Wistron, Foxconn).",
+        "pricing_power_assessment": "SMCI operates in a low-margin hardware sector. While they can pass through the high costs of GPUs to end customers due to current AI infrastructure demand, their ability to expand margins is limited by fierce competition from legacy OEMs and direct-to-cloud ODMs. They are primarily price takers regarding component costs.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": -0.01,
+        "analysis_summary": "SMCI benefits from a first-to-market advantage and engineering expertise in AI servers and liquid cooling. However, its strategic leverage is weak due to extreme reliance on a monopolistic supplier (Nvidia) that extracts most of the economic value (Power Ratio ~ 5.0). Furthermore, SMCI faces high substitution risk from well-capitalized OEMs like Dell and HPE, limiting long-term pricing power and warranting a negative adjustment to terminal growth."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.45,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Insufficient data due to search error; however, SMCI is primarily a hardware and server solutions provider, making deferred revenue a secondary growth indicator compared to hardware sales.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent or contract cliffs identified due to search errors. SMCI's business model relies heavily on engineering capabilities, time-to-market, and strategic partnerships (e.g., Nvidia) rather than single patent exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "SMCI's revenue Z-score of 1.45 indicates strong recent growth but does not breach the 2.0 threshold for a cyclical peak. Intangible decay risk appears low, as the company is hardware-focused and relies on supply chain execution and partnerships rather than patent exclusivity. No terminal haircut is recommended."
+      },
+      "messages": [
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:24.047670",
+    "agent": "Strategist",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 4.0/10. Terminal Adj: -0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 4.0,
+        "power_ratio": 5.0,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "SMCI is heavily dependent on Nvidia (and to a lesser extent AMD and Intel) for critical GPU and CPU components. Nvidia acts as a severe upstream bottleneck, capturing the vast majority of the value chain's profit pool with gross margins exceeding 70%, compared to SMCI's historical gross margins of roughly 14-17%.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "Dell Technologies, Hewlett Packard Enterprise (HPE), Lenovo, and Taiwanese ODMs (e.g., Quanta, Wistron, Foxconn).",
+        "pricing_power_assessment": "SMCI operates in a low-margin hardware sector. While they can pass through the high costs of GPUs to end customers due to current AI infrastructure demand, their ability to expand margins is limited by fierce competition from legacy OEMs and direct-to-cloud ODMs. They are primarily price takers regarding component costs.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": -0.01,
+        "analysis_summary": "SMCI benefits from a first-to-market advantage and engineering expertise in AI servers and liquid cooling. However, its strategic leverage is weak due to extreme reliance on a monopolistic supplier (Nvidia) that extracts most of the economic value (Power Ratio ~ 5.0). Furthermore, SMCI faces high substitution risk from well-capitalized OEMs like Dell and HPE, limiting long-term pricing power and warranting a negative adjustment to terminal growth."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.45,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Insufficient data due to search error; however, SMCI is primarily a hardware and server solutions provider, making deferred revenue a secondary growth indicator compared to hardware sales.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent or contract cliffs identified due to search errors. SMCI's business model relies heavily on engineering capabilities, time-to-market, and strategic partnerships (e.g., Nvidia) rather than single patent exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "SMCI's revenue Z-score of 1.45 indicates strong recent growth but does not breach the 2.0 threshold for a cyclical peak. Intangible decay risk appears low, as the company is hardware-focused and relies on supply chain execution and partnerships rather than patent exclusivity. No terminal haircut is recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 19395000.0,
+          "equity": 17462015118.346863,
+          "wacc": 0.15016323609291826,
+          "cost_of_equity": 0.1502949238705566,
+          "beta": 1.9489986262320218
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1939500.0,
+            "cash": 80826000.0,
+            "liquidity_ratio": 0.02399599138890951,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 338351000.0,
+            "crash_fcf": 20968575.0,
+            "earnings_power_value": 123226235.47515301,
+            "floor_value": 338351000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.0,
+            "financial_leverage_score": 0.004442786211912553,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.15016323609291826,
+            "2": 0.15016323609291826,
+            "3": 0.15016323609291826,
+            "4": 0.15016323609291826,
+            "5": 0.15016323609291826
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 15.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:24.344316",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "base": {
+        "net_sales": 1013874000.0,
+        "cogs": 848457000.0,
+        "interest_expense": 0.0,
+        "net_debt": -61431000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.006974239402529309,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.02452178475826385,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 0.9546156623012327,
+        "calibration_adjustment": 0.11776907189650783
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-26T21:36:24.344369",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": -245432601.3968806,
+      "equity_value": -184001601.3968806,
+      "terminal_value": -286516505.15414876,
+      "discounted_terminal_value": -186216069.3921929,
+      "sum_pv_cash_flows": -59216532.0046877,
+      "audit_metrics": {
+        "roic_path": [
+          0.04768339345632969,
+          0.048270667428624535,
+          0.04792327392700812,
+          0.046701981953654596,
+          0.04514664418785393
+        ],
+        "invested_capital_path": [
+          709711800.0,
+          757163435.0,
+          808411200.8,
+          862733832.548,
+          919229369.56592,
+          977419772.6943777
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 1115261400.0,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.038410098296237954,
+          "ebit": 42837299.999999955,
+          "nopat": 33841466.99999996,
+          "depreciation": 7778100.0,
+          "capex": 27348200.0,
+          "change_in_wc": 27881535.0,
+          "fcff": -13610168.000000037,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": -12486392.660550492
+        },
+        {
+          "year": 2.0,
+          "revenue": 1204482312.0,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.038410098296237954,
+          "ebit": 46264283.999999955,
+          "nopat": 36548784.35999997,
+          "depreciation": 8400348.0,
+          "capex": 29536056.0,
+          "change_in_wc": 30112057.8,
+          "fcff": -14698981.440000031,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": -12371838.599444516
+        },
+        {
+          "year": 3.0,
+          "revenue": 1276751250.72,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.038410098296237954,
+          "ebit": 49040141.03999995,
+          "nopat": 38741711.42159996,
+          "depreciation": 8904368.88,
+          "capex": 31308219.360000003,
+          "change_in_wc": 31918781.268000003,
+          "fcff": -15580920.326400042,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": -12031329.280193755
+        },
+        {
+          "year": 4.0,
+          "revenue": 1327821300.7488,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.038410098296237954,
+          "ebit": 51001746.68159995,
+          "nopat": 40291379.87846396,
+          "depreciation": 9260543.635200001,
+          "capex": 32560548.134400003,
+          "change_in_wc": 33195532.51872,
+          "fcff": -16204157.139456041,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": -11479433.441652752
+        },
+        {
+          "year": 5.0,
+          "revenue": 1367655939.771264,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.038410098296237954,
+          "ebit": 52531799.08204795,
+          "nopat": 41500121.27481788,
+          "depreciation": 9538359.944256,
+          "capex": 33537364.578432005,
+          "change_in_wc": 34191398.494281605,
+          "fcff": -16690281.853639733,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": -10847538.022846187
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 1013874000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.038410098296237954,
+        "terminal_value_pct_of_ev": 0.7587258918837327,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": -6.903991996958474,
+        "reinvestment_rate_terminal_year": 1.4021742910849595,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.006974239402529309,
+          "capex_percent_sales": 0.02452178475826385,
+          "wc_change_percent_sales": 0.025
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:24.344785",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 4.0/10. Terminal Adj: -0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 15.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 19395000.0,
+          "equity": 17462015118.346863,
+          "wacc": 0.15016323609291826,
+          "cost_of_equity": 0.1502949238705566,
+          "beta": 1.9489986262320218
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1939500.0,
+            "cash": 80826000.0,
+            "liquidity_ratio": 0.02399599138890951,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 338351000.0,
+            "crash_fcf": 20968575.0,
+            "earnings_power_value": 123226235.47515301,
+            "floor_value": 338351000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.0,
+            "financial_leverage_score": 0.004442786211912553,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.15016323609291826,
+            "2": 0.15016323609291826,
+            "3": 0.15016323609291826,
+            "4": 0.15016323609291826,
+            "5": 0.15016323609291826
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 4.0,
+        "power_ratio": 5.0,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "SMCI is heavily dependent on Nvidia (and to a lesser extent AMD and Intel) for critical GPU and CPU components. Nvidia acts as a severe upstream bottleneck, capturing the vast majority of the value chain's profit pool with gross margins exceeding 70%, compared to SMCI's historical gross margins of roughly 14-17%.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "Dell Technologies, Hewlett Packard Enterprise (HPE), Lenovo, and Taiwanese ODMs (e.g., Quanta, Wistron, Foxconn).",
+        "pricing_power_assessment": "SMCI operates in a low-margin hardware sector. While they can pass through the high costs of GPUs to end customers due to current AI infrastructure demand, their ability to expand margins is limited by fierce competition from legacy OEMs and direct-to-cloud ODMs. They are primarily price takers regarding component costs.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": -0.01,
+        "analysis_summary": "SMCI benefits from a first-to-market advantage and engineering expertise in AI servers and liquid cooling. However, its strategic leverage is weak due to extreme reliance on a monopolistic supplier (Nvidia) that extracts most of the economic value (Power Ratio ~ 5.0). Furthermore, SMCI faces high substitution risk from well-capitalized OEMs like Dell and HPE, limiting long-term pricing power and warranting a negative adjustment to terminal growth."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.45,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Insufficient data due to search error; however, SMCI is primarily a hardware and server solutions provider, making deferred revenue a secondary growth indicator compared to hardware sales.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent or contract cliffs identified due to search errors. SMCI's business model relies heavily on engineering capabilities, time-to-market, and strategic partnerships (e.g., Nvidia) rather than single patent exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "SMCI's revenue Z-score of 1.45 indicates strong recent growth but does not breach the 2.0 threshold for a cyclical peak. Intangible decay risk appears low, as the company is hardware-focused and relies on supply chain execution and partnerships rather than patent exclusivity. No terminal haircut is recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "terminal_value": -286516505.15414876,
+          "discounted_terminal_value": -186216069.3921929,
+          "sum_pv_cash_flows": -59216532.0046877,
+          "audit_metrics": {
+            "roic_path": [
+              0.04768339345632969,
+              0.048270667428624535,
+              0.04792327392700812,
+              0.046701981953654596,
+              0.04514664418785393
+            ],
+            "invested_capital_path": [
+              709711800.0,
+              757163435.0,
+              808411200.8,
+              862733832.548,
+              919229369.56592,
+              977419772.6943777
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 1013874000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.038410098296237954,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -6.903991996958474,
+            "reinvestment_rate_terminal_year": 1.4021742910849595,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.006974239402529309,
+              "capex_percent_sales": 0.02452178475826385,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -0.3064232214754611,
+          "upside_percent": -1.010537249706859,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.006974239402529309,
+            "capex_percent_sales": 0.02452178475826385,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.006974239402529309,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.02452178475826385,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9546156623012327,
+          "calibration_adjustment": 0.11776907189650783
+        },
+        "base_financials": {
+          "net_sales": 1013874000.0,
+          "cogs": 848457000.0,
+          "interest_expense": 0.0,
+          "net_debt": -61431000.0
+        },
+        "calculated_upside": -1.010537249706859
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-245,432,601",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:25.668355",
+    "agent": "ValuationNode",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 4.0/10. Terminal Adj: -0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 15.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-245,432,601",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "terminal_value": -286516505.15414876,
+          "discounted_terminal_value": -186216069.3921929,
+          "sum_pv_cash_flows": -59216532.0046877,
+          "audit_metrics": {
+            "roic_path": [
+              0.04768339345632969,
+              0.048270667428624535,
+              0.04792327392700812,
+              0.046701981953654596,
+              0.04514664418785393
+            ],
+            "invested_capital_path": [
+              709711800.0,
+              757163435.0,
+              808411200.8,
+              862733832.548,
+              919229369.56592,
+              977419772.6943777
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 1013874000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.038410098296237954,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -6.903991996958474,
+            "reinvestment_rate_terminal_year": 1.4021742910849595,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.006974239402529309,
+              "capex_percent_sales": 0.02452178475826385,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -0.3064232214754611,
+          "upside_percent": -1.010537249706859,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.006974239402529309,
+            "capex_percent_sales": 0.02452178475826385,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.006974239402529309,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.02452178475826385,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9546156623012327,
+          "calibration_adjustment": 0.11776907189650783
+        },
+        "base_financials": {
+          "net_sales": 1013874000.0,
+          "cogs": 848457000.0,
+          "interest_expense": 0.0,
+          "net_debt": -61431000.0
+        },
+        "calculated_upside": -1.010537249706859
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 19395000.0,
+          "equity": 17462015118.346863,
+          "wacc": 0.15016323609291826,
+          "cost_of_equity": 0.1502949238705566,
+          "beta": 1.9489986262320218
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1939500.0,
+            "cash": 80826000.0,
+            "liquidity_ratio": 0.02399599138890951,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 338351000.0,
+            "crash_fcf": 20968575.0,
+            "earnings_power_value": 123226235.47515301,
+            "floor_value": 338351000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.0,
+            "financial_leverage_score": 0.004442786211912553,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.15016323609291826,
+            "2": 0.15016323609291826,
+            "3": 0.15016323609291826,
+            "4": 0.15016323609291826,
+            "5": 0.15016323609291826
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 4.0,
+        "power_ratio": 5.0,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "SMCI is heavily dependent on Nvidia (and to a lesser extent AMD and Intel) for critical GPU and CPU components. Nvidia acts as a severe upstream bottleneck, capturing the vast majority of the value chain's profit pool with gross margins exceeding 70%, compared to SMCI's historical gross margins of roughly 14-17%.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "Dell Technologies, Hewlett Packard Enterprise (HPE), Lenovo, and Taiwanese ODMs (e.g., Quanta, Wistron, Foxconn).",
+        "pricing_power_assessment": "SMCI operates in a low-margin hardware sector. While they can pass through the high costs of GPUs to end customers due to current AI infrastructure demand, their ability to expand margins is limited by fierce competition from legacy OEMs and direct-to-cloud ODMs. They are primarily price takers regarding component costs.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": -0.01,
+        "analysis_summary": "SMCI benefits from a first-to-market advantage and engineering expertise in AI servers and liquid cooling. However, its strategic leverage is weak due to extreme reliance on a monopolistic supplier (Nvidia) that extracts most of the economic value (Power Ratio ~ 5.0). Furthermore, SMCI faces high substitution risk from well-capitalized OEMs like Dell and HPE, limiting long-term pricing power and warranting a negative adjustment to terminal growth."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.45,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Insufficient data due to search error; however, SMCI is primarily a hardware and server solutions provider, making deferred revenue a secondary growth indicator compared to hardware sales.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent or contract cliffs identified due to search errors. SMCI's business model relies heavily on engineering capabilities, time-to-market, and strategic partnerships (e.g., Nvidia) rather than single patent exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "SMCI's revenue Z-score of 1.45 indicates strong recent growth but does not breach the 2.0 threshold for a cyclical peak. Intangible decay risk appears low, as the company is hardware-focused and relies on supply chain execution and partnerships rather than patent exclusivity. No terminal haircut is recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-27T01:36:24.345244",
+          "current_price": 29.079999923706055,
+          "shares_diluted": 600481952.0,
+          "market_cap": 17462015118.346863,
+          "risk_free_rate": 0.04309999942779541,
+          "beta": 1.9489986262320218,
+          "wacc_base": 0.1502949238705566,
+          "revenue": 21972042000.0,
+          "ebitda": 1293994000.0,
+          "ebit": 1252994000.0,
+          "nopat": 989865260.0,
+          "roic": 0.6299253728284885,
+          "fcf": 1532310000.0,
+          "net_debt": -5169911000.0,
+          "bull_ev": 53412305888.9218,
+          "bull_intrinsic_per_share": 97.55866382628899,
+          "bull_upside": 2.3548371417552527,
+          "bull_wacc": 0.1452949238705566,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 41.27708929788067,
+          "bull_justified_ev_ebitda": 4.641420444813259,
+          "bull_roic_wacc_spread": 0.4846304489579319,
+          "bull_tv_pct_of_ev": 0.6356310994029596,
+          "bull_implied_tv_ebitda": 4.64142044481326,
+          "base_ev": 29374232156.70334,
+          "base_intrinsic_per_share": 57.52736288184618,
+          "base_upside": 0.9782449461064062,
+          "base_wacc": 0.1502949238705566,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 22.700439226691422,
+          "base_justified_ev_ebitda": 4.033856038618909,
+          "base_roic_wacc_spread": 0.4796304489579319,
+          "base_tv_pct_of_ev": 0.6017840288228118,
+          "base_implied_tv_ebitda": 4.033856038618909,
+          "bear_ev": 5412744343.002756,
+          "bear_intrinsic_per_share": 17.623602687400595,
+          "bear_upside": -0.39396139155303744,
+          "bear_wacc": 0.16,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 4.182974838370778,
+          "bear_justified_ev_ebitda": 3.0867593800468063,
+          "bear_roic_wacc_spread": 0.46992537282848845,
+          "bear_tv_pct_of_ev": 0.32658023780021733,
+          "bear_implied_tv_ebitda": 1.5285842141993833
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "SMCI",
+            "scenario": "bull",
+            "enterprise_value": 53412305888.9218,
+            "equity_value": 57442253905.9218,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 95.66025042817907,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": 2.2895547001083965,
+            "upside_pct": 2.2895547001083965,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          },
+          "base": {
+            "ticker": "SMCI",
+            "scenario": "base",
+            "enterprise_value": 29374232156.70334,
+            "equity_value": 33404180173.70334,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 55.62894948373626,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": 0.91296250445955,
+            "upside_pct": 0.91296250445955,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          },
+          "bear": {
+            "ticker": "SMCI",
+            "scenario": "bear",
+            "enterprise_value": 5412744343.002756,
+            "equity_value": 9442692360.002756,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 15.725189289290673,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": -0.4592438331998936,
+            "upside_pct": -0.4592438331998936,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 95.66025042817907,
+          "base": 55.62894948373626,
+          "bear": 15.725189289290673
+        },
+        "margin_of_safety": {
+          "bull": 2.2895547001083965,
+          "base": 0.91296250445955,
+          "bear": -0.4592438331998936
+        },
+        "reverse_dcf": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "current_price": 29.079999923706055,
+          "current_ev": 12292104118.346863,
+          "current_ev_ebitda": 9.499351711326995,
+          "wacc": 0.1502949238705566,
+          "ebit_margin": 0.057026743349571245,
+          "implied_cagr_10y": 0.1385687062396347,
+          "implied_cagr_5y": 0.1385687062396347,
+          "historical_cagr_5y": 0.3696758234351898,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 9.499351711326995,
+          "forward_ev_ebitda_justified": 5.29413499511963,
+          "signal": "deep_value"
+        },
+        "implied_cagr": 0.1385687062396347,
+        "historical_cagr": 0.3696758234351898,
+        "reverse_dcf_signal": "deep_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (13.9%) is less than 50% of historical (37.0%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+        ],
+        "multiples": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 9.499351711326995,
+          "market_ev_ebit": 9.810185937320421,
+          "market_p_sales": 0.7947379273326923,
+          "market_p_e": 16.648661413644668,
+          "market_peg": 0.45035840480283534,
+          "justified_ev_ebitda": 5.86304250398053,
+          "justified_ev_ebit": 6.0548907831129135,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 3.6363092073464642,
+          "ev_ebitda_premium_pct": 0.6202085700176496,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -12.500648288673005,
+          "roic": 0.6299253728284885,
+          "wacc": 0.1502949238705566,
+          "roic_wacc_spread": 0.4796304489579319,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7346094641860781,
+          "growth_rate": 0.3696758234351898,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 9.499351711326995,
+        "ev_ebitda_justified": 5.86304250398053,
+        "ev_ebitda_premium_pct": 0.6202085700176496,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.4796304489579319,
+        "multiple_decomposition": {
+          "roic": 0.6299253728284885,
+          "wacc": null
+        },
+        "value_creation": "creating",
+        "summary": "=== Phase 2 Valuation: SMCI ===\nCurrent price   : $29.08\nIntrinsic value : Bear=$16  Base=$56  Bull=$96\nMargin of safety: Bear=-45.9%  Base=+91.3%  Bull=+229.0%\nImplied CAGR    : 13.9%  (hist: 37.0%)  [deep_value]\nEV/EBITDA       : 9.5x  (justified: 5.9x)  premium: +62%  [high_premium]",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: SMCI complete. Base IV=$56/share MoS=+91.3% ImpliedCAGR=13.9% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:39.768759",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 4.0/10. Terminal Adj: -0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 15.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-245,432,601",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: SMCI complete. Base IV=$56/share MoS=+91.3% ImpliedCAGR=13.9% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "terminal_value": -286516505.15414876,
+          "discounted_terminal_value": -186216069.3921929,
+          "sum_pv_cash_flows": -59216532.0046877,
+          "audit_metrics": {
+            "roic_path": [
+              0.04768339345632969,
+              0.048270667428624535,
+              0.04792327392700812,
+              0.046701981953654596,
+              0.04514664418785393
+            ],
+            "invested_capital_path": [
+              709711800.0,
+              757163435.0,
+              808411200.8,
+              862733832.548,
+              919229369.56592,
+              977419772.6943777
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 1013874000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.038410098296237954,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -6.903991996958474,
+            "reinvestment_rate_terminal_year": 1.4021742910849595,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.006974239402529309,
+              "capex_percent_sales": 0.02452178475826385,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -0.3064232214754611,
+          "upside_percent": -1.010537249706859,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.006974239402529309,
+            "capex_percent_sales": 0.02452178475826385,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.006974239402529309,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.02452178475826385,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9546156623012327,
+          "calibration_adjustment": 0.11776907189650783
+        },
+        "base_financials": {
+          "net_sales": 1013874000.0,
+          "cogs": 848457000.0,
+          "interest_expense": 0.0,
+          "net_debt": -61431000.0
+        },
+        "calculated_upside": -1.010537249706859
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 19395000.0,
+          "equity": 17462015118.346863,
+          "wacc": 0.15016323609291826,
+          "cost_of_equity": 0.1502949238705566,
+          "beta": 1.9489986262320218
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1939500.0,
+            "cash": 80826000.0,
+            "liquidity_ratio": 0.02399599138890951,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 338351000.0,
+            "crash_fcf": 20968575.0,
+            "earnings_power_value": 123226235.47515301,
+            "floor_value": 338351000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.0,
+            "financial_leverage_score": 0.004442786211912553,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.15016323609291826,
+            "2": 0.15016323609291826,
+            "3": 0.15016323609291826,
+            "4": 0.15016323609291826,
+            "5": 0.15016323609291826
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-27T01:36:24.345244",
+          "current_price": 29.079999923706055,
+          "shares_diluted": 600481952.0,
+          "market_cap": 17462015118.346863,
+          "risk_free_rate": 0.04309999942779541,
+          "beta": 1.9489986262320218,
+          "wacc_base": 0.1502949238705566,
+          "revenue": 21972042000.0,
+          "ebitda": 1293994000.0,
+          "ebit": 1252994000.0,
+          "nopat": 989865260.0,
+          "roic": 0.6299253728284885,
+          "fcf": 1532310000.0,
+          "net_debt": -5169911000.0,
+          "bull_ev": 53412305888.9218,
+          "bull_intrinsic_per_share": 97.55866382628899,
+          "bull_upside": 2.3548371417552527,
+          "bull_wacc": 0.1452949238705566,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 41.27708929788067,
+          "bull_justified_ev_ebitda": 4.641420444813259,
+          "bull_roic_wacc_spread": 0.4846304489579319,
+          "bull_tv_pct_of_ev": 0.6356310994029596,
+          "bull_implied_tv_ebitda": 4.64142044481326,
+          "base_ev": 29374232156.70334,
+          "base_intrinsic_per_share": 57.52736288184618,
+          "base_upside": 0.9782449461064062,
+          "base_wacc": 0.1502949238705566,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 22.700439226691422,
+          "base_justified_ev_ebitda": 4.033856038618909,
+          "base_roic_wacc_spread": 0.4796304489579319,
+          "base_tv_pct_of_ev": 0.6017840288228118,
+          "base_implied_tv_ebitda": 4.033856038618909,
+          "bear_ev": 5412744343.002756,
+          "bear_intrinsic_per_share": 17.623602687400595,
+          "bear_upside": -0.39396139155303744,
+          "bear_wacc": 0.16,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 4.182974838370778,
+          "bear_justified_ev_ebitda": 3.0867593800468063,
+          "bear_roic_wacc_spread": 0.46992537282848845,
+          "bear_tv_pct_of_ev": 0.32658023780021733,
+          "bear_implied_tv_ebitda": 1.5285842141993833
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "SMCI",
+            "scenario": "bull",
+            "enterprise_value": 53412305888.9218,
+            "equity_value": 57442253905.9218,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 95.66025042817907,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": 2.2895547001083965,
+            "upside_pct": 2.2895547001083965,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          },
+          "base": {
+            "ticker": "SMCI",
+            "scenario": "base",
+            "enterprise_value": 29374232156.70334,
+            "equity_value": 33404180173.70334,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 55.62894948373626,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": 0.91296250445955,
+            "upside_pct": 0.91296250445955,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          },
+          "bear": {
+            "ticker": "SMCI",
+            "scenario": "bear",
+            "enterprise_value": 5412744343.002756,
+            "equity_value": 9442692360.002756,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 15.725189289290673,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": -0.4592438331998936,
+            "upside_pct": -0.4592438331998936,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 95.66025042817907,
+          "base": 55.62894948373626,
+          "bear": 15.725189289290673
+        },
+        "margin_of_safety": {
+          "bull": 2.2895547001083965,
+          "base": 0.91296250445955,
+          "bear": -0.4592438331998936
+        },
+        "reverse_dcf": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "current_price": 29.079999923706055,
+          "current_ev": 12292104118.346863,
+          "current_ev_ebitda": 9.499351711326995,
+          "wacc": 0.1502949238705566,
+          "ebit_margin": 0.057026743349571245,
+          "implied_cagr_10y": 0.1385687062396347,
+          "implied_cagr_5y": 0.1385687062396347,
+          "historical_cagr_5y": 0.3696758234351898,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 9.499351711326995,
+          "forward_ev_ebitda_justified": 5.29413499511963,
+          "signal": "deep_value"
+        },
+        "implied_cagr": 0.1385687062396347,
+        "historical_cagr": 0.3696758234351898,
+        "reverse_dcf_signal": "deep_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (13.9%) is less than 50% of historical (37.0%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+        ],
+        "multiples": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 9.499351711326995,
+          "market_ev_ebit": 9.810185937320421,
+          "market_p_sales": 0.7947379273326923,
+          "market_p_e": 16.648661413644668,
+          "market_peg": 0.45035840480283534,
+          "justified_ev_ebitda": 5.86304250398053,
+          "justified_ev_ebit": 6.0548907831129135,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 3.6363092073464642,
+          "ev_ebitda_premium_pct": 0.6202085700176496,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -12.500648288673005,
+          "roic": 0.6299253728284885,
+          "wacc": 0.1502949238705566,
+          "roic_wacc_spread": 0.4796304489579319,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7346094641860781,
+          "growth_rate": 0.3696758234351898,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 9.499351711326995,
+        "ev_ebitda_justified": 5.86304250398053,
+        "ev_ebitda_premium_pct": 0.6202085700176496,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.4796304489579319,
+        "multiple_decomposition": {
+          "roic": 0.6299253728284885,
+          "wacc": null
+        },
+        "value_creation": "creating",
+        "summary": "=== Phase 2 Valuation: SMCI ===\nCurrent price   : $29.08\nIntrinsic value : Bear=$16  Base=$56  Bull=$96\nMargin of safety: Bear=-45.9%  Base=+91.3%  Bull=+229.0%\nImplied CAGR    : 13.9%  (hist: 37.0%)  [deep_value]\nEV/EBITDA       : 9.5x  (justified: 5.9x)  premium: +62%  [high_premium]",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 4.0,
+        "power_ratio": 5.0,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "SMCI is heavily dependent on Nvidia (and to a lesser extent AMD and Intel) for critical GPU and CPU components. Nvidia acts as a severe upstream bottleneck, capturing the vast majority of the value chain's profit pool with gross margins exceeding 70%, compared to SMCI's historical gross margins of roughly 14-17%.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "Dell Technologies, Hewlett Packard Enterprise (HPE), Lenovo, and Taiwanese ODMs (e.g., Quanta, Wistron, Foxconn).",
+        "pricing_power_assessment": "SMCI operates in a low-margin hardware sector. While they can pass through the high costs of GPUs to end customers due to current AI infrastructure demand, their ability to expand margins is limited by fierce competition from legacy OEMs and direct-to-cloud ODMs. They are primarily price takers regarding component costs.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": -0.01,
+        "analysis_summary": "SMCI benefits from a first-to-market advantage and engineering expertise in AI servers and liquid cooling. However, its strategic leverage is weak due to extreme reliance on a monopolistic supplier (Nvidia) that extracts most of the economic value (Power Ratio ~ 5.0). Furthermore, SMCI faces high substitution risk from well-capitalized OEMs like Dell and HPE, limiting long-term pricing power and warranting a negative adjustment to terminal growth."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.45,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Insufficient data due to search error; however, SMCI is primarily a hardware and server solutions provider, making deferred revenue a secondary growth indicator compared to hardware sales.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent or contract cliffs identified due to search errors. SMCI's business model relies heavily on engineering capabilities, time-to-market, and strategic partnerships (e.g., Nvidia) rather than single patent exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "SMCI's revenue Z-score of 1.45 indicates strong recent growth but does not breach the 2.0 threshold for a cyclical peak. Intangible decay risk appears low, as the company is hardware-focused and relies on supply chain execution and partnerships rather than patent exclusivity. No terminal haircut is recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $29.08 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 13.9%\n  \u2022 Company's robust historical CAGR: 37.0%\n  \u2022 Ratio (implied / historical): 0.4x\n  \u2022 Reverse DCF signal: DEEP_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (13.9%) is less than 50% of historical (37.0%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 9.5x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 5.9x\n  \u2022 Premium to justified multiple: +62%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $16/share vs current price $29.08\n  \u2022 Downside in bear case: -45.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Anchoring Bias / Narrative Premium",
+          "bear_case_summary": "The market is exhibiting a severe mathematical contradiction regarding SMCI. While the reverse DCF implies a 10-year revenue CAGR of 13.9% (a massive deceleration from the historical 37.0%), the market is simultaneously assigning a 9.5x EV/EBITDA multiple. This represents a 62% premium over the mathematically justified multiple of 5.9x based on the company's ROIC and WACC. Investors are anchoring to the AI hardware narrative and paying a premium multiple for a business that is mathematically priced for severe growth deceleration. If SMCI experiences margin compression, increased competition in the server market, or a cyclical downturn in AI infrastructure spending, the multiple will violently contract to its justified 5.9x level. This multiple compression creates a direct path to the bear case intrinsic value of $16.00 per share, representing a steep 45.9% downside from the current price of $29.08.",
+          "sentiment_score": -7
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Anchoring Bias / Narrative Premium] Sentiment: -7/10. Implied CAGR 13.9% vs 37.0% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:50.154858",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/SMCI_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-26T21:36:50.155356",
+    "agent": "Lead",
+    "trace_id": "trace_SMCI_1777253735",
+    "inputs": {
+      "ticker": "SMCI",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for SMCI.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 4.0/10. Pricing Power: False.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 4.0/10. Terminal Adj: -0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 15.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-245,432,601",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: SMCI complete. Base IV=$56/share MoS=+91.3% ImpliedCAGR=13.9% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Anchoring Bias / Narrative Premium] Sentiment: -7/10. Implied CAGR 13.9% vs 37.0% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "SMCI",
+          "company_name": "Super Micro Computer, Inc.",
+          "sector": "Technology",
+          "industry": "Computer Hardware",
+          "market_cap": 17462013952,
+          "total_revenue": 28057104384,
+          "pe_ratio": 21.226276,
+          "forward_pe": 9.734217,
+          "beta": 1.629,
+          "price_to_book": 2.4910057,
+          "earnings_growth": 0.192,
+          "revenue_growth": 1.234,
+          "profit_margins": 0.03111,
+          "free_cashflow": 103480000,
+          "target_price": 33.2,
+          "current_price": 29.08,
+          "debt_to_equity": 75.28,
+          "return_on_equity": 0.13193
+        },
+        "statements": {
+          "income_statement": "{\"1751241600000\":{\"Tax Effect Of Unusual Items\":0.0,\"Tax Rate For Calcs\":0.129424,\"Normalized EBITDA\":1329833000.0,\"Net Income From Continuing Operation Net Minority Interest\":1048854000.0,\"Reconciled Depreciation\":58344000.0,\"Reconciled Cost Of Revenue\":19542120000.0,\"EBITDA\":1329833000.0,\"EBIT\":1271489000.0,\"Net Interest Income\":-59573000.0,\"Interest Expense\":59573000.0,\"Normalized Income\":1048854000.0,\"Net Income From Continuing And Discontinued Operation\":1048854000.0,\"Total Expenses\":20719048000.0,\"Total Operating Income As Reported\":1252994000.0,\"Diluted Average Shares\":628402000.0,\"Basic Average Shares\":593665000.0,\"Diluted EPS\":1.68,\"Basic EPS\":1.77,\"Diluted NI Availto Com Stockholders\":1048854000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":1048854000.0,\"Net Income\":1048854000.0,\"Net Income Including Noncontrolling Interests\":1048854000.0,\"Net Income Continuous Operations\":1048854000.0,\"Earnings From Equity Interest Net Of Tax\":-6211000.0,\"Tax Provision\"...(truncated)",
+          "balance_sheet": "{\"1751241600000\":{\"Ordinary Shares Number\":594136852.0,\"Share Issued\":594136852.0,\"Net Debt\":null,\"Total Debt\":4778842000.0,\"Tangible Book Value\":6301693000.0,\"Invested Capital\":11059346000.0,\"Working Capital\":9956862000.0,\"Net Tangible Assets\":6301693000.0,\"Capital Lease Obligations\":21189000.0,\"Common Stock Equity\":6301693000.0,\"Total Capitalization\":10984286000.0,\"Total Equity Gross Minority Interest\":6301871000.0,\"Minority Interest\":178000.0,\"Stockholders Equity\":6301693000.0,\"Gains Losses Not Affecting Retained Earnings\":705000.0,\"Other Equity Adjustments\":705000.0,\"Treasury Stock\":null,\"Retained Earnings\":3434539000.0,\"Capital Stock\":2866449000.0,\"Common Stock\":2866449000.0,\"Total Liabilities Net Minority Interest\":7716558000.0,\"Total Non Current Liabilities Net Minority Interest\":5371766000.0,\"Other Non Current Liabilities\":326528000.0,\"Non Current Accrued Expenses\":null,\"Non Current Deferred Liabilities\":362645000.0,\"Non Current Deferred Revenue\":362645000.0,\"Long Term Debt And...(truncated)",
+          "cash_flow": "{\"1751241600000\":{\"Free Cash Flow\":1532310000.0,\"Repurchase Of Capital Stock\":-200000000.0,\"Repayment Of Debt\":-1768650000.0,\"Issuance Of Debt\":4327660000.0,\"Issuance Of Capital Stock\":0.0,\"Capital Expenditure\":-127214000.0,\"Interest Paid Supplemental Data\":25490000.0,\"Income Tax Paid Supplemental Data\":327158000.0,\"End Cash Position\":5172301000.0,\"Beginning Cash Position\":1670273000.0,\"Effect Of Exchange Rate Changes\":1673000.0,\"Changes In Cash\":3500355000.0,\"Financing Cash Flow\":2024045000.0,\"Cash Flow From Continuing Financing Activities\":2024045000.0,\"Net Other Financing Charges\":-355863000.0,\"Proceeds From Stock Option Exercised\":20898000.0,\"Net Common Stock Issuance\":-200000000.0,\"Common Stock Payments\":-200000000.0,\"Common Stock Issuance\":0.0,\"Net Issuance Payments Of Debt\":2559010000.0,\"Net Short Term Debt Issuance\":-380659000.0,\"Short Term Debt Payments\":-1768650000.0,\"Short Term Debt Issuance\":1387991000.0,\"Net Long Term Debt Issuance\":2939669000.0,\"Long Term Debt Payments\":n...(truncated)"
+        }
+      },
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "terminal_value": -286516505.15414876,
+          "discounted_terminal_value": -186216069.3921929,
+          "sum_pv_cash_flows": -59216532.0046877,
+          "audit_metrics": {
+            "roic_path": [
+              0.04768339345632969,
+              0.048270667428624535,
+              0.04792327392700812,
+              0.046701981953654596,
+              0.04514664418785393
+            ],
+            "invested_capital_path": [
+              709711800.0,
+              757163435.0,
+              808411200.8,
+              862733832.548,
+              919229369.56592,
+              977419772.6943777
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 1013874000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.038410098296237954,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -6.903991996958474,
+            "reinvestment_rate_terminal_year": 1.4021742910849595,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.006974239402529309,
+              "capex_percent_sales": 0.02452178475826385,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -0.3064232214754611,
+          "upside_percent": -1.010537249706859,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.006974239402529309,
+            "capex_percent_sales": 0.02452178475826385,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 1115261400.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 42837299.999999955,
+              "nopat": 33841466.99999996,
+              "depreciation": 7778100.0,
+              "capex": 27348200.0,
+              "change_in_wc": 27881535.0,
+              "fcff": -13610168.000000037,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -12486392.660550492
+            },
+            {
+              "year": 2.0,
+              "revenue": 1204482312.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 46264283.999999955,
+              "nopat": 36548784.35999997,
+              "depreciation": 8400348.0,
+              "capex": 29536056.0,
+              "change_in_wc": 30112057.8,
+              "fcff": -14698981.440000031,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -12371838.599444516
+            },
+            {
+              "year": 3.0,
+              "revenue": 1276751250.72,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 49040141.03999995,
+              "nopat": 38741711.42159996,
+              "depreciation": 8904368.88,
+              "capex": 31308219.360000003,
+              "change_in_wc": 31918781.268000003,
+              "fcff": -15580920.326400042,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -12031329.280193755
+            },
+            {
+              "year": 4.0,
+              "revenue": 1327821300.7488,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 51001746.68159995,
+              "nopat": 40291379.87846396,
+              "depreciation": 9260543.635200001,
+              "capex": 32560548.134400003,
+              "change_in_wc": 33195532.51872,
+              "fcff": -16204157.139456041,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -11479433.441652752
+            },
+            {
+              "year": 5.0,
+              "revenue": 1367655939.771264,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.038410098296237954,
+              "ebit": 52531799.08204795,
+              "nopat": 41500121.27481788,
+              "depreciation": 9538359.944256,
+              "capex": 33537364.578432005,
+              "change_in_wc": 34191398.494281605,
+              "fcff": -16690281.853639733,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -10847538.022846187
+            }
+          ],
+          "enterprise_value": -245432601.3968806,
+          "equity_value": -184001601.3968806,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.006974239402529309,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.02452178475826385,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9546156623012327,
+          "calibration_adjustment": 0.11776907189650783
+        },
+        "base_financials": {
+          "net_sales": 1013874000.0,
+          "cogs": 848457000.0,
+          "interest_expense": 0.0,
+          "net_debt": -61431000.0
+        },
+        "calculated_upside": -1.010537249706859
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 19395000.0,
+          "equity": 17462015118.346863,
+          "wacc": 0.15016323609291826,
+          "cost_of_equity": 0.1502949238705566,
+          "beta": 1.9489986262320218
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1939500.0,
+            "cash": 80826000.0,
+            "liquidity_ratio": 0.02399599138890951,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 338351000.0,
+            "crash_fcf": 20968575.0,
+            "earnings_power_value": 123226235.47515301,
+            "floor_value": 338351000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.0,
+            "financial_leverage_score": 0.004442786211912553,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.15016323609291826,
+            "2": 0.15016323609291826,
+            "3": 0.15016323609291826,
+            "4": 0.15016323609291826,
+            "5": 0.15016323609291826
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-27T01:36:24.345244",
+          "current_price": 29.079999923706055,
+          "shares_diluted": 600481952.0,
+          "market_cap": 17462015118.346863,
+          "risk_free_rate": 0.04309999942779541,
+          "beta": 1.9489986262320218,
+          "wacc_base": 0.1502949238705566,
+          "revenue": 21972042000.0,
+          "ebitda": 1293994000.0,
+          "ebit": 1252994000.0,
+          "nopat": 989865260.0,
+          "roic": 0.6299253728284885,
+          "fcf": 1532310000.0,
+          "net_debt": -5169911000.0,
+          "bull_ev": 53412305888.9218,
+          "bull_intrinsic_per_share": 97.55866382628899,
+          "bull_upside": 2.3548371417552527,
+          "bull_wacc": 0.1452949238705566,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 41.27708929788067,
+          "bull_justified_ev_ebitda": 4.641420444813259,
+          "bull_roic_wacc_spread": 0.4846304489579319,
+          "bull_tv_pct_of_ev": 0.6356310994029596,
+          "bull_implied_tv_ebitda": 4.64142044481326,
+          "base_ev": 29374232156.70334,
+          "base_intrinsic_per_share": 57.52736288184618,
+          "base_upside": 0.9782449461064062,
+          "base_wacc": 0.1502949238705566,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 22.700439226691422,
+          "base_justified_ev_ebitda": 4.033856038618909,
+          "base_roic_wacc_spread": 0.4796304489579319,
+          "base_tv_pct_of_ev": 0.6017840288228118,
+          "base_implied_tv_ebitda": 4.033856038618909,
+          "bear_ev": 5412744343.002756,
+          "bear_intrinsic_per_share": 17.623602687400595,
+          "bear_upside": -0.39396139155303744,
+          "bear_wacc": 0.16,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 4.182974838370778,
+          "bear_justified_ev_ebitda": 3.0867593800468063,
+          "bear_roic_wacc_spread": 0.46992537282848845,
+          "bear_tv_pct_of_ev": 0.32658023780021733,
+          "bear_implied_tv_ebitda": 1.5285842141993833
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "SMCI",
+            "scenario": "bull",
+            "enterprise_value": 53412305888.9218,
+            "equity_value": 57442253905.9218,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 95.66025042817907,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": 2.2895547001083965,
+            "upside_pct": 2.2895547001083965,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          },
+          "base": {
+            "ticker": "SMCI",
+            "scenario": "base",
+            "enterprise_value": 29374232156.70334,
+            "equity_value": 33404180173.70334,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 55.62894948373626,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": 0.91296250445955,
+            "upside_pct": 0.91296250445955,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          },
+          "bear": {
+            "ticker": "SMCI",
+            "scenario": "bear",
+            "enterprise_value": 5412744343.002756,
+            "equity_value": 9442692360.002756,
+            "shares_diluted": 600481952.0,
+            "intrinsic_per_share": 15.725189289290673,
+            "current_price": 29.079999923706055,
+            "margin_of_safety": -0.4592438331998936,
+            "upside_pct": -0.4592438331998936,
+            "data_quality": 0.85,
+            "bridge_cash_(net_of_haircuts)": 4029948017.0,
+            "cash_gross": 5169911000.0,
+            "cash_wc_haircut": 659161260.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 480801723.0,
+            "cash_net_accessible": 4029948017.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4029948017.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 95.66025042817907,
+          "base": 55.62894948373626,
+          "bear": 15.725189289290673
+        },
+        "margin_of_safety": {
+          "bull": 2.2895547001083965,
+          "base": 0.91296250445955,
+          "bear": -0.4592438331998936
+        },
+        "reverse_dcf": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "current_price": 29.079999923706055,
+          "current_ev": 12292104118.346863,
+          "current_ev_ebitda": 9.499351711326995,
+          "wacc": 0.1502949238705566,
+          "ebit_margin": 0.057026743349571245,
+          "implied_cagr_10y": 0.1385687062396347,
+          "implied_cagr_5y": 0.1385687062396347,
+          "historical_cagr_5y": 0.3696758234351898,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 9.499351711326995,
+          "forward_ev_ebitda_justified": 5.29413499511963,
+          "signal": "deep_value"
+        },
+        "implied_cagr": 0.1385687062396347,
+        "historical_cagr": 0.3696758234351898,
+        "reverse_dcf_signal": "deep_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (13.9%) is less than 50% of historical (37.0%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+        ],
+        "multiples": {
+          "ticker": "SMCI",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 9.499351711326995,
+          "market_ev_ebit": 9.810185937320421,
+          "market_p_sales": 0.7947379273326923,
+          "market_p_e": 16.648661413644668,
+          "market_peg": 0.45035840480283534,
+          "justified_ev_ebitda": 5.86304250398053,
+          "justified_ev_ebit": 6.0548907831129135,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 3.6363092073464642,
+          "ev_ebitda_premium_pct": 0.6202085700176496,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -12.500648288673005,
+          "roic": 0.6299253728284885,
+          "wacc": 0.1502949238705566,
+          "roic_wacc_spread": 0.4796304489579319,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7346094641860781,
+          "growth_rate": 0.3696758234351898,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 9.499351711326995,
+        "ev_ebitda_justified": 5.86304250398053,
+        "ev_ebitda_premium_pct": 0.6202085700176496,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.4796304489579319,
+        "multiple_decomposition": {
+          "roic": 0.6299253728284885,
+          "wacc": null
+        },
+        "value_creation": "creating",
+        "summary": "=== Phase 2 Valuation: SMCI ===\nCurrent price   : $29.08\nIntrinsic value : Bear=$16  Base=$56  Bull=$96\nMargin of safety: Bear=-45.9%  Base=+91.3%  Bull=+229.0%\nImplied CAGR    : 13.9%  (hist: 37.0%)  [deep_value]\nEV/EBITDA       : 9.5x  (justified: 5.9x)  premium: +62%  [high_premium]",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $29.08 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 13.9%\n  \u2022 Company's robust historical CAGR: 37.0%\n  \u2022 Ratio (implied / historical): 0.4x\n  \u2022 Reverse DCF signal: DEEP_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (13.9%) is less than 50% of historical (37.0%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 9.5x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 5.9x\n  \u2022 Premium to justified multiple: +62%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $16/share vs current price $29.08\n  \u2022 Downside in bear case: -45.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Anchoring Bias / Narrative Premium",
+          "bear_case_summary": "The market is exhibiting a severe mathematical contradiction regarding SMCI. While the reverse DCF implies a 10-year revenue CAGR of 13.9% (a massive deceleration from the historical 37.0%), the market is simultaneously assigning a 9.5x EV/EBITDA multiple. This represents a 62% premium over the mathematically justified multiple of 5.9x based on the company's ROIC and WACC. Investors are anchoring to the AI hardware narrative and paying a premium multiple for a business that is mathematically priced for severe growth deceleration. If SMCI experiences margin compression, increased competition in the server market, or a cyclical downturn in AI infrastructure spending, the multiple will violently contract to its justified 5.9x level. This multiple compression creates a direct path to the bear case intrinsic value of $16.00 per share, representing a steep 45.9% downside from the current price of $29.08.",
+          "sentiment_score": -7
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_score": 3.0,
+        "operating_leverage_analysis": "SMCI operates a hardware manufacturing and assembly business model characterized by high variable costs. The cost of goods sold (COGS) is heavily dominated by expensive third-party components such as GPUs, CPUs, and memory. Consequently, gross margins are structurally low (typically 10-15%), indicating low operating leverage compared to software or IP-heavy businesses, though some fixed cost leverage exists in R&D and manufacturing facility utilization.",
+        "moat_score": 4.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 1.0,
+          "cost_advantage": 4.0,
+          "intangibles": 5.0
+        },
+        "moat_evidence": "SMCI possesses a narrow to non-existent moat. Its primary competitive edge is its 'building block' server architecture and strong engineering relationship with Nvidia, allowing for rapid time-to-market for new AI server designs (Intangibles). However, it operates in a highly commoditized hardware market against massive competitors like Dell, HPE, and ODMs. Switching costs are moderate once a data center is standardized, but ultimately the underlying compute power is driven by the component makers (Nvidia/AMD), not the server assembler.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "SMCI operates in a highly competitive, low-margin hardware industry. While it can pass through the high costs of components (like AI GPUs) to customers, it lacks strong independent pricing power to expand its own margins significantly. Customers have multiple alternative server OEMs to choose from if SMCI attempts to raise its premium.",
+        "growth_sustainability_boost": 0.0,
+        "concentration_risk": true,
+        "concentration_details": "SMCI faces extreme supplier concentration risk, being heavily dependent on Nvidia for the allocation of high-end GPUs that drive the vast majority of its current AI server revenue growth. Additionally, it faces customer concentration risk, historically relying on a handful of large cloud service providers and well-funded AI startups for a significant percentage of its total revenue.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 4.0,
+        "power_ratio": 5.0,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "SMCI is heavily dependent on Nvidia (and to a lesser extent AMD and Intel) for critical GPU and CPU components. Nvidia acts as a severe upstream bottleneck, capturing the vast majority of the value chain's profit pool with gross margins exceeding 70%, compared to SMCI's historical gross margins of roughly 14-17%.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "Dell Technologies, Hewlett Packard Enterprise (HPE), Lenovo, and Taiwanese ODMs (e.g., Quanta, Wistron, Foxconn).",
+        "pricing_power_assessment": "SMCI operates in a low-margin hardware sector. While they can pass through the high costs of GPUs to end customers due to current AI infrastructure demand, their ability to expand margins is limited by fierce competition from legacy OEMs and direct-to-cloud ODMs. They are primarily price takers regarding component costs.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": -0.01,
+        "analysis_summary": "SMCI benefits from a first-to-market advantage and engineering expertise in AI servers and liquid cooling. However, its strategic leverage is weak due to extreme reliance on a monopolistic supplier (Nvidia) that extracts most of the economic value (Power Ratio ~ 5.0). Furthermore, SMCI faces high substitution risk from well-capitalized OEMs like Dell and HPE, limiting long-term pricing power and warranting a negative adjustment to terminal growth."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.45,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Insufficient data due to search error; however, SMCI is primarily a hardware and server solutions provider, making deferred revenue a secondary growth indicator compared to hardware sales.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent or contract cliffs identified due to search errors. SMCI's business model relies heavily on engineering capabilities, time-to-market, and strategic partnerships (e.g., Nvidia) rather than single patent exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "SMCI's revenue Z-score of 1.45 indicates strong recent growth but does not breach the 2.0 threshold for a cyclical peak. Intangible decay risk appears low, as the company is hardware-focused and relies on supply chain execution and partnerships rather than patent exclusivity. No terminal haircut is recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>______________________________________________________________________</div>\n\n| \u2612ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended June 30, 2025\n\nor</div>\n\n| \u2610TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from___________to___________\n\nCommission File Number 001-33383\n\n______________________________________________________________________</div>\n\n#### Super Micro Computer, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n______________________________________________________________________</div>\n\n| Delaware                        |     | 77-0353939         |\n| (State...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "SMCI",
+        "generated_at": "2026-04-26T21:36:50.154140",
+        "1_economic_reality": {
+          "business_model": {
+            "revenue_drivers": "Defined by Forensic/Intake",
+            "cost_structure": "Operating Leverage Score: 3.0/10"
+          },
+          "value_chain": {
+            "power_ratio": 5.0,
+            "upstream_leak": true,
+            "strategic_leverage": 4.0
+          },
+          "moat": {
+            "score": 4.0,
+            "switching_costs": 4.0,
+            "network_effects": 1.0
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.45,
+            "is_peak": false
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 21.972042,
+            "ebitda_bn": 1.293994,
+            "fcf_bn": 1.53231,
+            "nopat_bn": 0.98986526,
+            "invested_capital_bn": 1.57140084,
+            "net_debt_bn": -5.169911,
+            "sbc_bn": 0.314452,
+            "fiscal_year": 2025,
+            "data_quality": 0.94
+          },
+          "ratios": {
+            "gross_margin_pct": 11.059154174200104,
+            "ebit_margin_pct": 5.702674334957124,
+            "ebitda_margin_pct": 5.889275106974582,
+            "fcf_margin_pct": 6.9739080236602495,
+            "roic": 0.6299253728284885,
+            "roe": 0.16644003444788566,
+            "sbc_pct_fcf": 20.521434957678277,
+            "share_dilution_pct": 5.767188375744988,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 3,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 19395000.0,
+            "equity": 17462015118.346863,
+            "wacc": 0.15016323609291826,
+            "cost_of_equity": 0.1502949238705566,
+            "beta": 1.9489986262320218
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 1939500.0,
+              "cash": 80826000.0,
+              "liquidity_ratio": 0.02399599138890951,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 338351000.0,
+              "crash_fcf": 20968575.0,
+              "earnings_power_value": 123226235.47515301,
+              "floor_value": 338351000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 3.0,
+              "financial_leverage_score": 0.004442786211912553,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.15016323609291826,
+              "2": 0.15016323609291826,
+              "3": 0.15016323609291826,
+              "4": 0.15016323609291826,
+              "5": 0.15016323609291826
+            }
+          }
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": -184001601.3968806,
+            "upside_percent": 0,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 15.725189289290673,
+                "margin_of_safety": -0.4592438331998936,
+                "ev": 5412744343.002756
+              },
+              "base": {
+                "intrinsic_per_share": 55.62894948373626,
+                "margin_of_safety": 0.91296250445955,
+                "ev": 29374232156.70334
+              },
+              "bull": {
+                "intrinsic_per_share": 95.66025042817907,
+                "margin_of_safety": 2.2895547001083965,
+                "ev": 53412305888.9218
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.1385687062396347,
+              "historical_cagr": 0.3696758234351898,
+              "signal": "deep_value",
+              "reasons": [
+                "Implied CAGR (13.9%) is less than 50% of historical (37.0%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 9.499351711326995,
+              "justified_ev_ebitda": 5.86304250398053,
+              "premium_pct": 0.6202085700176496,
+              "signal": "high_premium",
+              "roic_wacc_spread": 0.4796304489579319,
+              "value_creation": "creating"
+            },
+            "wacc": 0.1502949238705566,
+            "beta": 1.9489986262320218,
+            "risk_free_rate": 0.04309999942779541
+          },
+          "investment_thesis": {
+            "conviction_score": -4,
+            "margin_of_safety": 0.91296250445955,
+            "narrative": "While historical CAGR was 37.0%, the implied CAGR of 13.9% reflects a necessary deceleration. The company suffers from upstream value leakage to key GPU suppliers and low operating leverage (3.0/10). Growth sustainability is highly vulnerable to hardware cyclicality and supplier pricing power, justifying the expected decay.\n\nThe contrarian bear case correctly identifies the +62% EV/EBITDA premium and upstream value leakage as critical risks. However, the cyclicality Z-score of 1.45 indicates we are not yet at peak cycle, and the 13.9% implied CAGR remains achievable given secular AI tailwinds, preventing a complete structural collapse in the near term despite the lack of margin of safety.",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Implied CAGR (13.9%) is within 1.3x of historical (37.0%).",
+              "\u26a0\ufe0f CAUTION: EV/EBITDA at +62% premium. Growth assumptions must be documented."
+            ],
+            "pillar_scores": {
+              "ticker": "SMCI",
+              "p1_moat": 1,
+              "p2_health": 2,
+              "p3_tailwind": 5,
+              "p4_mos": 1,
+              "p5_leadership": 2,
+              "raw_total": 11,
+              "capped_total": 11,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "pass",
+              "position_size_pct": "Below minimum analytical threshold (capped at 75% due to reflexivity flag)",
+              "conviction_score": -4,
+              "reflexivity_flags": [
+                "High-SBC company (20.5% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 4.0/10 \u2014 No confirmed moat \u2014 commodity product, easily replicated"
+              ],
+              "p2_reasons": [
+                "FCF margin 7.0% \u2014 adequate FCF",
+                "Net cash position (-4.0\u00d7 EBITDA) \u2014 fortress balance sheet"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 37.0% \u2014 hypergrowth, structural demand",
+                "Sector 'Technology' \u2014 confirmed secular tailwind"
+              ],
+              "p4_reasons": [
+                "Margin of safety unavailable \u2014 defaulting to 1"
+              ],
+              "p5_reasons": [
+                "SBC 20.5% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 3.0/10",
+                "Strategic leverage 4.0/10 \u2014 moderate positioning"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Consolidated Report generated for SMCI. Conviction: -4",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,3151 @@
+[
+  {
+    "timestamp": "2026-04-29T10:56:27.062447",
+    "agent": "Librarian",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:56:59.755311",
+    "agent": "Forensic",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:57:29.814087",
+    "agent": "ValueChain",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.91,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+        "substitution_risk_score": 5.0,
+        "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+        "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+        "pass_through_capability": true,
+        "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: True. Pass-through: True. Sub risk: 5.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:57:55.100368",
+    "agent": "StrategicContext",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: True. Pass-through: True. Sub risk: 5.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.91,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+        "substitution_risk_score": 5.0,
+        "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+        "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+        "pass_through_capability": true,
+        "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 2.0657341829757345,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 166789666666.66666,
+        "deferred_revenue_trend": "Meta's D8 Revenue Score is 1.00, indicating clean revenue quality. As an advertising-driven business, deferred revenue is negligible (currently 0), making the -100.0% growth metric immaterial to overall revenue growth quality. There is no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K explicitly states that Meta's proprietary technology is not dependent on any single patent, copyright, or group of related patents. No material patent cliffs, exclusivity expirations, or contract renewals were identified. Revenue at risk is estimated at 0.0%.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Meta is currently flagged at a cyclical peak with a revenue Z-score of 2.07, reflecting strong structural growth in its advertising business rather than traditional commodity cyclicality. Revenue quality remains high with a D8 score of 1.00, indicating no pull-forward risk despite negligible deferred revenue. Furthermore, there is no material intangible decay risk, as the company explicitly notes it is not dependent on any single patent or copyright, resulting in 0.0% estimated revenue at risk from expiring assets."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=2.07 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:57:55.904148",
+    "agent": "Strategist",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: True. Pass-through: True. Sub risk: 5.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.07 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.91,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+        "substitution_risk_score": 5.0,
+        "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+        "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+        "pass_through_capability": true,
+        "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0657341829757345,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 166789666666.66666,
+        "deferred_revenue_trend": "Meta's D8 Revenue Score is 1.00, indicating clean revenue quality. As an advertising-driven business, deferred revenue is negligible (currently 0), making the -100.0% growth metric immaterial to overall revenue growth quality. There is no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K explicitly states that Meta's proprietary technology is not dependent on any single patent, copyright, or group of related patents. No material patent cliffs, exclusivity expirations, or contract renewals were identified. Revenue at risk is estimated at 0.0%.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Meta is currently flagged at a cyclical peak with a revenue Z-score of 2.07, reflecting strong structural growth in its advertising business rather than traditional commodity cyclicality. Revenue quality remains high with a D8 score of 1.00, indicating no pull-forward risk despite negligible deferred revenue. Furthermore, there is no material intangible decay risk, as the company explicitly notes it is not dependent on any single patent or copyright, resulting in 0.0% estimated revenue at risk from expiring assets."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1500000000.0,
+          "equity": 1706632774337.2476,
+          "wacc": 0.11824959167291949,
+          "cost_of_equity": 0.1183257500530138,
+          "beta": 1.3524681730719303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 150000000.0,
+            "cash": 2384000000.0,
+            "liquidity_ratio": 0.06291946308724833,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 11755000000.0,
+            "crash_fcf": 468865000.0,
+            "earnings_power_value": 3391438588.182405,
+            "floor_value": 11755000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.003515694817433724,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11824959167291949,
+            "2": 0.11824959167291949,
+            "3": 0.11824959167291949,
+            "4": 0.11824959167291949,
+            "5": 0.11824959167291949
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 11.8%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:57:56.959073",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "base": {
+        "net_sales": 200966000000.0,
+        "cogs": 36175000000.0,
+        "interest_expense": 0.0,
+        "net_debt": 22871000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.09263258461630325,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.3467800523471632,
+        "wacc": 0.11824959167291949,
+        "wc_change_percent_sales": 0.01,
+        "cogs_percent_sales": 0.5856214484042077,
+        "calibration_adjustment": 0.40561587532219373
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-29T10:57:56.959194",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": -26937796848.097702,
+      "equity_value": -49808796848.0977,
+      "terminal_value": -31539493119.46176,
+      "discounted_terminal_value": -18036861400.02916,
+      "sum_pv_cash_flows": -8900935448.068544,
+      "audit_metrics": {
+        "roic_path": [
+          0.3994246361502514,
+          0.3048420588915844,
+          0.2453928503012502,
+          0.2033507762759608,
+          0.1729108192555803
+        ],
+        "invested_capital_path": [
+          140676200000.0,
+          199069326000.0,
+          262133902080.0,
+          328982352724.80005,
+          398504741395.3921,
+          470112801726.10187
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 221062600000.00003,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.32174596697948904,
+          "ebit": 71126000000.0,
+          "nopat": 56189540000.0,
+          "depreciation": 20477600000.0,
+          "capex": 76660100000.00002,
+          "change_in_wc": 2210626000.0000005,
+          "fcff": -2203586000.0000157,
+          "discount_factor": 0.8942547419167699,
+          "pv_fcff": -1970567229.7214215
+        },
+        {
+          "year": 2.0,
+          "revenue": 238747608000.00006,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.32174596697948904,
+          "ebit": 76816080000.00002,
+          "nopat": 60684703200.000015,
+          "depreciation": 22115808000.000004,
+          "capex": 82792908000.00002,
+          "change_in_wc": 2387476080.0000005,
+          "fcff": -2379872880.0000005,
+          "discount_factor": 0.7996915434406288,
+          "pv_fcff": -1903164216.5996947
+        },
+        {
+          "year": 3.0,
+          "revenue": 253072464480.0001,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.32174596697948904,
+          "ebit": 81425044800.00002,
+          "nopat": 64325785392.000015,
+          "depreciation": 23442756480.000008,
+          "capex": 87760482480.00003,
+          "change_in_wc": 2530724644.800001,
+          "fcff": -2522665252.800001,
+          "discount_factor": 0.7151279547925228,
+          "pv_fcff": -1804028442.8610272
+        },
+        {
+          "year": 4.0,
+          "revenue": 263195363059.2001,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.32174596697948904,
+          "ebit": 84682046592.00003,
+          "nopat": 66898816807.68003,
+          "depreciation": 24380466739.20001,
+          "capex": 91270901779.20003,
+          "change_in_wc": 2631953630.592001,
+          "fcff": -2623571862.911993,
+          "discount_factor": 0.6395065646504549,
+          "pv_fcff": -1677791429.1644428
+        },
+        {
+          "year": 5.0,
+          "revenue": 271091223950.9761,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.32174596697948904,
+          "ebit": 87222507989.76003,
+          "nopat": 68905781311.91042,
+          "depreciation": 25111880741.376007,
+          "capex": 94009028832.57603,
+          "change_in_wc": 2710912239.5097613,
+          "fcff": -2702279018.799373,
+          "discount_factor": 0.5718817779255727,
+          "pv_fcff": -1545384129.7219577
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 200966000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.32174596697948904,
+        "terminal_value_pct_of_ev": 0.6695744830855717,
+        "implied_terminal_multiple_fcf": 11.671442104995808,
+        "implied_terminal_multiple_nopat": -0.4577191132438424,
+        "reinvestment_rate_terminal_year": 1.0392170144122912,
+        "assumptions_used": {
+          "wacc": 0.11824959167291949,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.09263258461630325,
+          "capex_percent_sales": 0.3467800523471632,
+          "wc_change_percent_sales": 0.01
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:57:56.959902",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: True. Pass-through: True. Sub risk: 5.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.07 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.8%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1500000000.0,
+          "equity": 1706632774337.2476,
+          "wacc": 0.11824959167291949,
+          "cost_of_equity": 0.1183257500530138,
+          "beta": 1.3524681730719303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 150000000.0,
+            "cash": 2384000000.0,
+            "liquidity_ratio": 0.06291946308724833,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 11755000000.0,
+            "crash_fcf": 468865000.0,
+            "earnings_power_value": 3391438588.182405,
+            "floor_value": 11755000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.003515694817433724,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11824959167291949,
+            "2": 0.11824959167291949,
+            "3": 0.11824959167291949,
+            "4": 0.11824959167291949,
+            "5": 0.11824959167291949
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.91,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+        "substitution_risk_score": 5.0,
+        "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+        "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+        "pass_through_capability": true,
+        "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0657341829757345,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 166789666666.66666,
+        "deferred_revenue_trend": "Meta's D8 Revenue Score is 1.00, indicating clean revenue quality. As an advertising-driven business, deferred revenue is negligible (currently 0), making the -100.0% growth metric immaterial to overall revenue growth quality. There is no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K explicitly states that Meta's proprietary technology is not dependent on any single patent, copyright, or group of related patents. No material patent cliffs, exclusivity expirations, or contract renewals were identified. Revenue at risk is estimated at 0.0%.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Meta is currently flagged at a cyclical peak with a revenue Z-score of 2.07, reflecting strong structural growth in its advertising business rather than traditional commodity cyclicality. Revenue quality remains high with a D8 score of 1.00, indicating no pull-forward risk despite negligible deferred revenue. Furthermore, there is no material intangible decay risk, as the company explicitly notes it is not dependent on any single patent or copyright, resulting in 0.0% estimated revenue at risk from expiring assets."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "terminal_value": -31539493119.46176,
+          "discounted_terminal_value": -18036861400.02916,
+          "sum_pv_cash_flows": -8900935448.068544,
+          "audit_metrics": {
+            "roic_path": [
+              0.3994246361502514,
+              0.3048420588915844,
+              0.2453928503012502,
+              0.2033507762759608,
+              0.1729108192555803
+            ],
+            "invested_capital_path": [
+              140676200000.0,
+              199069326000.0,
+              262133902080.0,
+              328982352724.80005,
+              398504741395.3921,
+              470112801726.10187
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 200966000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.32174596697948904,
+            "terminal_value_pct_of_ev": 0.6695744830855717,
+            "implied_terminal_multiple_fcf": 11.671442104995808,
+            "implied_terminal_multiple_nopat": -0.4577191132438424,
+            "reinvestment_rate_terminal_year": 1.0392170144122912,
+            "assumptions_used": {
+              "wacc": 0.11824959167291949,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.09263258461630325,
+              "capex_percent_sales": 0.3467800523471632,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -19.621942207680892,
+          "upside_percent": -1.0291854209419338,
+          "assumptions_used": {
+            "wacc": 0.11824959167291949,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.09263258461630325,
+            "capex_percent_sales": 0.3467800523471632,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.09263258461630325,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.3467800523471632,
+          "wacc": 0.11824959167291949,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5856214484042077,
+          "calibration_adjustment": 0.40561587532219373
+        },
+        "base_financials": {
+          "net_sales": 200966000000.0,
+          "cogs": 36175000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 22871000000.0
+        },
+        "calculated_upside": -1.0291854209419338
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-26,937,796,848",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:57:58.172852",
+    "agent": "ValuationNode",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: True. Pass-through: True. Sub risk: 5.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.07 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.8%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-26,937,796,848",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "terminal_value": -31539493119.46176,
+          "discounted_terminal_value": -18036861400.02916,
+          "sum_pv_cash_flows": -8900935448.068544,
+          "audit_metrics": {
+            "roic_path": [
+              0.3994246361502514,
+              0.3048420588915844,
+              0.2453928503012502,
+              0.2033507762759608,
+              0.1729108192555803
+            ],
+            "invested_capital_path": [
+              140676200000.0,
+              199069326000.0,
+              262133902080.0,
+              328982352724.80005,
+              398504741395.3921,
+              470112801726.10187
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 200966000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.32174596697948904,
+            "terminal_value_pct_of_ev": 0.6695744830855717,
+            "implied_terminal_multiple_fcf": 11.671442104995808,
+            "implied_terminal_multiple_nopat": -0.4577191132438424,
+            "reinvestment_rate_terminal_year": 1.0392170144122912,
+            "assumptions_used": {
+              "wacc": 0.11824959167291949,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.09263258461630325,
+              "capex_percent_sales": 0.3467800523471632,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -19.621942207680892,
+          "upside_percent": -1.0291854209419338,
+          "assumptions_used": {
+            "wacc": 0.11824959167291949,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.09263258461630325,
+            "capex_percent_sales": 0.3467800523471632,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.09263258461630325,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.3467800523471632,
+          "wacc": 0.11824959167291949,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5856214484042077,
+          "calibration_adjustment": 0.40561587532219373
+        },
+        "base_financials": {
+          "net_sales": 200966000000.0,
+          "cogs": 36175000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 22871000000.0
+        },
+        "calculated_upside": -1.0291854209419338
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1500000000.0,
+          "equity": 1706632774337.2476,
+          "wacc": 0.11824959167291949,
+          "cost_of_equity": 0.1183257500530138,
+          "beta": 1.3524681730719303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 150000000.0,
+            "cash": 2384000000.0,
+            "liquidity_ratio": 0.06291946308724833,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 11755000000.0,
+            "crash_fcf": 468865000.0,
+            "earnings_power_value": 3391438588.182405,
+            "floor_value": 11755000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.003515694817433724,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11824959167291949,
+            "2": 0.11824959167291949,
+            "3": 0.11824959167291949,
+            "4": 0.11824959167291949,
+            "5": 0.11824959167291949
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.91,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+        "substitution_risk_score": 5.0,
+        "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+        "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+        "pass_through_capability": true,
+        "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0657341829757345,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 166789666666.66666,
+        "deferred_revenue_trend": "Meta's D8 Revenue Score is 1.00, indicating clean revenue quality. As an advertising-driven business, deferred revenue is negligible (currently 0), making the -100.0% growth metric immaterial to overall revenue growth quality. There is no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K explicitly states that Meta's proprietary technology is not dependent on any single patent, copyright, or group of related patents. No material patent cliffs, exclusivity expirations, or contract renewals were identified. Revenue at risk is estimated at 0.0%.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Meta is currently flagged at a cyclical peak with a revenue Z-score of 2.07, reflecting strong structural growth in its advertising business rather than traditional commodity cyclicality. Revenue quality remains high with a D8 score of 1.00, indicating no pull-forward risk despite negligible deferred revenue. Furthermore, there is no material intangible decay risk, as the company explicitly notes it is not dependent on any single patent or copyright, resulting in 0.0% estimated revenue at risk from expiring assets."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 166789666666.66666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:57:56.962808",
+          "current_price": 672.3200073242188,
+          "shares_diluted": 2538423304.0,
+          "market_cap": 1706632774337.2476,
+          "risk_free_rate": 0.04394000053405762,
+          "beta": 1.3524681730719303,
+          "wacc_base": 0.11824959167291949,
+          "revenue": 166789666666.66666,
+          "ebitda": 101892000000.0,
+          "ebit": 83276000000.0,
+          "nopat": 65788040000.0,
+          "roic": 0.2694758749031062,
+          "fcf": 46109000000.0,
+          "net_debt": 22871000000.0,
+          "bull_ev": 1008440878539.574,
+          "bull_intrinsic_per_share": 388.2606486422227,
+          "bull_upside": -0.42250618096660575,
+          "bull_wacc": 0.11324959167291948,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 9.897154619985612,
+          "bull_justified_ev_ebitda": 7.634793118463259,
+          "bull_roic_wacc_spread": 0.15622628323018672,
+          "bull_tv_pct_of_ev": 0.6528897179773029,
+          "bull_implied_tv_ebitda": 3.5747521895755736,
+          "base_ev": 422208288852.38586,
+          "base_intrinsic_per_share": 157.3170590669876,
+          "base_upside": -0.7660086605289387,
+          "base_wacc": 0.11824959167291949,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 4.1436843800532515,
+          "base_justified_ev_ebitda": 6.558899795599198,
+          "base_roic_wacc_spread": 0.15122628323018672,
+          "base_tv_pct_of_ev": 0.5686754622128447,
+          "base_implied_tv_ebitda": 1.9306928305498534,
+          "bear_ev": 0.0,
+          "bear_intrinsic_per_share": -9.009923586803,
+          "bear_upside": -1.013401242694921,
+          "bear_wacc": 0.1332495916729195,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 0.0,
+          "bear_justified_ev_ebitda": 4.855884160150662,
+          "bear_roic_wacc_spread": 0.1362262832301867,
+          "bear_tv_pct_of_ev": 0.0,
+          "bear_implied_tv_ebitda": -1.17800386600913
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "META",
+            "scenario": "bull",
+            "enterprise_value": 1008440878539.574,
+            "equity_value": 976204709539.574,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 384.5712840727899,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -0.4279936936528876,
+            "upside_pct": -0.4279936936528876,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          },
+          "base": {
+            "ticker": "META",
+            "scenario": "base",
+            "enterprise_value": 422208288852.38586,
+            "equity_value": 389972119852.38586,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 153.62769449755487,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -0.7714961732152206,
+            "upside_pct": -0.7714961732152206,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          },
+          "bear": {
+            "ticker": "META",
+            "scenario": "bear",
+            "enterprise_value": 0.0,
+            "equity_value": 0.0,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 0.0,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -1.018888755381203,
+            "upside_pct": -1.018888755381203,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 384.5712840727899,
+          "base": 153.62769449755487,
+          "bear": 0.0
+        },
+        "margin_of_safety": {
+          "bull": -0.4279936936528876,
+          "base": -0.7714961732152206,
+          "bear": -1.018888755381203
+        },
+        "reverse_dcf": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "current_price": 672.3200073242188,
+          "current_ev": 1729503774337.2476,
+          "current_ev_ebitda": 16.973891712178066,
+          "wacc": 0.11543989727916225,
+          "ebit_margin": 0.49928752580595526,
+          "implied_cagr_10y": 0.17414882710521928,
+          "implied_cagr_5y": 0.17414882710521928,
+          "historical_cagr_5y": 0.15152656235627138,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 16.973891712178066,
+          "forward_ev_ebitda_justified": 7.8302315242321425,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.17414882710521928,
+        "historical_cagr": 0.15152656235627138,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.4%) exceeds historical (15.2%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 16.973891712178066,
+          "market_ev_ebit": 20.768333905774142,
+          "market_p_sales": 8.492146802629538,
+          "market_p_e": 28.2284027645183,
+          "market_peg": 1.8629342819872916,
+          "justified_ev_ebitda": 6.476836275075382,
+          "justified_ev_ebit": 7.924705818482885,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 10.497055437102684,
+          "ev_ebitda_premium_pct": 1.6207072390417208,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -5.026108287821934,
+          "roic": 0.2694758749031062,
+          "wacc": 0.11543989727916225,
+          "roic_wacc_spread": 0.15403597762394394,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5857644074117693,
+          "growth_rate": 0.15152656235627138,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 16.973891712178066,
+        "ev_ebitda_justified": 6.476836275075382,
+        "ev_ebitda_premium_pct": 1.6207072390417208,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.15403597762394394,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.2694758749031062,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: META ===\nPrice: $672.32  |  Bear=$0  Base=$154  Bull=$385\nMoS:  Bear=-101.9%  Base=-77.1%  Bull=-42.8%\nRDCF: implied=17.4% hist=15.2% [priced_for_growth]\nEV/EBITDA: 17.0x market vs 6.5x justified (+162%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: META \u2014 Base IV=$154/share MoS=-77.1% ImpliedCAGR=17.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:58:13.530332",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: True. Pass-through: True. Sub risk: 5.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.07 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.8%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-26,937,796,848",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: META \u2014 Base IV=$154/share MoS=-77.1% ImpliedCAGR=17.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "terminal_value": -31539493119.46176,
+          "discounted_terminal_value": -18036861400.02916,
+          "sum_pv_cash_flows": -8900935448.068544,
+          "audit_metrics": {
+            "roic_path": [
+              0.3994246361502514,
+              0.3048420588915844,
+              0.2453928503012502,
+              0.2033507762759608,
+              0.1729108192555803
+            ],
+            "invested_capital_path": [
+              140676200000.0,
+              199069326000.0,
+              262133902080.0,
+              328982352724.80005,
+              398504741395.3921,
+              470112801726.10187
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 200966000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.32174596697948904,
+            "terminal_value_pct_of_ev": 0.6695744830855717,
+            "implied_terminal_multiple_fcf": 11.671442104995808,
+            "implied_terminal_multiple_nopat": -0.4577191132438424,
+            "reinvestment_rate_terminal_year": 1.0392170144122912,
+            "assumptions_used": {
+              "wacc": 0.11824959167291949,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.09263258461630325,
+              "capex_percent_sales": 0.3467800523471632,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -19.621942207680892,
+          "upside_percent": -1.0291854209419338,
+          "assumptions_used": {
+            "wacc": 0.11824959167291949,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.09263258461630325,
+            "capex_percent_sales": 0.3467800523471632,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.09263258461630325,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.3467800523471632,
+          "wacc": 0.11824959167291949,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5856214484042077,
+          "calibration_adjustment": 0.40561587532219373
+        },
+        "base_financials": {
+          "net_sales": 200966000000.0,
+          "cogs": 36175000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 22871000000.0
+        },
+        "calculated_upside": -1.0291854209419338
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1500000000.0,
+          "equity": 1706632774337.2476,
+          "wacc": 0.11824959167291949,
+          "cost_of_equity": 0.1183257500530138,
+          "beta": 1.3524681730719303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 150000000.0,
+            "cash": 2384000000.0,
+            "liquidity_ratio": 0.06291946308724833,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 11755000000.0,
+            "crash_fcf": 468865000.0,
+            "earnings_power_value": 3391438588.182405,
+            "floor_value": 11755000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.003515694817433724,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11824959167291949,
+            "2": 0.11824959167291949,
+            "3": 0.11824959167291949,
+            "4": 0.11824959167291949,
+            "5": 0.11824959167291949
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 166789666666.66666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:57:56.962808",
+          "current_price": 672.3200073242188,
+          "shares_diluted": 2538423304.0,
+          "market_cap": 1706632774337.2476,
+          "risk_free_rate": 0.04394000053405762,
+          "beta": 1.3524681730719303,
+          "wacc_base": 0.11824959167291949,
+          "revenue": 166789666666.66666,
+          "ebitda": 101892000000.0,
+          "ebit": 83276000000.0,
+          "nopat": 65788040000.0,
+          "roic": 0.2694758749031062,
+          "fcf": 46109000000.0,
+          "net_debt": 22871000000.0,
+          "bull_ev": 1008440878539.574,
+          "bull_intrinsic_per_share": 388.2606486422227,
+          "bull_upside": -0.42250618096660575,
+          "bull_wacc": 0.11324959167291948,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 9.897154619985612,
+          "bull_justified_ev_ebitda": 7.634793118463259,
+          "bull_roic_wacc_spread": 0.15622628323018672,
+          "bull_tv_pct_of_ev": 0.6528897179773029,
+          "bull_implied_tv_ebitda": 3.5747521895755736,
+          "base_ev": 422208288852.38586,
+          "base_intrinsic_per_share": 157.3170590669876,
+          "base_upside": -0.7660086605289387,
+          "base_wacc": 0.11824959167291949,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 4.1436843800532515,
+          "base_justified_ev_ebitda": 6.558899795599198,
+          "base_roic_wacc_spread": 0.15122628323018672,
+          "base_tv_pct_of_ev": 0.5686754622128447,
+          "base_implied_tv_ebitda": 1.9306928305498534,
+          "bear_ev": 0.0,
+          "bear_intrinsic_per_share": -9.009923586803,
+          "bear_upside": -1.013401242694921,
+          "bear_wacc": 0.1332495916729195,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 0.0,
+          "bear_justified_ev_ebitda": 4.855884160150662,
+          "bear_roic_wacc_spread": 0.1362262832301867,
+          "bear_tv_pct_of_ev": 0.0,
+          "bear_implied_tv_ebitda": -1.17800386600913
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "META",
+            "scenario": "bull",
+            "enterprise_value": 1008440878539.574,
+            "equity_value": 976204709539.574,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 384.5712840727899,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -0.4279936936528876,
+            "upside_pct": -0.4279936936528876,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          },
+          "base": {
+            "ticker": "META",
+            "scenario": "base",
+            "enterprise_value": 422208288852.38586,
+            "equity_value": 389972119852.38586,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 153.62769449755487,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -0.7714961732152206,
+            "upside_pct": -0.7714961732152206,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          },
+          "bear": {
+            "ticker": "META",
+            "scenario": "bear",
+            "enterprise_value": 0.0,
+            "equity_value": 0.0,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 0.0,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -1.018888755381203,
+            "upside_pct": -1.018888755381203,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 384.5712840727899,
+          "base": 153.62769449755487,
+          "bear": 0.0
+        },
+        "margin_of_safety": {
+          "bull": -0.4279936936528876,
+          "base": -0.7714961732152206,
+          "bear": -1.018888755381203
+        },
+        "reverse_dcf": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "current_price": 672.3200073242188,
+          "current_ev": 1729503774337.2476,
+          "current_ev_ebitda": 16.973891712178066,
+          "wacc": 0.11543989727916225,
+          "ebit_margin": 0.49928752580595526,
+          "implied_cagr_10y": 0.17414882710521928,
+          "implied_cagr_5y": 0.17414882710521928,
+          "historical_cagr_5y": 0.15152656235627138,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 16.973891712178066,
+          "forward_ev_ebitda_justified": 7.8302315242321425,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.17414882710521928,
+        "historical_cagr": 0.15152656235627138,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.4%) exceeds historical (15.2%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 16.973891712178066,
+          "market_ev_ebit": 20.768333905774142,
+          "market_p_sales": 8.492146802629538,
+          "market_p_e": 28.2284027645183,
+          "market_peg": 1.8629342819872916,
+          "justified_ev_ebitda": 6.476836275075382,
+          "justified_ev_ebit": 7.924705818482885,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 10.497055437102684,
+          "ev_ebitda_premium_pct": 1.6207072390417208,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -5.026108287821934,
+          "roic": 0.2694758749031062,
+          "wacc": 0.11543989727916225,
+          "roic_wacc_spread": 0.15403597762394394,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5857644074117693,
+          "growth_rate": 0.15152656235627138,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 16.973891712178066,
+        "ev_ebitda_justified": 6.476836275075382,
+        "ev_ebitda_premium_pct": 1.6207072390417208,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.15403597762394394,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.2694758749031062,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: META ===\nPrice: $672.32  |  Bear=$0  Base=$154  Bull=$385\nMoS:  Bear=-101.9%  Base=-77.1%  Bull=-42.8%\nRDCF: implied=17.4% hist=15.2% [priced_for_growth]\nEV/EBITDA: 17.0x market vs 6.5x justified (+162%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.91,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+        "substitution_risk_score": 5.0,
+        "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+        "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+        "pass_through_capability": true,
+        "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0657341829757345,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 166789666666.66666,
+        "deferred_revenue_trend": "Meta's D8 Revenue Score is 1.00, indicating clean revenue quality. As an advertising-driven business, deferred revenue is negligible (currently 0), making the -100.0% growth metric immaterial to overall revenue growth quality. There is no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K explicitly states that Meta's proprietary technology is not dependent on any single patent, copyright, or group of related patents. No material patent cliffs, exclusivity expirations, or contract renewals were identified. Revenue at risk is estimated at 0.0%.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Meta is currently flagged at a cyclical peak with a revenue Z-score of 2.07, reflecting strong structural growth in its advertising business rather than traditional commodity cyclicality. Revenue quality remains high with a D8 score of 1.00, indicating no pull-forward risk despite negligible deferred revenue. Furthermore, there is no material intangible decay risk, as the company explicitly notes it is not dependent on any single patent or copyright, resulting in 0.0% estimated revenue at risk from expiring assets."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $672.32 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.4%\n  \u2022 Company's robust historical CAGR: 15.2%\n  \u2022 Ratio (implied / historical): 1.1x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.4%) exceeds historical (15.2%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 17.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 6.5x\n  \u2022 Premium to justified multiple: +162%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $672.32\n  \u2022 Downside in bear case: -100.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Premium / FOMO",
+          "bear_case_summary": "META's current valuation of $672.32 is mathematically disconnected from its fundamental realities, driven heavily by AI euphoria and narrative momentum. The Reverse DCF requires a 10-year revenue CAGR of 17.4%, outpacing the company's already robust historical 15.2% rate. Expecting a mega-cap company at META's scale to accelerate its growth rate over a full decade is highly improbable. Furthermore, the Liberti Formula exposes a massive valuation rift: the market assigns a 17.0x EV/EBITDA multiple compared to a mathematically justified 6.5x, representing a staggering 162% speculative premium. To justify this premium, META must flawlessly monetize its massive AI infrastructure and Reality Labs CapEx. The bear case assumes that as core Family of Apps user growth saturates and AI monetization fails to offset the massive, ongoing capital expenditures, the market's narrative will break. A reversion to the justified 6.5x multiple would trigger a catastrophic re-rating, aligning with the sever...(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Narrative Premium / FOMO] Sentiment: -8/10. Implied CAGR 17.4% vs 15.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:58:32.265298",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/META_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:58:32.266620",
+    "agent": "Lead",
+    "trace_id": "trace_META_1777474584",
+    "inputs": {
+      "ticker": "META",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for META.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: True. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: True. Pass-through: True. Sub risk: 5.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.07 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.8%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-26,937,796,848",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: META \u2014 Base IV=$154/share MoS=-77.1% ImpliedCAGR=17.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Narrative Premium / FOMO] Sentiment: -8/10. Implied CAGR 17.4% vs 15.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "terminal_value": -31539493119.46176,
+          "discounted_terminal_value": -18036861400.02916,
+          "sum_pv_cash_flows": -8900935448.068544,
+          "audit_metrics": {
+            "roic_path": [
+              0.3994246361502514,
+              0.3048420588915844,
+              0.2453928503012502,
+              0.2033507762759608,
+              0.1729108192555803
+            ],
+            "invested_capital_path": [
+              140676200000.0,
+              199069326000.0,
+              262133902080.0,
+              328982352724.80005,
+              398504741395.3921,
+              470112801726.10187
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 200966000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.32174596697948904,
+            "terminal_value_pct_of_ev": 0.6695744830855717,
+            "implied_terminal_multiple_fcf": 11.671442104995808,
+            "implied_terminal_multiple_nopat": -0.4577191132438424,
+            "reinvestment_rate_terminal_year": 1.0392170144122912,
+            "assumptions_used": {
+              "wacc": 0.11824959167291949,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.09263258461630325,
+              "capex_percent_sales": 0.3467800523471632,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -19.621942207680892,
+          "upside_percent": -1.0291854209419338,
+          "assumptions_used": {
+            "wacc": 0.11824959167291949,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.09263258461630325,
+            "capex_percent_sales": 0.3467800523471632,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 221062600000.00003,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 71126000000.0,
+              "nopat": 56189540000.0,
+              "depreciation": 20477600000.0,
+              "capex": 76660100000.00002,
+              "change_in_wc": 2210626000.0000005,
+              "fcff": -2203586000.0000157,
+              "discount_factor": 0.8942547419167699,
+              "pv_fcff": -1970567229.7214215
+            },
+            {
+              "year": 2.0,
+              "revenue": 238747608000.00006,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 76816080000.00002,
+              "nopat": 60684703200.000015,
+              "depreciation": 22115808000.000004,
+              "capex": 82792908000.00002,
+              "change_in_wc": 2387476080.0000005,
+              "fcff": -2379872880.0000005,
+              "discount_factor": 0.7996915434406288,
+              "pv_fcff": -1903164216.5996947
+            },
+            {
+              "year": 3.0,
+              "revenue": 253072464480.0001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 81425044800.00002,
+              "nopat": 64325785392.000015,
+              "depreciation": 23442756480.000008,
+              "capex": 87760482480.00003,
+              "change_in_wc": 2530724644.800001,
+              "fcff": -2522665252.800001,
+              "discount_factor": 0.7151279547925228,
+              "pv_fcff": -1804028442.8610272
+            },
+            {
+              "year": 4.0,
+              "revenue": 263195363059.2001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 84682046592.00003,
+              "nopat": 66898816807.68003,
+              "depreciation": 24380466739.20001,
+              "capex": 91270901779.20003,
+              "change_in_wc": 2631953630.592001,
+              "fcff": -2623571862.911993,
+              "discount_factor": 0.6395065646504549,
+              "pv_fcff": -1677791429.1644428
+            },
+            {
+              "year": 5.0,
+              "revenue": 271091223950.9761,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.32174596697948904,
+              "ebit": 87222507989.76003,
+              "nopat": 68905781311.91042,
+              "depreciation": 25111880741.376007,
+              "capex": 94009028832.57603,
+              "change_in_wc": 2710912239.5097613,
+              "fcff": -2702279018.799373,
+              "discount_factor": 0.5718817779255727,
+              "pv_fcff": -1545384129.7219577
+            }
+          ],
+          "enterprise_value": -26937796848.097702,
+          "equity_value": -49808796848.0977,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.09263258461630325,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.3467800523471632,
+          "wacc": 0.11824959167291949,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5856214484042077,
+          "calibration_adjustment": 0.40561587532219373
+        },
+        "base_financials": {
+          "net_sales": 200966000000.0,
+          "cogs": 36175000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 22871000000.0
+        },
+        "calculated_upside": -1.0291854209419338
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1500000000.0,
+          "equity": 1706632774337.2476,
+          "wacc": 0.11824959167291949,
+          "cost_of_equity": 0.1183257500530138,
+          "beta": 1.3524681730719303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 150000000.0,
+            "cash": 2384000000.0,
+            "liquidity_ratio": 0.06291946308724833,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 11755000000.0,
+            "crash_fcf": 468865000.0,
+            "earnings_power_value": 3391438588.182405,
+            "floor_value": 11755000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.003515694817433724,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11824959167291949,
+            "2": 0.11824959167291949,
+            "3": 0.11824959167291949,
+            "4": 0.11824959167291949,
+            "5": 0.11824959167291949
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 166789666666.66666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:57:56.962808",
+          "current_price": 672.3200073242188,
+          "shares_diluted": 2538423304.0,
+          "market_cap": 1706632774337.2476,
+          "risk_free_rate": 0.04394000053405762,
+          "beta": 1.3524681730719303,
+          "wacc_base": 0.11824959167291949,
+          "revenue": 166789666666.66666,
+          "ebitda": 101892000000.0,
+          "ebit": 83276000000.0,
+          "nopat": 65788040000.0,
+          "roic": 0.2694758749031062,
+          "fcf": 46109000000.0,
+          "net_debt": 22871000000.0,
+          "bull_ev": 1008440878539.574,
+          "bull_intrinsic_per_share": 388.2606486422227,
+          "bull_upside": -0.42250618096660575,
+          "bull_wacc": 0.11324959167291948,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 9.897154619985612,
+          "bull_justified_ev_ebitda": 7.634793118463259,
+          "bull_roic_wacc_spread": 0.15622628323018672,
+          "bull_tv_pct_of_ev": 0.6528897179773029,
+          "bull_implied_tv_ebitda": 3.5747521895755736,
+          "base_ev": 422208288852.38586,
+          "base_intrinsic_per_share": 157.3170590669876,
+          "base_upside": -0.7660086605289387,
+          "base_wacc": 0.11824959167291949,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 4.1436843800532515,
+          "base_justified_ev_ebitda": 6.558899795599198,
+          "base_roic_wacc_spread": 0.15122628323018672,
+          "base_tv_pct_of_ev": 0.5686754622128447,
+          "base_implied_tv_ebitda": 1.9306928305498534,
+          "bear_ev": 0.0,
+          "bear_intrinsic_per_share": -9.009923586803,
+          "bear_upside": -1.013401242694921,
+          "bear_wacc": 0.1332495916729195,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 0.0,
+          "bear_justified_ev_ebitda": 4.855884160150662,
+          "bear_roic_wacc_spread": 0.1362262832301867,
+          "bear_tv_pct_of_ev": 0.0,
+          "bear_implied_tv_ebitda": -1.17800386600913
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "META",
+            "scenario": "bull",
+            "enterprise_value": 1008440878539.574,
+            "equity_value": 976204709539.574,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 384.5712840727899,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -0.4279936936528876,
+            "upside_pct": -0.4279936936528876,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          },
+          "base": {
+            "ticker": "META",
+            "scenario": "base",
+            "enterprise_value": 422208288852.38586,
+            "equity_value": 389972119852.38586,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 153.62769449755487,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -0.7714961732152206,
+            "upside_pct": -0.7714961732152206,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          },
+          "bear": {
+            "ticker": "META",
+            "scenario": "bear",
+            "enterprise_value": 0.0,
+            "equity_value": 0.0,
+            "shares_diluted": 2538423304.0,
+            "intrinsic_per_share": 0.0,
+            "current_price": 672.3200073242188,
+            "margin_of_safety": -1.018888755381203,
+            "upside_pct": -1.018888755381203,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -58744000000.0,
+            "bridge_cash_(net_of_haircuts)": 26507831000.0,
+            "cash_gross": 35873000000.0,
+            "cash_wc_haircut": 6028980000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3336189000.0,
+            "cash_net_accessible": 26507831000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 26507831000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 384.5712840727899,
+          "base": 153.62769449755487,
+          "bear": 0.0
+        },
+        "margin_of_safety": {
+          "bull": -0.4279936936528876,
+          "base": -0.7714961732152206,
+          "bear": -1.018888755381203
+        },
+        "reverse_dcf": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "current_price": 672.3200073242188,
+          "current_ev": 1729503774337.2476,
+          "current_ev_ebitda": 16.973891712178066,
+          "wacc": 0.11543989727916225,
+          "ebit_margin": 0.49928752580595526,
+          "implied_cagr_10y": 0.17414882710521928,
+          "implied_cagr_5y": 0.17414882710521928,
+          "historical_cagr_5y": 0.15152656235627138,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 16.973891712178066,
+          "forward_ev_ebitda_justified": 7.8302315242321425,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.17414882710521928,
+        "historical_cagr": 0.15152656235627138,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.4%) exceeds historical (15.2%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "META",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 16.973891712178066,
+          "market_ev_ebit": 20.768333905774142,
+          "market_p_sales": 8.492146802629538,
+          "market_p_e": 28.2284027645183,
+          "market_peg": 1.8629342819872916,
+          "justified_ev_ebitda": 6.476836275075382,
+          "justified_ev_ebit": 7.924705818482885,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 10.497055437102684,
+          "ev_ebitda_premium_pct": 1.6207072390417208,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -5.026108287821934,
+          "roic": 0.2694758749031062,
+          "wacc": 0.11543989727916225,
+          "roic_wacc_spread": 0.15403597762394394,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5857644074117693,
+          "growth_rate": 0.15152656235627138,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 16.973891712178066,
+        "ev_ebitda_justified": 6.476836275075382,
+        "ev_ebitda_premium_pct": 1.6207072390417208,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.15403597762394394,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.2694758749031062,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: META ===\nPrice: $672.32  |  Bear=$0  Base=$154  Bull=$385\nMoS:  Bear=-101.9%  Base=-77.1%  Bull=-42.8%\nRDCF: implied=17.4% hist=15.2% [priced_for_growth]\nEV/EBITDA: 17.0x market vs 6.5x justified (+162%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $672.32 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.4%\n  \u2022 Company's robust historical CAGR: 15.2%\n  \u2022 Ratio (implied / historical): 1.1x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.4%) exceeds historical (15.2%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 17.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 6.5x\n  \u2022 Premium to justified multiple: +162%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $672.32\n  \u2022 Downside in bear case: -100.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Premium / FOMO",
+          "bear_case_summary": "META's current valuation of $672.32 is mathematically disconnected from its fundamental realities, driven heavily by AI euphoria and narrative momentum. The Reverse DCF requires a 10-year revenue CAGR of 17.4%, outpacing the company's already robust historical 15.2% rate. Expecting a mega-cap company at META's scale to accelerate its growth rate over a full decade is highly improbable. Furthermore, the Liberti Formula exposes a massive valuation rift: the market assigns a 17.0x EV/EBITDA multiple compared to a mathematically justified 6.5x, representing a staggering 162% speculative premium. To justify this premium, META must flawlessly monetize its massive AI infrastructure and Reality Labs CapEx. The bear case assumes that as core Family of Apps user growth saturates and AI monetization fails to offset the massive, ongoing capital expenditures, the market's narrative will break. A reversion to the justified 6.5x multiple would trigger a catastrophic re-rating, aligning with the sever...(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers.",
+        "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+        "revenue_segments": [
+          {
+            "segment": "Family of Apps (FoA)",
+            "pct_revenue": 99.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Reality Labs (RL)",
+            "pct_revenue": 1.0,
+            "growth_trend": "Operating at a loss"
+          }
+        ],
+        "key_customers": [
+          "Global marketers and advertisers",
+          "Advertising agencies",
+          "Resellers",
+          "Direct-to-consumer hardware buyers"
+        ],
+        "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+        "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.91,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+        "substitution_risk_score": 5.0,
+        "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+        "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+        "pass_through_capability": true,
+        "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0657341829757345,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 166789666666.66666,
+        "deferred_revenue_trend": "Meta's D8 Revenue Score is 1.00, indicating clean revenue quality. As an advertising-driven business, deferred revenue is negligible (currently 0), making the -100.0% growth metric immaterial to overall revenue growth quality. There is no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K explicitly states that Meta's proprietary technology is not dependent on any single patent, copyright, or group of related patents. No material patent cliffs, exclusivity expirations, or contract renewals were identified. Revenue at risk is estimated at 0.0%.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Meta is currently flagged at a cyclical peak with a revenue Z-score of 2.07, reflecting strong structural growth in its advertising business rather than traditional commodity cyclicality. Revenue quality remains high with a D8 score of 1.00, indicating no pull-forward risk despite negligible deferred revenue. Furthermore, there is no material intangible decay risk, as the company explicitly notes it is not dependent on any single patent or copyright, resulting in 0.0% estimated revenue at risk from expiring assets."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>__________________________</div>\n\n#### FORM 10-K\n<div align='center'>__________________________</div>\n\n(Mark One)\n\n\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\n#### For the transition period from to\n\n#### Commission File Number: 001-35551\n<div align='center'>__________________________</div>\n\n#### Meta Platforms, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n__________________________</div>\n\n| Delaware                                                       |     | 20-1665019                             |\n| (State or other jurisdiction of incorporation or organization) |     | -I.R.S. Employer Identification Number |\n\n#### 1 Meta Way, Menlo Park, California 94...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "META",
+        "generated_at": "2026-04-29T10:58:32.264461",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 5.1,
+            "cost_structure": "With an Operating Leverage Score of 5.1/10, Meta's cost structure is heavily weighted toward fixed costs, primarily R&D for AI and Reality Labs, data center infrastructure, and headcount (78,865 employees). Variable costs are low, meaning that as advertising revenue grows, it flows efficiently to EBIT, though massive ongoing investments in Reality Labs (18% of total costs) and AI infrastructure currently offset some of this margin expansion.",
+            "business_description": "Meta Platforms operates a family of social and communication applications, including Facebook, Instagram, and WhatsApp, which connect billions of users globally. The company generates substantially all of its revenue by selling targeted advertising placements to marketers. Additionally, Meta invests in its Reality Labs segment to develop consumer hardware and software for virtual and augmented reality.",
+            "revenue_segments": [
+              {
+                "segment": "Family of Apps (FoA)",
+                "pct_revenue": 99.0,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Reality Labs (RL)",
+                "pct_revenue": 1.0,
+                "growth_trend": "Operating at a loss"
+              }
+            ],
+            "key_customers": [
+              "Global marketers and advertisers",
+              "Advertising agencies",
+              "Resellers",
+              "Direct-to-consumer hardware buyers"
+            ],
+            "competitive_landscape": "Meta faces intense competition from platforms like TikTok for user engagement, as well as from other tech giants in AI and AR/VR. It differentiates itself through its unparalleled global user scale, advanced AI-driven discovery engine, and deep integration of social graphs across its Family of Apps.",
+            "regulatory_risk": "Meta faces significant regulatory exposure globally, including compliance with the GDPR, Digital Markets Act (DMA), Digital Services Act (DSA), and an FTC consent order regarding privacy and data use."
+          },
+          "value_chain": {
+            "power_ratio": 0.91,
+            "upstream_leak": true,
+            "strategic_leverage": 8.0,
+            "bottleneck_analysis": "Critical supplier bottlenecks include mobile operating system platforms (Apple iOS, Google Android) and AI hardware providers (Nvidia). Apple controls app distribution and data tracking policies (e.g., App Tracking Transparency), giving them immense leverage to disrupt Meta's ad targeting signals. Nvidia controls the GPU market necessary for Meta's massive AI infrastructure build-out. If Nvidia raises prices, Meta's CapEx increases significantly, though Meta's scale allows it to absorb these costs better than smaller peers.",
+            "substitution_risk_score": 5.0,
+            "top_substitutes": "1. TikTok (competes for short-form video engagement and creator attention); 2. YouTube (competes for digital video ad dollars and user screen time); 3. Apple iMessage / Snapchat (competes for private messaging and social sharing). Realistic switching scenario: Younger demographics increasingly default to TikTok for discovery and entertainment, leading advertisers to shift their performance marketing budgets away from Meta's ecosystem to follow user attention.",
+            "pricing_power_assessment": "Meta exhibits strong pricing power through its automated, auction-based ad platform. Because advertisers bid for conversions and Meta's AI-driven Advantage+ campaigns consistently deliver high Return on Ad Spend (ROAS), Meta can effectively pass through costs. The fragmented nature of the millions of SMB advertisers on the platform ensures no single buyer has leverage to dictate pricing terms.",
+            "pass_through_capability": true,
+            "analysis_summary": "Meta possesses formidable strategic leverage driven by deep network effects, a massive user base, and an AI-powered discovery engine that locks in advertiser spend. Buyer power is extremely low due to a highly fragmented advertiser base reliant on Meta's ROAS. However, supplier power is a significant vulnerability, as Meta relies on third-party mobile operating systems (Apple/Google) for distribution and Nvidia for critical AI infrastructure. Substitution risk is moderate but persistent, primarily from TikTok and YouTube competing for user attention. Overall, Meta operates as a dominant platform with strong pricing power, offset only by its upstream hardware and OS dependencies."
+          },
+          "moat": {
+            "score": 8.5,
+            "switching_costs": 7.0,
+            "network_effects": 10.0,
+            "cost_advantage": 8.0,
+            "intangibles": 9.0,
+            "evidence": "Meta's moat is driven by massive network effects across its Family of Apps (Facebook, Instagram, WhatsApp), making it indispensable for users and advertisers. Intangibles include proprietary AI models (Llama) and a vast patent portfolio. Switching costs are high for advertisers integrated into Meta's self-service ad platform and targeting algorithms.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "While Meta does not use traditional subscription pricing, it demonstrates pricing power through its auction-based ad system, where it consistently drives up the average price per ad and total ad impressions delivered, maintaining advertiser demand despite competitive pressures."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 2.0657341829757345,
+            "is_peak": true
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Meta's D8 Revenue Score is 1.00, indicating clean revenue quality. As an advertising-driven business, deferred revenue is negligible (currently 0), making the -100.0% growth metric immaterial to overall revenue growth quality. There is no pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "The 10-K explicitly states that Meta's proprietary technology is not dependent on any single patent, copyright, or group of related patents. No material patent cliffs, exclusivity expirations, or contract renewals were identified. Revenue at risk is estimated at 0.0%.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Meta is currently flagged at a cyclical peak with a revenue Z-score of 2.07, reflecting strong structural growth in its advertising business rather than traditional commodity cyclicality. Revenue quality remains high with a D8 score of 1.00, indicating no pull-forward risk despite negligible deferred revenue. Furthermore, there is no material intangible decay risk, as the company explicitly notes it is not dependent on any single patent or copyright, resulting in 0.0% estimated revenue at risk from expiring assets."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 200.966,
+            "ebitda_bn": 101.892,
+            "fcf_bn": 46.109,
+            "nopat_bn": 65.78804,
+            "invested_capital_bn": 244.13332,
+            "net_debt_bn": 22.871,
+            "sbc_bn": 20.427,
+            "fiscal_year": 2025,
+            "data_quality": 0.94
+          },
+          "ratios": {
+            "gross_margin_pct": 81.9994426917986,
+            "ebit_margin_pct": 41.437855159579236,
+            "ebitda_margin_pct": 50.70111362120956,
+            "fcf_margin_pct": 22.943682015863377,
+            "roic": 0.2694758749031062,
+            "roe": 0.2782966539773433,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 4,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 1500000000.0,
+            "equity": 1706632774337.2476,
+            "wacc": 0.11824959167291949,
+            "cost_of_equity": 0.1183257500530138,
+            "beta": 1.3524681730719303
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 150000000.0,
+              "cash": 2384000000.0,
+              "liquidity_ratio": 0.06291946308724833,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 11755000000.0,
+              "crash_fcf": 468865000.0,
+              "earnings_power_value": 3391438588.182405,
+              "floor_value": 11755000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 5.1,
+              "financial_leverage_score": 0.003515694817433724,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.11824959167291949,
+              "2": 0.11824959167291949,
+              "3": 0.11824959167291949,
+              "4": 0.11824959167291949,
+              "5": 0.11824959167291949
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company relies on a highly diversified base of millions of global marketers and advertisers."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": -49808796848.0977,
+            "upside_percent": -1.0291854209419338,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 0.0,
+                "margin_of_safety": -1.018888755381203,
+                "ev": 0.0
+              },
+              "base": {
+                "intrinsic_per_share": 153.62769449755487,
+                "margin_of_safety": -0.7714961732152206,
+                "ev": 422208288852.38586
+              },
+              "bull": {
+                "intrinsic_per_share": 384.5712840727899,
+                "margin_of_safety": -0.4279936936528876,
+                "ev": 1008440878539.574
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.17414882710521928,
+              "historical_cagr": 0.15152656235627138,
+              "signal": "priced_for_growth",
+              "reasons": [
+                "Implied CAGR (17.4%) exceeds historical (15.2%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 16.973891712178066,
+              "justified_ev_ebitda": 6.476836275075382,
+              "premium_pct": 1.6207072390417208,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.15403597762394394,
+              "value_creation": "creating",
+              "roic": 0.2694758749031062,
+              "wacc": 0.11824959167291949
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": 166789666666.66666,
+              "concentration_risk": false,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 8.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": true,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.11824959167291949,
+            "beta": 1.3524681730719303,
+            "risk_free_rate": 0.04394000053405762
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Narrative Premium / FOMO",
+            "bear_case_summary": "META's current valuation of $672.32 is mathematically disconnected from its fundamental realities, driven heavily by AI euphoria and narrative momentum. The Reverse DCF requires a 10-year revenue CAGR of 17.4%, outpacing the company's already robust historical 15.2% rate. Expecting a mega-cap company at META's scale to accelerate its growth rate over a full decade is highly improbable. Furthermore, the Liberti Formula exposes a massive valuation rift: the market assigns a 17.0x EV/EBITDA multiple compared to a mathematically justified 6.5x, representing a staggering 162% speculative premium. To justify this premium, META must flawlessly monetize its massive AI infrastructure and Reality Labs CapEx. The bear case assumes that as core Family of Apps user growth saturates and AI monetization fails to offset the massive, ongoing capital expenditures, the market's narrative will break. A reversion to the justified 6.5x multiple would trigger a catastrophic re-rating, aligning with the sever...(truncated)",
+            "sentiment_score": -8,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $672.32 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.4%\n  \u2022 Company's robust historical CAGR: 15.2%\n  \u2022 Ratio (implied / historical): 1.1x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.4%) exceeds historical (15.2%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 17.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 6.5x\n  \u2022 Premium to justified multiple: +162%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $672.32\n  \u2022 Downside in bear case: -100.0%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 3,
+            "margin_of_safety": -0.7714961732152206,
+            "narrative": "While the implied CAGR of 17.4% technically passes the constitution check (within 1.3x of the historical 15.2%), it is highly unrealistic given Meta's massive revenue base. Sustaining an accelerated growth rate over a 10-year horizon defies the law of large numbers, especially as user growth in the core Family of Apps approaches global saturation. Future growth relies heavily on unproven, capital-intensive bets in Reality Labs and AI monetization, making the implied growth trajectory highly susceptible to decay.\n\nThe Contrarian is correct that the current $672 price implies an improbable 17.4% 10-year CAGR and carries a massive speculative premium (+162% EV/EBITDA). The risk of a multiple contraction is acute if AI monetization fails to offset Reality Labs' cash burn. However, the bear case's 'justified' 6.5x EV/EBITDA multiple is overly punitive and ignores Meta's exceptional business quality. With an 8.5/10 moat, a +15.4% ROIC-WACC spread, and immense pricing power, Meta deserves a s...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Implied CAGR (17.4%) within 1.3x of historical.",
+              "\u274c FAIL: EV/EBITDA at +162% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "META",
+              "p1_moat": 4,
+              "p2_health": 5,
+              "p3_tailwind": 4,
+              "p4_mos": 2,
+              "p5_leadership": 3,
+              "raw_total": 18,
+              "capped_total": 18,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern (capped at 75% due to reflexivity flag)",
+              "conviction_score": 3,
+              "reflexivity_flags": [
+                "High-SBC company (44.3% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 8.5/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +15.2pp \u2014 exceptional value creation",
+                "FCF margin 22.9% \u2014 fortress cash generation",
+                "Net Debt/EBITDA 0.2\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 15.2% \u2014 strong growth compounder",
+                "\u26a0 Cyclicality peak detected \u2014 base revenue likely inflated",
+                "Sector 'Technology' \u2014 confirmed secular tailwind"
+              ],
+              "p4_reasons": [
+                "Base MoS -11.4% \u2014 Slight premium to intrinsic value \u2014 patience required"
+              ],
+              "p5_reasons": [
+                "SBC 44.3% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 5.1/10",
+                "Strategic leverage 8.5/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for META. Conviction: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

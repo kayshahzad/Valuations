@@ -1,0 +1,3227 @@
+[
+  {
+    "timestamp": "2026-04-28T22:46:30.067473",
+    "agent": "Librarian",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:46:58.672968",
+    "agent": "Forensic",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:47:19.728930",
+    "agent": "ValueChain",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.021,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+        "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+        "pass_through_capability": true,
+        "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:47:42.052818",
+    "agent": "StrategicContext",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.021,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+        "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+        "pass_through_capability": true,
+        "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.7070775382411383,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is reported as 0, so there is no evidence of pull-forward risk or declining deferred revenue relative to revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs, exclusivity dates, or contract renewals were identified due to lack of 10-K text and patent data. Given Berkshire Hathaway's diversified conglomerate structure, material revenue exposure to expiring intangible assets within 5 years is highly unlikely. Uncertainty is noted due to missing source text.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Berkshire Hathaway is not currently at a cyclical peak (Revenue Z-Score of 1.71). The quality of growth is strong, with a D8 Revenue Score of 1.00 and no deferred revenue risks. Intangible risk is estimated at 0.0 percent due to the company's diversified holding structure, though explicit 10-K data was unavailable, resulting in no terminal haircut."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:47:43.103818",
+    "agent": "Strategist",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.021,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+        "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+        "pass_through_capability": true,
+        "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7070775382411383,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is reported as 0, so there is no evidence of pull-forward risk or declining deferred revenue relative to revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs, exclusivity dates, or contract renewals were identified due to lack of 10-K text and patent data. Given Berkshire Hathaway's diversified conglomerate structure, material revenue exposure to expiring intangible assets within 5 years is highly unlikely. Uncertainty is noted due to missing source text.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Berkshire Hathaway is not currently at a cyclical peak (Revenue Z-Score of 1.71). The quality of growth is strong, with a D8 Revenue Score of 1.00 and no deferred revenue risks. Intangible risk is estimated at 0.0 percent due to the company's diversified holding structure, though explicit 10-K data was unavailable, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 1031329454821.8976,
+          "wacc": 0.09,
+          "cost_of_equity": 0.0788315503603125,
+          "beta": 0.6416645353597303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 30558000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 131102000000.0,
+            "crash_fcf": 0.0,
+            "earnings_power_value": 0.0,
+            "floor_value": 131102000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 10.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:47:44.039698",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "base": {
+        "net_sales": 112493000000.0,
+        "cogs": 100941000000.0,
+        "interest_expense": 0.0,
+        "net_debt": -30558000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.0,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.04388717520201257,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.015,
+        "_valuation_model_hint": "Earnings_Power_Value",
+        "cogs_percent_sales": 1.0,
+        "calibration_adjustment": 0.15000000000000002
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T22:47:44.039806",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": -131403723104.92662,
+      "equity_value": -100845723104.92662,
+      "terminal_value": -153399895914.33942,
+      "discounted_terminal_value": -99699407009.6285,
+      "sum_pv_cash_flows": -31704316095.298126,
+      "audit_metrics": {
+        "roic_path": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "invested_capital_path": [
+          78745100000.0,
+          86031934500.0,
+          93901715760.0,
+          102243683895.6,
+          110919330756.62401,
+          119855247023.47873
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 123742300000.00002,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "depreciation": 0.0,
+          "capex": 5430700000.0,
+          "change_in_wc": 1856134500.0000002,
+          "fcff": -7286834500.0,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": -6685169266.055045
+        },
+        {
+          "year": 2.0,
+          "revenue": 133641684000.00003,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "depreciation": 0.0,
+          "capex": 5865156000.000001,
+          "change_in_wc": 2004625260.0000005,
+          "fcff": -7869781260.000002,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": -6623837437.926102
+        },
+        {
+          "year": 3.0,
+          "revenue": 141660185040.00003,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "depreciation": 0.0,
+          "capex": 6217065360.000001,
+          "change_in_wc": 2124902775.6000004,
+          "fcff": -8341968135.600001,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": -6441529985.506117
+        },
+        {
+          "year": 4.0,
+          "revenue": 147326592441.60004,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "depreciation": 0.0,
+          "capex": 6465747974.400002,
+          "change_in_wc": 2209898886.6240005,
+          "fcff": -8675646861.024002,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": -6146046958.648036
+        },
+        {
+          "year": 5.0,
+          "revenue": 151746390214.84805,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "depreciation": 0.0,
+          "capex": 6659720413.632002,
+          "change_in_wc": 2276195853.2227206,
+          "fcff": -8935916266.854723,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": -5807732447.162824
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 112493000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.0,
+        "terminal_value_pct_of_ev": 0.7587258918837326,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": null,
+        "reinvestment_rate_terminal_year": null,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.0,
+          "capex_percent_sales": 0.04388717520201257,
+          "wc_change_percent_sales": 0.015
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:47:44.041542",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 1031329454821.8976,
+          "wacc": 0.09,
+          "cost_of_equity": 0.0788315503603125,
+          "beta": 0.6416645353597303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 30558000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 131102000000.0,
+            "crash_fcf": 0.0,
+            "earnings_power_value": 0.0,
+            "floor_value": 131102000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 10.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.021,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+        "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+        "pass_through_capability": true,
+        "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7070775382411383,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is reported as 0, so there is no evidence of pull-forward risk or declining deferred revenue relative to revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs, exclusivity dates, or contract renewals were identified due to lack of 10-K text and patent data. Given Berkshire Hathaway's diversified conglomerate structure, material revenue exposure to expiring intangible assets within 5 years is highly unlikely. Uncertainty is noted due to missing source text.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Berkshire Hathaway is not currently at a cyclical peak (Revenue Z-Score of 1.71). The quality of growth is strong, with a D8 Revenue Score of 1.00 and no deferred revenue risks. Intangible risk is estimated at 0.0 percent due to the company's diversified holding structure, though explicit 10-K data was unavailable, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "terminal_value": -153399895914.33942,
+          "discounted_terminal_value": -99699407009.6285,
+          "sum_pv_cash_flows": -31704316095.298126,
+          "audit_metrics": {
+            "roic_path": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "invested_capital_path": [
+              78745100000.0,
+              86031934500.0,
+              93901715760.0,
+              102243683895.6,
+              110919330756.62401,
+              119855247023.47873
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 112493000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": null,
+            "reinvestment_rate_terminal_year": null,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.04388717520201257,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -46.755566408427114,
+          "upside_percent": -1.0977822620219742,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.04388717520201257,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04388717520201257,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 1.0,
+          "calibration_adjustment": 0.15000000000000002
+        },
+        "base_financials": {
+          "net_sales": 112493000000.0,
+          "cogs": 100941000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -30558000000.0
+        },
+        "calculated_upside": -1.0977822620219742
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-131,403,723,105",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:47:45.449242",
+    "agent": "ValuationNode",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-131,403,723,105",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "terminal_value": -153399895914.33942,
+          "discounted_terminal_value": -99699407009.6285,
+          "sum_pv_cash_flows": -31704316095.298126,
+          "audit_metrics": {
+            "roic_path": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "invested_capital_path": [
+              78745100000.0,
+              86031934500.0,
+              93901715760.0,
+              102243683895.6,
+              110919330756.62401,
+              119855247023.47873
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 112493000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": null,
+            "reinvestment_rate_terminal_year": null,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.04388717520201257,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -46.755566408427114,
+          "upside_percent": -1.0977822620219742,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.04388717520201257,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04388717520201257,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 1.0,
+          "calibration_adjustment": 0.15000000000000002
+        },
+        "base_financials": {
+          "net_sales": 112493000000.0,
+          "cogs": 100941000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -30558000000.0
+        },
+        "calculated_upside": -1.0977822620219742
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 1031329454821.8976,
+          "wacc": 0.09,
+          "cost_of_equity": 0.0788315503603125,
+          "beta": 0.6416645353597303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 30558000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 131102000000.0,
+            "crash_fcf": 0.0,
+            "earnings_power_value": 0.0,
+            "floor_value": 131102000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 10.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.021,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+        "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+        "pass_through_capability": true,
+        "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7070775382411383,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is reported as 0, so there is no evidence of pull-forward risk or declining deferred revenue relative to revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs, exclusivity dates, or contract renewals were identified due to lack of 10-K text and patent data. Given Berkshire Hathaway's diversified conglomerate structure, material revenue exposure to expiring intangible assets within 5 years is highly unlikely. Uncertainty is noted due to missing source text.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Berkshire Hathaway is not currently at a cyclical peak (Revenue Z-Score of 1.71). The quality of growth is strong, with a D8 Revenue Score of 1.00 and no deferred revenue risks. Intangible risk is estimated at 0.0 percent due to the company's diversified holding structure, though explicit 10-K data was unavailable, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:47:44.042467",
+          "current_price": 478.1600036621094,
+          "shares_diluted": 2156871020.0,
+          "market_cap": 1031329454821.8976,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.6416645353597303,
+          "wacc_base": 0.09,
+          "revenue": 371444000000.0,
+          "ebitda": 101004000000.0,
+          "ebit": 87528000000.0,
+          "nopat": 69147120000.0,
+          "roic": 0.0960772985523195,
+          "fcf": 25042000000.0,
+          "net_debt": 0.0,
+          "bull_ev": 1490099891248.9546,
+          "bull_intrinsic_per_share": 690.8618445107369,
+          "bull_upside": 0.44483402881796186,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 14.752879997316489,
+          "bull_justified_ev_ebitda": 9.22532978081557,
+          "bull_roic_wacc_spread": 0.011077298552319509,
+          "bull_tv_pct_of_ev": 0.5635047758969167,
+          "bull_implied_tv_ebitda": 9.225329780815573,
+          "base_ev": 1126789886845.3115,
+          "base_intrinsic_per_share": 522.4187614358653,
+          "base_upside": 0.0925605601363332,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 11.155893695747807,
+          "base_justified_ev_ebitda": 8.076166314014516,
+          "base_roic_wacc_spread": 0.0060772985523195044,
+          "base_tv_pct_of_ev": 0.5095914458756193,
+          "base_implied_tv_ebitda": 8.076166314014518,
+          "bear_ev": 601259117736.2618,
+          "bear_intrinsic_per_share": 278.764521457691,
+          "bear_upside": -0.4170057735429514,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.952824816207891,
+          "bear_justified_ev_ebitda": 6.107919610967346,
+          "bear_roic_wacc_spread": -0.008922701447680495,
+          "bear_tv_pct_of_ev": 0.39208831800809535,
+          "bear_implied_tv_ebitda": 6.107919610967345
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "BRK-B",
+            "scenario": "bull",
+            "enterprise_value": 1490099891248.9546,
+            "equity_value": 1490099891248.9546,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 690.8618445107369,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": 0.44483402881796186,
+            "upside_pct": 0.44483402881796186,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "BRK-B",
+            "scenario": "base",
+            "enterprise_value": 1126789886845.3115,
+            "equity_value": 1126789886845.3115,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 522.4187614358653,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": 0.0925605601363332,
+            "upside_pct": 0.0925605601363332,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "BRK-B",
+            "scenario": "bear",
+            "enterprise_value": 601259117736.2618,
+            "equity_value": 601259117736.2618,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 278.764521457691,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": -0.4170057735429514,
+            "upside_pct": -0.4170057735429514,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 690.8618445107369,
+          "base": 522.4187614358653,
+          "bear": 278.764521457691
+        },
+        "margin_of_safety": {
+          "bull": 0.44483402881796186,
+          "base": 0.0925605601363332,
+          "bear": -0.4170057735429514
+        },
+        "reverse_dcf": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "current_price": 478.1600036621094,
+          "current_ev": 1031329454821.8976,
+          "current_ev_ebitda": 10.210778333748145,
+          "wacc": 0.0788315503603125,
+          "ebit_margin": 0.2356425194645761,
+          "implied_cagr_10y": 0.022670002168139827,
+          "implied_cagr_5y": 0.022670002168139827,
+          "historical_cagr_5y": 0.05374633297004561,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 10.210778333748145,
+          "forward_ev_ebitda_justified": 9.854153091055407,
+          "signal": "deep_value"
+        },
+        "implied_cagr": 0.022670002168139827,
+        "historical_cagr": 0.05374633297004561,
+        "reverse_dcf_signal": "deep_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (2.3%) is less than 50% of historical (5.4%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+        ],
+        "multiples": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 10.210778333748145,
+          "market_ev_ebit": 11.782851828236652,
+          "market_p_sales": 2.776540891283471,
+          "market_p_e": 15.400332320240974,
+          "market_peg": 2.8653735928038153,
+          "justified_ev_ebitda": 9.408248180285874,
+          "justified_ev_ebit": 10.85676239833647,
+          "justified_p_sales": 3.3367954171103884,
+          "ev_ebitda_premium": 0.8025301534622713,
+          "ev_ebitda_premium_pct": 0.08530069977787151,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": -1.789221666251855,
+          "roic": 0.0960772985523195,
+          "wacc": 0.0788315503603125,
+          "roic_wacc_spread": 0.017245748192007,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5064605857193775,
+          "growth_rate": 0.05374633297004561,
+          "signal": "fairly_valued"
+        },
+        "ev_ebitda_market": 10.210778333748145,
+        "ev_ebitda_justified": 9.408248180285874,
+        "ev_ebitda_premium_pct": 0.08530069977787151,
+        "multiple_signal": "fairly_valued",
+        "roic_wacc_spread": 0.017245748192007,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.0960772985523195,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: BRK-B ===\nPrice: $478.16  |  Bear=$279  Base=$522  Bull=$691\nMoS:  Bear=-41.7%  Base=+9.3%  Bull=+44.5%\nRDCF: implied=2.3% hist=5.4% [deep_value]\nEV/EBITDA: 10.2x market vs 9.4x justified (+9%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: BRK-B \u2014 Base IV=$522/share MoS=+9.3% ImpliedCAGR=2.3% Multiple=fairly_valued",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:48:05.210834",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-131,403,723,105",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: BRK-B \u2014 Base IV=$522/share MoS=+9.3% ImpliedCAGR=2.3% Multiple=fairly_valued",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "terminal_value": -153399895914.33942,
+          "discounted_terminal_value": -99699407009.6285,
+          "sum_pv_cash_flows": -31704316095.298126,
+          "audit_metrics": {
+            "roic_path": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "invested_capital_path": [
+              78745100000.0,
+              86031934500.0,
+              93901715760.0,
+              102243683895.6,
+              110919330756.62401,
+              119855247023.47873
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 112493000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": null,
+            "reinvestment_rate_terminal_year": null,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.04388717520201257,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -46.755566408427114,
+          "upside_percent": -1.0977822620219742,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.04388717520201257,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04388717520201257,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 1.0,
+          "calibration_adjustment": 0.15000000000000002
+        },
+        "base_financials": {
+          "net_sales": 112493000000.0,
+          "cogs": 100941000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -30558000000.0
+        },
+        "calculated_upside": -1.0977822620219742
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 1031329454821.8976,
+          "wacc": 0.09,
+          "cost_of_equity": 0.0788315503603125,
+          "beta": 0.6416645353597303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 30558000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 131102000000.0,
+            "crash_fcf": 0.0,
+            "earnings_power_value": 0.0,
+            "floor_value": 131102000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 10.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:47:44.042467",
+          "current_price": 478.1600036621094,
+          "shares_diluted": 2156871020.0,
+          "market_cap": 1031329454821.8976,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.6416645353597303,
+          "wacc_base": 0.09,
+          "revenue": 371444000000.0,
+          "ebitda": 101004000000.0,
+          "ebit": 87528000000.0,
+          "nopat": 69147120000.0,
+          "roic": 0.0960772985523195,
+          "fcf": 25042000000.0,
+          "net_debt": 0.0,
+          "bull_ev": 1490099891248.9546,
+          "bull_intrinsic_per_share": 690.8618445107369,
+          "bull_upside": 0.44483402881796186,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 14.752879997316489,
+          "bull_justified_ev_ebitda": 9.22532978081557,
+          "bull_roic_wacc_spread": 0.011077298552319509,
+          "bull_tv_pct_of_ev": 0.5635047758969167,
+          "bull_implied_tv_ebitda": 9.225329780815573,
+          "base_ev": 1126789886845.3115,
+          "base_intrinsic_per_share": 522.4187614358653,
+          "base_upside": 0.0925605601363332,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 11.155893695747807,
+          "base_justified_ev_ebitda": 8.076166314014516,
+          "base_roic_wacc_spread": 0.0060772985523195044,
+          "base_tv_pct_of_ev": 0.5095914458756193,
+          "base_implied_tv_ebitda": 8.076166314014518,
+          "bear_ev": 601259117736.2618,
+          "bear_intrinsic_per_share": 278.764521457691,
+          "bear_upside": -0.4170057735429514,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.952824816207891,
+          "bear_justified_ev_ebitda": 6.107919610967346,
+          "bear_roic_wacc_spread": -0.008922701447680495,
+          "bear_tv_pct_of_ev": 0.39208831800809535,
+          "bear_implied_tv_ebitda": 6.107919610967345
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "BRK-B",
+            "scenario": "bull",
+            "enterprise_value": 1490099891248.9546,
+            "equity_value": 1490099891248.9546,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 690.8618445107369,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": 0.44483402881796186,
+            "upside_pct": 0.44483402881796186,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "BRK-B",
+            "scenario": "base",
+            "enterprise_value": 1126789886845.3115,
+            "equity_value": 1126789886845.3115,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 522.4187614358653,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": 0.0925605601363332,
+            "upside_pct": 0.0925605601363332,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "BRK-B",
+            "scenario": "bear",
+            "enterprise_value": 601259117736.2618,
+            "equity_value": 601259117736.2618,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 278.764521457691,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": -0.4170057735429514,
+            "upside_pct": -0.4170057735429514,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 690.8618445107369,
+          "base": 522.4187614358653,
+          "bear": 278.764521457691
+        },
+        "margin_of_safety": {
+          "bull": 0.44483402881796186,
+          "base": 0.0925605601363332,
+          "bear": -0.4170057735429514
+        },
+        "reverse_dcf": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "current_price": 478.1600036621094,
+          "current_ev": 1031329454821.8976,
+          "current_ev_ebitda": 10.210778333748145,
+          "wacc": 0.0788315503603125,
+          "ebit_margin": 0.2356425194645761,
+          "implied_cagr_10y": 0.022670002168139827,
+          "implied_cagr_5y": 0.022670002168139827,
+          "historical_cagr_5y": 0.05374633297004561,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 10.210778333748145,
+          "forward_ev_ebitda_justified": 9.854153091055407,
+          "signal": "deep_value"
+        },
+        "implied_cagr": 0.022670002168139827,
+        "historical_cagr": 0.05374633297004561,
+        "reverse_dcf_signal": "deep_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (2.3%) is less than 50% of historical (5.4%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+        ],
+        "multiples": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 10.210778333748145,
+          "market_ev_ebit": 11.782851828236652,
+          "market_p_sales": 2.776540891283471,
+          "market_p_e": 15.400332320240974,
+          "market_peg": 2.8653735928038153,
+          "justified_ev_ebitda": 9.408248180285874,
+          "justified_ev_ebit": 10.85676239833647,
+          "justified_p_sales": 3.3367954171103884,
+          "ev_ebitda_premium": 0.8025301534622713,
+          "ev_ebitda_premium_pct": 0.08530069977787151,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": -1.789221666251855,
+          "roic": 0.0960772985523195,
+          "wacc": 0.0788315503603125,
+          "roic_wacc_spread": 0.017245748192007,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5064605857193775,
+          "growth_rate": 0.05374633297004561,
+          "signal": "fairly_valued"
+        },
+        "ev_ebitda_market": 10.210778333748145,
+        "ev_ebitda_justified": 9.408248180285874,
+        "ev_ebitda_premium_pct": 0.08530069977787151,
+        "multiple_signal": "fairly_valued",
+        "roic_wacc_spread": 0.017245748192007,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.0960772985523195,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: BRK-B ===\nPrice: $478.16  |  Bear=$279  Base=$522  Bull=$691\nMoS:  Bear=-41.7%  Base=+9.3%  Bull=+44.5%\nRDCF: implied=2.3% hist=5.4% [deep_value]\nEV/EBITDA: 10.2x market vs 9.4x justified (+9%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.021,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+        "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+        "pass_through_capability": true,
+        "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7070775382411383,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is reported as 0, so there is no evidence of pull-forward risk or declining deferred revenue relative to revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs, exclusivity dates, or contract renewals were identified due to lack of 10-K text and patent data. Given Berkshire Hathaway's diversified conglomerate structure, material revenue exposure to expiring intangible assets within 5 years is highly unlikely. Uncertainty is noted due to missing source text.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Berkshire Hathaway is not currently at a cyclical peak (Revenue Z-Score of 1.71). The quality of growth is strong, with a D8 Revenue Score of 1.00 and no deferred revenue risks. Intangible risk is estimated at 0.0 percent due to the company's diversified holding structure, though explicit 10-K data was unavailable, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $478.16 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 2.3%\n  \u2022 Company's robust historical CAGR: 5.4%\n  \u2022 Ratio (implied / historical): 0.4x\n  \u2022 Reverse DCF signal: DEEP_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (2.3%) is less than 50% of historical (5.4%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 10.2x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 9.4x\n  \u2022 Premium to justified multiple: +9%\n  \u2022 Multiple signal: FAIRLY_VALUED\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $279/share vs current price $478.16\n  \u2022 Downside in bear case: -41.7%\n",
+        "structured_analysis": {
+          "bias_detected": "Status Quo Bias / Flight to Safety",
+          "bear_case_summary": "While the reverse DCF suggests a deep value setup with the market pricing in only a 2.3% revenue CAGR (less than half the historical 5.4% rate), the multiple decomposition reveals a hidden risk: the stock trades at a 10.2x EV/EBITDA, a 9% premium to its mathematically justified multiple of 9.4x. This indicates investors are paying a 'safety premium' that ignores structural headwinds. The bear case intrinsic value of $279 per share implies a severe 41.7% downside. This downside will materialize if Berkshire fails to clear even the lowered 2.3% growth hurdle due to the 'law of large numbers' severely restricting its ability to deploy its massive cash pile at historical rates of return. Furthermore, the impending leadership transition introduces critical key-man risk; if capital allocation efficiency (ROIC) drops under new management, or if a major catastrophic insurance event impairs the float, the justified multiple will compress rapidly, forcing a violent reversion toward the $279 bear...(truncated)",
+          "sentiment_score": -4
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Status Quo Bias / Flight to Safety] Sentiment: -4/10. Implied CAGR 2.3% vs 5.4% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:48:21.590097",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/BRK-B_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:48:21.592006",
+    "agent": "Lead",
+    "trace_id": "trace_BRK-B_1777430781",
+    "inputs": {
+      "ticker": "BRK-B",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for BRK-B.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 10.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-131,403,723,105",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: BRK-B \u2014 Base IV=$522/share MoS=+9.3% ImpliedCAGR=2.3% Multiple=fairly_valued",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Status Quo Bias / Flight to Safety] Sentiment: -4/10. Implied CAGR 2.3% vs 5.4% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "terminal_value": -153399895914.33942,
+          "discounted_terminal_value": -99699407009.6285,
+          "sum_pv_cash_flows": -31704316095.298126,
+          "audit_metrics": {
+            "roic_path": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "invested_capital_path": [
+              78745100000.0,
+              86031934500.0,
+              93901715760.0,
+              102243683895.6,
+              110919330756.62401,
+              119855247023.47873
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 112493000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": null,
+            "reinvestment_rate_terminal_year": null,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.04388717520201257,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -46.755566408427114,
+          "upside_percent": -1.0977822620219742,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.04388717520201257,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 123742300000.00002,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5430700000.0,
+              "change_in_wc": 1856134500.0000002,
+              "fcff": -7286834500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -6685169266.055045
+            },
+            {
+              "year": 2.0,
+              "revenue": 133641684000.00003,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 5865156000.000001,
+              "change_in_wc": 2004625260.0000005,
+              "fcff": -7869781260.000002,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -6623837437.926102
+            },
+            {
+              "year": 3.0,
+              "revenue": 141660185040.00003,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6217065360.000001,
+              "change_in_wc": 2124902775.6000004,
+              "fcff": -8341968135.600001,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -6441529985.506117
+            },
+            {
+              "year": 4.0,
+              "revenue": 147326592441.60004,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6465747974.400002,
+              "change_in_wc": 2209898886.6240005,
+              "fcff": -8675646861.024002,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -6146046958.648036
+            },
+            {
+              "year": 5.0,
+              "revenue": 151746390214.84805,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0,
+              "ebit": 0.0,
+              "nopat": 0.0,
+              "depreciation": 0.0,
+              "capex": 6659720413.632002,
+              "change_in_wc": 2276195853.2227206,
+              "fcff": -8935916266.854723,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -5807732447.162824
+            }
+          ],
+          "enterprise_value": -131403723104.92662,
+          "equity_value": -100845723104.92662,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04388717520201257,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 1.0,
+          "calibration_adjustment": 0.15000000000000002
+        },
+        "base_financials": {
+          "net_sales": 112493000000.0,
+          "cogs": 100941000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -30558000000.0
+        },
+        "calculated_upside": -1.0977822620219742
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 1031329454821.8976,
+          "wacc": 0.09,
+          "cost_of_equity": 0.0788315503603125,
+          "beta": 0.6416645353597303
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 30558000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 131102000000.0,
+            "crash_fcf": 0.0,
+            "earnings_power_value": 0.0,
+            "floor_value": 131102000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 10.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:47:44.042467",
+          "current_price": 478.1600036621094,
+          "shares_diluted": 2156871020.0,
+          "market_cap": 1031329454821.8976,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.6416645353597303,
+          "wacc_base": 0.09,
+          "revenue": 371444000000.0,
+          "ebitda": 101004000000.0,
+          "ebit": 87528000000.0,
+          "nopat": 69147120000.0,
+          "roic": 0.0960772985523195,
+          "fcf": 25042000000.0,
+          "net_debt": 0.0,
+          "bull_ev": 1490099891248.9546,
+          "bull_intrinsic_per_share": 690.8618445107369,
+          "bull_upside": 0.44483402881796186,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 14.752879997316489,
+          "bull_justified_ev_ebitda": 9.22532978081557,
+          "bull_roic_wacc_spread": 0.011077298552319509,
+          "bull_tv_pct_of_ev": 0.5635047758969167,
+          "bull_implied_tv_ebitda": 9.225329780815573,
+          "base_ev": 1126789886845.3115,
+          "base_intrinsic_per_share": 522.4187614358653,
+          "base_upside": 0.0925605601363332,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 11.155893695747807,
+          "base_justified_ev_ebitda": 8.076166314014516,
+          "base_roic_wacc_spread": 0.0060772985523195044,
+          "base_tv_pct_of_ev": 0.5095914458756193,
+          "base_implied_tv_ebitda": 8.076166314014518,
+          "bear_ev": 601259117736.2618,
+          "bear_intrinsic_per_share": 278.764521457691,
+          "bear_upside": -0.4170057735429514,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.952824816207891,
+          "bear_justified_ev_ebitda": 6.107919610967346,
+          "bear_roic_wacc_spread": -0.008922701447680495,
+          "bear_tv_pct_of_ev": 0.39208831800809535,
+          "bear_implied_tv_ebitda": 6.107919610967345
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "BRK-B",
+            "scenario": "bull",
+            "enterprise_value": 1490099891248.9546,
+            "equity_value": 1490099891248.9546,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 690.8618445107369,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": 0.44483402881796186,
+            "upside_pct": 0.44483402881796186,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "BRK-B",
+            "scenario": "base",
+            "enterprise_value": 1126789886845.3115,
+            "equity_value": 1126789886845.3115,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 522.4187614358653,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": 0.0925605601363332,
+            "upside_pct": 0.0925605601363332,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "BRK-B",
+            "scenario": "bear",
+            "enterprise_value": 601259117736.2618,
+            "equity_value": 601259117736.2618,
+            "shares_diluted": 2156871020.0,
+            "intrinsic_per_share": 278.764521457691,
+            "current_price": 478.1600036621094,
+            "margin_of_safety": -0.4170057735429514,
+            "upside_pct": -0.4170057735429514,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 11143320000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 690.8618445107369,
+          "base": 522.4187614358653,
+          "bear": 278.764521457691
+        },
+        "margin_of_safety": {
+          "bull": 0.44483402881796186,
+          "base": 0.0925605601363332,
+          "bear": -0.4170057735429514
+        },
+        "reverse_dcf": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "current_price": 478.1600036621094,
+          "current_ev": 1031329454821.8976,
+          "current_ev_ebitda": 10.210778333748145,
+          "wacc": 0.0788315503603125,
+          "ebit_margin": 0.2356425194645761,
+          "implied_cagr_10y": 0.022670002168139827,
+          "implied_cagr_5y": 0.022670002168139827,
+          "historical_cagr_5y": 0.05374633297004561,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 10.210778333748145,
+          "forward_ev_ebitda_justified": 9.854153091055407,
+          "signal": "deep_value"
+        },
+        "implied_cagr": 0.022670002168139827,
+        "historical_cagr": 0.05374633297004561,
+        "reverse_dcf_signal": "deep_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (2.3%) is less than 50% of historical (5.4%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+        ],
+        "multiples": {
+          "ticker": "BRK-B",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 10.210778333748145,
+          "market_ev_ebit": 11.782851828236652,
+          "market_p_sales": 2.776540891283471,
+          "market_p_e": 15.400332320240974,
+          "market_peg": 2.8653735928038153,
+          "justified_ev_ebitda": 9.408248180285874,
+          "justified_ev_ebit": 10.85676239833647,
+          "justified_p_sales": 3.3367954171103884,
+          "ev_ebitda_premium": 0.8025301534622713,
+          "ev_ebitda_premium_pct": 0.08530069977787151,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": -1.789221666251855,
+          "roic": 0.0960772985523195,
+          "wacc": 0.0788315503603125,
+          "roic_wacc_spread": 0.017245748192007,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5064605857193775,
+          "growth_rate": 0.05374633297004561,
+          "signal": "fairly_valued"
+        },
+        "ev_ebitda_market": 10.210778333748145,
+        "ev_ebitda_justified": 9.408248180285874,
+        "ev_ebitda_premium_pct": 0.08530069977787151,
+        "multiple_signal": "fairly_valued",
+        "roic_wacc_spread": 0.017245748192007,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.0960772985523195,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: BRK-B ===\nPrice: $478.16  |  Bear=$279  Base=$522  Bull=$691\nMoS:  Bear=-41.7%  Base=+9.3%  Bull=+44.5%\nRDCF: implied=2.3% hist=5.4% [deep_value]\nEV/EBITDA: 10.2x market vs 9.4x justified (+9%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $478.16 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 2.3%\n  \u2022 Company's robust historical CAGR: 5.4%\n  \u2022 Ratio (implied / historical): 0.4x\n  \u2022 Reverse DCF signal: DEEP_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (2.3%) is less than 50% of historical (5.4%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 10.2x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 9.4x\n  \u2022 Premium to justified multiple: +9%\n  \u2022 Multiple signal: FAIRLY_VALUED\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $279/share vs current price $478.16\n  \u2022 Downside in bear case: -41.7%\n",
+        "structured_analysis": {
+          "bias_detected": "Status Quo Bias / Flight to Safety",
+          "bear_case_summary": "While the reverse DCF suggests a deep value setup with the market pricing in only a 2.3% revenue CAGR (less than half the historical 5.4% rate), the multiple decomposition reveals a hidden risk: the stock trades at a 10.2x EV/EBITDA, a 9% premium to its mathematically justified multiple of 9.4x. This indicates investors are paying a 'safety premium' that ignores structural headwinds. The bear case intrinsic value of $279 per share implies a severe 41.7% downside. This downside will materialize if Berkshire fails to clear even the lowered 2.3% growth hurdle due to the 'law of large numbers' severely restricting its ability to deploy its massive cash pile at historical rates of return. Furthermore, the impending leadership transition introduces critical key-man risk; if capital allocation efficiency (ROIC) drops under new management, or if a major catastrophic insurance event impairs the float, the justified multiple will compress rapidly, forcing a violent reversion toward the $279 bear...(truncated)",
+          "sentiment_score": -4
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 10.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers.",
+        "concentration_risk": false,
+        "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments.",
+        "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+        "revenue_segments": [
+          {
+            "segment": "Manufacturing, Service and Retailing",
+            "pct_revenue": 62.0,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Insurance (Premiums and Investment Income)",
+            "pct_revenue": 25.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Utilities and Energy (BHE)",
+            "pct_revenue": 7.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Railroad (BNSF)",
+            "pct_revenue": 6.0,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers (GEICO, retail)",
+          "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+          "Municipalities and regional grids (BHE)",
+          "Wholesale distributors (McLane)"
+        ],
+        "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+        "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses.",
+        "operating_leverage_score": 10.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.021,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+        "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+        "pass_through_capability": true,
+        "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7070775382411383,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is reported as 0, so there is no evidence of pull-forward risk or declining deferred revenue relative to revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs, exclusivity dates, or contract renewals were identified due to lack of 10-K text and patent data. Given Berkshire Hathaway's diversified conglomerate structure, material revenue exposure to expiring intangible assets within 5 years is highly unlikely. Uncertainty is noted due to missing source text.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Berkshire Hathaway is not currently at a cyclical peak (Revenue Z-Score of 1.71). The quality of growth is strong, with a D8 Revenue Score of 1.00 and no deferred revenue risks. Intangible risk is estimated at 0.0 percent due to the company's diversified holding structure, though explicit 10-K data was unavailable, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2611 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the fiscal year ended December 31, 2025 or\n\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\nFor the transition period from _________ to ________ Commission file number 001-14905 BERKSHIRE HATHAWAY INC . (Exact name of Registrant as specified in its charter)\n\n| Delaware                                                    |     |                         47-0813844 |\n| State or other jurisdiction ofincorporation or organization |     | -I.R.S. EmployerIdentification No. |\n| 3555 Farnam Street, Omaha, Nebraska                         |     |                              68131 |\n| (Address of principal executive office)                     |     |                          -Zip Code |\n\nRegistrant\u2019s telephone number, including area code ( 402 ) 346-1400 Securities re...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "BRK-B",
+        "generated_at": "2026-04-28T22:48:21.588780",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 10.0,
+            "cost_structure": "Berkshire Hathaway's high operating leverage is driven by its capital-intensive subsidiaries, particularly BNSF (railroad) and BHE (utilities). Fixed cost drivers include massive depreciation on rail infrastructure, locomotives, and power generation facilities, as well as fixed lease obligations and unionized labor contracts. In these segments, once fixed infrastructure costs are covered, incremental freight volume or energy demand flows directly to EBIT. The insurance segment also exhibits leverage where fixed underwriting and administrative headcount costs are scaled across growing premium volumes.",
+            "business_description": "Berkshire Hathaway is a diversified holding company whose subsidiaries engage in insurance, freight rail transportation, utility and energy generation, manufacturing, and retail. Its core engine is its insurance operations, which generate low-cost float that is reinvested into wholly-owned businesses and publicly traded equities. Customers range from individual consumers to large enterprises and municipalities.",
+            "revenue_segments": [
+              {
+                "segment": "Manufacturing, Service and Retailing",
+                "pct_revenue": 62.0,
+                "growth_trend": "Stable"
+              },
+              {
+                "segment": "Insurance (Premiums and Investment Income)",
+                "pct_revenue": 25.0,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Utilities and Energy (BHE)",
+                "pct_revenue": 7.0,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Railroad (BNSF)",
+                "pct_revenue": 6.0,
+                "growth_trend": "Stable"
+              }
+            ],
+            "key_customers": [
+              "Individual consumers (GEICO, retail)",
+              "Industrial manufacturers (BNSF, Marmon, Lubrizol)",
+              "Municipalities and regional grids (BHE)",
+              "Wholesale distributors (McLane)"
+            ],
+            "competitive_landscape": "Competes with Progressive and Allstate in auto insurance, Union Pacific in western US rail freight, and various private equity firms for acquisitions. Berkshire differentiates through its massive balance sheet, decentralized management structure, and ability to deploy capital quickly without financing contingencies.",
+            "regulatory_risk": "Significant regulatory exposure exists in its insurance (state-level capital and rate regulations), railroad (Surface Transportation Board), and utility (FERC and state utility commissions) businesses."
+          },
+          "value_chain": {
+            "power_ratio": 0.021,
+            "upstream_leak": false,
+            "strategic_leverage": 8.0,
+            "bottleneck_analysis": "Berkshire Hathaway is a highly diversified conglomerate. Key suppliers vary by subsidiary (e.g., locomotive manufacturers for BNSF, auto repair networks for GEICO, turbine suppliers for BHE). Due to its massive scale, decentralized structure, and strong balance sheet, Berkshire holds significant negotiating power over its suppliers. No single supplier poses a critical bottleneck to the overall holding company.",
+            "substitution_risk_score": 3.0,
+            "top_substitutes": "1. Alternative freight transport (trucking) for BNSF. 2. Competing P&C insurers (Progressive, Allstate) for GEICO. 3. Alternative energy providers or self-generation for BHE.",
+            "pricing_power_assessment": "Berkshire possesses strong pricing power across its regulated utilities (BHE) and freight rail (BNSF) due to high barriers to entry and oligopolistic market structures. GEICO operates in a highly competitive market but relies on scale and brand to maintain pricing discipline. Overall, the conglomerate exhibits price leadership in its capital-intensive subsidiaries.",
+            "pass_through_capability": true,
+            "analysis_summary": "Berkshire Hathaway operates as a diversified holding company with immense strategic leverage. Supplier power is fragmented and weak against Berkshire's scale. Buyer power varies by subsidiary but is generally low in infrastructure assets like BNSF and BHE. Substitution threat is mitigated by diversification across essential industries. Rivalry is manageable due to oligopolistic positions in rail and energy. Overall, Berkshire holds a dominant value chain position with strong pricing power and minimal upstream value leakage."
+          },
+          "moat": {
+            "score": 9.0,
+            "switching_costs": 7.0,
+            "network_effects": 4.0,
+            "cost_advantage": 10.0,
+            "intangibles": 9.0,
+            "evidence": "Berkshire's primary moat is its structural cost advantage derived from over $160 billion in insurance float, providing essentially zero or negative cost of capital. BNSF possesses an intangible and regulatory moat via irreplaceable railroad rights-of-way. BHE operates regulated monopolies with high barriers to entry. GEICO benefits from scale and a direct-to-consumer model that historically drives low-cost operator status.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "GEICO and other insurance subsidiaries regularly raise premiums to offset inflation and higher loss severities. BNSF exercises pricing power in freight due to limited rail alternatives and high trucking costs. BHE utilizes regulated rate cases to pass through infrastructure investments and fuel costs to consumers."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.7070775382411383,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is reported as 0, so there is no evidence of pull-forward risk or declining deferred revenue relative to revenue growth.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "No specific patent cliffs, exclusivity dates, or contract renewals were identified due to lack of 10-K text and patent data. Given Berkshire Hathaway's diversified conglomerate structure, material revenue exposure to expiring intangible assets within 5 years is highly unlikely. Uncertainty is noted due to missing source text.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Berkshire Hathaway is not currently at a cyclical peak (Revenue Z-Score of 1.71). The quality of growth is strong, with a D8 Revenue Score of 1.00 and no deferred revenue risks. Intangible risk is estimated at 0.0 percent due to the company's diversified holding structure, though explicit 10-K data was unavailable, resulting in no terminal haircut."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 371.444,
+            "ebitda_bn": 101.004,
+            "fcf_bn": 25.042,
+            "nopat_bn": 69.14712,
+            "invested_capital_bn": 719.703,
+            "net_debt_bn": 0.0,
+            "sbc_bn": 0.0,
+            "fiscal_year": 2025,
+            "data_quality": 1.0
+          },
+          "ratios": {
+            "gross_margin_pct": 14.260830703955374,
+            "ebit_margin_pct": 23.56425194645761,
+            "ebitda_margin_pct": 27.192255090942375,
+            "fcf_margin_pct": 6.741796879206556,
+            "roic": 0.0960772985523195,
+            "roe": 0.09334572962243821,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 0,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 0.0,
+            "equity": 1031329454821.8976,
+            "wacc": 0.09,
+            "cost_of_equity": 0.0788315503603125,
+            "beta": 0.6416645353597303
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 0.0,
+              "cash": 30558000000.0,
+              "liquidity_ratio": 0.0,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 131102000000.0,
+              "crash_fcf": 0.0,
+              "earnings_power_value": 0.0,
+              "floor_value": 131102000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 10.0,
+              "financial_leverage_score": 0.0,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.09,
+              "2": 0.09,
+              "3": 0.09,
+              "4": 0.09,
+              "5": 0.09
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "Berkshire Hathaway is a highly diversified conglomerate. No single customer or supplier accounts for more than 10% of total consolidated revenues across its manufacturing, service, retailing, insurance, and freight rail segments."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": -100845723104.92662,
+            "upside_percent": -1.0977822620219742,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 278.764521457691,
+                "margin_of_safety": -0.4170057735429514,
+                "ev": 601259117736.2618
+              },
+              "base": {
+                "intrinsic_per_share": 522.4187614358653,
+                "margin_of_safety": 0.0925605601363332,
+                "ev": 1126789886845.3115
+              },
+              "bull": {
+                "intrinsic_per_share": 690.8618445107369,
+                "margin_of_safety": 0.44483402881796186,
+                "ev": 1490099891248.9546
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.022670002168139827,
+              "historical_cagr": 0.05374633297004561,
+              "signal": "deep_value",
+              "reasons": [
+                "Implied CAGR (2.3%) is less than 50% of historical (5.4%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 10.210778333748145,
+              "justified_ev_ebitda": 9.408248180285874,
+              "premium_pct": 0.08530069977787151,
+              "signal": "fairly_valued",
+              "roic_wacc_spread": 0.017245748192007,
+              "value_creation": "creating",
+              "roic": 0.0960772985523195,
+              "wacc": 0.09
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": false,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 8.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.09,
+            "beta": 0.6416645353597303,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Status Quo Bias / Flight to Safety",
+            "bear_case_summary": "While the reverse DCF suggests a deep value setup with the market pricing in only a 2.3% revenue CAGR (less than half the historical 5.4% rate), the multiple decomposition reveals a hidden risk: the stock trades at a 10.2x EV/EBITDA, a 9% premium to its mathematically justified multiple of 9.4x. This indicates investors are paying a 'safety premium' that ignores structural headwinds. The bear case intrinsic value of $279 per share implies a severe 41.7% downside. This downside will materialize if Berkshire fails to clear even the lowered 2.3% growth hurdle due to the 'law of large numbers' severely restricting its ability to deploy its massive cash pile at historical rates of return. Furthermore, the impending leadership transition introduces critical key-man risk; if capital allocation efficiency (ROIC) drops under new management, or if a major catastrophic insurance event impairs the float, the justified multiple will compress rapidly, forcing a violent reversion toward the $279 bear...(truncated)",
+            "sentiment_score": -4,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $478.16 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 2.3%\n  \u2022 Company's robust historical CAGR: 5.4%\n  \u2022 Ratio (implied / historical): 0.4x\n  \u2022 Reverse DCF signal: DEEP_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (2.3%) is less than 50% of historical (5.4%) \u2014 market is pricing in significant deceleration. Value opportunity if thesis is intact.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 10.2x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 9.4x\n  \u2022 Premium to justified multiple: +9%\n  \u2022 Multiple signal: FAIRLY_VALUED\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $279/share vs current price $478.16\n  \u2022 Downside in bear case: -41.7%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 4,
+            "margin_of_safety": 0.0925605601363332,
+            "narrative": "The implied revenue CAGR of 2.3% is highly realistic and arguably conservative. Historically, Berkshire has compounded at 5.4%. While the 'law of large numbers' does restrict hyper-growth, a 2.3% hurdle rate is essentially equivalent to long-term macroeconomic inflation plus minimal real GDP growth. Given the pricing power of its regulated monopolies (BHE), irreplaceable infrastructure (BNSF), and continuous float generation, Berkshire's growth sustainability easily clears this low bar without requiring heroic capital deployment.\n\nThe Contrarian correctly identifies the 9% EV/EBITDA premium and the 'law of large numbers' as headwinds to historical outperformance. However, the bear case overstates the downside risk of the leadership transition and catastrophic insurance events. The 9% 'safety premium' is mathematically justified by Berkshire's $160B+ zero-cost float and 9.0/10 moat, which provide unparalleled downside protection. Furthermore, the $279 bear case assumes a catastrophic co...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Implied CAGR (2.3%) within 1.3x of historical.",
+              "\u2705 PASS: Multiple premium +9% within range."
+            ],
+            "pillar_scores": {
+              "ticker": "BRK-B",
+              "p1_moat": 4,
+              "p2_health": 3,
+              "p3_tailwind": 3,
+              "p4_mos": 5,
+              "p5_leadership": 4,
+              "raw_total": 19,
+              "capped_total": 19,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern",
+              "conviction_score": 4,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 8.0/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROE 9.3% \u2014 adequate financial returns"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 5.4% \u2014 moderate growth"
+              ],
+              "p4_reasons": [
+                "Base MoS +31.5% \u2014 Trading at <70% of base DCF IV \u2014 fortress margin of safety"
+              ],
+              "p5_reasons": [
+                "SBC data unavailable \u2014 neutral score",
+                "Operating leverage 6.0/10",
+                "Strategic leverage 9.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for BRK-B. Conviction: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

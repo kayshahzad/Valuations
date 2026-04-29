@@ -1,0 +1,1183 @@
+[
+  {
+    "timestamp": "2026-04-26T16:30:03.602668",
+    "agent": "Librarian",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD",
+      "messages": [],
+      "financial_data": {},
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "financial_data": {
+        "metrics": {
+          "ticker": "AMD",
+          "company_name": "Advanced Micro Devices, Inc.",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 567056859136,
+          "total_revenue": 34638999552,
+          "pe_ratio": 133.2567,
+          "forward_pe": 31.594515,
+          "beta": 1.963,
+          "price_to_book": 8.998706,
+          "earnings_growth": 2.171,
+          "revenue_growth": 0.341,
+          "profit_margins": 0.12515001,
+          "free_cashflow": 4587250176,
+          "target_price": 295.76086,
+          "current_price": 347.8,
+          "debt_to_equity": 6.359,
+          "return_on_equity": 0.07082
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":76860000.0,\"Tax Rate For Calcs\":0.21,\"Normalized EBITDA\":6909000000.0,\"Total Unusual Items\":366000000.0,\"Total Unusual Items Excluding Goodwill\":366000000.0,\"Net Income From Continuing Operation Net Minority Interest\":4269000000.0,\"Reconciled Depreciation\":3004000000.0,\"Reconciled Cost Of Revenue\":15706000000.0,\"EBITDA\":7275000000.0,\"EBIT\":4271000000.0,\"Net Interest Income\":84000000.0,\"Interest Expense\":131000000.0,\"Interest Income\":215000000.0,\"Normalized Income\":3979860000.0,\"Net Income From Continuing And Discontinued Operation\":4335000000.0,\"Total Expenses\":30945000000.0,\"Total Operating Income As Reported\":3694000000.0,\"Diluted Average Shares\":1636000000.0,\"Basic Average Shares\":1624000000.0,\"Diluted EPS\":2.65,\"Basic EPS\":2.67,\"Diluted NI Availto Com Stockholders\":4335000000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":4335000000.0,\"Net Income\":4335000000.0,\"Net Income Including Noncontrolling Interests\":433500...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":65000000.0,\"Ordinary Shares Number\":1630000000.0,\"Share Issued\":1695000000.0,\"Total Debt\":3847000000.0,\"Tangible Book Value\":21168000000.0,\"Invested Capital\":66221000000.0,\"Working Capital\":17492000000.0,\"Net Tangible Assets\":21168000000.0,\"Capital Lease Obligations\":625000000.0,\"Common Stock Equity\":62999000000.0,\"Total Capitalization\":65347000000.0,\"Total Equity Gross Minority Interest\":62999000000.0,\"Stockholders Equity\":62999000000.0,\"Gains Losses Not Affecting Retained Earnings\":-3000000.0,\"Other Equity Adjustments\":-3000000.0,\"Treasury Stock\":7079000000.0,\"Retained Earnings\":6699000000.0,\"Additional Paid In Capital\":63365000000.0,\"Capital Stock\":17000000.0,\"Common Stock\":17000000.0,\"Total Liabilities Net Minority Interest\":13927000000.0,\"Total Non Current Liabilities Net Minority Interest\":4472000000.0,\"Other Non Current Liabilities\":1186000000.0,\"Non Current Deferred Liabilities\":313000000.0,\"Non Current Deferred Taxes Liabilities\":3130...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":6735000000.0,\"Repurchase Of Capital Stock\":-1923000000.0,\"Repayment Of Debt\":-950000000.0,\"Issuance Of Debt\":2441000000.0,\"Capital Expenditure\":-974000000.0,\"Interest Paid Supplemental Data\":91000000.0,\"Income Tax Paid Supplemental Data\":884000000.0,\"End Cash Position\":5556000000.0,\"Beginning Cash Position\":3811000000.0,\"Changes In Cash\":1745000000.0,\"Financing Cash Flow\":-431000000.0,\"Cash Flow From Continuing Financing Activities\":-431000000.0,\"Net Other Financing Charges\":-284000000.0,\"Proceeds From Stock Option Exercised\":285000000.0,\"Net Common Stock Issuance\":-1923000000.0,\"Common Stock Payments\":-1923000000.0,\"Net Issuance Payments Of Debt\":1491000000.0,\"Net Short Term Debt Issuance\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":1491000000.0,\"Long Term Debt Payments\":-950000000.0,\"Long Term Debt Issuance\":2441000000.0,\"Investing Cash Flow\":-5533000000.0,\"Cash From Discontinued Investing Activities\":1318000000.0,\"Cash Flow F...(truncated)"
+        }
+      },
+      "raw_10k_text": "### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K/A\n<div align='center'>(Amendment No.1)</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934.     \n For the fiscal year endedDecember 27, 2025                                                |\n|:--|:----|:------------------------------------------------------------------------------------------|\n|   |     | OR                                                                                        |\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934. |\n|   |     | For the transition period fromto                                                          |\n\n#### Commission File Number\n\n#### 001-07882\n\n#### ADVANCED MICRO DEVICES, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |    ...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for AMD.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T16:30:20.333739",
+    "agent": "Forensic",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for AMD.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "AMD",
+          "company_name": "Advanced Micro Devices, Inc.",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 567056859136,
+          "total_revenue": 34638999552,
+          "pe_ratio": 133.2567,
+          "forward_pe": 31.594515,
+          "beta": 1.963,
+          "price_to_book": 8.998706,
+          "earnings_growth": 2.171,
+          "revenue_growth": 0.341,
+          "profit_margins": 0.12515001,
+          "free_cashflow": 4587250176,
+          "target_price": 295.76086,
+          "current_price": 347.8,
+          "debt_to_equity": 6.359,
+          "return_on_equity": 0.07082
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":76860000.0,\"Tax Rate For Calcs\":0.21,\"Normalized EBITDA\":6909000000.0,\"Total Unusual Items\":366000000.0,\"Total Unusual Items Excluding Goodwill\":366000000.0,\"Net Income From Continuing Operation Net Minority Interest\":4269000000.0,\"Reconciled Depreciation\":3004000000.0,\"Reconciled Cost Of Revenue\":15706000000.0,\"EBITDA\":7275000000.0,\"EBIT\":4271000000.0,\"Net Interest Income\":84000000.0,\"Interest Expense\":131000000.0,\"Interest Income\":215000000.0,\"Normalized Income\":3979860000.0,\"Net Income From Continuing And Discontinued Operation\":4335000000.0,\"Total Expenses\":30945000000.0,\"Total Operating Income As Reported\":3694000000.0,\"Diluted Average Shares\":1636000000.0,\"Basic Average Shares\":1624000000.0,\"Diluted EPS\":2.65,\"Basic EPS\":2.67,\"Diluted NI Availto Com Stockholders\":4335000000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":4335000000.0,\"Net Income\":4335000000.0,\"Net Income Including Noncontrolling Interests\":433500...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":65000000.0,\"Ordinary Shares Number\":1630000000.0,\"Share Issued\":1695000000.0,\"Total Debt\":3847000000.0,\"Tangible Book Value\":21168000000.0,\"Invested Capital\":66221000000.0,\"Working Capital\":17492000000.0,\"Net Tangible Assets\":21168000000.0,\"Capital Lease Obligations\":625000000.0,\"Common Stock Equity\":62999000000.0,\"Total Capitalization\":65347000000.0,\"Total Equity Gross Minority Interest\":62999000000.0,\"Stockholders Equity\":62999000000.0,\"Gains Losses Not Affecting Retained Earnings\":-3000000.0,\"Other Equity Adjustments\":-3000000.0,\"Treasury Stock\":7079000000.0,\"Retained Earnings\":6699000000.0,\"Additional Paid In Capital\":63365000000.0,\"Capital Stock\":17000000.0,\"Common Stock\":17000000.0,\"Total Liabilities Net Minority Interest\":13927000000.0,\"Total Non Current Liabilities Net Minority Interest\":4472000000.0,\"Other Non Current Liabilities\":1186000000.0,\"Non Current Deferred Liabilities\":313000000.0,\"Non Current Deferred Taxes Liabilities\":3130...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":6735000000.0,\"Repurchase Of Capital Stock\":-1923000000.0,\"Repayment Of Debt\":-950000000.0,\"Issuance Of Debt\":2441000000.0,\"Capital Expenditure\":-974000000.0,\"Interest Paid Supplemental Data\":91000000.0,\"Income Tax Paid Supplemental Data\":884000000.0,\"End Cash Position\":5556000000.0,\"Beginning Cash Position\":3811000000.0,\"Changes In Cash\":1745000000.0,\"Financing Cash Flow\":-431000000.0,\"Cash Flow From Continuing Financing Activities\":-431000000.0,\"Net Other Financing Charges\":-284000000.0,\"Proceeds From Stock Option Exercised\":285000000.0,\"Net Common Stock Issuance\":-1923000000.0,\"Common Stock Payments\":-1923000000.0,\"Net Issuance Payments Of Debt\":1491000000.0,\"Net Short Term Debt Issuance\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":1491000000.0,\"Long Term Debt Payments\":-950000000.0,\"Long Term Debt Issuance\":2441000000.0,\"Investing Cash Flow\":-5533000000.0,\"Cash From Discontinued Investing Activities\":1318000000.0,\"Cash Flow F...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K/A\n<div align='center'>(Amendment No.1)</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934.     \n For the fiscal year endedDecember 27, 2025                                                |\n|:--|:----|:------------------------------------------------------------------------------------------|\n|   |     | OR                                                                                        |\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934. |\n|   |     | For the transition period fromto                                                          |\n\n#### Commission File Number\n\n#### 001-07882\n\n#### ADVANCED MICRO DEVICES, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |    ...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_score": 7.5,
+        "operating_leverage_analysis": "AMD operates on a fabless semiconductor model. It incurs massive fixed costs in R&D for chip design, architecture, and IP development. Manufacturing is outsourced (primarily to TSMC), which introduces variable COGS. However, once the high fixed R&D and tape-out costs are covered, incremental sales of high-margin data center (EPYC) and AI (Instinct) chips drop straight to the bottom line, providing strong operating leverage.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 5.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "AMD's primary moat stems from its intangible assets, specifically its x86 instruction set architecture cross-licensing agreement with Intel, creating a functional duopoly in PC and server CPUs. The sheer complexity and R&D scale required to design cutting-edge CPUs and GPUs create massive barriers to entry. Switching costs are present in the data center due to server platform validation and software optimization, though AMD is still working to build stronger network effects for its ROCm software stack to compete with NVIDIA's CUDA.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Historically a budget alternative to Intel, AMD has successfully transitioned to a performance leader in the data center and premium PC markets. This performance leadership has allowed AMD to consistently raise Average Selling Prices (ASPs) and expand gross margins, demonstrating pricing power, particularly with its EPYC server processors.",
+        "growth_sustainability_boost": 0.01,
+        "concentration_risk": true,
+        "concentration_details": "AMD faces extreme supplier concentration risk. As a fabless designer, it relies almost exclusively on Taiwan Semiconductor Manufacturing Company (TSMC) for the fabrication of its advanced node chips (e.g., 5nm, 3nm). Any geopolitical conflict in Taiwan or operational disruption at TSMC would severely cripple AMD's supply chain.",
+        "wacc_penalty": 0.015
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat Score 7.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T16:30:33.874099",
+    "agent": "ValueChain",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for AMD.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 7.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "AMD",
+          "company_name": "Advanced Micro Devices, Inc.",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 567056859136,
+          "total_revenue": 34638999552,
+          "pe_ratio": 133.2567,
+          "forward_pe": 31.594515,
+          "beta": 1.963,
+          "price_to_book": 8.998706,
+          "earnings_growth": 2.171,
+          "revenue_growth": 0.341,
+          "profit_margins": 0.12515001,
+          "free_cashflow": 4587250176,
+          "target_price": 295.76086,
+          "current_price": 347.8,
+          "debt_to_equity": 6.359,
+          "return_on_equity": 0.07082
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":76860000.0,\"Tax Rate For Calcs\":0.21,\"Normalized EBITDA\":6909000000.0,\"Total Unusual Items\":366000000.0,\"Total Unusual Items Excluding Goodwill\":366000000.0,\"Net Income From Continuing Operation Net Minority Interest\":4269000000.0,\"Reconciled Depreciation\":3004000000.0,\"Reconciled Cost Of Revenue\":15706000000.0,\"EBITDA\":7275000000.0,\"EBIT\":4271000000.0,\"Net Interest Income\":84000000.0,\"Interest Expense\":131000000.0,\"Interest Income\":215000000.0,\"Normalized Income\":3979860000.0,\"Net Income From Continuing And Discontinued Operation\":4335000000.0,\"Total Expenses\":30945000000.0,\"Total Operating Income As Reported\":3694000000.0,\"Diluted Average Shares\":1636000000.0,\"Basic Average Shares\":1624000000.0,\"Diluted EPS\":2.65,\"Basic EPS\":2.67,\"Diluted NI Availto Com Stockholders\":4335000000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":4335000000.0,\"Net Income\":4335000000.0,\"Net Income Including Noncontrolling Interests\":433500...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":65000000.0,\"Ordinary Shares Number\":1630000000.0,\"Share Issued\":1695000000.0,\"Total Debt\":3847000000.0,\"Tangible Book Value\":21168000000.0,\"Invested Capital\":66221000000.0,\"Working Capital\":17492000000.0,\"Net Tangible Assets\":21168000000.0,\"Capital Lease Obligations\":625000000.0,\"Common Stock Equity\":62999000000.0,\"Total Capitalization\":65347000000.0,\"Total Equity Gross Minority Interest\":62999000000.0,\"Stockholders Equity\":62999000000.0,\"Gains Losses Not Affecting Retained Earnings\":-3000000.0,\"Other Equity Adjustments\":-3000000.0,\"Treasury Stock\":7079000000.0,\"Retained Earnings\":6699000000.0,\"Additional Paid In Capital\":63365000000.0,\"Capital Stock\":17000000.0,\"Common Stock\":17000000.0,\"Total Liabilities Net Minority Interest\":13927000000.0,\"Total Non Current Liabilities Net Minority Interest\":4472000000.0,\"Other Non Current Liabilities\":1186000000.0,\"Non Current Deferred Liabilities\":313000000.0,\"Non Current Deferred Taxes Liabilities\":3130...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":6735000000.0,\"Repurchase Of Capital Stock\":-1923000000.0,\"Repayment Of Debt\":-950000000.0,\"Issuance Of Debt\":2441000000.0,\"Capital Expenditure\":-974000000.0,\"Interest Paid Supplemental Data\":91000000.0,\"Income Tax Paid Supplemental Data\":884000000.0,\"End Cash Position\":5556000000.0,\"Beginning Cash Position\":3811000000.0,\"Changes In Cash\":1745000000.0,\"Financing Cash Flow\":-431000000.0,\"Cash Flow From Continuing Financing Activities\":-431000000.0,\"Net Other Financing Charges\":-284000000.0,\"Proceeds From Stock Option Exercised\":285000000.0,\"Net Common Stock Issuance\":-1923000000.0,\"Common Stock Payments\":-1923000000.0,\"Net Issuance Payments Of Debt\":1491000000.0,\"Net Short Term Debt Issuance\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":1491000000.0,\"Long Term Debt Payments\":-950000000.0,\"Long Term Debt Issuance\":2441000000.0,\"Investing Cash Flow\":-5533000000.0,\"Cash From Discontinued Investing Activities\":1318000000.0,\"Cash Flow F...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 7.5,
+        "operating_leverage_analysis": "AMD operates on a fabless semiconductor model. It incurs massive fixed costs in R&D for chip design, architecture, and IP development. Manufacturing is outsourced (primarily to TSMC), which introduces variable COGS. However, once the high fixed R&D and tape-out costs are covered, incremental sales of high-margin data center (EPYC) and AI (Instinct) chips drop straight to the bottom line, providing strong operating leverage.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 5.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "AMD's primary moat stems from its intangible assets, specifically its x86 instruction set architecture cross-licensing agreement with Intel, creating a functional duopoly in PC and server CPUs. The sheer complexity and R&D scale required to design cutting-edge CPUs and GPUs create massive barriers to entry. Switching costs are present in the data center due to server platform validation and software optimization, though AMD is still working to build stronger network effects for its ROCm software stack to compete with NVIDIA's CUDA.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Historically a budget alternative to Intel, AMD has successfully transitioned to a performance leader in the data center and premium PC markets. This performance leadership has allowed AMD to consistently raise Average Selling Prices (ASPs) and expand gross margins, demonstrating pricing power, particularly with its EPYC server processors.",
+        "growth_sustainability_boost": 0.01,
+        "concentration_risk": true,
+        "concentration_details": "AMD faces extreme supplier concentration risk. As a fabless designer, it relies almost exclusively on Taiwan Semiconductor Manufacturing Company (TSMC) for the fabrication of its advanced node chips (e.g., 5nm, 3nm). Any geopolitical conflict in Taiwan or operational disruption at TSMC would severely cripple AMD's supply chain.",
+        "wacc_penalty": 0.015
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K/A\n<div align='center'>(Amendment No.1)</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934.     \n For the fiscal year endedDecember 27, 2025                                                |\n|:--|:----|:------------------------------------------------------------------------------------------|\n|   |     | OR                                                                                        |\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934. |\n|   |     | For the transition period fromto                                                          |\n\n#### Commission File Number\n\n#### 001-07882\n\n#### ADVANCED MICRO DEVICES, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |    ...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 1.13,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "AMD is a fabless semiconductor company heavily reliant on TSMC (Taiwan Semiconductor Manufacturing Company) for leading-edge node manufacturing. TSMC acts as a critical upstream bottleneck with immense pricing power. Assuming TSMC gross margins of ~54% and AMD gross margins of ~48%, the power ratio is ~1.13. While below the 1.5 threshold, TSMC's monopoly on advanced nodes constitutes a critical structural bottleneck.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "Intel (x86 CPUs), Nvidia (AI/Data Center GPUs), ARM-based custom silicon (AWS Graviton, Apple M-series, Ampere)",
+        "pricing_power_assessment": "AMD exhibits strong pricing power and price leadership in the server CPU market (EPYC) due to sustained performance advantages over Intel, allowing for consistent ASP (Average Selling Price) expansion. However, in the AI accelerator/GPU market, AMD is a price taker/challenger relative to Nvidia's dominant CUDA ecosystem.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.005,
+        "analysis_summary": "AMD holds a robust strategic position within the semiconductor value chain, benefiting from a duopoly in x86 processors and acting as the primary alternative to Nvidia in AI GPUs. The company demonstrates strong pricing power in data center CPUs with high switching costs. However, strategic leverage is capped by its absolute dependence on TSMC for fabrication (upstream bottleneck) and emerging substitution risks from ARM-based custom silicon in cloud environments."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 7.0/10. Terminal Adj: 0.005",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T16:30:45.027829",
+    "agent": "StrategicContext",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for AMD.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 7.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Terminal Adj: 0.005",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "AMD",
+          "company_name": "Advanced Micro Devices, Inc.",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 567056859136,
+          "total_revenue": 34638999552,
+          "pe_ratio": 133.2567,
+          "forward_pe": 31.594515,
+          "beta": 1.963,
+          "price_to_book": 8.998706,
+          "earnings_growth": 2.171,
+          "revenue_growth": 0.341,
+          "profit_margins": 0.12515001,
+          "free_cashflow": 4587250176,
+          "target_price": 295.76086,
+          "current_price": 347.8,
+          "debt_to_equity": 6.359,
+          "return_on_equity": 0.07082
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":76860000.0,\"Tax Rate For Calcs\":0.21,\"Normalized EBITDA\":6909000000.0,\"Total Unusual Items\":366000000.0,\"Total Unusual Items Excluding Goodwill\":366000000.0,\"Net Income From Continuing Operation Net Minority Interest\":4269000000.0,\"Reconciled Depreciation\":3004000000.0,\"Reconciled Cost Of Revenue\":15706000000.0,\"EBITDA\":7275000000.0,\"EBIT\":4271000000.0,\"Net Interest Income\":84000000.0,\"Interest Expense\":131000000.0,\"Interest Income\":215000000.0,\"Normalized Income\":3979860000.0,\"Net Income From Continuing And Discontinued Operation\":4335000000.0,\"Total Expenses\":30945000000.0,\"Total Operating Income As Reported\":3694000000.0,\"Diluted Average Shares\":1636000000.0,\"Basic Average Shares\":1624000000.0,\"Diluted EPS\":2.65,\"Basic EPS\":2.67,\"Diluted NI Availto Com Stockholders\":4335000000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":4335000000.0,\"Net Income\":4335000000.0,\"Net Income Including Noncontrolling Interests\":433500...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":65000000.0,\"Ordinary Shares Number\":1630000000.0,\"Share Issued\":1695000000.0,\"Total Debt\":3847000000.0,\"Tangible Book Value\":21168000000.0,\"Invested Capital\":66221000000.0,\"Working Capital\":17492000000.0,\"Net Tangible Assets\":21168000000.0,\"Capital Lease Obligations\":625000000.0,\"Common Stock Equity\":62999000000.0,\"Total Capitalization\":65347000000.0,\"Total Equity Gross Minority Interest\":62999000000.0,\"Stockholders Equity\":62999000000.0,\"Gains Losses Not Affecting Retained Earnings\":-3000000.0,\"Other Equity Adjustments\":-3000000.0,\"Treasury Stock\":7079000000.0,\"Retained Earnings\":6699000000.0,\"Additional Paid In Capital\":63365000000.0,\"Capital Stock\":17000000.0,\"Common Stock\":17000000.0,\"Total Liabilities Net Minority Interest\":13927000000.0,\"Total Non Current Liabilities Net Minority Interest\":4472000000.0,\"Other Non Current Liabilities\":1186000000.0,\"Non Current Deferred Liabilities\":313000000.0,\"Non Current Deferred Taxes Liabilities\":3130...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":6735000000.0,\"Repurchase Of Capital Stock\":-1923000000.0,\"Repayment Of Debt\":-950000000.0,\"Issuance Of Debt\":2441000000.0,\"Capital Expenditure\":-974000000.0,\"Interest Paid Supplemental Data\":91000000.0,\"Income Tax Paid Supplemental Data\":884000000.0,\"End Cash Position\":5556000000.0,\"Beginning Cash Position\":3811000000.0,\"Changes In Cash\":1745000000.0,\"Financing Cash Flow\":-431000000.0,\"Cash Flow From Continuing Financing Activities\":-431000000.0,\"Net Other Financing Charges\":-284000000.0,\"Proceeds From Stock Option Exercised\":285000000.0,\"Net Common Stock Issuance\":-1923000000.0,\"Common Stock Payments\":-1923000000.0,\"Net Issuance Payments Of Debt\":1491000000.0,\"Net Short Term Debt Issuance\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":1491000000.0,\"Long Term Debt Payments\":-950000000.0,\"Long Term Debt Issuance\":2441000000.0,\"Investing Cash Flow\":-5533000000.0,\"Cash From Discontinued Investing Activities\":1318000000.0,\"Cash Flow F...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 7.5,
+        "operating_leverage_analysis": "AMD operates on a fabless semiconductor model. It incurs massive fixed costs in R&D for chip design, architecture, and IP development. Manufacturing is outsourced (primarily to TSMC), which introduces variable COGS. However, once the high fixed R&D and tape-out costs are covered, incremental sales of high-margin data center (EPYC) and AI (Instinct) chips drop straight to the bottom line, providing strong operating leverage.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 5.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "AMD's primary moat stems from its intangible assets, specifically its x86 instruction set architecture cross-licensing agreement with Intel, creating a functional duopoly in PC and server CPUs. The sheer complexity and R&D scale required to design cutting-edge CPUs and GPUs create massive barriers to entry. Switching costs are present in the data center due to server platform validation and software optimization, though AMD is still working to build stronger network effects for its ROCm software stack to compete with NVIDIA's CUDA.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Historically a budget alternative to Intel, AMD has successfully transitioned to a performance leader in the data center and premium PC markets. This performance leadership has allowed AMD to consistently raise Average Selling Prices (ASPs) and expand gross margins, demonstrating pricing power, particularly with its EPYC server processors.",
+        "growth_sustainability_boost": 0.01,
+        "concentration_risk": true,
+        "concentration_details": "AMD faces extreme supplier concentration risk. As a fabless designer, it relies almost exclusively on Taiwan Semiconductor Manufacturing Company (TSMC) for the fabrication of its advanced node chips (e.g., 5nm, 3nm). Any geopolitical conflict in Taiwan or operational disruption at TSMC would severely cripple AMD's supply chain.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 1.13,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "AMD is a fabless semiconductor company heavily reliant on TSMC (Taiwan Semiconductor Manufacturing Company) for leading-edge node manufacturing. TSMC acts as a critical upstream bottleneck with immense pricing power. Assuming TSMC gross margins of ~54% and AMD gross margins of ~48%, the power ratio is ~1.13. While below the 1.5 threshold, TSMC's monopoly on advanced nodes constitutes a critical structural bottleneck.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "Intel (x86 CPUs), Nvidia (AI/Data Center GPUs), ARM-based custom silicon (AWS Graviton, Apple M-series, Ampere)",
+        "pricing_power_assessment": "AMD exhibits strong pricing power and price leadership in the server CPU market (EPYC) due to sustained performance advantages over Intel, allowing for consistent ASP (Average Selling Price) expansion. However, in the AI accelerator/GPU market, AMD is a price taker/challenger relative to Nvidia's dominant CUDA ecosystem.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.005,
+        "analysis_summary": "AMD holds a robust strategic position within the semiconductor value chain, benefiting from a duopoly in x86 processors and acting as the primary alternative to Nvidia in AI GPUs. The company demonstrates strong pricing power in data center CPUs with high switching costs. However, strategic leverage is capped by its absolute dependence on TSMC for fabrication (upstream bottleneck) and emerging substitution risks from ARM-based custom silicon in cloud environments."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K/A\n<div align='center'>(Amendment No.1)</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934.     \n For the fiscal year endedDecember 27, 2025                                                |\n|:--|:----|:------------------------------------------------------------------------------------------|\n|   |     | OR                                                                                        |\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934. |\n|   |     | For the transition period fromto                                                          |\n\n#### Commission File Number\n\n#### 001-07882\n\n#### ADVANCED MICRO DEVICES, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |    ...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.68,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable. As a semiconductor company, deferred revenue is not the primary driver of growth quality compared to software peers.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified due to search errors. AMD relies on broad IP portfolios and cross-licensing agreements rather than single-asset exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "AMD is not at a cyclical peak with a revenue Z-Score of 1.68. Intangible decay risk is assessed as low, as the company relies on a broad patent portfolio and cross-licensing rather than single-asset exclusivity. No terminal haircut is required."
+      },
+      "messages": [
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T16:30:45.407284",
+    "agent": "ValuationNode",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for AMD.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 7.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Terminal Adj: 0.005",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: No DB data for AMD",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: No DB data for AMD",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "AMD",
+          "company_name": "Advanced Micro Devices, Inc.",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 567056859136,
+          "total_revenue": 34638999552,
+          "pe_ratio": 133.2567,
+          "forward_pe": 31.594515,
+          "beta": 1.963,
+          "price_to_book": 8.998706,
+          "earnings_growth": 2.171,
+          "revenue_growth": 0.341,
+          "profit_margins": 0.12515001,
+          "free_cashflow": 4587250176,
+          "target_price": 295.76086,
+          "current_price": 347.8,
+          "debt_to_equity": 6.359,
+          "return_on_equity": 0.07082
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":76860000.0,\"Tax Rate For Calcs\":0.21,\"Normalized EBITDA\":6909000000.0,\"Total Unusual Items\":366000000.0,\"Total Unusual Items Excluding Goodwill\":366000000.0,\"Net Income From Continuing Operation Net Minority Interest\":4269000000.0,\"Reconciled Depreciation\":3004000000.0,\"Reconciled Cost Of Revenue\":15706000000.0,\"EBITDA\":7275000000.0,\"EBIT\":4271000000.0,\"Net Interest Income\":84000000.0,\"Interest Expense\":131000000.0,\"Interest Income\":215000000.0,\"Normalized Income\":3979860000.0,\"Net Income From Continuing And Discontinued Operation\":4335000000.0,\"Total Expenses\":30945000000.0,\"Total Operating Income As Reported\":3694000000.0,\"Diluted Average Shares\":1636000000.0,\"Basic Average Shares\":1624000000.0,\"Diluted EPS\":2.65,\"Basic EPS\":2.67,\"Diluted NI Availto Com Stockholders\":4335000000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":4335000000.0,\"Net Income\":4335000000.0,\"Net Income Including Noncontrolling Interests\":433500...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":65000000.0,\"Ordinary Shares Number\":1630000000.0,\"Share Issued\":1695000000.0,\"Total Debt\":3847000000.0,\"Tangible Book Value\":21168000000.0,\"Invested Capital\":66221000000.0,\"Working Capital\":17492000000.0,\"Net Tangible Assets\":21168000000.0,\"Capital Lease Obligations\":625000000.0,\"Common Stock Equity\":62999000000.0,\"Total Capitalization\":65347000000.0,\"Total Equity Gross Minority Interest\":62999000000.0,\"Stockholders Equity\":62999000000.0,\"Gains Losses Not Affecting Retained Earnings\":-3000000.0,\"Other Equity Adjustments\":-3000000.0,\"Treasury Stock\":7079000000.0,\"Retained Earnings\":6699000000.0,\"Additional Paid In Capital\":63365000000.0,\"Capital Stock\":17000000.0,\"Common Stock\":17000000.0,\"Total Liabilities Net Minority Interest\":13927000000.0,\"Total Non Current Liabilities Net Minority Interest\":4472000000.0,\"Other Non Current Liabilities\":1186000000.0,\"Non Current Deferred Liabilities\":313000000.0,\"Non Current Deferred Taxes Liabilities\":3130...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":6735000000.0,\"Repurchase Of Capital Stock\":-1923000000.0,\"Repayment Of Debt\":-950000000.0,\"Issuance Of Debt\":2441000000.0,\"Capital Expenditure\":-974000000.0,\"Interest Paid Supplemental Data\":91000000.0,\"Income Tax Paid Supplemental Data\":884000000.0,\"End Cash Position\":5556000000.0,\"Beginning Cash Position\":3811000000.0,\"Changes In Cash\":1745000000.0,\"Financing Cash Flow\":-431000000.0,\"Cash Flow From Continuing Financing Activities\":-431000000.0,\"Net Other Financing Charges\":-284000000.0,\"Proceeds From Stock Option Exercised\":285000000.0,\"Net Common Stock Issuance\":-1923000000.0,\"Common Stock Payments\":-1923000000.0,\"Net Issuance Payments Of Debt\":1491000000.0,\"Net Short Term Debt Issuance\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":1491000000.0,\"Long Term Debt Payments\":-950000000.0,\"Long Term Debt Issuance\":2441000000.0,\"Investing Cash Flow\":-5533000000.0,\"Cash From Discontinued Investing Activities\":1318000000.0,\"Cash Flow F...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 7.5,
+        "operating_leverage_analysis": "AMD operates on a fabless semiconductor model. It incurs massive fixed costs in R&D for chip design, architecture, and IP development. Manufacturing is outsourced (primarily to TSMC), which introduces variable COGS. However, once the high fixed R&D and tape-out costs are covered, incremental sales of high-margin data center (EPYC) and AI (Instinct) chips drop straight to the bottom line, providing strong operating leverage.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 5.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "AMD's primary moat stems from its intangible assets, specifically its x86 instruction set architecture cross-licensing agreement with Intel, creating a functional duopoly in PC and server CPUs. The sheer complexity and R&D scale required to design cutting-edge CPUs and GPUs create massive barriers to entry. Switching costs are present in the data center due to server platform validation and software optimization, though AMD is still working to build stronger network effects for its ROCm software stack to compete with NVIDIA's CUDA.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Historically a budget alternative to Intel, AMD has successfully transitioned to a performance leader in the data center and premium PC markets. This performance leadership has allowed AMD to consistently raise Average Selling Prices (ASPs) and expand gross margins, demonstrating pricing power, particularly with its EPYC server processors.",
+        "growth_sustainability_boost": 0.01,
+        "concentration_risk": true,
+        "concentration_details": "AMD faces extreme supplier concentration risk. As a fabless designer, it relies almost exclusively on Taiwan Semiconductor Manufacturing Company (TSMC) for the fabrication of its advanced node chips (e.g., 5nm, 3nm). Any geopolitical conflict in Taiwan or operational disruption at TSMC would severely cripple AMD's supply chain.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 1.13,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "AMD is a fabless semiconductor company heavily reliant on TSMC (Taiwan Semiconductor Manufacturing Company) for leading-edge node manufacturing. TSMC acts as a critical upstream bottleneck with immense pricing power. Assuming TSMC gross margins of ~54% and AMD gross margins of ~48%, the power ratio is ~1.13. While below the 1.5 threshold, TSMC's monopoly on advanced nodes constitutes a critical structural bottleneck.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "Intel (x86 CPUs), Nvidia (AI/Data Center GPUs), ARM-based custom silicon (AWS Graviton, Apple M-series, Ampere)",
+        "pricing_power_assessment": "AMD exhibits strong pricing power and price leadership in the server CPU market (EPYC) due to sustained performance advantages over Intel, allowing for consistent ASP (Average Selling Price) expansion. However, in the AI accelerator/GPU market, AMD is a price taker/challenger relative to Nvidia's dominant CUDA ecosystem.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.005,
+        "analysis_summary": "AMD holds a robust strategic position within the semiconductor value chain, benefiting from a duopoly in x86 processors and acting as the primary alternative to Nvidia in AI GPUs. The company demonstrates strong pricing power in data center CPUs with high switching costs. However, strategic leverage is capped by its absolute dependence on TSMC for fabrication (upstream bottleneck) and emerging substitution risks from ARM-based custom silicon in cloud environments."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.68,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable. As a semiconductor company, deferred revenue is not the primary driver of growth quality compared to software peers.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified due to search errors. AMD relies on broad IP portfolios and cross-licensing agreements rather than single-asset exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "AMD is not at a cyclical peak with a revenue Z-Score of 1.68. Intangible decay risk is assessed as low, as the company relies on a broad patent portfolio and cross-licensing rather than single-asset exclusivity. No terminal haircut is required."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K/A\n<div align='center'>(Amendment No.1)</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934.     \n For the fiscal year endedDecember 27, 2025                                                |\n|:--|:----|:------------------------------------------------------------------------------------------|\n|   |     | OR                                                                                        |\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934. |\n|   |     | For the transition period fromto                                                          |\n\n#### Commission File Number\n\n#### 001-07882\n\n#### ADVANCED MICRO DEVICES, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |    ...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "run_date": "2026-04-26T20:30:45.088300",
+          "current_price": 0.0,
+          "shares_diluted": 0.0,
+          "market_cap": 0.0,
+          "risk_free_rate": 0.0,
+          "beta": 1.0,
+          "wacc_base": 0.0,
+          "revenue": 0.0,
+          "ebitda": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "roic": 0.0,
+          "fcf": 0.0,
+          "net_debt": 0.0
+        },
+        "reverse_dcf": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "current_price": 0.0,
+          "current_ev": 0.0,
+          "current_ev_ebitda": 0.0,
+          "wacc": 0.0,
+          "ebit_margin": 0.0,
+          "implied_cagr_10y": 0.0,
+          "implied_cagr_5y": 0.0,
+          "historical_cagr_5y": 0.0,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 0.0,
+          "forward_ev_ebitda_justified": 0.0,
+          "signal": "neutral"
+        },
+        "implied_cagr": 0.0,
+        "historical_cagr": 0.0,
+        "reverse_dcf_signal": "neutral",
+        "reverse_dcf_reasons": [],
+        "multiples": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "market_ev_ebitda": 0.0,
+          "market_ev_ebit": 0.0,
+          "market_p_sales": 0.0,
+          "market_p_e": 0.0,
+          "market_peg": 0.0,
+          "justified_ev_ebitda": 0.0,
+          "justified_ev_ebit": 0.0,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 0.0,
+          "ev_ebitda_premium_pct": 0.0,
+          "sector_median_ev_ebitda": 0.0,
+          "vs_sector_premium": 0.0,
+          "roic": 0.0,
+          "wacc": 0.0,
+          "roic_wacc_spread": 0.0,
+          "value_creation": "",
+          "cash_conversion_ratio": 0.0,
+          "growth_rate": 0.0,
+          "signal": "neutral"
+        },
+        "ev_ebitda_market": 0.0,
+        "ev_ebitda_justified": 0.0,
+        "ev_ebitda_premium_pct": 0.0,
+        "multiple_signal": "neutral",
+        "roic_wacc_spread": 0.0,
+        "multiple_decomposition": {
+          "roic": 0.0,
+          "wacc": null
+        },
+        "value_creation": "",
+        "summary": "=== Phase 2 Valuation: AMD ===\nImplied CAGR    : 0.0%  (hist: 0.0%)  [neutral]\nErrors: No data in database for AMD",
+        "errors": [
+          "No data in database for AMD"
+        ]
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: AMD complete. Base IV=$0/share MoS=+0.0% ImpliedCAGR=0.0% Multiple=neutral",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T16:31:03.253380",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for AMD.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 7.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Terminal Adj: 0.005",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: No DB data for AMD",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: No DB data for AMD",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: AMD complete. Base IV=$0/share MoS=+0.0% ImpliedCAGR=0.0% Multiple=neutral",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "AMD",
+          "company_name": "Advanced Micro Devices, Inc.",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 567056859136,
+          "total_revenue": 34638999552,
+          "pe_ratio": 133.2567,
+          "forward_pe": 31.594515,
+          "beta": 1.963,
+          "price_to_book": 8.998706,
+          "earnings_growth": 2.171,
+          "revenue_growth": 0.341,
+          "profit_margins": 0.12515001,
+          "free_cashflow": 4587250176,
+          "target_price": 295.76086,
+          "current_price": 347.8,
+          "debt_to_equity": 6.359,
+          "return_on_equity": 0.07082
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":76860000.0,\"Tax Rate For Calcs\":0.21,\"Normalized EBITDA\":6909000000.0,\"Total Unusual Items\":366000000.0,\"Total Unusual Items Excluding Goodwill\":366000000.0,\"Net Income From Continuing Operation Net Minority Interest\":4269000000.0,\"Reconciled Depreciation\":3004000000.0,\"Reconciled Cost Of Revenue\":15706000000.0,\"EBITDA\":7275000000.0,\"EBIT\":4271000000.0,\"Net Interest Income\":84000000.0,\"Interest Expense\":131000000.0,\"Interest Income\":215000000.0,\"Normalized Income\":3979860000.0,\"Net Income From Continuing And Discontinued Operation\":4335000000.0,\"Total Expenses\":30945000000.0,\"Total Operating Income As Reported\":3694000000.0,\"Diluted Average Shares\":1636000000.0,\"Basic Average Shares\":1624000000.0,\"Diluted EPS\":2.65,\"Basic EPS\":2.67,\"Diluted NI Availto Com Stockholders\":4335000000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":4335000000.0,\"Net Income\":4335000000.0,\"Net Income Including Noncontrolling Interests\":433500...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":65000000.0,\"Ordinary Shares Number\":1630000000.0,\"Share Issued\":1695000000.0,\"Total Debt\":3847000000.0,\"Tangible Book Value\":21168000000.0,\"Invested Capital\":66221000000.0,\"Working Capital\":17492000000.0,\"Net Tangible Assets\":21168000000.0,\"Capital Lease Obligations\":625000000.0,\"Common Stock Equity\":62999000000.0,\"Total Capitalization\":65347000000.0,\"Total Equity Gross Minority Interest\":62999000000.0,\"Stockholders Equity\":62999000000.0,\"Gains Losses Not Affecting Retained Earnings\":-3000000.0,\"Other Equity Adjustments\":-3000000.0,\"Treasury Stock\":7079000000.0,\"Retained Earnings\":6699000000.0,\"Additional Paid In Capital\":63365000000.0,\"Capital Stock\":17000000.0,\"Common Stock\":17000000.0,\"Total Liabilities Net Minority Interest\":13927000000.0,\"Total Non Current Liabilities Net Minority Interest\":4472000000.0,\"Other Non Current Liabilities\":1186000000.0,\"Non Current Deferred Liabilities\":313000000.0,\"Non Current Deferred Taxes Liabilities\":3130...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":6735000000.0,\"Repurchase Of Capital Stock\":-1923000000.0,\"Repayment Of Debt\":-950000000.0,\"Issuance Of Debt\":2441000000.0,\"Capital Expenditure\":-974000000.0,\"Interest Paid Supplemental Data\":91000000.0,\"Income Tax Paid Supplemental Data\":884000000.0,\"End Cash Position\":5556000000.0,\"Beginning Cash Position\":3811000000.0,\"Changes In Cash\":1745000000.0,\"Financing Cash Flow\":-431000000.0,\"Cash Flow From Continuing Financing Activities\":-431000000.0,\"Net Other Financing Charges\":-284000000.0,\"Proceeds From Stock Option Exercised\":285000000.0,\"Net Common Stock Issuance\":-1923000000.0,\"Common Stock Payments\":-1923000000.0,\"Net Issuance Payments Of Debt\":1491000000.0,\"Net Short Term Debt Issuance\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":1491000000.0,\"Long Term Debt Payments\":-950000000.0,\"Long Term Debt Issuance\":2441000000.0,\"Investing Cash Flow\":-5533000000.0,\"Cash From Discontinued Investing Activities\":1318000000.0,\"Cash Flow F...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "run_date": "2026-04-26T20:30:45.088300",
+          "current_price": 0.0,
+          "shares_diluted": 0.0,
+          "market_cap": 0.0,
+          "risk_free_rate": 0.0,
+          "beta": 1.0,
+          "wacc_base": 0.0,
+          "revenue": 0.0,
+          "ebitda": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "roic": 0.0,
+          "fcf": 0.0,
+          "net_debt": 0.0
+        },
+        "reverse_dcf": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "current_price": 0.0,
+          "current_ev": 0.0,
+          "current_ev_ebitda": 0.0,
+          "wacc": 0.0,
+          "ebit_margin": 0.0,
+          "implied_cagr_10y": 0.0,
+          "implied_cagr_5y": 0.0,
+          "historical_cagr_5y": 0.0,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 0.0,
+          "forward_ev_ebitda_justified": 0.0,
+          "signal": "neutral"
+        },
+        "implied_cagr": 0.0,
+        "historical_cagr": 0.0,
+        "reverse_dcf_signal": "neutral",
+        "reverse_dcf_reasons": [],
+        "multiples": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "market_ev_ebitda": 0.0,
+          "market_ev_ebit": 0.0,
+          "market_p_sales": 0.0,
+          "market_p_e": 0.0,
+          "market_peg": 0.0,
+          "justified_ev_ebitda": 0.0,
+          "justified_ev_ebit": 0.0,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 0.0,
+          "ev_ebitda_premium_pct": 0.0,
+          "sector_median_ev_ebitda": 0.0,
+          "vs_sector_premium": 0.0,
+          "roic": 0.0,
+          "wacc": 0.0,
+          "roic_wacc_spread": 0.0,
+          "value_creation": "",
+          "cash_conversion_ratio": 0.0,
+          "growth_rate": 0.0,
+          "signal": "neutral"
+        },
+        "ev_ebitda_market": 0.0,
+        "ev_ebitda_justified": 0.0,
+        "ev_ebitda_premium_pct": 0.0,
+        "multiple_signal": "neutral",
+        "roic_wacc_spread": 0.0,
+        "multiple_decomposition": {
+          "roic": 0.0,
+          "wacc": null
+        },
+        "value_creation": "",
+        "summary": "=== Phase 2 Valuation: AMD ===\nImplied CAGR    : 0.0%  (hist: 0.0%)  [neutral]\nErrors: No data in database for AMD",
+        "errors": [
+          "No data in database for AMD"
+        ]
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 7.5,
+        "operating_leverage_analysis": "AMD operates on a fabless semiconductor model. It incurs massive fixed costs in R&D for chip design, architecture, and IP development. Manufacturing is outsourced (primarily to TSMC), which introduces variable COGS. However, once the high fixed R&D and tape-out costs are covered, incremental sales of high-margin data center (EPYC) and AI (Instinct) chips drop straight to the bottom line, providing strong operating leverage.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 5.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "AMD's primary moat stems from its intangible assets, specifically its x86 instruction set architecture cross-licensing agreement with Intel, creating a functional duopoly in PC and server CPUs. The sheer complexity and R&D scale required to design cutting-edge CPUs and GPUs create massive barriers to entry. Switching costs are present in the data center due to server platform validation and software optimization, though AMD is still working to build stronger network effects for its ROCm software stack to compete with NVIDIA's CUDA.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Historically a budget alternative to Intel, AMD has successfully transitioned to a performance leader in the data center and premium PC markets. This performance leadership has allowed AMD to consistently raise Average Selling Prices (ASPs) and expand gross margins, demonstrating pricing power, particularly with its EPYC server processors.",
+        "growth_sustainability_boost": 0.01,
+        "concentration_risk": true,
+        "concentration_details": "AMD faces extreme supplier concentration risk. As a fabless designer, it relies almost exclusively on Taiwan Semiconductor Manufacturing Company (TSMC) for the fabrication of its advanced node chips (e.g., 5nm, 3nm). Any geopolitical conflict in Taiwan or operational disruption at TSMC would severely cripple AMD's supply chain.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 1.13,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "AMD is a fabless semiconductor company heavily reliant on TSMC (Taiwan Semiconductor Manufacturing Company) for leading-edge node manufacturing. TSMC acts as a critical upstream bottleneck with immense pricing power. Assuming TSMC gross margins of ~54% and AMD gross margins of ~48%, the power ratio is ~1.13. While below the 1.5 threshold, TSMC's monopoly on advanced nodes constitutes a critical structural bottleneck.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "Intel (x86 CPUs), Nvidia (AI/Data Center GPUs), ARM-based custom silicon (AWS Graviton, Apple M-series, Ampere)",
+        "pricing_power_assessment": "AMD exhibits strong pricing power and price leadership in the server CPU market (EPYC) due to sustained performance advantages over Intel, allowing for consistent ASP (Average Selling Price) expansion. However, in the AI accelerator/GPU market, AMD is a price taker/challenger relative to Nvidia's dominant CUDA ecosystem.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.005,
+        "analysis_summary": "AMD holds a robust strategic position within the semiconductor value chain, benefiting from a duopoly in x86 processors and acting as the primary alternative to Nvidia in AI GPUs. The company demonstrates strong pricing power in data center CPUs with high switching costs. However, strategic leverage is capped by its absolute dependence on TSMC for fabrication (upstream bottleneck) and emerging substitution risks from ARM-based custom silicon in cloud environments."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.68,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable. As a semiconductor company, deferred revenue is not the primary driver of growth quality compared to software peers.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified due to search errors. AMD relies on broad IP portfolios and cross-licensing agreements rather than single-asset exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "AMD is not at a cyclical peak with a revenue Z-Score of 1.68. Intangible decay risk is assessed as low, as the company relies on a broad patent portfolio and cross-licensing rather than single-asset exclusivity. No terminal haircut is required."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K/A\n<div align='center'>(Amendment No.1)</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934.     \n For the fiscal year endedDecember 27, 2025                                                |\n|:--|:----|:------------------------------------------------------------------------------------------|\n|   |     | OR                                                                                        |\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934. |\n|   |     | For the transition period fromto                                                          |\n\n#### Commission File Number\n\n#### 001-07882\n\n#### ADVANCED MICRO DEVICES, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |    ...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $0.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 0.0%\n  \u2022 Company's robust historical CAGR: 0.0%\n  \u2022 Ratio (implied / historical): 0.0x\n  \u2022 Reverse DCF signal: NEUTRAL\n\n  Reverse DCF assessment:\n  \n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 0.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 0.0x\n  \u2022 Premium to justified multiple: +0%\n  \u2022 Multiple signal: NEUTRAL\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $0.00\n  \u2022 Downside in bear case: +0.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Fallacy",
+          "bear_case_summary": "The quantitative models currently return degenerate values (implied CAGR of 0.0%, EV/EBITDA of 0.0x, and a bear case DCF of $0/share), indicating a complete lack of fundamental visibility or a systemic data failure. In this vacuum of empirical support, any bullish thesis relies entirely on narrative rather than math. Qualitatively, the structural bear case for AMD remains potent: Nvidia's entrenched CUDA ecosystem creates a near-insurmountable moat in AI training, while hyperscalers (AWS, Google, Microsoft) are increasingly pivoting to custom in-house silicon, threatening AMD's AI accelerator total addressable market. Furthermore, the legacy x86 server and PC markets face secular pressure from ARM architecture. Without a verifiable margin of safety or justified multiples, the stock is highly vulnerable to multiple compression if AI revenue growth decelerates.",
+          "sentiment_score": -5
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian: Narrative Fallacy. Score: -5/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T16:31:12.693919",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/AMD_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-26T16:31:12.694441",
+    "agent": "Lead",
+    "trace_id": "trace_AMD_1777235401",
+    "inputs": {
+      "ticker": "AMD",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for AMD.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 7.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Terminal Adj: 0.005",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: No DB data for AMD",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: No DB data for AMD",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: AMD complete. Base IV=$0/share MoS=+0.0% ImpliedCAGR=0.0% Multiple=neutral",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian: Narrative Fallacy. Score: -5/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "AMD",
+          "company_name": "Advanced Micro Devices, Inc.",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 567056859136,
+          "total_revenue": 34638999552,
+          "pe_ratio": 133.2567,
+          "forward_pe": 31.594515,
+          "beta": 1.963,
+          "price_to_book": 8.998706,
+          "earnings_growth": 2.171,
+          "revenue_growth": 0.341,
+          "profit_margins": 0.12515001,
+          "free_cashflow": 4587250176,
+          "target_price": 295.76086,
+          "current_price": 347.8,
+          "debt_to_equity": 6.359,
+          "return_on_equity": 0.07082
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":76860000.0,\"Tax Rate For Calcs\":0.21,\"Normalized EBITDA\":6909000000.0,\"Total Unusual Items\":366000000.0,\"Total Unusual Items Excluding Goodwill\":366000000.0,\"Net Income From Continuing Operation Net Minority Interest\":4269000000.0,\"Reconciled Depreciation\":3004000000.0,\"Reconciled Cost Of Revenue\":15706000000.0,\"EBITDA\":7275000000.0,\"EBIT\":4271000000.0,\"Net Interest Income\":84000000.0,\"Interest Expense\":131000000.0,\"Interest Income\":215000000.0,\"Normalized Income\":3979860000.0,\"Net Income From Continuing And Discontinued Operation\":4335000000.0,\"Total Expenses\":30945000000.0,\"Total Operating Income As Reported\":3694000000.0,\"Diluted Average Shares\":1636000000.0,\"Basic Average Shares\":1624000000.0,\"Diluted EPS\":2.65,\"Basic EPS\":2.67,\"Diluted NI Availto Com Stockholders\":4335000000.0,\"Average Dilution Earnings\":null,\"Net Income Common Stockholders\":4335000000.0,\"Net Income\":4335000000.0,\"Net Income Including Noncontrolling Interests\":433500...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":65000000.0,\"Ordinary Shares Number\":1630000000.0,\"Share Issued\":1695000000.0,\"Total Debt\":3847000000.0,\"Tangible Book Value\":21168000000.0,\"Invested Capital\":66221000000.0,\"Working Capital\":17492000000.0,\"Net Tangible Assets\":21168000000.0,\"Capital Lease Obligations\":625000000.0,\"Common Stock Equity\":62999000000.0,\"Total Capitalization\":65347000000.0,\"Total Equity Gross Minority Interest\":62999000000.0,\"Stockholders Equity\":62999000000.0,\"Gains Losses Not Affecting Retained Earnings\":-3000000.0,\"Other Equity Adjustments\":-3000000.0,\"Treasury Stock\":7079000000.0,\"Retained Earnings\":6699000000.0,\"Additional Paid In Capital\":63365000000.0,\"Capital Stock\":17000000.0,\"Common Stock\":17000000.0,\"Total Liabilities Net Minority Interest\":13927000000.0,\"Total Non Current Liabilities Net Minority Interest\":4472000000.0,\"Other Non Current Liabilities\":1186000000.0,\"Non Current Deferred Liabilities\":313000000.0,\"Non Current Deferred Taxes Liabilities\":3130...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":6735000000.0,\"Repurchase Of Capital Stock\":-1923000000.0,\"Repayment Of Debt\":-950000000.0,\"Issuance Of Debt\":2441000000.0,\"Capital Expenditure\":-974000000.0,\"Interest Paid Supplemental Data\":91000000.0,\"Income Tax Paid Supplemental Data\":884000000.0,\"End Cash Position\":5556000000.0,\"Beginning Cash Position\":3811000000.0,\"Changes In Cash\":1745000000.0,\"Financing Cash Flow\":-431000000.0,\"Cash Flow From Continuing Financing Activities\":-431000000.0,\"Net Other Financing Charges\":-284000000.0,\"Proceeds From Stock Option Exercised\":285000000.0,\"Net Common Stock Issuance\":-1923000000.0,\"Common Stock Payments\":-1923000000.0,\"Net Issuance Payments Of Debt\":1491000000.0,\"Net Short Term Debt Issuance\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":1491000000.0,\"Long Term Debt Payments\":-950000000.0,\"Long Term Debt Issuance\":2441000000.0,\"Investing Cash Flow\":-5533000000.0,\"Cash From Discontinued Investing Activities\":1318000000.0,\"Cash Flow F...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "run_date": "2026-04-26T20:30:45.088300",
+          "current_price": 0.0,
+          "shares_diluted": 0.0,
+          "market_cap": 0.0,
+          "risk_free_rate": 0.0,
+          "beta": 1.0,
+          "wacc_base": 0.0,
+          "revenue": 0.0,
+          "ebitda": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "roic": 0.0,
+          "fcf": 0.0,
+          "net_debt": 0.0
+        },
+        "reverse_dcf": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "current_price": 0.0,
+          "current_ev": 0.0,
+          "current_ev_ebitda": 0.0,
+          "wacc": 0.0,
+          "ebit_margin": 0.0,
+          "implied_cagr_10y": 0.0,
+          "implied_cagr_5y": 0.0,
+          "historical_cagr_5y": 0.0,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 0.0,
+          "forward_ev_ebitda_justified": 0.0,
+          "signal": "neutral"
+        },
+        "implied_cagr": 0.0,
+        "historical_cagr": 0.0,
+        "reverse_dcf_signal": "neutral",
+        "reverse_dcf_reasons": [],
+        "multiples": {
+          "ticker": "AMD",
+          "fiscal_year": 0,
+          "market_ev_ebitda": 0.0,
+          "market_ev_ebit": 0.0,
+          "market_p_sales": 0.0,
+          "market_p_e": 0.0,
+          "market_peg": 0.0,
+          "justified_ev_ebitda": 0.0,
+          "justified_ev_ebit": 0.0,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 0.0,
+          "ev_ebitda_premium_pct": 0.0,
+          "sector_median_ev_ebitda": 0.0,
+          "vs_sector_premium": 0.0,
+          "roic": 0.0,
+          "wacc": 0.0,
+          "roic_wacc_spread": 0.0,
+          "value_creation": "",
+          "cash_conversion_ratio": 0.0,
+          "growth_rate": 0.0,
+          "signal": "neutral"
+        },
+        "ev_ebitda_market": 0.0,
+        "ev_ebitda_justified": 0.0,
+        "ev_ebitda_premium_pct": 0.0,
+        "multiple_signal": "neutral",
+        "roic_wacc_spread": 0.0,
+        "multiple_decomposition": {
+          "roic": 0.0,
+          "wacc": null
+        },
+        "value_creation": "",
+        "summary": "=== Phase 2 Valuation: AMD ===\nImplied CAGR    : 0.0%  (hist: 0.0%)  [neutral]\nErrors: No data in database for AMD",
+        "errors": [
+          "No data in database for AMD"
+        ]
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $0.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 0.0%\n  \u2022 Company's robust historical CAGR: 0.0%\n  \u2022 Ratio (implied / historical): 0.0x\n  \u2022 Reverse DCF signal: NEUTRAL\n\n  Reverse DCF assessment:\n  \n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 0.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 0.0x\n  \u2022 Premium to justified multiple: +0%\n  \u2022 Multiple signal: NEUTRAL\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $0.00\n  \u2022 Downside in bear case: +0.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Fallacy",
+          "bear_case_summary": "The quantitative models currently return degenerate values (implied CAGR of 0.0%, EV/EBITDA of 0.0x, and a bear case DCF of $0/share), indicating a complete lack of fundamental visibility or a systemic data failure. In this vacuum of empirical support, any bullish thesis relies entirely on narrative rather than math. Qualitatively, the structural bear case for AMD remains potent: Nvidia's entrenched CUDA ecosystem creates a near-insurmountable moat in AI training, while hyperscalers (AWS, Google, Microsoft) are increasingly pivoting to custom in-house silicon, threatening AMD's AI accelerator total addressable market. Furthermore, the legacy x86 server and PC markets face secular pressure from ARM architecture. Without a verifiable margin of safety or justified multiples, the stock is highly vulnerable to multiple compression if AI revenue growth decelerates.",
+          "sentiment_score": -5
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_score": 7.5,
+        "operating_leverage_analysis": "AMD operates on a fabless semiconductor model. It incurs massive fixed costs in R&D for chip design, architecture, and IP development. Manufacturing is outsourced (primarily to TSMC), which introduces variable COGS. However, once the high fixed R&D and tape-out costs are covered, incremental sales of high-margin data center (EPYC) and AI (Instinct) chips drop straight to the bottom line, providing strong operating leverage.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 4.0,
+          "cost_advantage": 5.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "AMD's primary moat stems from its intangible assets, specifically its x86 instruction set architecture cross-licensing agreement with Intel, creating a functional duopoly in PC and server CPUs. The sheer complexity and R&D scale required to design cutting-edge CPUs and GPUs create massive barriers to entry. Switching costs are present in the data center due to server platform validation and software optimization, though AMD is still working to build stronger network effects for its ROCm software stack to compete with NVIDIA's CUDA.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Historically a budget alternative to Intel, AMD has successfully transitioned to a performance leader in the data center and premium PC markets. This performance leadership has allowed AMD to consistently raise Average Selling Prices (ASPs) and expand gross margins, demonstrating pricing power, particularly with its EPYC server processors.",
+        "growth_sustainability_boost": 0.01,
+        "concentration_risk": true,
+        "concentration_details": "AMD faces extreme supplier concentration risk. As a fabless designer, it relies almost exclusively on Taiwan Semiconductor Manufacturing Company (TSMC) for the fabrication of its advanced node chips (e.g., 5nm, 3nm). Any geopolitical conflict in Taiwan or operational disruption at TSMC would severely cripple AMD's supply chain.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 1.13,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "AMD is a fabless semiconductor company heavily reliant on TSMC (Taiwan Semiconductor Manufacturing Company) for leading-edge node manufacturing. TSMC acts as a critical upstream bottleneck with immense pricing power. Assuming TSMC gross margins of ~54% and AMD gross margins of ~48%, the power ratio is ~1.13. While below the 1.5 threshold, TSMC's monopoly on advanced nodes constitutes a critical structural bottleneck.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "Intel (x86 CPUs), Nvidia (AI/Data Center GPUs), ARM-based custom silicon (AWS Graviton, Apple M-series, Ampere)",
+        "pricing_power_assessment": "AMD exhibits strong pricing power and price leadership in the server CPU market (EPYC) due to sustained performance advantages over Intel, allowing for consistent ASP (Average Selling Price) expansion. However, in the AI accelerator/GPU market, AMD is a price taker/challenger relative to Nvidia's dominant CUDA ecosystem.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.005,
+        "analysis_summary": "AMD holds a robust strategic position within the semiconductor value chain, benefiting from a duopoly in x86 processors and acting as the primary alternative to Nvidia in AI GPUs. The company demonstrates strong pricing power in data center CPUs with high switching costs. However, strategic leverage is capped by its absolute dependence on TSMC for fabrication (upstream bottleneck) and emerging substitution risks from ARM-based custom silicon in cloud environments."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.68,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable. As a semiconductor company, deferred revenue is not the primary driver of growth quality compared to software peers.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified due to search errors. AMD relies on broad IP portfolios and cross-licensing agreements rather than single-asset exclusivity.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "AMD is not at a cyclical peak with a revenue Z-Score of 1.68. Intangible decay risk is assessed as low, as the company relies on a broad patent portfolio and cross-licensing rather than single-asset exclusivity. No terminal haircut is required."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K/A\n<div align='center'>(Amendment No.1)</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934.     \n For the fiscal year endedDecember 27, 2025                                                |\n|:--|:----|:------------------------------------------------------------------------------------------|\n|   |     | OR                                                                                        |\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934. |\n|   |     | For the transition period fromto                                                          |\n\n#### Commission File Number\n\n#### 001-07882\n\n#### ADVANCED MICRO DEVICES, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |    ...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "AMD",
+        "generated_at": "2026-04-26T16:31:12.693557",
+        "1_economic_reality": {
+          "business_model": {
+            "revenue_drivers": "Defined by Forensic/Intake",
+            "cost_structure": "Operating Leverage Score: 7.5/10"
+          },
+          "value_chain": {
+            "power_ratio": 1.13,
+            "upstream_leak": true,
+            "strategic_leverage": 7.0
+          },
+          "moat": {
+            "score": 7.5,
+            "switching_costs": 7.0,
+            "network_effects": 4.0
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.68,
+            "is_peak": false
+          }
+        },
+        "2_financial_translation": {
+          "error": "No DB data for AMD"
+        },
+        "3_capital_structure_risk": {},
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": null,
+            "upside_percent": 0,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              },
+              "base": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              },
+              "bull": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.0,
+              "historical_cagr": 0.0,
+              "signal": "neutral",
+              "reasons": []
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 0.0,
+              "justified_ev_ebitda": 0.0,
+              "premium_pct": 0.0,
+              "signal": "neutral",
+              "roic_wacc_spread": 0.0,
+              "value_creation": ""
+            },
+            "wacc": 0.0,
+            "beta": 1.0,
+            "risk_free_rate": 0.0
+          },
+          "investment_thesis": {
+            "conviction_score": -5,
+            "margin_of_safety": null,
+            "narrative": "AMD exhibits a solid moat (7.5) with strong operating leverage (7.5/10) and strategic leverage (7.0). However, the presence of upstream leakage and moderate network effects (4.0) suggests growth may face structural headwinds over the long term despite current non-peak cyclicality (Z-score 1.68). Growth sustainability is robust but constrained by supply chain dependencies.\n\nWhile the contrarian may argue that upstream leakage and cyclical risks threaten AMD's margin expansion, the company's strong switching costs (7.0) and favorable power ratio (1.13) provide sufficient pricing power to offset these pressures. The current valuation perfectly reflects this balanced risk-reward profile, resulting in a 0.0% margin of safety.",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Multiple premium +0% within acceptable range."
+            ],
+            "pillar_scores": {
+              "ticker": "AMD",
+              "p1_moat": 3,
+              "p2_health": 1,
+              "p3_tailwind": 1,
+              "p4_mos": 1,
+              "p5_leadership": 4,
+              "raw_total": 10,
+              "capped_total": 10,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "pass",
+              "position_size_pct": "Below minimum analytical threshold",
+              "conviction_score": -5,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 7.5/10 \u2014 Moderate moat \u2014 single power confirmed with evidence"
+              ],
+              "p2_reasons": [],
+              "p3_reasons": [
+                "Revenue CAGR 0.0% \u2014 stagnant or declining",
+                "Cyclicality Z-score 1.7 \u2014 elevated, applying penalty"
+              ],
+              "p4_reasons": [
+                "Margin of safety unavailable \u2014 defaulting to 1"
+              ],
+              "p5_reasons": [
+                "SBC data unavailable \u2014 neutral score",
+                "Operating leverage 7.5/10",
+                "Strategic leverage 7.0/10 \u2014 strong positioning"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Consolidated Report generated for AMD. Conviction: -5",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,199 @@
+{
+  "meta": {
+    "ticker": "AAPL",
+    "model": "ThreeStageDCF",
+    "description": "High Growth -> Transition -> Stable"
+  },
+  "valuation_summary": {
+    "enterprise_value": 1406306308209.4565,
+    "equity_value": 1368306308209.4565,
+    "market_cap_input": 3400000000000,
+    "upside": -0.5975569681736892
+  },
+  "inputs": {
+    "base_year": {
+      "revenue": 391000000000,
+      "tax_rate": 0.15,
+      "cash": 62000000000
+    },
+    "config": {
+      "risk_free_rate": 0.042,
+      "equity_risk_premium": 0.05,
+      "marginal_tax_rate": 0.21,
+      "unlevered_beta": 1.1,
+      "terminal_unlevered_beta": 1.0,
+      "year_beta_converge": 5,
+      "current_pretax_cost_of_debt": 0.05,
+      "terminal_pretax_cost_of_debt": 0.05,
+      "year_cod_converge": 5,
+      "rates_cycle_1": [
+        0.06,
+        0.05
+      ],
+      "rates_cycle_2": [
+        0.05,
+        0.03
+      ],
+      "rates_cycle_3": [
+        0.03,
+        0.03
+      ],
+      "len_cycle_1": 5,
+      "len_cycle_2": 5,
+      "len_cycle_3": 0,
+      "conv_cycle_1": 1,
+      "conv_cycle_2": 1,
+      "conv_cycle_3": 1,
+      "current_operating_margin": 0.3,
+      "terminal_operating_margin": 0.25,
+      "year_margin_converge": 10,
+      "current_sales_to_capital": 3.0,
+      "terminal_sales_to_capital": 2.5,
+      "year_sales_cap_converge": 5,
+      "additional_return_on_coc_perpetuity": 0.0
+    }
+  },
+  "audit_trail": {
+    "sum_pv": 738676031828.3035,
+    "terminal_value": 1656143713328.7073,
+    "pv_terminal": 667630276381.153,
+    "terminal_params": {
+      "g": 0.03,
+      "wacc": 0.09162857142857143,
+      "roic": 0.09162857142857143,
+      "rr": 0.3274087932647334
+    }
+  },
+  "projections": [
+    {
+      "Growth": 0.06,
+      "Revenue": 414460000000.0,
+      "Margin": 0.3,
+      "EBIT": 124338000000.0,
+      "TaxRate": 0.15,
+      "NOPAT": 105687300000.0,
+      "Sales/Cap": 3.0,
+      "Reinvestment": 7820000000.0,
+      "FCFF": 97867300000.0,
+      "WACC": 0.09659857142857144,
+      "PV_FCFF": 89246240648.02982
+    },
+    {
+      "Growth": 0.057499999999999996,
+      "Revenue": 438291450000.00006,
+      "Margin": 0.3,
+      "EBIT": 131487435000.00002,
+      "TaxRate": 0.15,
+      "NOPAT": 111764319750.00002,
+      "Sales/Cap": 3.0,
+      "Reinvestment": 7943816666.666687,
+      "FCFF": 103820503083.33333,
+      "WACC": 0.09659857142857144,
+      "PV_FCFF": 86335175755.05159
+    },
+    {
+      "Growth": 0.055,
+      "Revenue": 462397479750.0,
+      "Margin": 0.3,
+      "EBIT": 138719243925.0,
+      "TaxRate": 0.15,
+      "NOPAT": 117911357336.25,
+      "Sales/Cap": 3.0,
+      "Reinvestment": 8035343249.99998,
+      "FCFF": 109876014086.25002,
+      "WACC": 0.09659857142857144,
+      "PV_FCFF": 83322035136.4137
+    },
+    {
+      "Growth": 0.052500000000000005,
+      "Revenue": 486673347436.87494,
+      "Margin": 0.3,
+      "EBIT": 146002004231.06247,
+      "TaxRate": 0.15,
+      "NOPAT": 124101703596.40309,
+      "Sales/Cap": 3.0,
+      "Reinvestment": 8091955895.62498,
+      "FCFF": 116009747700.7781,
+      "WACC": 0.09659857142857144,
+      "PV_FCFF": 80223901522.45766
+    },
+    {
+      "Growth": 0.05,
+      "Revenue": 511007014808.71875,
+      "Margin": 0.3,
+      "EBIT": 153302104442.61563,
+      "TaxRate": 0.15,
+      "NOPAT": 130306788776.22328,
+      "Sales/Cap": 3.0,
+      "Reinvestment": 8111222457.28127,
+      "FCFF": 122195566318.94202,
+      "WACC": 0.09659857142857144,
+      "PV_FCFF": 77057882298.31055
+    },
+    {
+      "Growth": 0.05,
+      "Revenue": 536557365549.1547,
+      "Margin": 0.3,
+      "EBIT": 160967209664.7464,
+      "TaxRate": 0.162,
+      "NOPAT": 134890521699.05748,
+      "Sales/Cap": 2.9,
+      "Reinvestment": 8810465772.564129,
+      "FCFF": 126080055926.49335,
+      "WACC": 0.09560457142857141,
+      "PV_FCFF": 72569507916.92381
+    },
+    {
+      "Growth": 0.045,
+      "Revenue": 560702446998.8667,
+      "Margin": 0.3,
+      "EBIT": 168210734099.66,
+      "TaxRate": 0.174,
+      "NOPAT": 138942066366.31918,
+      "Sales/Cap": 2.8,
+      "Reinvestment": 8623243374.897135,
+      "FCFF": 130318822991.42204,
+      "WACC": 0.09461057142857143,
+      "PV_FCFF": 68525986470.698494
+    },
+    {
+      "Growth": 0.04,
+      "Revenue": 583130544878.8214,
+      "Margin": 0.3,
+      "EBIT": 174939163463.64642,
+      "TaxRate": 0.186,
+      "NOPAT": 142400479059.4082,
+      "Sales/Cap": 2.7,
+      "Reinvestment": 8306702918.501744,
+      "FCFF": 134093776140.90646,
+      "WACC": 0.09361657142857142,
+      "PV_FCFF": 64475049726.28096
+    },
+    {
+      "Growth": 0.035,
+      "Revenue": 603540113949.5801,
+      "Margin": 0.3,
+      "EBIT": 181062034184.87402,
+      "TaxRate": 0.198,
+      "NOPAT": 145211751416.26898,
+      "Sales/Cap": 2.6,
+      "Reinvestment": 7849834257.984102,
+      "FCFF": 137361917158.28488,
+      "WACC": 0.09262257142857144,
+      "PV_FCFF": 60447624801.07437
+    },
+    {
+      "Growth": 0.03,
+      "Revenue": 621646317368.0675,
+      "Margin": 0.3,
+      "EBIT": 186493895210.42026,
+      "TaxRate": 0.21,
+      "NOPAT": 147330177216.23203,
+      "Sales/Cap": 2.5,
+      "Reinvestment": 7242481367.394971,
+      "FCFF": 140087695848.83707,
+      "WACC": 0.09162857142857143,
+      "PV_FCFF": 56472627553.06249
+    }
+  ]
+}

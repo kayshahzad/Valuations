@@ -1,0 +1,3253 @@
+[
+  {
+    "timestamp": "2026-04-28T23:00:58.556475",
+    "agent": "Librarian",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:01:33.967631",
+    "agent": "Forensic",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:01:57.707040",
+    "agent": "ValueChain",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.01,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+        "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+        "pass_through_capability": false,
+        "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:18.914779",
+    "agent": "StrategicContext",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.01,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+        "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+        "pass_through_capability": false,
+        "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.3170497349547396,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is reported as 0 with a D8 Revenue Score of 1.00. This indicates a clean revenue profile with healthy growth quality and no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Abbott holds various patents expiring between 2026 and 2046. However, the company explicitly states that no single patent, license, or trademark is material in relation to the business as a whole. Therefore, there is no concentrated patent cliff or material intangible decay risk.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Abbott Laboratories demonstrates structural, non-cyclical growth (Revenue Z-Score: 1.32) and is not currently at a cyclical peak. Growth quality is strong, with a D8 Revenue Score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is minimal and highly diversified; although patents expire between 2026 and 2046, the company confirms no single patent is material to the business as a whole."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.32 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:19.924145",
+    "agent": "Strategist",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.32 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.01,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+        "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+        "pass_through_capability": false,
+        "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.3170497349547396,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is reported as 0 with a D8 Revenue Score of 1.00. This indicates a clean revenue profile with healthy growth quality and no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Abbott holds various patents expiring between 2026 and 2046. However, the company explicitly states that no single patent, license, or trademark is material in relation to the business as a whole. Therefore, there is no concentrated patent cliff or material intangible decay risk.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Abbott Laboratories demonstrates structural, non-cyclical growth (Revenue Z-Score: 1.32) and is not currently at a cyclical peak. Growth quality is strong, with a D8 Revenue Score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is minimal and highly diversified; although patents expire between 2026 and 2046, the company confirms no single patent is material to the business as a whole."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 11266294000.0,
+          "equity": 163098916834.41748,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07317354975865532,
+          "beta": 0.5387917971477814
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1126629400.0,
+            "cash": 8809339000.0,
+            "liquidity_ratio": 0.1278903445536606,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 22855627000.0,
+            "crash_fcf": 2463117695.0,
+            "earnings_power_value": 22391979045.454544,
+            "floor_value": 22855627000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.2,
+            "financial_leverage_score": 0.2763057957383703,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:20.870257",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "base": {
+        "net_sales": 30764707000.0,
+        "cogs": 13209329000.0,
+        "interest_expense": 0.0,
+        "net_debt": 2456955000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.27323205125925626,
+        "da_percent_sales": 0.0,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.03539926448836324,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.01,
+        "cogs_percent_sales": 0.5240765660469316,
+        "calibration_adjustment": 0.09471024703729503
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T23:02:20.870337",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 70013146694.44592,
+      "equity_value": 67556191694.44592,
+      "terminal_value": 81732915641.87587,
+      "discounted_terminal_value": 53120787169.33009,
+      "sum_pv_cash_flows": 16892359525.115835,
+      "audit_metrics": {
+        "roic_path": [
+          0.2516268736584611,
+          0.25366045512045593,
+          0.25084009756907455,
+          0.2435525752163048,
+          0.23465560525457577
+        ],
+        "invested_capital_path": [
+          21535294900.0,
+          23071659477.0,
+          24730933220.16,
+          26489763387.9096,
+          28318946762.369183,
+          30203005638.062553
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 33841177700.000004,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.2026913826938121,
+          "ebit": 6859315100.000001,
+          "nopat": 5418858929.000001,
+          "depreciation": 0.0,
+          "capex": 1197952800.0,
+          "change_in_wc": 338411777.00000006,
+          "fcff": 3882494352.000001,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 3561921423.853212
+        },
+        {
+          "year": 2.0,
+          "revenue": 36548471916.00001,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.2026913826938121,
+          "ebit": 7408060308.000001,
+          "nopat": 5852367643.320001,
+          "depreciation": 0.0,
+          "capex": 1293789024.0000002,
+          "change_in_wc": 365484719.1600001,
+          "fcff": 4193093900.160001,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 3529243245.6527233
+        },
+        {
+          "year": 3.0,
+          "revenue": 38741380230.96001,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.2026913826938121,
+          "ebit": 7852543926.480001,
+          "nopat": 6203509701.919202,
+          "depreciation": 0.0,
+          "capex": 1371416365.44,
+          "change_in_wc": 387413802.30960006,
+          "fcff": 4444679534.169602,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 3432108110.4512734
+        },
+        {
+          "year": 4.0,
+          "revenue": 40291035440.19841,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.2026913826938121,
+          "ebit": 8166645683.539202,
+          "nopat": 6451650089.99597,
+          "depreciation": 0.0,
+          "capex": 1426273020.0576003,
+          "change_in_wc": 402910354.4019841,
+          "fcff": 4622466715.536386,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 3274671958.5957084
+        },
+        {
+          "year": 5.0,
+          "revenue": 41499766503.404366,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.2026913826938121,
+          "ebit": 8411645054.045379,
+          "nopat": 6645199592.695849,
+          "depreciation": 0.0,
+          "capex": 1469061210.6593285,
+          "change_in_wc": 414997665.03404367,
+          "fcff": 4761140717.002478,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 3094414786.5629177
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 30764707000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.2026913826938121,
+        "terminal_value_pct_of_ev": 0.7587258918837326,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": 12.299542624982037,
+        "reinvestment_rate_terminal_year": 0.28352178883599793,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.0,
+          "capex_percent_sales": 0.03539926448836324,
+          "wc_change_percent_sales": 0.01
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:20.870804",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.32 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 11266294000.0,
+          "equity": 163098916834.41748,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07317354975865532,
+          "beta": 0.5387917971477814
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1126629400.0,
+            "cash": 8809339000.0,
+            "liquidity_ratio": 0.1278903445536606,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 22855627000.0,
+            "crash_fcf": 2463117695.0,
+            "earnings_power_value": 22391979045.454544,
+            "floor_value": 22855627000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.2,
+            "financial_leverage_score": 0.2763057957383703,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.01,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+        "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+        "pass_through_capability": false,
+        "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.3170497349547396,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is reported as 0 with a D8 Revenue Score of 1.00. This indicates a clean revenue profile with healthy growth quality and no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Abbott holds various patents expiring between 2026 and 2046. However, the company explicitly states that no single patent, license, or trademark is material in relation to the business as a whole. Therefore, there is no concentrated patent cliff or material intangible decay risk.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Abbott Laboratories demonstrates structural, non-cyclical growth (Revenue Z-Score: 1.32) and is not currently at a cyclical peak. Growth quality is strong, with a D8 Revenue Score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is minimal and highly diversified; although patents expire between 2026 and 2046, the company confirms no single patent is material to the business as a whole."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "terminal_value": 81732915641.87587,
+          "discounted_terminal_value": 53120787169.33009,
+          "sum_pv_cash_flows": 16892359525.115835,
+          "audit_metrics": {
+            "roic_path": [
+              0.2516268736584611,
+              0.25366045512045593,
+              0.25084009756907455,
+              0.2435525752163048,
+              0.23465560525457577
+            ],
+            "invested_capital_path": [
+              21535294900.0,
+              23071659477.0,
+              24730933220.16,
+              26489763387.9096,
+              28318946762.369183,
+              30203005638.062553
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 30764707000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2026913826938121,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.299542624982037,
+            "reinvestment_rate_terminal_year": 0.28352178883599793,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.03539926448836324,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 38.8771684983509,
+          "upside_percent": -0.5857962018074696,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.03539926448836324,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.27323205125925626,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.03539926448836324,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5240765660469316,
+          "calibration_adjustment": 0.09471024703729503
+        },
+        "base_financials": {
+          "net_sales": 30764707000.0,
+          "cogs": 13209329000.0,
+          "interest_expense": 0.0,
+          "net_debt": 2456955000.0
+        },
+        "calculated_upside": -0.5857962018074696
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $70,013,146,694",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:22.284521",
+    "agent": "ValuationNode",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.32 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $70,013,146,694",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "terminal_value": 81732915641.87587,
+          "discounted_terminal_value": 53120787169.33009,
+          "sum_pv_cash_flows": 16892359525.115835,
+          "audit_metrics": {
+            "roic_path": [
+              0.2516268736584611,
+              0.25366045512045593,
+              0.25084009756907455,
+              0.2435525752163048,
+              0.23465560525457577
+            ],
+            "invested_capital_path": [
+              21535294900.0,
+              23071659477.0,
+              24730933220.16,
+              26489763387.9096,
+              28318946762.369183,
+              30203005638.062553
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 30764707000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2026913826938121,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.299542624982037,
+            "reinvestment_rate_terminal_year": 0.28352178883599793,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.03539926448836324,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 38.8771684983509,
+          "upside_percent": -0.5857962018074696,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.03539926448836324,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.27323205125925626,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.03539926448836324,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5240765660469316,
+          "calibration_adjustment": 0.09471024703729503
+        },
+        "base_financials": {
+          "net_sales": 30764707000.0,
+          "cogs": 13209329000.0,
+          "interest_expense": 0.0,
+          "net_debt": 2456955000.0
+        },
+        "calculated_upside": -0.5857962018074696
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 11266294000.0,
+          "equity": 163098916834.41748,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07317354975865532,
+          "beta": 0.5387917971477814
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1126629400.0,
+            "cash": 8809339000.0,
+            "liquidity_ratio": 0.1278903445536606,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 22855627000.0,
+            "crash_fcf": 2463117695.0,
+            "earnings_power_value": 22391979045.454544,
+            "floor_value": 22855627000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.2,
+            "financial_leverage_score": 0.2763057957383703,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.01,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+        "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+        "pass_through_capability": false,
+        "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.3170497349547396,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is reported as 0 with a D8 Revenue Score of 1.00. This indicates a clean revenue profile with healthy growth quality and no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Abbott holds various patents expiring between 2026 and 2046. However, the company explicitly states that no single patent, license, or trademark is material in relation to the business as a whole. Therefore, there is no concentrated patent cliff or material intangible decay risk.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Abbott Laboratories demonstrates structural, non-cyclical growth (Revenue Z-Score: 1.32) and is not currently at a cyclical peak. Growth quality is strong, with a D8 Revenue Score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is minimal and highly diversified; although patents expire between 2026 and 2046, the company confirms no single patent is material to the business as a whole."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.0,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 7.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:02:20.871326",
+          "current_price": 93.86000061035156,
+          "shares_diluted": 1737682887.0000002,
+          "market_cap": 163098916834.41748,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.5387917971477814,
+          "wacc_base": 0.09,
+          "revenue": 44328000000.0,
+          "ebitda": 8053000000.0,
+          "ebit": 8053000000.0,
+          "nopat": 6361870000.0,
+          "roic": 0.11696643682286044,
+          "fcf": 7395000000.0,
+          "net_debt": 1374000000.0,
+          "bull_ev": 125440054986.7797,
+          "bull_intrinsic_per_share": 71.3974085346331,
+          "bull_upside": -0.23932017824045404,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 15.57681050376005,
+          "bull_justified_ev_ebitda": 9.681865960896216,
+          "bull_roic_wacc_spread": 0.03196643682286045,
+          "bull_tv_pct_of_ev": 0.5652120668067558,
+          "bull_implied_tv_ebitda": 9.681865960896214,
+          "base_ev": 95466449202.02756,
+          "base_intrinsic_per_share": 54.14822802592723,
+          "base_upside": -0.42309580573393507,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 11.85476831019838,
+          "base_justified_ev_ebitda": 8.25745576044028,
+          "base_roic_wacc_spread": 0.026966436822860443,
+          "base_tv_pct_of_ev": 0.5095478026012752,
+          "base_implied_tv_ebitda": 8.25745576044028,
+          "bear_ev": 52247328368.34456,
+          "bear_intrinsic_per_share": 29.276531839577558,
+          "bear_upside": -0.6880829783805826,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 6.4879334866937235,
+          "bear_justified_ev_ebitda": 6.101948661226179,
+          "bear_roic_wacc_spread": 0.011966436822860443,
+          "bear_tv_pct_of_ev": 0.3974917224954188,
+          "bear_implied_tv_ebitda": 6.10194866122618
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "ABT",
+            "scenario": "bull",
+            "enterprise_value": 125440054986.7797,
+            "equity_value": 121943668986.7797,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 70.17601997410917,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.2523330543600098,
+            "upside_pct": -0.2523330543600098,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          },
+          "base": {
+            "ticker": "ABT",
+            "scenario": "base",
+            "enterprise_value": 95466449202.02756,
+            "equity_value": 91970063202.02756,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 52.926839465403305,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.4361086818534908,
+            "upside_pct": -0.4361086818534908,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          },
+          "bear": {
+            "ticker": "ABT",
+            "scenario": "bear",
+            "enterprise_value": 52247328368.34456,
+            "equity_value": 48750942368.34456,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 28.055143279053627,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.7010958545001383,
+            "upside_pct": -0.7010958545001383,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 70.17601997410917,
+          "base": 52.926839465403305,
+          "bear": 28.055143279053627
+        },
+        "margin_of_safety": {
+          "bull": -0.2523330543600098,
+          "base": -0.4361086818534908,
+          "bear": -0.7010958545001383
+        },
+        "reverse_dcf": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "current_price": 93.86000061035156,
+          "current_ev": 164472916834.41748,
+          "current_ev_ebitda": 20.423806883697686,
+          "wacc": 0.07079537671207133,
+          "ebit_margin": 0.18166847139505504,
+          "implied_cagr_10y": 0.07641606049228991,
+          "implied_cagr_5y": 0.07641606049228991,
+          "historical_cagr_5y": 0.04100268186895517,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 20.423806883697686,
+          "forward_ev_ebitda_justified": 12.569611823768456,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.07641606049228991,
+        "historical_cagr": 0.04100268186895517,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (7.6%) exceeds historical (4.1%) but is below sector 75th percentile (12.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 20.423806883697686,
+          "market_ev_ebit": 20.423806883697686,
+          "market_p_sales": 3.6793655665587774,
+          "market_p_e": 24.999833972166996,
+          "market_peg": 6.09712165952135,
+          "justified_ev_ebitda": 13.563555715554532,
+          "justified_ev_ebit": 13.563555715554532,
+          "justified_p_sales": 3.3398198326960187,
+          "ev_ebitda_premium": 6.860251168143154,
+          "ev_ebitda_premium_pct": 0.5057856001782701,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 6.4238068836976865,
+          "roic": 0.11696643682286044,
+          "wacc": 0.07079537671207133,
+          "roic_wacc_spread": 0.046171060110789114,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.621148143548988,
+          "growth_rate": 0.04100268186895517,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 20.423806883697686,
+        "ev_ebitda_justified": 13.563555715554532,
+        "ev_ebitda_premium_pct": 0.5057856001782701,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.046171060110789114,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.11696643682286044,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: ABT ===\nPrice: $93.86  |  Bear=$28  Base=$53  Bull=$70\nMoS:  Bear=-70.1%  Base=-43.6%  Bull=-25.2%\nRDCF: implied=7.6% hist=4.1% [priced_for_growth]\nEV/EBITDA: 20.4x market vs 13.6x justified (+51%)",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: ABT \u2014 Base IV=$53/share MoS=-43.6% ImpliedCAGR=7.6% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:38.136785",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.32 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $70,013,146,694",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: ABT \u2014 Base IV=$53/share MoS=-43.6% ImpliedCAGR=7.6% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "terminal_value": 81732915641.87587,
+          "discounted_terminal_value": 53120787169.33009,
+          "sum_pv_cash_flows": 16892359525.115835,
+          "audit_metrics": {
+            "roic_path": [
+              0.2516268736584611,
+              0.25366045512045593,
+              0.25084009756907455,
+              0.2435525752163048,
+              0.23465560525457577
+            ],
+            "invested_capital_path": [
+              21535294900.0,
+              23071659477.0,
+              24730933220.16,
+              26489763387.9096,
+              28318946762.369183,
+              30203005638.062553
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 30764707000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2026913826938121,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.299542624982037,
+            "reinvestment_rate_terminal_year": 0.28352178883599793,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.03539926448836324,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 38.8771684983509,
+          "upside_percent": -0.5857962018074696,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.03539926448836324,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.27323205125925626,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.03539926448836324,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5240765660469316,
+          "calibration_adjustment": 0.09471024703729503
+        },
+        "base_financials": {
+          "net_sales": 30764707000.0,
+          "cogs": 13209329000.0,
+          "interest_expense": 0.0,
+          "net_debt": 2456955000.0
+        },
+        "calculated_upside": -0.5857962018074696
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 11266294000.0,
+          "equity": 163098916834.41748,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07317354975865532,
+          "beta": 0.5387917971477814
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1126629400.0,
+            "cash": 8809339000.0,
+            "liquidity_ratio": 0.1278903445536606,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 22855627000.0,
+            "crash_fcf": 2463117695.0,
+            "earnings_power_value": 22391979045.454544,
+            "floor_value": 22855627000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.2,
+            "financial_leverage_score": 0.2763057957383703,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.0,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 7.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:02:20.871326",
+          "current_price": 93.86000061035156,
+          "shares_diluted": 1737682887.0000002,
+          "market_cap": 163098916834.41748,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.5387917971477814,
+          "wacc_base": 0.09,
+          "revenue": 44328000000.0,
+          "ebitda": 8053000000.0,
+          "ebit": 8053000000.0,
+          "nopat": 6361870000.0,
+          "roic": 0.11696643682286044,
+          "fcf": 7395000000.0,
+          "net_debt": 1374000000.0,
+          "bull_ev": 125440054986.7797,
+          "bull_intrinsic_per_share": 71.3974085346331,
+          "bull_upside": -0.23932017824045404,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 15.57681050376005,
+          "bull_justified_ev_ebitda": 9.681865960896216,
+          "bull_roic_wacc_spread": 0.03196643682286045,
+          "bull_tv_pct_of_ev": 0.5652120668067558,
+          "bull_implied_tv_ebitda": 9.681865960896214,
+          "base_ev": 95466449202.02756,
+          "base_intrinsic_per_share": 54.14822802592723,
+          "base_upside": -0.42309580573393507,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 11.85476831019838,
+          "base_justified_ev_ebitda": 8.25745576044028,
+          "base_roic_wacc_spread": 0.026966436822860443,
+          "base_tv_pct_of_ev": 0.5095478026012752,
+          "base_implied_tv_ebitda": 8.25745576044028,
+          "bear_ev": 52247328368.34456,
+          "bear_intrinsic_per_share": 29.276531839577558,
+          "bear_upside": -0.6880829783805826,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 6.4879334866937235,
+          "bear_justified_ev_ebitda": 6.101948661226179,
+          "bear_roic_wacc_spread": 0.011966436822860443,
+          "bear_tv_pct_of_ev": 0.3974917224954188,
+          "bear_implied_tv_ebitda": 6.10194866122618
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "ABT",
+            "scenario": "bull",
+            "enterprise_value": 125440054986.7797,
+            "equity_value": 121943668986.7797,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 70.17601997410917,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.2523330543600098,
+            "upside_pct": -0.2523330543600098,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          },
+          "base": {
+            "ticker": "ABT",
+            "scenario": "base",
+            "enterprise_value": 95466449202.02756,
+            "equity_value": 91970063202.02756,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 52.926839465403305,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.4361086818534908,
+            "upside_pct": -0.4361086818534908,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          },
+          "bear": {
+            "ticker": "ABT",
+            "scenario": "bear",
+            "enterprise_value": 52247328368.34456,
+            "equity_value": 48750942368.34456,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 28.055143279053627,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.7010958545001383,
+            "upside_pct": -0.7010958545001383,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 70.17601997410917,
+          "base": 52.926839465403305,
+          "bear": 28.055143279053627
+        },
+        "margin_of_safety": {
+          "bull": -0.2523330543600098,
+          "base": -0.4361086818534908,
+          "bear": -0.7010958545001383
+        },
+        "reverse_dcf": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "current_price": 93.86000061035156,
+          "current_ev": 164472916834.41748,
+          "current_ev_ebitda": 20.423806883697686,
+          "wacc": 0.07079537671207133,
+          "ebit_margin": 0.18166847139505504,
+          "implied_cagr_10y": 0.07641606049228991,
+          "implied_cagr_5y": 0.07641606049228991,
+          "historical_cagr_5y": 0.04100268186895517,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 20.423806883697686,
+          "forward_ev_ebitda_justified": 12.569611823768456,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.07641606049228991,
+        "historical_cagr": 0.04100268186895517,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (7.6%) exceeds historical (4.1%) but is below sector 75th percentile (12.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 20.423806883697686,
+          "market_ev_ebit": 20.423806883697686,
+          "market_p_sales": 3.6793655665587774,
+          "market_p_e": 24.999833972166996,
+          "market_peg": 6.09712165952135,
+          "justified_ev_ebitda": 13.563555715554532,
+          "justified_ev_ebit": 13.563555715554532,
+          "justified_p_sales": 3.3398198326960187,
+          "ev_ebitda_premium": 6.860251168143154,
+          "ev_ebitda_premium_pct": 0.5057856001782701,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 6.4238068836976865,
+          "roic": 0.11696643682286044,
+          "wacc": 0.07079537671207133,
+          "roic_wacc_spread": 0.046171060110789114,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.621148143548988,
+          "growth_rate": 0.04100268186895517,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 20.423806883697686,
+        "ev_ebitda_justified": 13.563555715554532,
+        "ev_ebitda_premium_pct": 0.5057856001782701,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.046171060110789114,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.11696643682286044,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: ABT ===\nPrice: $93.86  |  Bear=$28  Base=$53  Bull=$70\nMoS:  Bear=-70.1%  Base=-43.6%  Bull=-25.2%\nRDCF: implied=7.6% hist=4.1% [priced_for_growth]\nEV/EBITDA: 20.4x market vs 13.6x justified (+51%)",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.01,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+        "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+        "pass_through_capability": false,
+        "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.3170497349547396,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is reported as 0 with a D8 Revenue Score of 1.00. This indicates a clean revenue profile with healthy growth quality and no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Abbott holds various patents expiring between 2026 and 2046. However, the company explicitly states that no single patent, license, or trademark is material in relation to the business as a whole. Therefore, there is no concentrated patent cliff or material intangible decay risk.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Abbott Laboratories demonstrates structural, non-cyclical growth (Revenue Z-Score: 1.32) and is not currently at a cyclical peak. Growth quality is strong, with a D8 Revenue Score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is minimal and highly diversified; although patents expire between 2026 and 2046, the company confirms no single patent is material to the business as a whole."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $93.86 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 7.6%\n  \u2022 Company's robust historical CAGR: 4.1%\n  \u2022 Ratio (implied / historical): 1.9x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (7.6%) exceeds historical (4.1%) but is below sector 75th percentile (12.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 20.4x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.6x\n  \u2022 Premium to justified multiple: +51%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $28/share vs current price $93.86\n  \u2022 Downside in bear case: -70.1%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias",
+          "bear_case_summary": "The market is pricing ABT for perfection, demanding a 10-year revenue CAGR of 7.6% to justify its $93.86 price tag. This is a staggering 1.9x its historical growth rate of 4.1%. Furthermore, the Liberti multiple decomposition reveals a market EV/EBITDA of 20.4x, representing a 51% premium over the mathematically justified multiple of 13.6x. To achieve this implied growth, ABT would need flawless execution and massive market share capture in its Medical Devices and Diagnostics segments, ignoring the reality of post-COVID diagnostic cliffs, intense continuous glucose monitor (CGM) competition, and GLP-1 drug headwinds impacting cardiovascular and diabetes device TAMs. If ABT fails to double its historical growth trajectory and multiples mean-revert to justified levels, the stock faces a catastrophic repricing toward the bear case intrinsic value of $28 per share, representing a 70.1% downside. The current valuation offers zero margin of safety.",
+          "sentiment_score": -7
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias] Sentiment: -7/10. Implied CAGR 7.6% vs 4.1% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:57.153807",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/ABT_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:02:57.155846",
+    "agent": "Lead",
+    "trace_id": "trace_ABT_1777431655",
+    "inputs": {
+      "ticker": "ABT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ABT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 6.5/10. OpLev 3.2/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.32 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $70,013,146,694",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: ABT \u2014 Base IV=$53/share MoS=-43.6% ImpliedCAGR=7.6% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias] Sentiment: -7/10. Implied CAGR 7.6% vs 4.1% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "terminal_value": 81732915641.87587,
+          "discounted_terminal_value": 53120787169.33009,
+          "sum_pv_cash_flows": 16892359525.115835,
+          "audit_metrics": {
+            "roic_path": [
+              0.2516268736584611,
+              0.25366045512045593,
+              0.25084009756907455,
+              0.2435525752163048,
+              0.23465560525457577
+            ],
+            "invested_capital_path": [
+              21535294900.0,
+              23071659477.0,
+              24730933220.16,
+              26489763387.9096,
+              28318946762.369183,
+              30203005638.062553
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 30764707000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2026913826938121,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.299542624982037,
+            "reinvestment_rate_terminal_year": 0.28352178883599793,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.03539926448836324,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 38.8771684983509,
+          "upside_percent": -0.5857962018074696,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.03539926448836324,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 33841177700.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 6859315100.000001,
+              "nopat": 5418858929.000001,
+              "depreciation": 0.0,
+              "capex": 1197952800.0,
+              "change_in_wc": 338411777.00000006,
+              "fcff": 3882494352.000001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 3561921423.853212
+            },
+            {
+              "year": 2.0,
+              "revenue": 36548471916.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7408060308.000001,
+              "nopat": 5852367643.320001,
+              "depreciation": 0.0,
+              "capex": 1293789024.0000002,
+              "change_in_wc": 365484719.1600001,
+              "fcff": 4193093900.160001,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 3529243245.6527233
+            },
+            {
+              "year": 3.0,
+              "revenue": 38741380230.96001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 7852543926.480001,
+              "nopat": 6203509701.919202,
+              "depreciation": 0.0,
+              "capex": 1371416365.44,
+              "change_in_wc": 387413802.30960006,
+              "fcff": 4444679534.169602,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 3432108110.4512734
+            },
+            {
+              "year": 4.0,
+              "revenue": 40291035440.19841,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8166645683.539202,
+              "nopat": 6451650089.99597,
+              "depreciation": 0.0,
+              "capex": 1426273020.0576003,
+              "change_in_wc": 402910354.4019841,
+              "fcff": 4622466715.536386,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 3274671958.5957084
+            },
+            {
+              "year": 5.0,
+              "revenue": 41499766503.404366,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2026913826938121,
+              "ebit": 8411645054.045379,
+              "nopat": 6645199592.695849,
+              "depreciation": 0.0,
+              "capex": 1469061210.6593285,
+              "change_in_wc": 414997665.03404367,
+              "fcff": 4761140717.002478,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 3094414786.5629177
+            }
+          ],
+          "enterprise_value": 70013146694.44592,
+          "equity_value": 67556191694.44592,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.27323205125925626,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.03539926448836324,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5240765660469316,
+          "calibration_adjustment": 0.09471024703729503
+        },
+        "base_financials": {
+          "net_sales": 30764707000.0,
+          "cogs": 13209329000.0,
+          "interest_expense": 0.0,
+          "net_debt": 2456955000.0
+        },
+        "calculated_upside": -0.5857962018074696
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 11266294000.0,
+          "equity": 163098916834.41748,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07317354975865532,
+          "beta": 0.5387917971477814
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 1126629400.0,
+            "cash": 8809339000.0,
+            "liquidity_ratio": 0.1278903445536606,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 22855627000.0,
+            "crash_fcf": 2463117695.0,
+            "earnings_power_value": 22391979045.454544,
+            "floor_value": 22855627000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 3.2,
+            "financial_leverage_score": 0.2763057957383703,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.0,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 7.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:02:20.871326",
+          "current_price": 93.86000061035156,
+          "shares_diluted": 1737682887.0000002,
+          "market_cap": 163098916834.41748,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.5387917971477814,
+          "wacc_base": 0.09,
+          "revenue": 44328000000.0,
+          "ebitda": 8053000000.0,
+          "ebit": 8053000000.0,
+          "nopat": 6361870000.0,
+          "roic": 0.11696643682286044,
+          "fcf": 7395000000.0,
+          "net_debt": 1374000000.0,
+          "bull_ev": 125440054986.7797,
+          "bull_intrinsic_per_share": 71.3974085346331,
+          "bull_upside": -0.23932017824045404,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 15.57681050376005,
+          "bull_justified_ev_ebitda": 9.681865960896216,
+          "bull_roic_wacc_spread": 0.03196643682286045,
+          "bull_tv_pct_of_ev": 0.5652120668067558,
+          "bull_implied_tv_ebitda": 9.681865960896214,
+          "base_ev": 95466449202.02756,
+          "base_intrinsic_per_share": 54.14822802592723,
+          "base_upside": -0.42309580573393507,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 11.85476831019838,
+          "base_justified_ev_ebitda": 8.25745576044028,
+          "base_roic_wacc_spread": 0.026966436822860443,
+          "base_tv_pct_of_ev": 0.5095478026012752,
+          "base_implied_tv_ebitda": 8.25745576044028,
+          "bear_ev": 52247328368.34456,
+          "bear_intrinsic_per_share": 29.276531839577558,
+          "bear_upside": -0.6880829783805826,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 6.4879334866937235,
+          "bear_justified_ev_ebitda": 6.101948661226179,
+          "bear_roic_wacc_spread": 0.011966436822860443,
+          "bear_tv_pct_of_ev": 0.3974917224954188,
+          "bear_implied_tv_ebitda": 6.10194866122618
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "ABT",
+            "scenario": "bull",
+            "enterprise_value": 125440054986.7797,
+            "equity_value": 121943668986.7797,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 70.17601997410917,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.2523330543600098,
+            "upside_pct": -0.2523330543600098,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          },
+          "base": {
+            "ticker": "ABT",
+            "scenario": "base",
+            "enterprise_value": 95466449202.02756,
+            "equity_value": 91970063202.02756,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 52.926839465403305,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.4361086818534908,
+            "upside_pct": -0.4361086818534908,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          },
+          "bear": {
+            "ticker": "ABT",
+            "scenario": "bear",
+            "enterprise_value": 52247328368.34456,
+            "equity_value": 48750942368.34456,
+            "shares_diluted": 1737682887.0000002,
+            "intrinsic_per_share": 28.055143279053627,
+            "current_price": 93.86000061035156,
+            "margin_of_safety": -0.7010958545001383,
+            "upside_pct": -0.7010958545001383,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -9896000000.0,
+            "bridge_cash_(net_of_haircuts)": 6399614000.0,
+            "cash_gross": 8522000000.0,
+            "cash_wc_haircut": 1329840000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 792546000.0,
+            "cash_net_accessible": 6399614000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 6399614000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 70.17601997410917,
+          "base": 52.926839465403305,
+          "bear": 28.055143279053627
+        },
+        "margin_of_safety": {
+          "bull": -0.2523330543600098,
+          "base": -0.4361086818534908,
+          "bear": -0.7010958545001383
+        },
+        "reverse_dcf": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "current_price": 93.86000061035156,
+          "current_ev": 164472916834.41748,
+          "current_ev_ebitda": 20.423806883697686,
+          "wacc": 0.07079537671207133,
+          "ebit_margin": 0.18166847139505504,
+          "implied_cagr_10y": 0.07641606049228991,
+          "implied_cagr_5y": 0.07641606049228991,
+          "historical_cagr_5y": 0.04100268186895517,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 20.423806883697686,
+          "forward_ev_ebitda_justified": 12.569611823768456,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.07641606049228991,
+        "historical_cagr": 0.04100268186895517,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (7.6%) exceeds historical (4.1%) but is below sector 75th percentile (12.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "ABT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 20.423806883697686,
+          "market_ev_ebit": 20.423806883697686,
+          "market_p_sales": 3.6793655665587774,
+          "market_p_e": 24.999833972166996,
+          "market_peg": 6.09712165952135,
+          "justified_ev_ebitda": 13.563555715554532,
+          "justified_ev_ebit": 13.563555715554532,
+          "justified_p_sales": 3.3398198326960187,
+          "ev_ebitda_premium": 6.860251168143154,
+          "ev_ebitda_premium_pct": 0.5057856001782701,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 6.4238068836976865,
+          "roic": 0.11696643682286044,
+          "wacc": 0.07079537671207133,
+          "roic_wacc_spread": 0.046171060110789114,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.621148143548988,
+          "growth_rate": 0.04100268186895517,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 20.423806883697686,
+        "ev_ebitda_justified": 13.563555715554532,
+        "ev_ebitda_premium_pct": 0.5057856001782701,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.046171060110789114,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.11696643682286044,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: ABT ===\nPrice: $93.86  |  Bear=$28  Base=$53  Bull=$70\nMoS:  Bear=-70.1%  Base=-43.6%  Bull=-25.2%\nRDCF: implied=7.6% hist=4.1% [priced_for_growth]\nEV/EBITDA: 20.4x market vs 13.6x justified (+51%)",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $93.86 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 7.6%\n  \u2022 Company's robust historical CAGR: 4.1%\n  \u2022 Ratio (implied / historical): 1.9x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (7.6%) exceeds historical (4.1%) but is below sector 75th percentile (12.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 20.4x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.6x\n  \u2022 Premium to justified multiple: +51%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $28/share vs current price $93.86\n  \u2022 Downside in bear case: -70.1%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias",
+          "bear_case_summary": "The market is pricing ABT for perfection, demanding a 10-year revenue CAGR of 7.6% to justify its $93.86 price tag. This is a staggering 1.9x its historical growth rate of 4.1%. Furthermore, the Liberti multiple decomposition reveals a market EV/EBITDA of 20.4x, representing a 51% premium over the mathematically justified multiple of 13.6x. To achieve this implied growth, ABT would need flawless execution and massive market share capture in its Medical Devices and Diagnostics segments, ignoring the reality of post-COVID diagnostic cliffs, intense continuous glucose monitor (CGM) competition, and GLP-1 drug headwinds impacting cardiovascular and diabetes device TAMs. If ABT fails to double its historical growth trajectory and multiples mean-revert to justified levels, the stock faces a catastrophic repricing toward the bear case intrinsic value of $28 per share, representing a 70.1% downside. The current valuation offers zero margin of safety.",
+          "sentiment_score": -7
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+        "moat_score": 6.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 2.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution.",
+        "concentration_risk": false,
+        "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company.",
+        "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+        "revenue_segments": [
+          {
+            "segment": "Established Pharmaceutical Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable growth driven by emerging markets"
+          },
+          {
+            "segment": "Diagnostic Products",
+            "pct_revenue": null,
+            "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+          },
+          {
+            "segment": "Nutritional Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable consumer demand"
+          },
+          {
+            "segment": "Medical Devices",
+            "pct_revenue": null,
+            "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+          }
+        ],
+        "key_customers": [
+          "Hospitals and healthcare facilities",
+          "Commercial laboratories and blood banks",
+          "Government agencies",
+          "Wholesalers and distributors",
+          "Consumers"
+        ],
+        "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+        "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree.",
+        "operating_leverage_score": 3.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.01,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+        "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+        "pass_through_capability": false,
+        "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.3170497349547396,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is reported as 0 with a D8 Revenue Score of 1.00. This indicates a clean revenue profile with healthy growth quality and no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Abbott holds various patents expiring between 2026 and 2046. However, the company explicitly states that no single patent, license, or trademark is material in relation to the business as a whole. Therefore, there is no concentrated patent cliff or material intangible decay risk.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Abbott Laboratories demonstrates structural, non-cyclical growth (Revenue Z-Score: 1.32) and is not currently at a cyclical peak. Growth quality is strong, with a D8 Revenue Score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is minimal and highly diversified; although patents expire between 2026 and 2046, the company confirms no single patent is material to the business as a whole."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D. C. 20549\n<div align='center'>______________________________________________\n\nFORM 10-K</div>\n\n| (MARK ONE) |     |                                                                                          |\n| x          |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934     |\n|            |     | OR                                                                                       |\n| o          |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>_______________________________________________________</div>\n\n| For the fiscal year endedDecember 31, 2025 |     | Commission file number1-2189 |\n\n<div align='center'>Abbott Laboratories</div>\n\n| AnIllinoisCorporation          |     | 36-0698440                              |\n| 100 Abbott Park Road           \n Abbott Park,Illinois60064-6400 |     | -I.R.S...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "ABT",
+        "generated_at": "2026-04-28T23:02:57.151909",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 3.2,
+            "cost_structure": "Abbott's operating leverage score of 3.2/10 reflects a cost structure heavily weighted toward fixed expenses such as R&D, regulatory compliance, and a massive global workforce of 115,000 employees. The extremely high SBC as a percentage of FCF (897.9%) indicates substantial fixed headcount costs compensated through equity. While variable costs include raw materials and distribution, the heavy ongoing investments required for medical device and diagnostic innovation limit the degree to which revenue growth flows directly to EBIT.",
+            "business_description": "Abbott Laboratories discovers, develops, manufactures, and sells a diversified line of healthcare products globally. Its core offerings include established generic pharmaceuticals, diagnostic systems, nutritional products, and medical devices for cardiovascular and neuromodulation treatments. The company generates revenue by selling directly to hospitals, commercial laboratories, government agencies, wholesalers, and consumers.",
+            "revenue_segments": [
+              {
+                "segment": "Established Pharmaceutical Products",
+                "pct_revenue": null,
+                "growth_trend": "Stable growth driven by emerging markets"
+              },
+              {
+                "segment": "Diagnostic Products",
+                "pct_revenue": null,
+                "growth_trend": "Variable due to COVID-19 testing roll-offs but stable core growth"
+              },
+              {
+                "segment": "Nutritional Products",
+                "pct_revenue": null,
+                "growth_trend": "Stable consumer demand"
+              },
+              {
+                "segment": "Medical Devices",
+                "pct_revenue": null,
+                "growth_trend": "Growing driven by new product launches like FreeStyle Libre"
+              }
+            ],
+            "key_customers": [
+              "Hospitals and healthcare facilities",
+              "Commercial laboratories and blood banks",
+              "Government agencies",
+              "Wholesalers and distributors",
+              "Consumers"
+            ],
+            "competitive_landscape": "Abbott competes with other large healthcare, pharmaceutical, and diversified consumer manufacturers. It differentiates itself through a highly diversified portfolio across four distinct segments, significant R&D investments yielding proprietary systems, and a massive global distribution footprint.",
+            "regulatory_risk": "Abbott faces significant regulatory risk from the FDA and international agencies regarding product approvals, manufacturing compliance, and healthcare fraud and abuse laws, as evidenced by the 2022 Sturgis facility consent decree."
+          },
+          "value_chain": {
+            "power_ratio": 0.01,
+            "upstream_leak": false,
+            "strategic_leverage": 7.0,
+            "bottleneck_analysis": "Abbott relies on a vast, complex global supply chain for raw materials, APIs, and electronic components. While the 10-K Item 1 notes 'no recent significant availability problems,' Item 1A highlights vulnerability to global supply chain disruptions, inflationary pressures, and labor shortages affecting raw materials and services. Because Abbott utilizes numerous suppliers globally and has massive scale, individual suppliers lack the leverage to force significant price hikes, though macro-level supply constraints can temporarily impact costs.",
+            "substitution_risk_score": 6.0,
+            "top_substitutes": "1. Generic pharmaceuticals and biosimilars (substituting Established Pharma products); 2. Competing medical devices from peers like Medtronic or Boston Scientific (e.g., alternative CGMs or structural heart devices); 3. Private label and competing nutritional formulas (e.g., Nestle, Mead Johnson) substituting Similac or Ensure.",
+            "pricing_power_assessment": "Pricing power is heavily constrained by institutional and governmental buyers. The 10-K explicitly cites global cost containment efforts, DRG/PPS fixed reimbursement models in hospitals, and competitive bidding systems (such as the WIC program for infant formula). These structural factors force Abbott to compete on cost-effectiveness and limit unilateral price hikes.",
+            "pass_through_capability": false,
+            "analysis_summary": "Abbott holds a strong, diversified position across Medical Devices, Diagnostics, Nutrition, and Established Pharmaceuticals, mitigating reliance on any single product line. Supplier power is low due to a broad, global procurement base, preventing severe upstream value leaks. However, buyer power is exceptionally high; government agencies, hospital networks, and insurers exert immense pressure through fixed reimbursement models (DRG/PPS) and competitive bidding (WIC). Substitution threats vary by segment\u2014high in off-patent pharma and nutrition, but lower in proprietary, sticky medical devices like the FreeStyle Libre. Overall, Abbott is a highly competitive platform but acts as a price-taker in several heavily regulated segments, limiting absolute pricing power."
+          },
+          "moat": {
+            "score": 6.5,
+            "switching_costs": 8.0,
+            "network_effects": 2.0,
+            "cost_advantage": 7.0,
+            "intangibles": 9.0,
+            "evidence": "Abbott benefits from high switching costs in its Diagnostic Products segment due to long-term supply contracts and proprietary closed-loop systems like Alinity. Intangibles are supported by a substantial portfolio of patents expiring between 2026 and 2046, FDA approvals, and strong brand equity in Nutritional Products like Similac and Ensure.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The 10-K does not provide evidence of recent price hikes without churn. Instead, it highlights significant pricing pressures from government cost containment efforts, DRG/PPS reimbursement systems, competitive bidding for WIC infant formula rebates, and generic drug substitution."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.3170497349547396,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue is reported as 0 with a D8 Revenue Score of 1.00. This indicates a clean revenue profile with healthy growth quality and no signs of pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "According to the 10-K, Abbott holds various patents expiring between 2026 and 2046. However, the company explicitly states that no single patent, license, or trademark is material in relation to the business as a whole. Therefore, there is no concentrated patent cliff or material intangible decay risk.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Abbott Laboratories demonstrates structural, non-cyclical growth (Revenue Z-Score: 1.32) and is not currently at a cyclical peak. Growth quality is strong, with a D8 Revenue Score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is minimal and highly diversified; although patents expire between 2026 and 2046, the company confirms no single patent is material to the business as a whole."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 44.328,
+            "ebitda_bn": 8.053,
+            "fcf_bn": 7.395,
+            "nopat_bn": 6.36187,
+            "invested_capital_bn": 54.39056,
+            "net_debt_bn": 1.374,
+            "sbc_bn": 0.664,
+            "fiscal_year": 2025,
+            "data_quality": 0.96
+          },
+          "ratios": {
+            "gross_margin_pct": 56.418065331167654,
+            "ebit_margin_pct": 18.166847139505503,
+            "ebitda_margin_pct": 18.166847139505503,
+            "fcf_margin_pct": 16.682458040064972,
+            "roic": 0.11696643682286044,
+            "roe": 0.12514866679455208,
+            "sbc_pct_fcf": 8.979039891818797,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 2,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 11266294000.0,
+            "equity": 163098916834.41748,
+            "wacc": 0.09,
+            "cost_of_equity": 0.07317354975865532,
+            "beta": 0.5387917971477814
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 1126629400.0,
+              "cash": 8809339000.0,
+              "liquidity_ratio": 0.1278903445536606,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 22855627000.0,
+              "crash_fcf": 2463117695.0,
+              "earnings_power_value": 22391979045.454544,
+              "floor_value": 22855627000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 3.2,
+              "financial_leverage_score": 0.2763057957383703,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.09,
+              "2": 0.09,
+              "3": 0.09,
+              "4": 0.09,
+              "5": 0.09
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "The 10-K explicitly states that Abbott has no single customer that, if lost, would have a material adverse effect on the company."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 67556191694.44592,
+            "upside_percent": -0.5857962018074696,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 28.055143279053627,
+                "margin_of_safety": -0.7010958545001383,
+                "ev": 52247328368.34456
+              },
+              "base": {
+                "intrinsic_per_share": 52.926839465403305,
+                "margin_of_safety": -0.4361086818534908,
+                "ev": 95466449202.02756
+              },
+              "bull": {
+                "intrinsic_per_share": 70.17601997410917,
+                "margin_of_safety": -0.2523330543600098,
+                "ev": 125440054986.7797
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.07641606049228991,
+              "historical_cagr": 0.04100268186895517,
+              "signal": "priced_for_growth",
+              "reasons": [
+                "Implied CAGR (7.6%) exceeds historical (4.1%) but is below sector 75th percentile (12.0%). Growth premium is being paid \u2014 requires documented justification."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 20.423806883697686,
+              "justified_ev_ebitda": 13.563555715554532,
+              "premium_pct": 0.5057856001782701,
+              "signal": "high_premium",
+              "roic_wacc_spread": 0.046171060110789114,
+              "value_creation": "creating",
+              "roic": 0.11696643682286044,
+              "wacc": 0.09
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.0,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": false,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 7.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.09,
+            "beta": 0.5387917971477814,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias",
+            "bear_case_summary": "The market is pricing ABT for perfection, demanding a 10-year revenue CAGR of 7.6% to justify its $93.86 price tag. This is a staggering 1.9x its historical growth rate of 4.1%. Furthermore, the Liberti multiple decomposition reveals a market EV/EBITDA of 20.4x, representing a 51% premium over the mathematically justified multiple of 13.6x. To achieve this implied growth, ABT would need flawless execution and massive market share capture in its Medical Devices and Diagnostics segments, ignoring the reality of post-COVID diagnostic cliffs, intense continuous glucose monitor (CGM) competition, and GLP-1 drug headwinds impacting cardiovascular and diabetes device TAMs. If ABT fails to double its historical growth trajectory and multiples mean-revert to justified levels, the stock faces a catastrophic repricing toward the bear case intrinsic value of $28 per share, representing a 70.1% downside. The current valuation offers zero margin of safety.",
+            "sentiment_score": -7,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $93.86 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 7.6%\n  \u2022 Company's robust historical CAGR: 4.1%\n  \u2022 Ratio (implied / historical): 1.9x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (7.6%) exceeds historical (4.1%) but is below sector 75th percentile (12.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 20.4x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.6x\n  \u2022 Premium to justified multiple: +51%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $28/share vs current price $93.86\n  \u2022 Downside in bear case: -70.1%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 2,
+            "margin_of_safety": -0.4361086818534908,
+            "narrative": "The implied 10-year CAGR of 7.6% is highly unrealistic, representing a 1.9x expansion over Abbott's historical 4.1% growth rate. While the company possesses a moderate moat (6.5/10) driven by switching costs in Diagnostics and strong brand equity in Nutrition, it fundamentally lacks pricing power due to immense buyer consolidation. Without pricing power, achieving a near-doubling of historical growth requires unprecedented volume expansion, which is structurally constrained by GLP-1 headwinds in cardiovascular/diabetes TAMs and intense CGM competition. Growth is more likely to decay toward the historical 4% mean.\n\nThe Contrarian is entirely correct regarding the severe valuation disconnect: a 51% EV/EBITDA premium and an implied 7.6% CAGR leave absolutely zero margin of safety. The bear case accurately identifies the structural headwinds from GLP-1s and post-COVID diagnostic normalization. However, the bear's catastrophic $28 price target may underestimate the downside protection affor...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u26a0\ufe0f CAUTION: Implied CAGR (7.6%) exceeds historical (4.1%) by 1.9x.",
+              "\u26a0\ufe0f CAUTION: EV/EBITDA at +51% premium."
+            ],
+            "pillar_scores": {
+              "ticker": "ABT",
+              "p1_moat": 4,
+              "p2_health": 4,
+              "p3_tailwind": 3,
+              "p4_mos": 2,
+              "p5_leadership": 4,
+              "raw_total": 17,
+              "capped_total": 17,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern",
+              "conviction_score": 2,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 8.0/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +4.7pp \u2014 modest value creation",
+                "FCF margin 16.7% \u2014 strong FCF",
+                "Net Debt/EBITDA 0.2\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 4.1% \u2014 moderate growth",
+                "Sector 'Healthcare' \u2014 confirmed secular tailwind",
+                "Market implied CAGR 1.7\u00d7 historical \u2014 tailwind partially priced"
+              ],
+              "p4_reasons": [
+                "Base MoS -17.0% \u2014 Slight premium to intrinsic value \u2014 patience required"
+              ],
+              "p5_reasons": [
+                "SBC 9.0% of FCF \u2014 elevated, investigate",
+                "Operating leverage 6.0/10",
+                "Strategic leverage 8.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for ABT. Conviction: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

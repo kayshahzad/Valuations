@@ -1,0 +1,2795 @@
+[
+  {
+    "timestamp": "2026-04-29T10:43:41.993245",
+    "agent": "Librarian",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "Data unavailable.",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:44:14.762382",
+    "agent": "Forensic",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:44:38.782581",
+    "agent": "ValueChain",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 10.0,
+        "power_ratio": 0.85,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+        "substitution_risk_score": 1.0,
+        "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+        "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+        "pass_through_capability": true,
+        "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 10.0/10. Upstream leak: False. Pass-through: True. Sub risk: 1.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:44:55.678528",
+    "agent": "StrategicContext",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 10.0/10. Upstream leak: False. Pass-through: True. Sub risk: 1.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 10.0,
+        "power_ratio": 0.85,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+        "substitution_risk_score": 1.0,
+        "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+        "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+        "pass_through_capability": true,
+        "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.7267002041984445,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue stands at $17.5B with a 1.2% growth rate. The D8 Revenue Score is 1.00, indicating clean and healthy deferred revenue trends relative to overall revenue growth, with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Due to the unavailability of 10-K text and patent search errors, specific patent cliffs or contract expirations cannot be verified. Uncertainty is high due to missing data, but estimated at 0.0% based on available inputs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "ASML is currently not at a cyclical peak (Z-score 1.73), reflecting sustained structural growth in semiconductor lithography demand. Quality of growth is robust, supported by a perfect D8 score (1.00) and stable deferred revenue ($17.5B, +1.2% YoY), signaling no pull-forward risk. While specific 10-K patent data was unavailable, no material intangible decay or terminal haircut is estimated, though this assessment carries uncertainty due to missing source text."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.73 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:44:56.853329",
+    "agent": "Strategist",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 10.0/10. Upstream leak: False. Pass-through: True. Sub risk: 1.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.73 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 10.0,
+        "power_ratio": 0.85,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+        "substitution_risk_score": 1.0,
+        "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+        "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+        "pass_through_capability": true,
+        "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7267002041984445,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue stands at $17.5B with a 1.2% growth rate. The D8 Revenue Score is 1.00, indicating clean and healthy deferred revenue trends relative to overall revenue growth, with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Due to the unavailability of 10-K text and patent search errors, specific patent cliffs or contract expirations cannot be verified. Uncertainty is high due to missing data, but estimated at 0.0% based on available inputs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "ASML is currently not at a cyclical peak (Z-score 1.73), reflecting sustained structural growth in semiconductor lithography demand. Quality of growth is robust, supported by a perfect D8 score (1.00) and stable deferred revenue ($17.5B, +1.2% YoY), signaling no pull-forward risk. While specific 10-K patent data was unavailable, no material intangible decay or terminal haircut is estimated, though this assessment carries uncertainty due to missing source text."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1052184959.9999999,
+          "equity": 537439904277.3413,
+          "wacc": 0.13705552166149718,
+          "cost_of_equity": 0.13726197956117692,
+          "beta": 1.6967632550385325
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 105218496.0,
+            "cash": 2460493632.0,
+            "liquidity_ratio": 0.04276316533868599,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5661115056.0,
+            "crash_fcf": 740429939.52,
+            "earnings_power_value": 4714447041.956625,
+            "floor_value": 5661115056.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.5,
+            "financial_leverage_score": 0.00783108921854101,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.13705552166149718,
+            "2": 0.13705552166149718,
+            "3": 0.13705552166149718,
+            "4": 0.13705552166149718,
+            "5": 0.13705552166149718
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 13.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:44:57.852779",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "base": {
+        "net_sales": 35770693500.0,
+        "cogs": 16873183500.0,
+        "interest_expense": 0.0,
+        "net_debt": -11176665000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.038503335139420766,
+        "da_percent_sales": 0.031404493178193486,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.04817049465367508,
+        "wacc": 0.13705552166149718,
+        "wc_change_percent_sales": 0.01,
+        "cogs_percent_sales": 0.6155421476522394,
+        "calibration_adjustment": 0.14383802763007647
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-29T10:44:57.852865",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 87755803969.58583,
+      "equity_value": 98932468969.58583,
+      "terminal_value": 102936627619.2865,
+      "discounted_terminal_value": 54157870361.112045,
+      "sum_pv_cash_flows": 33597933608.473785,
+      "audit_metrics": {
+        "roic_path": [
+          0.3904913869745674,
+          0.4047083182363072,
+          0.4110713133135995,
+          0.4093874798856385,
+          0.4038603925792216
+        ],
+        "invested_capital_path": [
+          25039485450.0,
+          26092667728.5,
+          27230104589.28,
+          28435787661.7068,
+          29689698057.03067,
+          30981225764.214256
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 39347762850.0,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.31455002403014637,
+          "ebit": 12376839750.0,
+          "nopat": 9777703402.5,
+          "depreciation": 1235696550.0,
+          "capex": 1895401200.0,
+          "change_in_wc": 393477628.5,
+          "fcff": 8724521124.0,
+          "discount_factor": 0.8794645300510674,
+          "pv_fcff": 7672906870.23927
+        },
+        {
+          "year": 2.0,
+          "revenue": 42495583878.0,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.31455002403014637,
+          "ebit": 13366986930.0,
+          "nopat": 10559919674.7,
+          "depreciation": 1334552274.0,
+          "capex": 2047033296.0,
+          "change_in_wc": 424955838.78000003,
+          "fcff": 9422482813.92,
+          "discount_factor": 0.7734578596179448,
+          "pv_fcff": 7287893389.541432
+        },
+        {
+          "year": 3.0,
+          "revenue": 45045318910.68,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.31455002403014637,
+          "ebit": 14169006145.800001,
+          "nopat": 11193514855.182001,
+          "depreciation": 1414625410.44,
+          "capex": 2169855293.7599998,
+          "change_in_wc": 450453189.1068,
+          "fcff": 9987831782.755201,
+          "discount_factor": 0.6802287530232004,
+          "pv_fcff": 6794010358.989059
+        },
+        {
+          "year": 4.0,
+          "revenue": 46847131667.1072,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.31455002403014637,
+          "ebit": 14735766391.632,
+          "nopat": 11641255449.38928,
+          "depreciation": 1471210426.8576002,
+          "capex": 2256649505.5104,
+          "change_in_wc": 468471316.671072,
+          "fcff": 10387345054.065409,
+          "discount_factor": 0.5982370606047724,
+          "pv_fcff": 6214094772.631611
+        },
+        {
+          "year": 5.0,
+          "revenue": 48252545617.120415,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.31455002403014637,
+          "ebit": 15177839383.38096,
+          "nopat": 11990493112.87096,
+          "depreciation": 1515346739.6633282,
+          "capex": 2324348990.675712,
+          "change_in_wc": 482525456.17120415,
+          "fcff": 10698965405.687372,
+          "discount_factor": 0.5261282753639082,
+          "pv_fcff": 5629028217.072413
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 35770693500.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.31455002403014637,
+        "terminal_value_pct_of_ev": 0.6171428886900966,
+        "implied_terminal_multiple_fcf": 9.621175853561251,
+        "implied_terminal_multiple_nopat": 8.584853571100524,
+        "reinvestment_rate_terminal_year": 0.10771264326045298,
+        "assumptions_used": {
+          "wacc": 0.13705552166149718,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.031404493178193486,
+          "capex_percent_sales": 0.04817049465367508,
+          "wc_change_percent_sales": 0.01
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:44:57.854582",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 10.0/10. Upstream leak: False. Pass-through: True. Sub risk: 1.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.73 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 13.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1052184959.9999999,
+          "equity": 537439904277.3413,
+          "wacc": 0.13705552166149718,
+          "cost_of_equity": 0.13726197956117692,
+          "beta": 1.6967632550385325
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 105218496.0,
+            "cash": 2460493632.0,
+            "liquidity_ratio": 0.04276316533868599,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5661115056.0,
+            "crash_fcf": 740429939.52,
+            "earnings_power_value": 4714447041.956625,
+            "floor_value": 5661115056.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.5,
+            "financial_leverage_score": 0.00783108921854101,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.13705552166149718,
+            "2": 0.13705552166149718,
+            "3": 0.13705552166149718,
+            "4": 0.13705552166149718,
+            "5": 0.13705552166149718
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 10.0,
+        "power_ratio": 0.85,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+        "substitution_risk_score": 1.0,
+        "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+        "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+        "pass_through_capability": true,
+        "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7267002041984445,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue stands at $17.5B with a 1.2% growth rate. The D8 Revenue Score is 1.00, indicating clean and healthy deferred revenue trends relative to overall revenue growth, with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Due to the unavailability of 10-K text and patent search errors, specific patent cliffs or contract expirations cannot be verified. Uncertainty is high due to missing data, but estimated at 0.0% based on available inputs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "ASML is currently not at a cyclical peak (Z-score 1.73), reflecting sustained structural growth in semiconductor lithography demand. Quality of growth is robust, supported by a perfect D8 score (1.00) and stable deferred revenue ($17.5B, +1.2% YoY), signaling no pull-forward risk. While specific 10-K patent data was unavailable, no material intangible decay or terminal haircut is estimated, though this assessment carries uncertainty due to missing source text."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "terminal_value": 102936627619.2865,
+          "discounted_terminal_value": 54157870361.112045,
+          "sum_pv_cash_flows": 33597933608.473785,
+          "audit_metrics": {
+            "roic_path": [
+              0.3904913869745674,
+              0.4047083182363072,
+              0.4110713133135995,
+              0.4093874798856385,
+              0.4038603925792216
+            ],
+            "invested_capital_path": [
+              25039485450.0,
+              26092667728.5,
+              27230104589.28,
+              28435787661.7068,
+              29689698057.03067,
+              30981225764.214256
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 35770693500.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.31455002403014637,
+            "terminal_value_pct_of_ev": 0.6171428886900966,
+            "implied_terminal_multiple_fcf": 9.621175853561251,
+            "implied_terminal_multiple_nopat": 8.584853571100524,
+            "reinvestment_rate_terminal_year": 0.10771264326045298,
+            "assumptions_used": {
+              "wacc": 0.13705552166149718,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.031404493178193486,
+              "capex_percent_sales": 0.04817049465367508,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 256.6889777058923,
+          "upside_percent": -0.815919008267942,
+          "assumptions_used": {
+            "wacc": 0.13705552166149718,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.031404493178193486,
+            "capex_percent_sales": 0.04817049465367508,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.038503335139420766,
+          "da_percent_sales": 0.031404493178193486,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04817049465367508,
+          "wacc": 0.13705552166149718,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6155421476522394,
+          "calibration_adjustment": 0.14383802763007647
+        },
+        "base_financials": {
+          "net_sales": 35770693500.0,
+          "cogs": 16873183500.0,
+          "interest_expense": 0.0,
+          "net_debt": -11176665000.0
+        },
+        "calculated_upside": -0.815919008267942
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $87,755,803,970",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:44:58.865016",
+    "agent": "ValuationNode",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 10.0/10. Upstream leak: False. Pass-through: True. Sub risk: 1.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.73 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 13.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $87,755,803,970",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "terminal_value": 102936627619.2865,
+          "discounted_terminal_value": 54157870361.112045,
+          "sum_pv_cash_flows": 33597933608.473785,
+          "audit_metrics": {
+            "roic_path": [
+              0.3904913869745674,
+              0.4047083182363072,
+              0.4110713133135995,
+              0.4093874798856385,
+              0.4038603925792216
+            ],
+            "invested_capital_path": [
+              25039485450.0,
+              26092667728.5,
+              27230104589.28,
+              28435787661.7068,
+              29689698057.03067,
+              30981225764.214256
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 35770693500.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.31455002403014637,
+            "terminal_value_pct_of_ev": 0.6171428886900966,
+            "implied_terminal_multiple_fcf": 9.621175853561251,
+            "implied_terminal_multiple_nopat": 8.584853571100524,
+            "reinvestment_rate_terminal_year": 0.10771264326045298,
+            "assumptions_used": {
+              "wacc": 0.13705552166149718,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.031404493178193486,
+              "capex_percent_sales": 0.04817049465367508,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 256.6889777058923,
+          "upside_percent": -0.815919008267942,
+          "assumptions_used": {
+            "wacc": 0.13705552166149718,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.031404493178193486,
+            "capex_percent_sales": 0.04817049465367508,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.038503335139420766,
+          "da_percent_sales": 0.031404493178193486,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04817049465367508,
+          "wacc": 0.13705552166149718,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6155421476522394,
+          "calibration_adjustment": 0.14383802763007647
+        },
+        "base_financials": {
+          "net_sales": 35770693500.0,
+          "cogs": 16873183500.0,
+          "interest_expense": 0.0,
+          "net_debt": -11176665000.0
+        },
+        "calculated_upside": -0.815919008267942
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1052184959.9999999,
+          "equity": 537439904277.3413,
+          "wacc": 0.13705552166149718,
+          "cost_of_equity": 0.13726197956117692,
+          "beta": 1.6967632550385325
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 105218496.0,
+            "cash": 2460493632.0,
+            "liquidity_ratio": 0.04276316533868599,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5661115056.0,
+            "crash_fcf": 740429939.52,
+            "earnings_power_value": 4714447041.956625,
+            "floor_value": 5661115056.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.5,
+            "financial_leverage_score": 0.00783108921854101,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.13705552166149718,
+            "2": 0.13705552166149718,
+            "3": 0.13705552166149718,
+            "4": 0.13705552166149718,
+            "5": 0.13705552166149718
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 10.0,
+        "power_ratio": 0.85,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+        "substitution_risk_score": 1.0,
+        "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+        "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+        "pass_through_capability": true,
+        "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7267002041984445,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue stands at $17.5B with a 1.2% growth rate. The D8 Revenue Score is 1.00, indicating clean and healthy deferred revenue trends relative to overall revenue growth, with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Due to the unavailability of 10-K text and patent search errors, specific patent cliffs or contract expirations cannot be verified. Uncertainty is high due to missing data, but estimated at 0.0% based on available inputs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "ASML is currently not at a cyclical peak (Z-score 1.73), reflecting sustained structural growth in semiconductor lithography demand. Quality of growth is robust, supported by a perfect D8 score (1.00) and stable deferred revenue ($17.5B, +1.2% YoY), signaling no pull-forward risk. While specific 10-K patent data was unavailable, no material intangible decay or terminal haircut is estimated, though this assessment carries uncertainty due to missing source text."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 10.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "reverse_dcf": {
+          "ticker": "ASML",
+          "fiscal_year": 2025,
+          "current_price": 1394.43505859375,
+          "current_ev": 526263239277.3413,
+          "current_ev_ebitda": 38.98710163378637,
+          "wacc": 0.13668198823798178,
+          "ebit_margin": 0.34595451720833986,
+          "implied_cagr_10y": 0.33315236289289574,
+          "implied_cagr_5y": 0.33315236289289574,
+          "historical_cagr_5y": 0.09964105905849963,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 38.98710163378637,
+          "forward_ev_ebitda_justified": 6.840971956702478,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.33315236289289574,
+        "historical_cagr": 0.09964105905849963,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (33.3%) is 1.9x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "ASML",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 38.98710163378637,
+          "market_ev_ebit": 42.526208962621865,
+          "market_p_sales": 15.024587216273604,
+          "market_p_e": 51.076310484543754,
+          "market_peg": 5.126030470486737,
+          "justified_ev_ebitda": 6.302322081424555,
+          "justified_ev_ebit": 6.874423964672069,
+          "justified_p_sales": 7.752455189288515,
+          "ev_ebitda_premium": 32.68477955236181,
+          "ev_ebitda_premium_pct": 5.186148713138103,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 16.987101633786367,
+          "roic": 0.8876139752206731,
+          "wacc": 0.13668198823798178,
+          "roic_wacc_spread": 0.7509319869826914,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.70385586056963,
+          "growth_rate": 0.09964105905849963,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 38.98710163378637,
+        "ev_ebitda_justified": 6.302322081424555,
+        "ev_ebitda_premium_pct": 5.186148713138103,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.7509319869826914,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.8876139752206731,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: ASML ===\nRDCF: implied=33.3% hist=10.0% [flag]\nEV/EBITDA: 39.0x market vs 6.3x justified (+519%)\nAdj: WACC+0.015 terminal+0.005 cap=None\nErrors: DCFEngine failed: DCFEngine: missing D&A or CapEx for ASML. da=None, capex=None. Check tag_misses.jsonl for the unresolved XBRL tag.",
+        "errors": [
+          "DCFEngine failed: DCFEngine: missing D&A or CapEx for ASML. da=None, capex=None. Check tag_misses.jsonl for the unresolved XBRL tag."
+        ]
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: ASML \u2014 Base IV=$0/share MoS=+0.0% ImpliedCAGR=33.3% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:45:15.488603",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 10.0/10. Upstream leak: False. Pass-through: True. Sub risk: 1.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.73 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 13.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $87,755,803,970",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: ASML \u2014 Base IV=$0/share MoS=+0.0% ImpliedCAGR=33.3% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "terminal_value": 102936627619.2865,
+          "discounted_terminal_value": 54157870361.112045,
+          "sum_pv_cash_flows": 33597933608.473785,
+          "audit_metrics": {
+            "roic_path": [
+              0.3904913869745674,
+              0.4047083182363072,
+              0.4110713133135995,
+              0.4093874798856385,
+              0.4038603925792216
+            ],
+            "invested_capital_path": [
+              25039485450.0,
+              26092667728.5,
+              27230104589.28,
+              28435787661.7068,
+              29689698057.03067,
+              30981225764.214256
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 35770693500.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.31455002403014637,
+            "terminal_value_pct_of_ev": 0.6171428886900966,
+            "implied_terminal_multiple_fcf": 9.621175853561251,
+            "implied_terminal_multiple_nopat": 8.584853571100524,
+            "reinvestment_rate_terminal_year": 0.10771264326045298,
+            "assumptions_used": {
+              "wacc": 0.13705552166149718,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.031404493178193486,
+              "capex_percent_sales": 0.04817049465367508,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 256.6889777058923,
+          "upside_percent": -0.815919008267942,
+          "assumptions_used": {
+            "wacc": 0.13705552166149718,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.031404493178193486,
+            "capex_percent_sales": 0.04817049465367508,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.038503335139420766,
+          "da_percent_sales": 0.031404493178193486,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04817049465367508,
+          "wacc": 0.13705552166149718,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6155421476522394,
+          "calibration_adjustment": 0.14383802763007647
+        },
+        "base_financials": {
+          "net_sales": 35770693500.0,
+          "cogs": 16873183500.0,
+          "interest_expense": 0.0,
+          "net_debt": -11176665000.0
+        },
+        "calculated_upside": -0.815919008267942
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1052184959.9999999,
+          "equity": 537439904277.3413,
+          "wacc": 0.13705552166149718,
+          "cost_of_equity": 0.13726197956117692,
+          "beta": 1.6967632550385325
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 105218496.0,
+            "cash": 2460493632.0,
+            "liquidity_ratio": 0.04276316533868599,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5661115056.0,
+            "crash_fcf": 740429939.52,
+            "earnings_power_value": 4714447041.956625,
+            "floor_value": 5661115056.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.5,
+            "financial_leverage_score": 0.00783108921854101,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.13705552166149718,
+            "2": 0.13705552166149718,
+            "3": 0.13705552166149718,
+            "4": 0.13705552166149718,
+            "5": 0.13705552166149718
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 10.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "reverse_dcf": {
+          "ticker": "ASML",
+          "fiscal_year": 2025,
+          "current_price": 1394.43505859375,
+          "current_ev": 526263239277.3413,
+          "current_ev_ebitda": 38.98710163378637,
+          "wacc": 0.13668198823798178,
+          "ebit_margin": 0.34595451720833986,
+          "implied_cagr_10y": 0.33315236289289574,
+          "implied_cagr_5y": 0.33315236289289574,
+          "historical_cagr_5y": 0.09964105905849963,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 38.98710163378637,
+          "forward_ev_ebitda_justified": 6.840971956702478,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.33315236289289574,
+        "historical_cagr": 0.09964105905849963,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (33.3%) is 1.9x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "ASML",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 38.98710163378637,
+          "market_ev_ebit": 42.526208962621865,
+          "market_p_sales": 15.024587216273604,
+          "market_p_e": 51.076310484543754,
+          "market_peg": 5.126030470486737,
+          "justified_ev_ebitda": 6.302322081424555,
+          "justified_ev_ebit": 6.874423964672069,
+          "justified_p_sales": 7.752455189288515,
+          "ev_ebitda_premium": 32.68477955236181,
+          "ev_ebitda_premium_pct": 5.186148713138103,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 16.987101633786367,
+          "roic": 0.8876139752206731,
+          "wacc": 0.13668198823798178,
+          "roic_wacc_spread": 0.7509319869826914,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.70385586056963,
+          "growth_rate": 0.09964105905849963,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 38.98710163378637,
+        "ev_ebitda_justified": 6.302322081424555,
+        "ev_ebitda_premium_pct": 5.186148713138103,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.7509319869826914,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.8876139752206731,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: ASML ===\nRDCF: implied=33.3% hist=10.0% [flag]\nEV/EBITDA: 39.0x market vs 6.3x justified (+519%)\nAdj: WACC+0.015 terminal+0.005 cap=None\nErrors: DCFEngine failed: DCFEngine: missing D&A or CapEx for ASML. da=None, capex=None. Check tag_misses.jsonl for the unresolved XBRL tag.",
+        "errors": [
+          "DCFEngine failed: DCFEngine: missing D&A or CapEx for ASML. da=None, capex=None. Check tag_misses.jsonl for the unresolved XBRL tag."
+        ]
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 10.0,
+        "power_ratio": 0.85,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+        "substitution_risk_score": 1.0,
+        "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+        "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+        "pass_through_capability": true,
+        "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7267002041984445,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue stands at $17.5B with a 1.2% growth rate. The D8 Revenue Score is 1.00, indicating clean and healthy deferred revenue trends relative to overall revenue growth, with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Due to the unavailability of 10-K text and patent search errors, specific patent cliffs or contract expirations cannot be verified. Uncertainty is high due to missing data, but estimated at 0.0% based on available inputs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "ASML is currently not at a cyclical peak (Z-score 1.73), reflecting sustained structural growth in semiconductor lithography demand. Quality of growth is robust, supported by a perfect D8 score (1.00) and stable deferred revenue ($17.5B, +1.2% YoY), signaling no pull-forward risk. While specific 10-K patent data was unavailable, no material intangible decay or terminal haircut is estimated, though this assessment carries uncertainty due to missing source text."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $0.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 33.3%\n  \u2022 Company's robust historical CAGR: 10.0%\n  \u2022 Ratio (implied / historical): 3.3x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (33.3%) is 1.9x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 39.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 6.3x\n  \u2022 Premium to justified multiple: +519%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $0.00\n  \u2022 Downside in bear case: +0.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The current valuation of ASML is built on a mathematical impossibility and extreme speculative fervor. To justify the current market pricing, ASML must deliver a 10-year revenue CAGR of 33.3%, which is 3.3x its historical growth rate of 10.0% and nearly double the sector's 75th percentile of 18.0%. Furthermore, the stock trades at an EV/EBITDA of 39.0x, representing a massive 519% premium over its mathematically justified multiple of 6.3x based on ROIC and WACC. This implies the market is pricing in uninterrupted, exponential AI-driven demand while completely ignoring the inherent cyclicality of semiconductor capital equipment. Qualitatively, this growth extrapolation ignores severe geopolitical risks, specifically tightening export controls to China, which threaten a massive revenue base. The market is pricing in a flawless execution of an impossible TAM expansion, leaving investors exposed to catastrophic multiple compression when growth inevitably reverts to historical means.",
+          "sentiment_score": -9
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 33.3% vs 10.0% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:45:37.935248",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/ASML_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:45:37.937095",
+    "agent": "Lead",
+    "trace_id": "trace_ASML_1777473821",
+    "inputs": {
+      "ticker": "ASML",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for ASML.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.5/10 (Python). Pricing power: True. Concentration: True. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 10.0/10. Upstream leak: False. Pass-through: True. Sub risk: 1.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.73 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 13.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $87,755,803,970",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: ASML \u2014 Base IV=$0/share MoS=+0.0% ImpliedCAGR=33.3% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 33.3% vs 10.0% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "terminal_value": 102936627619.2865,
+          "discounted_terminal_value": 54157870361.112045,
+          "sum_pv_cash_flows": 33597933608.473785,
+          "audit_metrics": {
+            "roic_path": [
+              0.3904913869745674,
+              0.4047083182363072,
+              0.4110713133135995,
+              0.4093874798856385,
+              0.4038603925792216
+            ],
+            "invested_capital_path": [
+              25039485450.0,
+              26092667728.5,
+              27230104589.28,
+              28435787661.7068,
+              29689698057.03067,
+              30981225764.214256
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 35770693500.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.31455002403014637,
+            "terminal_value_pct_of_ev": 0.6171428886900966,
+            "implied_terminal_multiple_fcf": 9.621175853561251,
+            "implied_terminal_multiple_nopat": 8.584853571100524,
+            "reinvestment_rate_terminal_year": 0.10771264326045298,
+            "assumptions_used": {
+              "wacc": 0.13705552166149718,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.031404493178193486,
+              "capex_percent_sales": 0.04817049465367508,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 256.6889777058923,
+          "upside_percent": -0.815919008267942,
+          "assumptions_used": {
+            "wacc": 0.13705552166149718,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.031404493178193486,
+            "capex_percent_sales": 0.04817049465367508,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 39347762850.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 12376839750.0,
+              "nopat": 9777703402.5,
+              "depreciation": 1235696550.0,
+              "capex": 1895401200.0,
+              "change_in_wc": 393477628.5,
+              "fcff": 8724521124.0,
+              "discount_factor": 0.8794645300510674,
+              "pv_fcff": 7672906870.23927
+            },
+            {
+              "year": 2.0,
+              "revenue": 42495583878.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 13366986930.0,
+              "nopat": 10559919674.7,
+              "depreciation": 1334552274.0,
+              "capex": 2047033296.0,
+              "change_in_wc": 424955838.78000003,
+              "fcff": 9422482813.92,
+              "discount_factor": 0.7734578596179448,
+              "pv_fcff": 7287893389.541432
+            },
+            {
+              "year": 3.0,
+              "revenue": 45045318910.68,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14169006145.800001,
+              "nopat": 11193514855.182001,
+              "depreciation": 1414625410.44,
+              "capex": 2169855293.7599998,
+              "change_in_wc": 450453189.1068,
+              "fcff": 9987831782.755201,
+              "discount_factor": 0.6802287530232004,
+              "pv_fcff": 6794010358.989059
+            },
+            {
+              "year": 4.0,
+              "revenue": 46847131667.1072,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 14735766391.632,
+              "nopat": 11641255449.38928,
+              "depreciation": 1471210426.8576002,
+              "capex": 2256649505.5104,
+              "change_in_wc": 468471316.671072,
+              "fcff": 10387345054.065409,
+              "discount_factor": 0.5982370606047724,
+              "pv_fcff": 6214094772.631611
+            },
+            {
+              "year": 5.0,
+              "revenue": 48252545617.120415,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.31455002403014637,
+              "ebit": 15177839383.38096,
+              "nopat": 11990493112.87096,
+              "depreciation": 1515346739.6633282,
+              "capex": 2324348990.675712,
+              "change_in_wc": 482525456.17120415,
+              "fcff": 10698965405.687372,
+              "discount_factor": 0.5261282753639082,
+              "pv_fcff": 5629028217.072413
+            }
+          ],
+          "enterprise_value": 87755803969.58583,
+          "equity_value": 98932468969.58583,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.038503335139420766,
+          "da_percent_sales": 0.031404493178193486,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04817049465367508,
+          "wacc": 0.13705552166149718,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6155421476522394,
+          "calibration_adjustment": 0.14383802763007647
+        },
+        "base_financials": {
+          "net_sales": 35770693500.0,
+          "cogs": 16873183500.0,
+          "interest_expense": 0.0,
+          "net_debt": -11176665000.0
+        },
+        "calculated_upside": -0.815919008267942
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1052184959.9999999,
+          "equity": 537439904277.3413,
+          "wacc": 0.13705552166149718,
+          "cost_of_equity": 0.13726197956117692,
+          "beta": 1.6967632550385325
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 105218496.0,
+            "cash": 2460493632.0,
+            "liquidity_ratio": 0.04276316533868599,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5661115056.0,
+            "crash_fcf": 740429939.52,
+            "earnings_power_value": 4714447041.956625,
+            "floor_value": 5661115056.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.5,
+            "financial_leverage_score": 0.00783108921854101,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.13705552166149718,
+            "2": 0.13705552166149718,
+            "3": 0.13705552166149718,
+            "4": 0.13705552166149718,
+            "5": 0.13705552166149718
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 10.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "reverse_dcf": {
+          "ticker": "ASML",
+          "fiscal_year": 2025,
+          "current_price": 1394.43505859375,
+          "current_ev": 526263239277.3413,
+          "current_ev_ebitda": 38.98710163378637,
+          "wacc": 0.13668198823798178,
+          "ebit_margin": 0.34595451720833986,
+          "implied_cagr_10y": 0.33315236289289574,
+          "implied_cagr_5y": 0.33315236289289574,
+          "historical_cagr_5y": 0.09964105905849963,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 38.98710163378637,
+          "forward_ev_ebitda_justified": 6.840971956702478,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.33315236289289574,
+        "historical_cagr": 0.09964105905849963,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (33.3%) is 1.9x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "ASML",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 38.98710163378637,
+          "market_ev_ebit": 42.526208962621865,
+          "market_p_sales": 15.024587216273604,
+          "market_p_e": 51.076310484543754,
+          "market_peg": 5.126030470486737,
+          "justified_ev_ebitda": 6.302322081424555,
+          "justified_ev_ebit": 6.874423964672069,
+          "justified_p_sales": 7.752455189288515,
+          "ev_ebitda_premium": 32.68477955236181,
+          "ev_ebitda_premium_pct": 5.186148713138103,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 16.987101633786367,
+          "roic": 0.8876139752206731,
+          "wacc": 0.13668198823798178,
+          "roic_wacc_spread": 0.7509319869826914,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.70385586056963,
+          "growth_rate": 0.09964105905849963,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 38.98710163378637,
+        "ev_ebitda_justified": 6.302322081424555,
+        "ev_ebitda_premium_pct": 5.186148713138103,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.7509319869826914,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.8876139752206731,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: ASML ===\nRDCF: implied=33.3% hist=10.0% [flag]\nEV/EBITDA: 39.0x market vs 6.3x justified (+519%)\nAdj: WACC+0.015 terminal+0.005 cap=None\nErrors: DCFEngine failed: DCFEngine: missing D&A or CapEx for ASML. da=None, capex=None. Check tag_misses.jsonl for the unresolved XBRL tag.",
+        "errors": [
+          "DCFEngine failed: DCFEngine: missing D&A or CapEx for ASML. da=None, capex=None. Check tag_misses.jsonl for the unresolved XBRL tag."
+        ]
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $0.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 33.3%\n  \u2022 Company's robust historical CAGR: 10.0%\n  \u2022 Ratio (implied / historical): 3.3x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (33.3%) is 1.9x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 39.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 6.3x\n  \u2022 Premium to justified multiple: +519%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $0.00\n  \u2022 Downside in bear case: +0.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The current valuation of ASML is built on a mathematical impossibility and extreme speculative fervor. To justify the current market pricing, ASML must deliver a 10-year revenue CAGR of 33.3%, which is 3.3x its historical growth rate of 10.0% and nearly double the sector's 75th percentile of 18.0%. Furthermore, the stock trades at an EV/EBITDA of 39.0x, representing a massive 519% premium over its mathematically justified multiple of 6.3x based on ROIC and WACC. This implies the market is pricing in uninterrupted, exponential AI-driven demand while completely ignoring the inherent cyclicality of semiconductor capital equipment. Qualitatively, this growth extrapolation ignores severe geopolitical risks, specifically tightening export controls to China, which threaten a massive revenue base. The market is pricing in a flawless execution of an impossible TAM expansion, leaving investors exposed to catastrophic multiple compression when growth inevitably reverts to historical means.",
+          "sentiment_score": -9
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 5.0,
+          "cost_advantage": 7.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags.",
+        "concentration_risk": true,
+        "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components.",
+        "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+        "revenue_segments": [
+          {
+            "segment": "System Sales",
+            "pct_revenue": 80.0,
+            "growth_trend": "Cyclical but growing with global fab expansions"
+          },
+          {
+            "segment": "Installed Base Management",
+            "pct_revenue": 20.0,
+            "growth_trend": "Steady recurring growth"
+          }
+        ],
+        "key_customers": [
+          "TSMC",
+          "Samsung Electronics",
+          "Intel",
+          "SK Hynix",
+          "Micron"
+        ],
+        "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+        "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers.",
+        "operating_leverage_score": 6.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 10.0,
+        "power_ratio": 0.85,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+        "substitution_risk_score": 1.0,
+        "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+        "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+        "pass_through_capability": true,
+        "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7267002041984445,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue stands at $17.5B with a 1.2% growth rate. The D8 Revenue Score is 1.00, indicating clean and healthy deferred revenue trends relative to overall revenue growth, with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Due to the unavailability of 10-K text and patent search errors, specific patent cliffs or contract expirations cannot be verified. Uncertainty is high due to missing data, but estimated at 0.0% based on available inputs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "ASML is currently not at a cyclical peak (Z-score 1.73), reflecting sustained structural growth in semiconductor lithography demand. Quality of growth is robust, supported by a perfect D8 score (1.00) and stable deferred revenue ($17.5B, +1.2% YoY), signaling no pull-forward risk. While specific 10-K patent data was unavailable, no material intangible decay or terminal haircut is estimated, though this assessment carries uncertainty due to missing source text."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "ASML",
+        "generated_at": "2026-04-29T10:45:37.934021",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 6.5,
+            "cost_structure": "ASML exhibits moderate-to-high operating leverage (score 6.5/10) driven by massive fixed R&D expenditures and specialized manufacturing infrastructure. Variable costs include highly complex components from sole-source suppliers like Zeiss. Because the fixed R&D base is so large, incremental revenue from next-generation EUV and High-NA systems flows strongly to EBIT, reflected in the exceptionally high ROIC (88.8%) and strong FCF generation ($12.1B).",
+            "business_description": "ASML designs and manufactures advanced photolithography machines used in the production of semiconductor chips. Its customers are major semiconductor foundries and memory manufacturers who use ASML's DUV and EUV systems to print complex circuit patterns onto silicon wafers. Revenue is generated through the sale of these capital-intensive systems as well as high-margin installed base management, including service and upgrades.",
+            "revenue_segments": [
+              {
+                "segment": "System Sales",
+                "pct_revenue": 80.0,
+                "growth_trend": "Cyclical but growing with global fab expansions"
+              },
+              {
+                "segment": "Installed Base Management",
+                "pct_revenue": 20.0,
+                "growth_trend": "Steady recurring growth"
+              }
+            ],
+            "key_customers": [
+              "TSMC",
+              "Samsung Electronics",
+              "Intel",
+              "SK Hynix",
+              "Micron"
+            ],
+            "competitive_landscape": "ASML holds an absolute monopoly in EUV lithography. In the older DUV technology segment, it competes with Nikon and Canon, but ASML maintains dominant market share due to superior throughput, overlay capabilities, and an integrated software ecosystem.",
+            "regulatory_risk": "High exposure to geopolitical export controls, specifically US and Dutch government restrictions on selling advanced DUV and EUV equipment to Chinese customers."
+          },
+          "value_chain": {
+            "power_ratio": 0.85,
+            "upstream_leak": false,
+            "strategic_leverage": 10.0,
+            "bottleneck_analysis": "Carl Zeiss SMT is the critical sole-source supplier for the ultra-precision optical systems and mirrors required for EUV lithography. Trumpf is another critical supplier for high-power lasers. While Zeiss has immense theoretical leverage, ASML owns a 24.9 percent strategic equity stake in Zeiss SMT to align incentives, co-fund R&D, and prevent value leakage. If Zeiss raises prices, ASML's monopoly allows it to pass costs directly to foundries.",
+            "substitution_risk_score": 1.0,
+            "top_substitutes": "1. Multi-patterning DUV (economically unviable for sub-5nm logic). 2. Nanoimprint Lithography (Canon - limited to specific memory/niche uses, lacks defect control for advanced logic). 3. Directed Self-Assembly (DSA - experimental, complementary rather than a full substitute).",
+            "pricing_power_assessment": "ASML exhibits absolute price leadership as the sole global provider of EUV lithography systems. High-NA EUV systems sell for over $300M each. Customers (TSMC, Intel, Samsung) have no alternative suppliers and must accept ASML's pricing and contract terms to maintain their own technological roadmaps and competitive survival.",
+            "pass_through_capability": true,
+            "analysis_summary": "ASML operates as a dominant monopoly in the critical EUV lithography market, yielding an exceptionally strong Porter's Five Forces profile. Buyer power is negligible, as the world's leading semiconductor foundries are entirely dependent on ASML's technology for advanced node manufacturing. While supplier power is highly concentrated with sole-source partners like Carl Zeiss SMT, ASML effectively neutralizes this threat through strategic equity investments and deep R&D integration. With virtually zero substitution risk and insurmountable barriers to entry, ASML commands absolute pricing power and unparalleled strategic leverage within the global semiconductor value chain."
+          },
+          "moat": {
+            "score": 9.5,
+            "switching_costs": 10.0,
+            "network_effects": 5.0,
+            "cost_advantage": 7.0,
+            "intangibles": 10.0,
+            "evidence": "ASML possesses a monopoly in Extreme Ultraviolet (EUV) lithography, protected by decades of R&D, thousands of patents, and exclusive supplier agreements (e.g., Carl Zeiss SMT). The technological barrier to entry is insurmountable for peers. Customers like Intel, TSMC, and Samsung previously co-invested in ASML's R&D, locking them into the ecosystem.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "ASML consistently raises average selling prices (ASPs) for new generations of lithography tools, with High-NA EUV systems priced over $300 million each. Because there are no alternative suppliers for EUV, ASML experiences zero churn among leading-edge foundries despite these massive price tags."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.7267002041984445,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue stands at $17.5B with a 1.2% growth rate. The D8 Revenue Score is 1.00, indicating clean and healthy deferred revenue trends relative to overall revenue growth, with no signs of pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "Due to the unavailability of 10-K text and patent search errors, specific patent cliffs or contract expirations cannot be verified. Uncertainty is high due to missing data, but estimated at 0.0% based on available inputs.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "ASML is currently not at a cyclical peak (Z-score 1.73), reflecting sustained structural growth in semiconductor lithography demand. Quality of growth is robust, supported by a perfect D8 score (1.00) and stable deferred revenue ($17.5B, +1.2% YoY), signaling no pull-forward risk. While specific 10-K patent data was unavailable, no material intangible decay or terminal haircut is estimated, though this assessment carries uncertainty due to missing source text."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 35.7706935,
+            "ebitda_bn": 13.4983935,
+            "fcf_bn": 12.1379655,
+            "nopat_bn": 9.77627607,
+            "invested_capital_bn": 11.01410787,
+            "net_debt_bn": -11.176665,
+            "sbc_bn": 0.2215185,
+            "fiscal_year": 2025,
+            "data_quality": 1.0
+          },
+          "ratios": {
+            "gross_margin_pct": 52.82958799778371,
+            "ebit_margin_pct": 34.595451720833985,
+            "ebitda_margin_pct": 37.73590103865333,
+            "fcf_margin_pct": 33.932709467877665,
+            "roic": 0.8876139752206731,
+            "roe": 0.4899705285485565,
+            "sbc_pct_fcf": 1.8250051872366915,
+            "share_dilution_pct": 0.903522416389503,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 0,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 1052184959.9999999,
+            "equity": 537439904277.3413,
+            "wacc": 0.13705552166149718,
+            "cost_of_equity": 0.13726197956117692,
+            "beta": 1.6967632550385325
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 105218496.0,
+              "cash": 2460493632.0,
+              "liquidity_ratio": 0.04276316533868599,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 5661115056.0,
+              "crash_fcf": 740429939.52,
+              "earnings_power_value": 4714447041.956625,
+              "floor_value": 5661115056.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 6.5,
+              "financial_leverage_score": 0.00783108921854101,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.13705552166149718,
+              "2": 0.13705552166149718,
+              "3": 0.13705552166149718,
+              "4": 0.13705552166149718,
+              "5": 0.13705552166149718
+            }
+          },
+          "concentration_risk": true,
+          "concentration_details": "Top customers (TSMC, Samsung, Intel) account for the vast majority of revenue, with TSMC alone often exceeding 30%. Loss of any leading-edge customer would severely impact revenue. ASML also faces extreme supplier concentration risk, relying exclusively on Carl Zeiss SMT for critical optical components."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 98932468969.58583,
+            "upside_percent": -0.815919008267942,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              },
+              "base": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              },
+              "bull": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.33315236289289574,
+              "historical_cagr": 0.09964105905849963,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (33.3%) is 1.9x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 38.98710163378637,
+              "justified_ev_ebitda": 6.302322081424555,
+              "premium_pct": 5.186148713138103,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.7509319869826914,
+              "value_creation": "creating",
+              "roic": 0.8876139752206731,
+              "wacc": null
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.015,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": true,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 10.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": null,
+            "beta": null,
+            "risk_free_rate": null
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+            "bear_case_summary": "The current valuation of ASML is built on a mathematical impossibility and extreme speculative fervor. To justify the current market pricing, ASML must deliver a 10-year revenue CAGR of 33.3%, which is 3.3x its historical growth rate of 10.0% and nearly double the sector's 75th percentile of 18.0%. Furthermore, the stock trades at an EV/EBITDA of 39.0x, representing a massive 519% premium over its mathematically justified multiple of 6.3x based on ROIC and WACC. This implies the market is pricing in uninterrupted, exponential AI-driven demand while completely ignoring the inherent cyclicality of semiconductor capital equipment. Qualitatively, this growth extrapolation ignores severe geopolitical risks, specifically tightening export controls to China, which threaten a massive revenue base. The market is pricing in a flawless execution of an impossible TAM expansion, leaving investors exposed to catastrophic multiple compression when growth inevitably reverts to historical means.",
+            "sentiment_score": -9,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $0.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 33.3%\n  \u2022 Company's robust historical CAGR: 10.0%\n  \u2022 Ratio (implied / historical): 3.3x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (33.3%) is 1.9x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 39.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 6.3x\n  \u2022 Premium to justified multiple: +519%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $0.00\n  \u2022 Downside in bear case: +0.0%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 1,
+            "margin_of_safety": -0.815919008267942,
+            "narrative": "The implied 10-year revenue CAGR of 33.3% is highly unrealistic and defies base rates, representing a 3.3x expansion over ASML's historical 10.0% growth. While ASML possesses an insurmountable 9.5/10 moat with its EUV monopoly and will benefit from AI-driven High-NA EUV adoption, sustaining >30% annualized growth on its current massive revenue base ignores the inherent cyclicality of semiconductor capital expenditures and the physical limits of foundry capacity expansion. Growth will inevitably decay toward the mid-teens as the AI infrastructure build-out matures.\n\nThe Contrarian is entirely correct regarding the extreme valuation disconnect; pricing in a 33.3% 10-year CAGR and a 519% EV/EBITDA premium leaves zero room for execution missteps or cyclical downturns. The geopolitical risks regarding China export controls are also valid and underpriced. However, the Contrarian's justified EV/EBITDA of 6.3x is overly punitive and fails to account for ASML's absolute monopoly in EUV, 88.8% R...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u274c FAIL: Implied CAGR (33.3%) is 3.3x historical (10.0%). Requires TAM justification.",
+              "\u274c FAIL: EV/EBITDA at +519% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "ASML",
+              "p1_moat": 5,
+              "p2_health": 4,
+              "p3_tailwind": 2,
+              "p4_mos": 1,
+              "p5_leadership": 4,
+              "raw_total": 16,
+              "capped_total": 16,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern",
+              "conviction_score": 1,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 9.5/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "FCF margin 33.9% \u2014 fortress cash generation",
+                "Net cash position (-0.8\u00d7 EBITDA)"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 10.0% \u2014 solid growth for mature stage",
+                "Cyclicality Z-score 1.7 \u2014 elevated, applying penalty",
+                "Sector 'Technology' \u2014 confirmed secular tailwind",
+                "Market implied CAGR 3.3\u00d7 historical \u2014 tailwind fully priced, no entry benefit"
+              ],
+              "p4_reasons": [
+                "Margin of safety unavailable \u2014 defaulting to 1"
+              ],
+              "p5_reasons": [
+                "SBC 1.8% of FCF \u2014 minimal dilution",
+                "Operating leverage 6.5/10",
+                "Strategic leverage 10.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for ASML. Conviction: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

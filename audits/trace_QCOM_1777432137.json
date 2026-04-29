@@ -1,0 +1,3191 @@
+[
+  {
+    "timestamp": "2026-04-28T23:09:00.889224",
+    "agent": "Librarian",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:09:33.365190",
+    "agent": "Forensic",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:09:57.587285",
+    "agent": "ValueChain",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.96,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+        "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+        "pass_through_capability": false,
+        "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:15.041942",
+    "agent": "StrategicContext",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.96,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+        "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+        "pass_through_capability": false,
+        "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.8274275211435085,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 20.5% outpaces overall revenue growth, and the D8 Revenue Score is a perfect 1.00. This indicates healthy deferred revenue dynamics with no signs of pull-forward risk or deteriorating growth quality.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt discusses the QTL licensing segment and standard-essential patents for 3G, 4G, and 5G technologies, but does not disclose specific patent expiration dates, exclusivity cliffs, or contract renewals. Based on the available text, no specific near-term patent cliffs can be quantified.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Qualcomm is currently not at a cyclical peak (Z-score: 1.83), indicating structural growth driven by 5G, automotive, and IoT expansion rather than a pure cyclical top. Growth quality is strong, with deferred revenue growing 20.5% and a clean D8 score of 1.00, signaling no pull-forward risk. Intangible risk cannot be precisely quantified from the provided text as specific patent expiration dates were not disclosed, resulting in an estimated 0.0% revenue at risk, though uncertainty remains regarding the long-term QTL patent portfolio lifecycle."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.83 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:16.042979",
+    "agent": "Strategist",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.83 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.96,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+        "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+        "pass_through_capability": false,
+        "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.8274275211435085,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 20.5% outpaces overall revenue growth, and the D8 Revenue Score is a perfect 1.00. This indicates healthy deferred revenue dynamics with no signs of pull-forward risk or deteriorating growth quality.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt discusses the QTL licensing segment and standard-essential patents for 3G, 4G, and 5G technologies, but does not disclose specific patent expiration dates, exclusivity cliffs, or contract renewals. Based on the available text, no specific near-term patent cliffs can be quantified.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Qualcomm is currently not at a cyclical peak (Z-score: 1.83), indicating structural growth driven by 5G, automotive, and IoT expansion rather than a pure cyclical top. Growth quality is strong, with deferred revenue growing 20.5% and a clean D8 score of 1.00, signaling no pull-forward risk. Intangible risk cannot be precisely quantified from the provided text as specific patent expiration dates were not disclosed, resulting in an estimated 0.0% revenue at risk, though uncertainty remains regarding the long-term QTL patent portfolio lifecycle."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 160206765300.0,
+          "wacc": 0.12167409652223002,
+          "cost_of_equity": 0.12167409652223002,
+          "beta": 1.4206199201218668
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 2717000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 20316000000.0,
+            "crash_fcf": 1130095000.0,
+            "earnings_power_value": 7976722828.95185,
+            "floor_value": 20316000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12167409652223002,
+            "2": 0.12167409652223002,
+            "3": 0.12167409652223002,
+            "4": 0.12167409652223002,
+            "5": 0.12167409652223002
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 12.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:16.922328",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "base": {
+        "net_sales": 10416000000.0,
+        "cogs": 3181000000.0,
+        "interest_expense": 0.0,
+        "net_debt": -2717000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.14938556067588327,
+        "da_percent_sales": 0.06096390168970814,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.07306067588325653,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.01,
+        "cogs_percent_sales": 0.6369047619047619,
+        "calibration_adjustment": 0.33150921658986165
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T23:10:16.922450",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 20366560964.966812,
+      "equity_value": 23083560964.966812,
+      "terminal_value": 23775797658.82465,
+      "discounted_terminal_value": 15452637132.748857,
+      "sum_pv_cash_flows": 4913923832.217954,
+      "audit_metrics": {
+        "roic_path": [
+          0.18962297015580432,
+          0.1979203210444443,
+          0.20245787923150949,
+          0.20302913028407346,
+          0.20162394445353468
+        ],
+        "invested_capital_path": [
+          7291200000.0,
+          7544376000.0,
+          7817806080.0,
+          8107641964.8,
+          8409071284.992001,
+          8719543484.78976
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 11457600000.0,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.15274577572964673,
+          "ebit": 1750100000.0000005,
+          "nopat": 1382579000.0000005,
+          "depreciation": 698500000.0,
+          "capex": 837100000.0,
+          "change_in_wc": 114576000.0,
+          "fcff": 1129403000.0000005,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 1036149541.284404
+        },
+        {
+          "year": 2.0,
+          "revenue": 12374208000.0,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.15274577572964673,
+          "ebit": 1890108000.0000005,
+          "nopat": 1493185320.0000005,
+          "depreciation": 754380000.0,
+          "capex": 904068000.0,
+          "change_in_wc": 123742080.0,
+          "fcff": 1219755240.0000005,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 1026643582.1900517
+        },
+        {
+          "year": 3.0,
+          "revenue": 13116660480.0,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.15274577572964673,
+          "ebit": 2003514480.0000005,
+          "nopat": 1582776439.2000005,
+          "depreciation": 799642800.0,
+          "capex": 958312080.0,
+          "change_in_wc": 131166604.8,
+          "fcff": 1292940554.4000008,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 998387336.8086743
+        },
+        {
+          "year": 4.0,
+          "revenue": 13641326899.2,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.15274577572964673,
+          "ebit": 2083655059.2000005,
+          "nopat": 1646087496.7680006,
+          "depreciation": 831628512.0,
+          "capex": 996644563.2,
+          "change_in_wc": 136413268.992,
+          "fcff": 1344658176.5760005,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 952589752.551395
+        },
+        {
+          "year": 5.0,
+          "revenue": 14050566706.176,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.15274577572964673,
+          "ebit": 2146164710.9760005,
+          "nopat": 1695470121.6710405,
+          "depreciation": 856577367.36,
+          "capex": 1026543900.0960001,
+          "change_in_wc": 140505667.06176,
+          "fcff": 1384997921.8732805,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 900153619.3834285
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 10416000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.15274577572964673,
+        "terminal_value_pct_of_ev": 0.7587258918837325,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": 14.023129841646181,
+        "reinvestment_rate_terminal_year": 0.1831186500011934,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.06096390168970814,
+          "capex_percent_sales": 0.07306067588325653,
+          "wc_change_percent_sales": 0.01
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:16.923065",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.83 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 160206765300.0,
+          "wacc": 0.12167409652223002,
+          "cost_of_equity": 0.12167409652223002,
+          "beta": 1.4206199201218668
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 2717000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 20316000000.0,
+            "crash_fcf": 1130095000.0,
+            "earnings_power_value": 7976722828.95185,
+            "floor_value": 20316000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12167409652223002,
+            "2": 0.12167409652223002,
+            "3": 0.12167409652223002,
+            "4": 0.12167409652223002,
+            "5": 0.12167409652223002
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.96,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+        "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+        "pass_through_capability": false,
+        "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.8274275211435085,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 20.5% outpaces overall revenue growth, and the D8 Revenue Score is a perfect 1.00. This indicates healthy deferred revenue dynamics with no signs of pull-forward risk or deteriorating growth quality.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt discusses the QTL licensing segment and standard-essential patents for 3G, 4G, and 5G technologies, but does not disclose specific patent expiration dates, exclusivity cliffs, or contract renewals. Based on the available text, no specific near-term patent cliffs can be quantified.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Qualcomm is currently not at a cyclical peak (Z-score: 1.83), indicating structural growth driven by 5G, automotive, and IoT expansion rather than a pure cyclical top. Growth quality is strong, with deferred revenue growing 20.5% and a clean D8 score of 1.00, signaling no pull-forward risk. Intangible risk cannot be precisely quantified from the provided text as specific patent expiration dates were not disclosed, resulting in an estimated 0.0% revenue at risk, though uncertainty remains regarding the long-term QTL patent portfolio lifecycle."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "terminal_value": 23775797658.82465,
+          "discounted_terminal_value": 15452637132.748857,
+          "sum_pv_cash_flows": 4913923832.217954,
+          "audit_metrics": {
+            "roic_path": [
+              0.18962297015580432,
+              0.1979203210444443,
+              0.20245787923150949,
+              0.20302913028407346,
+              0.20162394445353468
+            ],
+            "invested_capital_path": [
+              7291200000.0,
+              7544376000.0,
+              7817806080.0,
+              8107641964.8,
+              8409071284.992001,
+              8719543484.78976
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10416000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.15274577572964673,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 14.023129841646181,
+            "reinvestment_rate_terminal_year": 0.1831186500011934,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.06096390168970814,
+              "capex_percent_sales": 0.07306067588325653,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 21.61290830261182,
+          "upside_percent": -0.8559139446492545,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.06096390168970814,
+            "capex_percent_sales": 0.07306067588325653,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.14938556067588327,
+          "da_percent_sales": 0.06096390168970814,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07306067588325653,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6369047619047619,
+          "calibration_adjustment": 0.33150921658986165
+        },
+        "base_financials": {
+          "net_sales": 10416000000.0,
+          "cogs": 3181000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -2717000000.0
+        },
+        "calculated_upside": -0.8559139446492545
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $20,366,560,965",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:18.367182",
+    "agent": "ValuationNode",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.83 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $20,366,560,965",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "terminal_value": 23775797658.82465,
+          "discounted_terminal_value": 15452637132.748857,
+          "sum_pv_cash_flows": 4913923832.217954,
+          "audit_metrics": {
+            "roic_path": [
+              0.18962297015580432,
+              0.1979203210444443,
+              0.20245787923150949,
+              0.20302913028407346,
+              0.20162394445353468
+            ],
+            "invested_capital_path": [
+              7291200000.0,
+              7544376000.0,
+              7817806080.0,
+              8107641964.8,
+              8409071284.992001,
+              8719543484.78976
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10416000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.15274577572964673,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 14.023129841646181,
+            "reinvestment_rate_terminal_year": 0.1831186500011934,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.06096390168970814,
+              "capex_percent_sales": 0.07306067588325653,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 21.61290830261182,
+          "upside_percent": -0.8559139446492545,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.06096390168970814,
+            "capex_percent_sales": 0.07306067588325653,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.14938556067588327,
+          "da_percent_sales": 0.06096390168970814,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07306067588325653,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6369047619047619,
+          "calibration_adjustment": 0.33150921658986165
+        },
+        "base_financials": {
+          "net_sales": 10416000000.0,
+          "cogs": 3181000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -2717000000.0
+        },
+        "calculated_upside": -0.8559139446492545
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 160206765300.0,
+          "wacc": 0.12167409652223002,
+          "cost_of_equity": 0.12167409652223002,
+          "beta": 1.4206199201218668
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 2717000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 20316000000.0,
+            "crash_fcf": 1130095000.0,
+            "earnings_power_value": 7976722828.95185,
+            "floor_value": 20316000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12167409652223002,
+            "2": 0.12167409652223002,
+            "3": 0.12167409652223002,
+            "4": 0.12167409652223002,
+            "5": 0.12167409652223002
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.96,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+        "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+        "pass_through_capability": false,
+        "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.8274275211435085,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 20.5% outpaces overall revenue growth, and the D8 Revenue Score is a perfect 1.00. This indicates healthy deferred revenue dynamics with no signs of pull-forward risk or deteriorating growth quality.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt discusses the QTL licensing segment and standard-essential patents for 3G, 4G, and 5G technologies, but does not disclose specific patent expiration dates, exclusivity cliffs, or contract renewals. Based on the available text, no specific near-term patent cliffs can be quantified.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Qualcomm is currently not at a cyclical peak (Z-score: 1.83), indicating structural growth driven by 5G, automotive, and IoT expansion rather than a pure cyclical top. Growth quality is strong, with deferred revenue growing 20.5% and a clean D8 score of 1.00, signaling no pull-forward risk. Intangible risk cannot be precisely quantified from the provided text as specific patent expiration dates were not disclosed, resulting in an estimated 0.0% revenue at risk, though uncertainty remains regarding the long-term QTL patent portfolio lifecycle."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.0,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 7.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:10:16.923939",
+          "current_price": 150.0,
+          "shares_diluted": 1068045102.0,
+          "market_cap": 160206765300.0,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.4206199201218668,
+          "wacc_base": 0.13667409652223,
+          "revenue": 44284000000.0,
+          "ebitda": 14013000000.0,
+          "ebit": 12411000000.0,
+          "nopat": 9804690000.0,
+          "roic": 0.31242360435756283,
+          "fcf": 12820000000.0,
+          "net_debt": 9291000000.0,
+          "bull_ev": 143830949913.51797,
+          "bull_intrinsic_per_share": 125.96841618540373,
+          "bull_upside": -0.16021055876397516,
+          "bull_wacc": 0.13167409652223,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 10.264108321809603,
+          "bull_justified_ev_ebitda": 6.638408712565032,
+          "bull_roic_wacc_spread": 0.18074950783533283,
+          "bull_tv_pct_of_ev": 0.43932637527854773,
+          "bull_implied_tv_ebitda": 6.638408712565031,
+          "base_ev": 110645965474.28348,
+          "base_intrinsic_per_share": 94.8976455062508,
+          "base_upside": -0.367349029958328,
+          "base_wacc": 0.13667409652223,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 7.895951293390671,
+          "base_justified_ev_ebitda": 5.9059906387111,
+          "base_roic_wacc_spread": 0.17574950783533283,
+          "base_tv_pct_of_ev": 0.384369978409696,
+          "base_implied_tv_ebitda": 5.9059906387111,
+          "bear_ev": 62050928068.554855,
+          "bear_intrinsic_per_share": 49.39859559278692,
+          "bear_upside": -0.6706760293814206,
+          "bear_wacc": 0.15167409652223002,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 4.4280973430782025,
+          "bear_justified_ev_ebitda": 4.668966153372892,
+          "bear_roic_wacc_spread": 0.16074950783533282,
+          "bear_tv_pct_of_ev": 0.2757054579007261,
+          "bear_implied_tv_ebitda": 4.668966153372892
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "QCOM",
+            "scenario": "bull",
+            "enterprise_value": 143830949913.51797,
+            "equity_value": 132698069913.51797,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 124.24388227147918,
+            "current_price": 150.0,
+            "margin_of_safety": -0.17170745152347214,
+            "upside_pct": -0.17170745152347214,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          },
+          "base": {
+            "ticker": "QCOM",
+            "scenario": "base",
+            "enterprise_value": 110645965474.28348,
+            "equity_value": 99513085474.28348,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 93.17311159232625,
+            "current_price": 150.0,
+            "margin_of_safety": -0.37884592271782497,
+            "upside_pct": -0.37884592271782497,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          },
+          "bear": {
+            "ticker": "QCOM",
+            "scenario": "bear",
+            "enterprise_value": 62050928068.554855,
+            "equity_value": 50918048068.554855,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 47.67406167886237,
+            "current_price": 150.0,
+            "margin_of_safety": -0.6821729221409175,
+            "upside_pct": -0.6821729221409175,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 124.24388227147918,
+          "base": 93.17311159232625,
+          "bear": 47.67406167886237
+        },
+        "margin_of_safety": {
+          "bull": -0.17170745152347214,
+          "base": -0.37884592271782497,
+          "bear": -0.6821729221409175
+        },
+        "reverse_dcf": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "current_price": 150.0,
+          "current_ev": 169497765300.0,
+          "current_ev_ebitda": 12.095751466495397,
+          "wacc": 0.11405151351584793,
+          "ebit_margin": 0.2802592358413874,
+          "implied_cagr_10y": 0.1051002194804353,
+          "implied_cagr_5y": 0.1051002194804353,
+          "historical_cagr_5y": 0.06921677861992204,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 12.095751466495397,
+          "forward_ev_ebitda_justified": 7.8519916647088746,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.1051002194804353,
+        "historical_cagr": 0.06921677861992204,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (10.5%) exceeds historical (6.9%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 12.095751466495397,
+          "market_ev_ebit": 13.657059487551365,
+          "market_p_sales": 3.617712160148135,
+          "market_p_e": 28.912969734704927,
+          "market_peg": 4.177161999039228,
+          "justified_ev_ebitda": 7.228364304503656,
+          "justified_ev_ebit": 8.16139464982755,
+          "justified_p_sales": 2.3228672356158615,
+          "ev_ebitda_premium": 4.867387161991741,
+          "ev_ebitda_premium_pct": 0.6733732497349503,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -9.904248533504603,
+          "roic": 0.31242360435756283,
+          "wacc": 0.11405151351584793,
+          "roic_wacc_spread": 0.19837209084171492,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.64369678155998,
+          "growth_rate": 0.06921677861992204,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 12.095751466495397,
+        "ev_ebitda_justified": 7.228364304503656,
+        "ev_ebitda_premium_pct": 0.6733732497349503,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.19837209084171492,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.31242360435756283,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: QCOM ===\nPrice: $150.00  |  Bear=$48  Base=$93  Bull=$124\nMoS:  Bear=-68.2%  Base=-37.9%  Bull=-17.2%\nRDCF: implied=10.5% hist=6.9% [priced_for_growth]\nEV/EBITDA: 12.1x market vs 7.2x justified (+67%)\nAdj: WACC+0.015 terminal+0.000 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: QCOM \u2014 Base IV=$93/share MoS=-37.9% ImpliedCAGR=10.5% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:31.419144",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.83 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $20,366,560,965",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: QCOM \u2014 Base IV=$93/share MoS=-37.9% ImpliedCAGR=10.5% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "terminal_value": 23775797658.82465,
+          "discounted_terminal_value": 15452637132.748857,
+          "sum_pv_cash_flows": 4913923832.217954,
+          "audit_metrics": {
+            "roic_path": [
+              0.18962297015580432,
+              0.1979203210444443,
+              0.20245787923150949,
+              0.20302913028407346,
+              0.20162394445353468
+            ],
+            "invested_capital_path": [
+              7291200000.0,
+              7544376000.0,
+              7817806080.0,
+              8107641964.8,
+              8409071284.992001,
+              8719543484.78976
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10416000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.15274577572964673,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 14.023129841646181,
+            "reinvestment_rate_terminal_year": 0.1831186500011934,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.06096390168970814,
+              "capex_percent_sales": 0.07306067588325653,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 21.61290830261182,
+          "upside_percent": -0.8559139446492545,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.06096390168970814,
+            "capex_percent_sales": 0.07306067588325653,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.14938556067588327,
+          "da_percent_sales": 0.06096390168970814,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07306067588325653,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6369047619047619,
+          "calibration_adjustment": 0.33150921658986165
+        },
+        "base_financials": {
+          "net_sales": 10416000000.0,
+          "cogs": 3181000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -2717000000.0
+        },
+        "calculated_upside": -0.8559139446492545
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 160206765300.0,
+          "wacc": 0.12167409652223002,
+          "cost_of_equity": 0.12167409652223002,
+          "beta": 1.4206199201218668
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 2717000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 20316000000.0,
+            "crash_fcf": 1130095000.0,
+            "earnings_power_value": 7976722828.95185,
+            "floor_value": 20316000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12167409652223002,
+            "2": 0.12167409652223002,
+            "3": 0.12167409652223002,
+            "4": 0.12167409652223002,
+            "5": 0.12167409652223002
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.0,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 7.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:10:16.923939",
+          "current_price": 150.0,
+          "shares_diluted": 1068045102.0,
+          "market_cap": 160206765300.0,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.4206199201218668,
+          "wacc_base": 0.13667409652223,
+          "revenue": 44284000000.0,
+          "ebitda": 14013000000.0,
+          "ebit": 12411000000.0,
+          "nopat": 9804690000.0,
+          "roic": 0.31242360435756283,
+          "fcf": 12820000000.0,
+          "net_debt": 9291000000.0,
+          "bull_ev": 143830949913.51797,
+          "bull_intrinsic_per_share": 125.96841618540373,
+          "bull_upside": -0.16021055876397516,
+          "bull_wacc": 0.13167409652223,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 10.264108321809603,
+          "bull_justified_ev_ebitda": 6.638408712565032,
+          "bull_roic_wacc_spread": 0.18074950783533283,
+          "bull_tv_pct_of_ev": 0.43932637527854773,
+          "bull_implied_tv_ebitda": 6.638408712565031,
+          "base_ev": 110645965474.28348,
+          "base_intrinsic_per_share": 94.8976455062508,
+          "base_upside": -0.367349029958328,
+          "base_wacc": 0.13667409652223,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 7.895951293390671,
+          "base_justified_ev_ebitda": 5.9059906387111,
+          "base_roic_wacc_spread": 0.17574950783533283,
+          "base_tv_pct_of_ev": 0.384369978409696,
+          "base_implied_tv_ebitda": 5.9059906387111,
+          "bear_ev": 62050928068.554855,
+          "bear_intrinsic_per_share": 49.39859559278692,
+          "bear_upside": -0.6706760293814206,
+          "bear_wacc": 0.15167409652223002,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 4.4280973430782025,
+          "bear_justified_ev_ebitda": 4.668966153372892,
+          "bear_roic_wacc_spread": 0.16074950783533282,
+          "bear_tv_pct_of_ev": 0.2757054579007261,
+          "bear_implied_tv_ebitda": 4.668966153372892
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "QCOM",
+            "scenario": "bull",
+            "enterprise_value": 143830949913.51797,
+            "equity_value": 132698069913.51797,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 124.24388227147918,
+            "current_price": 150.0,
+            "margin_of_safety": -0.17170745152347214,
+            "upside_pct": -0.17170745152347214,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          },
+          "base": {
+            "ticker": "QCOM",
+            "scenario": "base",
+            "enterprise_value": 110645965474.28348,
+            "equity_value": 99513085474.28348,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 93.17311159232625,
+            "current_price": 150.0,
+            "margin_of_safety": -0.37884592271782497,
+            "upside_pct": -0.37884592271782497,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          },
+          "bear": {
+            "ticker": "QCOM",
+            "scenario": "bear",
+            "enterprise_value": 62050928068.554855,
+            "equity_value": 50918048068.554855,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 47.67406167886237,
+            "current_price": 150.0,
+            "margin_of_safety": -0.6821729221409175,
+            "upside_pct": -0.6821729221409175,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 124.24388227147918,
+          "base": 93.17311159232625,
+          "bear": 47.67406167886237
+        },
+        "margin_of_safety": {
+          "bull": -0.17170745152347214,
+          "base": -0.37884592271782497,
+          "bear": -0.6821729221409175
+        },
+        "reverse_dcf": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "current_price": 150.0,
+          "current_ev": 169497765300.0,
+          "current_ev_ebitda": 12.095751466495397,
+          "wacc": 0.11405151351584793,
+          "ebit_margin": 0.2802592358413874,
+          "implied_cagr_10y": 0.1051002194804353,
+          "implied_cagr_5y": 0.1051002194804353,
+          "historical_cagr_5y": 0.06921677861992204,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 12.095751466495397,
+          "forward_ev_ebitda_justified": 7.8519916647088746,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.1051002194804353,
+        "historical_cagr": 0.06921677861992204,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (10.5%) exceeds historical (6.9%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 12.095751466495397,
+          "market_ev_ebit": 13.657059487551365,
+          "market_p_sales": 3.617712160148135,
+          "market_p_e": 28.912969734704927,
+          "market_peg": 4.177161999039228,
+          "justified_ev_ebitda": 7.228364304503656,
+          "justified_ev_ebit": 8.16139464982755,
+          "justified_p_sales": 2.3228672356158615,
+          "ev_ebitda_premium": 4.867387161991741,
+          "ev_ebitda_premium_pct": 0.6733732497349503,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -9.904248533504603,
+          "roic": 0.31242360435756283,
+          "wacc": 0.11405151351584793,
+          "roic_wacc_spread": 0.19837209084171492,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.64369678155998,
+          "growth_rate": 0.06921677861992204,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 12.095751466495397,
+        "ev_ebitda_justified": 7.228364304503656,
+        "ev_ebitda_premium_pct": 0.6733732497349503,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.19837209084171492,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.31242360435756283,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: QCOM ===\nPrice: $150.00  |  Bear=$48  Base=$93  Bull=$124\nMoS:  Bear=-68.2%  Base=-37.9%  Bull=-17.2%\nRDCF: implied=10.5% hist=6.9% [priced_for_growth]\nEV/EBITDA: 12.1x market vs 7.2x justified (+67%)\nAdj: WACC+0.015 terminal+0.000 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.96,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+        "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+        "pass_through_capability": false,
+        "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.8274275211435085,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 20.5% outpaces overall revenue growth, and the D8 Revenue Score is a perfect 1.00. This indicates healthy deferred revenue dynamics with no signs of pull-forward risk or deteriorating growth quality.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt discusses the QTL licensing segment and standard-essential patents for 3G, 4G, and 5G technologies, but does not disclose specific patent expiration dates, exclusivity cliffs, or contract renewals. Based on the available text, no specific near-term patent cliffs can be quantified.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Qualcomm is currently not at a cyclical peak (Z-score: 1.83), indicating structural growth driven by 5G, automotive, and IoT expansion rather than a pure cyclical top. Growth quality is strong, with deferred revenue growing 20.5% and a clean D8 score of 1.00, signaling no pull-forward risk. Intangible risk cannot be precisely quantified from the provided text as specific patent expiration dates were not disclosed, resulting in an estimated 0.0% revenue at risk, though uncertainty remains regarding the long-term QTL patent portfolio lifecycle."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $150.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 10.5%\n  \u2022 Company's robust historical CAGR: 6.9%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (10.5%) exceeds historical (6.9%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 12.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.2x\n  \u2022 Premium to justified multiple: +67%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $48/share vs current price $150.00\n  \u2022 Downside in bear case: -68.2%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias",
+          "bear_case_summary": "The market is currently pricing QCOM at $150.00, which mathematically requires a 10-year revenue CAGR of 10.5% - a 1.5x acceleration over its historical rate of 6.9%. Furthermore, the current EV/EBITDA multiple of 12.1x represents a 67% premium over the mathematically justified multiple of 7.2x. To justify this growth premium, QCOM must flawlessly execute its automotive and IoT diversification while defending its handset dominance. However, structural headwinds make this highly improbable: Apple is actively developing in-house modems to replace QCOM, the global smartphone market is saturated with lengthening upgrade cycles, and heavy reliance on the Chinese market exposes the company to severe geopolitical and export restriction risks. If QCOM fails to accelerate growth to the implied 10.5% and instead faces revenue contraction from Apple's departure or ARM licensing disputes, the multiple will violently compress to its justified 7.2x level, driving the stock toward the bear case intri...(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias] Sentiment: -8/10. Implied CAGR 10.5% vs 6.9% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:45.927315",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/QCOM_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:10:45.928708",
+    "agent": "Lead",
+    "trace_id": "trace_QCOM_1777432137",
+    "inputs": {
+      "ticker": "QCOM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for QCOM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.1/10 (Python). Pricing power: False. Concentration: True. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 7.0/10. Upstream leak: False. Pass-through: False. Sub risk: 6.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.83 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $20,366,560,965",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: QCOM \u2014 Base IV=$93/share MoS=-37.9% ImpliedCAGR=10.5% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias] Sentiment: -8/10. Implied CAGR 10.5% vs 6.9% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "terminal_value": 23775797658.82465,
+          "discounted_terminal_value": 15452637132.748857,
+          "sum_pv_cash_flows": 4913923832.217954,
+          "audit_metrics": {
+            "roic_path": [
+              0.18962297015580432,
+              0.1979203210444443,
+              0.20245787923150949,
+              0.20302913028407346,
+              0.20162394445353468
+            ],
+            "invested_capital_path": [
+              7291200000.0,
+              7544376000.0,
+              7817806080.0,
+              8107641964.8,
+              8409071284.992001,
+              8719543484.78976
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10416000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.15274577572964673,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 14.023129841646181,
+            "reinvestment_rate_terminal_year": 0.1831186500011934,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.06096390168970814,
+              "capex_percent_sales": 0.07306067588325653,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 21.61290830261182,
+          "upside_percent": -0.8559139446492545,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.06096390168970814,
+            "capex_percent_sales": 0.07306067588325653,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11457600000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1750100000.0000005,
+              "nopat": 1382579000.0000005,
+              "depreciation": 698500000.0,
+              "capex": 837100000.0,
+              "change_in_wc": 114576000.0,
+              "fcff": 1129403000.0000005,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 1036149541.284404
+            },
+            {
+              "year": 2.0,
+              "revenue": 12374208000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 1890108000.0000005,
+              "nopat": 1493185320.0000005,
+              "depreciation": 754380000.0,
+              "capex": 904068000.0,
+              "change_in_wc": 123742080.0,
+              "fcff": 1219755240.0000005,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 1026643582.1900517
+            },
+            {
+              "year": 3.0,
+              "revenue": 13116660480.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2003514480.0000005,
+              "nopat": 1582776439.2000005,
+              "depreciation": 799642800.0,
+              "capex": 958312080.0,
+              "change_in_wc": 131166604.8,
+              "fcff": 1292940554.4000008,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 998387336.8086743
+            },
+            {
+              "year": 4.0,
+              "revenue": 13641326899.2,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2083655059.2000005,
+              "nopat": 1646087496.7680006,
+              "depreciation": 831628512.0,
+              "capex": 996644563.2,
+              "change_in_wc": 136413268.992,
+              "fcff": 1344658176.5760005,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 952589752.551395
+            },
+            {
+              "year": 5.0,
+              "revenue": 14050566706.176,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.15274577572964673,
+              "ebit": 2146164710.9760005,
+              "nopat": 1695470121.6710405,
+              "depreciation": 856577367.36,
+              "capex": 1026543900.0960001,
+              "change_in_wc": 140505667.06176,
+              "fcff": 1384997921.8732805,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 900153619.3834285
+            }
+          ],
+          "enterprise_value": 20366560964.966812,
+          "equity_value": 23083560964.966812,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.14938556067588327,
+          "da_percent_sales": 0.06096390168970814,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07306067588325653,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6369047619047619,
+          "calibration_adjustment": 0.33150921658986165
+        },
+        "base_financials": {
+          "net_sales": 10416000000.0,
+          "cogs": 3181000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -2717000000.0
+        },
+        "calculated_upside": -0.8559139446492545
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 160206765300.0,
+          "wacc": 0.12167409652223002,
+          "cost_of_equity": 0.12167409652223002,
+          "beta": 1.4206199201218668
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 2717000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 20316000000.0,
+            "crash_fcf": 1130095000.0,
+            "earnings_power_value": 7976722828.95185,
+            "floor_value": 20316000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.1,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12167409652223002,
+            "2": 0.12167409652223002,
+            "3": 0.12167409652223002,
+            "4": 0.12167409652223002,
+            "5": 0.12167409652223002
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.0,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 7.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:10:16.923939",
+          "current_price": 150.0,
+          "shares_diluted": 1068045102.0,
+          "market_cap": 160206765300.0,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.4206199201218668,
+          "wacc_base": 0.13667409652223,
+          "revenue": 44284000000.0,
+          "ebitda": 14013000000.0,
+          "ebit": 12411000000.0,
+          "nopat": 9804690000.0,
+          "roic": 0.31242360435756283,
+          "fcf": 12820000000.0,
+          "net_debt": 9291000000.0,
+          "bull_ev": 143830949913.51797,
+          "bull_intrinsic_per_share": 125.96841618540373,
+          "bull_upside": -0.16021055876397516,
+          "bull_wacc": 0.13167409652223,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 10.264108321809603,
+          "bull_justified_ev_ebitda": 6.638408712565032,
+          "bull_roic_wacc_spread": 0.18074950783533283,
+          "bull_tv_pct_of_ev": 0.43932637527854773,
+          "bull_implied_tv_ebitda": 6.638408712565031,
+          "base_ev": 110645965474.28348,
+          "base_intrinsic_per_share": 94.8976455062508,
+          "base_upside": -0.367349029958328,
+          "base_wacc": 0.13667409652223,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 7.895951293390671,
+          "base_justified_ev_ebitda": 5.9059906387111,
+          "base_roic_wacc_spread": 0.17574950783533283,
+          "base_tv_pct_of_ev": 0.384369978409696,
+          "base_implied_tv_ebitda": 5.9059906387111,
+          "bear_ev": 62050928068.554855,
+          "bear_intrinsic_per_share": 49.39859559278692,
+          "bear_upside": -0.6706760293814206,
+          "bear_wacc": 0.15167409652223002,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 4.4280973430782025,
+          "bear_justified_ev_ebitda": 4.668966153372892,
+          "bear_roic_wacc_spread": 0.16074950783533282,
+          "bear_tv_pct_of_ev": 0.2757054579007261,
+          "bear_implied_tv_ebitda": 4.668966153372892
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "QCOM",
+            "scenario": "bull",
+            "enterprise_value": 143830949913.51797,
+            "equity_value": 132698069913.51797,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 124.24388227147918,
+            "current_price": 150.0,
+            "margin_of_safety": -0.17170745152347214,
+            "upside_pct": -0.17170745152347214,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          },
+          "base": {
+            "ticker": "QCOM",
+            "scenario": "base",
+            "enterprise_value": 110645965474.28348,
+            "equity_value": 99513085474.28348,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 93.17311159232625,
+            "current_price": 150.0,
+            "margin_of_safety": -0.37884592271782497,
+            "upside_pct": -0.37884592271782497,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          },
+          "bear": {
+            "ticker": "QCOM",
+            "scenario": "bear",
+            "enterprise_value": 62050928068.554855,
+            "equity_value": 50918048068.554855,
+            "shares_diluted": 1068045102.0,
+            "intrinsic_per_share": 47.67406167886237,
+            "current_price": 150.0,
+            "margin_of_safety": -0.6821729221409175,
+            "upside_pct": -0.6821729221409175,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -14811000000.0,
+            "bridge_cash_(net_of_haircuts)": 3678120000.0,
+            "cash_gross": 5520000000.0,
+            "cash_wc_haircut": 1328520000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 513360000.0,
+            "cash_net_accessible": 3678120000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 3678120000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 124.24388227147918,
+          "base": 93.17311159232625,
+          "bear": 47.67406167886237
+        },
+        "margin_of_safety": {
+          "bull": -0.17170745152347214,
+          "base": -0.37884592271782497,
+          "bear": -0.6821729221409175
+        },
+        "reverse_dcf": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "current_price": 150.0,
+          "current_ev": 169497765300.0,
+          "current_ev_ebitda": 12.095751466495397,
+          "wacc": 0.11405151351584793,
+          "ebit_margin": 0.2802592358413874,
+          "implied_cagr_10y": 0.1051002194804353,
+          "implied_cagr_5y": 0.1051002194804353,
+          "historical_cagr_5y": 0.06921677861992204,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 12.095751466495397,
+          "forward_ev_ebitda_justified": 7.8519916647088746,
+          "signal": "priced_for_growth"
+        },
+        "implied_cagr": 0.1051002194804353,
+        "historical_cagr": 0.06921677861992204,
+        "reverse_dcf_signal": "priced_for_growth",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (10.5%) exceeds historical (6.9%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+        ],
+        "multiples": {
+          "ticker": "QCOM",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 12.095751466495397,
+          "market_ev_ebit": 13.657059487551365,
+          "market_p_sales": 3.617712160148135,
+          "market_p_e": 28.912969734704927,
+          "market_peg": 4.177161999039228,
+          "justified_ev_ebitda": 7.228364304503656,
+          "justified_ev_ebit": 8.16139464982755,
+          "justified_p_sales": 2.3228672356158615,
+          "ev_ebitda_premium": 4.867387161991741,
+          "ev_ebitda_premium_pct": 0.6733732497349503,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -9.904248533504603,
+          "roic": 0.31242360435756283,
+          "wacc": 0.11405151351584793,
+          "roic_wacc_spread": 0.19837209084171492,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.64369678155998,
+          "growth_rate": 0.06921677861992204,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 12.095751466495397,
+        "ev_ebitda_justified": 7.228364304503656,
+        "ev_ebitda_premium_pct": 0.6733732497349503,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.19837209084171492,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.31242360435756283,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: QCOM ===\nPrice: $150.00  |  Bear=$48  Base=$93  Bull=$124\nMoS:  Bear=-68.2%  Base=-37.9%  Bull=-17.2%\nRDCF: implied=10.5% hist=6.9% [priced_for_growth]\nEV/EBITDA: 12.1x market vs 7.2x justified (+67%)\nAdj: WACC+0.015 terminal+0.000 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $150.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 10.5%\n  \u2022 Company's robust historical CAGR: 6.9%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (10.5%) exceeds historical (6.9%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 12.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.2x\n  \u2022 Premium to justified multiple: +67%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $48/share vs current price $150.00\n  \u2022 Downside in bear case: -68.2%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias",
+          "bear_case_summary": "The market is currently pricing QCOM at $150.00, which mathematically requires a 10-year revenue CAGR of 10.5% - a 1.5x acceleration over its historical rate of 6.9%. Furthermore, the current EV/EBITDA multiple of 12.1x represents a 67% premium over the mathematically justified multiple of 7.2x. To justify this growth premium, QCOM must flawlessly execute its automotive and IoT diversification while defending its handset dominance. However, structural headwinds make this highly improbable: Apple is actively developing in-house modems to replace QCOM, the global smartphone market is saturated with lengthening upgrade cycles, and heavy reliance on the Chinese market exposes the company to severe geopolitical and export restriction risks. If QCOM fails to accelerate growth to the implied 10.5% and instead faces revenue contraction from Apple's departure or ARM licensing disputes, the multiple will violently compress to its justified 7.2x level, driving the stock toward the bear case intri...(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps.",
+        "concentration_risk": true,
+        "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues.",
+        "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+        "revenue_segments": [
+          {
+            "segment": "QCT (Qualcomm CDMA Technologies)",
+            "pct_revenue": null,
+            "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+          },
+          {
+            "segment": "QTL (Qualcomm Technology Licensing)",
+            "pct_revenue": null,
+            "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+          },
+          {
+            "segment": "QSI (Qualcomm Strategic Initiatives)",
+            "pct_revenue": null,
+            "growth_trend": "Variable based on strategic investment exits and market conditions."
+          }
+        ],
+        "key_customers": [
+          "Apple",
+          "Samsung",
+          "Xiaomi"
+        ],
+        "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+        "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model.",
+        "operating_leverage_score": 5.1
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 7.0,
+        "power_ratio": 0.96,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+        "substitution_risk_score": 6.0,
+        "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+        "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+        "pass_through_capability": false,
+        "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.8274275211435085,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 20.5% outpaces overall revenue growth, and the D8 Revenue Score is a perfect 1.00. This indicates healthy deferred revenue dynamics with no signs of pull-forward risk or deteriorating growth quality.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt discusses the QTL licensing segment and standard-essential patents for 3G, 4G, and 5G technologies, but does not disclose specific patent expiration dates, exclusivity cliffs, or contract renewals. Based on the available text, no specific near-term patent cliffs can be quantified.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Qualcomm is currently not at a cyclical peak (Z-score: 1.83), indicating structural growth driven by 5G, automotive, and IoT expansion rather than a pure cyclical top. Growth quality is strong, with deferred revenue growing 20.5% and a clean D8 score of 1.00, signaling no pull-forward risk. Intangible risk cannot be precisely quantified from the provided text as specific patent expiration dates were not disclosed, resulting in an estimated 0.0% revenue at risk, though uncertainty remains regarding the long-term QTL patent portfolio lifecycle."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n(Mark one)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 28, 2025\n<div align='center'>OR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from\n\n#### to\n#### .\n\n#### Commission File Number 0-19528\n\n#### QUALCOMM Incorporated\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                                                       |     | 95-3685934         |\n| (State or Other Jurisdiction of Incorporation or Organization) |     | -I.R.S. Employer   \n Identification No. |\n| 5775 Morehouse Dr.,San Diego,California                        |     | 92121-1714         |\n| (Address of Principal Executive Offices)                       |     | -Zip Code          |\n\n<div...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "QCOM",
+        "generated_at": "2026-04-28T23:10:45.925840",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 5.1,
+            "cost_structure": "With an operating leverage score of 5.1/10, Qualcomm's cost structure is a mix of variable costs in its fabless QCT semiconductor business and highly fixed costs in its QTL licensing business. Major fixed cost drivers include massive R&D investments for 5G, 6G, and AI technologies, as well as extremely high stock-based compensation (2170.8% of FCF). Revenue growth in the QTL segment flows almost entirely to EBIT due to the zero marginal cost of licensing patents, whereas QCT margins are constrained by third-party foundry and assembly costs.",
+            "business_description": "Qualcomm develops and commercializes foundational technologies for the wireless industry, including on-device AI, computing, and connectivity solutions. It generates revenue by selling integrated circuit platforms (Snapdragon) for mobile, automotive, and IoT devices, and by licensing its extensive portfolio of cellular standard-essential patents to device manufacturers.",
+            "revenue_segments": [
+              {
+                "segment": "QCT (Qualcomm CDMA Technologies)",
+                "pct_revenue": null,
+                "growth_trend": "Growing through expansion into automotive and IoT, offsetting flat handset demand."
+              },
+              {
+                "segment": "QTL (Qualcomm Technology Licensing)",
+                "pct_revenue": null,
+                "growth_trend": "Mature, driven by 5G adoption but constrained by handset market saturation and legal challenges."
+              },
+              {
+                "segment": "QSI (Qualcomm Strategic Initiatives)",
+                "pct_revenue": null,
+                "growth_trend": "Variable based on strategic investment exits and market conditions."
+              }
+            ],
+            "key_customers": [
+              "Apple",
+              "Samsung",
+              "Xiaomi"
+            ],
+            "competitive_landscape": "Qualcomm competes with global semiconductor designers and faces significant threats from internal silicon development by its own customers (vertical integration). It differentiates through highly integrated SoC platforms (Snapdragon), leading 5G/modem technology, and a massive foundational patent portfolio.",
+            "regulatory_risk": "Qualcomm is subject to various governmental investigations and legal proceedings challenging its patent licensing practices, which could force changes to its highly profitable QTL business model."
+          },
+          "value_chain": {
+            "power_ratio": 0.96,
+            "upstream_leak": false,
+            "strategic_leverage": 7.0,
+            "bottleneck_analysis": "The critical supplier bottlenecks are advanced semiconductor foundries, primarily TSMC and Samsung. As a fabless semiconductor company, Qualcomm relies entirely on these foundries for leading-edge node manufacturing. If foundries raise prices, Qualcomm faces margin compression unless it can pass costs to handset OEMs, which is difficult given the concentrated buyer power of companies like Apple and Samsung.",
+            "substitution_risk_score": 6.0,
+            "top_substitutes": "1. In-house OEM silicon (e.g., Apple Silicon, Samsung Exynos); 2. Competing merchant silicon (e.g., MediaTek Dimensity); 3. Alternative baseband/modem developers. Realistic switching scenario: Large handset OEMs vertically integrate by developing their own SoCs and modems to bypass Qualcomm's margins, as seen with Apple's ongoing modem development.",
+            "pricing_power_assessment": "Qualcomm has strong pricing power in its QTL licensing division due to standard-essential patents (SEPs), but faces price-taking pressure in QCT from highly concentrated buyers (Apple, Samsung). While Snapdragon commands a premium, a 10% price hike would likely accelerate OEM vertical integration (in-house chip development) or shift volume to lower-cost competitors like MediaTek.",
+            "pass_through_capability": false,
+            "analysis_summary": "Supplier Power is high due to reliance on a consolidated foundry market (TSMC, Samsung) for advanced nodes. Buyer Power is very high, as the handset market is dominated by a few massive OEMs (Apple, Samsung) who possess the capital to vertically integrate. Substitution Threat is moderate-to-high, driven by this exact vertical integration trend (OEMs building in-house chips) and capable rivals like MediaTek. Rivalry is intense in the semiconductor space. However, Qualcomm maintains a strong overall position (Strategic Leverage) through its dominant patent portfolio (QTL), essential 5G/CDMA IP, and premium Snapdragon brand, preventing it from becoming a mere commodity price taker."
+          },
+          "moat": {
+            "score": 8.5,
+            "switching_costs": 8.0,
+            "network_effects": 4.0,
+            "cost_advantage": 6.0,
+            "intangibles": 10.0,
+            "evidence": "Qualcomm possesses an industry-leading patent portfolio covering 3G, 4G, and 5G cellular standards, which are essential and widely licensed to hundreds of companies. High switching costs are evidenced by long design-in time frames and product life cycles, particularly in the automotive and IoT sectors where Snapdragon platforms are deeply integrated.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The 10-K provides no explicit evidence of recent price hikes without churn. Instead, it highlights risks of declining average selling prices, intense competition, and the threat of vertical integration by major customers like Apple, which limits Qualcomm's ability to unilaterally raise prices. Furthermore, QTL royalties are often subject to per-unit caps."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.8274275211435085,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue growth of 20.5% outpaces overall revenue growth, and the D8 Revenue Score is a perfect 1.00. This indicates healthy deferred revenue dynamics with no signs of pull-forward risk or deteriorating growth quality.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "The provided 10-K excerpt discusses the QTL licensing segment and standard-essential patents for 3G, 4G, and 5G technologies, but does not disclose specific patent expiration dates, exclusivity cliffs, or contract renewals. Based on the available text, no specific near-term patent cliffs can be quantified.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Qualcomm is currently not at a cyclical peak (Z-score: 1.83), indicating structural growth driven by 5G, automotive, and IoT expansion rather than a pure cyclical top. Growth quality is strong, with deferred revenue growing 20.5% and a clean D8 score of 1.00, signaling no pull-forward risk. Intangible risk cannot be precisely quantified from the provided text as specific patent expiration dates were not disclosed, resulting in an estimated 0.0% revenue at risk, though uncertainty remains regarding the long-term QTL patent portfolio lifecycle."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 44.284,
+            "ebitda_bn": 14.013,
+            "fcf_bn": 12.82,
+            "nopat_bn": 9.80469,
+            "invested_capital_bn": 31.38268,
+            "net_debt_bn": 9.291,
+            "sbc_bn": 2.783,
+            "fiscal_year": 2025,
+            "data_quality": 0.97
+          },
+          "ratios": {
+            "gross_margin_pct": 55.428597236022036,
+            "ebit_margin_pct": 28.02592358413874,
+            "ebitda_margin_pct": 31.64348297353446,
+            "fcf_margin_pct": 28.9495077228796,
+            "roic": 0.31242360435756283,
+            "roe": 0.26129397340375365,
+            "sbc_pct_fcf": 21.70826833073323,
+            "share_dilution_pct": 2.8864059590316575,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 0.9,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 0.0,
+            "equity": 160206765300.0,
+            "wacc": 0.12167409652223002,
+            "cost_of_equity": 0.12167409652223002,
+            "beta": 1.4206199201218668
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 0.0,
+              "cash": 2717000000.0,
+              "liquidity_ratio": 0.0,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 20316000000.0,
+              "crash_fcf": 1130095000.0,
+              "earnings_power_value": 7976722828.95185,
+              "floor_value": 20316000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 5.1,
+              "financial_leverage_score": 0.0,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.12167409652223002,
+              "2": 0.12167409652223002,
+              "3": 0.12167409652223002,
+              "4": 0.12167409652223002,
+              "5": 0.12167409652223002
+            }
+          },
+          "concentration_risk": true,
+          "concentration_details": "Apple, Samsung, and Xiaomi each accounted for 10% or more of consolidated revenues in fiscal 2025. The loss of any of these customers, or their successful transition to internally developed silicon (vertical integration), would severely impact revenues."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 23083560964.966812,
+            "upside_percent": -0.8559139446492545,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 47.67406167886237,
+                "margin_of_safety": -0.6821729221409175,
+                "ev": 62050928068.554855
+              },
+              "base": {
+                "intrinsic_per_share": 93.17311159232625,
+                "margin_of_safety": -0.37884592271782497,
+                "ev": 110645965474.28348
+              },
+              "bull": {
+                "intrinsic_per_share": 124.24388227147918,
+                "margin_of_safety": -0.17170745152347214,
+                "ev": 143830949913.51797
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.1051002194804353,
+              "historical_cagr": 0.06921677861992204,
+              "signal": "priced_for_growth",
+              "reasons": [
+                "Implied CAGR (10.5%) exceeds historical (6.9%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 12.095751466495397,
+              "justified_ev_ebitda": 7.228364304503656,
+              "premium_pct": 0.6733732497349503,
+              "signal": "high_premium",
+              "roic_wacc_spread": 0.19837209084171492,
+              "value_creation": "creating",
+              "roic": 0.31242360435756283,
+              "wacc": 0.13667409652223
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.015,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.0,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": true,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 7.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.13667409652223,
+            "beta": 1.4206199201218668,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias",
+            "bear_case_summary": "The market is currently pricing QCOM at $150.00, which mathematically requires a 10-year revenue CAGR of 10.5% - a 1.5x acceleration over its historical rate of 6.9%. Furthermore, the current EV/EBITDA multiple of 12.1x represents a 67% premium over the mathematically justified multiple of 7.2x. To justify this growth premium, QCOM must flawlessly execute its automotive and IoT diversification while defending its handset dominance. However, structural headwinds make this highly improbable: Apple is actively developing in-house modems to replace QCOM, the global smartphone market is saturated with lengthening upgrade cycles, and heavy reliance on the Chinese market exposes the company to severe geopolitical and export restriction risks. If QCOM fails to accelerate growth to the implied 10.5% and instead faces revenue contraction from Apple's departure or ARM licensing disputes, the multiple will violently compress to its justified 7.2x level, driving the stock toward the bear case intri...(truncated)",
+            "sentiment_score": -8,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $150.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 10.5%\n  \u2022 Company's robust historical CAGR: 6.9%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: PRICED_FOR_GROWTH\n\n  Reverse DCF assessment:\n    - Implied CAGR (10.5%) exceeds historical (6.9%) but is below sector 75th percentile (18.0%). Growth premium is being paid \u2014 requires documented justification.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 12.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.2x\n  \u2022 Premium to justified multiple: +67%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $48/share vs current price $150.00\n  \u2022 Downside in bear case: -68.2%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 4,
+            "margin_of_safety": -0.37884592271782497,
+            "narrative": "The implied 10.5% CAGR is highly unrealistic given the historical 6.9% rate and structural headwinds in the handset market. While automotive and IoT offer growth vectors, they are unlikely to offset the massive revenue hole left by Apple's eventual transition to in-house modems and the general saturation of the smartphone market. The lack of pricing power and high buyer concentration further cap growth sustainability.\n\nThe bear case is largely correct regarding the mathematical overvaluation (pricing in 10.5% CAGR vs 6.9% historical) and the structural risks of Apple's vertical integration and China exposure. However, the bear case might slightly underestimate the stickiness of QCOM's patent portfolio (QTL) and the long design-in cycles of its automotive/IoT segments, which provide a high ROIC-WACC spread (+19.8%) and prevent an immediate collapse to the $48 bear case. Nonetheless, the current $150 price offers no margin of safety.",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u26a0\ufe0f CAUTION: Implied CAGR (10.5%) exceeds historical (6.9%) by 1.5x.",
+              "\u26a0\ufe0f CAUTION: EV/EBITDA at +67% premium."
+            ],
+            "pillar_scores": {
+              "ticker": "QCOM",
+              "p1_moat": 4,
+              "p2_health": 5,
+              "p3_tailwind": 5,
+              "p4_mos": 2,
+              "p5_leadership": 3,
+              "raw_total": 19,
+              "capped_total": 19,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern (capped at 75% due to reflexivity flag)",
+              "conviction_score": 4,
+              "reflexivity_flags": [
+                "High-SBC company (21.7% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 8.0/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +19.9pp \u2014 exceptional value creation",
+                "FCF margin 28.9% \u2014 fortress cash generation",
+                "Net Debt/EBITDA 0.7\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 6.9% \u2014 solid growth for mature stage",
+                "Sector 'Technology' \u2014 confirmed secular tailwind"
+              ],
+              "p4_reasons": [
+                "Base MoS -18.1% \u2014 Slight premium to intrinsic value \u2014 patience required"
+              ],
+              "p5_reasons": [
+                "SBC 21.7% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 8.0/10",
+                "Strategic leverage 8.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for QCOM. Conviction: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,138 @@
+[
+  {
+    "timestamp": "2026-02-04T11:56:59.738932",
+    "agent": "ProForma_Init",
+    "trace_id": "ProForma_Trace_Request",
+    "inputs": {
+      "base": {
+        "revenue": 163071000000.0,
+        "ebit": 3175000000.0,
+        "da": 549000000.0,
+        "capex": 644000000.0,
+        "net_debt": 4470000000.0
+      },
+      "assumptions": {
+        "wacc": 0.09,
+        "tax_rate": 0.21,
+        "terminal_growth_rate": 0.03,
+        "revenue_growth_initial": 0.05,
+        "revenue_growth_decay": 0.005,
+        "ebit_margin_initial": 0.019470046789435275,
+        "ebit_margin_target": 0.05,
+        "ebit_margin_convergence_years": 5,
+        "wc_change_percent_sales": 0.0
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-02-04T11:56:59.739417",
+    "agent": "ProForma_Complete",
+    "trace_id": "ProForma_Trace_Request",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 106776733669.92647,
+      "equity_value": 102306733669.92647,
+      "terminal_value": 132532803144.98555,
+      "discounted_terminal_value": 86137228478.02615,
+      "sum_pv_cash_flows": 20639505191.90031,
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 171224550000.0,
+          "revenue_growth": 0.05,
+          "ebit_margin": 0.02557603743154822,
+          "ebit": 4379245500.0,
+          "nopat": 3459603945.0,
+          "depreciation": 576450000.0,
+          "capex": 676200000.0,
+          "change_in_wc": 0.0,
+          "fcff": 3359853945.0,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 3082434811.926605
+        },
+        {
+          "year": 2.0,
+          "revenue": 178929654750.0,
+          "revenue_growth": 0.045000000000000005,
+          "ebit_margin": 0.03168202807366117,
+          "ebit": 5668854345.0,
+          "nopat": 4478394932.55,
+          "depreciation": 602390250.0,
+          "capex": 706629000.0,
+          "change_in_wc": 0.0,
+          "fcff": 4374156182.55,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 3681639746.2755656
+        },
+        {
+          "year": 3.0,
+          "revenue": 186086840940.0,
+          "revenue_growth": 0.04000000000000001,
+          "ebit_margin": 0.03778801871577411,
+          "ebit": 7031853028.200001,
+          "nopat": 5555163892.278001,
+          "depreciation": 626485860.0,
+          "capex": 734894160.0,
+          "change_in_wc": 0.0,
+          "fcff": 5446755592.278001,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 4205894688.2872896
+        },
+        {
+          "year": 4.0,
+          "revenue": 192599880372.9,
+          "revenue_growth": 0.03500000000000001,
+          "ebit_margin": 0.04389400935788706,
+          "ebit": 8453980951.416,
+          "nopat": 6678644951.618641,
+          "depreciation": 648412865.1,
+          "capex": 760615455.6,
+          "change_in_wc": 0.0,
+          "fcff": 6566442361.118641,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 4651833315.622919
+        },
+        {
+          "year": 5.0,
+          "revenue": 198377876784.087,
+          "revenue_growth": 0.03000000000000001,
+          "ebit_margin": 0.05,
+          "ebit": 9918893839.204351,
+          "nopat": 7835926132.971438,
+          "depreciation": 667865251.053,
+          "capex": 783433919.268,
+          "change_in_wc": 0.0,
+          "fcff": 7720357464.756439,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 5017702629.7879305
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 163071000000.0,
+        "base_ebit": 3175000000.0,
+        "base_ebit_margin": 0.019470046789435275,
+        "terminal_value_pct_of_ev": 0.8067040966461647,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": 16.913482962444437,
+        "reinvestment_rate_terminal_year": 0.014748565294498965,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.05,
+          "revenue_growth_decay": 0.005,
+          "ebit_margin_target": 0.05,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": null,
+          "capex_percent_sales": null,
+          "wc_change_percent_sales": 0.0
+        },
+        "warnings": [
+          "Reinvestment modeled by scaling base D&A and Capex with revenue (percent-of-sales not provided).",
+          "Terminal value contributes 81% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  }
+]

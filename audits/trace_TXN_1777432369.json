@@ -1,0 +1,3201 @@
+[
+  {
+    "timestamp": "2026-04-28T23:12:50.706777",
+    "agent": "Librarian",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:13:19.208443",
+    "agent": "Forensic",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:13:37.117416",
+    "agent": "ValueChain",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.66,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+        "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:13:49.948443",
+    "agent": "StrategicContext",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.66,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+        "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.2087292698783223,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is not a material factor for TXN. The D8 Revenue Score is 1.00, indicating clean revenue quality with no deferred revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific 10-K text or patent data available. As a broad-based analog semiconductor manufacturer, TXN relies on a vast, diversified portfolio of patents and proprietary manufacturing processes. Expiration risk is highly diversified and not tied to single blockbuster patents. Uncertainty is noted due to lack of direct filings, but structural risk is historically negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TXN is not at a cyclical peak with a revenue Z-score of 1.21. Growth quality is clean as indicated by a D8 score of 1.00 and no deferred revenue risks. Intangible risk is estimated to be immaterial due to a highly diversified patent portfolio, requiring no terminal haircut."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.21 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:13:51.122262",
+    "agent": "Strategist",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.21 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.66,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+        "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.2087292698783223,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is not a material factor for TXN. The D8 Revenue Score is 1.00, indicating clean revenue quality with no deferred revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific 10-K text or patent data available. As a broad-based analog semiconductor manufacturer, TXN relies on a vast, diversified portfolio of patents and proprietary manufacturing processes. Expiration risk is highly diversified and not tied to single blockbuster patents. Uncertainty is noted due to lack of direct filings, but structural risk is historically negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TXN is not at a cyclical peak with a revenue Z-score of 1.21. Growth quality is clean as indicated by a D8 score of 1.00 and no deferred revenue risks. Intangible risk is estimated to be immaterial due to a highly diversified patent portfolio, requiring no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 241174589615.0,
+          "wacc": 0.10203928153343012,
+          "cost_of_equity": 0.10203928153343012,
+          "beta": 1.0636232839618687
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1182000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 9722000000.0,
+            "crash_fcf": 786445000.0,
+            "earnings_power_value": 6444195591.110308,
+            "floor_value": 9722000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10203928153343012,
+            "2": 0.10203928153343012,
+            "3": 0.10203928153343012,
+            "4": 0.10203928153343012,
+            "5": 0.10203928153343012
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 10.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:13:51.954419",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "base": {
+        "net_sales": 10427000000.0,
+        "cogs": 5428000000.0,
+        "interest_expense": 0.0,
+        "net_debt": -1182000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.12659441833700968,
+        "da_percent_sales": 0.0,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.07221636136952143,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 0.682459000671334,
+        "calibration_adjustment": 0.16188740769156995
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T23:13:51.954480",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 11092776474.851141,
+      "equity_value": 12274776474.851141,
+      "terminal_value": 12949638841.545122,
+      "discounted_terminal_value": 8416376724.348319,
+      "sum_pv_cash_flows": 2676399750.502822,
+      "audit_metrics": {
+        "roic_path": [
+          0.23704654125964186,
+          0.2220829676456667,
+          0.20593367865408002,
+          0.18907719768392028,
+          0.17359614149570154
+        ],
+        "invested_capital_path": [
+          7298900000.0,
+          8413942500.0,
+          9618188400.0,
+          10894689054.0,
+          12222249734.16,
+          13589637234.7248
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 11469700000.0,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.1909465809916563,
+          "ebit": 2190100000.0,
+          "nopat": 1730179000.0,
+          "depreciation": 0.0,
+          "capex": 828300000.0,
+          "change_in_wc": 286742500.0,
+          "fcff": 615136500.0,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 564345412.8440367
+        },
+        {
+          "year": 2.0,
+          "revenue": 12387276000.0,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.1909465809916563,
+          "ebit": 2365308000.0,
+          "nopat": 1868593320.0,
+          "depreciation": 0.0,
+          "capex": 894564000.0,
+          "change_in_wc": 309681900.0,
+          "fcff": 664347420.0,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 559167931.9922565
+        },
+        {
+          "year": 3.0,
+          "revenue": 13130512560.0,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.1909465809916563,
+          "ebit": 2507226480.0,
+          "nopat": 1980708919.2,
+          "depreciation": 0.0,
+          "capex": 948237840.0,
+          "change_in_wc": 328262814.0,
+          "fcff": 704208265.2,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 543777988.9099008
+        },
+        {
+          "year": 4.0,
+          "revenue": 13655733062.4,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.1909465809916563,
+          "ebit": 2607515539.2000003,
+          "nopat": 2059937275.9680004,
+          "depreciation": 0.0,
+          "capex": 986167353.5999999,
+          "change_in_wc": 341393326.56,
+          "fcff": 732376595.8080006,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 518834044.46449274
+        },
+        {
+          "year": 5.0,
+          "revenue": 14065405054.272,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.1909465809916563,
+          "ebit": 2685741005.376,
+          "nopat": 2121735394.24704,
+          "depreciation": 0.0,
+          "capex": 1015752374.208,
+          "change_in_wc": 351635126.3568,
+          "fcff": 754347893.68224,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 490274372.292135
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 10427000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.1909465809916563,
+        "terminal_value_pct_of_ev": 0.7587258918837326,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": 6.103324135826409,
+        "reinvestment_rate_terminal_year": 0.6444665551945782,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.0,
+          "capex_percent_sales": 0.07221636136952143,
+          "wc_change_percent_sales": 0.025
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:13:51.956253",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.21 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 241174589615.0,
+          "wacc": 0.10203928153343012,
+          "cost_of_equity": 0.10203928153343012,
+          "beta": 1.0636232839618687
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1182000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 9722000000.0,
+            "crash_fcf": 786445000.0,
+            "earnings_power_value": 6444195591.110308,
+            "floor_value": 9722000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10203928153343012,
+            "2": 0.10203928153343012,
+            "3": 0.10203928153343012,
+            "4": 0.10203928153343012,
+            "5": 0.10203928153343012
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.66,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+        "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.2087292698783223,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is not a material factor for TXN. The D8 Revenue Score is 1.00, indicating clean revenue quality with no deferred revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific 10-K text or patent data available. As a broad-based analog semiconductor manufacturer, TXN relies on a vast, diversified portfolio of patents and proprietary manufacturing processes. Expiration risk is highly diversified and not tied to single blockbuster patents. Uncertainty is noted due to lack of direct filings, but structural risk is historically negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TXN is not at a cyclical peak with a revenue Z-score of 1.21. Growth quality is clean as indicated by a D8 score of 1.00 and no deferred revenue risks. Intangible risk is estimated to be immaterial due to a highly diversified patent portfolio, requiring no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "terminal_value": 12949638841.545122,
+          "discounted_terminal_value": 8416376724.348319,
+          "sum_pv_cash_flows": 2676399750.502822,
+          "audit_metrics": {
+            "roic_path": [
+              0.23704654125964186,
+              0.2220829676456667,
+              0.20593367865408002,
+              0.18907719768392028,
+              0.17359614149570154
+            ],
+            "invested_capital_path": [
+              7298900000.0,
+              8413942500.0,
+              9618188400.0,
+              10894689054.0,
+              12222249734.16,
+              13589637234.7248
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10427000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.1909465809916563,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 6.103324135826409,
+            "reinvestment_rate_terminal_year": 0.6444665551945782,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.07221636136952143,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 13.487389853732692,
+          "upside_percent": -0.9491041892311974,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.07221636136952143,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12659441833700968,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07221636136952143,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.682459000671334,
+          "calibration_adjustment": 0.16188740769156995
+        },
+        "base_financials": {
+          "net_sales": 10427000000.0,
+          "cogs": 5428000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -1182000000.0
+        },
+        "calculated_upside": -0.9491041892311974
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $11,092,776,475",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:13:53.123585",
+    "agent": "ValuationNode",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.21 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $11,092,776,475",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "terminal_value": 12949638841.545122,
+          "discounted_terminal_value": 8416376724.348319,
+          "sum_pv_cash_flows": 2676399750.502822,
+          "audit_metrics": {
+            "roic_path": [
+              0.23704654125964186,
+              0.2220829676456667,
+              0.20593367865408002,
+              0.18907719768392028,
+              0.17359614149570154
+            ],
+            "invested_capital_path": [
+              7298900000.0,
+              8413942500.0,
+              9618188400.0,
+              10894689054.0,
+              12222249734.16,
+              13589637234.7248
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10427000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.1909465809916563,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 6.103324135826409,
+            "reinvestment_rate_terminal_year": 0.6444665551945782,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.07221636136952143,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 13.487389853732692,
+          "upside_percent": -0.9491041892311974,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.07221636136952143,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12659441833700968,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07221636136952143,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.682459000671334,
+          "calibration_adjustment": 0.16188740769156995
+        },
+        "base_financials": {
+          "net_sales": 10427000000.0,
+          "cogs": 5428000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -1182000000.0
+        },
+        "calculated_upside": -0.9491041892311974
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 241174589615.0,
+          "wacc": 0.10203928153343012,
+          "cost_of_equity": 0.10203928153343012,
+          "beta": 1.0636232839618687
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1182000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 9722000000.0,
+            "crash_fcf": 786445000.0,
+            "earnings_power_value": 6444195591.110308,
+            "floor_value": 9722000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10203928153343012,
+            "2": 0.10203928153343012,
+            "3": 0.10203928153343012,
+            "4": 0.10203928153343012,
+            "5": 0.10203928153343012
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.66,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+        "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.2087292698783223,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is not a material factor for TXN. The D8 Revenue Score is 1.00, indicating clean revenue quality with no deferred revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific 10-K text or patent data available. As a broad-based analog semiconductor manufacturer, TXN relies on a vast, diversified portfolio of patents and proprietary manufacturing processes. Expiration risk is highly diversified and not tied to single blockbuster patents. Uncertainty is noted due to lack of direct filings, but structural risk is historically negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TXN is not at a cyclical peak with a revenue Z-score of 1.21. Growth quality is clean as indicated by a D8 score of 1.00 and no deferred revenue risks. Intangible risk is estimated to be immaterial due to a highly diversified patent portfolio, requiring no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:13:51.956733",
+          "current_price": 265.0,
+          "shares_diluted": 910092791.0,
+          "market_cap": 241174589615.0,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.0636232839618687,
+          "wacc_base": 0.10203928153343012,
+          "revenue": 17682000000.0,
+          "ebitda": 6023000000.0,
+          "ebit": 6023000000.0,
+          "nopat": 4758170000.0,
+          "roic": 0.17655783157029184,
+          "fcf": 2603000000.0,
+          "net_debt": 10323000000.0,
+          "bull_ev": 70185685776.28568,
+          "bull_intrinsic_per_share": 65.77646407956843,
+          "bull_upside": -0.7517869280016286,
+          "bull_wacc": 0.09703928153343011,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 11.652944674794234,
+          "bull_justified_ev_ebitda": 9.950260995172242,
+          "bull_roic_wacc_spread": 0.07951855003686173,
+          "bull_tv_pct_of_ev": 0.5130599176103829,
+          "bull_implied_tv_ebitda": 9.95026099517224,
+          "base_ev": 56564927796.88735,
+          "base_intrinsic_per_share": 50.81012425785422,
+          "base_upside": -0.8082636820458331,
+          "base_wacc": 0.10203928153343012,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.391487264965525,
+          "base_justified_ev_ebitda": 8.398450654629254,
+          "base_roic_wacc_spread": 0.07451855003686172,
+          "base_tv_pct_of_ev": 0.45515387749991404,
+          "base_implied_tv_ebitda": 8.398450654629254,
+          "bear_ev": 35473249175.26816,
+          "bear_intrinsic_per_share": 27.634818585512956,
+          "bear_upside": -0.8957176657150454,
+          "bear_wacc": 0.11703928153343011,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.889631275986744,
+          "bear_justified_ev_ebitda": 6.255981420325092,
+          "bear_roic_wacc_spread": 0.059518550036861725,
+          "bear_tv_pct_of_ev": 0.34853575760635214,
+          "bear_implied_tv_ebitda": 6.255981420325092
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TXN",
+            "scenario": "bull",
+            "enterprise_value": 70185685776.28568,
+            "equity_value": 59032300776.285675,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 64.86404612811143,
+            "current_price": 265.0,
+            "margin_of_safety": -0.7552300146109003,
+            "upside_pct": -0.7552300146109003,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          },
+          "base": {
+            "ticker": "TXN",
+            "scenario": "base",
+            "enterprise_value": 56564927796.88735,
+            "equity_value": 45411542796.88735,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 49.897706306397225,
+            "current_price": 265.0,
+            "margin_of_safety": -0.8117067686551048,
+            "upside_pct": -0.8117067686551048,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          },
+          "bear": {
+            "ticker": "TXN",
+            "scenario": "bear",
+            "enterprise_value": 35473249175.26816,
+            "equity_value": 24319864175.268158,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 26.72240063405596,
+            "current_price": 265.0,
+            "margin_of_safety": -0.8991607523243171,
+            "upside_pct": -0.8991607523243171,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 64.86404612811143,
+          "base": 49.897706306397225,
+          "bear": 26.72240063405596
+        },
+        "margin_of_safety": {
+          "bull": -0.7552300146109003,
+          "base": -0.8117067686551048,
+          "bear": -0.8991607523243171
+        },
+        "reverse_dcf": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "current_price": 265.0,
+          "current_ev": 251497589615.0,
+          "current_ev_ebitda": 41.7561995043998,
+          "wacc": 0.09829280821256248,
+          "ebit_margin": 0.3406288881348264,
+          "implied_cagr_10y": 0.25159799306802877,
+          "implied_cagr_5y": 0.25159799306802877,
+          "historical_cagr_5y": 0.015719782653737413,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 41.7561995043998,
+          "forward_ev_ebitda_justified": 9.166870193761808,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.25159799306802877,
+        "historical_cagr": 0.015719782653737413,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (25.2%) is 1.4x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 41.7561995043998,
+          "market_ev_ebit": 41.7561995043998,
+          "market_p_sales": 13.639553761735097,
+          "market_p_e": 48.225272868426316,
+          "market_peg": 30.678078654580286,
+          "justified_ev_ebitda": 9.252458075625738,
+          "justified_ev_ebit": 9.252458075625738,
+          "justified_p_sales": 3.1692973780222147,
+          "ev_ebitda_premium": 32.50374142877406,
+          "ev_ebitda_premium_pct": 3.5129844591677175,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 19.756199504399802,
+          "roic": 0.17655783157029184,
+          "wacc": 0.09829280821256248,
+          "roic_wacc_spread": 0.07826502335772936,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6781386352316121,
+          "growth_rate": 0.015719782653737413,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 41.7561995043998,
+        "ev_ebitda_justified": 9.252458075625738,
+        "ev_ebitda_premium_pct": 3.5129844591677175,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.07826502335772936,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.17655783157029184,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: TXN ===\nPrice: $265.00  |  Bear=$27  Base=$50  Bull=$65\nMoS:  Bear=-89.9%  Base=-81.2%  Bull=-75.5%\nRDCF: implied=25.2% hist=1.6% [flag]\nEV/EBITDA: 41.8x market vs 9.3x justified (+351%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: TXN \u2014 Base IV=$50/share MoS=-81.2% ImpliedCAGR=25.2% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:14:07.652760",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.21 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $11,092,776,475",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TXN \u2014 Base IV=$50/share MoS=-81.2% ImpliedCAGR=25.2% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "terminal_value": 12949638841.545122,
+          "discounted_terminal_value": 8416376724.348319,
+          "sum_pv_cash_flows": 2676399750.502822,
+          "audit_metrics": {
+            "roic_path": [
+              0.23704654125964186,
+              0.2220829676456667,
+              0.20593367865408002,
+              0.18907719768392028,
+              0.17359614149570154
+            ],
+            "invested_capital_path": [
+              7298900000.0,
+              8413942500.0,
+              9618188400.0,
+              10894689054.0,
+              12222249734.16,
+              13589637234.7248
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10427000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.1909465809916563,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 6.103324135826409,
+            "reinvestment_rate_terminal_year": 0.6444665551945782,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.07221636136952143,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 13.487389853732692,
+          "upside_percent": -0.9491041892311974,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.07221636136952143,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12659441833700968,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07221636136952143,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.682459000671334,
+          "calibration_adjustment": 0.16188740769156995
+        },
+        "base_financials": {
+          "net_sales": 10427000000.0,
+          "cogs": 5428000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -1182000000.0
+        },
+        "calculated_upside": -0.9491041892311974
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 241174589615.0,
+          "wacc": 0.10203928153343012,
+          "cost_of_equity": 0.10203928153343012,
+          "beta": 1.0636232839618687
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1182000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 9722000000.0,
+            "crash_fcf": 786445000.0,
+            "earnings_power_value": 6444195591.110308,
+            "floor_value": 9722000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10203928153343012,
+            "2": 0.10203928153343012,
+            "3": 0.10203928153343012,
+            "4": 0.10203928153343012,
+            "5": 0.10203928153343012
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:13:51.956733",
+          "current_price": 265.0,
+          "shares_diluted": 910092791.0,
+          "market_cap": 241174589615.0,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.0636232839618687,
+          "wacc_base": 0.10203928153343012,
+          "revenue": 17682000000.0,
+          "ebitda": 6023000000.0,
+          "ebit": 6023000000.0,
+          "nopat": 4758170000.0,
+          "roic": 0.17655783157029184,
+          "fcf": 2603000000.0,
+          "net_debt": 10323000000.0,
+          "bull_ev": 70185685776.28568,
+          "bull_intrinsic_per_share": 65.77646407956843,
+          "bull_upside": -0.7517869280016286,
+          "bull_wacc": 0.09703928153343011,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 11.652944674794234,
+          "bull_justified_ev_ebitda": 9.950260995172242,
+          "bull_roic_wacc_spread": 0.07951855003686173,
+          "bull_tv_pct_of_ev": 0.5130599176103829,
+          "bull_implied_tv_ebitda": 9.95026099517224,
+          "base_ev": 56564927796.88735,
+          "base_intrinsic_per_share": 50.81012425785422,
+          "base_upside": -0.8082636820458331,
+          "base_wacc": 0.10203928153343012,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.391487264965525,
+          "base_justified_ev_ebitda": 8.398450654629254,
+          "base_roic_wacc_spread": 0.07451855003686172,
+          "base_tv_pct_of_ev": 0.45515387749991404,
+          "base_implied_tv_ebitda": 8.398450654629254,
+          "bear_ev": 35473249175.26816,
+          "bear_intrinsic_per_share": 27.634818585512956,
+          "bear_upside": -0.8957176657150454,
+          "bear_wacc": 0.11703928153343011,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.889631275986744,
+          "bear_justified_ev_ebitda": 6.255981420325092,
+          "bear_roic_wacc_spread": 0.059518550036861725,
+          "bear_tv_pct_of_ev": 0.34853575760635214,
+          "bear_implied_tv_ebitda": 6.255981420325092
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TXN",
+            "scenario": "bull",
+            "enterprise_value": 70185685776.28568,
+            "equity_value": 59032300776.285675,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 64.86404612811143,
+            "current_price": 265.0,
+            "margin_of_safety": -0.7552300146109003,
+            "upside_pct": -0.7552300146109003,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          },
+          "base": {
+            "ticker": "TXN",
+            "scenario": "base",
+            "enterprise_value": 56564927796.88735,
+            "equity_value": 45411542796.88735,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 49.897706306397225,
+            "current_price": 265.0,
+            "margin_of_safety": -0.8117067686551048,
+            "upside_pct": -0.8117067686551048,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          },
+          "bear": {
+            "ticker": "TXN",
+            "scenario": "bear",
+            "enterprise_value": 35473249175.26816,
+            "equity_value": 24319864175.268158,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 26.72240063405596,
+            "current_price": 265.0,
+            "margin_of_safety": -0.8991607523243171,
+            "upside_pct": -0.8991607523243171,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 64.86404612811143,
+          "base": 49.897706306397225,
+          "bear": 26.72240063405596
+        },
+        "margin_of_safety": {
+          "bull": -0.7552300146109003,
+          "base": -0.8117067686551048,
+          "bear": -0.8991607523243171
+        },
+        "reverse_dcf": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "current_price": 265.0,
+          "current_ev": 251497589615.0,
+          "current_ev_ebitda": 41.7561995043998,
+          "wacc": 0.09829280821256248,
+          "ebit_margin": 0.3406288881348264,
+          "implied_cagr_10y": 0.25159799306802877,
+          "implied_cagr_5y": 0.25159799306802877,
+          "historical_cagr_5y": 0.015719782653737413,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 41.7561995043998,
+          "forward_ev_ebitda_justified": 9.166870193761808,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.25159799306802877,
+        "historical_cagr": 0.015719782653737413,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (25.2%) is 1.4x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 41.7561995043998,
+          "market_ev_ebit": 41.7561995043998,
+          "market_p_sales": 13.639553761735097,
+          "market_p_e": 48.225272868426316,
+          "market_peg": 30.678078654580286,
+          "justified_ev_ebitda": 9.252458075625738,
+          "justified_ev_ebit": 9.252458075625738,
+          "justified_p_sales": 3.1692973780222147,
+          "ev_ebitda_premium": 32.50374142877406,
+          "ev_ebitda_premium_pct": 3.5129844591677175,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 19.756199504399802,
+          "roic": 0.17655783157029184,
+          "wacc": 0.09829280821256248,
+          "roic_wacc_spread": 0.07826502335772936,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6781386352316121,
+          "growth_rate": 0.015719782653737413,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 41.7561995043998,
+        "ev_ebitda_justified": 9.252458075625738,
+        "ev_ebitda_premium_pct": 3.5129844591677175,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.07826502335772936,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.17655783157029184,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: TXN ===\nPrice: $265.00  |  Bear=$27  Base=$50  Bull=$65\nMoS:  Bear=-89.9%  Base=-81.2%  Bull=-75.5%\nRDCF: implied=25.2% hist=1.6% [flag]\nEV/EBITDA: 41.8x market vs 9.3x justified (+351%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.66,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+        "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.2087292698783223,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is not a material factor for TXN. The D8 Revenue Score is 1.00, indicating clean revenue quality with no deferred revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific 10-K text or patent data available. As a broad-based analog semiconductor manufacturer, TXN relies on a vast, diversified portfolio of patents and proprietary manufacturing processes. Expiration risk is highly diversified and not tied to single blockbuster patents. Uncertainty is noted due to lack of direct filings, but structural risk is historically negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TXN is not at a cyclical peak with a revenue Z-score of 1.21. Growth quality is clean as indicated by a D8 score of 1.00 and no deferred revenue risks. Intangible risk is estimated to be immaterial due to a highly diversified patent portfolio, requiring no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $265.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 25.2%\n  \u2022 Company's robust historical CAGR: 1.6%\n  \u2022 Ratio (implied / historical): 16.0x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (25.2%) is 1.4x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 41.8x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 9.3x\n  \u2022 Premium to justified multiple: +351%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $27/share vs current price $265.00\n  \u2022 Downside in bear case: -89.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market is pricing TXN at $265.00, which mathematically demands a 10-year revenue CAGR of 25.2%. This is a staggering 16.0x its historical growth rate of 1.6% and 1.4x the sector's 75th percentile. TXN is a mature analog semiconductor company, not a hyper-growth AI startup. Furthermore, the current EV/EBITDA is 41.8x, while the mathematically justified multiple based on ROIC and WACC is only 9.3x, representing a massive 351% speculative premium. Fundamentally, a 25% sustained CAGR is virtually impossible given TXN's massive revenue base, cyclical end-markets, and the physical constraints of semiconductor manufacturing. The market is entirely ignoring the massive, multi-year CapEx cycle TXN is undergoing to build out 300mm wafer fabs, which will heavily depress free cash flow and margins in the near term. If growth reverts to historical low-single-digit norms and the multiple contracts to its justified 9.3x EV/EBITDA, the stock faces a catastrophic repricing toward the bear case intr...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 25.2% vs 1.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:14:22.548881",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/TXN_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:14:22.550290",
+    "agent": "Lead",
+    "trace_id": "trace_TXN_1777432369",
+    "inputs": {
+      "ticker": "TXN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TXN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.21 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.2%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $11,092,776,475",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TXN \u2014 Base IV=$50/share MoS=-81.2% ImpliedCAGR=25.2% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 25.2% vs 1.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "terminal_value": 12949638841.545122,
+          "discounted_terminal_value": 8416376724.348319,
+          "sum_pv_cash_flows": 2676399750.502822,
+          "audit_metrics": {
+            "roic_path": [
+              0.23704654125964186,
+              0.2220829676456667,
+              0.20593367865408002,
+              0.18907719768392028,
+              0.17359614149570154
+            ],
+            "invested_capital_path": [
+              7298900000.0,
+              8413942500.0,
+              9618188400.0,
+              10894689054.0,
+              12222249734.16,
+              13589637234.7248
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 10427000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.1909465809916563,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 6.103324135826409,
+            "reinvestment_rate_terminal_year": 0.6444665551945782,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.07221636136952143,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 13.487389853732692,
+          "upside_percent": -0.9491041892311974,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.07221636136952143,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 11469700000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2190100000.0,
+              "nopat": 1730179000.0,
+              "depreciation": 0.0,
+              "capex": 828300000.0,
+              "change_in_wc": 286742500.0,
+              "fcff": 615136500.0,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 564345412.8440367
+            },
+            {
+              "year": 2.0,
+              "revenue": 12387276000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2365308000.0,
+              "nopat": 1868593320.0,
+              "depreciation": 0.0,
+              "capex": 894564000.0,
+              "change_in_wc": 309681900.0,
+              "fcff": 664347420.0,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 559167931.9922565
+            },
+            {
+              "year": 3.0,
+              "revenue": 13130512560.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2507226480.0,
+              "nopat": 1980708919.2,
+              "depreciation": 0.0,
+              "capex": 948237840.0,
+              "change_in_wc": 328262814.0,
+              "fcff": 704208265.2,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 543777988.9099008
+            },
+            {
+              "year": 4.0,
+              "revenue": 13655733062.4,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2607515539.2000003,
+              "nopat": 2059937275.9680004,
+              "depreciation": 0.0,
+              "capex": 986167353.5999999,
+              "change_in_wc": 341393326.56,
+              "fcff": 732376595.8080006,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 518834044.46449274
+            },
+            {
+              "year": 5.0,
+              "revenue": 14065405054.272,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.1909465809916563,
+              "ebit": 2685741005.376,
+              "nopat": 2121735394.24704,
+              "depreciation": 0.0,
+              "capex": 1015752374.208,
+              "change_in_wc": 351635126.3568,
+              "fcff": 754347893.68224,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 490274372.292135
+            }
+          ],
+          "enterprise_value": 11092776474.851141,
+          "equity_value": 12274776474.851141,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12659441833700968,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.07221636136952143,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.682459000671334,
+          "calibration_adjustment": 0.16188740769156995
+        },
+        "base_financials": {
+          "net_sales": 10427000000.0,
+          "cogs": 5428000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -1182000000.0
+        },
+        "calculated_upside": -0.9491041892311974
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 241174589615.0,
+          "wacc": 0.10203928153343012,
+          "cost_of_equity": 0.10203928153343012,
+          "beta": 1.0636232839618687
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1182000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 9722000000.0,
+            "crash_fcf": 786445000.0,
+            "earnings_power_value": 6444195591.110308,
+            "floor_value": 9722000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10203928153343012,
+            "2": 0.10203928153343012,
+            "3": 0.10203928153343012,
+            "4": 0.10203928153343012,
+            "5": 0.10203928153343012
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:13:51.956733",
+          "current_price": 265.0,
+          "shares_diluted": 910092791.0,
+          "market_cap": 241174589615.0,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.0636232839618687,
+          "wacc_base": 0.10203928153343012,
+          "revenue": 17682000000.0,
+          "ebitda": 6023000000.0,
+          "ebit": 6023000000.0,
+          "nopat": 4758170000.0,
+          "roic": 0.17655783157029184,
+          "fcf": 2603000000.0,
+          "net_debt": 10323000000.0,
+          "bull_ev": 70185685776.28568,
+          "bull_intrinsic_per_share": 65.77646407956843,
+          "bull_upside": -0.7517869280016286,
+          "bull_wacc": 0.09703928153343011,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 11.652944674794234,
+          "bull_justified_ev_ebitda": 9.950260995172242,
+          "bull_roic_wacc_spread": 0.07951855003686173,
+          "bull_tv_pct_of_ev": 0.5130599176103829,
+          "bull_implied_tv_ebitda": 9.95026099517224,
+          "base_ev": 56564927796.88735,
+          "base_intrinsic_per_share": 50.81012425785422,
+          "base_upside": -0.8082636820458331,
+          "base_wacc": 0.10203928153343012,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.391487264965525,
+          "base_justified_ev_ebitda": 8.398450654629254,
+          "base_roic_wacc_spread": 0.07451855003686172,
+          "base_tv_pct_of_ev": 0.45515387749991404,
+          "base_implied_tv_ebitda": 8.398450654629254,
+          "bear_ev": 35473249175.26816,
+          "bear_intrinsic_per_share": 27.634818585512956,
+          "bear_upside": -0.8957176657150454,
+          "bear_wacc": 0.11703928153343011,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.889631275986744,
+          "bear_justified_ev_ebitda": 6.255981420325092,
+          "bear_roic_wacc_spread": 0.059518550036861725,
+          "bear_tv_pct_of_ev": 0.34853575760635214,
+          "bear_implied_tv_ebitda": 6.255981420325092
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TXN",
+            "scenario": "bull",
+            "enterprise_value": 70185685776.28568,
+            "equity_value": 59032300776.285675,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 64.86404612811143,
+            "current_price": 265.0,
+            "margin_of_safety": -0.7552300146109003,
+            "upside_pct": -0.7552300146109003,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          },
+          "base": {
+            "ticker": "TXN",
+            "scenario": "base",
+            "enterprise_value": 56564927796.88735,
+            "equity_value": 45411542796.88735,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 49.897706306397225,
+            "current_price": 265.0,
+            "margin_of_safety": -0.8117067686551048,
+            "upside_pct": -0.8117067686551048,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          },
+          "bear": {
+            "ticker": "TXN",
+            "scenario": "bear",
+            "enterprise_value": 35473249175.26816,
+            "equity_value": 24319864175.268158,
+            "shares_diluted": 910092791.0,
+            "intrinsic_per_share": 26.72240063405596,
+            "current_price": 265.0,
+            "margin_of_safety": -0.8991607523243171,
+            "upside_pct": -0.8991607523243171,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -13548000000.0,
+            "bridge_cash_(net_of_haircuts)": 2394615000.0,
+            "cash_gross": 3225000000.0,
+            "cash_wc_haircut": 530460000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 299925000.0,
+            "cash_net_accessible": 2394615000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 2394615000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 64.86404612811143,
+          "base": 49.897706306397225,
+          "bear": 26.72240063405596
+        },
+        "margin_of_safety": {
+          "bull": -0.7552300146109003,
+          "base": -0.8117067686551048,
+          "bear": -0.8991607523243171
+        },
+        "reverse_dcf": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "current_price": 265.0,
+          "current_ev": 251497589615.0,
+          "current_ev_ebitda": 41.7561995043998,
+          "wacc": 0.09829280821256248,
+          "ebit_margin": 0.3406288881348264,
+          "implied_cagr_10y": 0.25159799306802877,
+          "implied_cagr_5y": 0.25159799306802877,
+          "historical_cagr_5y": 0.015719782653737413,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 41.7561995043998,
+          "forward_ev_ebitda_justified": 9.166870193761808,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.25159799306802877,
+        "historical_cagr": 0.015719782653737413,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (25.2%) is 1.4x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TXN",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 41.7561995043998,
+          "market_ev_ebit": 41.7561995043998,
+          "market_p_sales": 13.639553761735097,
+          "market_p_e": 48.225272868426316,
+          "market_peg": 30.678078654580286,
+          "justified_ev_ebitda": 9.252458075625738,
+          "justified_ev_ebit": 9.252458075625738,
+          "justified_p_sales": 3.1692973780222147,
+          "ev_ebitda_premium": 32.50374142877406,
+          "ev_ebitda_premium_pct": 3.5129844591677175,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 19.756199504399802,
+          "roic": 0.17655783157029184,
+          "wacc": 0.09829280821256248,
+          "roic_wacc_spread": 0.07826502335772936,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6781386352316121,
+          "growth_rate": 0.015719782653737413,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 41.7561995043998,
+        "ev_ebitda_justified": 9.252458075625738,
+        "ev_ebitda_premium_pct": 3.5129844591677175,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.07826502335772936,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.17655783157029184,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: TXN ===\nPrice: $265.00  |  Bear=$27  Base=$50  Bull=$65\nMoS:  Bear=-89.9%  Base=-81.2%  Bull=-75.5%\nRDCF: implied=25.2% hist=1.6% [flag]\nEV/EBITDA: 41.8x market vs 9.3x justified (+351%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $265.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 25.2%\n  \u2022 Company's robust historical CAGR: 1.6%\n  \u2022 Ratio (implied / historical): 16.0x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (25.2%) is 1.4x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 41.8x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 9.3x\n  \u2022 Premium to justified multiple: +351%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $27/share vs current price $265.00\n  \u2022 Downside in bear case: -89.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market is pricing TXN at $265.00, which mathematically demands a 10-year revenue CAGR of 25.2%. This is a staggering 16.0x its historical growth rate of 1.6% and 1.4x the sector's 75th percentile. TXN is a mature analog semiconductor company, not a hyper-growth AI startup. Furthermore, the current EV/EBITDA is 41.8x, while the mathematically justified multiple based on ROIC and WACC is only 9.3x, representing a massive 351% speculative premium. Fundamentally, a 25% sustained CAGR is virtually impossible given TXN's massive revenue base, cyclical end-markets, and the physical constraints of semiconductor manufacturing. The market is entirely ignoring the massive, multi-year CapEx cycle TXN is undergoing to build out 300mm wafer fabs, which will heavily depress free cash flow and margins in the near term. If growth reverts to historical low-single-digit norms and the multiple contracts to its justified 9.3x EV/EBITDA, the stock faces a catastrophic repricing toward the bear case intr...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 1.0,
+          "cost_advantage": 9.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable.",
+        "concentration_risk": false,
+        "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes.",
+        "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+        "revenue_segments": [
+          {
+            "segment": "Analog",
+            "pct_revenue": 75.0,
+            "growth_trend": "Stable/Cyclical"
+          },
+          {
+            "segment": "Embedded Processing",
+            "pct_revenue": 18.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other",
+            "pct_revenue": 7.0,
+            "growth_trend": "Declining"
+          }
+        ],
+        "key_customers": [
+          "Automotive OEMs",
+          "Industrial equipment manufacturers",
+          "Enterprise systems providers",
+          "Personal electronics manufacturers"
+        ],
+        "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.66,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+        "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.2087292698783223,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is not a material factor for TXN. The D8 Revenue Score is 1.00, indicating clean revenue quality with no deferred revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific 10-K text or patent data available. As a broad-based analog semiconductor manufacturer, TXN relies on a vast, diversified portfolio of patents and proprietary manufacturing processes. Expiration risk is highly diversified and not tied to single blockbuster patents. Uncertainty is noted due to lack of direct filings, but structural risk is historically negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TXN is not at a cyclical peak with a revenue Z-score of 1.21. Growth quality is clean as indicated by a D8 score of 1.00 and no deferred revenue risks. Intangible risk is estimated to be immaterial due to a highly diversified patent portfolio, requiring no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n<div align='center'>Washington, D.C. 20549</div>\n\n#### FORM 10-K\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from ___________ to ___________\n\nCommission File Number 001-03761</div>\n\n<div align='center'>TEXAS INSTRUMENTS INCORPORATED</div>\n\n| (Exact Name of Registrant as Specified in Its Charter)         |     |                                     |\n| Delaware                                                       |     |                          75-0289970 |\n| (State of Incorporation)                                       |     | -I.R.S. Employer Identification No. |\n| 12500 TI Boulevard,Dallas,Texas                                |     |                               75243 |\n| (...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "TXN",
+        "generated_at": "2026-04-28T23:14:22.547874",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 6.0,
+            "cost_structure": "Texas Instruments operates with a high fixed-cost structure driven by its internal manufacturing footprint, heavy depreciation of semiconductor manufacturing equipment, and consistent R&D investments. Because of these high fixed costs, revenue growth flows powerfully to EBIT as factory utilization increases, spreading depreciation over higher unit volumes. Conversely, during cyclical downturns, underutilization of fabs creates margin pressure.",
+            "business_description": "Texas Instruments designs, manufactures, and sells analog and embedded processing semiconductors to original equipment manufacturers globally. The company focuses heavily on the industrial and automotive markets, generating revenue through the direct sale of its proprietary chips and through distribution channels.",
+            "revenue_segments": [
+              {
+                "segment": "Analog",
+                "pct_revenue": 75.0,
+                "growth_trend": "Stable/Cyclical"
+              },
+              {
+                "segment": "Embedded Processing",
+                "pct_revenue": 18.0,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Other",
+                "pct_revenue": 7.0,
+                "growth_trend": "Declining"
+              }
+            ],
+            "key_customers": [
+              "Automotive OEMs",
+              "Industrial equipment manufacturers",
+              "Enterprise systems providers",
+              "Personal electronics manufacturers"
+            ],
+            "competitive_landscape": "Top competitors include Analog Devices (ADI), Infineon, and NXP Semiconductors. TXN differentiates itself through its massive scale, a structural cost advantage from internal 300mm wafer manufacturing, and a strong direct-to-customer sales channel via TI.com.",
+            "regulatory_risk": "The company faces regulatory risks related to international trade policies, specifically US export controls restricting the sale of certain semiconductor technologies to China."
+          },
+          "value_chain": {
+            "power_ratio": 0.66,
+            "upstream_leak": false,
+            "strategic_leverage": 8.0,
+            "bottleneck_analysis": "TXN is largely vertically integrated, owning its own fabs. Key external dependencies are semiconductor manufacturing equipment (Applied Materials) and raw silicon wafers (Shin-Etsu). Because TXN uses mature nodes rather than leading-edge, they are not bottlenecked by ASML EUV machines, giving them diverse equipment supplier options and strong negotiating leverage.",
+            "substitution_risk_score": 2.0,
+            "top_substitutes": "1. Competitor analog ICs (Analog Devices, Infineon). 2. Digital signal processing alternatives. 3. Custom ASICs. Switching requires complete board redesign and re-certification, which is highly prohibitive in auto/industrial markets.",
+            "pricing_power_assessment": "TXN exhibits strong pricing power due to the proprietary nature of its catalog (100,000+ products) and the low cost of its chips relative to the total bill of materials. They have a history of passing on inflationary costs and benefit from high switching costs.",
+            "pass_through_capability": true,
+            "analysis_summary": "Texas Instruments holds a dominant position in the analog and embedded processing semiconductor markets. Its strategic leverage is driven by internal 300mm manufacturing capabilities, a massive catalog, and deep integration into long-lifecycle automotive and industrial applications. Supplier power is low due to reliance on mature manufacturing nodes, while buyer power is fragmented across 100,000+ customers. Substitution threat is minimal given the high switching costs of redesigning circuit boards. Overall, TXN operates with a wide economic moat and strong pricing power."
+          },
+          "moat": {
+            "score": 8.0,
+            "switching_costs": 8.0,
+            "network_effects": 1.0,
+            "cost_advantage": 9.0,
+            "intangibles": 8.0,
+            "evidence": "TXN possesses a catalog of over 80,000 products sold to 100,000+ customers. Its internal 300mm wafer manufacturing provides an estimated 40% cost advantage per unpackaged chip over competitors using 200mm wafers. Furthermore, its chips are designed into long-lifecycle automotive and industrial systems, creating high switching costs.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "Analog chips represent a very small fraction of the total bill of materials for end products like vehicles or industrial machinery, but are mission-critical. This allows TXN to pass on inflationary costs or raise prices during supply constraints without material churn, as redesigning a board to save pennies on an analog chip is economically unviable."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.2087292698783223,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue is not a material factor for TXN. The D8 Revenue Score is 1.00, indicating clean revenue quality with no deferred revenue pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "No specific 10-K text or patent data available. As a broad-based analog semiconductor manufacturer, TXN relies on a vast, diversified portfolio of patents and proprietary manufacturing processes. Expiration risk is highly diversified and not tied to single blockbuster patents. Uncertainty is noted due to lack of direct filings, but structural risk is historically negligible.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "TXN is not at a cyclical peak with a revenue Z-score of 1.21. Growth quality is clean as indicated by a D8 score of 1.00 and no deferred revenue risks. Intangible risk is estimated to be immaterial due to a highly diversified patent portfolio, requiring no terminal haircut."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 17.682,
+            "ebitda_bn": 6.023,
+            "fcf_bn": 2.603,
+            "nopat_bn": 4.75817,
+            "invested_capital_bn": 26.94964,
+            "net_debt_bn": 10.323,
+            "sbc_bn": 0.419,
+            "fiscal_year": 2025,
+            "data_quality": 0.98
+          },
+          "ratios": {
+            "gross_margin_pct": 57.024092297251435,
+            "ebit_margin_pct": 34.06288881348264,
+            "ebitda_margin_pct": 34.06288881348264,
+            "fcf_margin_pct": 14.72118538626852,
+            "roic": 0.17655783157029184,
+            "roe": 0.3073188717507528,
+            "sbc_pct_fcf": 16.09681137149443,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 0.0,
+            "equity": 241174589615.0,
+            "wacc": 0.10203928153343012,
+            "cost_of_equity": 0.10203928153343012,
+            "beta": 1.0636232839618687
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 0.0,
+              "cash": 1182000000.0,
+              "liquidity_ratio": 0.0,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 9722000000.0,
+              "crash_fcf": 786445000.0,
+              "earnings_power_value": 6444195591.110308,
+              "floor_value": 9722000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 6.0,
+              "financial_leverage_score": 0.0,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.10203928153343012,
+              "2": 0.10203928153343012,
+              "3": 0.10203928153343012,
+              "4": 0.10203928153343012,
+              "5": 0.10203928153343012
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "TXN has a highly diversified customer base of over 100,000 customers. No single direct end-customer accounts for more than 10% of total revenue, mitigating concentration risk, though certain distributors may handle large volumes."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 12274776474.851141,
+            "upside_percent": -0.9491041892311974,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 26.72240063405596,
+                "margin_of_safety": -0.8991607523243171,
+                "ev": 35473249175.26816
+              },
+              "base": {
+                "intrinsic_per_share": 49.897706306397225,
+                "margin_of_safety": -0.8117067686551048,
+                "ev": 56564927796.88735
+              },
+              "bull": {
+                "intrinsic_per_share": 64.86404612811143,
+                "margin_of_safety": -0.7552300146109003,
+                "ev": 70185685776.28568
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.25159799306802877,
+              "historical_cagr": 0.015719782653737413,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (25.2%) is 1.4x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 41.7561995043998,
+              "justified_ev_ebitda": 9.252458075625738,
+              "premium_pct": 3.5129844591677175,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.07826502335772936,
+              "value_creation": "creating",
+              "roic": 0.17655783157029184,
+              "wacc": 0.10203928153343012
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": false,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 8.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.10203928153343012,
+            "beta": 1.0636232839618687,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+            "bear_case_summary": "The market is pricing TXN at $265.00, which mathematically demands a 10-year revenue CAGR of 25.2%. This is a staggering 16.0x its historical growth rate of 1.6% and 1.4x the sector's 75th percentile. TXN is a mature analog semiconductor company, not a hyper-growth AI startup. Furthermore, the current EV/EBITDA is 41.8x, while the mathematically justified multiple based on ROIC and WACC is only 9.3x, representing a massive 351% speculative premium. Fundamentally, a 25% sustained CAGR is virtually impossible given TXN's massive revenue base, cyclical end-markets, and the physical constraints of semiconductor manufacturing. The market is entirely ignoring the massive, multi-year CapEx cycle TXN is undergoing to build out 300mm wafer fabs, which will heavily depress free cash flow and margins in the near term. If growth reverts to historical low-single-digit norms and the multiple contracts to its justified 9.3x EV/EBITDA, the stock faces a catastrophic repricing toward the bear case intr...(truncated)",
+            "sentiment_score": -9,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $265.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 25.2%\n  \u2022 Company's robust historical CAGR: 1.6%\n  \u2022 Ratio (implied / historical): 16.0x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (25.2%) is 1.4x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 41.8x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 9.3x\n  \u2022 Premium to justified multiple: +351%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $27/share vs current price $265.00\n  \u2022 Downside in bear case: -89.9%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": -1,
+            "margin_of_safety": -0.8117067686551048,
+            "narrative": "The implied 25.2% CAGR is mathematically indefensible given TXN's historical 1.6% growth rate and its position as a mature analog semiconductor manufacturer. While the transition to 300mm wafers provides a structural 40% cost advantage and supports margin expansion, it does not fundamentally alter the TAM or end-market demand dynamics to support a 16x acceleration in top-line growth. Growth will inevitably decay toward low-single-digit historical norms as cyclical industrial and automotive end-markets normalize.\n\nThe Contrarian is entirely correct that the market is applying a hyper-growth narrative premium to a mature, cyclical business, demanding an impossible 25.2% sustained CAGR. The 351% EV/EBITDA premium is a clear signal of overvaluation, and the ongoing CapEx cycle will indeed suppress near-term free cash flow. Where the bear case may be slightly too pessimistic is in ignoring the terminal margin profile; TXN's 8.0/10 moat, driven by 100,000+ customers and high switching costs,...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u274c FAIL: Implied CAGR (25.2%) is 16.0x historical (1.6%). Requires TAM justification.",
+              "\u274c FAIL: EV/EBITDA at +351% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "TXN",
+              "p1_moat": 5,
+              "p2_health": 4,
+              "p3_tailwind": 1,
+              "p4_mos": 1,
+              "p5_leadership": 3,
+              "raw_total": 14,
+              "capped_total": 14,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "pass",
+              "position_size_pct": "Below minimum analytical threshold (capped at 75% due to reflexivity flag)",
+              "conviction_score": -1,
+              "reflexivity_flags": [
+                "High-SBC company (16.1% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 9.0/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +7.9pp \u2014 modest value creation",
+                "FCF margin 14.7% \u2014 strong FCF",
+                "Net Debt/EBITDA 1.7\u00d7 \u2014 moderate leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 1.6% \u2014 slow growth",
+                "Sector 'Technology' \u2014 confirmed secular tailwind",
+                "Market implied CAGR 16.4\u00d7 historical \u2014 tailwind fully priced, no entry benefit"
+              ],
+              "p4_reasons": [
+                "Base MoS -81.5% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 16.1% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 8.5/10",
+                "Strategic leverage 9.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for TXN. Conviction: -1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

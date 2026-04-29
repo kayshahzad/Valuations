@@ -1,0 +1,3177 @@
+[
+  {
+    "timestamp": "2026-04-28T22:56:44.949085",
+    "agent": "Librarian",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:57:16.141977",
+    "agent": "Forensic",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:57:44.749432",
+    "agent": "ValueChain",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.02,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+        "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+        "pass_through_capability": false,
+        "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: False. Sub risk: 7.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:07.392200",
+    "agent": "StrategicContext",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: False. Sub risk: 7.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.02,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+        "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+        "pass_through_capability": false,
+        "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 2.1243158619275704,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 674529333333.3334,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is 0, which is standard for a traditional retail business model. There is no deferred revenue trend to indicate pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K indicates reliance on trademarks, trade secrets, and proprietary technologies, but does not disclose any material patent cliffs, exclusivity dates, or contract renewals. As a mass merchandiser, intangible decay risk is negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Walmart's revenue Z-score of 2.12 mathematically triggers a cyclical peak flag, though this is driven by consistent structural growth and inflation rather than cyclical end-markets. Revenue quality is clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Additionally, as a global retailer, Walmart has no material revenue tied to expiring patents or contracts, resulting in negligible intangible risk."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=2.12 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:08.463710",
+    "agent": "Strategist",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: False. Sub risk: 7.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.12 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.02,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+        "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+        "pass_through_capability": false,
+        "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.1243158619275704,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 674529333333.3334,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is 0, which is standard for a traditional retail business model. There is no deferred revenue trend to indicate pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K indicates reliance on trademarks, trade secrets, and proprietary technologies, but does not disclose any material patent cliffs, exclusivity dates, or contract renewals. As a mass merchandiser, intangible decay risk is negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Walmart's revenue Z-score of 2.12 mathematically triggers a cyclical peak flag, though this is driven by consistent structural growth and inflation rather than cyclical end-markets. Revenue quality is clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Additionally, as a global retailer, Walmart has no material revenue tied to expiring patents or contracts, resulting in negligible intangible risk."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 33231000000.0,
+          "equity": 1017018650618.2109,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07696388563472673,
+          "beta": 0.6077069948945342
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 3323100000.0,
+            "cash": 7907000000.0,
+            "liquidity_ratio": 0.4202731756671304,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 70749000000.0,
+            "crash_fcf": 12287265000.0,
+            "earnings_power_value": 111702409090.90909,
+            "floor_value": 111702409090.90909,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.130699668014151,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:09.323510",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "base": {
+        "net_sales": 405046000000.0,
+        "cogs": 304657000000.0,
+        "interest_expense": 0.0,
+        "net_debt": 25324000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.19653817097317342,
+        "da_percent_sales": 0.01766959802096552,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.030080534062797804,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 0.7521540763271333
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T22:58:09.323673",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": -87069611971.6241,
+      "equity_value": -112393611971.6241,
+      "terminal_value": -101644528009.93956,
+      "discounted_terminal_value": -66061968999.14101,
+      "sum_pv_cash_flows": -21007642972.483093,
+      "audit_metrics": {
+        "roic_path": [
+          0.04175936630830637,
+          0.04259595827344348,
+          0.0425973099946366,
+          0.04179483838984258,
+          0.040656513208032014
+        ],
+        "invested_capital_path": [
+          283532200000.0,
+          300200665000.0,
+          318202607200.0,
+          337284665932.0,
+          357130007013.28,
+          377570708326.9984
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 445550600000.00006,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.0336381546787278,
+          "ebit": 14987499999.99998,
+          "nopat": 11840124999.999985,
+          "depreciation": 7872700000.000001,
+          "capex": 13402400000.000002,
+          "change_in_wc": 11138765000.000002,
+          "fcff": -4828340000.000019,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": -4429669724.770659
+        },
+        {
+          "year": 2.0,
+          "revenue": 481194648000.0001,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.0336381546787278,
+          "ebit": 16186499999.99998,
+          "nopat": 12787334999.999985,
+          "depreciation": 8502516000.000002,
+          "capex": 14474592000.000004,
+          "change_in_wc": 12029866200.000004,
+          "fcff": -5214607200.000023,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": -4389030552.983774
+        },
+        {
+          "year": 3.0,
+          "revenue": 510066326880.0002,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.0336381546787278,
+          "ebit": 17157689999.99998,
+          "nopat": 13554575099.999985,
+          "depreciation": 9012666960.000002,
+          "capex": 15343067520.000004,
+          "change_in_wc": 12751658172.000006,
+          "fcff": -5527483632.000025,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": -4268231546.9383497
+        },
+        {
+          "year": 4.0,
+          "revenue": 530468979955.2002,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.0336381546787278,
+          "ebit": 17843997599.99998,
+          "nopat": 14096758103.999985,
+          "depreciation": 9373173638.400003,
+          "capex": 15956790220.800005,
+          "change_in_wc": 13261724498.880005,
+          "fcff": -5748582977.280024,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": -4072441109.0053954
+        },
+        {
+          "year": 5.0,
+          "revenue": 546383049353.8562,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.0336381546787278,
+          "ebit": 18379317527.99998,
+          "nopat": 14519660847.119986,
+          "depreciation": 9654368847.552004,
+          "capex": 16435493927.424006,
+          "change_in_wc": 13659576233.846405,
+          "fcff": -5921040466.598421,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": -3848270038.7849126
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 405046000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.0336381546787278,
+        "terminal_value_pct_of_ev": 0.7587258918837325,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": -7.000475360972431,
+        "reinvestment_rate_terminal_year": 1.407794681221695,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.01766959802096552,
+          "capex_percent_sales": 0.030080534062797804,
+          "wc_change_percent_sales": 0.025
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:09.324440",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: False. Sub risk: 7.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.12 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 33231000000.0,
+          "equity": 1017018650618.2109,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07696388563472673,
+          "beta": 0.6077069948945342
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 3323100000.0,
+            "cash": 7907000000.0,
+            "liquidity_ratio": 0.4202731756671304,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 70749000000.0,
+            "crash_fcf": 12287265000.0,
+            "earnings_power_value": 111702409090.90909,
+            "floor_value": 111702409090.90909,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.130699668014151,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.02,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+        "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+        "pass_through_capability": false,
+        "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.1243158619275704,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 674529333333.3334,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is 0, which is standard for a traditional retail business model. There is no deferred revenue trend to indicate pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K indicates reliance on trademarks, trade secrets, and proprietary technologies, but does not disclose any material patent cliffs, exclusivity dates, or contract renewals. As a mass merchandiser, intangible decay risk is negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Walmart's revenue Z-score of 2.12 mathematically triggers a cyclical peak flag, though this is driven by consistent structural growth and inflation rather than cyclical end-markets. Revenue quality is clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Additionally, as a global retailer, Walmart has no material revenue tied to expiring patents or contracts, resulting in negligible intangible risk."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "terminal_value": -101644528009.93956,
+          "discounted_terminal_value": -66061968999.14101,
+          "sum_pv_cash_flows": -21007642972.483093,
+          "audit_metrics": {
+            "roic_path": [
+              0.04175936630830637,
+              0.04259595827344348,
+              0.0425973099946366,
+              0.04179483838984258,
+              0.040656513208032014
+            ],
+            "invested_capital_path": [
+              283532200000.0,
+              300200665000.0,
+              318202607200.0,
+              337284665932.0,
+              357130007013.28,
+              377570708326.9984
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 405046000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0336381546787278,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -7.000475360972431,
+            "reinvestment_rate_terminal_year": 1.407794681221695,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.01766959802096552,
+              "capex_percent_sales": 0.030080534062797804,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -14.100332378777786,
+          "upside_percent": -1.110512833127814,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.01766959802096552,
+            "capex_percent_sales": 0.030080534062797804,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.19653817097317342,
+          "da_percent_sales": 0.01766959802096552,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030080534062797804,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.7521540763271333
+        },
+        "base_financials": {
+          "net_sales": 405046000000.0,
+          "cogs": 304657000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 25324000000.0
+        },
+        "calculated_upside": -1.110512833127814
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-87,069,611,972",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:10.500614",
+    "agent": "ValuationNode",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: False. Sub risk: 7.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.12 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-87,069,611,972",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "terminal_value": -101644528009.93956,
+          "discounted_terminal_value": -66061968999.14101,
+          "sum_pv_cash_flows": -21007642972.483093,
+          "audit_metrics": {
+            "roic_path": [
+              0.04175936630830637,
+              0.04259595827344348,
+              0.0425973099946366,
+              0.04179483838984258,
+              0.040656513208032014
+            ],
+            "invested_capital_path": [
+              283532200000.0,
+              300200665000.0,
+              318202607200.0,
+              337284665932.0,
+              357130007013.28,
+              377570708326.9984
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 405046000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0336381546787278,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -7.000475360972431,
+            "reinvestment_rate_terminal_year": 1.407794681221695,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.01766959802096552,
+              "capex_percent_sales": 0.030080534062797804,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -14.100332378777786,
+          "upside_percent": -1.110512833127814,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.01766959802096552,
+            "capex_percent_sales": 0.030080534062797804,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.19653817097317342,
+          "da_percent_sales": 0.01766959802096552,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030080534062797804,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.7521540763271333
+        },
+        "base_financials": {
+          "net_sales": 405046000000.0,
+          "cogs": 304657000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 25324000000.0
+        },
+        "calculated_upside": -1.110512833127814
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 33231000000.0,
+          "equity": 1017018650618.2109,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07696388563472673,
+          "beta": 0.6077069948945342
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 3323100000.0,
+            "cash": 7907000000.0,
+            "liquidity_ratio": 0.4202731756671304,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 70749000000.0,
+            "crash_fcf": 12287265000.0,
+            "earnings_power_value": 111702409090.90909,
+            "floor_value": 111702409090.90909,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.130699668014151,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.02,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+        "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+        "pass_through_capability": false,
+        "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.1243158619275704,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 674529333333.3334,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is 0, which is standard for a traditional retail business model. There is no deferred revenue trend to indicate pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K indicates reliance on trademarks, trade secrets, and proprietary technologies, but does not disclose any material patent cliffs, exclusivity dates, or contract renewals. As a mass merchandiser, intangible decay risk is negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Walmart's revenue Z-score of 2.12 mathematically triggers a cyclical peak flag, though this is driven by consistent structural growth and inflation rather than cyclical end-markets. Revenue quality is clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Additionally, as a global retailer, Walmart has no material revenue tied to expiring patents or contracts, resulting in negligible intangible risk."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 674529333333.3334,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "run_date": "2026-04-29T02:58:09.325522",
+          "current_price": 127.58999633789062,
+          "shares_diluted": 7970990515.0,
+          "market_cap": 1017018650618.2109,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.6077069948945342,
+          "wacc_base": 0.09,
+          "revenue": 674529333333.3334,
+          "ebitda": 29825000000.0,
+          "ebit": 29825000000.0,
+          "nopat": 23561750000.0,
+          "roic": 0.17551828427976549,
+          "fcf": 14923000000.0,
+          "net_debt": 23897000000.0,
+          "bull_ev": 496058004014.7533,
+          "bull_intrinsic_per_share": 59.234922325679534,
+          "bull_upside": -0.535740073470882,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 16.63228848331109,
+          "bull_justified_ev_ebitda": 8.525032218569704,
+          "bull_roic_wacc_spread": 0.09051828427976549,
+          "bull_tv_pct_of_ev": 0.6541880057245182,
+          "bull_implied_tv_ebitda": 8.525032218569704,
+          "base_ev": 337366470198.59766,
+          "base_intrinsic_per_share": 39.326288195764796,
+          "base_upside": -0.6917760849242537,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 11.31153294882138,
+          "base_justified_ev_ebitda": 6.631231338064984,
+          "base_roic_wacc_spread": 0.08551828427976549,
+          "base_tv_pct_of_ev": 0.6146346918861303,
+          "base_implied_tv_ebitda": 6.6312313380649845,
+          "bear_ev": 96952437852.93008,
+          "bear_intrinsic_per_share": 9.165164318719563,
+          "bear_upside": -0.928167061824754,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 3.250710405798159,
+          "bear_justified_ev_ebitda": 4.286730522856567,
+          "bear_roic_wacc_spread": 0.07051828427976549,
+          "bear_tv_pct_of_ev": 0.38681674003934063,
+          "bear_implied_tv_ebitda": 1.9349918340177492
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "WMT",
+            "scenario": "bull",
+            "enterprise_value": 496058004014.7533,
+            "equity_value": 461434004014.7533,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 57.88916736839867,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.5462875693240599,
+            "upside_pct": -0.5462875693240599,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "WMT",
+            "scenario": "base",
+            "enterprise_value": 337366470198.59766,
+            "equity_value": 302742470198.59766,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 37.98053323848393,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.7023235807774314,
+            "upside_pct": -0.7023235807774314,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "WMT",
+            "scenario": "bear",
+            "enterprise_value": 96952437852.93008,
+            "equity_value": 62328437852.930084,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 7.8194093614387,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.9387145576779317,
+            "upside_pct": -0.9387145576779317,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 57.88916736839867,
+          "base": 37.98053323848393,
+          "bear": 7.8194093614387
+        },
+        "margin_of_safety": {
+          "bull": -0.5462875693240599,
+          "base": -0.7023235807774314,
+          "bear": -0.9387145576779317
+        },
+        "reverse_dcf": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "current_price": 127.58999633789062,
+          "current_ev": 1040915650618.2109,
+          "current_ev_ebitda": 34.90077621519567,
+          "wacc": 0.0754703372556329,
+          "ebit_margin": 0.044216016303713995,
+          "implied_cagr_10y": 0.1759809561786855,
+          "implied_cagr_5y": 0.1759809561786855,
+          "historical_cagr_5y": 0.04189068114885819,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 34.90077621519567,
+          "forward_ev_ebitda_justified": 11.835685673447328,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.1759809561786855,
+        "historical_cagr": 0.04189068114885819,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.6%) is 1.5x the sector 75th percentile (12.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "market_ev_ebitda": 34.90077621519567,
+          "market_ev_ebit": 34.90077621519567,
+          "market_p_sales": 1.4396941316456675,
+          "market_p_e": 46.45405611922582,
+          "market_peg": 11.089353251180546,
+          "justified_ev_ebitda": 13.423253092484929,
+          "justified_ev_ebit": 13.423253092484929,
+          "justified_p_sales": 0.7320931061231777,
+          "ev_ebitda_premium": 21.477523122710743,
+          "ev_ebitda_premium_pct": 1.6000237032508189,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 22.90077621519567,
+          "roic": 0.17551828427976549,
+          "wacc": 0.0754703372556329,
+          "roic_wacc_spread": 0.10004794702413258,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6774761106454317,
+          "growth_rate": 0.04189068114885819,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 34.90077621519567,
+        "ev_ebitda_justified": 13.423253092484929,
+        "ev_ebitda_premium_pct": 1.6000237032508189,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.10004794702413258,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.17551828427976549,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: WMT ===\nPrice: $127.59  |  Bear=$8  Base=$38  Bull=$58\nMoS:  Bear=-93.9%  Base=-70.2%  Bull=-54.6%\nRDCF: implied=17.6% hist=4.2% [flag]\nEV/EBITDA: 34.9x market vs 13.4x justified (+160%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: WMT \u2014 Base IV=$38/share MoS=-70.2% ImpliedCAGR=17.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:27.885103",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: False. Sub risk: 7.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.12 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-87,069,611,972",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: WMT \u2014 Base IV=$38/share MoS=-70.2% ImpliedCAGR=17.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "terminal_value": -101644528009.93956,
+          "discounted_terminal_value": -66061968999.14101,
+          "sum_pv_cash_flows": -21007642972.483093,
+          "audit_metrics": {
+            "roic_path": [
+              0.04175936630830637,
+              0.04259595827344348,
+              0.0425973099946366,
+              0.04179483838984258,
+              0.040656513208032014
+            ],
+            "invested_capital_path": [
+              283532200000.0,
+              300200665000.0,
+              318202607200.0,
+              337284665932.0,
+              357130007013.28,
+              377570708326.9984
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 405046000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0336381546787278,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -7.000475360972431,
+            "reinvestment_rate_terminal_year": 1.407794681221695,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.01766959802096552,
+              "capex_percent_sales": 0.030080534062797804,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -14.100332378777786,
+          "upside_percent": -1.110512833127814,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.01766959802096552,
+            "capex_percent_sales": 0.030080534062797804,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.19653817097317342,
+          "da_percent_sales": 0.01766959802096552,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030080534062797804,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.7521540763271333
+        },
+        "base_financials": {
+          "net_sales": 405046000000.0,
+          "cogs": 304657000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 25324000000.0
+        },
+        "calculated_upside": -1.110512833127814
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 33231000000.0,
+          "equity": 1017018650618.2109,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07696388563472673,
+          "beta": 0.6077069948945342
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 3323100000.0,
+            "cash": 7907000000.0,
+            "liquidity_ratio": 0.4202731756671304,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 70749000000.0,
+            "crash_fcf": 12287265000.0,
+            "earnings_power_value": 111702409090.90909,
+            "floor_value": 111702409090.90909,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.130699668014151,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 674529333333.3334,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "run_date": "2026-04-29T02:58:09.325522",
+          "current_price": 127.58999633789062,
+          "shares_diluted": 7970990515.0,
+          "market_cap": 1017018650618.2109,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.6077069948945342,
+          "wacc_base": 0.09,
+          "revenue": 674529333333.3334,
+          "ebitda": 29825000000.0,
+          "ebit": 29825000000.0,
+          "nopat": 23561750000.0,
+          "roic": 0.17551828427976549,
+          "fcf": 14923000000.0,
+          "net_debt": 23897000000.0,
+          "bull_ev": 496058004014.7533,
+          "bull_intrinsic_per_share": 59.234922325679534,
+          "bull_upside": -0.535740073470882,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 16.63228848331109,
+          "bull_justified_ev_ebitda": 8.525032218569704,
+          "bull_roic_wacc_spread": 0.09051828427976549,
+          "bull_tv_pct_of_ev": 0.6541880057245182,
+          "bull_implied_tv_ebitda": 8.525032218569704,
+          "base_ev": 337366470198.59766,
+          "base_intrinsic_per_share": 39.326288195764796,
+          "base_upside": -0.6917760849242537,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 11.31153294882138,
+          "base_justified_ev_ebitda": 6.631231338064984,
+          "base_roic_wacc_spread": 0.08551828427976549,
+          "base_tv_pct_of_ev": 0.6146346918861303,
+          "base_implied_tv_ebitda": 6.6312313380649845,
+          "bear_ev": 96952437852.93008,
+          "bear_intrinsic_per_share": 9.165164318719563,
+          "bear_upside": -0.928167061824754,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 3.250710405798159,
+          "bear_justified_ev_ebitda": 4.286730522856567,
+          "bear_roic_wacc_spread": 0.07051828427976549,
+          "bear_tv_pct_of_ev": 0.38681674003934063,
+          "bear_implied_tv_ebitda": 1.9349918340177492
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "WMT",
+            "scenario": "bull",
+            "enterprise_value": 496058004014.7533,
+            "equity_value": 461434004014.7533,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 57.88916736839867,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.5462875693240599,
+            "upside_pct": -0.5462875693240599,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "WMT",
+            "scenario": "base",
+            "enterprise_value": 337366470198.59766,
+            "equity_value": 302742470198.59766,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 37.98053323848393,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.7023235807774314,
+            "upside_pct": -0.7023235807774314,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "WMT",
+            "scenario": "bear",
+            "enterprise_value": 96952437852.93008,
+            "equity_value": 62328437852.930084,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 7.8194093614387,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.9387145576779317,
+            "upside_pct": -0.9387145576779317,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 57.88916736839867,
+          "base": 37.98053323848393,
+          "bear": 7.8194093614387
+        },
+        "margin_of_safety": {
+          "bull": -0.5462875693240599,
+          "base": -0.7023235807774314,
+          "bear": -0.9387145576779317
+        },
+        "reverse_dcf": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "current_price": 127.58999633789062,
+          "current_ev": 1040915650618.2109,
+          "current_ev_ebitda": 34.90077621519567,
+          "wacc": 0.0754703372556329,
+          "ebit_margin": 0.044216016303713995,
+          "implied_cagr_10y": 0.1759809561786855,
+          "implied_cagr_5y": 0.1759809561786855,
+          "historical_cagr_5y": 0.04189068114885819,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 34.90077621519567,
+          "forward_ev_ebitda_justified": 11.835685673447328,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.1759809561786855,
+        "historical_cagr": 0.04189068114885819,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.6%) is 1.5x the sector 75th percentile (12.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "market_ev_ebitda": 34.90077621519567,
+          "market_ev_ebit": 34.90077621519567,
+          "market_p_sales": 1.4396941316456675,
+          "market_p_e": 46.45405611922582,
+          "market_peg": 11.089353251180546,
+          "justified_ev_ebitda": 13.423253092484929,
+          "justified_ev_ebit": 13.423253092484929,
+          "justified_p_sales": 0.7320931061231777,
+          "ev_ebitda_premium": 21.477523122710743,
+          "ev_ebitda_premium_pct": 1.6000237032508189,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 22.90077621519567,
+          "roic": 0.17551828427976549,
+          "wacc": 0.0754703372556329,
+          "roic_wacc_spread": 0.10004794702413258,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6774761106454317,
+          "growth_rate": 0.04189068114885819,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 34.90077621519567,
+        "ev_ebitda_justified": 13.423253092484929,
+        "ev_ebitda_premium_pct": 1.6000237032508189,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.10004794702413258,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.17551828427976549,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: WMT ===\nPrice: $127.59  |  Bear=$8  Base=$38  Bull=$58\nMoS:  Bear=-93.9%  Base=-70.2%  Bull=-54.6%\nRDCF: implied=17.6% hist=4.2% [flag]\nEV/EBITDA: 34.9x market vs 13.4x justified (+160%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.02,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+        "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+        "pass_through_capability": false,
+        "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.1243158619275704,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 674529333333.3334,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is 0, which is standard for a traditional retail business model. There is no deferred revenue trend to indicate pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K indicates reliance on trademarks, trade secrets, and proprietary technologies, but does not disclose any material patent cliffs, exclusivity dates, or contract renewals. As a mass merchandiser, intangible decay risk is negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Walmart's revenue Z-score of 2.12 mathematically triggers a cyclical peak flag, though this is driven by consistent structural growth and inflation rather than cyclical end-markets. Revenue quality is clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Additionally, as a global retailer, Walmart has no material revenue tied to expiring patents or contracts, resulting in negligible intangible risk."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $127.59 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.6%\n  \u2022 Company's robust historical CAGR: 4.2%\n  \u2022 Ratio (implied / historical): 4.2x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.6%) is 1.5x the sector 75th percentile (12.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 34.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.4x\n  \u2022 Premium to justified multiple: +160%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $8/share vs current price $127.59\n  \u2022 Downside in bear case: -93.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market price of $127.59 mathematically requires WMT to achieve a 10-year revenue CAGR of 17.6%, which is a staggering 4.2x its historical CAGR of 4.2% and 1.5x the sector 75th percentile. For a mature mega-cap retailer, compounding at 17.6% defies the law of large numbers and requires adding hundreds of billions in new revenue annually. Furthermore, the market is assigning an EV/EBITDA multiple of 34.9x, representing a massive 160% speculative premium over the mathematically justified multiple of 13.4x. This signals a severe narrative premium, likely pricing WMT as a high-margin tech platform rather than a physical retailer. The path to the $8 per share bear case (a 93.9% downside) will be triggered by a mean reversion in valuation multiples as the market realizes WMT cannot sustain tech-like growth rates in a low-margin, highly saturated retail environment, exacerbated by labor cost pressures and intense price competition.",
+          "sentiment_score": -9
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 17.6% vs 4.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:46.040878",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/WMT_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:58:46.041769",
+    "agent": "Lead",
+    "trace_id": "trace_WMT_1777431401",
+    "inputs": {
+      "ticker": "WMT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for WMT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.0/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: False. Sub risk: 7.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.12 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-87,069,611,972",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: WMT \u2014 Base IV=$38/share MoS=-70.2% ImpliedCAGR=17.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 17.6% vs 4.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "terminal_value": -101644528009.93956,
+          "discounted_terminal_value": -66061968999.14101,
+          "sum_pv_cash_flows": -21007642972.483093,
+          "audit_metrics": {
+            "roic_path": [
+              0.04175936630830637,
+              0.04259595827344348,
+              0.0425973099946366,
+              0.04179483838984258,
+              0.040656513208032014
+            ],
+            "invested_capital_path": [
+              283532200000.0,
+              300200665000.0,
+              318202607200.0,
+              337284665932.0,
+              357130007013.28,
+              377570708326.9984
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 405046000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.0336381546787278,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -7.000475360972431,
+            "reinvestment_rate_terminal_year": 1.407794681221695,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.01766959802096552,
+              "capex_percent_sales": 0.030080534062797804,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -14.100332378777786,
+          "upside_percent": -1.110512833127814,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.01766959802096552,
+            "capex_percent_sales": 0.030080534062797804,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 445550600000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 14987499999.99998,
+              "nopat": 11840124999.999985,
+              "depreciation": 7872700000.000001,
+              "capex": 13402400000.000002,
+              "change_in_wc": 11138765000.000002,
+              "fcff": -4828340000.000019,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -4429669724.770659
+            },
+            {
+              "year": 2.0,
+              "revenue": 481194648000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 16186499999.99998,
+              "nopat": 12787334999.999985,
+              "depreciation": 8502516000.000002,
+              "capex": 14474592000.000004,
+              "change_in_wc": 12029866200.000004,
+              "fcff": -5214607200.000023,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -4389030552.983774
+            },
+            {
+              "year": 3.0,
+              "revenue": 510066326880.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17157689999.99998,
+              "nopat": 13554575099.999985,
+              "depreciation": 9012666960.000002,
+              "capex": 15343067520.000004,
+              "change_in_wc": 12751658172.000006,
+              "fcff": -5527483632.000025,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -4268231546.9383497
+            },
+            {
+              "year": 4.0,
+              "revenue": 530468979955.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 17843997599.99998,
+              "nopat": 14096758103.999985,
+              "depreciation": 9373173638.400003,
+              "capex": 15956790220.800005,
+              "change_in_wc": 13261724498.880005,
+              "fcff": -5748582977.280024,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -4072441109.0053954
+            },
+            {
+              "year": 5.0,
+              "revenue": 546383049353.8562,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.0336381546787278,
+              "ebit": 18379317527.99998,
+              "nopat": 14519660847.119986,
+              "depreciation": 9654368847.552004,
+              "capex": 16435493927.424006,
+              "change_in_wc": 13659576233.846405,
+              "fcff": -5921040466.598421,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -3848270038.7849126
+            }
+          ],
+          "enterprise_value": -87069611971.6241,
+          "equity_value": -112393611971.6241,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.19653817097317342,
+          "da_percent_sales": 0.01766959802096552,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030080534062797804,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.7521540763271333
+        },
+        "base_financials": {
+          "net_sales": 405046000000.0,
+          "cogs": 304657000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 25324000000.0
+        },
+        "calculated_upside": -1.110512833127814
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 33231000000.0,
+          "equity": 1017018650618.2109,
+          "wacc": 0.09,
+          "cost_of_equity": 0.07696388563472673,
+          "beta": 0.6077069948945342
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 3323100000.0,
+            "cash": 7907000000.0,
+            "liquidity_ratio": 0.4202731756671304,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 70749000000.0,
+            "crash_fcf": 12287265000.0,
+            "earnings_power_value": 111702409090.90909,
+            "floor_value": 111702409090.90909,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.130699668014151,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 674529333333.3334,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "run_date": "2026-04-29T02:58:09.325522",
+          "current_price": 127.58999633789062,
+          "shares_diluted": 7970990515.0,
+          "market_cap": 1017018650618.2109,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.6077069948945342,
+          "wacc_base": 0.09,
+          "revenue": 674529333333.3334,
+          "ebitda": 29825000000.0,
+          "ebit": 29825000000.0,
+          "nopat": 23561750000.0,
+          "roic": 0.17551828427976549,
+          "fcf": 14923000000.0,
+          "net_debt": 23897000000.0,
+          "bull_ev": 496058004014.7533,
+          "bull_intrinsic_per_share": 59.234922325679534,
+          "bull_upside": -0.535740073470882,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 16.63228848331109,
+          "bull_justified_ev_ebitda": 8.525032218569704,
+          "bull_roic_wacc_spread": 0.09051828427976549,
+          "bull_tv_pct_of_ev": 0.6541880057245182,
+          "bull_implied_tv_ebitda": 8.525032218569704,
+          "base_ev": 337366470198.59766,
+          "base_intrinsic_per_share": 39.326288195764796,
+          "base_upside": -0.6917760849242537,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 11.31153294882138,
+          "base_justified_ev_ebitda": 6.631231338064984,
+          "base_roic_wacc_spread": 0.08551828427976549,
+          "base_tv_pct_of_ev": 0.6146346918861303,
+          "base_implied_tv_ebitda": 6.6312313380649845,
+          "bear_ev": 96952437852.93008,
+          "bear_intrinsic_per_share": 9.165164318719563,
+          "bear_upside": -0.928167061824754,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 3.250710405798159,
+          "bear_justified_ev_ebitda": 4.286730522856567,
+          "bear_roic_wacc_spread": 0.07051828427976549,
+          "bear_tv_pct_of_ev": 0.38681674003934063,
+          "bear_implied_tv_ebitda": 1.9349918340177492
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "WMT",
+            "scenario": "bull",
+            "enterprise_value": 496058004014.7533,
+            "equity_value": 461434004014.7533,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 57.88916736839867,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.5462875693240599,
+            "upside_pct": -0.5462875693240599,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "WMT",
+            "scenario": "base",
+            "enterprise_value": 337366470198.59766,
+            "equity_value": 302742470198.59766,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 37.98053323848393,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.7023235807774314,
+            "upside_pct": -0.7023235807774314,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "WMT",
+            "scenario": "bear",
+            "enterprise_value": 96952437852.93008,
+            "equity_value": 62328437852.930084,
+            "shares_diluted": 7970990515.0,
+            "intrinsic_per_share": 7.8194093614387,
+            "current_price": 127.58999633789062,
+            "margin_of_safety": -0.9387145576779317,
+            "upside_pct": -0.9387145576779317,
+            "data_quality": 0.95,
+            "bridge_long-term_debt": -34624000000.0,
+            "cash_gross": 10727000000.0,
+            "cash_wc_haircut": 21192390000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 997611000.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 57.88916736839867,
+          "base": 37.98053323848393,
+          "bear": 7.8194093614387
+        },
+        "margin_of_safety": {
+          "bull": -0.5462875693240599,
+          "base": -0.7023235807774314,
+          "bear": -0.9387145576779317
+        },
+        "reverse_dcf": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "current_price": 127.58999633789062,
+          "current_ev": 1040915650618.2109,
+          "current_ev_ebitda": 34.90077621519567,
+          "wacc": 0.0754703372556329,
+          "ebit_margin": 0.044216016303713995,
+          "implied_cagr_10y": 0.1759809561786855,
+          "implied_cagr_5y": 0.1759809561786855,
+          "historical_cagr_5y": 0.04189068114885819,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 34.90077621519567,
+          "forward_ev_ebitda_justified": 11.835685673447328,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.1759809561786855,
+        "historical_cagr": 0.04189068114885819,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.6%) is 1.5x the sector 75th percentile (12.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "WMT",
+          "fiscal_year": 2026,
+          "market_ev_ebitda": 34.90077621519567,
+          "market_ev_ebit": 34.90077621519567,
+          "market_p_sales": 1.4396941316456675,
+          "market_p_e": 46.45405611922582,
+          "market_peg": 11.089353251180546,
+          "justified_ev_ebitda": 13.423253092484929,
+          "justified_ev_ebit": 13.423253092484929,
+          "justified_p_sales": 0.7320931061231777,
+          "ev_ebitda_premium": 21.477523122710743,
+          "ev_ebitda_premium_pct": 1.6000237032508189,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 22.90077621519567,
+          "roic": 0.17551828427976549,
+          "wacc": 0.0754703372556329,
+          "roic_wacc_spread": 0.10004794702413258,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6774761106454317,
+          "growth_rate": 0.04189068114885819,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 34.90077621519567,
+        "ev_ebitda_justified": 13.423253092484929,
+        "ev_ebitda_premium_pct": 1.6000237032508189,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.10004794702413258,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.17551828427976549,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: WMT ===\nPrice: $127.59  |  Bear=$8  Base=$38  Bull=$58\nMoS:  Bear=-93.9%  Base=-70.2%  Bull=-54.6%\nRDCF: implied=17.6% hist=4.2% [flag]\nEV/EBITDA: 34.9x market vs 13.4x justified (+160%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $127.59 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.6%\n  \u2022 Company's robust historical CAGR: 4.2%\n  \u2022 Ratio (implied / historical): 4.2x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.6%) is 1.5x the sector 75th percentile (12.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 34.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.4x\n  \u2022 Premium to justified multiple: +160%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $8/share vs current price $127.59\n  \u2022 Downside in bear case: -93.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market price of $127.59 mathematically requires WMT to achieve a 10-year revenue CAGR of 17.6%, which is a staggering 4.2x its historical CAGR of 4.2% and 1.5x the sector 75th percentile. For a mature mega-cap retailer, compounding at 17.6% defies the law of large numbers and requires adding hundreds of billions in new revenue annually. Furthermore, the market is assigning an EV/EBITDA multiple of 34.9x, representing a massive 160% speculative premium over the mathematically justified multiple of 13.4x. This signals a severe narrative premium, likely pricing WMT as a high-margin tech platform rather than a physical retailer. The path to the $8 per share bear case (a 93.9% downside) will be triggered by a mean reversion in valuation multiples as the market realizes WMT cannot sustain tech-like growth rates in a low-margin, highly saturated retail environment, exacerbated by labor cost pressures and intense price competition.",
+          "sentiment_score": -9
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+        "moat_score": 8.0,
+        "moat_attributes": {
+          "switching_costs": 4.0,
+          "network_effects": 6.0,
+          "cost_advantage": 10.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain.",
+        "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+        "revenue_segments": [
+          {
+            "segment": "Walmart U.S.",
+            "pct_revenue": 68.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Walmart International",
+            "pct_revenue": 19.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Sam's Club U.S.",
+            "pct_revenue": 13.0,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Individual consumers",
+          "Households and busy families",
+          "Small businesses"
+        ],
+        "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+        "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.02,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+        "substitution_risk_score": 7.0,
+        "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+        "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+        "pass_through_capability": false,
+        "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.1243158619275704,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 674529333333.3334,
+        "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is 0, which is standard for a traditional retail business model. There is no deferred revenue trend to indicate pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K indicates reliance on trademarks, trade secrets, and proprietary technologies, but does not disclose any material patent cliffs, exclusivity dates, or contract renewals. As a mass merchandiser, intangible decay risk is negligible.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Walmart's revenue Z-score of 2.12 mathematically triggers a cyclical peak flag, though this is driven by consistent structural growth and inflation rather than cyclical end-markets. Revenue quality is clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Additionally, as a global retailer, Walmart has no material revenue tied to expiring patents or contracts, resulting in negligible intangible risk."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n#### ___________________________________________\n\n#### FORM 10-K\n#### ___________________________________________\n\n| \u2612 |     | Annual report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>For the fiscal year ended January 31, 2026, or</div>\n\n| \u2610 |     | Transition report pursuant to section 13 or 15(d) of the Securities Exchange Act of 1934 |\n\n<div align='center'>Commission file number 001-06991.</div>\n\n#### ___________________________________________\n\n#### Walmart Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n#### ___________________________________________\n\n| Delaware                                 |     |    |     |                       71-0415188 |\n| (State or other jurisdiction of          \n incorporation or organization)           |     |    |     | -IRS Employer Identification No. |\n| 1 Customer Drive    ...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "WMT",
+        "generated_at": "2026-04-28T22:58:46.039939",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 1.7,
+            "cost_structure": "Walmart's operating leverage score of 1.7/10 reflects a highly fixed-cost infrastructure supporting a high-volume retail model. Major fixed cost drivers include lease obligations and maintenance for over 10,900 global stores, a massive supply chain network of 371 distribution facilities, and headcount costs for approximately 2.1 million associates. Variable costs are dominated by inventory purchasing (COGS). Because retail gross margins are structurally thin, revenue growth flows to EBIT slowly, requiring massive scale to cover the fixed overhead of physical stores and logistics.",
+            "business_description": "Walmart is a global omnichannel retailer operating supercenters, discount stores, and warehouse clubs. The company serves everyday consumers and small businesses by selling a broad assortment of grocery, general merchandise, and health and wellness products. Revenue is generated primarily through merchandise sales, supplemented by membership fees, advertising, and financial services.",
+            "revenue_segments": [
+              {
+                "segment": "Walmart U.S.",
+                "pct_revenue": 68.0,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Walmart International",
+                "pct_revenue": 19.0,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Sam's Club U.S.",
+                "pct_revenue": 13.0,
+                "growth_trend": "Growing"
+              }
+            ],
+            "key_customers": [
+              "Individual consumers",
+              "Households and busy families",
+              "Small businesses"
+            ],
+            "competitive_landscape": "Competes with brick-and-mortar, eCommerce, and omnichannel retailers like Amazon, Target, and Costco. Walmart differentiates through its unmatched physical scale, Everyday Low Price (EDLP) strategy, and ability to leverage over 8,400 locations for same-day pickup and delivery.",
+            "regulatory_risk": "The company faces regulatory risks related to international trade restrictions, tariffs, and local labor and worker safety laws across the 19 countries in which it operates."
+          },
+          "value_chain": {
+            "power_ratio": 0.02,
+            "upstream_leak": false,
+            "strategic_leverage": 9.0,
+            "bottleneck_analysis": "No specific critical supplier is named in the provided text, but Walmart relies heavily on a vast network of U.S. and international suppliers and global supply chain logistics. Due to its massive scale, Walmart generally dictates terms to suppliers. If a major CPG supplier attempts to raise prices, Walmart leverages its extensive private brands (e.g., Great Value, Equate) and volume purchasing power to resist price hikes and prevent bottleneck leverage.",
+            "substitution_risk_score": 7.0,
+            "top_substitutes": "1. Amazon (eCommerce and Prime delivery); 2. Costco and Target (warehouse and discount retail); 3. Aldi and Dollar General (extreme value grocery). Realistic switching scenario: Consumers shift to Amazon for faster delivery convenience or to Aldi for cheaper basic groceries if Walmart fails to maintain its Everyday Low Price (EDLP) gaps.",
+            "pricing_power_assessment": "Walmart operates strictly on an Everyday Low Price (EDLP) and Everyday Low Cost (EDLC) model. It acts as a price leader by keeping prices lower than competitors, rather than raising them. While it has immense scale to negotiate lower costs from suppliers, it cannot arbitrarily hike prices without violating its core brand promise and risking customer flight to other discount retailers.",
+            "pass_through_capability": false,
+            "analysis_summary": "Walmart commands a dominant position in the retail value chain, driven by unparalleled scale and omnichannel integration. Supplier power is extremely low, as Walmart's volume purchasing and robust private label portfolio allow it to dictate terms and enforce Everyday Low Cost (EDLC). Buyer power is moderate; while individual shoppers lack negotiation leverage, low switching costs force Walmart to rigorously defend its Everyday Low Price (EDLP) moat. The threat of substitution is high due to fierce competition from Amazon and discount grocers, but Walmart's strategic leverage remains formidable due to its massive physical footprint and expanding digital ecosystem."
+          },
+          "moat": {
+            "score": 8.0,
+            "switching_costs": 4.0,
+            "network_effects": 6.0,
+            "cost_advantage": 10.0,
+            "intangibles": 8.0,
+            "evidence": "The 10-K highlights a massive scale advantage with 10,900 stores and 280 million weekly customers, driving Everyday Low Cost (EDLC) purchasing power. Intangibles are supported by global brand recognition and private labels like 'Great Value' and 'Equate'. Switching costs are present in the Sam's Club segment via $50/$110 annual memberships and the Walmart+ ecosystem.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The 10-K explicitly states that Everyday Low Prices (EDLP) is a cornerstone of the business. Walmart prices items at a low price every day so customers trust prices will not change under frequent promotional activity, indicating a strategy of passing savings to customers rather than exercising upward pricing power."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 2.1243158619275704,
+            "is_peak": true
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "D8 Revenue Score is 1.00, indicating clean revenue quality. Deferred revenue is 0, which is standard for a traditional retail business model. There is no deferred revenue trend to indicate pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "The 10-K indicates reliance on trademarks, trade secrets, and proprietary technologies, but does not disclose any material patent cliffs, exclusivity dates, or contract renewals. As a mass merchandiser, intangible decay risk is negligible.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Walmart's revenue Z-score of 2.12 mathematically triggers a cyclical peak flag, though this is driven by consistent structural growth and inflation rather than cyclical end-markets. Revenue quality is clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Additionally, as a global retailer, Walmart has no material revenue tied to expiring patents or contracts, resulting in negligible intangible risk."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 706.413,
+            "ebitda_bn": 29.825,
+            "fcf_bn": 14.923,
+            "nopat_bn": 23.56175,
+            "invested_capital_bn": 134.241,
+            "net_debt_bn": 23.897,
+            "sbc_bn": 3.603,
+            "fiscal_year": 2026,
+            "data_quality": 0.98
+          },
+          "ratios": {
+            "gross_margin_pct": 24.20935062067091,
+            "ebit_margin_pct": 4.222034418958881,
+            "ebitda_margin_pct": 4.222034418958881,
+            "fcf_margin_pct": 2.112503592091312,
+            "roic": 0.17551828427976549,
+            "roe": 0.21977172570946726,
+            "sbc_pct_fcf": 24.14393888628292,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 33231000000.0,
+            "equity": 1017018650618.2109,
+            "wacc": 0.09,
+            "cost_of_equity": 0.07696388563472673,
+            "beta": 0.6077069948945342
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 3323100000.0,
+              "cash": 7907000000.0,
+              "liquidity_ratio": 0.4202731756671304,
+              "refinancing_risk_score": 1,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 70749000000.0,
+              "crash_fcf": 12287265000.0,
+              "earnings_power_value": 111702409090.90909,
+              "floor_value": 111702409090.90909,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 1.7,
+              "financial_leverage_score": 0.130699668014151,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.09,
+              "2": 0.09,
+              "3": 0.09,
+              "4": 0.09,
+              "5": 0.09
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The company serves approximately 280 million customers weekly and sources from a vast, diversified global supply chain."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": -112393611971.6241,
+            "upside_percent": -1.110512833127814,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 7.8194093614387,
+                "margin_of_safety": -0.9387145576779317,
+                "ev": 96952437852.93008
+              },
+              "base": {
+                "intrinsic_per_share": 37.98053323848393,
+                "margin_of_safety": -0.7023235807774314,
+                "ev": 337366470198.59766
+              },
+              "bull": {
+                "intrinsic_per_share": 57.88916736839867,
+                "margin_of_safety": -0.5462875693240599,
+                "ev": 496058004014.7533
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.1759809561786855,
+              "historical_cagr": 0.04189068114885819,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (17.6%) is 1.5x the sector 75th percentile (12.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 34.90077621519567,
+              "justified_ev_ebitda": 13.423253092484929,
+              "premium_pct": 1.6000237032508189,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.10004794702413258,
+              "value_creation": "creating",
+              "roic": 0.17551828427976549,
+              "wacc": 0.09
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": 674529333333.3334,
+              "concentration_risk": false,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 9.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": true,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.09,
+            "beta": 0.6077069948945342,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+            "bear_case_summary": "The market price of $127.59 mathematically requires WMT to achieve a 10-year revenue CAGR of 17.6%, which is a staggering 4.2x its historical CAGR of 4.2% and 1.5x the sector 75th percentile. For a mature mega-cap retailer, compounding at 17.6% defies the law of large numbers and requires adding hundreds of billions in new revenue annually. Furthermore, the market is assigning an EV/EBITDA multiple of 34.9x, representing a massive 160% speculative premium over the mathematically justified multiple of 13.4x. This signals a severe narrative premium, likely pricing WMT as a high-margin tech platform rather than a physical retailer. The path to the $8 per share bear case (a 93.9% downside) will be triggered by a mean reversion in valuation multiples as the market realizes WMT cannot sustain tech-like growth rates in a low-margin, highly saturated retail environment, exacerbated by labor cost pressures and intense price competition.",
+            "sentiment_score": -9,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $127.59 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.6%\n  \u2022 Company's robust historical CAGR: 4.2%\n  \u2022 Ratio (implied / historical): 4.2x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.6%) is 1.5x the sector 75th percentile (12.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 34.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.4x\n  \u2022 Premium to justified multiple: +160%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $8/share vs current price $127.59\n  \u2022 Downside in bear case: -93.9%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": -4,
+            "margin_of_safety": -0.7023235807774314,
+            "narrative": "The implied 10-year revenue CAGR of 17.6% is mathematically indefensible for a mature mega-cap retailer, representing a 4.2x deviation from its historical 4.2% CAGR. Given Walmart's massive revenue base, compounding at 17.6% defies the law of large numbers, requiring the addition of hundreds of billions in new revenue annually. While high-margin segments like advertising and Walmart+ offer growth vectors, they cannot mathematically offset the structural growth decay inherent in a saturated, low-margin physical retail footprint.\n\nThe Contrarian is entirely correct regarding the severe narrative premium and growth extrapolation bias; an EV/EBITDA multiple of 34.9x (+160% premium) prices WMT as a high-margin tech platform rather than a physical retailer. However, the Bear's $8 price target (-93.9% downside) is overly punitive and ignores WMT's formidable 8.0/10 moat, defensive EDLC positioning, and robust +10.0% ROIC-WACC spread. While a severe multiple contraction is highly probable, WMT...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u274c FAIL: Implied CAGR (17.6%) is 4.2x historical (4.2%). Requires TAM justification.",
+              "\u274c FAIL: EV/EBITDA at +160% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "WMT",
+              "p1_moat": 4,
+              "p2_health": 3,
+              "p3_tailwind": 1,
+              "p4_mos": 1,
+              "p5_leadership": 2,
+              "raw_total": 11,
+              "capped_total": 11,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "pass",
+              "position_size_pct": "Below minimum analytical threshold (capped at 75% due to reflexivity flag)",
+              "conviction_score": -4,
+              "reflexivity_flags": [
+                "High-SBC company (24.1% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 8.0/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +10.0pp \u2014 strong value creation",
+                "FCF margin 2.1% \u2014 thin FCF",
+                "Net Debt/EBITDA 0.8\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 4.2% \u2014 moderate growth",
+                "Market implied CAGR 4.2\u00d7 historical \u2014 tailwind fully priced, no entry benefit"
+              ],
+              "p4_reasons": [
+                "Base MoS -61.6% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 24.1% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 4.0/10",
+                "Upstream value leak detected \u2014 suppliers capture excess margin"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for WMT. Conviction: -4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

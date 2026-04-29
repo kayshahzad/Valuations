@@ -1,0 +1,3192 @@
+[
+  {
+    "timestamp": "2026-04-28T22:26:50.057697",
+    "agent": "Librarian",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:27:22.214230",
+    "agent": "Forensic",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:27:43.660916",
+    "agent": "ValueChain",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 8.5,
+        "power_ratio": 1.26,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+        "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+        "pass_through_capability": true,
+        "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 8.5/10. Upstream leak: True. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:00.537420",
+    "agent": "StrategicContext",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.5/10. Upstream leak: True. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.5,
+        "power_ratio": 1.26,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+        "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+        "pass_through_capability": true,
+        "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.7718147994792974,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 30.6% significantly outpaces the 3-year revenue CAGR of 9.4%. Combined with a perfect D8 Revenue Score of 1.00, this indicates healthy pipeline generation and no evidence of revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the provided 10-K text, Alphabet relies on a broad portfolio of patents, trademarks, copyrights, and trade secrets to protect its proprietary technology. However, there are no disclosures regarding specific patent cliffs, contract expirations, or material revenue exposure tied to assets expiring within the next 5 years. While there is inherent uncertainty in broad IP portfolios, no specific near-term intangible decay risks are identifiable.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Alphabet's revenue trajectory reflects structural growth rather than cyclicality, evidenced by a Z-score of 1.77 (below the 2.0 peak threshold). Growth quality is robust, with deferred revenue expanding at 30.6% and a clean D8 score of 1.00, indicating no pull-forward risk. Additionally, there are no disclosed near-term patent cliffs or contract expirations, leaving estimated revenue at risk from intangible decay at 0.0%."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.77 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:01.527817",
+    "agent": "Strategist",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.5/10. Upstream leak: True. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.77 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.5,
+        "power_ratio": 1.26,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+        "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+        "pass_through_capability": true,
+        "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7718147994792974,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 30.6% significantly outpaces the 3-year revenue CAGR of 9.4%. Combined with a perfect D8 Revenue Score of 1.00, this indicates healthy pipeline generation and no evidence of revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the provided 10-K text, Alphabet relies on a broad portfolio of patents, trademarks, copyrights, and trade secrets to protect its proprietary technology. However, there are no disclosures regarding specific patent cliffs, contract expirations, or material revenue exposure tied to assets expiring within the next 5 years. While there is inherent uncertainty in broad IP portfolios, no specific near-term intangible decay risks are identifiable.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Alphabet's revenue trajectory reflects structural growth rather than cyclicality, evidenced by a Z-score of 1.77 (below the 2.0 peak threshold). Growth quality is robust, with deferred revenue expanding at 30.6% and a clean D8 score of 1.00, indicating no pull-forward risk. Additionally, there are no disclosed near-term patent cliffs or contract expirations, leaving estimated revenue at risk from intangible decay at 0.0%."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1995000000.0,
+          "equity": 4231444001418.732,
+          "wacc": 0.10901688942361597,
+          "cost_of_equity": 0.10905338918453643,
+          "beta": 1.1911525139819834
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 199500000.0,
+            "cash": 16549000000.0,
+            "liquidity_ratio": 0.012055109070034443,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 120331000000.0,
+            "crash_fcf": 7647200000.0,
+            "earnings_power_value": 59272859810.556046,
+            "floor_value": 120331000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.4,
+            "financial_leverage_score": 0.0018858810366684377,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10901688942361597,
+            "2": 0.10901688942361597,
+            "3": 0.10901688942361597,
+            "4": 0.10901688942361597,
+            "5": 0.10901688942361597
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 10.9%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:02.420084",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "base": {
+        "net_sales": 74989000000.0,
+        "cogs": 28164000000.0,
+        "interest_expense": 0.0,
+        "net_debt": -14554000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.0,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.13221939217751938,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.01,
+        "cogs_percent_sales": 0.7418288015575618,
+        "calibration_adjustment": 0.3662537172118577
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T22:28:02.420179",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 91832514539.28827,
+      "equity_value": 106386514539.28827,
+      "terminal_value": 107204711092.01569,
+      "discounted_terminal_value": 69675706497.74734,
+      "sum_pv_cash_flows": 22156808041.540928,
+      "audit_metrics": {
+        "roic_path": [
+          0.32050110206639826,
+          0.2829135216623139,
+          0.25047520166898657,
+          0.22176173230040722,
+          0.19782389332194222
+        ],
+        "invested_capital_path": [
+          52492300000.0,
+          64223679000.0,
+          76893568320.0,
+          90323650999.2,
+          104290936985.568,
+          118677241551.52704
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 82487900000.0,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.2581711984424382,
+          "ebit": 21295999999.999996,
+          "nopat": 16823839999.999998,
+          "depreciation": 0.0,
+          "capex": 10906500000.0,
+          "change_in_wc": 824879000.0,
+          "fcff": 5092460999.999998,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 4671982568.807338
+        },
+        {
+          "year": 2.0,
+          "revenue": 89086932000.0,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.2581711984424382,
+          "ebit": 22999679999.999996,
+          "nopat": 18169747199.999996,
+          "depreciation": 0.0,
+          "capex": 11779020000.0,
+          "change_in_wc": 890869320.0,
+          "fcff": 5499857879.999996,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 4629120343.405434
+        },
+        {
+          "year": 3.0,
+          "revenue": 94432147920.0,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.2581711984424382,
+          "ebit": 24379660799.999996,
+          "nopat": 19259932031.999996,
+          "depreciation": 0.0,
+          "capex": 12485761200.0,
+          "change_in_wc": 944321479.2,
+          "fcff": 5829849352.799996,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 4501713361.476844
+        },
+        {
+          "year": 4.0,
+          "revenue": 98209433836.8,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.2581711984424382,
+          "ebit": 25354847231.999996,
+          "nopat": 20030329313.28,
+          "depreciation": 0.0,
+          "capex": 12985191648.000002,
+          "change_in_wc": 982094338.368,
+          "fcff": 6063043326.911997,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 4295212748.565062
+        },
+        {
+          "year": 5.0,
+          "revenue": 101155716851.904,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.2581711984424382,
+          "ebit": 26115492648.96,
+          "nopat": 20631239192.678402,
+          "depreciation": 0.0,
+          "capex": 13374747397.440002,
+          "change_in_wc": 1011557168.5190401,
+          "fcff": 6244934626.719359,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 4058779019.2862525
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 74989000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.2581711984424382,
+        "terminal_value_pct_of_ev": 0.7587258918837327,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": 5.196232281096349,
+        "reinvestment_rate_terminal_year": 0.6973068574118632,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.0,
+          "capex_percent_sales": 0.13221939217751938,
+          "wc_change_percent_sales": 0.01
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:02.421880",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.5/10. Upstream leak: True. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.77 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.9%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1995000000.0,
+          "equity": 4231444001418.732,
+          "wacc": 0.10901688942361597,
+          "cost_of_equity": 0.10905338918453643,
+          "beta": 1.1911525139819834
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 199500000.0,
+            "cash": 16549000000.0,
+            "liquidity_ratio": 0.012055109070034443,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 120331000000.0,
+            "crash_fcf": 7647200000.0,
+            "earnings_power_value": 59272859810.556046,
+            "floor_value": 120331000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.4,
+            "financial_leverage_score": 0.0018858810366684377,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10901688942361597,
+            "2": 0.10901688942361597,
+            "3": 0.10901688942361597,
+            "4": 0.10901688942361597,
+            "5": 0.10901688942361597
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.5,
+        "power_ratio": 1.26,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+        "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+        "pass_through_capability": true,
+        "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7718147994792974,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 30.6% significantly outpaces the 3-year revenue CAGR of 9.4%. Combined with a perfect D8 Revenue Score of 1.00, this indicates healthy pipeline generation and no evidence of revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the provided 10-K text, Alphabet relies on a broad portfolio of patents, trademarks, copyrights, and trade secrets to protect its proprietary technology. However, there are no disclosures regarding specific patent cliffs, contract expirations, or material revenue exposure tied to assets expiring within the next 5 years. While there is inherent uncertainty in broad IP portfolios, no specific near-term intangible decay risks are identifiable.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Alphabet's revenue trajectory reflects structural growth rather than cyclicality, evidenced by a Z-score of 1.77 (below the 2.0 peak threshold). Growth quality is robust, with deferred revenue expanding at 30.6% and a clean D8 score of 1.00, indicating no pull-forward risk. Additionally, there are no disclosed near-term patent cliffs or contract expirations, leaving estimated revenue at risk from intangible decay at 0.0%."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "terminal_value": 107204711092.01569,
+          "discounted_terminal_value": 69675706497.74734,
+          "sum_pv_cash_flows": 22156808041.540928,
+          "audit_metrics": {
+            "roic_path": [
+              0.32050110206639826,
+              0.2829135216623139,
+              0.25047520166898657,
+              0.22176173230040722,
+              0.19782389332194222
+            ],
+            "invested_capital_path": [
+              52492300000.0,
+              64223679000.0,
+              76893568320.0,
+              90323650999.2,
+              104290936985.568,
+              118677241551.52704
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 74989000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2581711984424382,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 5.196232281096349,
+            "reinvestment_rate_terminal_year": 0.6973068574118632,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.13221939217751938,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 8.794131986607978,
+          "upside_percent": -0.9748581051329179,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.13221939217751938,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.13221939217751938,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.7418288015575618,
+          "calibration_adjustment": 0.3662537172118577
+        },
+        "base_financials": {
+          "net_sales": 74989000000.0,
+          "cogs": 28164000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -14554000000.0
+        },
+        "calculated_upside": -0.9748581051329179
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $91,832,514,539",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:03.805125",
+    "agent": "ValuationNode",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.5/10. Upstream leak: True. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.77 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.9%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $91,832,514,539",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "terminal_value": 107204711092.01569,
+          "discounted_terminal_value": 69675706497.74734,
+          "sum_pv_cash_flows": 22156808041.540928,
+          "audit_metrics": {
+            "roic_path": [
+              0.32050110206639826,
+              0.2829135216623139,
+              0.25047520166898657,
+              0.22176173230040722,
+              0.19782389332194222
+            ],
+            "invested_capital_path": [
+              52492300000.0,
+              64223679000.0,
+              76893568320.0,
+              90323650999.2,
+              104290936985.568,
+              118677241551.52704
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 74989000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2581711984424382,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 5.196232281096349,
+            "reinvestment_rate_terminal_year": 0.6973068574118632,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.13221939217751938,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 8.794131986607978,
+          "upside_percent": -0.9748581051329179,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.13221939217751938,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.13221939217751938,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.7418288015575618,
+          "calibration_adjustment": 0.3662537172118577
+        },
+        "base_financials": {
+          "net_sales": 74989000000.0,
+          "cogs": 28164000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -14554000000.0
+        },
+        "calculated_upside": -0.9748581051329179
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1995000000.0,
+          "equity": 4231444001418.732,
+          "wacc": 0.10901688942361597,
+          "cost_of_equity": 0.10905338918453643,
+          "beta": 1.1911525139819834
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 199500000.0,
+            "cash": 16549000000.0,
+            "liquidity_ratio": 0.012055109070034443,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 120331000000.0,
+            "crash_fcf": 7647200000.0,
+            "earnings_power_value": 59272859810.556046,
+            "floor_value": 120331000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.4,
+            "financial_leverage_score": 0.0018858810366684377,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10901688942361597,
+            "2": 0.10901688942361597,
+            "3": 0.10901688942361597,
+            "4": 0.10901688942361597,
+            "5": 0.10901688942361597
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.5,
+        "power_ratio": 1.26,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+        "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+        "pass_through_capability": true,
+        "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7718147994792974,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 30.6% significantly outpaces the 3-year revenue CAGR of 9.4%. Combined with a perfect D8 Revenue Score of 1.00, this indicates healthy pipeline generation and no evidence of revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the provided 10-K text, Alphabet relies on a broad portfolio of patents, trademarks, copyrights, and trade secrets to protect its proprietary technology. However, there are no disclosures regarding specific patent cliffs, contract expirations, or material revenue exposure tied to assets expiring within the next 5 years. While there is inherent uncertainty in broad IP portfolios, no specific near-term intangible decay risks are identifiable.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Alphabet's revenue trajectory reflects structural growth rather than cyclicality, evidenced by a Z-score of 1.77 (below the 2.0 peak threshold). Growth quality is robust, with deferred revenue expanding at 30.6% and a clean D8 score of 1.00, indicating no pull-forward risk. Additionally, there are no disclosed near-term patent cliffs or contract expirations, leaving estimated revenue at risk from intangible decay at 0.0%."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.5,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:28:02.422796",
+          "current_price": 349.7799987792969,
+          "shares_diluted": 12097444154.0,
+          "market_cap": 4231444001418.732,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.1911525139819834,
+          "wacc_base": 0.10901688942361597,
+          "revenue": 402836000000.0,
+          "ebitda": 150175000000.0,
+          "ebit": 129039000000.0,
+          "nopat": 101940810000.0,
+          "roic": 0.23212642970436884,
+          "fcf": 73266000000.0,
+          "net_debt": 15839000000.0,
+          "bull_ev": 3184915511904.4863,
+          "bull_intrinsic_per_share": 261.96248327847303,
+          "bull_upside": -0.2510650003067633,
+          "bull_wacc": 0.10401688942361596,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 21.208027380752366,
+          "bull_justified_ev_ebitda": 9.44480828575534,
+          "bull_roic_wacc_spread": 0.1281095402807529,
+          "bull_tv_pct_of_ev": 0.6004612771767169,
+          "bull_implied_tv_ebitda": 9.44480828575534,
+          "base_ev": 2117369783779.4756,
+          "base_intrinsic_per_share": 173.71692375902458,
+          "base_upside": -0.5033537527437755,
+          "base_wacc": 0.10901688942361597,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 14.099349317659234,
+          "base_justified_ev_ebitda": 7.992821975732182,
+          "base_roic_wacc_spread": 0.12310954028075287,
+          "base_tv_pct_of_ev": 0.525607356228332,
+          "base_implied_tv_ebitda": 7.992821975732182,
+          "bear_ev": 929715625926.1304,
+          "bear_intrinsic_per_share": 75.54295058464548,
+          "bear_upside": -0.7840272432721022,
+          "bear_wacc": 0.12401688942361597,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 6.1908814777834555,
+          "bear_justified_ev_ebitda": 5.977234198524446,
+          "bear_roic_wacc_spread": 0.10810954028075287,
+          "bear_tv_pct_of_ev": 0.37355922553504156,
+          "bear_implied_tv_ebitda": 5.977234198524446
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "GOOGL",
+            "scenario": "bull",
+            "enterprise_value": 3184915511904.4863,
+            "equity_value": 3154135587904.4863,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 260.7274352956262,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.2545959282819393,
+            "upside_pct": -0.2545959282819393,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          },
+          "base": {
+            "ticker": "GOOGL",
+            "scenario": "base",
+            "enterprise_value": 2117369783779.4756,
+            "equity_value": 2086589859779.4756,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 172.48187577617773,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.5068846807189515,
+            "upside_pct": -0.5068846807189515,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          },
+          "bear": {
+            "ticker": "GOOGL",
+            "scenario": "bear",
+            "enterprise_value": 929715625926.1304,
+            "equity_value": 898935701926.1304,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 74.30790260179865,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.7875581712472781,
+            "upside_pct": -0.7875581712472781,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 260.7274352956262,
+          "base": 172.48187577617773,
+          "bear": 74.30790260179865
+        },
+        "margin_of_safety": {
+          "bull": -0.2545959282819393,
+          "base": -0.5068846807189515,
+          "bear": -0.7875581712472781
+        },
+        "reverse_dcf": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "current_price": 349.7799987792969,
+          "current_ev": 4247283001418.732,
+          "current_ev_ebitda": 28.28222408136329,
+          "wacc": 0.10821065180963849,
+          "ebit_margin": 0.32032638592380025,
+          "implied_cagr_10y": 0.23487998803820098,
+          "implied_cagr_5y": 0.23487998803820098,
+          "historical_cagr_5y": 0.11672190689623851,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 28.28222408136329,
+          "forward_ev_ebitda_justified": 8.376342268268688,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.23487998803820098,
+        "historical_cagr": 0.11672190689623851,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (23.5%) is 1.3x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.28222408136329,
+          "market_ev_ebit": 32.914723466694035,
+          "market_p_sales": 10.504135681564538,
+          "market_p_e": 32.015162301723024,
+          "market_peg": 2.742858059214482,
+          "justified_ev_ebitda": 7.279179736268606,
+          "justified_ev_ebit": 8.471476196298312,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 21.003044345094683,
+          "ev_ebitda_premium_pct": 2.8853586676046405,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 6.282224081363289,
+          "roic": 0.23212642970436884,
+          "wacc": 0.10821065180963849,
+          "roic_wacc_spread": 0.12391577789473035,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6057052904944231,
+          "growth_rate": 0.11672190689623851,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 28.28222408136329,
+        "ev_ebitda_justified": 7.279179736268606,
+        "ev_ebitda_premium_pct": 2.8853586676046405,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.12391577789473035,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.23212642970436884,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: GOOGL ===\nPrice: $349.78  |  Bear=$74  Base=$172  Bull=$261\nMoS:  Bear=-78.8%  Base=-50.7%  Bull=-25.5%\nRDCF: implied=23.5% hist=11.7% [flag]\nEV/EBITDA: 28.3x market vs 7.3x justified (+289%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: GOOGL \u2014 Base IV=$172/share MoS=-50.7% ImpliedCAGR=23.5% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:19.219250",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.5/10. Upstream leak: True. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.77 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.9%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $91,832,514,539",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: GOOGL \u2014 Base IV=$172/share MoS=-50.7% ImpliedCAGR=23.5% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "terminal_value": 107204711092.01569,
+          "discounted_terminal_value": 69675706497.74734,
+          "sum_pv_cash_flows": 22156808041.540928,
+          "audit_metrics": {
+            "roic_path": [
+              0.32050110206639826,
+              0.2829135216623139,
+              0.25047520166898657,
+              0.22176173230040722,
+              0.19782389332194222
+            ],
+            "invested_capital_path": [
+              52492300000.0,
+              64223679000.0,
+              76893568320.0,
+              90323650999.2,
+              104290936985.568,
+              118677241551.52704
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 74989000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2581711984424382,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 5.196232281096349,
+            "reinvestment_rate_terminal_year": 0.6973068574118632,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.13221939217751938,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 8.794131986607978,
+          "upside_percent": -0.9748581051329179,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.13221939217751938,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.13221939217751938,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.7418288015575618,
+          "calibration_adjustment": 0.3662537172118577
+        },
+        "base_financials": {
+          "net_sales": 74989000000.0,
+          "cogs": 28164000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -14554000000.0
+        },
+        "calculated_upside": -0.9748581051329179
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1995000000.0,
+          "equity": 4231444001418.732,
+          "wacc": 0.10901688942361597,
+          "cost_of_equity": 0.10905338918453643,
+          "beta": 1.1911525139819834
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 199500000.0,
+            "cash": 16549000000.0,
+            "liquidity_ratio": 0.012055109070034443,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 120331000000.0,
+            "crash_fcf": 7647200000.0,
+            "earnings_power_value": 59272859810.556046,
+            "floor_value": 120331000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.4,
+            "financial_leverage_score": 0.0018858810366684377,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10901688942361597,
+            "2": 0.10901688942361597,
+            "3": 0.10901688942361597,
+            "4": 0.10901688942361597,
+            "5": 0.10901688942361597
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.5,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:28:02.422796",
+          "current_price": 349.7799987792969,
+          "shares_diluted": 12097444154.0,
+          "market_cap": 4231444001418.732,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.1911525139819834,
+          "wacc_base": 0.10901688942361597,
+          "revenue": 402836000000.0,
+          "ebitda": 150175000000.0,
+          "ebit": 129039000000.0,
+          "nopat": 101940810000.0,
+          "roic": 0.23212642970436884,
+          "fcf": 73266000000.0,
+          "net_debt": 15839000000.0,
+          "bull_ev": 3184915511904.4863,
+          "bull_intrinsic_per_share": 261.96248327847303,
+          "bull_upside": -0.2510650003067633,
+          "bull_wacc": 0.10401688942361596,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 21.208027380752366,
+          "bull_justified_ev_ebitda": 9.44480828575534,
+          "bull_roic_wacc_spread": 0.1281095402807529,
+          "bull_tv_pct_of_ev": 0.6004612771767169,
+          "bull_implied_tv_ebitda": 9.44480828575534,
+          "base_ev": 2117369783779.4756,
+          "base_intrinsic_per_share": 173.71692375902458,
+          "base_upside": -0.5033537527437755,
+          "base_wacc": 0.10901688942361597,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 14.099349317659234,
+          "base_justified_ev_ebitda": 7.992821975732182,
+          "base_roic_wacc_spread": 0.12310954028075287,
+          "base_tv_pct_of_ev": 0.525607356228332,
+          "base_implied_tv_ebitda": 7.992821975732182,
+          "bear_ev": 929715625926.1304,
+          "bear_intrinsic_per_share": 75.54295058464548,
+          "bear_upside": -0.7840272432721022,
+          "bear_wacc": 0.12401688942361597,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 6.1908814777834555,
+          "bear_justified_ev_ebitda": 5.977234198524446,
+          "bear_roic_wacc_spread": 0.10810954028075287,
+          "bear_tv_pct_of_ev": 0.37355922553504156,
+          "bear_implied_tv_ebitda": 5.977234198524446
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "GOOGL",
+            "scenario": "bull",
+            "enterprise_value": 3184915511904.4863,
+            "equity_value": 3154135587904.4863,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 260.7274352956262,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.2545959282819393,
+            "upside_pct": -0.2545959282819393,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          },
+          "base": {
+            "ticker": "GOOGL",
+            "scenario": "base",
+            "enterprise_value": 2117369783779.4756,
+            "equity_value": 2086589859779.4756,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 172.48187577617773,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.5068846807189515,
+            "upside_pct": -0.5068846807189515,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          },
+          "bear": {
+            "ticker": "GOOGL",
+            "scenario": "bear",
+            "enterprise_value": 929715625926.1304,
+            "equity_value": 898935701926.1304,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 74.30790260179865,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.7875581712472781,
+            "upside_pct": -0.7875581712472781,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 260.7274352956262,
+          "base": 172.48187577617773,
+          "bear": 74.30790260179865
+        },
+        "margin_of_safety": {
+          "bull": -0.2545959282819393,
+          "base": -0.5068846807189515,
+          "bear": -0.7875581712472781
+        },
+        "reverse_dcf": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "current_price": 349.7799987792969,
+          "current_ev": 4247283001418.732,
+          "current_ev_ebitda": 28.28222408136329,
+          "wacc": 0.10821065180963849,
+          "ebit_margin": 0.32032638592380025,
+          "implied_cagr_10y": 0.23487998803820098,
+          "implied_cagr_5y": 0.23487998803820098,
+          "historical_cagr_5y": 0.11672190689623851,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 28.28222408136329,
+          "forward_ev_ebitda_justified": 8.376342268268688,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.23487998803820098,
+        "historical_cagr": 0.11672190689623851,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (23.5%) is 1.3x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.28222408136329,
+          "market_ev_ebit": 32.914723466694035,
+          "market_p_sales": 10.504135681564538,
+          "market_p_e": 32.015162301723024,
+          "market_peg": 2.742858059214482,
+          "justified_ev_ebitda": 7.279179736268606,
+          "justified_ev_ebit": 8.471476196298312,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 21.003044345094683,
+          "ev_ebitda_premium_pct": 2.8853586676046405,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 6.282224081363289,
+          "roic": 0.23212642970436884,
+          "wacc": 0.10821065180963849,
+          "roic_wacc_spread": 0.12391577789473035,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6057052904944231,
+          "growth_rate": 0.11672190689623851,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 28.28222408136329,
+        "ev_ebitda_justified": 7.279179736268606,
+        "ev_ebitda_premium_pct": 2.8853586676046405,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.12391577789473035,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.23212642970436884,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: GOOGL ===\nPrice: $349.78  |  Bear=$74  Base=$172  Bull=$261\nMoS:  Bear=-78.8%  Base=-50.7%  Bull=-25.5%\nRDCF: implied=23.5% hist=11.7% [flag]\nEV/EBITDA: 28.3x market vs 7.3x justified (+289%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.5,
+        "power_ratio": 1.26,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+        "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+        "pass_through_capability": true,
+        "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7718147994792974,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 30.6% significantly outpaces the 3-year revenue CAGR of 9.4%. Combined with a perfect D8 Revenue Score of 1.00, this indicates healthy pipeline generation and no evidence of revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the provided 10-K text, Alphabet relies on a broad portfolio of patents, trademarks, copyrights, and trade secrets to protect its proprietary technology. However, there are no disclosures regarding specific patent cliffs, contract expirations, or material revenue exposure tied to assets expiring within the next 5 years. While there is inherent uncertainty in broad IP portfolios, no specific near-term intangible decay risks are identifiable.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Alphabet's revenue trajectory reflects structural growth rather than cyclicality, evidenced by a Z-score of 1.77 (below the 2.0 peak threshold). Growth quality is robust, with deferred revenue expanding at 30.6% and a clean D8 score of 1.00, indicating no pull-forward risk. Additionally, there are no disclosed near-term patent cliffs or contract expirations, leaving estimated revenue at risk from intangible decay at 0.0%."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $349.78 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 23.5%\n  \u2022 Company's robust historical CAGR: 11.7%\n  \u2022 Ratio (implied / historical): 2.0x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (23.5%) is 1.3x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.3x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.3x\n  \u2022 Premium to justified multiple: +289%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $74/share vs current price $349.78\n  \u2022 Downside in bear case: -78.8%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The current market price of $349.78 for GOOGL is mathematically detached from reality, driven by extreme Growth Extrapolation Bias and AI-fueled FOMO. The Reverse DCF reveals that the market is pricing in a staggering 10-year revenue CAGR of 23.5%. This is exactly double the company's robust historical CAGR of 11.7% and 1.3x the sector's 75th percentile. For a mega-cap company of Alphabet's size, accelerating growth to 23.5% annualized over a decade defies the law of large numbers and requires an unprecedented, undocumented TAM expansion. Furthermore, the Multiple Decomposition Challenge exposes a massive speculative premium: GOOGL trades at an EV/EBITDA of 28.3x, which is a 289% premium over its mathematically justified multiple of 7.3x. The market is pricing in a flawless AI transition that exponentially grows revenues without cannibalizing the core, high-margin Search monopoly. The path to the bear case intrinsic value of $74 per share (a -78.8% downside) will likely be triggered by...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 23.5% vs 11.7% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:39.017679",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/GOOGL_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:28:39.018580",
+    "agent": "Lead",
+    "trace_id": "trace_GOOGL_1777429606",
+    "inputs": {
+      "ticker": "GOOGL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for GOOGL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 5.4/10 (Python). Pricing power: False. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.5/10. Upstream leak: True. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.77 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.9%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $91,832,514,539",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: GOOGL \u2014 Base IV=$172/share MoS=-50.7% ImpliedCAGR=23.5% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 23.5% vs 11.7% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "terminal_value": 107204711092.01569,
+          "discounted_terminal_value": 69675706497.74734,
+          "sum_pv_cash_flows": 22156808041.540928,
+          "audit_metrics": {
+            "roic_path": [
+              0.32050110206639826,
+              0.2829135216623139,
+              0.25047520166898657,
+              0.22176173230040722,
+              0.19782389332194222
+            ],
+            "invested_capital_path": [
+              52492300000.0,
+              64223679000.0,
+              76893568320.0,
+              90323650999.2,
+              104290936985.568,
+              118677241551.52704
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 74989000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2581711984424382,
+            "terminal_value_pct_of_ev": 0.7587258918837327,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 5.196232281096349,
+            "reinvestment_rate_terminal_year": 0.6973068574118632,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.13221939217751938,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 8.794131986607978,
+          "upside_percent": -0.9748581051329179,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.13221939217751938,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 82487900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 21295999999.999996,
+              "nopat": 16823839999.999998,
+              "depreciation": 0.0,
+              "capex": 10906500000.0,
+              "change_in_wc": 824879000.0,
+              "fcff": 5092460999.999998,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 4671982568.807338
+            },
+            {
+              "year": 2.0,
+              "revenue": 89086932000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 22999679999.999996,
+              "nopat": 18169747199.999996,
+              "depreciation": 0.0,
+              "capex": 11779020000.0,
+              "change_in_wc": 890869320.0,
+              "fcff": 5499857879.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 4629120343.405434
+            },
+            {
+              "year": 3.0,
+              "revenue": 94432147920.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 24379660799.999996,
+              "nopat": 19259932031.999996,
+              "depreciation": 0.0,
+              "capex": 12485761200.0,
+              "change_in_wc": 944321479.2,
+              "fcff": 5829849352.799996,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 4501713361.476844
+            },
+            {
+              "year": 4.0,
+              "revenue": 98209433836.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 25354847231.999996,
+              "nopat": 20030329313.28,
+              "depreciation": 0.0,
+              "capex": 12985191648.000002,
+              "change_in_wc": 982094338.368,
+              "fcff": 6063043326.911997,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 4295212748.565062
+            },
+            {
+              "year": 5.0,
+              "revenue": 101155716851.904,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2581711984424382,
+              "ebit": 26115492648.96,
+              "nopat": 20631239192.678402,
+              "depreciation": 0.0,
+              "capex": 13374747397.440002,
+              "change_in_wc": 1011557168.5190401,
+              "fcff": 6244934626.719359,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 4058779019.2862525
+            }
+          ],
+          "enterprise_value": 91832514539.28827,
+          "equity_value": 106386514539.28827,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.13221939217751938,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.7418288015575618,
+          "calibration_adjustment": 0.3662537172118577
+        },
+        "base_financials": {
+          "net_sales": 74989000000.0,
+          "cogs": 28164000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -14554000000.0
+        },
+        "calculated_upside": -0.9748581051329179
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 1995000000.0,
+          "equity": 4231444001418.732,
+          "wacc": 0.10901688942361597,
+          "cost_of_equity": 0.10905338918453643,
+          "beta": 1.1911525139819834
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 199500000.0,
+            "cash": 16549000000.0,
+            "liquidity_ratio": 0.012055109070034443,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 120331000000.0,
+            "crash_fcf": 7647200000.0,
+            "earnings_power_value": 59272859810.556046,
+            "floor_value": 120331000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 5.4,
+            "financial_leverage_score": 0.0018858810366684377,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10901688942361597,
+            "2": 0.10901688942361597,
+            "3": 0.10901688942361597,
+            "4": 0.10901688942361597,
+            "5": 0.10901688942361597
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.5,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:28:02.422796",
+          "current_price": 349.7799987792969,
+          "shares_diluted": 12097444154.0,
+          "market_cap": 4231444001418.732,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.1911525139819834,
+          "wacc_base": 0.10901688942361597,
+          "revenue": 402836000000.0,
+          "ebitda": 150175000000.0,
+          "ebit": 129039000000.0,
+          "nopat": 101940810000.0,
+          "roic": 0.23212642970436884,
+          "fcf": 73266000000.0,
+          "net_debt": 15839000000.0,
+          "bull_ev": 3184915511904.4863,
+          "bull_intrinsic_per_share": 261.96248327847303,
+          "bull_upside": -0.2510650003067633,
+          "bull_wacc": 0.10401688942361596,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 21.208027380752366,
+          "bull_justified_ev_ebitda": 9.44480828575534,
+          "bull_roic_wacc_spread": 0.1281095402807529,
+          "bull_tv_pct_of_ev": 0.6004612771767169,
+          "bull_implied_tv_ebitda": 9.44480828575534,
+          "base_ev": 2117369783779.4756,
+          "base_intrinsic_per_share": 173.71692375902458,
+          "base_upside": -0.5033537527437755,
+          "base_wacc": 0.10901688942361597,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 14.099349317659234,
+          "base_justified_ev_ebitda": 7.992821975732182,
+          "base_roic_wacc_spread": 0.12310954028075287,
+          "base_tv_pct_of_ev": 0.525607356228332,
+          "base_implied_tv_ebitda": 7.992821975732182,
+          "bear_ev": 929715625926.1304,
+          "bear_intrinsic_per_share": 75.54295058464548,
+          "bear_upside": -0.7840272432721022,
+          "bear_wacc": 0.12401688942361597,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 6.1908814777834555,
+          "bear_justified_ev_ebitda": 5.977234198524446,
+          "bear_roic_wacc_spread": 0.10810954028075287,
+          "bear_tv_pct_of_ev": 0.37355922553504156,
+          "bear_implied_tv_ebitda": 5.977234198524446
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "GOOGL",
+            "scenario": "bull",
+            "enterprise_value": 3184915511904.4863,
+            "equity_value": 3154135587904.4863,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 260.7274352956262,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.2545959282819393,
+            "upside_pct": -0.2545959282819393,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          },
+          "base": {
+            "ticker": "GOOGL",
+            "scenario": "base",
+            "enterprise_value": 2117369783779.4756,
+            "equity_value": 2086589859779.4756,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 172.48187577617773,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.5068846807189515,
+            "upside_pct": -0.5068846807189515,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          },
+          "bear": {
+            "ticker": "GOOGL",
+            "scenario": "bear",
+            "enterprise_value": 929715625926.1304,
+            "equity_value": 898935701926.1304,
+            "shares_diluted": 12097444154.0,
+            "intrinsic_per_share": 74.30790260179865,
+            "current_price": 349.7799987792969,
+            "margin_of_safety": -0.7875581712472781,
+            "upside_pct": -0.7875581712472781,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -46547000000.0,
+            "bridge_cash_(net_of_haircuts)": 15767076000.0,
+            "cash_gross": 30708000000.0,
+            "cash_wc_haircut": 12085080000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2855844000.0,
+            "cash_net_accessible": 15767076000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 15767076000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 260.7274352956262,
+          "base": 172.48187577617773,
+          "bear": 74.30790260179865
+        },
+        "margin_of_safety": {
+          "bull": -0.2545959282819393,
+          "base": -0.5068846807189515,
+          "bear": -0.7875581712472781
+        },
+        "reverse_dcf": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "current_price": 349.7799987792969,
+          "current_ev": 4247283001418.732,
+          "current_ev_ebitda": 28.28222408136329,
+          "wacc": 0.10821065180963849,
+          "ebit_margin": 0.32032638592380025,
+          "implied_cagr_10y": 0.23487998803820098,
+          "implied_cagr_5y": 0.23487998803820098,
+          "historical_cagr_5y": 0.11672190689623851,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 28.28222408136329,
+          "forward_ev_ebitda_justified": 8.376342268268688,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.23487998803820098,
+        "historical_cagr": 0.11672190689623851,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (23.5%) is 1.3x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "GOOGL",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.28222408136329,
+          "market_ev_ebit": 32.914723466694035,
+          "market_p_sales": 10.504135681564538,
+          "market_p_e": 32.015162301723024,
+          "market_peg": 2.742858059214482,
+          "justified_ev_ebitda": 7.279179736268606,
+          "justified_ev_ebit": 8.471476196298312,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 21.003044345094683,
+          "ev_ebitda_premium_pct": 2.8853586676046405,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 6.282224081363289,
+          "roic": 0.23212642970436884,
+          "wacc": 0.10821065180963849,
+          "roic_wacc_spread": 0.12391577789473035,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6057052904944231,
+          "growth_rate": 0.11672190689623851,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 28.28222408136329,
+        "ev_ebitda_justified": 7.279179736268606,
+        "ev_ebitda_premium_pct": 2.8853586676046405,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.12391577789473035,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.23212642970436884,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: GOOGL ===\nPrice: $349.78  |  Bear=$74  Base=$172  Bull=$261\nMoS:  Bear=-78.8%  Base=-50.7%  Bull=-25.5%\nRDCF: implied=23.5% hist=11.7% [flag]\nEV/EBITDA: 28.3x market vs 7.3x justified (+289%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $349.78 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 23.5%\n  \u2022 Company's robust historical CAGR: 11.7%\n  \u2022 Ratio (implied / historical): 2.0x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (23.5%) is 1.3x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.3x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.3x\n  \u2022 Premium to justified multiple: +289%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $74/share vs current price $349.78\n  \u2022 Downside in bear case: -78.8%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The current market price of $349.78 for GOOGL is mathematically detached from reality, driven by extreme Growth Extrapolation Bias and AI-fueled FOMO. The Reverse DCF reveals that the market is pricing in a staggering 10-year revenue CAGR of 23.5%. This is exactly double the company's robust historical CAGR of 11.7% and 1.3x the sector's 75th percentile. For a mega-cap company of Alphabet's size, accelerating growth to 23.5% annualized over a decade defies the law of large numbers and requires an unprecedented, undocumented TAM expansion. Furthermore, the Multiple Decomposition Challenge exposes a massive speculative premium: GOOGL trades at an EV/EBITDA of 28.3x, which is a 289% premium over its mathematically justified multiple of 7.3x. The market is pricing in a flawless AI transition that exponentially grows revenues without cannibalizing the core, high-margin Search monopoly. The path to the bear case intrinsic value of $74 per share (a -78.8% downside) will likely be triggered by...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 10.0,
+          "cost_advantage": 8.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market.",
+        "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Google Services (Advertising, Subscriptions, Devices)",
+            "pct_revenue": 70.0,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Google Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          },
+          {
+            "segment": "Other Bets",
+            "pct_revenue": null,
+            "growth_trend": "Scaling"
+          }
+        ],
+        "key_customers": [
+          "Advertisers and marketing agencies",
+          "Enterprise cloud and workspace customers",
+          "Consumers (subscriptions, apps, devices)"
+        ],
+        "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+        "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices.",
+        "operating_leverage_score": 5.4
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.5,
+        "power_ratio": 1.26,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+        "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+        "pass_through_capability": true,
+        "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7718147994792974,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth of 30.6% significantly outpaces the 3-year revenue CAGR of 9.4%. Combined with a perfect D8 Revenue Score of 1.00, this indicates healthy pipeline generation and no evidence of revenue pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the provided 10-K text, Alphabet relies on a broad portfolio of patents, trademarks, copyrights, and trade secrets to protect its proprietary technology. However, there are no disclosures regarding specific patent cliffs, contract expirations, or material revenue exposure tied to assets expiring within the next 5 years. While there is inherent uncertainty in broad IP portfolios, no specific near-term intangible decay risks are identifiable.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Alphabet's revenue trajectory reflects structural growth rather than cyclicality, evidenced by a Z-score of 1.77 (below the 2.0 peak threshold). Growth quality is robust, with deferred revenue expanding at 30.6% and a clean D8 score of 1.00, indicating no pull-forward risk. Additionally, there are no disclosed near-term patent cliffs or contract expirations, leaving estimated revenue at risk from intangible decay at 0.0%."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>___________________________________________</div>\n\n#### FORM 10-K\n<div align='center'>___________________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025\n\nOR</div>\n\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from to .</div>\n\n#### Commission file number:\n\n#### 001-37580\n<div align='center'>___________________________________________</div>\n\n#### Alphabet Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)\n\n___________________________________________</div>\n\n| Delaware                                                       |     | 61-1767919                          |\n| (State or other jurisdictio...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "GOOGL",
+        "generated_at": "2026-04-28T22:28:39.017032",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 5.4,
+            "cost_structure": "Alphabet's operating leverage (score: 5.4/10) is driven by massive fixed-cost investments in technical infrastructure (data centers, custom TPUs like Ironwood, servers), R&D for frontier AI models (Gemini 3), and compensation for its 190,820 employees. The company is also entering significant long-term leasing arrangements for compute capacity. Revenue growth from digital advertising and cloud consumption flows to EBIT after covering these substantial infrastructure and personnel costs, though margin compression risks exist from the mix shift toward lower-margin hardware devices, capital-intensive cloud/AI services, and increasing regulatory compliance costs.",
+            "business_description": "Alphabet primarily operates through Google, providing search, digital advertising, cloud computing, and AI technologies. The company generates the majority of its revenue by delivering performance and brand advertising across Google Search, YouTube, and network partners. It also serves enterprise customers through Google Cloud's infrastructure and platform services, and consumers via hardware devices and subscriptions.",
+            "revenue_segments": [
+              {
+                "segment": "Google Services (Advertising, Subscriptions, Devices)",
+                "pct_revenue": 70.0,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Google Cloud",
+                "pct_revenue": null,
+                "growth_trend": "Growing"
+              },
+              {
+                "segment": "Other Bets",
+                "pct_revenue": null,
+                "growth_trend": "Scaling"
+              }
+            ],
+            "key_customers": [
+              "Advertisers and marketing agencies",
+              "Enterprise cloud and workspace customers",
+              "Consumers (subscriptions, apps, devices)"
+            ],
+            "competitive_landscape": "Competes intensely with other search engines, online advertising platforms, enterprise cloud providers, and AI model developers. Alphabet differentiates itself through its 'full-stack' AI approach, proprietary custom TPUs (Ironwood), and an unmatched ecosystem of 15 products with over half a billion users each.",
+            "regulatory_risk": "Alphabet faces heightened global regulatory scrutiny and evolving laws concerning AI, competition, data privacy, and content moderation, which could increase compliance costs or restrict business practices."
+          },
+          "value_chain": {
+            "power_ratio": 1.26,
+            "upstream_leak": true,
+            "strategic_leverage": 8.5,
+            "bottleneck_analysis": "Nvidia (specialized GPUs) and third-party data center operators are the critical bottlenecks. While Google develops custom TPUs (e.g., Ironwood) to mitigate reliance, it still requires massive volumes of third-party specialized GPUs for AI workloads. If these suppliers raise prices, Google faces increased capital expenditures, though its internal silicon capabilities provide stronger leverage than its peers.",
+            "substitution_risk_score": 4.0,
+            "top_substitutes": "1. AI Chatbots and Agents (e.g., OpenAI, Anthropic) for direct information retrieval. 2. Vertical search engines and e-commerce platforms (e.g., Amazon) for high-intent shopping queries. 3. Social media and video platforms (e.g., TikTok, Meta) for product discovery. Realistic switching scenario: Users increasingly bypass traditional search engines for AI agents that provide synthesized answers, reducing traditional ad impressions.",
+            "pricing_power_assessment": "Google exhibits strong price leadership in its core advertising business through its opaque, auction-based pricing model, allowing it to implicitly raise cost-per-click (CPC) rates. However, the 10-K notes that advertisers can terminate contracts at any time and easily shift budgets to other digital platforms if ROI declines. In Google Cloud, pricing power is weaker due to intense oligopolistic competition.",
+            "pass_through_capability": true,
+            "analysis_summary": "Google holds a dominant platform position with immense strategic leverage, driven by its entrenched search ecosystem and Android/Chrome distribution moats. Buyer power is highly fragmented, allowing Google to maintain strong auction-based pricing power despite low contractual lock-in for advertisers. The primary strategic threats are substitution risks from generative AI platforms and vertical search engines, coupled with upstream supplier power from specialized GPU manufacturers. Google's massive R&D investments and proprietary TPU infrastructure serve as critical defenses against upstream value leakage and substitution."
+          },
+          "moat": {
+            "score": 8.5,
+            "switching_costs": 7.0,
+            "network_effects": 10.0,
+            "cost_advantage": 8.0,
+            "intangibles": 9.0,
+            "evidence": "The 10-K highlights massive scale and network effects with '15 of our half-billion-user products \u2014 including seven with two billion users'. Intangibles and cost advantages are evidenced by proprietary AI-optimized infrastructure, including seventh-generation custom-built Tensor Processing Units (TPUs) and the Gemini 3 model. The company also relies heavily on a vast portfolio of patents, trademarks (including the highly recognized 'Google' brand), and trade secrets.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The provided 10-K excerpt does not disclose specific price hike dates, amounts, Net Retention Rates (NRR), or contract escalators to definitively prove pricing power without material churn over the last 3 years."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.7718147994792974,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue growth of 30.6% significantly outpaces the 3-year revenue CAGR of 9.4%. Combined with a perfect D8 Revenue Score of 1.00, this indicates healthy pipeline generation and no evidence of revenue pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "Based on the provided 10-K text, Alphabet relies on a broad portfolio of patents, trademarks, copyrights, and trade secrets to protect its proprietary technology. However, there are no disclosures regarding specific patent cliffs, contract expirations, or material revenue exposure tied to assets expiring within the next 5 years. While there is inherent uncertainty in broad IP portfolios, no specific near-term intangible decay risks are identifiable.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Alphabet's revenue trajectory reflects structural growth rather than cyclicality, evidenced by a Z-score of 1.77 (below the 2.0 peak threshold). Growth quality is robust, with deferred revenue expanding at 30.6% and a clean D8 score of 1.00, indicating no pull-forward risk. Additionally, there are no disclosed near-term patent cliffs or contract expirations, leaving estimated revenue at risk from intangible decay at 0.0%."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 402.836,
+            "ebitda_bn": 150.175,
+            "fcf_bn": 73.266,
+            "nopat_bn": 101.94081,
+            "invested_capital_bn": 439.16072,
+            "net_debt_bn": 15.839,
+            "sbc_bn": 24.953,
+            "fiscal_year": 2025,
+            "data_quality": 0.98
+          },
+          "ratios": {
+            "gross_margin_pct": 59.65231508603998,
+            "ebit_margin_pct": 32.032638592380025,
+            "ebitda_margin_pct": 37.27943877905649,
+            "fcf_margin_pct": 18.187550268595658,
+            "roic": 0.23212642970436884,
+            "roe": 0.3182786895115167,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": 1.1747187293183323,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 2,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 1995000000.0,
+            "equity": 4231444001418.732,
+            "wacc": 0.10901688942361597,
+            "cost_of_equity": 0.10905338918453643,
+            "beta": 1.1911525139819834
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 199500000.0,
+              "cash": 16549000000.0,
+              "liquidity_ratio": 0.012055109070034443,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 120331000000.0,
+              "crash_fcf": 7647200000.0,
+              "earnings_power_value": 59272859810.556046,
+              "floor_value": 120331000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 5.4,
+              "financial_leverage_score": 0.0018858810366684377,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.10901688942361597,
+              "2": 0.10901688942361597,
+              "3": 0.10901688942361597,
+              "4": 0.10901688942361597,
+              "5": 0.10901688942361597
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier is identified as accounting for more than 10% of revenue. However, the company notes that more than 70% of total revenues in 2025 were generated collectively from online advertising, indicating a concentration in the broader digital advertising market."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 106386514539.28827,
+            "upside_percent": -0.9748581051329179,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 74.30790260179865,
+                "margin_of_safety": -0.7875581712472781,
+                "ev": 929715625926.1304
+              },
+              "base": {
+                "intrinsic_per_share": 172.48187577617773,
+                "margin_of_safety": -0.5068846807189515,
+                "ev": 2117369783779.4756
+              },
+              "bull": {
+                "intrinsic_per_share": 260.7274352956262,
+                "margin_of_safety": -0.2545959282819393,
+                "ev": 3184915511904.4863
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.23487998803820098,
+              "historical_cagr": 0.11672190689623851,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (23.5%) is 1.3x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 28.28222408136329,
+              "justified_ev_ebitda": 7.279179736268606,
+              "premium_pct": 2.8853586676046405,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.12391577789473035,
+              "value_creation": "creating",
+              "roic": 0.23212642970436884,
+              "wacc": 0.10901688942361597
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": false,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 8.5,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.10901688942361597,
+            "beta": 1.1911525139819834,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+            "bear_case_summary": "The current market price of $349.78 for GOOGL is mathematically detached from reality, driven by extreme Growth Extrapolation Bias and AI-fueled FOMO. The Reverse DCF reveals that the market is pricing in a staggering 10-year revenue CAGR of 23.5%. This is exactly double the company's robust historical CAGR of 11.7% and 1.3x the sector's 75th percentile. For a mega-cap company of Alphabet's size, accelerating growth to 23.5% annualized over a decade defies the law of large numbers and requires an unprecedented, undocumented TAM expansion. Furthermore, the Multiple Decomposition Challenge exposes a massive speculative premium: GOOGL trades at an EV/EBITDA of 28.3x, which is a 289% premium over its mathematically justified multiple of 7.3x. The market is pricing in a flawless AI transition that exponentially grows revenues without cannibalizing the core, high-margin Search monopoly. The path to the bear case intrinsic value of $74 per share (a -78.8% downside) will likely be triggered by...(truncated)",
+            "sentiment_score": -9,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $349.78 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 23.5%\n  \u2022 Company's robust historical CAGR: 11.7%\n  \u2022 Ratio (implied / historical): 2.0x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (23.5%) is 1.3x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.3x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.3x\n  \u2022 Premium to justified multiple: +289%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $74/share vs current price $349.78\n  \u2022 Downside in bear case: -78.8%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 0,
+            "margin_of_safety": -0.5068846807189515,
+            "narrative": "The implied 10-year revenue CAGR of 23.5% is highly unrealistic and mathematically improbable for a mega-cap entity of Alphabet's scale. It represents a 2.0x acceleration over the historical 11.7% CAGR and exceeds the sector's 75th percentile. While Alphabet possesses a formidable moat (8.5/10) with 15 half-billion-user products and proprietary TPU infrastructure, sustaining a 23.5% growth rate defies the law of large numbers and would require an unprecedented, undocumented TAM expansion, likely ignoring the cannibalization risks of generative AI on traditional search volumes.\n\nThe Contrarian is absolutely correct regarding the extreme Growth Extrapolation Bias; pricing in a 23.5% CAGR and a 289% EV/EBITDA premium (28.3x vs justified 7.3x) leaves zero room for execution missteps. The bear case accurately identifies margin compression from compute-intensive AI queries and antitrust scrutiny as primary catalysts for multiple mean reversion. However, the bear case's $74 intrinsic value ma...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u274c FAIL: Implied CAGR (23.5%) is 2.0x historical (11.7%). Requires TAM justification.",
+              "\u274c FAIL: EV/EBITDA at +289% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "GOOGL",
+              "p1_moat": 5,
+              "p2_health": 4,
+              "p3_tailwind": 3,
+              "p4_mos": 1,
+              "p5_leadership": 2,
+              "raw_total": 15,
+              "capped_total": 15,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern (capped at 75% due to reflexivity flag)",
+              "conviction_score": 0,
+              "reflexivity_flags": [
+                "High-SBC company (34.1% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 9.0/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +12.4pp \u2014 strong value creation",
+                "FCF margin 18.2% \u2014 strong FCF",
+                "Net Debt/EBITDA 0.1\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 11.7% \u2014 moderate growth",
+                "Sector 'Technology' \u2014 confirmed secular tailwind",
+                "Market implied CAGR 2.0\u00d7 historical \u2014 tailwind partially priced"
+              ],
+              "p4_reasons": [
+                "Base MoS -50.1% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 34.1% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 8.0/10",
+                "Upstream value leak detected \u2014 suppliers capture excess margin"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for GOOGL. Conviction: 0.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

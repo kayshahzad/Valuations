@@ -1,0 +1,1919 @@
+[
+  {
+    "timestamp": "2026-04-28T22:32:45.844765",
+    "agent": "Librarian",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:33:16.162686",
+    "agent": "Forensic",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 6.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers.",
+        "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+        "revenue_segments": [
+          {
+            "segment": "Automotive",
+            "pct_revenue": null,
+            "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+          },
+          {
+            "segment": "Energy Generation and Storage",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by AI infrastructure load growth)"
+          }
+        ],
+        "key_customers": [
+          "Direct-to-consumer retail vehicle buyers",
+          "Commercial, industrial, and utility energy storage customers",
+          "Other automotive manufacturers (purchasing regulatory credits)"
+        ],
+        "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+        "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA.",
+        "operating_leverage_score": 2.8
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 2.8/10 (Python). Pricing power: False. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:33:35.350526",
+    "agent": "ValueChain",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 2.8/10 (Python). Pricing power: False. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 6.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers.",
+        "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+        "revenue_segments": [
+          {
+            "segment": "Automotive",
+            "pct_revenue": null,
+            "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+          },
+          {
+            "segment": "Energy Generation and Storage",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by AI infrastructure load growth)"
+          }
+        ],
+        "key_customers": [
+          "Direct-to-consumer retail vehicle buyers",
+          "Commercial, industrial, and utility energy storage customers",
+          "Other automotive manufacturers (purchasing regulatory credits)"
+        ],
+        "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+        "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA.",
+        "operating_leverage_score": 2.8
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.011,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include battery cell manufacturers (e.g., Panasonic, CATL) and advanced semiconductor fabricators (e.g., Samsung for AI inference chips). While some components are single-sourced, Tesla actively mitigates supplier leverage through deep vertical integration, including in-house 4680 battery cell production, custom silicon design, and a new in-house lithium refinery in Texas. If suppliers raise prices, Tesla has multiple sourcing options and internal production buffers to absorb or negotiate costs.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Internal Combustion Engine (ICE) vehicles from legacy automakers. 2. Competing Electric Vehicles (e.g., BYD, Ford, Hyundai). 3. Traditional ride-hailing or public transit. Realistic switching scenario: A consumer opts for a lower-priced competing EV or hybrid due to upfront cost sensitivity, sacrificing native integration with Tesla's Supercharger network and FSD software ecosystem.",
+        "pricing_power_assessment": "Tesla has historically demonstrated dynamic pricing power, adjusting prices in real-time based on supply chain costs and demand. However, recent intense competition and market saturation have forced Tesla to utilize price cuts to defend market share, indicating a shift from absolute price leadership to a more competitive pricing environment. High-margin software upgrades (FSD) and energy storage products provide alternative avenues for margin expansion.",
+        "pass_through_capability": false,
+        "analysis_summary": "Tesla maintains a strong strategic position driven by deep vertical integration, proprietary AI/software capabilities (FSD, Autobidder), and a dominant Supercharger network that acts as an industry standard (NACS). Supplier power is moderate but actively suppressed through in-house manufacturing initiatives like lithium refining and custom compute clusters (Cortex). Buyer power is increasing as the EV market matures and competition from legacy OEMs and Chinese manufacturers intensifies, which currently limits Tesla's ability to pass through significant price hikes without material churn. Substitution threat is moderate but offset by strong ecosystem lock-in. Overall, Tesla operates as a dominant platform rather than a commodity price taker."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: False. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:33:58.779637",
+    "agent": "StrategicContext",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 2.8/10 (Python). Pricing power: False. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: False. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 6.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers.",
+        "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+        "revenue_segments": [
+          {
+            "segment": "Automotive",
+            "pct_revenue": null,
+            "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+          },
+          {
+            "segment": "Energy Generation and Storage",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by AI infrastructure load growth)"
+          }
+        ],
+        "key_customers": [
+          "Direct-to-consumer retail vehicle buyers",
+          "Commercial, industrial, and utility energy storage customers",
+          "Other automotive manufacturers (purchasing regulatory credits)"
+        ],
+        "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+        "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA.",
+        "operating_leverage_score": 2.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.011,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include battery cell manufacturers (e.g., Panasonic, CATL) and advanced semiconductor fabricators (e.g., Samsung for AI inference chips). While some components are single-sourced, Tesla actively mitigates supplier leverage through deep vertical integration, including in-house 4680 battery cell production, custom silicon design, and a new in-house lithium refinery in Texas. If suppliers raise prices, Tesla has multiple sourcing options and internal production buffers to absorb or negotiate costs.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Internal Combustion Engine (ICE) vehicles from legacy automakers. 2. Competing Electric Vehicles (e.g., BYD, Ford, Hyundai). 3. Traditional ride-hailing or public transit. Realistic switching scenario: A consumer opts for a lower-priced competing EV or hybrid due to upfront cost sensitivity, sacrificing native integration with Tesla's Supercharger network and FSD software ecosystem.",
+        "pricing_power_assessment": "Tesla has historically demonstrated dynamic pricing power, adjusting prices in real-time based on supply chain costs and demand. However, recent intense competition and market saturation have forced Tesla to utilize price cuts to defend market share, indicating a shift from absolute price leadership to a more competitive pricing environment. High-margin software upgrades (FSD) and energy storage products provide alternative avenues for margin expansion.",
+        "pass_through_capability": false,
+        "analysis_summary": "Tesla maintains a strong strategic position driven by deep vertical integration, proprietary AI/software capabilities (FSD, Autobidder), and a dominant Supercharger network that acts as an industry standard (NACS). Supplier power is moderate but actively suppressed through in-house manufacturing initiatives like lithium refining and custom compute clusters (Cortex). Buyer power is increasing as the EV market matures and competition from legacy OEMs and Chinese manufacturers intensifies, which currently limits Tesla's ability to pass through significant price hikes without material churn. Substitution threat is moderate but offset by strong ecosystem lock-in. Overall, Tesla operates as a dominant platform rather than a commodity price taker."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.6105307360358145,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 8.1% to $3.4B, outpacing the 3-year revenue CAGR of -0.7%. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy, indicating strong future revenue visibility and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, there are no specific disclosures regarding patent cliffs, exclusivity dates, or contract renewals that pose a threat to revenue. Tesla's technological moat relies on continuous R&D, AI training, and trade secrets rather than expiring patents. Uncertainty is noted due to the absence of a dedicated Patents and Proprietary Rights section in the provided text, but estimated risk is minimal.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Tesla's revenue profile shows no signs of a cyclical peak (Z-Score: 1.61), indicating structural market dynamics rather than a commodity cycle. The quality of growth is strong, with deferred revenue growing 8.1% and a perfect D8 score of 1.00, eliminating pull-forward concerns. Additionally, there is no identifiable intangible risk or patent cliff, as the company relies on continuous innovation in AI, software, and manufacturing rather than expiring intellectual property."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.61 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:33:59.606059",
+    "agent": "Strategist",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 2.8/10 (Python). Pricing power: False. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: False. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.61 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 6.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers.",
+        "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+        "revenue_segments": [
+          {
+            "segment": "Automotive",
+            "pct_revenue": null,
+            "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+          },
+          {
+            "segment": "Energy Generation and Storage",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by AI infrastructure load growth)"
+          }
+        ],
+        "key_customers": [
+          "Direct-to-consumer retail vehicle buyers",
+          "Commercial, industrial, and utility energy storage customers",
+          "Other automotive manufacturers (purchasing regulatory credits)"
+        ],
+        "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+        "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA.",
+        "operating_leverage_score": 2.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.011,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include battery cell manufacturers (e.g., Panasonic, CATL) and advanced semiconductor fabricators (e.g., Samsung for AI inference chips). While some components are single-sourced, Tesla actively mitigates supplier leverage through deep vertical integration, including in-house 4680 battery cell production, custom silicon design, and a new in-house lithium refinery in Texas. If suppliers raise prices, Tesla has multiple sourcing options and internal production buffers to absorb or negotiate costs.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Internal Combustion Engine (ICE) vehicles from legacy automakers. 2. Competing Electric Vehicles (e.g., BYD, Ford, Hyundai). 3. Traditional ride-hailing or public transit. Realistic switching scenario: A consumer opts for a lower-priced competing EV or hybrid due to upfront cost sensitivity, sacrificing native integration with Tesla's Supercharger network and FSD software ecosystem.",
+        "pricing_power_assessment": "Tesla has historically demonstrated dynamic pricing power, adjusting prices in real-time based on supply chain costs and demand. However, recent intense competition and market saturation have forced Tesla to utilize price cuts to defend market share, indicating a shift from absolute price leadership to a more competitive pricing environment. High-margin software upgrades (FSD) and energy storage products provide alternative avenues for margin expansion.",
+        "pass_through_capability": false,
+        "analysis_summary": "Tesla maintains a strong strategic position driven by deep vertical integration, proprietary AI/software capabilities (FSD, Autobidder), and a dominant Supercharger network that acts as an industry standard (NACS). Supplier power is moderate but actively suppressed through in-house manufacturing initiatives like lithium refining and custom compute clusters (Cortex). Buyer power is increasing as the EV market matures and competition from legacy OEMs and Chinese manufacturers intensifies, which currently limits Tesla's ability to pass through significant price hikes without material churn. Substitution threat is moderate but offset by strong ecosystem lock-in. Overall, Tesla operates as a dominant platform rather than a commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.6105307360358145,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 8.1% to $3.4B, outpacing the 3-year revenue CAGR of -0.7%. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy, indicating strong future revenue visibility and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, there are no specific disclosures regarding patent cliffs, exclusivity dates, or contract renewals that pose a threat to revenue. Tesla's technological moat relies on continuous R&D, AI training, and trade secrets rather than expiring patents. Uncertainty is noted due to the absence of a dedicated Patents and Proprietary Rights section in the provided text, but estimated risk is minimal.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Tesla's revenue profile shows no signs of a cyclical peak (Z-Score: 1.61), indicating structural market dynamics rather than a commodity cycle. The quality of growth is strong, with deferred revenue growing 8.1% and a perfect D8 score of 1.00, eliminating pull-forward concerns. Additionally, there is no identifiable intangible risk or patent cliff, as the company relies on continuous innovation in AI, software, and manufacturing rather than expiring intellectual property."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 268335000.0,
+          "equity": 1412227248711.8052,
+          "wacc": 0.14680216736892224,
+          "cost_of_equity": 0.14682405674516047,
+          "beta": 1.877891924175148
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 26833500.0,
+            "cash": 255266000.0,
+            "liquidity_ratio": 0.10511975742950491,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 224045000.0,
+            "crash_fcf": -92654755.0,
+            "earnings_power_value": -555476924.9195199,
+            "floor_value": 224045000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.8,
+            "financial_leverage_score": 0.0007600334868053787,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.14680216736892224,
+            "2": 0.14680216736892224,
+            "3": 0.14680216736892224,
+            "4": 0.14680216736892224,
+            "5": 0.14680216736892224
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 14.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:34:00.603758",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "base": {
+        "net_sales": 204242000.0,
+        "cogs": 142647000.0,
+        "interest_expense": 0.0,
+        "net_debt": 13069000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.5096992783071063,
+        "da_percent_sales": 0.08283800589496773,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.9689290155795576,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 1.7216243475876656,
+        "calibration_adjustment": 1.0232028671869644
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T22:34:01.783009",
+    "agent": "ValuationNode",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 2.8/10 (Python). Pricing power: False. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: False. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.61 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 14.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist Failed: EBIT margin out of bounds: -1.3141616317897395. Expected within [-0.50, 0.60].",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 268335000.0,
+          "equity": 1412227248711.8052,
+          "wacc": 0.14680216736892224,
+          "cost_of_equity": 0.14682405674516047,
+          "beta": 1.877891924175148
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 26833500.0,
+            "cash": 255266000.0,
+            "liquidity_ratio": 0.10511975742950491,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 224045000.0,
+            "crash_fcf": -92654755.0,
+            "earnings_power_value": -555476924.9195199,
+            "floor_value": 224045000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.8,
+            "financial_leverage_score": 0.0007600334868053787,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.14680216736892224,
+            "2": 0.14680216736892224,
+            "3": 0.14680216736892224,
+            "4": 0.14680216736892224,
+            "5": 0.14680216736892224
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 6.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers.",
+        "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+        "revenue_segments": [
+          {
+            "segment": "Automotive",
+            "pct_revenue": null,
+            "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+          },
+          {
+            "segment": "Energy Generation and Storage",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by AI infrastructure load growth)"
+          }
+        ],
+        "key_customers": [
+          "Direct-to-consumer retail vehicle buyers",
+          "Commercial, industrial, and utility energy storage customers",
+          "Other automotive manufacturers (purchasing regulatory credits)"
+        ],
+        "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+        "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA.",
+        "operating_leverage_score": 2.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.011,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include battery cell manufacturers (e.g., Panasonic, CATL) and advanced semiconductor fabricators (e.g., Samsung for AI inference chips). While some components are single-sourced, Tesla actively mitigates supplier leverage through deep vertical integration, including in-house 4680 battery cell production, custom silicon design, and a new in-house lithium refinery in Texas. If suppliers raise prices, Tesla has multiple sourcing options and internal production buffers to absorb or negotiate costs.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Internal Combustion Engine (ICE) vehicles from legacy automakers. 2. Competing Electric Vehicles (e.g., BYD, Ford, Hyundai). 3. Traditional ride-hailing or public transit. Realistic switching scenario: A consumer opts for a lower-priced competing EV or hybrid due to upfront cost sensitivity, sacrificing native integration with Tesla's Supercharger network and FSD software ecosystem.",
+        "pricing_power_assessment": "Tesla has historically demonstrated dynamic pricing power, adjusting prices in real-time based on supply chain costs and demand. However, recent intense competition and market saturation have forced Tesla to utilize price cuts to defend market share, indicating a shift from absolute price leadership to a more competitive pricing environment. High-margin software upgrades (FSD) and energy storage products provide alternative avenues for margin expansion.",
+        "pass_through_capability": false,
+        "analysis_summary": "Tesla maintains a strong strategic position driven by deep vertical integration, proprietary AI/software capabilities (FSD, Autobidder), and a dominant Supercharger network that acts as an industry standard (NACS). Supplier power is moderate but actively suppressed through in-house manufacturing initiatives like lithium refining and custom compute clusters (Cortex). Buyer power is increasing as the EV market matures and competition from legacy OEMs and Chinese manufacturers intensifies, which currently limits Tesla's ability to pass through significant price hikes without material churn. Substitution threat is moderate but offset by strong ecosystem lock-in. Overall, Tesla operates as a dominant platform rather than a commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.6105307360358145,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 8.1% to $3.4B, outpacing the 3-year revenue CAGR of -0.7%. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy, indicating strong future revenue visibility and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, there are no specific disclosures regarding patent cliffs, exclusivity dates, or contract renewals that pose a threat to revenue. Tesla's technological moat relies on continuous R&D, AI training, and trade secrets rather than expiring patents. Uncertainty is noted due to the absence of a dedicated Patents and Proprietary Rights section in the provided text, but estimated risk is minimal.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Tesla's revenue profile shows no signs of a cyclical peak (Z-Score: 1.61), indicating structural market dynamics rather than a commodity cycle. The quality of growth is strong, with deferred revenue growing 8.1% and a perfect D8 score of 1.00, eliminating pull-forward concerns. Additionally, there is no identifiable intangible risk or patent cliff, as the company relies on continuous innovation in AI, software, and manufacturing rather than expiring intellectual property."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:34:00.604215",
+          "current_price": 376.0199890136719,
+          "shares_diluted": 3755723871.0,
+          "market_cap": 1412227248711.8052,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.877891924175148,
+          "wacc_base": 0.14680216736892224,
+          "revenue": 94827000000.0,
+          "ebitda": 9775000000.0,
+          "ebit": 4745000000.0,
+          "nopat": 3748550000.0,
+          "roic": 0.050092513230207074,
+          "fcf": 6220000000.0,
+          "net_debt": -9929000000.0,
+          "bull_ev": 147685008138.35944,
+          "bull_intrinsic_per_share": 41.966346183057674,
+          "bull_upside": -0.8883933104377283,
+          "bull_wacc": 0.14180216736892223,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 15.10844073026695,
+          "bull_justified_ev_ebitda": 2.550435926270464,
+          "bull_roic_wacc_spread": -0.09170965413871515,
+          "bull_tv_pct_of_ev": 0.5147944924340189,
+          "bull_implied_tv_ebitda": 2.5504359262704646,
+          "base_ev": 90088341795.06822,
+          "base_intrinsic_per_share": 26.630643047897337,
+          "base_upside": -0.9291775867614073,
+          "base_wacc": 0.14680216736892224,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.216198649111838,
+          "base_justified_ev_ebitda": 2.6908101665315107,
+          "base_roic_wacc_spread": -0.09670965413871516,
+          "base_tv_pct_of_ev": 0.5347587193529882,
+          "base_implied_tv_ebitda": 2.6908101665315103,
+          "bear_ev": 17681863532.53664,
+          "bear_intrinsic_per_share": 7.3516755972757295,
+          "bear_upside": -0.9804487106747709,
+          "bear_wacc": 0.16,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 1.8088862948886588,
+          "bear_justified_ev_ebitda": 2.3272978532954345,
+          "bear_roic_wacc_spread": -0.10990748676979292,
+          "bear_tv_pct_of_ev": 0.33351738876101844,
+          "bear_implied_tv_ebitda": 1.2759564976402888
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TSLA",
+            "scenario": "bull",
+            "enterprise_value": 147685008138.35944,
+            "equity_value": 153233489138.35944,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 40.79998807195574,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.8914951617891987,
+            "upside_pct": -0.8914951617891987,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          },
+          "base": {
+            "ticker": "TSLA",
+            "scenario": "base",
+            "enterprise_value": 90088341795.06822,
+            "equity_value": 95636822795.06822,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 25.464284936795405,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.9322794381128777,
+            "upside_pct": -0.9322794381128777,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          },
+          "bear": {
+            "ticker": "TSLA",
+            "scenario": "bear",
+            "enterprise_value": 17681863532.53664,
+            "equity_value": 23230344532.53664,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 6.185317486173797,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.9835505620262414,
+            "upside_pct": -0.9835505620262414,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 40.79998807195574,
+          "base": 25.464284936795405,
+          "bear": 6.185317486173797
+        },
+        "margin_of_safety": {
+          "bull": -0.8914951617891987,
+          "base": -0.9322794381128777,
+          "bear": -0.9835505620262414
+        },
+        "reverse_dcf": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "current_price": 376.0199890136719,
+          "current_ev": 1402298248711.8052,
+          "current_ev_ebitda": 143.4576213515913,
+          "wacc": 0.1462893589900511,
+          "ebit_margin": 0.05003849114703618,
+          "implied_cagr_10y": 0.7993568072939765,
+          "implied_cagr_5y": 0.7993568072939765,
+          "historical_cagr_5y": 0.27999187195177533,
+          "sector_75th_cagr": 0.14,
+          "implied_tv_ebitda": 143.4576213515913,
+          "forward_ev_ebitda_justified": 4.470394480205753,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.7993568072939765,
+        "historical_cagr": 0.27999187195177533,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (79.9%) is 5.7x the sector 75th percentile (14.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 143.4576213515913,
+          "market_ev_ebit": 295.5317700130253,
+          "market_p_sales": 14.89267032292285,
+          "market_p_e": 372.22647567522546,
+          "market_peg": 13.294188616280127,
+          "justified_ev_ebitda": 2.1736846757801134,
+          "justified_ev_ebit": 4.477927862118147,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 141.2839366758112,
+          "ev_ebitda_premium_pct": 64.99743879599548,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 131.4576213515913,
+          "roic": 0.050092513230207074,
+          "wacc": 0.1462893589900511,
+          "roic_wacc_spread": -0.09619684575984402,
+          "value_creation": "destroying",
+          "cash_conversion_ratio": 0.26364482097186703,
+          "growth_rate": 0.27999187195177533,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 143.4576213515913,
+        "ev_ebitda_justified": 2.1736846757801134,
+        "ev_ebitda_premium_pct": 64.99743879599548,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": -0.09619684575984402,
+        "value_creation": "destroying",
+        "multiple_decomposition": {
+          "roic": 0.050092513230207074,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: TSLA ===\nPrice: $376.02  |  Bear=$6  Base=$25  Bull=$41\nMoS:  Bear=-98.4%  Base=-93.2%  Bull=-89.1%\nRDCF: implied=79.9% hist=28.0% [flag]\nEV/EBITDA: 143.5x market vs 2.2x justified (+6500%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: TSLA \u2014 Base IV=$25/share MoS=-93.2% ImpliedCAGR=79.9% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:34:18.943509",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 2.8/10 (Python). Pricing power: False. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: False. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.61 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 14.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist Failed: EBIT margin out of bounds: -1.3141616317897395. Expected within [-0.50, 0.60].",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TSLA \u2014 Base IV=$25/share MoS=-93.2% ImpliedCAGR=79.9% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 268335000.0,
+          "equity": 1412227248711.8052,
+          "wacc": 0.14680216736892224,
+          "cost_of_equity": 0.14682405674516047,
+          "beta": 1.877891924175148
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 26833500.0,
+            "cash": 255266000.0,
+            "liquidity_ratio": 0.10511975742950491,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 224045000.0,
+            "crash_fcf": -92654755.0,
+            "earnings_power_value": -555476924.9195199,
+            "floor_value": 224045000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.8,
+            "financial_leverage_score": 0.0007600334868053787,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.14680216736892224,
+            "2": 0.14680216736892224,
+            "3": 0.14680216736892224,
+            "4": 0.14680216736892224,
+            "5": 0.14680216736892224
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:34:00.604215",
+          "current_price": 376.0199890136719,
+          "shares_diluted": 3755723871.0,
+          "market_cap": 1412227248711.8052,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.877891924175148,
+          "wacc_base": 0.14680216736892224,
+          "revenue": 94827000000.0,
+          "ebitda": 9775000000.0,
+          "ebit": 4745000000.0,
+          "nopat": 3748550000.0,
+          "roic": 0.050092513230207074,
+          "fcf": 6220000000.0,
+          "net_debt": -9929000000.0,
+          "bull_ev": 147685008138.35944,
+          "bull_intrinsic_per_share": 41.966346183057674,
+          "bull_upside": -0.8883933104377283,
+          "bull_wacc": 0.14180216736892223,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 15.10844073026695,
+          "bull_justified_ev_ebitda": 2.550435926270464,
+          "bull_roic_wacc_spread": -0.09170965413871515,
+          "bull_tv_pct_of_ev": 0.5147944924340189,
+          "bull_implied_tv_ebitda": 2.5504359262704646,
+          "base_ev": 90088341795.06822,
+          "base_intrinsic_per_share": 26.630643047897337,
+          "base_upside": -0.9291775867614073,
+          "base_wacc": 0.14680216736892224,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.216198649111838,
+          "base_justified_ev_ebitda": 2.6908101665315107,
+          "base_roic_wacc_spread": -0.09670965413871516,
+          "base_tv_pct_of_ev": 0.5347587193529882,
+          "base_implied_tv_ebitda": 2.6908101665315103,
+          "bear_ev": 17681863532.53664,
+          "bear_intrinsic_per_share": 7.3516755972757295,
+          "bear_upside": -0.9804487106747709,
+          "bear_wacc": 0.16,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 1.8088862948886588,
+          "bear_justified_ev_ebitda": 2.3272978532954345,
+          "bear_roic_wacc_spread": -0.10990748676979292,
+          "bear_tv_pct_of_ev": 0.33351738876101844,
+          "bear_implied_tv_ebitda": 1.2759564976402888
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TSLA",
+            "scenario": "bull",
+            "enterprise_value": 147685008138.35944,
+            "equity_value": 153233489138.35944,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 40.79998807195574,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.8914951617891987,
+            "upside_pct": -0.8914951617891987,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          },
+          "base": {
+            "ticker": "TSLA",
+            "scenario": "base",
+            "enterprise_value": 90088341795.06822,
+            "equity_value": 95636822795.06822,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 25.464284936795405,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.9322794381128777,
+            "upside_pct": -0.9322794381128777,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          },
+          "bear": {
+            "ticker": "TSLA",
+            "scenario": "bear",
+            "enterprise_value": 17681863532.53664,
+            "equity_value": 23230344532.53664,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 6.185317486173797,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.9835505620262414,
+            "upside_pct": -0.9835505620262414,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 40.79998807195574,
+          "base": 25.464284936795405,
+          "bear": 6.185317486173797
+        },
+        "margin_of_safety": {
+          "bull": -0.8914951617891987,
+          "base": -0.9322794381128777,
+          "bear": -0.9835505620262414
+        },
+        "reverse_dcf": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "current_price": 376.0199890136719,
+          "current_ev": 1402298248711.8052,
+          "current_ev_ebitda": 143.4576213515913,
+          "wacc": 0.1462893589900511,
+          "ebit_margin": 0.05003849114703618,
+          "implied_cagr_10y": 0.7993568072939765,
+          "implied_cagr_5y": 0.7993568072939765,
+          "historical_cagr_5y": 0.27999187195177533,
+          "sector_75th_cagr": 0.14,
+          "implied_tv_ebitda": 143.4576213515913,
+          "forward_ev_ebitda_justified": 4.470394480205753,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.7993568072939765,
+        "historical_cagr": 0.27999187195177533,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (79.9%) is 5.7x the sector 75th percentile (14.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 143.4576213515913,
+          "market_ev_ebit": 295.5317700130253,
+          "market_p_sales": 14.89267032292285,
+          "market_p_e": 372.22647567522546,
+          "market_peg": 13.294188616280127,
+          "justified_ev_ebitda": 2.1736846757801134,
+          "justified_ev_ebit": 4.477927862118147,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 141.2839366758112,
+          "ev_ebitda_premium_pct": 64.99743879599548,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 131.4576213515913,
+          "roic": 0.050092513230207074,
+          "wacc": 0.1462893589900511,
+          "roic_wacc_spread": -0.09619684575984402,
+          "value_creation": "destroying",
+          "cash_conversion_ratio": 0.26364482097186703,
+          "growth_rate": 0.27999187195177533,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 143.4576213515913,
+        "ev_ebitda_justified": 2.1736846757801134,
+        "ev_ebitda_premium_pct": 64.99743879599548,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": -0.09619684575984402,
+        "value_creation": "destroying",
+        "multiple_decomposition": {
+          "roic": 0.050092513230207074,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: TSLA ===\nPrice: $376.02  |  Bear=$6  Base=$25  Bull=$41\nMoS:  Bear=-98.4%  Base=-93.2%  Bull=-89.1%\nRDCF: implied=79.9% hist=28.0% [flag]\nEV/EBITDA: 143.5x market vs 2.2x justified (+6500%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 6.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers.",
+        "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+        "revenue_segments": [
+          {
+            "segment": "Automotive",
+            "pct_revenue": null,
+            "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+          },
+          {
+            "segment": "Energy Generation and Storage",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by AI infrastructure load growth)"
+          }
+        ],
+        "key_customers": [
+          "Direct-to-consumer retail vehicle buyers",
+          "Commercial, industrial, and utility energy storage customers",
+          "Other automotive manufacturers (purchasing regulatory credits)"
+        ],
+        "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+        "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA.",
+        "operating_leverage_score": 2.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.011,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include battery cell manufacturers (e.g., Panasonic, CATL) and advanced semiconductor fabricators (e.g., Samsung for AI inference chips). While some components are single-sourced, Tesla actively mitigates supplier leverage through deep vertical integration, including in-house 4680 battery cell production, custom silicon design, and a new in-house lithium refinery in Texas. If suppliers raise prices, Tesla has multiple sourcing options and internal production buffers to absorb or negotiate costs.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Internal Combustion Engine (ICE) vehicles from legacy automakers. 2. Competing Electric Vehicles (e.g., BYD, Ford, Hyundai). 3. Traditional ride-hailing or public transit. Realistic switching scenario: A consumer opts for a lower-priced competing EV or hybrid due to upfront cost sensitivity, sacrificing native integration with Tesla's Supercharger network and FSD software ecosystem.",
+        "pricing_power_assessment": "Tesla has historically demonstrated dynamic pricing power, adjusting prices in real-time based on supply chain costs and demand. However, recent intense competition and market saturation have forced Tesla to utilize price cuts to defend market share, indicating a shift from absolute price leadership to a more competitive pricing environment. High-margin software upgrades (FSD) and energy storage products provide alternative avenues for margin expansion.",
+        "pass_through_capability": false,
+        "analysis_summary": "Tesla maintains a strong strategic position driven by deep vertical integration, proprietary AI/software capabilities (FSD, Autobidder), and a dominant Supercharger network that acts as an industry standard (NACS). Supplier power is moderate but actively suppressed through in-house manufacturing initiatives like lithium refining and custom compute clusters (Cortex). Buyer power is increasing as the EV market matures and competition from legacy OEMs and Chinese manufacturers intensifies, which currently limits Tesla's ability to pass through significant price hikes without material churn. Substitution threat is moderate but offset by strong ecosystem lock-in. Overall, Tesla operates as a dominant platform rather than a commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.6105307360358145,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 8.1% to $3.4B, outpacing the 3-year revenue CAGR of -0.7%. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy, indicating strong future revenue visibility and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, there are no specific disclosures regarding patent cliffs, exclusivity dates, or contract renewals that pose a threat to revenue. Tesla's technological moat relies on continuous R&D, AI training, and trade secrets rather than expiring patents. Uncertainty is noted due to the absence of a dedicated Patents and Proprietary Rights section in the provided text, but estimated risk is minimal.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Tesla's revenue profile shows no signs of a cyclical peak (Z-Score: 1.61), indicating structural market dynamics rather than a commodity cycle. The quality of growth is strong, with deferred revenue growing 8.1% and a perfect D8 score of 1.00, eliminating pull-forward concerns. Additionally, there is no identifiable intangible risk or patent cliff, as the company relies on continuous innovation in AI, software, and manufacturing rather than expiring intellectual property."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $376.02 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 79.9%\n  \u2022 Company's robust historical CAGR: 28.0%\n  \u2022 Ratio (implied / historical): 2.9x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (79.9%) is 5.7x the sector 75th percentile (14.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 143.5x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 2.2x\n  \u2022 Premium to justified multiple: +6500%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $6/share vs current price $376.02\n  \u2022 Downside in bear case: -98.4%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation and Narrative Fallacy",
+          "bear_case_summary": "The current market price of $376.02 is entirely detached from mathematical reality, driven by extreme narrative premium rather than fundamentals. To justify this valuation, TSLA must achieve a 10-year revenue CAGR of 79.9%, a staggering 2.9x its historical growth rate of 28.0% and 5.7x the sector's 75th percentile of 14.0%. Furthermore, the market is assigning an EV/EBITDA multiple of 143.5x, which is a +6500% premium over the mathematically justified multiple of 2.2x based on ROIC and WACC. This implies the market is pricing in flawless execution of unproven, capital-intensive TAM expansions like a global robotaxi monopoly, while ignoring automotive margin compression. If TSLA fails to meet these impossible growth extrapolations, the multiple will violently compress. The bear case intrinsic value is $6 per share, representing a 98.4% downside risk as the stock reverts to its justified multiple.",
+          "sentiment_score": -10
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation and Narrative Fallacy] Sentiment: -10/10. Implied CAGR 79.9% vs 28.0% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:34:39.038789",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/TSLA_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:34:39.040279",
+    "agent": "Lead",
+    "trace_id": "trace_TSLA_1777429962",
+    "inputs": {
+      "ticker": "TSLA",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for TSLA.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 2.8/10 (Python). Pricing power: False. Concentration: False. Segments: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: False. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.61 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 14.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist Failed: EBIT margin out of bounds: -1.3141616317897395. Expected within [-0.50, 0.60].",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TSLA \u2014 Base IV=$25/share MoS=-93.2% ImpliedCAGR=79.9% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation and Narrative Fallacy] Sentiment: -10/10. Implied CAGR 79.9% vs 28.0% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 268335000.0,
+          "equity": 1412227248711.8052,
+          "wacc": 0.14680216736892224,
+          "cost_of_equity": 0.14682405674516047,
+          "beta": 1.877891924175148
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 26833500.0,
+            "cash": 255266000.0,
+            "liquidity_ratio": 0.10511975742950491,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 224045000.0,
+            "crash_fcf": -92654755.0,
+            "earnings_power_value": -555476924.9195199,
+            "floor_value": 224045000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.8,
+            "financial_leverage_score": 0.0007600334868053787,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.14680216736892224,
+            "2": 0.14680216736892224,
+            "3": 0.14680216736892224,
+            "4": 0.14680216736892224,
+            "5": 0.14680216736892224
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:34:00.604215",
+          "current_price": 376.0199890136719,
+          "shares_diluted": 3755723871.0,
+          "market_cap": 1412227248711.8052,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.877891924175148,
+          "wacc_base": 0.14680216736892224,
+          "revenue": 94827000000.0,
+          "ebitda": 9775000000.0,
+          "ebit": 4745000000.0,
+          "nopat": 3748550000.0,
+          "roic": 0.050092513230207074,
+          "fcf": 6220000000.0,
+          "net_debt": -9929000000.0,
+          "bull_ev": 147685008138.35944,
+          "bull_intrinsic_per_share": 41.966346183057674,
+          "bull_upside": -0.8883933104377283,
+          "bull_wacc": 0.14180216736892223,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 15.10844073026695,
+          "bull_justified_ev_ebitda": 2.550435926270464,
+          "bull_roic_wacc_spread": -0.09170965413871515,
+          "bull_tv_pct_of_ev": 0.5147944924340189,
+          "bull_implied_tv_ebitda": 2.5504359262704646,
+          "base_ev": 90088341795.06822,
+          "base_intrinsic_per_share": 26.630643047897337,
+          "base_upside": -0.9291775867614073,
+          "base_wacc": 0.14680216736892224,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.216198649111838,
+          "base_justified_ev_ebitda": 2.6908101665315107,
+          "base_roic_wacc_spread": -0.09670965413871516,
+          "base_tv_pct_of_ev": 0.5347587193529882,
+          "base_implied_tv_ebitda": 2.6908101665315103,
+          "bear_ev": 17681863532.53664,
+          "bear_intrinsic_per_share": 7.3516755972757295,
+          "bear_upside": -0.9804487106747709,
+          "bear_wacc": 0.16,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 1.8088862948886588,
+          "bear_justified_ev_ebitda": 2.3272978532954345,
+          "bear_roic_wacc_spread": -0.10990748676979292,
+          "bear_tv_pct_of_ev": 0.33351738876101844,
+          "bear_implied_tv_ebitda": 1.2759564976402888
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TSLA",
+            "scenario": "bull",
+            "enterprise_value": 147685008138.35944,
+            "equity_value": 153233489138.35944,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 40.79998807195574,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.8914951617891987,
+            "upside_pct": -0.8914951617891987,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          },
+          "base": {
+            "ticker": "TSLA",
+            "scenario": "base",
+            "enterprise_value": 90088341795.06822,
+            "equity_value": 95636822795.06822,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 25.464284936795405,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.9322794381128777,
+            "upside_pct": -0.9322794381128777,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          },
+          "bear": {
+            "ticker": "TSLA",
+            "scenario": "bear",
+            "enterprise_value": 17681863532.53664,
+            "equity_value": 23230344532.53664,
+            "shares_diluted": 3755723871.0,
+            "intrinsic_per_share": 6.185317486173797,
+            "current_price": 376.0199890136719,
+            "margin_of_safety": -0.9835505620262414,
+            "upside_pct": -0.9835505620262414,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -6584000000.0,
+            "bridge_cash_(net_of_haircuts)": 12132481000.0,
+            "cash_gross": 16513000000.0,
+            "cash_wc_haircut": 2844810000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1535709000.0,
+            "cash_net_accessible": 12132481000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 12132481000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 40.79998807195574,
+          "base": 25.464284936795405,
+          "bear": 6.185317486173797
+        },
+        "margin_of_safety": {
+          "bull": -0.8914951617891987,
+          "base": -0.9322794381128777,
+          "bear": -0.9835505620262414
+        },
+        "reverse_dcf": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "current_price": 376.0199890136719,
+          "current_ev": 1402298248711.8052,
+          "current_ev_ebitda": 143.4576213515913,
+          "wacc": 0.1462893589900511,
+          "ebit_margin": 0.05003849114703618,
+          "implied_cagr_10y": 0.7993568072939765,
+          "implied_cagr_5y": 0.7993568072939765,
+          "historical_cagr_5y": 0.27999187195177533,
+          "sector_75th_cagr": 0.14,
+          "implied_tv_ebitda": 143.4576213515913,
+          "forward_ev_ebitda_justified": 4.470394480205753,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.7993568072939765,
+        "historical_cagr": 0.27999187195177533,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (79.9%) is 5.7x the sector 75th percentile (14.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TSLA",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 143.4576213515913,
+          "market_ev_ebit": 295.5317700130253,
+          "market_p_sales": 14.89267032292285,
+          "market_p_e": 372.22647567522546,
+          "market_peg": 13.294188616280127,
+          "justified_ev_ebitda": 2.1736846757801134,
+          "justified_ev_ebit": 4.477927862118147,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 141.2839366758112,
+          "ev_ebitda_premium_pct": 64.99743879599548,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 131.4576213515913,
+          "roic": 0.050092513230207074,
+          "wacc": 0.1462893589900511,
+          "roic_wacc_spread": -0.09619684575984402,
+          "value_creation": "destroying",
+          "cash_conversion_ratio": 0.26364482097186703,
+          "growth_rate": 0.27999187195177533,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 143.4576213515913,
+        "ev_ebitda_justified": 2.1736846757801134,
+        "ev_ebitda_premium_pct": 64.99743879599548,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": -0.09619684575984402,
+        "value_creation": "destroying",
+        "multiple_decomposition": {
+          "roic": 0.050092513230207074,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: TSLA ===\nPrice: $376.02  |  Bear=$6  Base=$25  Bull=$41\nMoS:  Bear=-98.4%  Base=-93.2%  Bull=-89.1%\nRDCF: implied=79.9% hist=28.0% [flag]\nEV/EBITDA: 143.5x market vs 2.2x justified (+6500%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $376.02 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 79.9%\n  \u2022 Company's robust historical CAGR: 28.0%\n  \u2022 Ratio (implied / historical): 2.9x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (79.9%) is 5.7x the sector 75th percentile (14.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 143.5x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 2.2x\n  \u2022 Premium to justified multiple: +6500%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $6/share vs current price $376.02\n  \u2022 Downside in bear case: -98.4%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation and Narrative Fallacy",
+          "bear_case_summary": "The current market price of $376.02 is entirely detached from mathematical reality, driven by extreme narrative premium rather than fundamentals. To justify this valuation, TSLA must achieve a 10-year revenue CAGR of 79.9%, a staggering 2.9x its historical growth rate of 28.0% and 5.7x the sector's 75th percentile of 14.0%. Furthermore, the market is assigning an EV/EBITDA multiple of 143.5x, which is a +6500% premium over the mathematically justified multiple of 2.2x based on ROIC and WACC. This implies the market is pricing in flawless execution of unproven, capital-intensive TAM expansions like a global robotaxi monopoly, while ignoring automotive margin compression. If TSLA fails to meet these impossible growth extrapolations, the multiple will violently compress. The bear case intrinsic value is $6 per share, representing a 98.4% downside risk as the stock reverts to its justified multiple.",
+          "sentiment_score": -10
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 6.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 8.0
+        },
+        "moat_evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers.",
+        "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+        "revenue_segments": [
+          {
+            "segment": "Automotive",
+            "pct_revenue": null,
+            "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+          },
+          {
+            "segment": "Energy Generation and Storage",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by AI infrastructure load growth)"
+          }
+        ],
+        "key_customers": [
+          "Direct-to-consumer retail vehicle buyers",
+          "Commercial, industrial, and utility energy storage customers",
+          "Other automotive manufacturers (purchasing regulatory credits)"
+        ],
+        "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+        "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA.",
+        "operating_leverage_score": 2.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.011,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include battery cell manufacturers (e.g., Panasonic, CATL) and advanced semiconductor fabricators (e.g., Samsung for AI inference chips). While some components are single-sourced, Tesla actively mitigates supplier leverage through deep vertical integration, including in-house 4680 battery cell production, custom silicon design, and a new in-house lithium refinery in Texas. If suppliers raise prices, Tesla has multiple sourcing options and internal production buffers to absorb or negotiate costs.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Internal Combustion Engine (ICE) vehicles from legacy automakers. 2. Competing Electric Vehicles (e.g., BYD, Ford, Hyundai). 3. Traditional ride-hailing or public transit. Realistic switching scenario: A consumer opts for a lower-priced competing EV or hybrid due to upfront cost sensitivity, sacrificing native integration with Tesla's Supercharger network and FSD software ecosystem.",
+        "pricing_power_assessment": "Tesla has historically demonstrated dynamic pricing power, adjusting prices in real-time based on supply chain costs and demand. However, recent intense competition and market saturation have forced Tesla to utilize price cuts to defend market share, indicating a shift from absolute price leadership to a more competitive pricing environment. High-margin software upgrades (FSD) and energy storage products provide alternative avenues for margin expansion.",
+        "pass_through_capability": false,
+        "analysis_summary": "Tesla maintains a strong strategic position driven by deep vertical integration, proprietary AI/software capabilities (FSD, Autobidder), and a dominant Supercharger network that acts as an industry standard (NACS). Supplier power is moderate but actively suppressed through in-house manufacturing initiatives like lithium refining and custom compute clusters (Cortex). Buyer power is increasing as the EV market matures and competition from legacy OEMs and Chinese manufacturers intensifies, which currently limits Tesla's ability to pass through significant price hikes without material churn. Substitution threat is moderate but offset by strong ecosystem lock-in. Overall, Tesla operates as a dominant platform rather than a commodity price taker."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.6105307360358145,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 8.1% to $3.4B, outpacing the 3-year revenue CAGR of -0.7%. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy, indicating strong future revenue visibility and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, there are no specific disclosures regarding patent cliffs, exclusivity dates, or contract renewals that pose a threat to revenue. Tesla's technological moat relies on continuous R&D, AI training, and trade secrets rather than expiring patents. Uncertainty is noted due to the absence of a dedicated Patents and Proprietary Rights section in the provided text, but estimated risk is minimal.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Tesla's revenue profile shows no signs of a cyclical peak (Z-Score: 1.61), indicating structural market dynamics rather than a commodity cycle. The quality of growth is strong, with deferred revenue growing 8.1% and a perfect D8 score of 1.00, eliminating pull-forward concerns. Additionally, there is no identifiable intangible risk or patent cliff, as the company relies on continuous innovation in AI, software, and manufacturing rather than expiring intellectual property."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| x |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| o |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the transition period from _________ to _________</div>\n\n#### Commission File Number: 001-34756\n\n#### Tesla, Inc.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Texas                           |     | 91-2197729         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n| 1 Tesla Road                             \n Austin,Texas                             |     |     78725 |\n| (Address of principal executive offices) |     | -Zip Code |\n\n<div align='center'>( 512) 516-8177\n\n(Registrant\u2019s ...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "TSLA",
+        "generated_at": "2026-04-28T22:34:39.037720",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 2.8,
+            "cost_structure": "Tesla's low operating leverage score (2.8/10) reflects a highly capital-intensive cost structure dominated by massive fixed costs, including depreciation of global manufacturing facilities (Gigafactories), heavy R&D investments in AI compute (Cortex clusters), and a large global headcount of 134,785 employees. Variable costs are primarily tied to raw materials (lithium, nickel, aluminum, steel) and direct manufacturing labor. Because of this heavy fixed infrastructure, revenue growth (which has stalled at a -0.7% 3Y CAGR) struggles to flow efficiently to EBIT, especially as the company continues to invest heavily in future product lines like Robotaxi and Optimus.",
+            "business_description": "Tesla designs, develops, manufactures, and sells high-performance fully electric vehicles and energy generation and storage systems. The company sells directly to consumers and commercial customers, generating revenue through vehicle sales, leasing, regulatory credits, energy storage products, and software/services like FSD and Supercharging.",
+            "revenue_segments": [
+              {
+                "segment": "Automotive",
+                "pct_revenue": null,
+                "growth_trend": "Stagnant/Declining (-0.7% 3Y CAGR)"
+              },
+              {
+                "segment": "Energy Generation and Storage",
+                "pct_revenue": null,
+                "growth_trend": "Growing (driven by AI infrastructure load growth)"
+              }
+            ],
+            "key_customers": [
+              "Direct-to-consumer retail vehicle buyers",
+              "Commercial, industrial, and utility energy storage customers",
+              "Other automotive manufacturers (purchasing regulatory credits)"
+            ],
+            "competitive_landscape": "Tesla competes with traditional automotive OEMs and new EV manufacturers in the vehicle space, and traditional utilities and solar companies in the energy sector. It differentiates through vertical integration, a direct-to-consumer sales model, proprietary AI/FSD software, and its expansive Supercharger network.",
+            "regulatory_risk": "Tesla faces significant regulatory risks including evolving autonomous vehicle regulations, state-level direct-sales bans, and the repeal of consumer tax credits under the newly enacted OBBBA."
+          },
+          "value_chain": {
+            "power_ratio": 0.011,
+            "upstream_leak": false,
+            "strategic_leverage": 8.0,
+            "bottleneck_analysis": "Critical suppliers include battery cell manufacturers (e.g., Panasonic, CATL) and advanced semiconductor fabricators (e.g., Samsung for AI inference chips). While some components are single-sourced, Tesla actively mitigates supplier leverage through deep vertical integration, including in-house 4680 battery cell production, custom silicon design, and a new in-house lithium refinery in Texas. If suppliers raise prices, Tesla has multiple sourcing options and internal production buffers to absorb or negotiate costs.",
+            "substitution_risk_score": 4.0,
+            "top_substitutes": "1. Internal Combustion Engine (ICE) vehicles from legacy automakers. 2. Competing Electric Vehicles (e.g., BYD, Ford, Hyundai). 3. Traditional ride-hailing or public transit. Realistic switching scenario: A consumer opts for a lower-priced competing EV or hybrid due to upfront cost sensitivity, sacrificing native integration with Tesla's Supercharger network and FSD software ecosystem.",
+            "pricing_power_assessment": "Tesla has historically demonstrated dynamic pricing power, adjusting prices in real-time based on supply chain costs and demand. However, recent intense competition and market saturation have forced Tesla to utilize price cuts to defend market share, indicating a shift from absolute price leadership to a more competitive pricing environment. High-margin software upgrades (FSD) and energy storage products provide alternative avenues for margin expansion.",
+            "pass_through_capability": false,
+            "analysis_summary": "Tesla maintains a strong strategic position driven by deep vertical integration, proprietary AI/software capabilities (FSD, Autobidder), and a dominant Supercharger network that acts as an industry standard (NACS). Supplier power is moderate but actively suppressed through in-house manufacturing initiatives like lithium refining and custom compute clusters (Cortex). Buyer power is increasing as the EV market matures and competition from legacy OEMs and Chinese manufacturers intensifies, which currently limits Tesla's ability to pass through significant price hikes without material churn. Substitution threat is moderate but offset by strong ecosystem lock-in. Overall, Tesla operates as a dominant platform rather than a commodity price taker."
+          },
+          "moat": {
+            "score": 7.5,
+            "switching_costs": 6.0,
+            "network_effects": 8.0,
+            "cost_advantage": 8.0,
+            "intangibles": 8.0,
+            "evidence": "Evidence of a moat includes the proprietary Supercharger network which has forced competitor adoption (NACS standard), massive fleet data collection creating network effects for FSD AI training, and significant cost advantages from vertical integration (e.g., in-house lithium refinery, direct sales model). The company holds numerous patents but has pledged not to initiate lawsuits against parties acting in good faith.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The 10-K provides no evidence of recent price hikes without churn; rather, it emphasizes efforts to 'lower the cost of ownership' and 'increase the affordability of our vehicles' in a highly competitive market, indicating a lack of pricing power."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.6105307360358145,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue grew by 8.1% to $3.4B, outpacing the 3-year revenue CAGR of -0.7%. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy, indicating strong future revenue visibility and no pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "Based on the 10-K filing, there are no specific disclosures regarding patent cliffs, exclusivity dates, or contract renewals that pose a threat to revenue. Tesla's technological moat relies on continuous R&D, AI training, and trade secrets rather than expiring patents. Uncertainty is noted due to the absence of a dedicated Patents and Proprietary Rights section in the provided text, but estimated risk is minimal.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Tesla's revenue profile shows no signs of a cyclical peak (Z-Score: 1.61), indicating structural market dynamics rather than a commodity cycle. The quality of growth is strong, with deferred revenue growing 8.1% and a perfect D8 score of 1.00, eliminating pull-forward concerns. Additionally, there is no identifiable intangible risk or patent cliff, as the company relies on continuous innovation in AI, software, and manufacturing rather than expiring intellectual property."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 94.827,
+            "ebitda_bn": 9.775,
+            "fcf_bn": 6.22,
+            "nopat_bn": 3.74855,
+            "invested_capital_bn": 74.83254,
+            "net_debt_bn": -9.929,
+            "sbc_bn": 2.825,
+            "fiscal_year": 2025,
+            "data_quality": 0.97
+          },
+          "ratios": {
+            "gross_margin_pct": 18.026511436616154,
+            "ebit_margin_pct": 5.003849114703618,
+            "ebitda_margin_pct": 10.308245541881531,
+            "fcf_margin_pct": 6.559313275754795,
+            "roic": 0.050092513230207074,
+            "roe": 0.04619111971462313,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": -5.945081311650227,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 0.9,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 268335000.0,
+            "equity": 1412227248711.8052,
+            "wacc": 0.14680216736892224,
+            "cost_of_equity": 0.14682405674516047,
+            "beta": 1.877891924175148
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 26833500.0,
+              "cash": 255266000.0,
+              "liquidity_ratio": 0.10511975742950491,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 224045000.0,
+              "crash_fcf": -92654755.0,
+              "earnings_power_value": -555476924.9195199,
+              "floor_value": 224045000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 2.8,
+              "financial_leverage_score": 0.0007600334868053787,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.14680216736892224,
+              "2": 0.14680216736892224,
+              "3": 0.14680216736892224,
+              "4": 0.14680216736892224,
+              "5": 0.14680216736892224
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier is disclosed as exceeding 10% of revenue. The company notes it sources parts from 'thousands of suppliers globally,' though it acknowledges some components are sourced from single suppliers."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": null,
+            "upside_percent": null,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 6.185317486173797,
+                "margin_of_safety": -0.9835505620262414,
+                "ev": 17681863532.53664
+              },
+              "base": {
+                "intrinsic_per_share": 25.464284936795405,
+                "margin_of_safety": -0.9322794381128777,
+                "ev": 90088341795.06822
+              },
+              "bull": {
+                "intrinsic_per_share": 40.79998807195574,
+                "margin_of_safety": -0.8914951617891987,
+                "ev": 147685008138.35944
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.7993568072939765,
+              "historical_cagr": 0.27999187195177533,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (79.9%) is 5.7x the sector 75th percentile (14.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 143.4576213515913,
+              "justified_ev_ebitda": 2.1736846757801134,
+              "premium_pct": 64.99743879599548,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": -0.09619684575984402,
+              "value_creation": "destroying",
+              "roic": 0.050092513230207074,
+              "wacc": 0.14680216736892224
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": false,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 8.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.14680216736892224,
+            "beta": 1.877891924175148,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation and Narrative Fallacy",
+            "bear_case_summary": "The current market price of $376.02 is entirely detached from mathematical reality, driven by extreme narrative premium rather than fundamentals. To justify this valuation, TSLA must achieve a 10-year revenue CAGR of 79.9%, a staggering 2.9x its historical growth rate of 28.0% and 5.7x the sector's 75th percentile of 14.0%. Furthermore, the market is assigning an EV/EBITDA multiple of 143.5x, which is a +6500% premium over the mathematically justified multiple of 2.2x based on ROIC and WACC. This implies the market is pricing in flawless execution of unproven, capital-intensive TAM expansions like a global robotaxi monopoly, while ignoring automotive margin compression. If TSLA fails to meet these impossible growth extrapolations, the multiple will violently compress. The bear case intrinsic value is $6 per share, representing a 98.4% downside risk as the stock reverts to its justified multiple.",
+            "sentiment_score": -10,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $376.02 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 79.9%\n  \u2022 Company's robust historical CAGR: 28.0%\n  \u2022 Ratio (implied / historical): 2.9x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (79.9%) is 5.7x the sector 75th percentile (14.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 143.5x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 2.2x\n  \u2022 Premium to justified multiple: +6500%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $6/share vs current price $376.02\n  \u2022 Downside in bear case: -98.4%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": -2,
+            "margin_of_safety": -0.9322794381128777,
+            "narrative": "The implied 10-year revenue CAGR of 79.9% is mathematically detached from reality, representing a 2.9x acceleration over its historical 28.0% rate and ignoring recent top-line stagnation (3Y CAGR of -0.7%). While Tesla possesses a solid 7.5/10 moat driven by its Supercharger network, vertical integration, and AI data collection, scaling at nearly 80% annually from its current massive revenue base defies the laws of large numbers. The heavy capital intensity (low operating leverage score of 2.8/10) and lack of pricing power further constrain the ability to sustain hyper-growth without severe margin degradation. The market is pricing in immediate, flawless monopolization of unproven TAMs like Robotaxi and Optimus, which carries extreme execution risk.\n\nThe Contrarian is entirely correct that the current $376.02 price is driven by narrative fallacy and extreme growth extrapolation. The +6500% EV/EBITDA premium and negative ROIC-WACC spread (-9.6%) mathematically prove that the stock is pr...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u274c FAIL: Implied CAGR (79.9%) is 2.9x historical (28.0%). Requires TAM justification.",
+              "\u274c FAIL: EV/EBITDA at +6500% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "TSLA",
+              "p1_moat": 4,
+              "p2_health": 3,
+              "p3_tailwind": 3,
+              "p4_mos": 1,
+              "p5_leadership": 2,
+              "raw_total": 13,
+              "capped_total": 13,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "pass",
+              "position_size_pct": "Below minimum analytical threshold (capped at 75% due to reflexivity flag)",
+              "conviction_score": -2,
+              "reflexivity_flags": [
+                "High-SBC company (45.4% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 8.0/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread -9.6pp \u2014 value destroying",
+                "FCF margin 6.6% \u2014 adequate FCF",
+                "Net cash position (-1.0\u00d7 EBITDA) \u2014 fortress balance sheet (capped: declining business \u2014 cash runway finite)"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 28.0% \u2014 strong growth for declining stage",
+                "Market implied CAGR 2.9\u00d7 historical \u2014 tailwind fully priced, no entry benefit"
+              ],
+              "p4_reasons": [
+                "Base MoS -93.0% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 45.4% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 7.5/10",
+                "Upstream value leak detected \u2014 suppliers capture excess margin"
+              ],
+              "lifecycle_stage": "declining",
+              "lifecycle_label": "DECLINING"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for TSLA. Conviction: -2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

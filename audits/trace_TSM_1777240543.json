@@ -1,0 +1,3110 @@
+[
+  {
+    "timestamp": "2026-04-26T17:55:45.744025",
+    "agent": "Librarian",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [],
+      "financial_data": {},
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "raw_10k_text": "Data unavailable.",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:00.049367",
+    "agent": "Forensic",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:15.822338",
+    "agent": "ValueChain",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TSM's primary upstream bottleneck is ASML, the sole provider of Extreme Ultraviolet (EUV) lithography machines required for advanced node manufacturing. While ASML holds significant monopolistic power, TSM's own gross margins (~53-55%) are comparable to or slightly higher than ASML's (~51%), resulting in a balanced power dynamic rather than a severe upstream value leak. Other critical suppliers include Applied Materials, Lam Research, and specialized chemical providers.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), SMIC (for legacy nodes)",
+        "pricing_power_assessment": "TSM exhibits exceptional price leadership. Due to its near-monopoly at the leading edge (3nm, 5nm) and high customer switching costs (design lock-in), TSM has successfully implemented broad-based wafer price hikes (5-10%) in recent years without losing major clients like Apple, Nvidia, or AMD.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite heavy reliance on a single critical supplier (ASML) for EUV technology, TSM captures immense value, boasting gross margins over 50%. High switching costs, massive capital barriers to entry, and unparalleled execution give TSM extreme pricing power over its buyers (fabless chipmakers). Substitution risk is minimal at the cutting edge, justifying a premium terminal growth rate."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:27.196474",
+    "agent": "StrategicContext",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TSM's primary upstream bottleneck is ASML, the sole provider of Extreme Ultraviolet (EUV) lithography machines required for advanced node manufacturing. While ASML holds significant monopolistic power, TSM's own gross margins (~53-55%) are comparable to or slightly higher than ASML's (~51%), resulting in a balanced power dynamic rather than a severe upstream value leak. Other critical suppliers include Applied Materials, Lam Research, and specialized chemical providers.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), SMIC (for legacy nodes)",
+        "pricing_power_assessment": "TSM exhibits exceptional price leadership. Due to its near-monopoly at the leading edge (3nm, 5nm) and high customer switching costs (design lock-in), TSM has successfully implemented broad-based wafer price hikes (5-10%) in recent years without losing major clients like Apple, Nvidia, or AMD.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite heavy reliance on a single critical supplier (ASML) for EUV technology, TSM captures immense value, boasting gross margins over 50%. High switching costs, massive capital barriers to entry, and unparalleled execution give TSM extreme pricing power over its buyers (fabless chipmakers). Substitution risk is minimal at the cutting edge, justifying a premium terminal growth rate."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error, but TSM deferred revenue typically consists of customer capacity prepayments which align with long-term growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified. TSM intellectual property relies on process technology, scale, and trade secrets rather than single expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM is not at a cyclical peak (Z-Score: 1.57). Intangible decay risk is minimal as the company competitive advantage stems from process technology leadership rather than vulnerable patents. Quality of growth remains stable with no terminal haircut recommended."
+      },
+      "messages": [
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:28.040442",
+    "agent": "Strategist",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TSM's primary upstream bottleneck is ASML, the sole provider of Extreme Ultraviolet (EUV) lithography machines required for advanced node manufacturing. While ASML holds significant monopolistic power, TSM's own gross margins (~53-55%) are comparable to or slightly higher than ASML's (~51%), resulting in a balanced power dynamic rather than a severe upstream value leak. Other critical suppliers include Applied Materials, Lam Research, and specialized chemical providers.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), SMIC (for legacy nodes)",
+        "pricing_power_assessment": "TSM exhibits exceptional price leadership. Due to its near-monopoly at the leading edge (3nm, 5nm) and high customer switching costs (design lock-in), TSM has successfully implemented broad-based wafer price hikes (5-10%) in recent years without losing major clients like Apple, Nvidia, or AMD.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite heavy reliance on a single critical supplier (ASML) for EUV technology, TSM captures immense value, boasting gross margins over 50%. High switching costs, massive capital barriers to entry, and unparalleled execution give TSM extreme pricing power over its buyers (fabless chipmakers). Substitution risk is minimal at the cutting edge, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error, but TSM deferred revenue typically consists of customer capacity prepayments which align with long-term growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified. TSM intellectual property relies on process technology, scale, and trade secrets rather than single expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM is not at a cyclical peak (Z-Score: 1.57). Intangible decay risk is minimal as the company competitive advantage stems from process technology leadership rather than vulnerable patents. Quality of growth remains stable with no terminal haircut recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 2087318499682.6172,
+          "wacc": 0.11114786638124641,
+          "cost_of_equity": 0.11114786638124641,
+          "beta": 1.2372339446082
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 49233894528.00001,
+            "crash_fcf": 5019672336.640001,
+            "earnings_power_value": 38274906600.82743,
+            "floor_value": 49233894528.00001,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 9.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11114786638124641,
+            "2": 0.11114786638124641,
+            "3": 0.11114786638124641,
+            "4": 0.11114786638124641,
+            "5": 0.11114786638124641
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 11.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:28.325318",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "base": {
+        "net_sales": 32216659712.000004,
+        "cogs": 15907029952.000002,
+        "interest_expense": 0.0,
+        "net_debt": 0.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.0,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.33821591590829664,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.01,
+        "cogs_percent_sales": 0.6055447291679796,
+        "calibration_adjustment": 0.11179304621262404
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-26T17:56:28.325383",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": -23387218248.244095,
+      "equity_value": -23387218248.244095,
+      "terminal_value": -27302094341.283367,
+      "discounted_terminal_value": -17744488024.078506,
+      "sum_pv_cash_flows": -5642730224.165587,
+      "audit_metrics": {
+        "roic_path": [
+          0.4896880433614654,
+          0.3418202585025122,
+          0.2621845974582657,
+          0.21088723919750482,
+          0.1757886334641714
+        ],
+        "invested_capital_path": [
+          22551661798.4,
+          34891850834.43201,
+          48219254993.34657,
+          62346303401.79601,
+          77038433746.58344,
+          92171328001.71448
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 35438325683.200005,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.39445527083202037,
+          "ebit": 13978834355.2,
+          "nopat": 11043279140.608002,
+          "depreciation": 0.0,
+          "capex": 11985805779.200003,
+          "change_in_wc": 354383256.8320001,
+          "fcff": -1296909895.424001,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": -1189825592.1321108
+        },
+        {
+          "year": 2.0,
+          "revenue": 38273391737.85601,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.39445527083202037,
+          "ebit": 15097141103.616003,
+          "nopat": 11926741471.856644,
+          "depreciation": 0.0,
+          "capex": 12944670241.536003,
+          "change_in_wc": 382733917.3785601,
+          "fcff": -1400662687.0579195,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": -1178909761.0116315
+        },
+        {
+          "year": 3.0,
+          "revenue": 40569795242.12737,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.39445527083202037,
+          "ebit": 16002969569.832964,
+          "nopat": 12642345960.168041,
+          "depreciation": 0.0,
+          "capex": 13721350456.028164,
+          "change_in_wc": 405697952.4212737,
+          "fcff": -1484702448.2813964,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": -1146462703.3691108
+        },
+        {
+          "year": 4.0,
+          "revenue": 42192587051.81247,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.39445527083202037,
+          "ebit": 16643088352.626284,
+          "nopat": 13148039798.574764,
+          "depreciation": 0.0,
+          "capex": 14270204474.26929,
+          "change_in_wc": 421925870.5181247,
+          "fcff": -1544090546.2126513,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": -1093872671.1044717
+        },
+        {
+          "year": 5.0,
+          "revenue": 43458364663.366844,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.39445527083202037,
+          "ebit": 17142381003.205072,
+          "nopat": 13542480992.532007,
+          "depreciation": 0.0,
+          "capex": 14698310608.49737,
+          "change_in_wc": 434583646.6336684,
+          "fcff": -1590413262.599031,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": -1033659496.5482624
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 32216659712.000004,
+        "base_ebit": null,
+        "base_ebit_margin": 0.39445527083202037,
+        "terminal_value_pct_of_ev": 0.7587258918837325,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": -2.0160334252150025,
+        "reinvestment_rate_terminal_year": 1.1174388403037865,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.0,
+          "capex_percent_sales": 0.33821591590829664,
+          "wc_change_percent_sales": 0.01
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:28.325778",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 2087318499682.6172,
+          "wacc": 0.11114786638124641,
+          "cost_of_equity": 0.11114786638124641,
+          "beta": 1.2372339446082
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 49233894528.00001,
+            "crash_fcf": 5019672336.640001,
+            "earnings_power_value": 38274906600.82743,
+            "floor_value": 49233894528.00001,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 9.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11114786638124641,
+            "2": 0.11114786638124641,
+            "3": 0.11114786638124641,
+            "4": 0.11114786638124641,
+            "5": 0.11114786638124641
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TSM's primary upstream bottleneck is ASML, the sole provider of Extreme Ultraviolet (EUV) lithography machines required for advanced node manufacturing. While ASML holds significant monopolistic power, TSM's own gross margins (~53-55%) are comparable to or slightly higher than ASML's (~51%), resulting in a balanced power dynamic rather than a severe upstream value leak. Other critical suppliers include Applied Materials, Lam Research, and specialized chemical providers.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), SMIC (for legacy nodes)",
+        "pricing_power_assessment": "TSM exhibits exceptional price leadership. Due to its near-monopoly at the leading edge (3nm, 5nm) and high customer switching costs (design lock-in), TSM has successfully implemented broad-based wafer price hikes (5-10%) in recent years without losing major clients like Apple, Nvidia, or AMD.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite heavy reliance on a single critical supplier (ASML) for EUV technology, TSM captures immense value, boasting gross margins over 50%. High switching costs, massive capital barriers to entry, and unparalleled execution give TSM extreme pricing power over its buyers (fabless chipmakers). Substitution risk is minimal at the cutting edge, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error, but TSM deferred revenue typically consists of customer capacity prepayments which align with long-term growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified. TSM intellectual property relies on process technology, scale, and trade secrets rather than single expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM is not at a cyclical peak (Z-Score: 1.57). Intangible decay risk is minimal as the company competitive advantage stems from process technology leadership rather than vulnerable patents. Quality of growth remains stable with no terminal haircut recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "terminal_value": -27302094341.283367,
+          "discounted_terminal_value": -17744488024.078506,
+          "sum_pv_cash_flows": -5642730224.165587,
+          "audit_metrics": {
+            "roic_path": [
+              0.4896880433614654,
+              0.3418202585025122,
+              0.2621845974582657,
+              0.21088723919750482,
+              0.1757886334641714
+            ],
+            "invested_capital_path": [
+              22551661798.4,
+              34891850834.43201,
+              48219254993.34657,
+              62346303401.79601,
+              77038433746.58344,
+              92171328001.71448
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 32216659712.000004,
+            "base_ebit": null,
+            "base_ebit_margin": 0.39445527083202037,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -2.0160334252150025,
+            "reinvestment_rate_terminal_year": 1.1174388403037865,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.33821591590829664,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -4.509335528499166,
+          "upside_percent": -1.01120443156711,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.33821591590829664,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.33821591590829664,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6055447291679796,
+          "calibration_adjustment": 0.11179304621262404
+        },
+        "base_financials": {
+          "net_sales": 32216659712.000004,
+          "cogs": 15907029952.000002,
+          "interest_expense": 0.0,
+          "net_debt": 0.0
+        },
+        "calculated_upside": -1.01120443156711
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-23,387,218,248",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:29.702894",
+    "agent": "ValuationNode",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-23,387,218,248",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "terminal_value": -27302094341.283367,
+          "discounted_terminal_value": -17744488024.078506,
+          "sum_pv_cash_flows": -5642730224.165587,
+          "audit_metrics": {
+            "roic_path": [
+              0.4896880433614654,
+              0.3418202585025122,
+              0.2621845974582657,
+              0.21088723919750482,
+              0.1757886334641714
+            ],
+            "invested_capital_path": [
+              22551661798.4,
+              34891850834.43201,
+              48219254993.34657,
+              62346303401.79601,
+              77038433746.58344,
+              92171328001.71448
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 32216659712.000004,
+            "base_ebit": null,
+            "base_ebit_margin": 0.39445527083202037,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -2.0160334252150025,
+            "reinvestment_rate_terminal_year": 1.1174388403037865,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.33821591590829664,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -4.509335528499166,
+          "upside_percent": -1.01120443156711,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.33821591590829664,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.33821591590829664,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6055447291679796,
+          "calibration_adjustment": 0.11179304621262404
+        },
+        "base_financials": {
+          "net_sales": 32216659712.000004,
+          "cogs": 15907029952.000002,
+          "interest_expense": 0.0,
+          "net_debt": 0.0
+        },
+        "calculated_upside": -1.01120443156711
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 2087318499682.6172,
+          "wacc": 0.11114786638124641,
+          "cost_of_equity": 0.11114786638124641,
+          "beta": 1.2372339446082
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 49233894528.00001,
+            "crash_fcf": 5019672336.640001,
+            "earnings_power_value": 38274906600.82743,
+            "floor_value": 49233894528.00001,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 9.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11114786638124641,
+            "2": 0.11114786638124641,
+            "3": 0.11114786638124641,
+            "4": 0.11114786638124641,
+            "5": 0.11114786638124641
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TSM's primary upstream bottleneck is ASML, the sole provider of Extreme Ultraviolet (EUV) lithography machines required for advanced node manufacturing. While ASML holds significant monopolistic power, TSM's own gross margins (~53-55%) are comparable to or slightly higher than ASML's (~51%), resulting in a balanced power dynamic rather than a severe upstream value leak. Other critical suppliers include Applied Materials, Lam Research, and specialized chemical providers.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), SMIC (for legacy nodes)",
+        "pricing_power_assessment": "TSM exhibits exceptional price leadership. Due to its near-monopoly at the leading edge (3nm, 5nm) and high customer switching costs (design lock-in), TSM has successfully implemented broad-based wafer price hikes (5-10%) in recent years without losing major clients like Apple, Nvidia, or AMD.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite heavy reliance on a single critical supplier (ASML) for EUV technology, TSM captures immense value, boasting gross margins over 50%. High switching costs, massive capital barriers to entry, and unparalleled execution give TSM extreme pricing power over its buyers (fabless chipmakers). Substitution risk is minimal at the cutting edge, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error, but TSM deferred revenue typically consists of customer capacity prepayments which align with long-term growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified. TSM intellectual property relies on process technology, scale, and trade secrets rather than single expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM is not at a cyclical peak (Z-Score: 1.57). Intangible decay risk is minimal as the company competitive advantage stems from process technology leadership rather than vulnerable patents. Quality of growth remains stable with no terminal haircut recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "run_date": "2026-04-26T21:56:28.326322",
+          "current_price": 402.4599914550781,
+          "shares_diluted": 5186400000.0,
+          "market_cap": 2087318499682.6172,
+          "risk_free_rate": 0.04309999942779541,
+          "beta": 1.2372339446082,
+          "wacc_base": 0.11114786638124641,
+          "revenue": 90273457163.0,
+          "ebitda": 41234833070.0,
+          "ebit": 41234833070.0,
+          "nopat": 32575518125.300003,
+          "roic": 0.2440653381290405,
+          "fcf": 27140621014.0,
+          "net_debt": 0.0,
+          "bull_ev": 1228100086083.1538,
+          "bull_intrinsic_per_share": 236.79239666881725,
+          "bull_upside": -0.4116374255917868,
+          "bull_wacc": 0.1061478663812464,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 29.783074033507997,
+          "bull_justified_ev_ebitda": 8.997473491108726,
+          "bull_roic_wacc_spread": 0.1379174717477941,
+          "bull_tv_pct_of_ev": 0.6050898987217213,
+          "bull_implied_tv_ebitda": 8.997473491108726,
+          "base_ev": 785824895942.1014,
+          "base_intrinsic_per_share": 151.5164460786097,
+          "base_upside": -0.623524202913169,
+          "base_wacc": 0.11114786638124641,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 19.057307558589844,
+          "base_justified_ev_ebitda": 7.746414331440637,
+          "base_roic_wacc_spread": 0.13291747174779409,
+          "base_tv_pct_of_ev": 0.5293590571631382,
+          "base_implied_tv_ebitda": 7.746414331440637,
+          "bear_ev": 319269513097.8087,
+          "bear_intrinsic_per_share": 61.558983706966046,
+          "bear_upside": -0.8470432216519163,
+          "bear_wacc": 0.12614786638124642,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 7.74271384961881,
+          "bear_justified_ev_ebitda": 5.930612580792808,
+          "bear_roic_wacc_spread": 0.11791747174779407,
+          "bear_tv_pct_of_ev": 0.36905394134741343,
+          "bear_implied_tv_ebitda": 5.930612580792808
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TSM",
+            "scenario": "bull",
+            "enterprise_value": 1228100086083.1538,
+            "equity_value": 1228100086083.1538,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 236.79239666881725,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.4116374255917868,
+            "upside_pct": -0.4116374255917868,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "TSM",
+            "scenario": "base",
+            "enterprise_value": 785824895942.1014,
+            "equity_value": 785824895942.1014,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 151.5164460786097,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.623524202913169,
+            "upside_pct": -0.623524202913169,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "TSM",
+            "scenario": "bear",
+            "enterprise_value": 319269513097.8087,
+            "equity_value": 319269513097.8087,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 61.558983706966046,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.8470432216519163,
+            "upside_pct": -0.8470432216519163,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 236.79239666881725,
+          "base": 151.5164460786097,
+          "bear": 61.558983706966046
+        },
+        "margin_of_safety": {
+          "bull": -0.4116374255917868,
+          "base": -0.623524202913169,
+          "bear": -0.8470432216519163
+        },
+        "reverse_dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "current_price": 402.4599914550781,
+          "current_ev": 2087318499682.6172,
+          "current_ev_ebitda": 50.62027281980742,
+          "wacc": 0.11114786638124641,
+          "ebit_margin": 0.45677693494717236,
+          "implied_cagr_10y": 0.31017273165004805,
+          "implied_cagr_5y": 0.31017273165004805,
+          "historical_cagr_5y": 0.14621198688161452,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 50.62027281980742,
+          "forward_ev_ebitda_justified": 8.194839379739632,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.31017273165004805,
+        "historical_cagr": 0.14621198688161452,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (31.0%) is 1.7x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "market_ev_ebitda": 50.62027281980742,
+          "market_ev_ebit": 50.62027281980742,
+          "market_p_sales": 23.12217306482129,
+          "market_p_e": 57.81537948568048,
+          "market_peg": 3.9542161158436793,
+          "justified_ev_ebitda": 8.230953078523049,
+          "justified_ev_ebit": 8.230953078523049,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 42.38931974128437,
+          "ev_ebitda_premium_pct": 5.149989234161769,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 28.62027281980742,
+          "roic": 0.2440653381290405,
+          "wacc": 0.11114786638124641,
+          "roic_wacc_spread": 0.13291747174779409,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7090790459989124,
+          "growth_rate": 0.14621198688161452,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 50.62027281980742,
+        "ev_ebitda_justified": 8.230953078523049,
+        "ev_ebitda_premium_pct": 5.149989234161769,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.13291747174779409,
+        "multiple_decomposition": {
+          "roic": 0.2440653381290405,
+          "wacc": null
+        },
+        "value_creation": "creating",
+        "summary": "=== Phase 2 Valuation: TSM ===\nCurrent price   : $402.46\nIntrinsic value : Bear=$62  Base=$152  Bull=$237\nMargin of safety: Bear=-84.7%  Base=-62.4%  Bull=-41.2%\nImplied CAGR    : 31.0%  (hist: 14.6%)  [flag]\nEV/EBITDA       : 50.6x  (justified: 8.2x)  premium: +515%  [speculative_premium]",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: TSM complete. Base IV=$152/share MoS=-62.4% ImpliedCAGR=31.0% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:45.488487",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-23,387,218,248",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TSM complete. Base IV=$152/share MoS=-62.4% ImpliedCAGR=31.0% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "terminal_value": -27302094341.283367,
+          "discounted_terminal_value": -17744488024.078506,
+          "sum_pv_cash_flows": -5642730224.165587,
+          "audit_metrics": {
+            "roic_path": [
+              0.4896880433614654,
+              0.3418202585025122,
+              0.2621845974582657,
+              0.21088723919750482,
+              0.1757886334641714
+            ],
+            "invested_capital_path": [
+              22551661798.4,
+              34891850834.43201,
+              48219254993.34657,
+              62346303401.79601,
+              77038433746.58344,
+              92171328001.71448
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 32216659712.000004,
+            "base_ebit": null,
+            "base_ebit_margin": 0.39445527083202037,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -2.0160334252150025,
+            "reinvestment_rate_terminal_year": 1.1174388403037865,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.33821591590829664,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -4.509335528499166,
+          "upside_percent": -1.01120443156711,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.33821591590829664,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.33821591590829664,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6055447291679796,
+          "calibration_adjustment": 0.11179304621262404
+        },
+        "base_financials": {
+          "net_sales": 32216659712.000004,
+          "cogs": 15907029952.000002,
+          "interest_expense": 0.0,
+          "net_debt": 0.0
+        },
+        "calculated_upside": -1.01120443156711
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 2087318499682.6172,
+          "wacc": 0.11114786638124641,
+          "cost_of_equity": 0.11114786638124641,
+          "beta": 1.2372339446082
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 49233894528.00001,
+            "crash_fcf": 5019672336.640001,
+            "earnings_power_value": 38274906600.82743,
+            "floor_value": 49233894528.00001,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 9.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11114786638124641,
+            "2": 0.11114786638124641,
+            "3": 0.11114786638124641,
+            "4": 0.11114786638124641,
+            "5": 0.11114786638124641
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "run_date": "2026-04-26T21:56:28.326322",
+          "current_price": 402.4599914550781,
+          "shares_diluted": 5186400000.0,
+          "market_cap": 2087318499682.6172,
+          "risk_free_rate": 0.04309999942779541,
+          "beta": 1.2372339446082,
+          "wacc_base": 0.11114786638124641,
+          "revenue": 90273457163.0,
+          "ebitda": 41234833070.0,
+          "ebit": 41234833070.0,
+          "nopat": 32575518125.300003,
+          "roic": 0.2440653381290405,
+          "fcf": 27140621014.0,
+          "net_debt": 0.0,
+          "bull_ev": 1228100086083.1538,
+          "bull_intrinsic_per_share": 236.79239666881725,
+          "bull_upside": -0.4116374255917868,
+          "bull_wacc": 0.1061478663812464,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 29.783074033507997,
+          "bull_justified_ev_ebitda": 8.997473491108726,
+          "bull_roic_wacc_spread": 0.1379174717477941,
+          "bull_tv_pct_of_ev": 0.6050898987217213,
+          "bull_implied_tv_ebitda": 8.997473491108726,
+          "base_ev": 785824895942.1014,
+          "base_intrinsic_per_share": 151.5164460786097,
+          "base_upside": -0.623524202913169,
+          "base_wacc": 0.11114786638124641,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 19.057307558589844,
+          "base_justified_ev_ebitda": 7.746414331440637,
+          "base_roic_wacc_spread": 0.13291747174779409,
+          "base_tv_pct_of_ev": 0.5293590571631382,
+          "base_implied_tv_ebitda": 7.746414331440637,
+          "bear_ev": 319269513097.8087,
+          "bear_intrinsic_per_share": 61.558983706966046,
+          "bear_upside": -0.8470432216519163,
+          "bear_wacc": 0.12614786638124642,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 7.74271384961881,
+          "bear_justified_ev_ebitda": 5.930612580792808,
+          "bear_roic_wacc_spread": 0.11791747174779407,
+          "bear_tv_pct_of_ev": 0.36905394134741343,
+          "bear_implied_tv_ebitda": 5.930612580792808
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TSM",
+            "scenario": "bull",
+            "enterprise_value": 1228100086083.1538,
+            "equity_value": 1228100086083.1538,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 236.79239666881725,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.4116374255917868,
+            "upside_pct": -0.4116374255917868,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "TSM",
+            "scenario": "base",
+            "enterprise_value": 785824895942.1014,
+            "equity_value": 785824895942.1014,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 151.5164460786097,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.623524202913169,
+            "upside_pct": -0.623524202913169,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "TSM",
+            "scenario": "bear",
+            "enterprise_value": 319269513097.8087,
+            "equity_value": 319269513097.8087,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 61.558983706966046,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.8470432216519163,
+            "upside_pct": -0.8470432216519163,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 236.79239666881725,
+          "base": 151.5164460786097,
+          "bear": 61.558983706966046
+        },
+        "margin_of_safety": {
+          "bull": -0.4116374255917868,
+          "base": -0.623524202913169,
+          "bear": -0.8470432216519163
+        },
+        "reverse_dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "current_price": 402.4599914550781,
+          "current_ev": 2087318499682.6172,
+          "current_ev_ebitda": 50.62027281980742,
+          "wacc": 0.11114786638124641,
+          "ebit_margin": 0.45677693494717236,
+          "implied_cagr_10y": 0.31017273165004805,
+          "implied_cagr_5y": 0.31017273165004805,
+          "historical_cagr_5y": 0.14621198688161452,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 50.62027281980742,
+          "forward_ev_ebitda_justified": 8.194839379739632,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.31017273165004805,
+        "historical_cagr": 0.14621198688161452,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (31.0%) is 1.7x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "market_ev_ebitda": 50.62027281980742,
+          "market_ev_ebit": 50.62027281980742,
+          "market_p_sales": 23.12217306482129,
+          "market_p_e": 57.81537948568048,
+          "market_peg": 3.9542161158436793,
+          "justified_ev_ebitda": 8.230953078523049,
+          "justified_ev_ebit": 8.230953078523049,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 42.38931974128437,
+          "ev_ebitda_premium_pct": 5.149989234161769,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 28.62027281980742,
+          "roic": 0.2440653381290405,
+          "wacc": 0.11114786638124641,
+          "roic_wacc_spread": 0.13291747174779409,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7090790459989124,
+          "growth_rate": 0.14621198688161452,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 50.62027281980742,
+        "ev_ebitda_justified": 8.230953078523049,
+        "ev_ebitda_premium_pct": 5.149989234161769,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.13291747174779409,
+        "multiple_decomposition": {
+          "roic": 0.2440653381290405,
+          "wacc": null
+        },
+        "value_creation": "creating",
+        "summary": "=== Phase 2 Valuation: TSM ===\nCurrent price   : $402.46\nIntrinsic value : Bear=$62  Base=$152  Bull=$237\nMargin of safety: Bear=-84.7%  Base=-62.4%  Bull=-41.2%\nImplied CAGR    : 31.0%  (hist: 14.6%)  [flag]\nEV/EBITDA       : 50.6x  (justified: 8.2x)  premium: +515%  [speculative_premium]",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TSM's primary upstream bottleneck is ASML, the sole provider of Extreme Ultraviolet (EUV) lithography machines required for advanced node manufacturing. While ASML holds significant monopolistic power, TSM's own gross margins (~53-55%) are comparable to or slightly higher than ASML's (~51%), resulting in a balanced power dynamic rather than a severe upstream value leak. Other critical suppliers include Applied Materials, Lam Research, and specialized chemical providers.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), SMIC (for legacy nodes)",
+        "pricing_power_assessment": "TSM exhibits exceptional price leadership. Due to its near-monopoly at the leading edge (3nm, 5nm) and high customer switching costs (design lock-in), TSM has successfully implemented broad-based wafer price hikes (5-10%) in recent years without losing major clients like Apple, Nvidia, or AMD.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite heavy reliance on a single critical supplier (ASML) for EUV technology, TSM captures immense value, boasting gross margins over 50%. High switching costs, massive capital barriers to entry, and unparalleled execution give TSM extreme pricing power over its buyers (fabless chipmakers). Substitution risk is minimal at the cutting edge, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error, but TSM deferred revenue typically consists of customer capacity prepayments which align with long-term growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified. TSM intellectual property relies on process technology, scale, and trade secrets rather than single expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM is not at a cyclical peak (Z-Score: 1.57). Intangible decay risk is minimal as the company competitive advantage stems from process technology leadership rather than vulnerable patents. Quality of growth remains stable with no terminal haircut recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $402.46 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 31.0%\n  \u2022 Company's robust historical CAGR: 14.6%\n  \u2022 Ratio (implied / historical): 2.1x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (31.0%) is 1.7x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 50.6x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.2x\n  \u2022 Premium to justified multiple: +515%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $62/share vs current price $402.46\n  \u2022 Downside in bear case: -84.7%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market price of $402.46 mathematically requires a 10-year revenue CAGR of 31.0%, which is 2.1x TSM's historical CAGR of 14.6% and 1.7x the sector's 75th percentile. For a mega-cap foundry, compounding at 31% for a decade defies the law of large numbers and requires an unrealistic expansion of the semiconductor TAM. Furthermore, the market is assigning an EV/EBITDA of 50.6x, a staggering +515% premium over the mathematically justified multiple of 8.2x. This speculative premium is entirely driven by AI euphoria, ignoring the massive capital intensity required to maintain node leadership and build overseas fabs. The market is pricing in zero geopolitical risk regarding Taiwan and assumes infinite, non-cyclical AI chip demand. If AI infrastructure spending normalizes or geopolitical tensions escalate, the multiple will violently compress toward its justified 8.2x level. This multiple contraction, combined with a reversion to historical growth rates, paves a direct path to the bear case...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 31.0% vs 14.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:57.759408",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/TSM_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:56:57.760569",
+    "agent": "Lead",
+    "trace_id": "trace_TSM_1777240543",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.5/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 11.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-23,387,218,248",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TSM complete. Base IV=$152/share MoS=-62.4% ImpliedCAGR=31.0% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 31.0% vs 14.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "terminal_value": -27302094341.283367,
+          "discounted_terminal_value": -17744488024.078506,
+          "sum_pv_cash_flows": -5642730224.165587,
+          "audit_metrics": {
+            "roic_path": [
+              0.4896880433614654,
+              0.3418202585025122,
+              0.2621845974582657,
+              0.21088723919750482,
+              0.1757886334641714
+            ],
+            "invested_capital_path": [
+              22551661798.4,
+              34891850834.43201,
+              48219254993.34657,
+              62346303401.79601,
+              77038433746.58344,
+              92171328001.71448
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 32216659712.000004,
+            "base_ebit": null,
+            "base_ebit_margin": 0.39445527083202037,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": -2.0160334252150025,
+            "reinvestment_rate_terminal_year": 1.1174388403037865,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0,
+              "capex_percent_sales": 0.33821591590829664,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": -4.509335528499166,
+          "upside_percent": -1.01120443156711,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0,
+            "capex_percent_sales": 0.33821591590829664,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 35438325683.200005,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 13978834355.2,
+              "nopat": 11043279140.608002,
+              "depreciation": 0.0,
+              "capex": 11985805779.200003,
+              "change_in_wc": 354383256.8320001,
+              "fcff": -1296909895.424001,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -1189825592.1321108
+            },
+            {
+              "year": 2.0,
+              "revenue": 38273391737.85601,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 15097141103.616003,
+              "nopat": 11926741471.856644,
+              "depreciation": 0.0,
+              "capex": 12944670241.536003,
+              "change_in_wc": 382733917.3785601,
+              "fcff": -1400662687.0579195,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -1178909761.0116315
+            },
+            {
+              "year": 3.0,
+              "revenue": 40569795242.12737,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16002969569.832964,
+              "nopat": 12642345960.168041,
+              "depreciation": 0.0,
+              "capex": 13721350456.028164,
+              "change_in_wc": 405697952.4212737,
+              "fcff": -1484702448.2813964,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -1146462703.3691108
+            },
+            {
+              "year": 4.0,
+              "revenue": 42192587051.81247,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 16643088352.626284,
+              "nopat": 13148039798.574764,
+              "depreciation": 0.0,
+              "capex": 14270204474.26929,
+              "change_in_wc": 421925870.5181247,
+              "fcff": -1544090546.2126513,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -1093872671.1044717
+            },
+            {
+              "year": 5.0,
+              "revenue": 43458364663.366844,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.39445527083202037,
+              "ebit": 17142381003.205072,
+              "nopat": 13542480992.532007,
+              "depreciation": 0.0,
+              "capex": 14698310608.49737,
+              "change_in_wc": 434583646.6336684,
+              "fcff": -1590413262.599031,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -1033659496.5482624
+            }
+          ],
+          "enterprise_value": -23387218248.244095,
+          "equity_value": -23387218248.244095,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.33821591590829664,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.6055447291679796,
+          "calibration_adjustment": 0.11179304621262404
+        },
+        "base_financials": {
+          "net_sales": 32216659712.000004,
+          "cogs": 15907029952.000002,
+          "interest_expense": 0.0,
+          "net_debt": 0.0
+        },
+        "calculated_upside": -1.01120443156711
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 2087318499682.6172,
+          "wacc": 0.11114786638124641,
+          "cost_of_equity": 0.11114786638124641,
+          "beta": 1.2372339446082
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 1.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 49233894528.00001,
+            "crash_fcf": 5019672336.640001,
+            "earnings_power_value": 38274906600.82743,
+            "floor_value": 49233894528.00001,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 9.0,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.11114786638124641,
+            "2": 0.11114786638124641,
+            "3": 0.11114786638124641,
+            "4": 0.11114786638124641,
+            "5": 0.11114786638124641
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "run_date": "2026-04-26T21:56:28.326322",
+          "current_price": 402.4599914550781,
+          "shares_diluted": 5186400000.0,
+          "market_cap": 2087318499682.6172,
+          "risk_free_rate": 0.04309999942779541,
+          "beta": 1.2372339446082,
+          "wacc_base": 0.11114786638124641,
+          "revenue": 90273457163.0,
+          "ebitda": 41234833070.0,
+          "ebit": 41234833070.0,
+          "nopat": 32575518125.300003,
+          "roic": 0.2440653381290405,
+          "fcf": 27140621014.0,
+          "net_debt": 0.0,
+          "bull_ev": 1228100086083.1538,
+          "bull_intrinsic_per_share": 236.79239666881725,
+          "bull_upside": -0.4116374255917868,
+          "bull_wacc": 0.1061478663812464,
+          "bull_terminal_g": 0.035,
+          "bull_ev_ebitda": 29.783074033507997,
+          "bull_justified_ev_ebitda": 8.997473491108726,
+          "bull_roic_wacc_spread": 0.1379174717477941,
+          "bull_tv_pct_of_ev": 0.6050898987217213,
+          "bull_implied_tv_ebitda": 8.997473491108726,
+          "base_ev": 785824895942.1014,
+          "base_intrinsic_per_share": 151.5164460786097,
+          "base_upside": -0.623524202913169,
+          "base_wacc": 0.11114786638124641,
+          "base_terminal_g": 0.025,
+          "base_ev_ebitda": 19.057307558589844,
+          "base_justified_ev_ebitda": 7.746414331440637,
+          "base_roic_wacc_spread": 0.13291747174779409,
+          "base_tv_pct_of_ev": 0.5293590571631382,
+          "base_implied_tv_ebitda": 7.746414331440637,
+          "bear_ev": 319269513097.8087,
+          "bear_intrinsic_per_share": 61.558983706966046,
+          "bear_upside": -0.8470432216519163,
+          "bear_wacc": 0.12614786638124642,
+          "bear_terminal_g": 0.015,
+          "bear_ev_ebitda": 7.74271384961881,
+          "bear_justified_ev_ebitda": 5.930612580792808,
+          "bear_roic_wacc_spread": 0.11791747174779407,
+          "bear_tv_pct_of_ev": 0.36905394134741343,
+          "bear_implied_tv_ebitda": 5.930612580792808
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "TSM",
+            "scenario": "bull",
+            "enterprise_value": 1228100086083.1538,
+            "equity_value": 1228100086083.1538,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 236.79239666881725,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.4116374255917868,
+            "upside_pct": -0.4116374255917868,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "base": {
+            "ticker": "TSM",
+            "scenario": "base",
+            "enterprise_value": 785824895942.1014,
+            "equity_value": 785824895942.1014,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 151.5164460786097,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.623524202913169,
+            "upside_pct": -0.623524202913169,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          },
+          "bear": {
+            "ticker": "TSM",
+            "scenario": "bear",
+            "enterprise_value": 319269513097.8087,
+            "equity_value": 319269513097.8087,
+            "shares_diluted": 5186400000.0,
+            "intrinsic_per_share": 61.558983706966046,
+            "current_price": 402.4599914550781,
+            "margin_of_safety": -0.8470432216519163,
+            "upside_pct": -0.8470432216519163,
+            "data_quality": 1.0,
+            "cash_gross": 0.0,
+            "cash_wc_haircut": 2708203714.89,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 0.0,
+            "cash_net_accessible": 0.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 0.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 236.79239666881725,
+          "base": 151.5164460786097,
+          "bear": 61.558983706966046
+        },
+        "margin_of_safety": {
+          "bull": -0.4116374255917868,
+          "base": -0.623524202913169,
+          "bear": -0.8470432216519163
+        },
+        "reverse_dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "current_price": 402.4599914550781,
+          "current_ev": 2087318499682.6172,
+          "current_ev_ebitda": 50.62027281980742,
+          "wacc": 0.11114786638124641,
+          "ebit_margin": 0.45677693494717236,
+          "implied_cagr_10y": 0.31017273165004805,
+          "implied_cagr_5y": 0.31017273165004805,
+          "historical_cagr_5y": 0.14621198688161452,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 50.62027281980742,
+          "forward_ev_ebitda_justified": 8.194839379739632,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.31017273165004805,
+        "historical_cagr": 0.14621198688161452,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (31.0%) is 1.7x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "TSM",
+          "fiscal_year": 2024,
+          "market_ev_ebitda": 50.62027281980742,
+          "market_ev_ebit": 50.62027281980742,
+          "market_p_sales": 23.12217306482129,
+          "market_p_e": 57.81537948568048,
+          "market_peg": 3.9542161158436793,
+          "justified_ev_ebitda": 8.230953078523049,
+          "justified_ev_ebit": 8.230953078523049,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 42.38931974128437,
+          "ev_ebitda_premium_pct": 5.149989234161769,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 28.62027281980742,
+          "roic": 0.2440653381290405,
+          "wacc": 0.11114786638124641,
+          "roic_wacc_spread": 0.13291747174779409,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7090790459989124,
+          "growth_rate": 0.14621198688161452,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 50.62027281980742,
+        "ev_ebitda_justified": 8.230953078523049,
+        "ev_ebitda_premium_pct": 5.149989234161769,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.13291747174779409,
+        "multiple_decomposition": {
+          "roic": 0.2440653381290405,
+          "wacc": null
+        },
+        "value_creation": "creating",
+        "summary": "=== Phase 2 Valuation: TSM ===\nCurrent price   : $402.46\nIntrinsic value : Bear=$62  Base=$152  Bull=$237\nMargin of safety: Bear=-84.7%  Base=-62.4%  Bull=-41.2%\nImplied CAGR    : 31.0%  (hist: 14.6%)  [flag]\nEV/EBITDA       : 50.6x  (justified: 8.2x)  premium: +515%  [speculative_premium]",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $402.46 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 31.0%\n  \u2022 Company's robust historical CAGR: 14.6%\n  \u2022 Ratio (implied / historical): 2.1x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (31.0%) is 1.7x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 50.6x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.2x\n  \u2022 Premium to justified multiple: +515%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $62/share vs current price $402.46\n  \u2022 Downside in bear case: -84.7%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market price of $402.46 mathematically requires a 10-year revenue CAGR of 31.0%, which is 2.1x TSM's historical CAGR of 14.6% and 1.7x the sector's 75th percentile. For a mega-cap foundry, compounding at 31% for a decade defies the law of large numbers and requires an unrealistic expansion of the semiconductor TAM. Furthermore, the market is assigning an EV/EBITDA of 50.6x, a staggering +515% premium over the mathematically justified multiple of 8.2x. This speculative premium is entirely driven by AI euphoria, ignoring the massive capital intensity required to maintain node leadership and build overseas fabs. The market is pricing in zero geopolitical risk regarding Taiwan and assumes infinite, non-cyclical AI chip demand. If AI infrastructure spending normalizes or geopolitical tensions escalate, the multiple will violently compress toward its justified 8.2x level. This multiple contraction, combined with a reversion to historical growth rates, paves a direct path to the bear case...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive foundry model. Building advanced semiconductor fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Once utilization rates cross the breakeven threshold, incremental revenue drops straight to the bottom line, demonstrating extremely high operating leverage.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 7.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a nearly insurmountable wide moat. Intangibles (process technology leadership at 3nm/2nm) are unmatched. Switching costs are immense; chip designs are heavily customized to TSM's specific process design kits (PDKs), costing hundreds of millions and years of R&D to port to rivals like Samsung or Intel. Cost advantage stems from dominant scale, driving the fastest learning curves and highest yields in the industry.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price hikes (e.g., 10-20% during the 2021/2022 shortage, and further increases for N3/N2 nodes) without losing customers. Fabless designers like Apple, Nvidia, and AMD rely exclusively on TSM for leading-edge nodes and have accepted these price increases to secure capacity.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "Customer concentration risk is present, with Apple historically accounting for over 20% of total revenue. Additionally, there is high reliance on ASML as a sole-source supplier for critical EUV lithography machines.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "TSM's primary upstream bottleneck is ASML, the sole provider of Extreme Ultraviolet (EUV) lithography machines required for advanced node manufacturing. While ASML holds significant monopolistic power, TSM's own gross margins (~53-55%) are comparable to or slightly higher than ASML's (~51%), resulting in a balanced power dynamic rather than a severe upstream value leak. Other critical suppliers include Applied Materials, Lam Research, and specialized chemical providers.",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), SMIC (for legacy nodes)",
+        "pricing_power_assessment": "TSM exhibits exceptional price leadership. Due to its near-monopoly at the leading edge (3nm, 5nm) and high customer switching costs (design lock-in), TSM has successfully implemented broad-based wafer price hikes (5-10%) in recent years without losing major clients like Apple, Nvidia, or AMD.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite heavy reliance on a single critical supplier (ASML) for EUV technology, TSM captures immense value, boasting gross margins over 50%. High switching costs, massive capital barriers to entry, and unparalleled execution give TSM extreme pricing power over its buyers (fabless chipmakers). Substitution risk is minimal at the cutting edge, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error, but TSM deferred revenue typically consists of customer capacity prepayments which align with long-term growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No specific patent cliffs identified. TSM intellectual property relies on process technology, scale, and trade secrets rather than single expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM is not at a cyclical peak (Z-Score: 1.57). Intangible decay risk is minimal as the company competitive advantage stems from process technology leadership rather than vulnerable patents. Quality of growth remains stable with no terminal haircut recommended."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "TSM",
+        "generated_at": "2026-04-26T17:56:57.758573",
+        "1_economic_reality": {
+          "business_model": {
+            "revenue_drivers": "Defined by Forensic/Intake",
+            "cost_structure": "Operating Leverage Score: 9.0/10"
+          },
+          "value_chain": {
+            "power_ratio": 0.94,
+            "upstream_leak": false,
+            "strategic_leverage": 9.0
+          },
+          "moat": {
+            "score": 9.5,
+            "switching_costs": 9.0,
+            "network_effects": 7.0
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.57,
+            "is_peak": false
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 90.273457163,
+            "ebitda_bn": 41.23483307,
+            "fcf_bn": 27.140621014,
+            "nopat_bn": 32.5755181253,
+            "invested_capital_bn": 133.470481204,
+            "net_debt_bn": 0.0,
+            "sbc_bn": 0.0,
+            "fiscal_year": 2024,
+            "data_quality": 0.98
+          },
+          "ratios": {
+            "gross_margin_pct": 56.1223535424378,
+            "ebit_margin_pct": 45.67769349471724,
+            "ebitda_margin_pct": 45.67769349471724,
+            "fcf_margin_pct": 30.064896002591567,
+            "roic": 0.2440653381290405,
+            "roe": 0.27272648878198386,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 0.0,
+            "equity": 2087318499682.6172,
+            "wacc": 0.11114786638124641,
+            "cost_of_equity": 0.11114786638124641,
+            "beta": 1.2372339446082
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 0.0,
+              "cash": 1.0,
+              "liquidity_ratio": 0.0,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 49233894528.00001,
+              "crash_fcf": 5019672336.640001,
+              "earnings_power_value": 38274906600.82743,
+              "floor_value": 49233894528.00001,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 9.0,
+              "financial_leverage_score": 0.0,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.11114786638124641,
+              "2": 0.11114786638124641,
+              "3": 0.11114786638124641,
+              "4": 0.11114786638124641,
+              "5": 0.11114786638124641
+            }
+          }
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": -23387218248.244095,
+            "upside_percent": 0,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 61.558983706966046,
+                "margin_of_safety": -0.8470432216519163,
+                "ev": 319269513097.8087
+              },
+              "base": {
+                "intrinsic_per_share": 151.5164460786097,
+                "margin_of_safety": -0.623524202913169,
+                "ev": 785824895942.1014
+              },
+              "bull": {
+                "intrinsic_per_share": 236.79239666881725,
+                "margin_of_safety": -0.4116374255917868,
+                "ev": 1228100086083.1538
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.31017273165004805,
+              "historical_cagr": 0.14621198688161452,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (31.0%) is 1.7x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 50.62027281980742,
+              "justified_ev_ebitda": 8.230953078523049,
+              "premium_pct": 5.149989234161769,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.13291747174779409,
+              "value_creation": "creating"
+            },
+            "wacc": 0.11114786638124641,
+            "beta": 1.2372339446082,
+            "risk_free_rate": 0.04309999942779541
+          },
+          "investment_thesis": {
+            "conviction_score": 2,
+            "margin_of_safety": -0.623524202913169,
+            "narrative": "TSM possesses an incredibly strong moat (9.5) with high switching costs (9.0) and strategic leverage. However, the market is pricing in a 31.0 percent implied CAGR, which is 2.1x its historical average of 14.6 percent. While AI-driven TAM expansion is real, sustaining a 31 percent CAGR at TSM's massive scale defies the base rates of semiconductor cyclicality and capital intensity. Growth decay is highly probable as the current AI infrastructure build-out matures and capital expenditure normalizes.\n\nThe contrarian bear case correctly identifies the speculative premium (+515 percent EV/EBITDA) and the unrealistic 31 percent implied CAGR. While bulls argue that AI represents a paradigm shift justifying these multiples, the constitution strictly prohibits underwriting growth at 2.1x historical rates without bulletproof TAM justification. The business quality is elite (Power Ratio 0.94), but the price offers zero margin of safety. We concede to the contrarian: the stock is priced for perfec...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u274c FAIL: Implied CAGR (31.0%) is 2.1x historical (14.6%). Market pricing in extraordinary growth \u2014 requires documented TAM justification before conviction.",
+              "\u274c FAIL: EV/EBITDA trades at +515% premium to justified multiple. Signal: speculative_premium. Requires reverse DCF and TAM stress test."
+            ],
+            "pillar_scores": {
+              "ticker": "TSM",
+              "p1_moat": 5,
+              "p2_health": 4,
+              "p3_tailwind": 3,
+              "p4_mos": 1,
+              "p5_leadership": 4,
+              "raw_total": 17,
+              "capped_total": 17,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern",
+              "conviction_score": 2,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 9.0/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +13.3pp \u2014 strong value creation",
+                "FCF margin 30.1% \u2014 fortress cash generation",
+                "Net Debt/EBITDA 0.0\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 14.6% \u2014 strong growth compounder",
+                "Cyclicality Z-score 1.6 \u2014 elevated, applying penalty",
+                "Sector 'Technology' \u2014 confirmed secular tailwind",
+                "Market implied CAGR 2.1\u00d7 historical \u2014 tailwind partially priced"
+              ],
+              "p4_reasons": [
+                "Base MoS -62.4% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC data unavailable \u2014 neutral score",
+                "Operating leverage 9.0/10",
+                "Strategic leverage 9.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Consolidated Report generated for TSM. Conviction: 2",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

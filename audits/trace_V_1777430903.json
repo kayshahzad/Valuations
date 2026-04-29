@@ -1,0 +1,3240 @@
+[
+  {
+    "timestamp": "2026-04-28T22:48:26.691882",
+    "agent": "Librarian",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:48:59.778344",
+    "agent": "Forensic",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:49:20.568091",
+    "agent": "ValueChain",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.5,
+        "power_ratio": 0.5,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+        "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+        "pass_through_capability": true,
+        "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.5/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:01.395544",
+    "agent": "StrategicContext",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.5/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.5,
+        "power_ratio": 0.5,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+        "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+        "pass_through_capability": true,
+        "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+      },
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 2.0763169984034873,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 36193000000.0,
+        "deferred_revenue_trend": "Visa's deferred revenue is $0 with a D8 Revenue Score of 1.00. The company's business model relies on transaction processing volumes rather than upfront software/service contracts, meaning deferred revenue is not a material driver or risk factor for revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs, exclusivity dates, or contract expirations were identified in the provided 10-K text. Visa's competitive moat is based on its global network effects (VisaNet), brand equity, and scale, rather than specific expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Visa's revenue Z-score of 2.08 flags a statistical cyclical peak, though this reflects consistent structural growth in global digital payments rather than traditional cyclicality. Growth quality is pristine (D8 score of 1.00) with no deferred revenue pull-forward risk. Intangible decay risk is estimated at 0.0%, as the company's value is derived from structural network effects and brand dominance rather than expiring patents or contracts."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:02.401480",
+    "agent": "Strategist",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.5/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.5,
+        "power_ratio": 0.5,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+        "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+        "pass_through_capability": true,
+        "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0763169984034873,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 36193000000.0,
+        "deferred_revenue_trend": "Visa's deferred revenue is $0 with a D8 Revenue Score of 1.00. The company's business model relies on transaction processing volumes rather than upfront software/service contracts, meaning deferred revenue is not a material driver or risk factor for revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs, exclusivity dates, or contract expirations were identified in the provided 10-K text. Visa's competitive moat is based on its global network effects (VisaNet), brand equity, and scale, rather than specific expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Visa's revenue Z-score of 2.08 flags a statistical cyclical peak, though this reflects consistent structural growth in global digital payments rather than traditional cyclicality. Growth quality is pristine (D8 score of 1.00) with no deferred revenue pull-forward risk. Intangible decay risk is estimated at 0.0%, as the company's value is derived from structural network effects and brand dominance rather than expiring patents or contracts."
+      },
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 44000000.0,
+          "equity": 596342625053.6604,
+          "wacc": 0.09,
+          "cost_of_equity": 0.08983944796396016,
+          "beta": 0.8418081281533241
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4400000.0,
+            "cash": 4617000000.0,
+            "liquidity_ratio": 0.0009529997834091401,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23189000000.0,
+            "crash_fcf": 1491125000.0,
+            "earnings_power_value": 13555681818.181818,
+            "floor_value": 23189000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0002951323494344599,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:03.301558",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "base": {
+        "net_sales": 6911000000.0,
+        "cogs": 0.0,
+        "interest_expense": 0.0,
+        "net_debt": -4573000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.03270149037765881,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.04427723918390971,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.015,
+        "_valuation_model_hint": "Earnings_Power_Value",
+        "cogs_percent_sales": 0.85
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T22:56:03.301708",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 9060216581.678871,
+      "equity_value": 13633216581.678871,
+      "terminal_value": 10576840958.160057,
+      "discounted_terminal_value": 6874220906.594085,
+      "sum_pv_cash_flows": 2185995675.0847864,
+      "audit_metrics": {
+        "roic_path": [
+          0.14561772123116362,
+          0.15096265306991064,
+          0.15337986611115031,
+          0.1527939591108695,
+          0.1507709968221736
+        ],
+        "invested_capital_path": [
+          4837700000.0,
+          5039731500.0,
+          5257925520.0,
+          5489211181.2,
+          5729748268.848,
+          5977501469.12544
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 7602100000.000001,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.11729850962234122,
+          "ebit": 891715000.0000002,
+          "nopat": 704454850.0000002,
+          "depreciation": 248600000.00000006,
+          "capex": 336600000.00000006,
+          "change_in_wc": 114031500.00000001,
+          "fcff": 502423350.00000024,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 460938853.2110094
+        },
+        {
+          "year": 2.0,
+          "revenue": 8210268000.000002,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.11729850962234122,
+          "ebit": 963052200.0000004,
+          "nopat": 760811238.0000004,
+          "depreciation": 268488000.00000006,
+          "capex": 363528000.0000001,
+          "change_in_wc": 123154020.00000003,
+          "fcff": 542617218.0000004,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 456710056.3925598
+        },
+        {
+          "year": 3.0,
+          "revenue": 8702884080.000002,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.11729850962234122,
+          "ebit": 1020835332.0000004,
+          "nopat": 806459912.2800003,
+          "depreciation": 284597280.00000006,
+          "capex": 385339680.0000001,
+          "change_in_wc": 130543261.20000002,
+          "fcff": 575174251.0800003,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 444140054.8404709
+        },
+        {
+          "year": 4.0,
+          "revenue": 9050999443.200003,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.11729850962234122,
+          "ebit": 1061668745.2800004,
+          "nopat": 838718308.7712004,
+          "depreciation": 295981171.2000001,
+          "capex": 400753267.2000001,
+          "change_in_wc": 135764991.64800003,
+          "fcff": 598181221.1232004,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 423766657.8294401
+        },
+        {
+          "year": 5.0,
+          "revenue": 9322529426.496002,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.11729850962234122,
+          "ebit": 1093518807.6384006,
+          "nopat": 863879858.0343364,
+          "depreciation": 304860606.3360001,
+          "capex": 412775865.2160001,
+          "change_in_wc": 139837941.39744002,
+          "fcff": 616126657.7568965,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 400440052.8113058
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 6911000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.11729850962234122,
+        "terminal_value_pct_of_ev": 0.7587258918837326,
+        "implied_terminal_multiple_fcf": 17.166666666666668,
+        "implied_terminal_multiple_nopat": 12.2434165582081,
+        "reinvestment_rate_terminal_year": 0.28679126845389724,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.03270149037765881,
+          "capex_percent_sales": 0.04427723918390971,
+          "wc_change_percent_sales": 0.015
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:03.303407",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.5/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 44000000.0,
+          "equity": 596342625053.6604,
+          "wacc": 0.09,
+          "cost_of_equity": 0.08983944796396016,
+          "beta": 0.8418081281533241
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4400000.0,
+            "cash": 4617000000.0,
+            "liquidity_ratio": 0.0009529997834091401,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23189000000.0,
+            "crash_fcf": 1491125000.0,
+            "earnings_power_value": 13555681818.181818,
+            "floor_value": 23189000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0002951323494344599,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.5,
+        "power_ratio": 0.5,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+        "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+        "pass_through_capability": true,
+        "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0763169984034873,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 36193000000.0,
+        "deferred_revenue_trend": "Visa's deferred revenue is $0 with a D8 Revenue Score of 1.00. The company's business model relies on transaction processing volumes rather than upfront software/service contracts, meaning deferred revenue is not a material driver or risk factor for revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs, exclusivity dates, or contract expirations were identified in the provided 10-K text. Visa's competitive moat is based on its global network effects (VisaNet), brand equity, and scale, rather than specific expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Visa's revenue Z-score of 2.08 flags a statistical cyclical peak, though this reflects consistent structural growth in global digital payments rather than traditional cyclicality. Growth quality is pristine (D8 score of 1.00) with no deferred revenue pull-forward risk. Intangible decay risk is estimated at 0.0%, as the company's value is derived from structural network effects and brand dominance rather than expiring patents or contracts."
+      },
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "terminal_value": 10576840958.160057,
+          "discounted_terminal_value": 6874220906.594085,
+          "sum_pv_cash_flows": 2185995675.0847864,
+          "audit_metrics": {
+            "roic_path": [
+              0.14561772123116362,
+              0.15096265306991064,
+              0.15337986611115031,
+              0.1527939591108695,
+              0.1507709968221736
+            ],
+            "invested_capital_path": [
+              4837700000.0,
+              5039731500.0,
+              5257925520.0,
+              5489211181.2,
+              5729748268.848,
+              5977501469.12544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 6911000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.11729850962234122,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.2434165582081,
+            "reinvestment_rate_terminal_year": 0.28679126845389724,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.03270149037765881,
+              "capex_percent_sales": 0.04427723918390971,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 7.0710257191303825,
+          "upside_percent": -0.9771386171382788,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.03270149037765881,
+            "capex_percent_sales": 0.04427723918390971,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.03270149037765881,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04427723918390971,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 0.85
+        },
+        "base_financials": {
+          "net_sales": 6911000000.0,
+          "cogs": 0.0,
+          "interest_expense": 0.0,
+          "net_debt": -4573000000.0
+        },
+        "calculated_upside": -0.9771386171382788
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $9,060,216,582",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:04.552445",
+    "agent": "ValuationNode",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.5/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $9,060,216,582",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "terminal_value": 10576840958.160057,
+          "discounted_terminal_value": 6874220906.594085,
+          "sum_pv_cash_flows": 2185995675.0847864,
+          "audit_metrics": {
+            "roic_path": [
+              0.14561772123116362,
+              0.15096265306991064,
+              0.15337986611115031,
+              0.1527939591108695,
+              0.1507709968221736
+            ],
+            "invested_capital_path": [
+              4837700000.0,
+              5039731500.0,
+              5257925520.0,
+              5489211181.2,
+              5729748268.848,
+              5977501469.12544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 6911000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.11729850962234122,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.2434165582081,
+            "reinvestment_rate_terminal_year": 0.28679126845389724,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.03270149037765881,
+              "capex_percent_sales": 0.04427723918390971,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 7.0710257191303825,
+          "upside_percent": -0.9771386171382788,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.03270149037765881,
+            "capex_percent_sales": 0.04427723918390971,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.03270149037765881,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04427723918390971,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 0.85
+        },
+        "base_financials": {
+          "net_sales": 6911000000.0,
+          "cogs": 0.0,
+          "interest_expense": 0.0,
+          "net_debt": -4573000000.0
+        },
+        "calculated_upside": -0.9771386171382788
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 44000000.0,
+          "equity": 596342625053.6604,
+          "wacc": 0.09,
+          "cost_of_equity": 0.08983944796396016,
+          "beta": 0.8418081281533241
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4400000.0,
+            "cash": 4617000000.0,
+            "liquidity_ratio": 0.0009529997834091401,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23189000000.0,
+            "crash_fcf": 1491125000.0,
+            "earnings_power_value": 13555681818.181818,
+            "floor_value": 23189000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0002951323494344599,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.5,
+        "power_ratio": 0.5,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+        "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+        "pass_through_capability": true,
+        "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0763169984034873,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 36193000000.0,
+        "deferred_revenue_trend": "Visa's deferred revenue is $0 with a D8 Revenue Score of 1.00. The company's business model relies on transaction processing volumes rather than upfront software/service contracts, meaning deferred revenue is not a material driver or risk factor for revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs, exclusivity dates, or contract expirations were identified in the provided 10-K text. Visa's competitive moat is based on its global network effects (VisaNet), brand equity, and scale, rather than specific expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Visa's revenue Z-score of 2.08 flags a statistical cyclical peak, though this reflects consistent structural growth in global digital payments rather than traditional cyclicality. Growth quality is pristine (D8 score of 1.00) with no deferred revenue pull-forward risk. Intangible decay risk is estimated at 0.0%, as the company's value is derived from structural network effects and brand dominance rather than expiring patents or contracts."
+      },
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 36193000000.0,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.5,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:56:03.304421",
+          "current_price": 309.29998779296875,
+          "shares_diluted": 1928039601.0000002,
+          "market_cap": 596342625053.6604,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.8418081281533241,
+          "wacc_base": 0.09,
+          "revenue": 36193000000.0,
+          "ebitda": 25214000000.0,
+          "ebit": 23994000000.0,
+          "nopat": 18955260000.0,
+          "roic": 0.4606717379152794,
+          "fcf": 21577000000.0,
+          "net_debt": 2438000000.0,
+          "bull_ev": 578815601066.7937,
+          "bull_intrinsic_per_share": 298.9448975881246,
+          "bull_upside": -0.03347911611226887,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 22.95611965839588,
+          "bull_justified_ev_ebitda": 15.202010911412406,
+          "bull_roic_wacc_spread": 0.3756717379152794,
+          "bull_tv_pct_of_ev": 0.6678740709926367,
+          "bull_implied_tv_ebitda": 15.202010911412406,
+          "base_ev": 483595499556.3932,
+          "base_intrinsic_per_share": 249.5578925385325,
+          "base_upside": -0.19315259493131587,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 19.179642244641595,
+          "base_justified_ev_ebitda": 11.800642820694007,
+          "base_roic_wacc_spread": 0.3706717379152794,
+          "base_tv_pct_of_ev": 0.6085114359455481,
+          "base_implied_tv_ebitda": 11.800642820694009,
+          "bear_ev": 208813540640.6342,
+          "bear_intrinsic_per_share": 107.03905694343368,
+          "bear_upside": -0.6539312603688794,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 8.281650695670429,
+          "bear_justified_ev_ebitda": 8.095091952008934,
+          "bear_roic_wacc_spread": 0.3556717379152794,
+          "bear_tv_pct_of_ev": 0.43827888133728754,
+          "bear_implied_tv_ebitda": 8.095091952008934
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "V",
+            "scenario": "bull",
+            "enterprise_value": 578815601066.7937,
+            "equity_value": 573581349066.7937,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 297.49458920309473,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.038168118512102917,
+            "upside_pct": -0.038168118512102917,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          },
+          "base": {
+            "ticker": "V",
+            "scenario": "base",
+            "enterprise_value": 483595499556.3932,
+            "equity_value": 478361247556.3932,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 248.10758415350261,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.19784159733115,
+            "upside_pct": -0.19784159733115,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          },
+          "bear": {
+            "ticker": "V",
+            "scenario": "bear",
+            "enterprise_value": 208813540640.6342,
+            "equity_value": 203579288640.6342,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 105.58874855840378,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.6586202627687135,
+            "upside_pct": -0.6586202627687135,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 297.49458920309473,
+          "base": 248.10758415350261,
+          "bear": 105.58874855840378
+        },
+        "margin_of_safety": {
+          "bull": -0.038168118512102917,
+          "base": -0.19784159733115,
+          "bear": -0.6586202627687135
+        },
+        "reverse_dcf": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "current_price": 309.29998779296875,
+          "current_ev": 598780625053.6604,
+          "current_ev_ebitda": 23.74794261337592,
+          "wacc": 0.08798601891765574,
+          "ebit_margin": 0.6629458735114525,
+          "implied_cagr_10y": 0.13420445850490503,
+          "implied_cagr_5y": 0.13420445850490503,
+          "historical_cagr_5y": 0.09243581742938634,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 23.74794261337592,
+          "forward_ev_ebitda_justified": 11.71137314357065,
+          "signal": "caution"
+        },
+        "implied_cagr": 0.13420445850490503,
+        "historical_cagr": 0.09243581742938634,
+        "reverse_dcf_signal": "caution",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (13.4%) exceeds sector 75th percentile (12.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+        ],
+        "multiples": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 23.74794261337592,
+          "market_ev_ebit": 24.9554315684613,
+          "market_p_sales": 14.90856562634151,
+          "market_p_e": 29.73091160901687,
+          "market_peg": 3.216384344924405,
+          "justified_ev_ebitda": 11.287861106153382,
+          "justified_ev_ebit": 11.861804198155847,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 12.460081507222537,
+          "ev_ebitda_premium_pct": 1.1038478760542276,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 11.747942613375919,
+          "roic": 0.4606717379152794,
+          "wacc": 0.08798601891765574,
+          "roic_wacc_spread": 0.37268571899762365,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7109774331720473,
+          "growth_rate": 0.09243581742938634,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 23.74794261337592,
+        "ev_ebitda_justified": 11.287861106153382,
+        "ev_ebitda_premium_pct": 1.1038478760542276,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.37268571899762365,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.4606717379152794,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: V ===\nPrice: $309.30  |  Bear=$106  Base=$248  Bull=$297\nMoS:  Bear=-65.9%  Base=-19.8%  Bull=-3.8%\nRDCF: implied=13.4% hist=9.2% [caution]\nEV/EBITDA: 23.7x market vs 11.3x justified (+110%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: V \u2014 Base IV=$248/share MoS=-19.8% ImpliedCAGR=13.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:19.250531",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.5/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $9,060,216,582",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: V \u2014 Base IV=$248/share MoS=-19.8% ImpliedCAGR=13.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "terminal_value": 10576840958.160057,
+          "discounted_terminal_value": 6874220906.594085,
+          "sum_pv_cash_flows": 2185995675.0847864,
+          "audit_metrics": {
+            "roic_path": [
+              0.14561772123116362,
+              0.15096265306991064,
+              0.15337986611115031,
+              0.1527939591108695,
+              0.1507709968221736
+            ],
+            "invested_capital_path": [
+              4837700000.0,
+              5039731500.0,
+              5257925520.0,
+              5489211181.2,
+              5729748268.848,
+              5977501469.12544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 6911000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.11729850962234122,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.2434165582081,
+            "reinvestment_rate_terminal_year": 0.28679126845389724,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.03270149037765881,
+              "capex_percent_sales": 0.04427723918390971,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 7.0710257191303825,
+          "upside_percent": -0.9771386171382788,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.03270149037765881,
+            "capex_percent_sales": 0.04427723918390971,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.03270149037765881,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04427723918390971,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 0.85
+        },
+        "base_financials": {
+          "net_sales": 6911000000.0,
+          "cogs": 0.0,
+          "interest_expense": 0.0,
+          "net_debt": -4573000000.0
+        },
+        "calculated_upside": -0.9771386171382788
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 44000000.0,
+          "equity": 596342625053.6604,
+          "wacc": 0.09,
+          "cost_of_equity": 0.08983944796396016,
+          "beta": 0.8418081281533241
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4400000.0,
+            "cash": 4617000000.0,
+            "liquidity_ratio": 0.0009529997834091401,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23189000000.0,
+            "crash_fcf": 1491125000.0,
+            "earnings_power_value": 13555681818.181818,
+            "floor_value": 23189000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0002951323494344599,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 36193000000.0,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.5,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:56:03.304421",
+          "current_price": 309.29998779296875,
+          "shares_diluted": 1928039601.0000002,
+          "market_cap": 596342625053.6604,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.8418081281533241,
+          "wacc_base": 0.09,
+          "revenue": 36193000000.0,
+          "ebitda": 25214000000.0,
+          "ebit": 23994000000.0,
+          "nopat": 18955260000.0,
+          "roic": 0.4606717379152794,
+          "fcf": 21577000000.0,
+          "net_debt": 2438000000.0,
+          "bull_ev": 578815601066.7937,
+          "bull_intrinsic_per_share": 298.9448975881246,
+          "bull_upside": -0.03347911611226887,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 22.95611965839588,
+          "bull_justified_ev_ebitda": 15.202010911412406,
+          "bull_roic_wacc_spread": 0.3756717379152794,
+          "bull_tv_pct_of_ev": 0.6678740709926367,
+          "bull_implied_tv_ebitda": 15.202010911412406,
+          "base_ev": 483595499556.3932,
+          "base_intrinsic_per_share": 249.5578925385325,
+          "base_upside": -0.19315259493131587,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 19.179642244641595,
+          "base_justified_ev_ebitda": 11.800642820694007,
+          "base_roic_wacc_spread": 0.3706717379152794,
+          "base_tv_pct_of_ev": 0.6085114359455481,
+          "base_implied_tv_ebitda": 11.800642820694009,
+          "bear_ev": 208813540640.6342,
+          "bear_intrinsic_per_share": 107.03905694343368,
+          "bear_upside": -0.6539312603688794,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 8.281650695670429,
+          "bear_justified_ev_ebitda": 8.095091952008934,
+          "bear_roic_wacc_spread": 0.3556717379152794,
+          "bear_tv_pct_of_ev": 0.43827888133728754,
+          "bear_implied_tv_ebitda": 8.095091952008934
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "V",
+            "scenario": "bull",
+            "enterprise_value": 578815601066.7937,
+            "equity_value": 573581349066.7937,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 297.49458920309473,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.038168118512102917,
+            "upside_pct": -0.038168118512102917,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          },
+          "base": {
+            "ticker": "V",
+            "scenario": "base",
+            "enterprise_value": 483595499556.3932,
+            "equity_value": 478361247556.3932,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 248.10758415350261,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.19784159733115,
+            "upside_pct": -0.19784159733115,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          },
+          "bear": {
+            "ticker": "V",
+            "scenario": "bear",
+            "enterprise_value": 208813540640.6342,
+            "equity_value": 203579288640.6342,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 105.58874855840378,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.6586202627687135,
+            "upside_pct": -0.6586202627687135,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 297.49458920309473,
+          "base": 248.10758415350261,
+          "bear": 105.58874855840378
+        },
+        "margin_of_safety": {
+          "bull": -0.038168118512102917,
+          "base": -0.19784159733115,
+          "bear": -0.6586202627687135
+        },
+        "reverse_dcf": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "current_price": 309.29998779296875,
+          "current_ev": 598780625053.6604,
+          "current_ev_ebitda": 23.74794261337592,
+          "wacc": 0.08798601891765574,
+          "ebit_margin": 0.6629458735114525,
+          "implied_cagr_10y": 0.13420445850490503,
+          "implied_cagr_5y": 0.13420445850490503,
+          "historical_cagr_5y": 0.09243581742938634,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 23.74794261337592,
+          "forward_ev_ebitda_justified": 11.71137314357065,
+          "signal": "caution"
+        },
+        "implied_cagr": 0.13420445850490503,
+        "historical_cagr": 0.09243581742938634,
+        "reverse_dcf_signal": "caution",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (13.4%) exceeds sector 75th percentile (12.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+        ],
+        "multiples": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 23.74794261337592,
+          "market_ev_ebit": 24.9554315684613,
+          "market_p_sales": 14.90856562634151,
+          "market_p_e": 29.73091160901687,
+          "market_peg": 3.216384344924405,
+          "justified_ev_ebitda": 11.287861106153382,
+          "justified_ev_ebit": 11.861804198155847,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 12.460081507222537,
+          "ev_ebitda_premium_pct": 1.1038478760542276,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 11.747942613375919,
+          "roic": 0.4606717379152794,
+          "wacc": 0.08798601891765574,
+          "roic_wacc_spread": 0.37268571899762365,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7109774331720473,
+          "growth_rate": 0.09243581742938634,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 23.74794261337592,
+        "ev_ebitda_justified": 11.287861106153382,
+        "ev_ebitda_premium_pct": 1.1038478760542276,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.37268571899762365,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.4606717379152794,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: V ===\nPrice: $309.30  |  Bear=$106  Base=$248  Bull=$297\nMoS:  Bear=-65.9%  Base=-19.8%  Bull=-3.8%\nRDCF: implied=13.4% hist=9.2% [caution]\nEV/EBITDA: 23.7x market vs 11.3x justified (+110%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.5,
+        "power_ratio": 0.5,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+        "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+        "pass_through_capability": true,
+        "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0763169984034873,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 36193000000.0,
+        "deferred_revenue_trend": "Visa's deferred revenue is $0 with a D8 Revenue Score of 1.00. The company's business model relies on transaction processing volumes rather than upfront software/service contracts, meaning deferred revenue is not a material driver or risk factor for revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs, exclusivity dates, or contract expirations were identified in the provided 10-K text. Visa's competitive moat is based on its global network effects (VisaNet), brand equity, and scale, rather than specific expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Visa's revenue Z-score of 2.08 flags a statistical cyclical peak, though this reflects consistent structural growth in global digital payments rather than traditional cyclicality. Growth quality is pristine (D8 score of 1.00) with no deferred revenue pull-forward risk. Intangible decay risk is estimated at 0.0%, as the company's value is derived from structural network effects and brand dominance rather than expiring patents or contracts."
+      },
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $309.30 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 13.4%\n  \u2022 Company's robust historical CAGR: 9.2%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: CAUTION\n\n  Reverse DCF assessment:\n    - Implied CAGR (13.4%) exceeds sector 75th percentile (12.0%). Market is pricing above-norm growth \u2014 requires very strong thesis.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 23.7x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 11.3x\n  \u2022 Premium to justified multiple: +110%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $106/share vs current price $309.30\n  \u2022 Downside in bear case: -65.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market is pricing Visa at $309.30, which mathematically demands a 10-year revenue CAGR of 13.4%. This requires a massive 1.5x acceleration over its historical CAGR of 9.2% and exceeds the sector's 75th percentile of 12.0%. Expecting a mature mega-cap to accelerate growth to this degree for a decade is highly improbable. Furthermore, the stock trades at an EV/EBITDA of 23.7x, a staggering 110% premium over its mathematically justified multiple of 11.3x. To achieve these implied metrics, Visa would need to flawlessly capture new payment flows without margin compression. However, mounting regulatory pressures including antitrust probes and swipe fee legislation, rising competition from alternative payment rails like account-to-account transfers and FedNow, and consumer spending fatigue threaten this thesis. If growth merely reverts to historical norms, the speculative premium will collapse, driving the stock toward its bear case intrinsic value of $106/share, representing a severe 65....(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -8/10. Implied CAGR 13.4% vs 9.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:39.671526",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/V_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:56:39.673137",
+    "agent": "Lead",
+    "trace_id": "trace_V_1777430903",
+    "inputs": {
+      "ticker": "V",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for V.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.0/10 (Python). Pricing power: True. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.5/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $9,060,216,582",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: V \u2014 Base IV=$248/share MoS=-19.8% ImpliedCAGR=13.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -8/10. Implied CAGR 13.4% vs 9.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "terminal_value": 10576840958.160057,
+          "discounted_terminal_value": 6874220906.594085,
+          "sum_pv_cash_flows": 2185995675.0847864,
+          "audit_metrics": {
+            "roic_path": [
+              0.14561772123116362,
+              0.15096265306991064,
+              0.15337986611115031,
+              0.1527939591108695,
+              0.1507709968221736
+            ],
+            "invested_capital_path": [
+              4837700000.0,
+              5039731500.0,
+              5257925520.0,
+              5489211181.2,
+              5729748268.848,
+              5977501469.12544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 6911000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.11729850962234122,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666668,
+            "implied_terminal_multiple_nopat": 12.2434165582081,
+            "reinvestment_rate_terminal_year": 0.28679126845389724,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.03270149037765881,
+              "capex_percent_sales": 0.04427723918390971,
+              "wc_change_percent_sales": 0.015
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 7.0710257191303825,
+          "upside_percent": -0.9771386171382788,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.03270149037765881,
+            "capex_percent_sales": 0.04427723918390971,
+            "wc_change_percent_sales": 0.015
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 7602100000.000001,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 891715000.0000002,
+              "nopat": 704454850.0000002,
+              "depreciation": 248600000.00000006,
+              "capex": 336600000.00000006,
+              "change_in_wc": 114031500.00000001,
+              "fcff": 502423350.00000024,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 460938853.2110094
+            },
+            {
+              "year": 2.0,
+              "revenue": 8210268000.000002,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 963052200.0000004,
+              "nopat": 760811238.0000004,
+              "depreciation": 268488000.00000006,
+              "capex": 363528000.0000001,
+              "change_in_wc": 123154020.00000003,
+              "fcff": 542617218.0000004,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 456710056.3925598
+            },
+            {
+              "year": 3.0,
+              "revenue": 8702884080.000002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1020835332.0000004,
+              "nopat": 806459912.2800003,
+              "depreciation": 284597280.00000006,
+              "capex": 385339680.0000001,
+              "change_in_wc": 130543261.20000002,
+              "fcff": 575174251.0800003,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 444140054.8404709
+            },
+            {
+              "year": 4.0,
+              "revenue": 9050999443.200003,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1061668745.2800004,
+              "nopat": 838718308.7712004,
+              "depreciation": 295981171.2000001,
+              "capex": 400753267.2000001,
+              "change_in_wc": 135764991.64800003,
+              "fcff": 598181221.1232004,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 423766657.8294401
+            },
+            {
+              "year": 5.0,
+              "revenue": 9322529426.496002,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.11729850962234122,
+              "ebit": 1093518807.6384006,
+              "nopat": 863879858.0343364,
+              "depreciation": 304860606.3360001,
+              "capex": 412775865.2160001,
+              "change_in_wc": 139837941.39744002,
+              "fcff": 616126657.7568965,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 400440052.8113058
+            }
+          ],
+          "enterprise_value": 9060216581.678871,
+          "equity_value": 13633216581.678871,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.03270149037765881,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.04427723918390971,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.015,
+          "_valuation_model_hint": "Earnings_Power_Value",
+          "cogs_percent_sales": 0.85
+        },
+        "base_financials": {
+          "net_sales": 6911000000.0,
+          "cogs": 0.0,
+          "interest_expense": 0.0,
+          "net_debt": -4573000000.0
+        },
+        "calculated_upside": -0.9771386171382788
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 44000000.0,
+          "equity": 596342625053.6604,
+          "wacc": 0.09,
+          "cost_of_equity": 0.08983944796396016,
+          "beta": 0.8418081281533241
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4400000.0,
+            "cash": 4617000000.0,
+            "liquidity_ratio": 0.0009529997834091401,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23189000000.0,
+            "crash_fcf": 1491125000.0,
+            "earnings_power_value": 13555681818.181818,
+            "floor_value": 23189000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.0,
+            "financial_leverage_score": 0.0002951323494344599,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 36193000000.0,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.5,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:56:03.304421",
+          "current_price": 309.29998779296875,
+          "shares_diluted": 1928039601.0000002,
+          "market_cap": 596342625053.6604,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.8418081281533241,
+          "wacc_base": 0.09,
+          "revenue": 36193000000.0,
+          "ebitda": 25214000000.0,
+          "ebit": 23994000000.0,
+          "nopat": 18955260000.0,
+          "roic": 0.4606717379152794,
+          "fcf": 21577000000.0,
+          "net_debt": 2438000000.0,
+          "bull_ev": 578815601066.7937,
+          "bull_intrinsic_per_share": 298.9448975881246,
+          "bull_upside": -0.03347911611226887,
+          "bull_wacc": 0.08499999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 22.95611965839588,
+          "bull_justified_ev_ebitda": 15.202010911412406,
+          "bull_roic_wacc_spread": 0.3756717379152794,
+          "bull_tv_pct_of_ev": 0.6678740709926367,
+          "bull_implied_tv_ebitda": 15.202010911412406,
+          "base_ev": 483595499556.3932,
+          "base_intrinsic_per_share": 249.5578925385325,
+          "base_upside": -0.19315259493131587,
+          "base_wacc": 0.09,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 19.179642244641595,
+          "base_justified_ev_ebitda": 11.800642820694007,
+          "base_roic_wacc_spread": 0.3706717379152794,
+          "base_tv_pct_of_ev": 0.6085114359455481,
+          "base_implied_tv_ebitda": 11.800642820694009,
+          "bear_ev": 208813540640.6342,
+          "bear_intrinsic_per_share": 107.03905694343368,
+          "bear_upside": -0.6539312603688794,
+          "bear_wacc": 0.105,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 8.281650695670429,
+          "bear_justified_ev_ebitda": 8.095091952008934,
+          "bear_roic_wacc_spread": 0.3556717379152794,
+          "bear_tv_pct_of_ev": 0.43827888133728754,
+          "bear_implied_tv_ebitda": 8.095091952008934
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "V",
+            "scenario": "bull",
+            "enterprise_value": 578815601066.7937,
+            "equity_value": 573581349066.7937,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 297.49458920309473,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.038168118512102917,
+            "upside_pct": -0.038168118512102917,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          },
+          "base": {
+            "ticker": "V",
+            "scenario": "base",
+            "enterprise_value": 483595499556.3932,
+            "equity_value": 478361247556.3932,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 248.10758415350261,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.19784159733115,
+            "upside_pct": -0.19784159733115,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          },
+          "bear": {
+            "ticker": "V",
+            "scenario": "bear",
+            "enterprise_value": 208813540640.6342,
+            "equity_value": 203579288640.6342,
+            "shares_diluted": 1928039601.0000002,
+            "intrinsic_per_share": 105.58874855840378,
+            "current_price": 309.29998779296875,
+            "margin_of_safety": -0.6586202627687135,
+            "upside_pct": -0.6586202627687135,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -19602000000.0,
+            "bridge_cash_(net_of_haircuts)": 14367748000.0,
+            "cash_gross": 17164000000.0,
+            "cash_wc_haircut": 1200000000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 1596252000.0,
+            "cash_net_accessible": 14367748000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 14367748000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 297.49458920309473,
+          "base": 248.10758415350261,
+          "bear": 105.58874855840378
+        },
+        "margin_of_safety": {
+          "bull": -0.038168118512102917,
+          "base": -0.19784159733115,
+          "bear": -0.6586202627687135
+        },
+        "reverse_dcf": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "current_price": 309.29998779296875,
+          "current_ev": 598780625053.6604,
+          "current_ev_ebitda": 23.74794261337592,
+          "wacc": 0.08798601891765574,
+          "ebit_margin": 0.6629458735114525,
+          "implied_cagr_10y": 0.13420445850490503,
+          "implied_cagr_5y": 0.13420445850490503,
+          "historical_cagr_5y": 0.09243581742938634,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 23.74794261337592,
+          "forward_ev_ebitda_justified": 11.71137314357065,
+          "signal": "caution"
+        },
+        "implied_cagr": 0.13420445850490503,
+        "historical_cagr": 0.09243581742938634,
+        "reverse_dcf_signal": "caution",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (13.4%) exceeds sector 75th percentile (12.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+        ],
+        "multiples": {
+          "ticker": "V",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 23.74794261337592,
+          "market_ev_ebit": 24.9554315684613,
+          "market_p_sales": 14.90856562634151,
+          "market_p_e": 29.73091160901687,
+          "market_peg": 3.216384344924405,
+          "justified_ev_ebitda": 11.287861106153382,
+          "justified_ev_ebit": 11.861804198155847,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 12.460081507222537,
+          "ev_ebitda_premium_pct": 1.1038478760542276,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 11.747942613375919,
+          "roic": 0.4606717379152794,
+          "wacc": 0.08798601891765574,
+          "roic_wacc_spread": 0.37268571899762365,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7109774331720473,
+          "growth_rate": 0.09243581742938634,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 23.74794261337592,
+        "ev_ebitda_justified": 11.287861106153382,
+        "ev_ebitda_premium_pct": 1.1038478760542276,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.37268571899762365,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.4606717379152794,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: V ===\nPrice: $309.30  |  Bear=$106  Base=$248  Bull=$297\nMoS:  Bear=-65.9%  Base=-19.8%  Bull=-3.8%\nRDCF: implied=13.4% hist=9.2% [caution]\nEV/EBITDA: 23.7x market vs 11.3x justified (+110%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $309.30 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 13.4%\n  \u2022 Company's robust historical CAGR: 9.2%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: CAUTION\n\n  Reverse DCF assessment:\n    - Implied CAGR (13.4%) exceeds sector 75th percentile (12.0%). Market is pricing above-norm growth \u2014 requires very strong thesis.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 23.7x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 11.3x\n  \u2022 Premium to justified multiple: +110%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $106/share vs current price $309.30\n  \u2022 Downside in bear case: -65.9%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market is pricing Visa at $309.30, which mathematically demands a 10-year revenue CAGR of 13.4%. This requires a massive 1.5x acceleration over its historical CAGR of 9.2% and exceeds the sector's 75th percentile of 12.0%. Expecting a mature mega-cap to accelerate growth to this degree for a decade is highly improbable. Furthermore, the stock trades at an EV/EBITDA of 23.7x, a staggering 110% premium over its mathematically justified multiple of 11.3x. To achieve these implied metrics, Visa would need to flawlessly capture new payment flows without margin compression. However, mounting regulatory pressures including antitrust probes and swipe fee legislation, rising competition from alternative payment rails like account-to-account transfers and FedNow, and consumer spending fatigue threaten this thesis. If growth merely reverts to historical norms, the speculative premium will collapse, driving the stock toward its bear case intrinsic value of $106/share, representing a severe 65....(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally.",
+        "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+        "revenue_segments": [
+          {
+            "segment": "Service Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with overall payment volume"
+          },
+          {
+            "segment": "Data Processing Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with transaction counts and network access"
+          },
+          {
+            "segment": "International Transaction Revenue",
+            "pct_revenue": null,
+            "growth_trend": "Growing with cross-border travel and ecommerce"
+          },
+          {
+            "segment": "Value-Added Services (VAS) / Other",
+            "pct_revenue": null,
+            "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+          }
+        ],
+        "key_customers": [
+          "Issuing Financial Institutions",
+          "Acquiring Financial Institutions",
+          "Fintechs and Digital Wallets",
+          "Merchants and Sellers"
+        ],
+        "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+        "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position.",
+        "operating_leverage_score": 6.0
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.5,
+        "power_ratio": 0.5,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+        "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+        "pass_through_capability": true,
+        "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.0763169984034873,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 36193000000.0,
+        "deferred_revenue_trend": "Visa's deferred revenue is $0 with a D8 Revenue Score of 1.00. The company's business model relies on transaction processing volumes rather than upfront software/service contracts, meaning deferred revenue is not a material driver or risk factor for revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs, exclusivity dates, or contract expirations were identified in the provided 10-K text. Visa's competitive moat is based on its global network effects (VisaNet), brand equity, and scale, rather than specific expiring patents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Visa's revenue Z-score of 2.08 flags a statistical cyclical peak, though this reflects consistent structural growth in global digital payments rather than traditional cyclicality. Growth quality is pristine (D8 score of 1.00) with no deferred revenue pull-forward risk. Intangible decay risk is estimated at 0.0%, as the company's value is derived from structural network effects and brand dominance rather than expiring patents or contracts."
+      },
+      "final_report": "",
+      "raw_10k_text": "Table of Contents\n\n### UNITED STATES SECURITIES AND EXCHANGE COMMISSION\n\n#### WASHINGTON, D.C. 20549\n\n#### FORM 10-K\n| \u2611 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended September 30, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to\n\n#### Commission file number 001-33977\n\n#### VISA INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                 |     |            |     | 26-0267673         |\n| (State or other jurisdiction             \n of incorporation or organization)        |     |            |     | -IRS Employer      \n Identification No. |\n| P.O. Box 8999                            |     |            |     | 94128-8999         |\n| San Francisco,                           |     | California |     |                    |\n| (Address of pr...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "V",
+        "generated_at": "2026-04-28T22:56:39.669869",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 6.0,
+            "cost_structure": "Visa exhibits immense operating leverage due to its highly scalable proprietary network, VisaNet. Major fixed costs include network infrastructure, data centers, and heavy R&D and personnel investments (evidenced by SBC at 415.7% of FCF) to develop AI, tokenization, and security features. Variable costs per transaction are near zero, meaning incremental revenue from higher payment volumes or new value-added services flows almost entirely to EBIT, driving exceptional margins.",
+            "business_description": "Visa is a global digital payments technology company that facilitates transaction processing, including authorization, clearing, and settlement, through its proprietary network, VisaNet. It connects consumers, merchants, financial institutions, and governments across more than 200 countries. Revenue is primarily generated through service fees based on payment volume, data processing fees for transaction routing, and international transaction fees.",
+            "revenue_segments": [
+              {
+                "segment": "Service Revenue",
+                "pct_revenue": null,
+                "growth_trend": "Growing with overall payment volume"
+              },
+              {
+                "segment": "Data Processing Revenue",
+                "pct_revenue": null,
+                "growth_trend": "Growing with transaction counts and network access"
+              },
+              {
+                "segment": "International Transaction Revenue",
+                "pct_revenue": null,
+                "growth_trend": "Growing with cross-border travel and ecommerce"
+              },
+              {
+                "segment": "Value-Added Services (VAS) / Other",
+                "pct_revenue": null,
+                "growth_trend": "High growth driven by security, advisory, and issuing solutions"
+              }
+            ],
+            "key_customers": [
+              "Issuing Financial Institutions",
+              "Acquiring Financial Institutions",
+              "Fintechs and Digital Wallets",
+              "Merchants and Sellers"
+            ],
+            "competitive_landscape": "Top competitors include Mastercard and American Express, as well as emerging A2A and real-time payment networks. Visa differentiates itself through its unmatched global scale (175 million merchants), advanced AI-driven fraud prevention (Visa Protect), and a 'network of networks' strategy that integrates card, A2A, and stablecoin flows.",
+            "regulatory_risk": "Visa faces ongoing global regulatory scrutiny regarding interchange fees, network routing mandates, and antitrust concerns related to its dominant market position."
+          },
+          "value_chain": {
+            "power_ratio": 0.5,
+            "upstream_leak": false,
+            "strategic_leverage": 9.5,
+            "bottleneck_analysis": "Visa relies on IT infrastructure, telecommunications, and cloud service providers to operate VisaNet. However, due to its massive scale, proprietary data centers, and the commoditized nature of basic IT infrastructure, suppliers have very little leverage. If a telecom or hardware provider raises prices, Visa can easily absorb the cost or switch vendors without material disruption.",
+            "substitution_risk_score": 3.0,
+            "top_substitutes": "1. Cash and Checks (still prevalent in emerging markets and B2B). 2. Account-to-Account (A2A) / Real-Time Payments (RTP) networks (e.g., Pix, UPI). 3. Closed-loop digital wallets and alternative payment methods (e.g., Alipay, WeChat Pay, BNPL).",
+            "pricing_power_assessment": "Visa exhibits exceptional pricing power, operating in a global duopoly with Mastercard. It can adjust network assessment fees and data processing fees with minimal churn, as banks and merchants are highly dependent on Visa's ubiquitous acceptance network. High switching costs and network effects lock in both issuers and acquirers.",
+            "pass_through_capability": true,
+            "analysis_summary": "Visa holds a dominant strategic position characterized by immense network effects and a global duopoly. Supplier power is negligible due to the proprietary nature of VisaNet and commoditized IT inputs. Buyer power (issuers and merchants) is low to moderate; while large merchants negotiate routing, they cannot afford to drop Visa acceptance. The primary threat is substitution from A2A, RTP, and alternative digital wallets, but Visa actively mitigates this by acquiring or partnering with emerging networks (e.g., Tink, Visa Direct). Rivalry is limited primarily to Mastercard. Overall, Visa possesses exceptional pricing power and strategic leverage."
+          },
+          "moat": {
+            "score": 9.5,
+            "switching_costs": 8.0,
+            "network_effects": 10.0,
+            "cost_advantage": 9.0,
+            "intangibles": 10.0,
+            "evidence": "Visa benefits from a massive two-sided network effect with nearly 5 billion payment credentials and 175 million merchant locations. Intangibles are supported by global brand sponsorships (Olympics, FIFA, NFL) and proprietary tech like Visa Token Service (over 16 billion tokens provisioned). Switching costs are high for the 14,500 financial institutions deeply integrated into VisaNet and Visa DPS.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "While specific price hike dates are not detailed in the excerpt, Visa demonstrates pricing power by independently setting network fees and successfully upselling over 200 Value-Added Services (VAS) to its captive network of 14,500 financial institutions, increasing yield per transaction without material churn."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 2.0763169984034873,
+            "is_peak": true
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Visa's deferred revenue is $0 with a D8 Revenue Score of 1.00. The company's business model relies on transaction processing volumes rather than upfront software/service contracts, meaning deferred revenue is not a material driver or risk factor for revenue growth.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "No material patent cliffs, exclusivity dates, or contract expirations were identified in the provided 10-K text. Visa's competitive moat is based on its global network effects (VisaNet), brand equity, and scale, rather than specific expiring patents.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Visa's revenue Z-score of 2.08 flags a statistical cyclical peak, though this reflects consistent structural growth in global digital payments rather than traditional cyclicality. Growth quality is pristine (D8 score of 1.00) with no deferred revenue pull-forward risk. Intangible decay risk is estimated at 0.0%, as the company's value is derived from structural network effects and brand dominance rather than expiring patents or contracts."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 40.0,
+            "ebitda_bn": 25.214,
+            "fcf_bn": 21.577,
+            "nopat_bn": 18.95526,
+            "invested_capital_bn": 41.147,
+            "net_debt_bn": 2.438,
+            "sbc_bn": 0.897,
+            "fiscal_year": 2025,
+            "data_quality": 0.96
+          },
+          "ratios": {
+            "gross_margin_pct": 100.0,
+            "ebit_margin_pct": 59.985,
+            "ebitda_margin_pct": 63.035,
+            "fcf_margin_pct": 53.9425,
+            "roic": 0.4606717379152794,
+            "roe": 0.5291091825160252,
+            "sbc_pct_fcf": 4.157204430643741,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 2,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 44000000.0,
+            "equity": 596342625053.6604,
+            "wacc": 0.09,
+            "cost_of_equity": 0.08983944796396016,
+            "beta": 0.8418081281533241
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 4400000.0,
+              "cash": 4617000000.0,
+              "liquidity_ratio": 0.0009529997834091401,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 23189000000.0,
+              "crash_fcf": 1491125000.0,
+              "earnings_power_value": 13555681818.181818,
+              "floor_value": 23189000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 6.0,
+              "financial_leverage_score": 0.0002951323494344599,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.09,
+              "2": 0.09,
+              "3": 0.09,
+              "4": 0.09,
+              "5": 0.09
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier is noted as exceeding 10% of revenue. The company serves a highly fragmented base of nearly 14,500 financial institutions and 175 million merchant locations globally."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 13633216581.678871,
+            "upside_percent": -0.9771386171382788,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 105.58874855840378,
+                "margin_of_safety": -0.6586202627687135,
+                "ev": 208813540640.6342
+              },
+              "base": {
+                "intrinsic_per_share": 248.10758415350261,
+                "margin_of_safety": -0.19784159733115,
+                "ev": 483595499556.3932
+              },
+              "bull": {
+                "intrinsic_per_share": 297.49458920309473,
+                "margin_of_safety": -0.038168118512102917,
+                "ev": 578815601066.7937
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.13420445850490503,
+              "historical_cagr": 0.09243581742938634,
+              "signal": "caution",
+              "reasons": [
+                "Implied CAGR (13.4%) exceeds sector 75th percentile (12.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 23.74794261337592,
+              "justified_ev_ebitda": 11.287861106153382,
+              "premium_pct": 1.1038478760542276,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.37268571899762365,
+              "value_creation": "creating",
+              "roic": 0.4606717379152794,
+              "wacc": 0.09
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": 36193000000.0,
+              "concentration_risk": false,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 9.5,
+              "terminal_haircut": false,
+              "is_cyclical_peak": true,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.09,
+            "beta": 0.8418081281533241,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+            "bear_case_summary": "The market is pricing Visa at $309.30, which mathematically demands a 10-year revenue CAGR of 13.4%. This requires a massive 1.5x acceleration over its historical CAGR of 9.2% and exceeds the sector's 75th percentile of 12.0%. Expecting a mature mega-cap to accelerate growth to this degree for a decade is highly improbable. Furthermore, the stock trades at an EV/EBITDA of 23.7x, a staggering 110% premium over its mathematically justified multiple of 11.3x. To achieve these implied metrics, Visa would need to flawlessly capture new payment flows without margin compression. However, mounting regulatory pressures including antitrust probes and swipe fee legislation, rising competition from alternative payment rails like account-to-account transfers and FedNow, and consumer spending fatigue threaten this thesis. If growth merely reverts to historical norms, the speculative premium will collapse, driving the stock toward its bear case intrinsic value of $106/share, representing a severe 65....(truncated)",
+            "sentiment_score": -8,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $309.30 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 13.4%\n  \u2022 Company's robust historical CAGR: 9.2%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: CAUTION\n\n  Reverse DCF assessment:\n    - Implied CAGR (13.4%) exceeds sector 75th percentile (12.0%). Market is pricing above-norm growth \u2014 requires very strong thesis.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 23.7x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 11.3x\n  \u2022 Premium to justified multiple: +110%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $106/share vs current price $309.30\n  \u2022 Downside in bear case: -65.9%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 5,
+            "margin_of_safety": -0.19784159733115,
+            "narrative": "Visa's implied 10-year CAGR of 13.4% requires a 1.5x acceleration over its historical 9.2% rate, which is highly improbable for a mature mega-cap. While the company boasts a pristine D8 score of 1.00 and 0.0% intangible decay risk, structural growth in digital payments is decelerating as global penetration matures. Value-added services and new flows provide some offset, but they are unlikely to bridge the 420 bps gap between historical performance and market expectations without margin dilution.\n\nThe Contrarian is mathematically correct regarding the valuation disconnect: pricing in a 13.4% CAGR and a 110% EV/EBITDA premium leaves zero room for execution error and guarantees multiple compression if growth merely reverts to the 9.2% historical mean. However, the bear case overstates the existential threat of alternative rails like FedNow and A2A. Visa's 9.5/10 moat, underpinned by 14,500 deeply integrated financial institutions and 16 billion provisioned tokens, allows it to co-opt thes...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u26a0\ufe0f CAUTION: Implied CAGR (13.4%) exceeds historical (9.2%) by 1.5x.",
+              "\u274c FAIL: EV/EBITDA at +110% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "V",
+              "p1_moat": 5,
+              "p2_health": 5,
+              "p3_tailwind": 4,
+              "p4_mos": 1,
+              "p5_leadership": 5,
+              "raw_total": 20,
+              "capped_total": 20,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "conviction",
+              "position_size_pct": "Strong \u2014 minor valuation or quality gap",
+              "conviction_score": 5,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 9.5/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "ROE 52.9% \u2014 exceptional for financial sector"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 9.2% \u2014 solid growth for mature stage"
+              ],
+              "p4_reasons": [
+                "Base MoS -21.5% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 4.2% of FCF \u2014 acceptable dilution",
+                "Operating leverage 9.5/10",
+                "Strategic leverage 10.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for V. Conviction: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

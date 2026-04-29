@@ -1,0 +1,3296 @@
+[
+  {
+    "timestamp": "2026-04-29T10:49:44.656443",
+    "agent": "Librarian",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:50:18.820320",
+    "agent": "Forensic",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:50:39.978280",
+    "agent": "ValueChain",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0113,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+        "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+        "pass_through_capability": true,
+        "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:05.091462",
+    "agent": "StrategicContext",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0113,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+        "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+        "pass_through_capability": true,
+        "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.7075551733563503,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 9.8 percent, outpacing the 3-year revenue CAGR of 2.8 percent. The D8 Revenue Score is 1.00, indicating clean revenue quality and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K states that no single intellectual property right is solely responsible for protecting the Company's products and services. No specific patent cliffs or contract expirations were disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Apple's revenue growth is structural, with a Z-score of 1.71 indicating it is not at a cyclical peak. Growth quality is strong, evidenced by a clean D8 score of 1.00 and deferred revenue growth of 9.8 percent. Intangible risk is minimal, as the company relies on a broad IP portfolio with 0 percent of revenue estimated to be at risk from near-term expirations."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:06.295771",
+    "agent": "Strategist",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0113,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+        "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+        "pass_through_capability": true,
+        "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7075551733563503,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 9.8 percent, outpacing the 3-year revenue CAGR of 2.8 percent. The D8 Revenue Score is 1.00, indicating clean revenue quality and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K states that no single intellectual property right is solely responsible for protecting the Company's products and services. No specific patent cliffs or contract expirations were disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Apple's revenue growth is structural, with a Z-score of 1.71 indicating it is not at a cyclical peak. Growth quality is strong, evidenced by a clean D8 score of 1.00 and deferred revenue growth of 9.8 percent. Intangible risk is minimal, as the company relies on a broad IP portfolio with 0 percent of revenue estimated to be at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 3960384469770.508,
+          "wacc": 0.10698294504512776,
+          "cost_of_equity": 0.10698294504512776,
+          "beta": 1.146599051451941
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 5263000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 27832000000.0,
+            "crash_fcf": 3024910000.0,
+            "earnings_power_value": 23821387973.991264,
+            "floor_value": 27832000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.8,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10698294504512776,
+            "2": 0.10698294504512776,
+            "3": 0.10698294504512776,
+            "4": 0.10698294504512776,
+            "5": 0.10698294504512776
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 10.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:07.298371",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "base": {
+        "net_sales": 416161000000.0,
+        "cogs": 220960000000.0,
+        "interest_expense": 0.0,
+        "net_debt": 42394000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.06632288945864702,
+        "da_percent_sales": 0.028109313462818475,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.030553079216937677,
+        "wacc": 0.10698294504512776,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 0.6139691129154341,
+        "calibration_adjustment": 0.08302075398703873
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-29T10:51:07.298507",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 1303243051400.2983,
+      "equity_value": 1260849051400.2983,
+      "terminal_value": 1524123227965.5486,
+      "discounted_terminal_value": 916886191997.438,
+      "sum_pv_cash_flows": 386356859402.8602,
+      "audit_metrics": {
+        "roic_path": [
+          0.361998937911049,
+          0.3747954550284196,
+          0.3803025220348375,
+          0.378371925363038,
+          0.37291345851599833
+        ],
+        "invested_capital_path": [
+          291312700000.0,
+          303875827500.0,
+          317444005200.0,
+          331826273562.0,
+          346783832658.48,
+          362190118527.8544
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 457777100000.00006,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.2915986841631004,
+          "ebit": 133487200000.00006,
+          "nopat": 105454888000.00005,
+          "depreciation": 12867800000.000002,
+          "capex": 13986500000.000002,
+          "change_in_wc": 11444427500.000002,
+          "fcff": 92891760500.00005,
+          "discount_factor": 0.9033562842824407,
+          "pv_fcff": 83914355605.73444
+        },
+        {
+          "year": 2.0,
+          "revenue": 494399268000.0001,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.2915986841631004,
+          "ebit": 144166176000.00006,
+          "nopat": 113891279040.00005,
+          "depreciation": 13897224000.000002,
+          "capex": 15105420000.000004,
+          "change_in_wc": 12359981700.000004,
+          "fcff": 100323101340.00005,
+          "discount_factor": 0.816052576352578,
+          "pv_fcff": 81868925316.1878
+        },
+        {
+          "year": 3.0,
+          "revenue": 524063224080.0002,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.2915986841631004,
+          "ebit": 152816146560.0001,
+          "nopat": 120724755782.40007,
+          "depreciation": 14731057440.000004,
+          "capex": 16011745200.000006,
+          "change_in_wc": 13101580602.000006,
+          "fcff": 106342487420.40007,
+          "discount_factor": 0.7371862231529775,
+          "pv_fcff": 78394216662.13776
+        },
+        {
+          "year": 4.0,
+          "revenue": 545025753043.2002,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.2915986841631004,
+          "ebit": 158928792422.40012,
+          "nopat": 125553746013.69609,
+          "depreciation": 15320299737.600004,
+          "capex": 16652215008.000006,
+          "change_in_wc": 13625643826.080006,
+          "fcff": 110596186917.21608,
+          "discount_factor": 0.6659418073716801,
+          "pv_fcff": 73650624604.06703
+        },
+        {
+          "year": 5.0,
+          "revenue": 561376525634.4962,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.2915986841631004,
+          "ebit": 163696656195.0721,
+          "nopat": 129320358394.10698,
+          "depreciation": 15779908729.728004,
+          "capex": 17151781458.240007,
+          "change_in_wc": 14034413140.862406,
+          "fcff": 113914072524.73257,
+          "discount_factor": 0.6015827166556138,
+          "pv_fcff": 68528737214.73324
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 416161000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.2915986841631004,
+        "terminal_value_pct_of_ev": 0.7035419763122998,
+        "implied_terminal_multiple_fcf": 13.37958686039108,
+        "implied_terminal_multiple_nopat": 11.785640303599727,
+        "reinvestment_rate_terminal_year": 0.11913271862751396,
+        "assumptions_used": {
+          "wacc": 0.10698294504512776,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.028109313462818475,
+          "capex_percent_sales": 0.030553079216937677,
+          "wc_change_percent_sales": 0.025
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:07.300228",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 3960384469770.508,
+          "wacc": 0.10698294504512776,
+          "cost_of_equity": 0.10698294504512776,
+          "beta": 1.146599051451941
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 5263000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 27832000000.0,
+            "crash_fcf": 3024910000.0,
+            "earnings_power_value": 23821387973.991264,
+            "floor_value": 27832000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.8,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10698294504512776,
+            "2": 0.10698294504512776,
+            "3": 0.10698294504512776,
+            "4": 0.10698294504512776,
+            "5": 0.10698294504512776
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0113,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+        "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+        "pass_through_capability": true,
+        "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7075551733563503,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 9.8 percent, outpacing the 3-year revenue CAGR of 2.8 percent. The D8 Revenue Score is 1.00, indicating clean revenue quality and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K states that no single intellectual property right is solely responsible for protecting the Company's products and services. No specific patent cliffs or contract expirations were disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Apple's revenue growth is structural, with a Z-score of 1.71 indicating it is not at a cyclical peak. Growth quality is strong, evidenced by a clean D8 score of 1.00 and deferred revenue growth of 9.8 percent. Intangible risk is minimal, as the company relies on a broad IP portfolio with 0 percent of revenue estimated to be at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "terminal_value": 1524123227965.5486,
+          "discounted_terminal_value": 916886191997.438,
+          "sum_pv_cash_flows": 386356859402.8602,
+          "audit_metrics": {
+            "roic_path": [
+              0.361998937911049,
+              0.3747954550284196,
+              0.3803025220348375,
+              0.378371925363038,
+              0.37291345851599833
+            ],
+            "invested_capital_path": [
+              291312700000.0,
+              303875827500.0,
+              317444005200.0,
+              331826273562.0,
+              346783832658.48,
+              362190118527.8544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 416161000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2915986841631004,
+            "terminal_value_pct_of_ev": 0.7035419763122998,
+            "implied_terminal_multiple_fcf": 13.37958686039108,
+            "implied_terminal_multiple_nopat": 11.785640303599727,
+            "reinvestment_rate_terminal_year": 0.11913271862751396,
+            "assumptions_used": {
+              "wacc": 0.10698294504512776,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.028109313462818475,
+              "capex_percent_sales": 0.030553079216937677,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 85.88222642816892,
+          "upside_percent": -0.6816346885076775,
+          "assumptions_used": {
+            "wacc": 0.10698294504512776,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.028109313462818475,
+            "capex_percent_sales": 0.030553079216937677,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.06632288945864702,
+          "da_percent_sales": 0.028109313462818475,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030553079216937677,
+          "wacc": 0.10698294504512776,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.6139691129154341,
+          "calibration_adjustment": 0.08302075398703873
+        },
+        "base_financials": {
+          "net_sales": 416161000000.0,
+          "cogs": 220960000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 42394000000.0
+        },
+        "calculated_upside": -0.6816346885076775
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $1,303,243,051,400",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:08.492674",
+    "agent": "ValuationNode",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $1,303,243,051,400",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "terminal_value": 1524123227965.5486,
+          "discounted_terminal_value": 916886191997.438,
+          "sum_pv_cash_flows": 386356859402.8602,
+          "audit_metrics": {
+            "roic_path": [
+              0.361998937911049,
+              0.3747954550284196,
+              0.3803025220348375,
+              0.378371925363038,
+              0.37291345851599833
+            ],
+            "invested_capital_path": [
+              291312700000.0,
+              303875827500.0,
+              317444005200.0,
+              331826273562.0,
+              346783832658.48,
+              362190118527.8544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 416161000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2915986841631004,
+            "terminal_value_pct_of_ev": 0.7035419763122998,
+            "implied_terminal_multiple_fcf": 13.37958686039108,
+            "implied_terminal_multiple_nopat": 11.785640303599727,
+            "reinvestment_rate_terminal_year": 0.11913271862751396,
+            "assumptions_used": {
+              "wacc": 0.10698294504512776,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.028109313462818475,
+              "capex_percent_sales": 0.030553079216937677,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 85.88222642816892,
+          "upside_percent": -0.6816346885076775,
+          "assumptions_used": {
+            "wacc": 0.10698294504512776,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.028109313462818475,
+            "capex_percent_sales": 0.030553079216937677,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.06632288945864702,
+          "da_percent_sales": 0.028109313462818475,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030553079216937677,
+          "wacc": 0.10698294504512776,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.6139691129154341,
+          "calibration_adjustment": 0.08302075398703873
+        },
+        "base_financials": {
+          "net_sales": 416161000000.0,
+          "cogs": 220960000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 42394000000.0
+        },
+        "calculated_upside": -0.6816346885076775
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 3960384469770.508,
+          "wacc": 0.10698294504512776,
+          "cost_of_equity": 0.10698294504512776,
+          "beta": 1.146599051451941
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 5263000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 27832000000.0,
+            "crash_fcf": 3024910000.0,
+            "earnings_power_value": 23821387973.991264,
+            "floor_value": 27832000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.8,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10698294504512776,
+            "2": 0.10698294504512776,
+            "3": 0.10698294504512776,
+            "4": 0.10698294504512776,
+            "5": 0.10698294504512776
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0113,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+        "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+        "pass_through_capability": true,
+        "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7075551733563503,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 9.8 percent, outpacing the 3-year revenue CAGR of 2.8 percent. The D8 Revenue Score is 1.00, indicating clean revenue quality and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K states that no single intellectual property right is solely responsible for protecting the Company's products and services. No specific patent cliffs or contract expirations were disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Apple's revenue growth is structural, with a Z-score of 1.71 indicating it is not at a cyclical peak. Growth quality is strong, evidenced by a clean D8 score of 1.00 and deferred revenue growth of 9.8 percent. Intangible risk is minimal, as the company relies on a broad IP portfolio with 0 percent of revenue estimated to be at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:51:07.300993",
+          "current_price": 269.760009765625,
+          "shares_diluted": 14681140000.0,
+          "market_cap": 3960384469770.508,
+          "risk_free_rate": 0.043919997215271,
+          "beta": 1.146599051451941,
+          "wacc_base": 0.12198294504512776,
+          "revenue": 416161000000.0,
+          "ebitda": 144748000000.0,
+          "ebit": 133050000000.0,
+          "nopat": 105109500000.0,
+          "roic": 0.8445907126560322,
+          "fcf": 98767000000.0,
+          "net_debt": 42394000000.0,
+          "bull_ev": 3497789351192.9863,
+          "bull_intrinsic_per_share": 235.3628772147794,
+          "bull_upside": -0.12751012494672875,
+          "bull_wacc": 0.11698294504512775,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 24.16468173095992,
+          "bull_justified_ev_ebitda": 9.081673851746617,
+          "bull_roic_wacc_spread": 0.7276077676109045,
+          "bull_tv_pct_of_ev": 0.5947339863128958,
+          "bull_implied_tv_ebitda": 9.081673851746617,
+          "base_ev": 2262799524988.4004,
+          "base_intrinsic_per_share": 151.24203740229984,
+          "base_upside": -0.43934596705529805,
+          "base_wacc": 0.12198294504512776,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 15.63268248948794,
+          "base_justified_ev_ebitda": 7.643456569089577,
+          "base_roic_wacc_spread": 0.7226077676109045,
+          "base_tv_pct_of_ev": 0.513880888777423,
+          "base_implied_tv_ebitda": 7.643456569089576,
+          "bear_ev": 957898049905.2915,
+          "bear_intrinsic_per_share": 62.359193489421905,
+          "bear_upside": -0.7688345520761165,
+          "bear_wacc": 0.13698294504512776,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 6.6176945443480495,
+          "bear_justified_ev_ebitda": 5.714765719603574,
+          "bear_roic_wacc_spread": 0.7076077676109045,
+          "bear_tv_pct_of_ev": 0.3520763948379108,
+          "bear_implied_tv_ebitda": 5.714765719603574
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "AAPL",
+            "scenario": "bull",
+            "enterprise_value": 3497789351192.9863,
+            "equity_value": 3439568659192.9863,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 234.28484839685382,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.1315063763513094,
+            "upside_pct": -0.1315063763513094,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          },
+          "base": {
+            "ticker": "AAPL",
+            "scenario": "base",
+            "enterprise_value": 2262799524988.4004,
+            "equity_value": 2204578832988.4004,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 150.16400858437427,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.4433422184598787,
+            "upside_pct": -0.4433422184598787,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          },
+          "bear": {
+            "ticker": "AAPL",
+            "scenario": "bear",
+            "enterprise_value": 957898049905.2915,
+            "equity_value": 899677357905.2915,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 61.28116467149632,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.7728308034806971,
+            "upside_pct": -0.7728308034806971,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 234.28484839685382,
+          "base": 150.16400858437427,
+          "bear": 61.28116467149632
+        },
+        "margin_of_safety": {
+          "bull": -0.1315063763513094,
+          "base": -0.4433422184598787,
+          "bear": -0.7728308034806971
+        },
+        "reverse_dcf": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "current_price": 269.760009765625,
+          "current_ev": 4002778469770.508,
+          "current_ev_ebitda": 27.653428508653022,
+          "wacc": 0.1055209456174165,
+          "ebit_margin": 0.31970799762591884,
+          "implied_cagr_10y": 0.20609353955194518,
+          "implied_cagr_5y": 0.20609353955194518,
+          "historical_cagr_5y": 0.13595259418648797,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 27.653428508653022,
+          "forward_ev_ebitda_justified": 9.385489701790004,
+          "signal": "caution"
+        },
+        "implied_cagr": 0.20609353955194518,
+        "historical_cagr": 0.13595259418648797,
+        "reverse_dcf_signal": "caution",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (20.6%) exceeds sector 75th percentile (18.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+        ],
+        "multiples": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 27.653428508653022,
+          "market_ev_ebit": 30.084768656674242,
+          "market_p_sales": 9.516471917768623,
+          "market_p_e": 35.357418710566094,
+          "market_peg": 2.6007167367520663,
+          "justified_ev_ebitda": 8.751273540961538,
+          "justified_ev_ebit": 9.520701559617441,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 18.902154967691484,
+          "ev_ebitda_premium_pct": 2.159931909249248,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 5.653428508653022,
+          "roic": 0.8445907126560322,
+          "wacc": 0.1055209456174165,
+          "roic_wacc_spread": 0.7390697670386157,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7046608208748998,
+          "growth_rate": 0.13595259418648797,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 27.653428508653022,
+        "ev_ebitda_justified": 8.751273540961538,
+        "ev_ebitda_premium_pct": 2.159931909249248,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.7390697670386157,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.8445907126560322,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: AAPL ===\nPrice: $269.76  |  Bear=$61  Base=$150  Bull=$234\nMoS:  Bear=-77.3%  Base=-44.3%  Bull=-13.2%\nRDCF: implied=20.6% hist=13.6% [caution]\nEV/EBITDA: 27.7x market vs 8.8x justified (+216%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: AAPL \u2014 Base IV=$150/share MoS=-44.3% ImpliedCAGR=20.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:24.254742",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $1,303,243,051,400",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: AAPL \u2014 Base IV=$150/share MoS=-44.3% ImpliedCAGR=20.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "terminal_value": 1524123227965.5486,
+          "discounted_terminal_value": 916886191997.438,
+          "sum_pv_cash_flows": 386356859402.8602,
+          "audit_metrics": {
+            "roic_path": [
+              0.361998937911049,
+              0.3747954550284196,
+              0.3803025220348375,
+              0.378371925363038,
+              0.37291345851599833
+            ],
+            "invested_capital_path": [
+              291312700000.0,
+              303875827500.0,
+              317444005200.0,
+              331826273562.0,
+              346783832658.48,
+              362190118527.8544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 416161000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2915986841631004,
+            "terminal_value_pct_of_ev": 0.7035419763122998,
+            "implied_terminal_multiple_fcf": 13.37958686039108,
+            "implied_terminal_multiple_nopat": 11.785640303599727,
+            "reinvestment_rate_terminal_year": 0.11913271862751396,
+            "assumptions_used": {
+              "wacc": 0.10698294504512776,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.028109313462818475,
+              "capex_percent_sales": 0.030553079216937677,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 85.88222642816892,
+          "upside_percent": -0.6816346885076775,
+          "assumptions_used": {
+            "wacc": 0.10698294504512776,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.028109313462818475,
+            "capex_percent_sales": 0.030553079216937677,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.06632288945864702,
+          "da_percent_sales": 0.028109313462818475,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030553079216937677,
+          "wacc": 0.10698294504512776,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.6139691129154341,
+          "calibration_adjustment": 0.08302075398703873
+        },
+        "base_financials": {
+          "net_sales": 416161000000.0,
+          "cogs": 220960000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 42394000000.0
+        },
+        "calculated_upside": -0.6816346885076775
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 3960384469770.508,
+          "wacc": 0.10698294504512776,
+          "cost_of_equity": 0.10698294504512776,
+          "beta": 1.146599051451941
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 5263000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 27832000000.0,
+            "crash_fcf": 3024910000.0,
+            "earnings_power_value": 23821387973.991264,
+            "floor_value": 27832000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.8,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10698294504512776,
+            "2": 0.10698294504512776,
+            "3": 0.10698294504512776,
+            "4": 0.10698294504512776,
+            "5": 0.10698294504512776
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:51:07.300993",
+          "current_price": 269.760009765625,
+          "shares_diluted": 14681140000.0,
+          "market_cap": 3960384469770.508,
+          "risk_free_rate": 0.043919997215271,
+          "beta": 1.146599051451941,
+          "wacc_base": 0.12198294504512776,
+          "revenue": 416161000000.0,
+          "ebitda": 144748000000.0,
+          "ebit": 133050000000.0,
+          "nopat": 105109500000.0,
+          "roic": 0.8445907126560322,
+          "fcf": 98767000000.0,
+          "net_debt": 42394000000.0,
+          "bull_ev": 3497789351192.9863,
+          "bull_intrinsic_per_share": 235.3628772147794,
+          "bull_upside": -0.12751012494672875,
+          "bull_wacc": 0.11698294504512775,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 24.16468173095992,
+          "bull_justified_ev_ebitda": 9.081673851746617,
+          "bull_roic_wacc_spread": 0.7276077676109045,
+          "bull_tv_pct_of_ev": 0.5947339863128958,
+          "bull_implied_tv_ebitda": 9.081673851746617,
+          "base_ev": 2262799524988.4004,
+          "base_intrinsic_per_share": 151.24203740229984,
+          "base_upside": -0.43934596705529805,
+          "base_wacc": 0.12198294504512776,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 15.63268248948794,
+          "base_justified_ev_ebitda": 7.643456569089577,
+          "base_roic_wacc_spread": 0.7226077676109045,
+          "base_tv_pct_of_ev": 0.513880888777423,
+          "base_implied_tv_ebitda": 7.643456569089576,
+          "bear_ev": 957898049905.2915,
+          "bear_intrinsic_per_share": 62.359193489421905,
+          "bear_upside": -0.7688345520761165,
+          "bear_wacc": 0.13698294504512776,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 6.6176945443480495,
+          "bear_justified_ev_ebitda": 5.714765719603574,
+          "bear_roic_wacc_spread": 0.7076077676109045,
+          "bear_tv_pct_of_ev": 0.3520763948379108,
+          "bear_implied_tv_ebitda": 5.714765719603574
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "AAPL",
+            "scenario": "bull",
+            "enterprise_value": 3497789351192.9863,
+            "equity_value": 3439568659192.9863,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 234.28484839685382,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.1315063763513094,
+            "upside_pct": -0.1315063763513094,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          },
+          "base": {
+            "ticker": "AAPL",
+            "scenario": "base",
+            "enterprise_value": 2262799524988.4004,
+            "equity_value": 2204578832988.4004,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 150.16400858437427,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.4433422184598787,
+            "upside_pct": -0.4433422184598787,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          },
+          "bear": {
+            "ticker": "AAPL",
+            "scenario": "bear",
+            "enterprise_value": 957898049905.2915,
+            "equity_value": 899677357905.2915,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 61.28116467149632,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.7728308034806971,
+            "upside_pct": -0.7728308034806971,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 234.28484839685382,
+          "base": 150.16400858437427,
+          "bear": 61.28116467149632
+        },
+        "margin_of_safety": {
+          "bull": -0.1315063763513094,
+          "base": -0.4433422184598787,
+          "bear": -0.7728308034806971
+        },
+        "reverse_dcf": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "current_price": 269.760009765625,
+          "current_ev": 4002778469770.508,
+          "current_ev_ebitda": 27.653428508653022,
+          "wacc": 0.1055209456174165,
+          "ebit_margin": 0.31970799762591884,
+          "implied_cagr_10y": 0.20609353955194518,
+          "implied_cagr_5y": 0.20609353955194518,
+          "historical_cagr_5y": 0.13595259418648797,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 27.653428508653022,
+          "forward_ev_ebitda_justified": 9.385489701790004,
+          "signal": "caution"
+        },
+        "implied_cagr": 0.20609353955194518,
+        "historical_cagr": 0.13595259418648797,
+        "reverse_dcf_signal": "caution",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (20.6%) exceeds sector 75th percentile (18.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+        ],
+        "multiples": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 27.653428508653022,
+          "market_ev_ebit": 30.084768656674242,
+          "market_p_sales": 9.516471917768623,
+          "market_p_e": 35.357418710566094,
+          "market_peg": 2.6007167367520663,
+          "justified_ev_ebitda": 8.751273540961538,
+          "justified_ev_ebit": 9.520701559617441,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 18.902154967691484,
+          "ev_ebitda_premium_pct": 2.159931909249248,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 5.653428508653022,
+          "roic": 0.8445907126560322,
+          "wacc": 0.1055209456174165,
+          "roic_wacc_spread": 0.7390697670386157,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7046608208748998,
+          "growth_rate": 0.13595259418648797,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 27.653428508653022,
+        "ev_ebitda_justified": 8.751273540961538,
+        "ev_ebitda_premium_pct": 2.159931909249248,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.7390697670386157,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.8445907126560322,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: AAPL ===\nPrice: $269.76  |  Bear=$61  Base=$150  Bull=$234\nMoS:  Bear=-77.3%  Base=-44.3%  Bull=-13.2%\nRDCF: implied=20.6% hist=13.6% [caution]\nEV/EBITDA: 27.7x market vs 8.8x justified (+216%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0113,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+        "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+        "pass_through_capability": true,
+        "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7075551733563503,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 9.8 percent, outpacing the 3-year revenue CAGR of 2.8 percent. The D8 Revenue Score is 1.00, indicating clean revenue quality and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K states that no single intellectual property right is solely responsible for protecting the Company's products and services. No specific patent cliffs or contract expirations were disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Apple's revenue growth is structural, with a Z-score of 1.71 indicating it is not at a cyclical peak. Growth quality is strong, evidenced by a clean D8 score of 1.00 and deferred revenue growth of 9.8 percent. Intangible risk is minimal, as the company relies on a broad IP portfolio with 0 percent of revenue estimated to be at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $269.76 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 20.6%\n  \u2022 Company's robust historical CAGR: 13.6%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: CAUTION\n\n  Reverse DCF assessment:\n    - Implied CAGR (20.6%) exceeds sector 75th percentile (18.0%). Market is pricing above-norm growth \u2014 requires very strong thesis.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 27.7x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.8x\n  \u2022 Premium to justified multiple: +216%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $61/share vs current price $269.76\n  \u2022 Downside in bear case: -77.3%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation and Narrative Premium",
+          "bear_case_summary": "The current market price of $269.76 is mathematically detached from reality, requiring a 10-year revenue CAGR of 20.6%. This demands a 1.5x acceleration over Apple's historical CAGR of 13.6% and exceeds the sector's 75th percentile of 18.0%. For a mega-cap company, accelerating growth to this degree defies the law of large numbers. Furthermore, the Liberti Formula reveals a severe speculative premium: the market EV/EBITDA of 27.7x is 216% higher than the mathematically justified multiple of 8.8x based on ROIC and WACC. To justify this valuation, Apple would need to launch a revolutionary, iPhone-scale product category repeatedly. In reality, the company faces smartphone market saturation, lengthening hardware upgrade cycles, fierce competition in China, and mounting antitrust regulatory pressures threatening its high-margin Services revenue. The most likely path to the bear case intrinsic value of $61 per share (a 77.3% downside) is a violent multiple contraction triggered by consecuti...(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation and Narrative Premium] Sentiment: -8/10. Implied CAGR 20.6% vs 13.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:42.983156",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/AAPL_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:51:42.984395",
+    "agent": "Lead",
+    "trace_id": "trace_AAPL_1777474182",
+    "inputs": {
+      "ticker": "AAPL",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AAPL.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 6.8/10 (Python). Pricing power: True. Concentration: True. Segments: 5.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.71 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.7%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $1,303,243,051,400",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: AAPL \u2014 Base IV=$150/share MoS=-44.3% ImpliedCAGR=20.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation and Narrative Premium] Sentiment: -8/10. Implied CAGR 20.6% vs 13.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "terminal_value": 1524123227965.5486,
+          "discounted_terminal_value": 916886191997.438,
+          "sum_pv_cash_flows": 386356859402.8602,
+          "audit_metrics": {
+            "roic_path": [
+              0.361998937911049,
+              0.3747954550284196,
+              0.3803025220348375,
+              0.378371925363038,
+              0.37291345851599833
+            ],
+            "invested_capital_path": [
+              291312700000.0,
+              303875827500.0,
+              317444005200.0,
+              331826273562.0,
+              346783832658.48,
+              362190118527.8544
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 416161000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.2915986841631004,
+            "terminal_value_pct_of_ev": 0.7035419763122998,
+            "implied_terminal_multiple_fcf": 13.37958686039108,
+            "implied_terminal_multiple_nopat": 11.785640303599727,
+            "reinvestment_rate_terminal_year": 0.11913271862751396,
+            "assumptions_used": {
+              "wacc": 0.10698294504512776,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.028109313462818475,
+              "capex_percent_sales": 0.030553079216937677,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 85.88222642816892,
+          "upside_percent": -0.6816346885076775,
+          "assumptions_used": {
+            "wacc": 0.10698294504512776,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.028109313462818475,
+            "capex_percent_sales": 0.030553079216937677,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 457777100000.00006,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 133487200000.00006,
+              "nopat": 105454888000.00005,
+              "depreciation": 12867800000.000002,
+              "capex": 13986500000.000002,
+              "change_in_wc": 11444427500.000002,
+              "fcff": 92891760500.00005,
+              "discount_factor": 0.9033562842824407,
+              "pv_fcff": 83914355605.73444
+            },
+            {
+              "year": 2.0,
+              "revenue": 494399268000.0001,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 144166176000.00006,
+              "nopat": 113891279040.00005,
+              "depreciation": 13897224000.000002,
+              "capex": 15105420000.000004,
+              "change_in_wc": 12359981700.000004,
+              "fcff": 100323101340.00005,
+              "discount_factor": 0.816052576352578,
+              "pv_fcff": 81868925316.1878
+            },
+            {
+              "year": 3.0,
+              "revenue": 524063224080.0002,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 152816146560.0001,
+              "nopat": 120724755782.40007,
+              "depreciation": 14731057440.000004,
+              "capex": 16011745200.000006,
+              "change_in_wc": 13101580602.000006,
+              "fcff": 106342487420.40007,
+              "discount_factor": 0.7371862231529775,
+              "pv_fcff": 78394216662.13776
+            },
+            {
+              "year": 4.0,
+              "revenue": 545025753043.2002,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 158928792422.40012,
+              "nopat": 125553746013.69609,
+              "depreciation": 15320299737.600004,
+              "capex": 16652215008.000006,
+              "change_in_wc": 13625643826.080006,
+              "fcff": 110596186917.21608,
+              "discount_factor": 0.6659418073716801,
+              "pv_fcff": 73650624604.06703
+            },
+            {
+              "year": 5.0,
+              "revenue": 561376525634.4962,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.2915986841631004,
+              "ebit": 163696656195.0721,
+              "nopat": 129320358394.10698,
+              "depreciation": 15779908729.728004,
+              "capex": 17151781458.240007,
+              "change_in_wc": 14034413140.862406,
+              "fcff": 113914072524.73257,
+              "discount_factor": 0.6015827166556138,
+              "pv_fcff": 68528737214.73324
+            }
+          ],
+          "enterprise_value": 1303243051400.2983,
+          "equity_value": 1260849051400.2983,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.06632288945864702,
+          "da_percent_sales": 0.028109313462818475,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.030553079216937677,
+          "wacc": 0.10698294504512776,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.6139691129154341,
+          "calibration_adjustment": 0.08302075398703873
+        },
+        "base_financials": {
+          "net_sales": 416161000000.0,
+          "cogs": 220960000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 42394000000.0
+        },
+        "calculated_upside": -0.6816346885076775
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 3960384469770.508,
+          "wacc": 0.10698294504512776,
+          "cost_of_equity": 0.10698294504512776,
+          "beta": 1.146599051451941
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 5263000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 27832000000.0,
+            "crash_fcf": 3024910000.0,
+            "earnings_power_value": 23821387973.991264,
+            "floor_value": 27832000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.8,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10698294504512776,
+            "2": 0.10698294504512776,
+            "3": 0.10698294504512776,
+            "4": 0.10698294504512776,
+            "5": 0.10698294504512776
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:51:07.300993",
+          "current_price": 269.760009765625,
+          "shares_diluted": 14681140000.0,
+          "market_cap": 3960384469770.508,
+          "risk_free_rate": 0.043919997215271,
+          "beta": 1.146599051451941,
+          "wacc_base": 0.12198294504512776,
+          "revenue": 416161000000.0,
+          "ebitda": 144748000000.0,
+          "ebit": 133050000000.0,
+          "nopat": 105109500000.0,
+          "roic": 0.8445907126560322,
+          "fcf": 98767000000.0,
+          "net_debt": 42394000000.0,
+          "bull_ev": 3497789351192.9863,
+          "bull_intrinsic_per_share": 235.3628772147794,
+          "bull_upside": -0.12751012494672875,
+          "bull_wacc": 0.11698294504512775,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 24.16468173095992,
+          "bull_justified_ev_ebitda": 9.081673851746617,
+          "bull_roic_wacc_spread": 0.7276077676109045,
+          "bull_tv_pct_of_ev": 0.5947339863128958,
+          "bull_implied_tv_ebitda": 9.081673851746617,
+          "base_ev": 2262799524988.4004,
+          "base_intrinsic_per_share": 151.24203740229984,
+          "base_upside": -0.43934596705529805,
+          "base_wacc": 0.12198294504512776,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 15.63268248948794,
+          "base_justified_ev_ebitda": 7.643456569089577,
+          "base_roic_wacc_spread": 0.7226077676109045,
+          "base_tv_pct_of_ev": 0.513880888777423,
+          "base_implied_tv_ebitda": 7.643456569089576,
+          "bear_ev": 957898049905.2915,
+          "bear_intrinsic_per_share": 62.359193489421905,
+          "bear_upside": -0.7688345520761165,
+          "bear_wacc": 0.13698294504512776,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 6.6176945443480495,
+          "bear_justified_ev_ebitda": 5.714765719603574,
+          "bear_roic_wacc_spread": 0.7076077676109045,
+          "bear_tv_pct_of_ev": 0.3520763948379108,
+          "bear_implied_tv_ebitda": 5.714765719603574
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "AAPL",
+            "scenario": "bull",
+            "enterprise_value": 3497789351192.9863,
+            "equity_value": 3439568659192.9863,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 234.28484839685382,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.1315063763513094,
+            "upside_pct": -0.1315063763513094,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          },
+          "base": {
+            "ticker": "AAPL",
+            "scenario": "base",
+            "enterprise_value": 2262799524988.4004,
+            "equity_value": 2204578832988.4004,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 150.16400858437427,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.4433422184598787,
+            "upside_pct": -0.4433422184598787,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          },
+          "bear": {
+            "ticker": "AAPL",
+            "scenario": "bear",
+            "enterprise_value": 957898049905.2915,
+            "equity_value": 899677357905.2915,
+            "shares_diluted": 14681140000.0,
+            "intrinsic_per_share": 61.28116467149632,
+            "current_price": 269.760009765625,
+            "margin_of_safety": -0.7728308034806971,
+            "upside_pct": -0.7728308034806971,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -78328000000.0,
+            "bridge_cash_(net_of_haircuts)": 20107308000.0,
+            "cash_gross": 35934000000.0,
+            "cash_wc_haircut": 12484830000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 3341862000.0,
+            "cash_net_accessible": 20107308000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 20107308000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 234.28484839685382,
+          "base": 150.16400858437427,
+          "bear": 61.28116467149632
+        },
+        "margin_of_safety": {
+          "bull": -0.1315063763513094,
+          "base": -0.4433422184598787,
+          "bear": -0.7728308034806971
+        },
+        "reverse_dcf": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "current_price": 269.760009765625,
+          "current_ev": 4002778469770.508,
+          "current_ev_ebitda": 27.653428508653022,
+          "wacc": 0.1055209456174165,
+          "ebit_margin": 0.31970799762591884,
+          "implied_cagr_10y": 0.20609353955194518,
+          "implied_cagr_5y": 0.20609353955194518,
+          "historical_cagr_5y": 0.13595259418648797,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 27.653428508653022,
+          "forward_ev_ebitda_justified": 9.385489701790004,
+          "signal": "caution"
+        },
+        "implied_cagr": 0.20609353955194518,
+        "historical_cagr": 0.13595259418648797,
+        "reverse_dcf_signal": "caution",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (20.6%) exceeds sector 75th percentile (18.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+        ],
+        "multiples": {
+          "ticker": "AAPL",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 27.653428508653022,
+          "market_ev_ebit": 30.084768656674242,
+          "market_p_sales": 9.516471917768623,
+          "market_p_e": 35.357418710566094,
+          "market_peg": 2.6007167367520663,
+          "justified_ev_ebitda": 8.751273540961538,
+          "justified_ev_ebit": 9.520701559617441,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 18.902154967691484,
+          "ev_ebitda_premium_pct": 2.159931909249248,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": 5.653428508653022,
+          "roic": 0.8445907126560322,
+          "wacc": 0.1055209456174165,
+          "roic_wacc_spread": 0.7390697670386157,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.7046608208748998,
+          "growth_rate": 0.13595259418648797,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 27.653428508653022,
+        "ev_ebitda_justified": 8.751273540961538,
+        "ev_ebitda_premium_pct": 2.159931909249248,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.7390697670386157,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.8445907126560322,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: AAPL ===\nPrice: $269.76  |  Bear=$61  Base=$150  Bull=$234\nMoS:  Bear=-77.3%  Base=-44.3%  Bull=-13.2%\nRDCF: implied=20.6% hist=13.6% [caution]\nEV/EBITDA: 27.7x market vs 8.8x justified (+216%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $269.76 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 20.6%\n  \u2022 Company's robust historical CAGR: 13.6%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: CAUTION\n\n  Reverse DCF assessment:\n    - Implied CAGR (20.6%) exceeds sector 75th percentile (18.0%). Market is pricing above-norm growth \u2014 requires very strong thesis.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 27.7x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.8x\n  \u2022 Premium to justified multiple: +216%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $61/share vs current price $269.76\n  \u2022 Downside in bear case: -77.3%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation and Narrative Premium",
+          "bear_case_summary": "The current market price of $269.76 is mathematically detached from reality, requiring a 10-year revenue CAGR of 20.6%. This demands a 1.5x acceleration over Apple's historical CAGR of 13.6% and exceeds the sector's 75th percentile of 18.0%. For a mega-cap company, accelerating growth to this degree defies the law of large numbers. Furthermore, the Liberti Formula reveals a severe speculative premium: the market EV/EBITDA of 27.7x is 216% higher than the mathematically justified multiple of 8.8x based on ROIC and WACC. To justify this valuation, Apple would need to launch a revolutionary, iPhone-scale product category repeatedly. In reality, the company faces smartphone market saturation, lengthening hardware upgrade cycles, fierce competition in China, and mounting antitrust regulatory pressures threatening its high-margin Services revenue. The most likely path to the bear case intrinsic value of $61 per share (a 77.3% downside) is a violent multiple contraction triggered by consecuti...(truncated)",
+          "sentiment_score": -8
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 8.0,
+          "cost_advantage": 8.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in.",
+        "concentration_risk": true,
+        "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk.",
+        "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+        "revenue_segments": [
+          {
+            "segment": "Americas",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Europe",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Greater China",
+            "pct_revenue": null,
+            "growth_trend": "Volatile"
+          },
+          {
+            "segment": "Japan",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          },
+          {
+            "segment": "Rest of Asia Pacific",
+            "pct_revenue": null,
+            "growth_trend": "Growing"
+          }
+        ],
+        "key_customers": [
+          "Consumers",
+          "Small and mid-sized businesses",
+          "Education and Enterprise",
+          "Cellular network carriers",
+          "Third-party resellers"
+        ],
+        "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+        "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices.",
+        "operating_leverage_score": 6.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0113,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+        "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+        "pass_through_capability": true,
+        "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7075551733563503,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 9.8 percent, outpacing the 3-year revenue CAGR of 2.8 percent. The D8 Revenue Score is 1.00, indicating clean revenue quality and no pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The 10-K states that no single intellectual property right is solely responsible for protecting the Company's products and services. No specific patent cliffs or contract expirations were disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Apple's revenue growth is structural, with a Z-score of 1.71 indicating it is not at a cyclical peak. Growth quality is strong, evidenced by a clean D8 score of 1.00 and deferred revenue growth of 9.8 percent. Intangible risk is minimal, as the company relies on a broad IP portfolio with 0 percent of revenue estimated to be at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n<div align='center'>\u2612 ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the fiscal year ended September 27, 2025\n\nor\n\n\u2610 TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934\n\nFor the transition period from to .</div>\n\n#### Commission File Number:\n\n#### 001-36743\n\n#### Apple Inc.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| California                               |     |                          94-2404110 |\n| (State or other jurisdiction             \n of incorporation or organization)        |     | -I.R.S. Employer Identification No. |\n| One Apple Park Way                       |     |                                     |\n| Cupertino,California                     |     |                               95014 |\n| (Address of principal executive offices) |     ...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "AAPL",
+        "generated_at": "2026-04-29T10:51:42.982242",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 6.8,
+            "cost_structure": "Apple's operating leverage (score: 6.8/10) is driven by a mix of high fixed costs in R&D, software development, and corporate infrastructure (166,000 employees), against variable costs dominated by outsourced manufacturing and component procurement. As revenue scales, particularly in the high-margin Services segment, incremental gross profit flows efficiently to EBIT because the underlying iOS ecosystem and data center infrastructure are already established, diluting fixed R&D and SG&A expenses over a massive installed base.",
+            "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), tablets (iPad), and wearables. The company serves consumers, businesses, education, and government markets globally. Revenue is generated through the sale of hardware devices and a growing portfolio of high-margin recurring services, including the App Store, AppleCare, and digital content subscriptions.",
+            "revenue_segments": [
+              {
+                "segment": "Americas",
+                "pct_revenue": null,
+                "growth_trend": "Stable"
+              },
+              {
+                "segment": "Europe",
+                "pct_revenue": null,
+                "growth_trend": "Stable"
+              },
+              {
+                "segment": "Greater China",
+                "pct_revenue": null,
+                "growth_trend": "Volatile"
+              },
+              {
+                "segment": "Japan",
+                "pct_revenue": null,
+                "growth_trend": "Stable"
+              },
+              {
+                "segment": "Rest of Asia Pacific",
+                "pct_revenue": null,
+                "growth_trend": "Growing"
+              }
+            ],
+            "key_customers": [
+              "Consumers",
+              "Small and mid-sized businesses",
+              "Education and Enterprise",
+              "Cellular network carriers",
+              "Third-party resellers"
+            ],
+            "competitive_landscape": "Apple competes with major technology firms like Samsung, Google, and Microsoft. It differentiates itself by designing the entire user experience (hardware, custom silicon, operating systems, and services) as a seamlessly integrated ecosystem, contrasting with competitors who often rely on fragmented third-party software and hardware combinations.",
+            "regulatory_risk": "The company faces significant regulatory risks regarding international trade restrictions, tariffs, and global antitrust investigations that could force modifications to its App Store and intellectual property practices."
+          },
+          "value_chain": {
+            "power_ratio": 0.0113,
+            "upstream_leak": false,
+            "strategic_leverage": 9.0,
+            "bottleneck_analysis": "The critical supplier bottleneck is TSMC for advanced semiconductor manufacturing, as referenced in the 10-K regarding single-source custom components and global semiconductor shortages. TSMC holds significant leverage due to its near-monopoly on leading-edge nodes. If TSMC raises prices, Apple's margins could be pressured, though Apple's status as TSMC's largest customer creates a mutual dependency that limits unilateral price gouging.",
+            "substitution_risk_score": 3.0,
+            "top_substitutes": "1. Premium Android smartphones (e.g., Samsung Galaxy, Google Pixel); 2. Windows-based PCs and laptops; 3. Alternative smart wearables (e.g., Garmin). A realistic switching scenario involves a consumer abandoning the iOS ecosystem due to extreme pricing fatigue, though high switching costs (iMessage, iCloud, app purchases) heavily mitigate this risk.",
+            "pricing_power_assessment": "Apple exhibits strong price leadership. Despite the 10-K noting aggressive price competition and downward pressure on margins in the broader industry, Apple consistently maintains premium pricing and successfully upsells consumers to 'Pro' models. Its ability to raise Average Selling Prices (ASPs) without material demand destruction demonstrates immense pricing power.",
+            "pass_through_capability": true,
+            "analysis_summary": "Apple holds a dominant position in its value chain. Buyer power is low due to immense brand loyalty and high ecosystem switching costs (iOS, macOS, services). Supplier power is moderate-to-high regarding critical bottlenecks like TSMC (semiconductors), but Apple's massive scale provides unmatched procurement leverage. Substitution threat is moderate functionally (Android/Windows) but low practically due to ecosystem lock-in. Rivalry is intense, yet Apple captures the vast majority of industry profits, justifying a highly favorable strategic leverage score."
+          },
+          "moat": {
+            "score": 9.0,
+            "switching_costs": 9.0,
+            "network_effects": 8.0,
+            "cost_advantage": 8.0,
+            "intangibles": 10.0,
+            "evidence": "The 10-K highlights a broad collection of intellectual property rights including thousands of patents and trademarks globally. The company's moat is reinforced by its tightly integrated ecosystem (designs and develops nearly the entire solution including hardware, operating system, numerous software applications) which creates high switching costs. Network effects are evidenced by the App Store ecosystem connecting developers and users.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "Despite noting aggressive price competition in the 10-K, Apple maintains a premium pricing strategy for its hardware and has successfully increased prices on subscription services without material churn, supported by a highly loyal installed base and ecosystem lock-in."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.7075551733563503,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue grew by 9.8 percent, outpacing the 3-year revenue CAGR of 2.8 percent. The D8 Revenue Score is 1.00, indicating clean revenue quality and no pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "The 10-K states that no single intellectual property right is solely responsible for protecting the Company's products and services. No specific patent cliffs or contract expirations were disclosed.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Apple's revenue growth is structural, with a Z-score of 1.71 indicating it is not at a cyclical peak. Growth quality is strong, evidenced by a clean D8 score of 1.00 and deferred revenue growth of 9.8 percent. Intangible risk is minimal, as the company relies on a broad IP portfolio with 0 percent of revenue estimated to be at risk from near-term expirations."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 416.161,
+            "ebitda_bn": 144.748,
+            "fcf_bn": 98.767,
+            "nopat_bn": 105.1095,
+            "invested_capital_bn": 124.45022,
+            "net_debt_bn": 42.394,
+            "sbc_bn": 12.863,
+            "fiscal_year": 2025,
+            "data_quality": 0.98
+          },
+          "ratios": {
+            "gross_margin_pct": 46.90516410716045,
+            "ebit_margin_pct": 31.970799762591884,
+            "ebitda_margin_pct": 34.78173110887373,
+            "fcf_margin_pct": 23.732882225869314,
+            "roic": 0.8445907126560322,
+            "roe": 1.5191298333175105,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": 1.5665939677498397,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 0.0,
+            "equity": 3960384469770.508,
+            "wacc": 0.10698294504512776,
+            "cost_of_equity": 0.10698294504512776,
+            "beta": 1.146599051451941
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 0.0,
+              "cash": 5263000000.0,
+              "liquidity_ratio": 0.0,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 27832000000.0,
+              "crash_fcf": 3024910000.0,
+              "earnings_power_value": 23821387973.991264,
+              "floor_value": 27832000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 6.8,
+              "financial_leverage_score": 0.0,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.10698294504512776,
+              "2": 0.10698294504512776,
+              "3": 0.10698294504512776,
+              "4": 0.10698294504512776,
+              "5": 0.10698294504512776
+            }
+          },
+          "concentration_risk": true,
+          "concentration_details": "The 10-K notes reliance on single or limited sources for critical components and final assembly partners primarily located in Asia (e.g., Foxconn, TSMC). Furthermore, indirect distribution channels (cellular carriers and resellers) accounted for 60% of total net sales in 2025, creating channel concentration risk."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 1260849051400.2983,
+            "upside_percent": -0.6816346885076775,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 61.28116467149632,
+                "margin_of_safety": -0.7728308034806971,
+                "ev": 957898049905.2915
+              },
+              "base": {
+                "intrinsic_per_share": 150.16400858437427,
+                "margin_of_safety": -0.4433422184598787,
+                "ev": 2262799524988.4004
+              },
+              "bull": {
+                "intrinsic_per_share": 234.28484839685382,
+                "margin_of_safety": -0.1315063763513094,
+                "ev": 3497789351192.9863
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.20609353955194518,
+              "historical_cagr": 0.13595259418648797,
+              "signal": "caution",
+              "reasons": [
+                "Implied CAGR (20.6%) exceeds sector 75th percentile (18.0%). Market is pricing above-norm growth \u2014 requires very strong thesis."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 27.653428508653022,
+              "justified_ev_ebitda": 8.751273540961538,
+              "premium_pct": 2.159931909249248,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.7390697670386157,
+              "value_creation": "creating",
+              "roic": 0.8445907126560322,
+              "wacc": 0.12198294504512776
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.015,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": true,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 9.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.12198294504512776,
+            "beta": 1.146599051451941,
+            "risk_free_rate": 0.043919997215271
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation and Narrative Premium",
+            "bear_case_summary": "The current market price of $269.76 is mathematically detached from reality, requiring a 10-year revenue CAGR of 20.6%. This demands a 1.5x acceleration over Apple's historical CAGR of 13.6% and exceeds the sector's 75th percentile of 18.0%. For a mega-cap company, accelerating growth to this degree defies the law of large numbers. Furthermore, the Liberti Formula reveals a severe speculative premium: the market EV/EBITDA of 27.7x is 216% higher than the mathematically justified multiple of 8.8x based on ROIC and WACC. To justify this valuation, Apple would need to launch a revolutionary, iPhone-scale product category repeatedly. In reality, the company faces smartphone market saturation, lengthening hardware upgrade cycles, fierce competition in China, and mounting antitrust regulatory pressures threatening its high-margin Services revenue. The most likely path to the bear case intrinsic value of $61 per share (a 77.3% downside) is a violent multiple contraction triggered by consecuti...(truncated)",
+            "sentiment_score": -8,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $269.76 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 20.6%\n  \u2022 Company's robust historical CAGR: 13.6%\n  \u2022 Ratio (implied / historical): 1.5x\n  \u2022 Reverse DCF signal: CAUTION\n\n  Reverse DCF assessment:\n    - Implied CAGR (20.6%) exceeds sector 75th percentile (18.0%). Market is pricing above-norm growth \u2014 requires very strong thesis.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 27.7x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.8x\n  \u2022 Premium to justified multiple: +216%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $61/share vs current price $269.76\n  \u2022 Downside in bear case: -77.3%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 3,
+            "margin_of_safety": -0.4433422184598787,
+            "narrative": "The implied 10-year revenue CAGR of 20.6% is highly unrealistic and exhibits severe growth extrapolation. While Apple possesses a formidable 9.0/10 moat, immense pricing power, and a massive +73.9% ROIC-WACC spread, accelerating growth to 1.5x its historical 13.6% rate at its current mega-cap scale defies the law of large numbers. The structural shift toward high-margin Services provides excellent operating leverage, but it is insufficient to mathematically bridge the gap to a 20.6% top-line CAGR without the introduction of multiple revolutionary, iPhone-scale product categories.\n\nThe Contrarian is absolutely correct that the current valuation is mathematically detached from reality, accurately identifying the +216% EV/EBITDA speculative premium and the improbable 20.6% implied CAGR. However, the bear case intrinsic value of $61 (requiring an 8.8x EV/EBITDA multiple) is overly punitive and ignores the quality of Apple's earnings. A multiple of 8.8x fails to account for Apple's +73.9% R...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u26a0\ufe0f CAUTION: Implied CAGR (20.6%) exceeds historical (13.6%) by 1.5x.",
+              "\u274c FAIL: EV/EBITDA at +216% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "AAPL",
+              "p1_moat": 5,
+              "p2_health": 5,
+              "p3_tailwind": 4,
+              "p4_mos": 1,
+              "p5_leadership": 3,
+              "raw_total": 18,
+              "capped_total": 18,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern (capped at 75% due to reflexivity flag)",
+              "conviction_score": 3,
+              "reflexivity_flags": [
+                "High-SBC company (13.0% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 9.0/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +73.8pp \u2014 exceptional value creation",
+                "FCF margin 23.7% \u2014 fortress cash generation",
+                "Net Debt/EBITDA 0.3\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 13.6% \u2014 strong growth for mature stage",
+                "Cyclicality Z-score 1.7 \u2014 elevated, applying penalty",
+                "Sector 'Technology' \u2014 confirmed secular tailwind",
+                "Market implied CAGR 1.5\u00d7 historical \u2014 tailwind partially priced"
+              ],
+              "p4_reasons": [
+                "Base MoS -32.1% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 13.0% of FCF \u2014 quiet dilution (flag)",
+                "Operating leverage 6.8/10",
+                "Strategic leverage 9.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for AAPL. Conviction: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

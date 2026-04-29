@@ -1,0 +1,2004 @@
+[
+  {
+    "timestamp": "2026-04-28T22:58:51.733105",
+    "agent": "Librarian",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:59:22.065317",
+    "agent": "Forensic",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 7.0
+        },
+        "moat_evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years.",
+        "concentration_risk": true,
+        "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business.",
+        "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+        "revenue_segments": [
+          {
+            "segment": "UnitedHealthcare",
+            "pct_revenue": null,
+            "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+          },
+          {
+            "segment": "Optum Health",
+            "pct_revenue": null,
+            "growth_trend": "Growing, expanding value-based care and clinical home visits"
+          },
+          {
+            "segment": "Optum Insight",
+            "pct_revenue": null,
+            "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+          },
+          {
+            "segment": "Optum Rx",
+            "pct_revenue": null,
+            "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+          }
+        ],
+        "key_customers": [
+          "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+          "Large national and mid-sized employers",
+          "State Medicaid agencies",
+          "Health care providers and hospital systems"
+        ],
+        "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+        "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations.",
+        "operating_leverage_score": 0.5
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 0.5/10 (Python). Pricing power: False. Concentration: True. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:59:43.804408",
+    "agent": "ValueChain",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 0.5/10 (Python). Pricing power: False. Concentration: True. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 7.0
+        },
+        "moat_evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years.",
+        "concentration_risk": true,
+        "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business.",
+        "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+        "revenue_segments": [
+          {
+            "segment": "UnitedHealthcare",
+            "pct_revenue": null,
+            "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+          },
+          {
+            "segment": "Optum Health",
+            "pct_revenue": null,
+            "growth_trend": "Growing, expanding value-based care and clinical home visits"
+          },
+          {
+            "segment": "Optum Insight",
+            "pct_revenue": null,
+            "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+          },
+          {
+            "segment": "Optum Rx",
+            "pct_revenue": null,
+            "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+          }
+        ],
+        "key_customers": [
+          "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+          "Large national and mid-sized employers",
+          "State Medicaid agencies",
+          "Health care providers and hospital systems"
+        ],
+        "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+        "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations.",
+        "operating_leverage_score": 0.5
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0085,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Pharmaceutical manufacturers (especially for specialty, rare disease, and GLP-1 drugs) and consolidated regional health systems act as critical suppliers. While UNH has massive scale to negotiate, patented drug makers have monopoly pricing power. If they raise prices, UNH typically passes these costs to plan sponsors (employers/government) via higher premiums, though it can pressure short-term Medical Loss Ratios.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Competing national MCOs/PBMs (CVS/Aetna, Cigna, Elevance). 2. Direct-to-provider contracting by large self-insured employers. 3. Regional/niche health plans or specialized value-based care startups.",
+        "pricing_power_assessment": "Strong pricing power. UNH consistently passes underlying medical and pharmacy cost inflation to buyers (employers and government) through annual premium increases. The integration of Optum and UHC creates a closed-loop system that captures value even when costs rise.",
+        "pass_through_capability": true,
+        "analysis_summary": "UNH operates as a dominant, vertically integrated healthcare platform. Supplier power is moderate-to-high for patented pharmaceuticals but mitigated by Optum Rx's formulary control. Buyer power is fragmented across employers and individuals, though CMS holds significant regulatory pricing power. Substitution threat is low due to massive network effects and switching costs. Rivalry is high but rational among top MCOs. Overall, UNH holds immense strategic leverage and pricing power."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:00:13.451912",
+    "agent": "StrategicContext",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 0.5/10 (Python). Pricing power: False. Concentration: True. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 7.0
+        },
+        "moat_evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years.",
+        "concentration_risk": true,
+        "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business.",
+        "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+        "revenue_segments": [
+          {
+            "segment": "UnitedHealthcare",
+            "pct_revenue": null,
+            "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+          },
+          {
+            "segment": "Optum Health",
+            "pct_revenue": null,
+            "growth_trend": "Growing, expanding value-based care and clinical home visits"
+          },
+          {
+            "segment": "Optum Insight",
+            "pct_revenue": null,
+            "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+          },
+          {
+            "segment": "Optum Rx",
+            "pct_revenue": null,
+            "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+          }
+        ],
+        "key_customers": [
+          "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+          "Large national and mid-sized employers",
+          "State Medicaid agencies",
+          "Health care providers and hospital systems"
+        ],
+        "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+        "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations.",
+        "operating_leverage_score": 0.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0085,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Pharmaceutical manufacturers (especially for specialty, rare disease, and GLP-1 drugs) and consolidated regional health systems act as critical suppliers. While UNH has massive scale to negotiate, patented drug makers have monopoly pricing power. If they raise prices, UNH typically passes these costs to plan sponsors (employers/government) via higher premiums, though it can pressure short-term Medical Loss Ratios.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Competing national MCOs/PBMs (CVS/Aetna, Cigna, Elevance). 2. Direct-to-provider contracting by large self-insured employers. 3. Regional/niche health plans or specialized value-based care startups.",
+        "pricing_power_assessment": "Strong pricing power. UNH consistently passes underlying medical and pharmacy cost inflation to buyers (employers and government) through annual premium increases. The integration of Optum and UHC creates a closed-loop system that captures value even when costs rise.",
+        "pass_through_capability": true,
+        "analysis_summary": "UNH operates as a dominant, vertically integrated healthcare platform. Supplier power is moderate-to-high for patented pharmaceuticals but mitigated by Optum Rx's formulary control. Buyer power is fragmented across employers and individuals, though CMS holds significant regulatory pricing power. Substitution threat is low due to massive network effects and switching costs. Rivalry is high but rational among top MCOs. Overall, UNH holds immense strategic leverage and pricing power."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.7892156313828627,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth is 2.9%, which is healthy and consistent with overall business expansion. The D8 Revenue Score is 1.00, indicating clean revenue quality with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs or contract expirations identified. UNH is a health insurance and services company, not a pharmaceutical manufacturer, so it does not face traditional patent cliffs. Optum Insight has a strong $31.1 billion backlog, indicating stable future contract revenue.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "UnitedHealth Group demonstrates consistent structural growth rather than cyclicality, with a revenue Z-score of 1.79 (below the 2.0 peak threshold). The quality of growth is strong, evidenced by a perfect D8 Revenue Score of 1.00 and stable deferred revenue growth of 2.9%, indicating no pull-forward risk. Intangible risk is assessed at 0.0%, as the company's core operations in health benefits and services are not exposed to traditional patent cliffs, and it maintains a robust multi-billion dollar contract backlog."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.79 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:00:14.719434",
+    "agent": "Strategist",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 0.5/10 (Python). Pricing power: False. Concentration: True. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.79 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 7.0
+        },
+        "moat_evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years.",
+        "concentration_risk": true,
+        "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business.",
+        "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+        "revenue_segments": [
+          {
+            "segment": "UnitedHealthcare",
+            "pct_revenue": null,
+            "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+          },
+          {
+            "segment": "Optum Health",
+            "pct_revenue": null,
+            "growth_trend": "Growing, expanding value-based care and clinical home visits"
+          },
+          {
+            "segment": "Optum Insight",
+            "pct_revenue": null,
+            "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+          },
+          {
+            "segment": "Optum Rx",
+            "pct_revenue": null,
+            "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+          }
+        ],
+        "key_customers": [
+          "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+          "Large national and mid-sized employers",
+          "State Medicaid agencies",
+          "Health care providers and hospital systems"
+        ],
+        "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+        "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations.",
+        "operating_leverage_score": 0.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0085,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Pharmaceutical manufacturers (especially for specialty, rare disease, and GLP-1 drugs) and consolidated regional health systems act as critical suppliers. While UNH has massive scale to negotiate, patented drug makers have monopoly pricing power. If they raise prices, UNH typically passes these costs to plan sponsors (employers/government) via higher premiums, though it can pressure short-term Medical Loss Ratios.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Competing national MCOs/PBMs (CVS/Aetna, Cigna, Elevance). 2. Direct-to-provider contracting by large self-insured employers. 3. Regional/niche health plans or specialized value-based care startups.",
+        "pricing_power_assessment": "Strong pricing power. UNH consistently passes underlying medical and pharmacy cost inflation to buyers (employers and government) through annual premium increases. The integration of Optum and UHC creates a closed-loop system that captures value even when costs rise.",
+        "pass_through_capability": true,
+        "analysis_summary": "UNH operates as a dominant, vertically integrated healthcare platform. Supplier power is moderate-to-high for patented pharmaceuticals but mitigated by Optum Rx's formulary control. Buyer power is fragmented across employers and individuals, though CMS holds significant regulatory pricing power. Substitution threat is low due to massive network effects and switching costs. Rivalry is high but rational among top MCOs. Overall, UNH holds immense strategic leverage and pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7892156313828627,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth is 2.9%, which is healthy and consistent with overall business expansion. The D8 Revenue Score is 1.00, indicating clean revenue quality with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs or contract expirations identified. UNH is a health insurance and services company, not a pharmaceutical manufacturer, so it does not face traditional patent cliffs. Optum Insight has a strong $31.1 billion backlog, indicating stable future contract revenue.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "UnitedHealth Group demonstrates consistent structural growth rather than cyclicality, with a revenue Z-score of 1.79 (below the 2.0 peak threshold). The quality of growth is strong, evidenced by a perfect D8 Revenue Score of 1.00 and stable deferred revenue growth of 2.9%, indicating no pull-forward risk. Intangible risk is assessed at 0.0%, as the company's core operations in health benefits and services are not exposed to traditional patent cliffs, and it maintains a robust multi-billion dollar contract backlog."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 9009000000.0,
+          "equity": 333105338050.672,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06526632677266009,
+          "beta": 0.39502410649332276
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 900900000.0,
+            "cash": 9800000000.0,
+            "liquidity_ratio": 0.09192857142857143,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23606000000.0,
+            "crash_fcf": 2903250000.0,
+            "earnings_power_value": 26393181818.18182,
+            "floor_value": 26393181818.18182,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 0.5,
+            "financial_leverage_score": 0.1081819949535549,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:00:15.692622",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "base": {
+        "net_sales": 1925000000.0,
+        "cogs": 1765000000.0,
+        "interest_expense": 0.0,
+        "net_debt": -791000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 6.615064935064935,
+        "da_percent_sales": 0.5148051948051948,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.3838961038961039,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 0.9168831168831169
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T23:00:17.102675",
+    "agent": "ValuationNode",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 0.5/10 (Python). Pricing power: False. Concentration: True. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.79 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist Failed: EBIT margin out of bounds: -7.046753246753247. Expected within [-0.50, 0.60].",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 9009000000.0,
+          "equity": 333105338050.672,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06526632677266009,
+          "beta": 0.39502410649332276
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 900900000.0,
+            "cash": 9800000000.0,
+            "liquidity_ratio": 0.09192857142857143,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23606000000.0,
+            "crash_fcf": 2903250000.0,
+            "earnings_power_value": 26393181818.18182,
+            "floor_value": 26393181818.18182,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 0.5,
+            "financial_leverage_score": 0.1081819949535549,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 7.0
+        },
+        "moat_evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years.",
+        "concentration_risk": true,
+        "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business.",
+        "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+        "revenue_segments": [
+          {
+            "segment": "UnitedHealthcare",
+            "pct_revenue": null,
+            "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+          },
+          {
+            "segment": "Optum Health",
+            "pct_revenue": null,
+            "growth_trend": "Growing, expanding value-based care and clinical home visits"
+          },
+          {
+            "segment": "Optum Insight",
+            "pct_revenue": null,
+            "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+          },
+          {
+            "segment": "Optum Rx",
+            "pct_revenue": null,
+            "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+          }
+        ],
+        "key_customers": [
+          "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+          "Large national and mid-sized employers",
+          "State Medicaid agencies",
+          "Health care providers and hospital systems"
+        ],
+        "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+        "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations.",
+        "operating_leverage_score": 0.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0085,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Pharmaceutical manufacturers (especially for specialty, rare disease, and GLP-1 drugs) and consolidated regional health systems act as critical suppliers. While UNH has massive scale to negotiate, patented drug makers have monopoly pricing power. If they raise prices, UNH typically passes these costs to plan sponsors (employers/government) via higher premiums, though it can pressure short-term Medical Loss Ratios.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Competing national MCOs/PBMs (CVS/Aetna, Cigna, Elevance). 2. Direct-to-provider contracting by large self-insured employers. 3. Regional/niche health plans or specialized value-based care startups.",
+        "pricing_power_assessment": "Strong pricing power. UNH consistently passes underlying medical and pharmacy cost inflation to buyers (employers and government) through annual premium increases. The integration of Optum and UHC creates a closed-loop system that captures value even when costs rise.",
+        "pass_through_capability": true,
+        "analysis_summary": "UNH operates as a dominant, vertically integrated healthcare platform. Supplier power is moderate-to-high for patented pharmaceuticals but mitigated by Optum Rx's formulary control. Buyer power is fragmented across employers and individuals, though CMS holds significant regulatory pricing power. Substitution threat is low due to massive network effects and switching costs. Rivalry is high but rational among top MCOs. Overall, UNH holds immense strategic leverage and pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7892156313828627,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth is 2.9%, which is healthy and consistent with overall business expansion. The D8 Revenue Score is 1.00, indicating clean revenue quality with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs or contract expirations identified. UNH is a health insurance and services company, not a pharmaceutical manufacturer, so it does not face traditional patent cliffs. Optum Insight has a strong $31.1 billion backlog, indicating stable future contract revenue.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "UnitedHealth Group demonstrates consistent structural growth rather than cyclicality, with a revenue Z-score of 1.79 (below the 2.0 peak threshold). The quality of growth is strong, evidenced by a perfect D8 Revenue Score of 1.00 and stable deferred revenue growth of 2.9%, indicating no pull-forward risk. Intangible risk is assessed at 0.0%, as the company's core operations in health benefits and services are not exposed to traditional patent cliffs, and it maintains a robust multi-billion dollar contract backlog."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:00:15.693020",
+          "current_price": 366.7699890136719,
+          "shares_diluted": 908213180.0,
+          "market_cap": 333105338050.672,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.39502410649332276,
+          "wacc_base": 0.105,
+          "revenue": 447567000000.0,
+          "ebitda": 23325000000.0,
+          "ebit": 18964000000.0,
+          "nopat": 14981560000.0,
+          "roic": 0.09445870144537029,
+          "fcf": 16075000000.0,
+          "net_debt": 47955000000.0,
+          "bull_ev": 298543491824.02515,
+          "bull_intrinsic_per_share": 275.91373627062444,
+          "bull_upside": -0.24771997563753953,
+          "bull_wacc": 0.09999999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 12.799292253977498,
+          "bull_justified_ev_ebitda": 4.698369234986992,
+          "bull_roic_wacc_spread": -0.005541298554629703,
+          "bull_tv_pct_of_ev": 0.5677129199999644,
+          "bull_implied_tv_ebitda": 4.698369234986992,
+          "base_ev": 205593348254.29236,
+          "base_intrinsic_per_share": 173.56976503500243,
+          "base_upside": -0.5267612666407873,
+          "base_wacc": 0.105,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 8.814291457847474,
+          "base_justified_ev_ebitda": 4.293083645353326,
+          "base_roic_wacc_spread": -0.010541298554629708,
+          "base_tv_pct_of_ev": 0.558739212143209,
+          "base_implied_tv_ebitda": 4.293083645353326,
+          "bear_ev": 54676515964.69533,
+          "bear_intrinsic_per_share": 7.400813060976859,
+          "bear_upside": -0.9798216504003522,
+          "bear_wacc": 0.12,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 2.344116440072683,
+          "bear_justified_ev_ebitda": 3.1781044176974897,
+          "bear_roic_wacc_spread": -0.025541298554629707,
+          "bear_tv_pct_of_ev": 0.3558341668225374,
+          "bear_implied_tv_ebitda": 1.4397255413231946
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "UNH",
+            "scenario": "bull",
+            "enterprise_value": 298543491824.02515,
+            "equity_value": 234895536824.02515,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 258.63480292592226,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -0.29483106395523195,
+            "upside_pct": -0.29483106395523195,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          },
+          "base": {
+            "ticker": "UNH",
+            "scenario": "base",
+            "enterprise_value": 205593348254.29236,
+            "equity_value": 141945393254.29236,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 156.29083169030025,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -0.5738723549584798,
+            "upside_pct": -0.5738723549584798,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          },
+          "bear": {
+            "ticker": "UNH",
+            "scenario": "bear",
+            "enterprise_value": 54676515964.69533,
+            "equity_value": 0.0,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 0.0,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -1.0269327387180447,
+            "upside_pct": -1.0269327387180447,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 258.63480292592226,
+          "base": 156.29083169030025,
+          "bear": 0.0
+        },
+        "margin_of_safety": {
+          "bull": -0.29483106395523195,
+          "base": -0.5738723549584798,
+          "bear": -1.0269327387180447
+        },
+        "reverse_dcf": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "current_price": 366.7699890136719,
+          "current_ev": 381060338050.672,
+          "current_ev_ebitda": 16.336991985023452,
+          "wacc": 0.059260908453456586,
+          "ebit_margin": 0.04237130977038075,
+          "implied_cagr_10y": 0.05348164547783764,
+          "implied_cagr_5y": 0.05348164547783764,
+          "historical_cagr_5y": 0.09209900889196976,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 16.336991985023452,
+          "forward_ev_ebitda_justified": 11.936242471446606,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.05348164547783764,
+        "historical_cagr": 0.09209900889196976,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (5.3%) is below historical (9.2%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 16.336991985023452,
+          "market_ev_ebit": 20.09387988033495,
+          "market_p_sales": 0.7442580396916484,
+          "market_p_e": 27.629838922583943,
+          "market_peg": 3.0000147944038327,
+          "justified_ev_ebitda": 13.785458017091473,
+          "justified_ev_ebit": 16.955589973036204,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 2.551533967931979,
+          "ev_ebitda_premium_pct": 0.18508880624557694,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 2.3369919850234524,
+          "roic": 0.09445870144537029,
+          "wacc": 0.059260908453456586,
+          "roic_wacc_spread": 0.0351977929919137,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.4723023151125401,
+          "growth_rate": 0.09209900889196976,
+          "signal": "moderate_premium"
+        },
+        "ev_ebitda_market": 16.336991985023452,
+        "ev_ebitda_justified": 13.785458017091473,
+        "ev_ebitda_premium_pct": 0.18508880624557694,
+        "multiple_signal": "moderate_premium",
+        "roic_wacc_spread": 0.0351977929919137,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.09445870144537029,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: UNH ===\nPrice: $366.77  |  Bear=$0  Base=$156  Bull=$259\nMoS:  Bear=-102.7%  Base=-57.4%  Bull=-29.5%\nRDCF: implied=5.3% hist=9.2% [fair_value]\nEV/EBITDA: 16.3x market vs 13.8x justified (+19%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: UNH \u2014 Base IV=$156/share MoS=-57.4% ImpliedCAGR=5.3% Multiple=moderate_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:00:33.819166",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 0.5/10 (Python). Pricing power: False. Concentration: True. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.79 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist Failed: EBIT margin out of bounds: -7.046753246753247. Expected within [-0.50, 0.60].",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: UNH \u2014 Base IV=$156/share MoS=-57.4% ImpliedCAGR=5.3% Multiple=moderate_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 9009000000.0,
+          "equity": 333105338050.672,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06526632677266009,
+          "beta": 0.39502410649332276
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 900900000.0,
+            "cash": 9800000000.0,
+            "liquidity_ratio": 0.09192857142857143,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23606000000.0,
+            "crash_fcf": 2903250000.0,
+            "earnings_power_value": 26393181818.18182,
+            "floor_value": 26393181818.18182,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 0.5,
+            "financial_leverage_score": 0.1081819949535549,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:00:15.693020",
+          "current_price": 366.7699890136719,
+          "shares_diluted": 908213180.0,
+          "market_cap": 333105338050.672,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.39502410649332276,
+          "wacc_base": 0.105,
+          "revenue": 447567000000.0,
+          "ebitda": 23325000000.0,
+          "ebit": 18964000000.0,
+          "nopat": 14981560000.0,
+          "roic": 0.09445870144537029,
+          "fcf": 16075000000.0,
+          "net_debt": 47955000000.0,
+          "bull_ev": 298543491824.02515,
+          "bull_intrinsic_per_share": 275.91373627062444,
+          "bull_upside": -0.24771997563753953,
+          "bull_wacc": 0.09999999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 12.799292253977498,
+          "bull_justified_ev_ebitda": 4.698369234986992,
+          "bull_roic_wacc_spread": -0.005541298554629703,
+          "bull_tv_pct_of_ev": 0.5677129199999644,
+          "bull_implied_tv_ebitda": 4.698369234986992,
+          "base_ev": 205593348254.29236,
+          "base_intrinsic_per_share": 173.56976503500243,
+          "base_upside": -0.5267612666407873,
+          "base_wacc": 0.105,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 8.814291457847474,
+          "base_justified_ev_ebitda": 4.293083645353326,
+          "base_roic_wacc_spread": -0.010541298554629708,
+          "base_tv_pct_of_ev": 0.558739212143209,
+          "base_implied_tv_ebitda": 4.293083645353326,
+          "bear_ev": 54676515964.69533,
+          "bear_intrinsic_per_share": 7.400813060976859,
+          "bear_upside": -0.9798216504003522,
+          "bear_wacc": 0.12,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 2.344116440072683,
+          "bear_justified_ev_ebitda": 3.1781044176974897,
+          "bear_roic_wacc_spread": -0.025541298554629707,
+          "bear_tv_pct_of_ev": 0.3558341668225374,
+          "bear_implied_tv_ebitda": 1.4397255413231946
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "UNH",
+            "scenario": "bull",
+            "enterprise_value": 298543491824.02515,
+            "equity_value": 234895536824.02515,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 258.63480292592226,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -0.29483106395523195,
+            "upside_pct": -0.29483106395523195,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          },
+          "base": {
+            "ticker": "UNH",
+            "scenario": "base",
+            "enterprise_value": 205593348254.29236,
+            "equity_value": 141945393254.29236,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 156.29083169030025,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -0.5738723549584798,
+            "upside_pct": -0.5738723549584798,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          },
+          "bear": {
+            "ticker": "UNH",
+            "scenario": "bear",
+            "enterprise_value": 54676515964.69533,
+            "equity_value": 0.0,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 0.0,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -1.0269327387180447,
+            "upside_pct": -1.0269327387180447,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 258.63480292592226,
+          "base": 156.29083169030025,
+          "bear": 0.0
+        },
+        "margin_of_safety": {
+          "bull": -0.29483106395523195,
+          "base": -0.5738723549584798,
+          "bear": -1.0269327387180447
+        },
+        "reverse_dcf": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "current_price": 366.7699890136719,
+          "current_ev": 381060338050.672,
+          "current_ev_ebitda": 16.336991985023452,
+          "wacc": 0.059260908453456586,
+          "ebit_margin": 0.04237130977038075,
+          "implied_cagr_10y": 0.05348164547783764,
+          "implied_cagr_5y": 0.05348164547783764,
+          "historical_cagr_5y": 0.09209900889196976,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 16.336991985023452,
+          "forward_ev_ebitda_justified": 11.936242471446606,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.05348164547783764,
+        "historical_cagr": 0.09209900889196976,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (5.3%) is below historical (9.2%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 16.336991985023452,
+          "market_ev_ebit": 20.09387988033495,
+          "market_p_sales": 0.7442580396916484,
+          "market_p_e": 27.629838922583943,
+          "market_peg": 3.0000147944038327,
+          "justified_ev_ebitda": 13.785458017091473,
+          "justified_ev_ebit": 16.955589973036204,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 2.551533967931979,
+          "ev_ebitda_premium_pct": 0.18508880624557694,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 2.3369919850234524,
+          "roic": 0.09445870144537029,
+          "wacc": 0.059260908453456586,
+          "roic_wacc_spread": 0.0351977929919137,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.4723023151125401,
+          "growth_rate": 0.09209900889196976,
+          "signal": "moderate_premium"
+        },
+        "ev_ebitda_market": 16.336991985023452,
+        "ev_ebitda_justified": 13.785458017091473,
+        "ev_ebitda_premium_pct": 0.18508880624557694,
+        "multiple_signal": "moderate_premium",
+        "roic_wacc_spread": 0.0351977929919137,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.09445870144537029,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: UNH ===\nPrice: $366.77  |  Bear=$0  Base=$156  Bull=$259\nMoS:  Bear=-102.7%  Base=-57.4%  Bull=-29.5%\nRDCF: implied=5.3% hist=9.2% [fair_value]\nEV/EBITDA: 16.3x market vs 13.8x justified (+19%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 7.0
+        },
+        "moat_evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years.",
+        "concentration_risk": true,
+        "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business.",
+        "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+        "revenue_segments": [
+          {
+            "segment": "UnitedHealthcare",
+            "pct_revenue": null,
+            "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+          },
+          {
+            "segment": "Optum Health",
+            "pct_revenue": null,
+            "growth_trend": "Growing, expanding value-based care and clinical home visits"
+          },
+          {
+            "segment": "Optum Insight",
+            "pct_revenue": null,
+            "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+          },
+          {
+            "segment": "Optum Rx",
+            "pct_revenue": null,
+            "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+          }
+        ],
+        "key_customers": [
+          "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+          "Large national and mid-sized employers",
+          "State Medicaid agencies",
+          "Health care providers and hospital systems"
+        ],
+        "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+        "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations.",
+        "operating_leverage_score": 0.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0085,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Pharmaceutical manufacturers (especially for specialty, rare disease, and GLP-1 drugs) and consolidated regional health systems act as critical suppliers. While UNH has massive scale to negotiate, patented drug makers have monopoly pricing power. If they raise prices, UNH typically passes these costs to plan sponsors (employers/government) via higher premiums, though it can pressure short-term Medical Loss Ratios.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Competing national MCOs/PBMs (CVS/Aetna, Cigna, Elevance). 2. Direct-to-provider contracting by large self-insured employers. 3. Regional/niche health plans or specialized value-based care startups.",
+        "pricing_power_assessment": "Strong pricing power. UNH consistently passes underlying medical and pharmacy cost inflation to buyers (employers and government) through annual premium increases. The integration of Optum and UHC creates a closed-loop system that captures value even when costs rise.",
+        "pass_through_capability": true,
+        "analysis_summary": "UNH operates as a dominant, vertically integrated healthcare platform. Supplier power is moderate-to-high for patented pharmaceuticals but mitigated by Optum Rx's formulary control. Buyer power is fragmented across employers and individuals, though CMS holds significant regulatory pricing power. Substitution threat is low due to massive network effects and switching costs. Rivalry is high but rational among top MCOs. Overall, UNH holds immense strategic leverage and pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7892156313828627,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth is 2.9%, which is healthy and consistent with overall business expansion. The D8 Revenue Score is 1.00, indicating clean revenue quality with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs or contract expirations identified. UNH is a health insurance and services company, not a pharmaceutical manufacturer, so it does not face traditional patent cliffs. Optum Insight has a strong $31.1 billion backlog, indicating stable future contract revenue.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "UnitedHealth Group demonstrates consistent structural growth rather than cyclicality, with a revenue Z-score of 1.79 (below the 2.0 peak threshold). The quality of growth is strong, evidenced by a perfect D8 Revenue Score of 1.00 and stable deferred revenue growth of 2.9%, indicating no pull-forward risk. Intangible risk is assessed at 0.0%, as the company's core operations in health benefits and services are not exposed to traditional patent cliffs, and it maintains a robust multi-billion dollar contract backlog."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $366.77 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 5.3%\n  \u2022 Company's robust historical CAGR: 9.2%\n  \u2022 Ratio (implied / historical): 0.6x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (5.3%) is below historical (9.2%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 16.3x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.8x\n  \u2022 Premium to justified multiple: +19%\n  \u2022 Multiple signal: MODERATE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $366.77\n  \u2022 Downside in bear case: -100.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Overconfidence",
+          "bear_case_summary": "While the Reverse DCF suggests the market is pricing in a conservative 5.3% revenue CAGR (0.6x its historical 9.2% rate), the multiple decomposition reveals a hidden vulnerability: UNH trades at a 16.3x EV/EBITDA multiple, a 19% premium to its mathematically justified 13.8x multiple. This premium reflects Overconfidence in UNH's status as a 'safe haven' and assumes flawless execution. The catastrophic bear case valuation of $0/share (-100% downside) highlights severe tail risks that the current premium ignores. To trigger this downside, UNH would face a confluence of systemic shocks: severe Medicare Advantage rate cuts, uncontrollable spikes in the Medical Loss Ratio (MLR) due to rising utilization, and aggressive DOJ antitrust actions forcing a breakup of the UnitedHealthcare/Optum vertical integration. If ROIC structurally declines below WACC due to these regulatory and margin pressures, the 19% multiple premium will violently compress, wiping out significant equity value.",
+          "sentiment_score": -5
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Overconfidence] Sentiment: -5/10. Implied CAGR 5.3% vs 9.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:00:53.574974",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/UNH_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T23:00:53.576197",
+    "agent": "Lead",
+    "trace_id": "trace_UNH_1777431527",
+    "inputs": {
+      "ticker": "UNH",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for UNH.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 0.5/10 (Python). Pricing power: False. Concentration: True. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.79 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist Failed: EBIT margin out of bounds: -7.046753246753247. Expected within [-0.50, 0.60].",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: UNH \u2014 Base IV=$156/share MoS=-57.4% ImpliedCAGR=5.3% Multiple=moderate_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Overconfidence] Sentiment: -5/10. Implied CAGR 5.3% vs 9.2% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 9009000000.0,
+          "equity": 333105338050.672,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06526632677266009,
+          "beta": 0.39502410649332276
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 900900000.0,
+            "cash": 9800000000.0,
+            "liquidity_ratio": 0.09192857142857143,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 23606000000.0,
+            "crash_fcf": 2903250000.0,
+            "earnings_power_value": 26393181818.18182,
+            "floor_value": 26393181818.18182,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 0.5,
+            "financial_leverage_score": 0.1081819949535549,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T03:00:15.693020",
+          "current_price": 366.7699890136719,
+          "shares_diluted": 908213180.0,
+          "market_cap": 333105338050.672,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 0.39502410649332276,
+          "wacc_base": 0.105,
+          "revenue": 447567000000.0,
+          "ebitda": 23325000000.0,
+          "ebit": 18964000000.0,
+          "nopat": 14981560000.0,
+          "roic": 0.09445870144537029,
+          "fcf": 16075000000.0,
+          "net_debt": 47955000000.0,
+          "bull_ev": 298543491824.02515,
+          "bull_intrinsic_per_share": 275.91373627062444,
+          "bull_upside": -0.24771997563753953,
+          "bull_wacc": 0.09999999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 12.799292253977498,
+          "bull_justified_ev_ebitda": 4.698369234986992,
+          "bull_roic_wacc_spread": -0.005541298554629703,
+          "bull_tv_pct_of_ev": 0.5677129199999644,
+          "bull_implied_tv_ebitda": 4.698369234986992,
+          "base_ev": 205593348254.29236,
+          "base_intrinsic_per_share": 173.56976503500243,
+          "base_upside": -0.5267612666407873,
+          "base_wacc": 0.105,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 8.814291457847474,
+          "base_justified_ev_ebitda": 4.293083645353326,
+          "base_roic_wacc_spread": -0.010541298554629708,
+          "base_tv_pct_of_ev": 0.558739212143209,
+          "base_implied_tv_ebitda": 4.293083645353326,
+          "bear_ev": 54676515964.69533,
+          "bear_intrinsic_per_share": 7.400813060976859,
+          "bear_upside": -0.9798216504003522,
+          "bear_wacc": 0.12,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 2.344116440072683,
+          "bear_justified_ev_ebitda": 3.1781044176974897,
+          "bear_roic_wacc_spread": -0.025541298554629707,
+          "bear_tv_pct_of_ev": 0.3558341668225374,
+          "bear_implied_tv_ebitda": 1.4397255413231946
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "UNH",
+            "scenario": "bull",
+            "enterprise_value": 298543491824.02515,
+            "equity_value": 234895536824.02515,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 258.63480292592226,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -0.29483106395523195,
+            "upside_pct": -0.29483106395523195,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          },
+          "base": {
+            "ticker": "UNH",
+            "scenario": "base",
+            "enterprise_value": 205593348254.29236,
+            "equity_value": 141945393254.29236,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 156.29083169030025,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -0.5738723549584798,
+            "upside_pct": -0.5738723549584798,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          },
+          "bear": {
+            "ticker": "UNH",
+            "scenario": "bear",
+            "enterprise_value": 54676515964.69533,
+            "equity_value": 0.0,
+            "shares_diluted": 908213180.0,
+            "intrinsic_per_share": 0.0,
+            "current_price": 366.7699890136719,
+            "margin_of_safety": -1.0269327387180447,
+            "upside_pct": -1.0269327387180447,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -72320000000.0,
+            "bridge_cash_(net_of_haircuts)": 8672045000.0,
+            "cash_gross": 24365000000.0,
+            "cash_wc_haircut": 13427010000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2265945000.0,
+            "cash_net_accessible": 8672045000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 8672045000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 258.63480292592226,
+          "base": 156.29083169030025,
+          "bear": 0.0
+        },
+        "margin_of_safety": {
+          "bull": -0.29483106395523195,
+          "base": -0.5738723549584798,
+          "bear": -1.0269327387180447
+        },
+        "reverse_dcf": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "current_price": 366.7699890136719,
+          "current_ev": 381060338050.672,
+          "current_ev_ebitda": 16.336991985023452,
+          "wacc": 0.059260908453456586,
+          "ebit_margin": 0.04237130977038075,
+          "implied_cagr_10y": 0.05348164547783764,
+          "implied_cagr_5y": 0.05348164547783764,
+          "historical_cagr_5y": 0.09209900889196976,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 16.336991985023452,
+          "forward_ev_ebitda_justified": 11.936242471446606,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.05348164547783764,
+        "historical_cagr": 0.09209900889196976,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (5.3%) is below historical (9.2%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "UNH",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 16.336991985023452,
+          "market_ev_ebit": 20.09387988033495,
+          "market_p_sales": 0.7442580396916484,
+          "market_p_e": 27.629838922583943,
+          "market_peg": 3.0000147944038327,
+          "justified_ev_ebitda": 13.785458017091473,
+          "justified_ev_ebit": 16.955589973036204,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 2.551533967931979,
+          "ev_ebitda_premium_pct": 0.18508880624557694,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 2.3369919850234524,
+          "roic": 0.09445870144537029,
+          "wacc": 0.059260908453456586,
+          "roic_wacc_spread": 0.0351977929919137,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.4723023151125401,
+          "growth_rate": 0.09209900889196976,
+          "signal": "moderate_premium"
+        },
+        "ev_ebitda_market": 16.336991985023452,
+        "ev_ebitda_justified": 13.785458017091473,
+        "ev_ebitda_premium_pct": 0.18508880624557694,
+        "multiple_signal": "moderate_premium",
+        "roic_wacc_spread": 0.0351977929919137,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.09445870144537029,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: UNH ===\nPrice: $366.77  |  Bear=$0  Base=$156  Bull=$259\nMoS:  Bear=-102.7%  Base=-57.4%  Bull=-29.5%\nRDCF: implied=5.3% hist=9.2% [fair_value]\nEV/EBITDA: 16.3x market vs 13.8x justified (+19%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $366.77 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 5.3%\n  \u2022 Company's robust historical CAGR: 9.2%\n  \u2022 Ratio (implied / historical): 0.6x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (5.3%) is below historical (9.2%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 16.3x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.8x\n  \u2022 Premium to justified multiple: +19%\n  \u2022 Multiple signal: MODERATE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $366.77\n  \u2022 Downside in bear case: -100.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Overconfidence",
+          "bear_case_summary": "While the Reverse DCF suggests the market is pricing in a conservative 5.3% revenue CAGR (0.6x its historical 9.2% rate), the multiple decomposition reveals a hidden vulnerability: UNH trades at a 16.3x EV/EBITDA multiple, a 19% premium to its mathematically justified 13.8x multiple. This premium reflects Overconfidence in UNH's status as a 'safe haven' and assumes flawless execution. The catastrophic bear case valuation of $0/share (-100% downside) highlights severe tail risks that the current premium ignores. To trigger this downside, UNH would face a confluence of systemic shocks: severe Medicare Advantage rate cuts, uncontrollable spikes in the Medical Loss Ratio (MLR) due to rising utilization, and aggressive DOJ antitrust actions forcing a breakup of the UnitedHealthcare/Optum vertical integration. If ROIC structurally declines below WACC due to these regulatory and margin pressures, the 19% multiple premium will violently compress, wiping out significant equity value.",
+          "sentiment_score": -5
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 7.0
+        },
+        "moat_evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years.",
+        "concentration_risk": true,
+        "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business.",
+        "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+        "revenue_segments": [
+          {
+            "segment": "UnitedHealthcare",
+            "pct_revenue": null,
+            "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+          },
+          {
+            "segment": "Optum Health",
+            "pct_revenue": null,
+            "growth_trend": "Growing, expanding value-based care and clinical home visits"
+          },
+          {
+            "segment": "Optum Insight",
+            "pct_revenue": null,
+            "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+          },
+          {
+            "segment": "Optum Rx",
+            "pct_revenue": null,
+            "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+          }
+        ],
+        "key_customers": [
+          "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+          "Large national and mid-sized employers",
+          "State Medicaid agencies",
+          "Health care providers and hospital systems"
+        ],
+        "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+        "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations.",
+        "operating_leverage_score": 0.5
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.0085,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Pharmaceutical manufacturers (especially for specialty, rare disease, and GLP-1 drugs) and consolidated regional health systems act as critical suppliers. While UNH has massive scale to negotiate, patented drug makers have monopoly pricing power. If they raise prices, UNH typically passes these costs to plan sponsors (employers/government) via higher premiums, though it can pressure short-term Medical Loss Ratios.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Competing national MCOs/PBMs (CVS/Aetna, Cigna, Elevance). 2. Direct-to-provider contracting by large self-insured employers. 3. Regional/niche health plans or specialized value-based care startups.",
+        "pricing_power_assessment": "Strong pricing power. UNH consistently passes underlying medical and pharmacy cost inflation to buyers (employers and government) through annual premium increases. The integration of Optum and UHC creates a closed-loop system that captures value even when costs rise.",
+        "pass_through_capability": true,
+        "analysis_summary": "UNH operates as a dominant, vertically integrated healthcare platform. Supplier power is moderate-to-high for patented pharmaceuticals but mitigated by Optum Rx's formulary control. Buyer power is fragmented across employers and individuals, though CMS holds significant regulatory pricing power. Substitution threat is low due to massive network effects and switching costs. Rivalry is high but rational among top MCOs. Overall, UNH holds immense strategic leverage and pricing power."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.7892156313828627,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue growth is 2.9%, which is healthy and consistent with overall business expansion. The D8 Revenue Score is 1.00, indicating clean revenue quality with no signs of pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No material patent cliffs or contract expirations identified. UNH is a health insurance and services company, not a pharmaceutical manufacturer, so it does not face traditional patent cliffs. Optum Insight has a strong $31.1 billion backlog, indicating stable future contract revenue.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "UnitedHealth Group demonstrates consistent structural growth rather than cyclicality, with a revenue Z-score of 1.79 (below the 2.0 peak threshold). The quality of growth is strong, evidenced by a perfect D8 Revenue Score of 1.00 and stable deferred revenue growth of 2.9%, indicating no pull-forward risk. Intangible risk is assessed at 0.0%, as the company's core operations in health benefits and services are not exposed to traditional patent cliffs, and it maintains a robust multi-billion dollar contract backlog."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>______________________________________________________________________________________</div>\n\n#### Form 10-K\n<div align='center'>_____________________________________________________________________________________</div>\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n<div align='center'>For the fiscal year ended December 31, 2025</div>\n\n| or                                            |     |                                                                                          |\n| \u2610                                             |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n| For the transition period from _____ to _____ |     |                                                                                          |\n\n#### Commission file number: 1-10864\n<div align='center'>_...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "UNH",
+        "generated_at": "2026-04-28T23:00:53.574079",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 0.5,
+            "cost_structure": "With an operating leverage score of 0.5/10, UNH exhibits a highly variable cost structure dominated by medical claims, care delivery expenses, and pharmacy costs. Fixed cost drivers include a massive administrative and clinical headcount of over 390,000 employees, technology infrastructure for Optum Insight, and significant stock-based compensation (604% of FCF). Because the core insurance and PBM businesses require proportional increases in medical and pharmacy payouts as premium and service revenues grow, revenue growth does not efficiently flow through to EBIT.",
+            "business_description": "UnitedHealth Group is a diversified health care and well-being company operating through two main platforms: UnitedHealthcare (health benefits and insurance) and Optum (health services, pharmacy care, and analytics). It serves consumers, employers, health care providers, and government entities by assuming health care risk, managing pharmacy benefits, and providing technology-enabled care delivery.",
+            "revenue_segments": [
+              {
+                "segment": "UnitedHealthcare",
+                "pct_revenue": null,
+                "growth_trend": "Growing, driven by Medicare Advantage and government programs"
+              },
+              {
+                "segment": "Optum Health",
+                "pct_revenue": null,
+                "growth_trend": "Growing, expanding value-based care and clinical home visits"
+              },
+              {
+                "segment": "Optum Insight",
+                "pct_revenue": null,
+                "growth_trend": "Growing, supported by a $31.1 billion contract backlog"
+              },
+              {
+                "segment": "Optum Rx",
+                "pct_revenue": null,
+                "growth_trend": "Growing, managing $188 billion in pharmaceutical spending"
+              }
+            ],
+            "key_customers": [
+              "Centers for Medicare & Medicaid Services (CMS) - 44% of revenue",
+              "Large national and mid-sized employers",
+              "State Medicaid agencies",
+              "Health care providers and hospital systems"
+            ],
+            "competitive_landscape": "Competes with Fortune 50 global enterprises, regional health plans, and PBMs. Differentiates through its massive scale, vertical integration of care delivery and pharmacy services (Optum) with health benefits (UnitedHealthcare), and extensive data analytics capabilities.",
+            "regulatory_risk": "Highly regulated by CMS, state insurance boards, and federal laws (HIPAA, ERISA), with significant exposure to changes in Medicare/Medicaid funding and PBM regulations."
+          },
+          "value_chain": {
+            "power_ratio": 0.0085,
+            "upstream_leak": false,
+            "strategic_leverage": 9.0,
+            "bottleneck_analysis": "Pharmaceutical manufacturers (especially for specialty, rare disease, and GLP-1 drugs) and consolidated regional health systems act as critical suppliers. While UNH has massive scale to negotiate, patented drug makers have monopoly pricing power. If they raise prices, UNH typically passes these costs to plan sponsors (employers/government) via higher premiums, though it can pressure short-term Medical Loss Ratios.",
+            "substitution_risk_score": 3.0,
+            "top_substitutes": "1. Competing national MCOs/PBMs (CVS/Aetna, Cigna, Elevance). 2. Direct-to-provider contracting by large self-insured employers. 3. Regional/niche health plans or specialized value-based care startups.",
+            "pricing_power_assessment": "Strong pricing power. UNH consistently passes underlying medical and pharmacy cost inflation to buyers (employers and government) through annual premium increases. The integration of Optum and UHC creates a closed-loop system that captures value even when costs rise.",
+            "pass_through_capability": true,
+            "analysis_summary": "UNH operates as a dominant, vertically integrated healthcare platform. Supplier power is moderate-to-high for patented pharmaceuticals but mitigated by Optum Rx's formulary control. Buyer power is fragmented across employers and individuals, though CMS holds significant regulatory pricing power. Substitution threat is low due to massive network effects and switching costs. Rivalry is high but rational among top MCOs. Overall, UNH holds immense strategic leverage and pricing power."
+          },
+          "moat": {
+            "score": 8.5,
+            "switching_costs": 7.0,
+            "network_effects": 9.0,
+            "cost_advantage": 9.0,
+            "intangibles": 7.0,
+            "evidence": "Optum Insight's backlog of $31.1 billion indicates high switching costs and long-term embedded contracts. Network effects are demonstrated by a massive two-sided network including 64,000 retail pharmacies, 29.7 million commercial members, and 8.4 million Medicare Advantage members. Cost advantages stem from massive scale, such as managing $188 billion in pharmaceutical spending. Intangibles include state HMO licenses, regulatory approvals, and brand trademarks, though the company is not dependent on specific patents.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The provided 10-K excerpt does not explicitly disclose specific price hike dates, premium increase amounts, or Net Retention Rate (NRR) to definitively confirm pricing power without material churn over the last 3 years."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.7892156313828627,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue growth is 2.9%, which is healthy and consistent with overall business expansion. The D8 Revenue Score is 1.00, indicating clean revenue quality with no signs of pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "No material patent cliffs or contract expirations identified. UNH is a health insurance and services company, not a pharmaceutical manufacturer, so it does not face traditional patent cliffs. Optum Insight has a strong $31.1 billion backlog, indicating stable future contract revenue.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "UnitedHealth Group demonstrates consistent structural growth rather than cyclicality, with a revenue Z-score of 1.79 (below the 2.0 peak threshold). The quality of growth is strong, evidenced by a perfect D8 Revenue Score of 1.00 and stable deferred revenue growth of 2.9%, indicating no pull-forward risk. Intangible risk is assessed at 0.0%, as the company's core operations in health benefits and services are not exposed to traditional patent cliffs, and it maintains a robust multi-billion dollar contract backlog."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 447.567,
+            "ebitda_bn": 23.325,
+            "fcf_bn": 16.075,
+            "nopat_bn": 14.98156,
+            "invested_capital_bn": 158.60434,
+            "net_debt_bn": 47.955,
+            "sbc_bn": 0.971,
+            "fiscal_year": 2025,
+            "data_quality": 0.98
+          },
+          "ratios": {
+            "gross_margin_pct": 88.68214144474459,
+            "ebit_margin_pct": 4.237130977038075,
+            "ebitda_margin_pct": 5.211510231987613,
+            "fcf_margin_pct": 3.5916410280471975,
+            "roic": 0.09445870144537029,
+            "roe": 0.12045159356579078,
+            "sbc_pct_fcf": 6.040435458786937,
+            "share_dilution_pct": 0.5518763796909493,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 9009000000.0,
+            "equity": 333105338050.672,
+            "wacc": 0.09,
+            "cost_of_equity": 0.06526632677266009,
+            "beta": 0.39502410649332276
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 900900000.0,
+              "cash": 9800000000.0,
+              "liquidity_ratio": 0.09192857142857143,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 23606000000.0,
+              "crash_fcf": 2903250000.0,
+              "earnings_power_value": 26393181818.18182,
+              "floor_value": 26393181818.18182,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 0.5,
+              "financial_leverage_score": 0.1081819949535549,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.09,
+              "2": 0.09,
+              "3": 0.09,
+              "4": 0.09,
+              "5": 0.09
+            }
+          },
+          "concentration_risk": true,
+          "concentration_details": "The Centers for Medicare & Medicaid Services (CMS) represents 44% of total consolidated revenues. The loss of this customer or adverse changes to Medicare Advantage and Medicaid reimbursement rates would severely impact the business."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": null,
+            "upside_percent": null,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 0.0,
+                "margin_of_safety": -1.0269327387180447,
+                "ev": 54676515964.69533
+              },
+              "base": {
+                "intrinsic_per_share": 156.29083169030025,
+                "margin_of_safety": -0.5738723549584798,
+                "ev": 205593348254.29236
+              },
+              "bull": {
+                "intrinsic_per_share": 258.63480292592226,
+                "margin_of_safety": -0.29483106395523195,
+                "ev": 298543491824.02515
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.05348164547783764,
+              "historical_cagr": 0.09209900889196976,
+              "signal": "fair_value",
+              "reasons": [
+                "Implied CAGR (5.3%) is below historical (9.2%). Market is not pricing in full continuation of historical trajectory."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 16.336991985023452,
+              "justified_ev_ebitda": 13.785458017091473,
+              "premium_pct": 0.18508880624557694,
+              "signal": "moderate_premium",
+              "roic_wacc_spread": 0.0351977929919137,
+              "value_creation": "creating",
+              "roic": 0.09445870144537029,
+              "wacc": 0.105
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.015,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": true,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 9.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.105,
+            "beta": 0.39502410649332276,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Overconfidence",
+            "bear_case_summary": "While the Reverse DCF suggests the market is pricing in a conservative 5.3% revenue CAGR (0.6x its historical 9.2% rate), the multiple decomposition reveals a hidden vulnerability: UNH trades at a 16.3x EV/EBITDA multiple, a 19% premium to its mathematically justified 13.8x multiple. This premium reflects Overconfidence in UNH's status as a 'safe haven' and assumes flawless execution. The catastrophic bear case valuation of $0/share (-100% downside) highlights severe tail risks that the current premium ignores. To trigger this downside, UNH would face a confluence of systemic shocks: severe Medicare Advantage rate cuts, uncontrollable spikes in the Medical Loss Ratio (MLR) due to rising utilization, and aggressive DOJ antitrust actions forcing a breakup of the UnitedHealthcare/Optum vertical integration. If ROIC structurally declines below WACC due to these regulatory and margin pressures, the 19% multiple premium will violently compress, wiping out significant equity value.",
+            "sentiment_score": -5,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $366.77 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 5.3%\n  \u2022 Company's robust historical CAGR: 9.2%\n  \u2022 Ratio (implied / historical): 0.6x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (5.3%) is below historical (9.2%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 16.3x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 13.8x\n  \u2022 Premium to justified multiple: +19%\n  \u2022 Multiple signal: MODERATE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $366.77\n  \u2022 Downside in bear case: -100.0%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 3,
+            "margin_of_safety": -0.5738723549584798,
+            "narrative": "The implied revenue CAGR of 5.3% is highly realistic and conservative compared to UNH's historical 9.2% rate. The company's 8.5/10 moat, underpinned by Optum Insight's $31.1 billion backlog and massive network effects, supports durable structural growth. However, the highly variable cost structure (operating leverage score of 0.5/10) and heavy reliance on medical claims payouts mean that revenue growth does not efficiently translate to free cash flow, which is the primary driver of the severe valuation disconnect.\n\nThe Contrarian is correct that the 19% EV/EBITDA premium leaves UNH vulnerable to multiple compression if Medicare Advantage rates are cut or MLR spikes uncontrollably. Furthermore, the DOJ antitrust threat against its vertical integration is a valid tail risk. However, the catastrophic $0/share bear case is fundamentally flawed. It ignores UNH's entrenched position in the US healthcare system, its positive 3.5% ROIC-WACC spread, and the massive switching costs embedded in O...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Implied CAGR (5.3%) within 1.3x of historical.",
+              "\u2705 PASS: Multiple premium +19% within range."
+            ],
+            "pillar_scores": {
+              "ticker": "UNH",
+              "p1_moat": 4,
+              "p2_health": 2,
+              "p3_tailwind": 5,
+              "p4_mos": 5,
+              "p5_leadership": 2,
+              "raw_total": 18,
+              "capped_total": 18,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern",
+              "conviction_score": 3,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 8.0/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +3.6pp \u2014 modest value creation",
+                "FCF margin 3.6% \u2014 thin FCF",
+                "Net Debt/EBITDA 2.1\u00d7 \u2014 moderate leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 9.2% \u2014 solid growth for mature stage",
+                "Sector 'Healthcare' \u2014 confirmed secular tailwind"
+              ],
+              "p4_reasons": [
+                "Base MoS +46.6% \u2014 Trading at <70% of base DCF IV \u2014 fortress margin of safety"
+              ],
+              "p5_reasons": [
+                "SBC 6.0% of FCF \u2014 elevated, investigate",
+                "Operating leverage 3.0/10",
+                "Upstream value leak detected \u2014 suppliers capture excess margin"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for UNH. Conviction: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

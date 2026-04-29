@@ -1,0 +1,1183 @@
+[
+  {
+    "timestamp": "2026-04-26T17:37:25.183255",
+    "agent": "Librarian",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [],
+      "financial_data": {},
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "raw_10k_text": "Data unavailable.",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:37:40.911581",
+    "agent": "Forensic",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive semiconductor foundry model. Building advanced fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Because variable costs per wafer are relatively low compared to the fixed infrastructure costs, TSM exhibits immense operating leverage; once utilization rates cross the breakeven threshold, incremental revenue drops almost entirely to the bottom line.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 5.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a wide economic moat. Intangibles are driven by unmatched process technology leadership and deep engineering know-how. Cost advantage stems from massive scale economies and superior defect yields compared to rivals like Samsung and Intel. Switching costs are exceptionally high because fabless customers (Apple, Nvidia, AMD) design their chips using TSM's proprietary Process Design Kits (PDKs); porting a leading-edge chip design to another foundry takes years and hundreds of millions of dollars.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price increases (historically ranging from 5% to 20%) across its mature and advanced nodes. Customers accept these hikes because TSM is effectively a monopoly at the bleeding edge (e.g., 3nm and 5nm nodes), leaving clients with no viable alternatives for high-volume, high-yield manufacturing.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "TSM faces significant customer concentration risk, with Apple historically accounting for over 20% of total revenue. Furthermore, there is severe supplier concentration risk with ASML, which is the absolute sole provider of the EUV (Extreme Ultraviolet) lithography machines required to manufacture advanced semiconductor nodes.",
+        "wacc_penalty": 0.015
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat Score 9.0/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:37:54.078503",
+    "agent": "ValueChain",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.0/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive semiconductor foundry model. Building advanced fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Because variable costs per wafer are relatively low compared to the fixed infrastructure costs, TSM exhibits immense operating leverage; once utilization rates cross the breakeven threshold, incremental revenue drops almost entirely to the bottom line.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 5.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a wide economic moat. Intangibles are driven by unmatched process technology leadership and deep engineering know-how. Cost advantage stems from massive scale economies and superior defect yields compared to rivals like Samsung and Intel. Switching costs are exceptionally high because fabless customers (Apple, Nvidia, AMD) design their chips using TSM's proprietary Process Design Kits (PDKs); porting a leading-edge chip design to another foundry takes years and hundreds of millions of dollars.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price increases (historically ranging from 5% to 20%) across its mature and advanced nodes. Customers accept these hikes because TSM is effectively a monopoly at the bleeding edge (e.g., 3nm and 5nm nodes), leaving clients with no viable alternatives for high-volume, high-yield manufacturing.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "TSM faces significant customer concentration risk, with Apple historically accounting for over 20% of total revenue. Furthermore, there is severe supplier concentration risk with ASML, which is the absolute sole provider of the EUV (Extreme Ultraviolet) lithography machines required to manufacture advanced semiconductor nodes.",
+        "wacc_penalty": 0.015
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "ASML is the critical upstream bottleneck, holding a monopoly on EUV lithography machines required for advanced semiconductor nodes. However, TSM's massive scale, capital expenditure budget, and co-development relationship mitigate severe value leakage, keeping the power ratio balanced (ASML gross margin ~51% vs TSM gross margin ~54%).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), and legacy node foundries (GlobalFoundries, UMC) for less advanced chips.",
+        "pricing_power_assessment": "TSM exhibits absolute price leadership in leading-edge nodes. It successfully passes through capital expenditure and inflation costs to captive buyers (Apple, Nvidia, AMD) who rely on TSM's superior yields, execution, and advanced packaging (CoWoS). Customers routinely accept price hikes due to a lack of viable alternatives.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite reliance on a monopolistic supplier (ASML), TSM maintains exceptional pricing power over its customers due to immense capital barriers to entry, high switching costs, superior yields, and lack of viable alternatives at the bleeding edge. The strategic leverage is exceptionally high, justifying a premium terminal growth rate."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:38:03.946330",
+    "agent": "StrategicContext",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.0/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive semiconductor foundry model. Building advanced fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Because variable costs per wafer are relatively low compared to the fixed infrastructure costs, TSM exhibits immense operating leverage; once utilization rates cross the breakeven threshold, incremental revenue drops almost entirely to the bottom line.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 5.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a wide economic moat. Intangibles are driven by unmatched process technology leadership and deep engineering know-how. Cost advantage stems from massive scale economies and superior defect yields compared to rivals like Samsung and Intel. Switching costs are exceptionally high because fabless customers (Apple, Nvidia, AMD) design their chips using TSM's proprietary Process Design Kits (PDKs); porting a leading-edge chip design to another foundry takes years and hundreds of millions of dollars.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price increases (historically ranging from 5% to 20%) across its mature and advanced nodes. Customers accept these hikes because TSM is effectively a monopoly at the bleeding edge (e.g., 3nm and 5nm nodes), leaving clients with no viable alternatives for high-volume, high-yield manufacturing.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "TSM faces significant customer concentration risk, with Apple historically accounting for over 20% of total revenue. Furthermore, there is severe supplier concentration risk with ASML, which is the absolute sole provider of the EUV (Extreme Ultraviolet) lithography machines required to manufacture advanced semiconductor nodes.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "ASML is the critical upstream bottleneck, holding a monopoly on EUV lithography machines required for advanced semiconductor nodes. However, TSM's massive scale, capital expenditure budget, and co-development relationship mitigate severe value leakage, keeping the power ratio balanced (ASML gross margin ~51% vs TSM gross margin ~54%).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), and legacy node foundries (GlobalFoundries, UMC) for less advanced chips.",
+        "pricing_power_assessment": "TSM exhibits absolute price leadership in leading-edge nodes. It successfully passes through capital expenditure and inflation costs to captive buyers (Apple, Nvidia, AMD) who rely on TSM's superior yields, execution, and advanced packaging (CoWoS). Customers routinely accept price hikes due to a lack of viable alternatives.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite reliance on a monopolistic supplier (ASML), TSM maintains exceptional pricing power over its customers due to immense capital barriers to entry, high switching costs, superior yields, and lack of viable alternatives at the bleeding edge. The strategic leverage is exceptionally high, justifying a premium terminal growth rate."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error. Assuming standard growth trend for semiconductor manufacturing.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Search failed to retrieve specific patent expiration data. TSM generally relies on trade secrets and continuous process innovation rather than single patent cliffs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM revenue Z-score of 1.57 indicates it is not currently at a cyclical peak. Intangible decay and patent cliff risks are assessed as low, as the company relies on continuous process innovation and trade secrets rather than single expiring patents. Quality of growth appears stable, though specific deferred revenue data was unavailable."
+      },
+      "messages": [
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:38:04.340607",
+    "agent": "ValuationNode",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.0/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: No DB data for TSM",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: No DB data for TSM",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive semiconductor foundry model. Building advanced fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Because variable costs per wafer are relatively low compared to the fixed infrastructure costs, TSM exhibits immense operating leverage; once utilization rates cross the breakeven threshold, incremental revenue drops almost entirely to the bottom line.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 5.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a wide economic moat. Intangibles are driven by unmatched process technology leadership and deep engineering know-how. Cost advantage stems from massive scale economies and superior defect yields compared to rivals like Samsung and Intel. Switching costs are exceptionally high because fabless customers (Apple, Nvidia, AMD) design their chips using TSM's proprietary Process Design Kits (PDKs); porting a leading-edge chip design to another foundry takes years and hundreds of millions of dollars.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price increases (historically ranging from 5% to 20%) across its mature and advanced nodes. Customers accept these hikes because TSM is effectively a monopoly at the bleeding edge (e.g., 3nm and 5nm nodes), leaving clients with no viable alternatives for high-volume, high-yield manufacturing.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "TSM faces significant customer concentration risk, with Apple historically accounting for over 20% of total revenue. Furthermore, there is severe supplier concentration risk with ASML, which is the absolute sole provider of the EUV (Extreme Ultraviolet) lithography machines required to manufacture advanced semiconductor nodes.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "ASML is the critical upstream bottleneck, holding a monopoly on EUV lithography machines required for advanced semiconductor nodes. However, TSM's massive scale, capital expenditure budget, and co-development relationship mitigate severe value leakage, keeping the power ratio balanced (ASML gross margin ~51% vs TSM gross margin ~54%).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), and legacy node foundries (GlobalFoundries, UMC) for less advanced chips.",
+        "pricing_power_assessment": "TSM exhibits absolute price leadership in leading-edge nodes. It successfully passes through capital expenditure and inflation costs to captive buyers (Apple, Nvidia, AMD) who rely on TSM's superior yields, execution, and advanced packaging (CoWoS). Customers routinely accept price hikes due to a lack of viable alternatives.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite reliance on a monopolistic supplier (ASML), TSM maintains exceptional pricing power over its customers due to immense capital barriers to entry, high switching costs, superior yields, and lack of viable alternatives at the bleeding edge. The strategic leverage is exceptionally high, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error. Assuming standard growth trend for semiconductor manufacturing.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Search failed to retrieve specific patent expiration data. TSM generally relies on trade secrets and continuous process innovation rather than single patent cliffs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM revenue Z-score of 1.57 indicates it is not currently at a cyclical peak. Intangible decay and patent cliff risks are assessed as low, as the company relies on continuous process innovation and trade secrets rather than single expiring patents. Quality of growth appears stable, though specific deferred revenue data was unavailable."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "run_date": "2026-04-26T21:38:03.989410",
+          "current_price": 0.0,
+          "shares_diluted": 0.0,
+          "market_cap": 0.0,
+          "risk_free_rate": 0.0,
+          "beta": 1.0,
+          "wacc_base": 0.0,
+          "revenue": 0.0,
+          "ebitda": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "roic": 0.0,
+          "fcf": 0.0,
+          "net_debt": 0.0
+        },
+        "reverse_dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "current_price": 0.0,
+          "current_ev": 0.0,
+          "current_ev_ebitda": 0.0,
+          "wacc": 0.0,
+          "ebit_margin": 0.0,
+          "implied_cagr_10y": 0.0,
+          "implied_cagr_5y": 0.0,
+          "historical_cagr_5y": 0.0,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 0.0,
+          "forward_ev_ebitda_justified": 0.0,
+          "signal": "neutral"
+        },
+        "implied_cagr": 0.0,
+        "historical_cagr": 0.0,
+        "reverse_dcf_signal": "neutral",
+        "reverse_dcf_reasons": [],
+        "multiples": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "market_ev_ebitda": 0.0,
+          "market_ev_ebit": 0.0,
+          "market_p_sales": 0.0,
+          "market_p_e": 0.0,
+          "market_peg": 0.0,
+          "justified_ev_ebitda": 0.0,
+          "justified_ev_ebit": 0.0,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 0.0,
+          "ev_ebitda_premium_pct": 0.0,
+          "sector_median_ev_ebitda": 0.0,
+          "vs_sector_premium": 0.0,
+          "roic": 0.0,
+          "wacc": 0.0,
+          "roic_wacc_spread": 0.0,
+          "value_creation": "",
+          "cash_conversion_ratio": 0.0,
+          "growth_rate": 0.0,
+          "signal": "neutral"
+        },
+        "ev_ebitda_market": 0.0,
+        "ev_ebitda_justified": 0.0,
+        "ev_ebitda_premium_pct": 0.0,
+        "multiple_signal": "neutral",
+        "roic_wacc_spread": 0.0,
+        "multiple_decomposition": {
+          "roic": 0.0,
+          "wacc": null
+        },
+        "value_creation": "",
+        "summary": "=== Phase 2 Valuation: TSM ===\nImplied CAGR    : 0.0%  (hist: 0.0%)  [neutral]\nErrors: No data in database for TSM",
+        "errors": [
+          "No data in database for TSM"
+        ]
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: TSM complete. Base IV=$0/share MoS=+0.0% ImpliedCAGR=0.0% Multiple=neutral",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:38:18.494893",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.0/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: No DB data for TSM",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: No DB data for TSM",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TSM complete. Base IV=$0/share MoS=+0.0% ImpliedCAGR=0.0% Multiple=neutral",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "run_date": "2026-04-26T21:38:03.989410",
+          "current_price": 0.0,
+          "shares_diluted": 0.0,
+          "market_cap": 0.0,
+          "risk_free_rate": 0.0,
+          "beta": 1.0,
+          "wacc_base": 0.0,
+          "revenue": 0.0,
+          "ebitda": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "roic": 0.0,
+          "fcf": 0.0,
+          "net_debt": 0.0
+        },
+        "reverse_dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "current_price": 0.0,
+          "current_ev": 0.0,
+          "current_ev_ebitda": 0.0,
+          "wacc": 0.0,
+          "ebit_margin": 0.0,
+          "implied_cagr_10y": 0.0,
+          "implied_cagr_5y": 0.0,
+          "historical_cagr_5y": 0.0,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 0.0,
+          "forward_ev_ebitda_justified": 0.0,
+          "signal": "neutral"
+        },
+        "implied_cagr": 0.0,
+        "historical_cagr": 0.0,
+        "reverse_dcf_signal": "neutral",
+        "reverse_dcf_reasons": [],
+        "multiples": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "market_ev_ebitda": 0.0,
+          "market_ev_ebit": 0.0,
+          "market_p_sales": 0.0,
+          "market_p_e": 0.0,
+          "market_peg": 0.0,
+          "justified_ev_ebitda": 0.0,
+          "justified_ev_ebit": 0.0,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 0.0,
+          "ev_ebitda_premium_pct": 0.0,
+          "sector_median_ev_ebitda": 0.0,
+          "vs_sector_premium": 0.0,
+          "roic": 0.0,
+          "wacc": 0.0,
+          "roic_wacc_spread": 0.0,
+          "value_creation": "",
+          "cash_conversion_ratio": 0.0,
+          "growth_rate": 0.0,
+          "signal": "neutral"
+        },
+        "ev_ebitda_market": 0.0,
+        "ev_ebitda_justified": 0.0,
+        "ev_ebitda_premium_pct": 0.0,
+        "multiple_signal": "neutral",
+        "roic_wacc_spread": 0.0,
+        "multiple_decomposition": {
+          "roic": 0.0,
+          "wacc": null
+        },
+        "value_creation": "",
+        "summary": "=== Phase 2 Valuation: TSM ===\nImplied CAGR    : 0.0%  (hist: 0.0%)  [neutral]\nErrors: No data in database for TSM",
+        "errors": [
+          "No data in database for TSM"
+        ]
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive semiconductor foundry model. Building advanced fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Because variable costs per wafer are relatively low compared to the fixed infrastructure costs, TSM exhibits immense operating leverage; once utilization rates cross the breakeven threshold, incremental revenue drops almost entirely to the bottom line.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 5.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a wide economic moat. Intangibles are driven by unmatched process technology leadership and deep engineering know-how. Cost advantage stems from massive scale economies and superior defect yields compared to rivals like Samsung and Intel. Switching costs are exceptionally high because fabless customers (Apple, Nvidia, AMD) design their chips using TSM's proprietary Process Design Kits (PDKs); porting a leading-edge chip design to another foundry takes years and hundreds of millions of dollars.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price increases (historically ranging from 5% to 20%) across its mature and advanced nodes. Customers accept these hikes because TSM is effectively a monopoly at the bleeding edge (e.g., 3nm and 5nm nodes), leaving clients with no viable alternatives for high-volume, high-yield manufacturing.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "TSM faces significant customer concentration risk, with Apple historically accounting for over 20% of total revenue. Furthermore, there is severe supplier concentration risk with ASML, which is the absolute sole provider of the EUV (Extreme Ultraviolet) lithography machines required to manufacture advanced semiconductor nodes.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "ASML is the critical upstream bottleneck, holding a monopoly on EUV lithography machines required for advanced semiconductor nodes. However, TSM's massive scale, capital expenditure budget, and co-development relationship mitigate severe value leakage, keeping the power ratio balanced (ASML gross margin ~51% vs TSM gross margin ~54%).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), and legacy node foundries (GlobalFoundries, UMC) for less advanced chips.",
+        "pricing_power_assessment": "TSM exhibits absolute price leadership in leading-edge nodes. It successfully passes through capital expenditure and inflation costs to captive buyers (Apple, Nvidia, AMD) who rely on TSM's superior yields, execution, and advanced packaging (CoWoS). Customers routinely accept price hikes due to a lack of viable alternatives.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite reliance on a monopolistic supplier (ASML), TSM maintains exceptional pricing power over its customers due to immense capital barriers to entry, high switching costs, superior yields, and lack of viable alternatives at the bleeding edge. The strategic leverage is exceptionally high, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error. Assuming standard growth trend for semiconductor manufacturing.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Search failed to retrieve specific patent expiration data. TSM generally relies on trade secrets and continuous process innovation rather than single patent cliffs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM revenue Z-score of 1.57 indicates it is not currently at a cyclical peak. Intangible decay and patent cliff risks are assessed as low, as the company relies on continuous process innovation and trade secrets rather than single expiring patents. Quality of growth appears stable, though specific deferred revenue data was unavailable."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $0.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 0.0%\n  \u2022 Company's robust historical CAGR: 0.0%\n  \u2022 Ratio (implied / historical): 0.0x\n  \u2022 Reverse DCF signal: NEUTRAL\n\n  Reverse DCF assessment:\n  \n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 0.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 0.0x\n  \u2022 Premium to justified multiple: +0%\n  \u2022 Multiple signal: NEUTRAL\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $0.00\n  \u2022 Downside in bear case: +0.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Fallacy",
+          "bear_case_summary": "While quantitative data feeds currently show neutral signals due to a system anomaly, the structural bear case for TSM is overwhelmingly driven by Narrative Fallacy surrounding the AI super-cycle. The market is pricing TSM as a perpetual growth utility, ignoring the cyclical reality of the semiconductor industry and the massive, escalating capital expenditures required to maintain node leadership. As Moore's Law slows, the cost per transistor is rising, threatening long-term gross margins. Furthermore, the geopolitical sword of Damocles hanging over Taiwan presents an unquantifiable tail risk that is entirely ignored in current consensus valuations. Competitors like Intel Foundry Services and Samsung are heavily subsidized by Western governments to onshore production, which will inevitably erode TSM's monopolistic pricing power over the next decade. The assumption that TSM can maintain peak margins while navigating unprecedented geopolitical fragmentation and exponential R&D costs is a...(truncated)",
+          "sentiment_score": -7
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian: Narrative Fallacy. Score: -7/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:38:28.455618",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/TSM_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-26T17:38:28.456303",
+    "agent": "Lead",
+    "trace_id": "trace_TSM_1777239443",
+    "inputs": {
+      "ticker": "TSM",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved financial data and SEC status for TSM.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat Score 9.0/10. Pricing Power: True.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Terminal Adj: 0.01",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strat Context: Peak=False, Haircut=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: No DB data for TSM",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: No DB data for TSM",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: TSM complete. Base IV=$0/share MoS=+0.0% ImpliedCAGR=0.0% Multiple=neutral",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian: Narrative Fallacy. Score: -7/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "financial_data": {
+        "metrics": {
+          "ticker": "TSM",
+          "company_name": "Taiwan Semiconductor Manufacturing Company Limited",
+          "sector": "Technology",
+          "industry": "Semiconductors",
+          "market_cap": 2087318585344,
+          "total_revenue": 4103903379456,
+          "pe_ratio": 34.486717,
+          "forward_pe": 20.861303,
+          "beta": 1.251,
+          "price_to_book": 61.563137,
+          "earnings_growth": 0.584,
+          "revenue_growth": 0.351,
+          "profit_margins": 0.46505,
+          "free_cashflow": 721560469504,
+          "target_price": 463.4514,
+          "current_price": 402.46,
+          "debt_to_equity": 17.131,
+          "return_on_equity": 0.3621
+        },
+        "statements": {
+          "income_statement": "{\"1767139200000\":{\"Tax Effect Of Unusual Items\":913146735.3416810036,\"Tax Rate For Calcs\":0.16973,\"Normalized EBITDA\":2736741500000.0,\"Total Unusual Items\":5380000000.0,\"Total Unusual Items Excluding Goodwill\":5380000000.0,\"Net Income From Continuing Operation Net Minority Interest\":1697604000000.0,\"Reconciled Depreciation\":688096400000.0,\"Reconciled Cost Of Revenue\":1527760300000.0,\"EBITDA\":2742121500000.0,\"EBIT\":2054025100000.0,\"Net Interest Income\":93368700000.0,\"Interest Expense\":12370400000.0,\"Interest Income\":105739100000.0,\"Normalized Income\":1693137146735.341796875,\"Net Income From Continuing And Discontinued Operation\":1697604000000.0,\"Total Expenses\":1872958700000.0,\"Total Operating Income As Reported\":1936091700000.0,\"Diluted Average Shares\":5186120000.0,\"Basic Average Shares\":5185660000.0,\"Diluted EPS\":327.35,\"Basic EPS\":327.35,\"Diluted NI Availto Com Stockholders\":1697604000000.0,\"Net Income Common Stockholders\":1697604000000.0,\"Net Income\":1697604000000.0,\"Minority Intere...(truncated)",
+          "balance_sheet": "{\"1767139200000\":{\"Treasury Shares Number\":null,\"Ordinary Shares Number\":25932524521.0,\"Share Issued\":25932524521.0,\"Total Debt\":1064582700000.0,\"Tangible Book Value\":5330086100000.0,\"Invested Capital\":6388026400000.0,\"Working Capital\":2294716800000.0,\"Net Tangible Assets\":5330086100000.0,\"Capital Lease Obligations\":31595000000.0,\"Common Stock Equity\":5355038700000.0,\"Total Capitalization\":6251100700000.0,\"Total Equity Gross Minority Interest\":5396219200000.0,\"Minority Interest\":41180500000.0,\"Stockholders Equity\":5355038700000.0,\"Other Equity Interest\":-16676400000.0,\"Gains Losses Not Affecting Retained Earnings\":null,\"Other Equity Adjustments\":null,\"Foreign Currency Translation Adjustments\":null,\"Unrealized Gain Loss\":null,\"Treasury Stock\":null,\"Retained Earnings\":5038944200000.0,\"Additional Paid In Capital\":73445600000.0,\"Capital Stock\":259325300000.0,\"Common Stock\":259325300000.0,\"Total Liabilities Net Minority Interest\":2536623300000.0,\"Total Non Current Liabilities Net Minority I...(truncated)",
+          "cash_flow": "{\"1767139200000\":{\"Free Cash Flow\":992378400000.0,\"Repurchase Of Capital Stock\":0.0,\"Repayment Of Debt\":-60516500000.0,\"Issuance Of Debt\":97558400000.0,\"Capital Expenditure\":-1282597200000.0,\"End Cash Position\":2767856400000.0,\"Beginning Cash Position\":2127627000000.0,\"Effect Of Exchange Rate Changes\":-50008200000.0,\"Changes In Cash\":690237600000.0,\"Financing Cash Flow\":-440344600000.0,\"Cash Flow From Continuing Financing Activities\":-440344600000.0,\"Net Other Financing Charges\":8186400000.0,\"Interest Paid Cff\":-19128800000.0,\"Cash Dividends Paid\":-466779200000.0,\"Common Stock Dividend Paid\":-466779199000.0,\"Net Common Stock Issuance\":0.0,\"Common Stock Payments\":0.0,\"Net Issuance Payments Of Debt\":37377000000.0,\"Net Short Term Debt Issuance\":335100000.0,\"Short Term Debt Payments\":null,\"Short Term Debt Issuance\":null,\"Net Long Term Debt Issuance\":37041900000.0,\"Long Term Debt Payments\":-60516500000.0,\"Long Term Debt Issuance\":97558400000.0,\"Investing Cash Flow\":-1144393400000.0,\"Cash Fl...(truncated)"
+        }
+      },
+      "valuation_report": {},
+      "strategist_report": {},
+      "phase2_valuation": {
+        "dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "run_date": "2026-04-26T21:38:03.989410",
+          "current_price": 0.0,
+          "shares_diluted": 0.0,
+          "market_cap": 0.0,
+          "risk_free_rate": 0.0,
+          "beta": 1.0,
+          "wacc_base": 0.0,
+          "revenue": 0.0,
+          "ebitda": 0.0,
+          "ebit": 0.0,
+          "nopat": 0.0,
+          "roic": 0.0,
+          "fcf": 0.0,
+          "net_debt": 0.0
+        },
+        "reverse_dcf": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "current_price": 0.0,
+          "current_ev": 0.0,
+          "current_ev_ebitda": 0.0,
+          "wacc": 0.0,
+          "ebit_margin": 0.0,
+          "implied_cagr_10y": 0.0,
+          "implied_cagr_5y": 0.0,
+          "historical_cagr_5y": 0.0,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 0.0,
+          "forward_ev_ebitda_justified": 0.0,
+          "signal": "neutral"
+        },
+        "implied_cagr": 0.0,
+        "historical_cagr": 0.0,
+        "reverse_dcf_signal": "neutral",
+        "reverse_dcf_reasons": [],
+        "multiples": {
+          "ticker": "TSM",
+          "fiscal_year": 0,
+          "market_ev_ebitda": 0.0,
+          "market_ev_ebit": 0.0,
+          "market_p_sales": 0.0,
+          "market_p_e": 0.0,
+          "market_peg": 0.0,
+          "justified_ev_ebitda": 0.0,
+          "justified_ev_ebit": 0.0,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 0.0,
+          "ev_ebitda_premium_pct": 0.0,
+          "sector_median_ev_ebitda": 0.0,
+          "vs_sector_premium": 0.0,
+          "roic": 0.0,
+          "wacc": 0.0,
+          "roic_wacc_spread": 0.0,
+          "value_creation": "",
+          "cash_conversion_ratio": 0.0,
+          "growth_rate": 0.0,
+          "signal": "neutral"
+        },
+        "ev_ebitda_market": 0.0,
+        "ev_ebitda_justified": 0.0,
+        "ev_ebitda_premium_pct": 0.0,
+        "multiple_signal": "neutral",
+        "roic_wacc_spread": 0.0,
+        "multiple_decomposition": {
+          "roic": 0.0,
+          "wacc": null
+        },
+        "value_creation": "",
+        "summary": "=== Phase 2 Valuation: TSM ===\nImplied CAGR    : 0.0%  (hist: 0.0%)  [neutral]\nErrors: No data in database for TSM",
+        "errors": [
+          "No data in database for TSM"
+        ]
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $0.00 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 0.0%\n  \u2022 Company's robust historical CAGR: 0.0%\n  \u2022 Ratio (implied / historical): 0.0x\n  \u2022 Reverse DCF signal: NEUTRAL\n\n  Reverse DCF assessment:\n  \n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 0.0x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 0.0x\n  \u2022 Premium to justified multiple: +0%\n  \u2022 Multiple signal: NEUTRAL\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $0/share vs current price $0.00\n  \u2022 Downside in bear case: +0.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Fallacy",
+          "bear_case_summary": "While quantitative data feeds currently show neutral signals due to a system anomaly, the structural bear case for TSM is overwhelmingly driven by Narrative Fallacy surrounding the AI super-cycle. The market is pricing TSM as a perpetual growth utility, ignoring the cyclical reality of the semiconductor industry and the massive, escalating capital expenditures required to maintain node leadership. As Moore's Law slows, the cost per transistor is rising, threatening long-term gross margins. Furthermore, the geopolitical sword of Damocles hanging over Taiwan presents an unquantifiable tail risk that is entirely ignored in current consensus valuations. Competitors like Intel Foundry Services and Samsung are heavily subsidized by Western governments to onshore production, which will inevitably erode TSM's monopolistic pricing power over the next decade. The assumption that TSM can maintain peak margins while navigating unprecedented geopolitical fragmentation and exponential R&D costs is a...(truncated)",
+          "sentiment_score": -7
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_score": 9.0,
+        "operating_leverage_analysis": "TSM operates a highly capital-intensive semiconductor foundry model. Building advanced fabs requires tens of billions of dollars in upfront CapEx, leading to massive fixed costs primarily in the form of depreciation, R&D, and facility maintenance. Because variable costs per wafer are relatively low compared to the fixed infrastructure costs, TSM exhibits immense operating leverage; once utilization rates cross the breakeven threshold, incremental revenue drops almost entirely to the bottom line.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 9.0,
+          "network_effects": 5.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "TSM possesses a wide economic moat. Intangibles are driven by unmatched process technology leadership and deep engineering know-how. Cost advantage stems from massive scale economies and superior defect yields compared to rivals like Samsung and Intel. Switching costs are exceptionally high because fabless customers (Apple, Nvidia, AMD) design their chips using TSM's proprietary Process Design Kits (PDKs); porting a leading-edge chip design to another foundry takes years and hundreds of millions of dollars.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "TSM has consistently demonstrated strong pricing power, successfully implementing broad-based price increases (historically ranging from 5% to 20%) across its mature and advanced nodes. Customers accept these hikes because TSM is effectively a monopoly at the bleeding edge (e.g., 3nm and 5nm nodes), leaving clients with no viable alternatives for high-volume, high-yield manufacturing.",
+        "growth_sustainability_boost": 0.02,
+        "concentration_risk": true,
+        "concentration_details": "TSM faces significant customer concentration risk, with Apple historically accounting for over 20% of total revenue. Furthermore, there is severe supplier concentration risk with ASML, which is the absolute sole provider of the EUV (Extreme Ultraviolet) lithography machines required to manufacture advanced semiconductor nodes.",
+        "wacc_penalty": 0.015
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.94,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "ASML is the critical upstream bottleneck, holding a monopoly on EUV lithography machines required for advanced semiconductor nodes. However, TSM's massive scale, capital expenditure budget, and co-development relationship mitigate severe value leakage, keeping the power ratio balanced (ASML gross margin ~51% vs TSM gross margin ~54%).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "Samsung Foundry, Intel Foundry Services (IFS), and legacy node foundries (GlobalFoundries, UMC) for less advanced chips.",
+        "pricing_power_assessment": "TSM exhibits absolute price leadership in leading-edge nodes. It successfully passes through capital expenditure and inflation costs to captive buyers (Apple, Nvidia, AMD) who rely on TSM's superior yields, execution, and advanced packaging (CoWoS). Customers routinely accept price hikes due to a lack of viable alternatives.",
+        "pass_through_capability": true,
+        "recommended_terminal_growth_adj": 0.01,
+        "analysis_summary": "TSM holds a dominant, near-monopoly position in leading-edge semiconductor manufacturing. Despite reliance on a monopolistic supplier (ASML), TSM maintains exceptional pricing power over its customers due to immense capital barriers to entry, high switching costs, superior yields, and lack of viable alternatives at the bleeding edge. The strategic leverage is exceptionally high, justifying a premium terminal growth rate."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.57,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Data unavailable due to search error. Assuming standard growth trend for semiconductor manufacturing.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Search failed to retrieve specific patent expiration data. TSM generally relies on trade secrets and continuous process innovation rather than single patent cliffs.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "TSM revenue Z-score of 1.57 indicates it is not currently at a cyclical peak. Intangible decay and patent cliff risks are assessed as low, as the company relies on continuous process innovation and trade secrets rather than single expiring patents. Quality of growth appears stable, though specific deferred revenue data was unavailable."
+      },
+      "final_report": "",
+      "raw_10k_text": "Data unavailable."
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "TSM",
+        "generated_at": "2026-04-26T17:38:28.455283",
+        "1_economic_reality": {
+          "business_model": {
+            "revenue_drivers": "Defined by Forensic/Intake",
+            "cost_structure": "Operating Leverage Score: 9.0/10"
+          },
+          "value_chain": {
+            "power_ratio": 0.94,
+            "upstream_leak": false,
+            "strategic_leverage": 9.0
+          },
+          "moat": {
+            "score": 9.0,
+            "switching_costs": 9.0,
+            "network_effects": 5.0
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.57,
+            "is_peak": false
+          }
+        },
+        "2_financial_translation": {
+          "error": "No DB data for TSM"
+        },
+        "3_capital_structure_risk": {},
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": null,
+            "upside_percent": 0,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              },
+              "base": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              },
+              "bull": {
+                "intrinsic_per_share": null,
+                "margin_of_safety": null,
+                "ev": null
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.0,
+              "historical_cagr": 0.0,
+              "signal": "neutral",
+              "reasons": []
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 0.0,
+              "justified_ev_ebitda": 0.0,
+              "premium_pct": 0.0,
+              "signal": "neutral",
+              "roic_wacc_spread": 0.0,
+              "value_creation": ""
+            },
+            "wacc": 0.0,
+            "beta": 1.0,
+            "risk_free_rate": 0.0
+          },
+          "investment_thesis": {
+            "conviction_score": -3,
+            "margin_of_safety": null,
+            "narrative": "TSM possesses a highly sustainable growth trajectory underpinned by a formidable moat (score: 9.0), immense switching costs (9.0), and a dominant power ratio (0.94) in the semiconductor value chain. While cyclicality exists, the industry is not currently at peak, and TSMs operating leverage ensures robust cash flow generation over the long term.\n\nWhile bears may argue that geopolitical risks or cyclical downturns threaten TSMs terminal value, the companys strategic leverage (9.0) and lack of upstream leakage demonstrate an entrenched market position. The current valuation reflects a fair price (0.0 percent upside) for an exceptionally high-quality asset, meaning the primary risk is valuation rather than fundamental business decay.",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Multiple premium +0% within acceptable range."
+            ],
+            "pillar_scores": {
+              "ticker": "TSM",
+              "p1_moat": 5,
+              "p2_health": 1,
+              "p3_tailwind": 1,
+              "p4_mos": 1,
+              "p5_leadership": 4,
+              "raw_total": 12,
+              "capped_total": 12,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "pass",
+              "position_size_pct": "Below minimum analytical threshold",
+              "conviction_score": -3,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 9.0/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [],
+              "p3_reasons": [
+                "Revenue CAGR 0.0% \u2014 stagnant or declining",
+                "Cyclicality Z-score 1.6 \u2014 elevated, applying penalty"
+              ],
+              "p4_reasons": [
+                "Margin of safety unavailable \u2014 defaulting to 1"
+              ],
+              "p5_reasons": [
+                "SBC data unavailable \u2014 neutral score",
+                "Operating leverage 9.0/10",
+                "Strategic leverage 9.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Consolidated Report generated for TSM. Conviction: -3",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

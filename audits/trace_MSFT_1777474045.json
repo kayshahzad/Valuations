@@ -1,0 +1,3205 @@
+[
+  {
+    "timestamp": "2026-04-29T10:47:31.933624",
+    "agent": "Librarian",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:48:03.344372",
+    "agent": "Forensic",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:48:31.616901",
+    "agent": "ValueChain",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 1.09,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+        "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: True. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:48:57.636810",
+    "agent": "StrategicContext",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: True. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 1.09,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+        "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 2.084705608684617,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 246253666666.66666,
+        "deferred_revenue_trend": "Deferred revenue stands at $64.6B with a 12.1% growth rate. The D8 Revenue Score of 1.00 confirms that deferred revenue trends are healthy and supportive of overall revenue growth, showing no signs of aggressive accounting or pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, Microsoft's continuing research and product development are not materially dependent on any single license or third-party agreement. There are no disclosed patent cliffs or material contract expirations within the next 5 years.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Microsoft exhibits strong structural growth driven by cloud and AI, though statistically flagged as a cyclical peak with a Z-score of 2.08. The quality of growth is high, evidenced by a 12.1% increase in deferred revenue and a perfect D8 domain score of 1.00, indicating no pull-forward risk. Intangible risk is minimal, as the company is not materially dependent on any single patent or license, resulting in no terminal haircut."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:48:58.687734",
+    "agent": "Strategist",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: True. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 1.09,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+        "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.084705608684617,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 246253666666.66666,
+        "deferred_revenue_trend": "Deferred revenue stands at $64.6B with a 12.1% growth rate. The D8 Revenue Score of 1.00 confirms that deferred revenue trends are healthy and supportive of overall revenue growth, showing no signs of aggressive accounting or pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, Microsoft's continuing research and product development are not materially dependent on any single license or third-party agreement. There are no disclosed patent cliffs or material contract expirations within the next 5 years.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Microsoft exhibits strong structural growth driven by cloud and AI, though statistically flagged as a cyclical peak with a Z-score of 2.08. The quality of growth is high, evidenced by a 12.1% increase in deferred revenue and a perfect D8 domain score of 1.00, indicating no pull-forward risk. Intangible risk is minimal, as the company is not materially dependent on any single patent or license, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 4939000000.0,
+          "equity": 3158723305620.8135,
+          "wacc": 0.10431464690442974,
+          "cost_of_equity": 0.10442834399224427,
+          "beta": 1.0997880628761207
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 493900000.0,
+            "cash": 5505000000.0,
+            "liquidity_ratio": 0.08971843778383289,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 46175000000.0,
+            "crash_fcf": 10229710000.0,
+            "earnings_power_value": 82288855374.09254,
+            "floor_value": 82288855374.09254,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.6,
+            "financial_leverage_score": 0.0062544256297615685,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10431464690442974,
+            "2": 0.10431464690442974,
+            "3": 0.10431464690442974,
+            "4": 0.10431464690442974,
+            "5": 0.10431464690442974
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 10.4%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:48:59.785543",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "base": {
+        "net_sales": 281724000000.0,
+        "cogs": 87831000000.0,
+        "interest_expense": 0.0,
+        "net_debt": 9910000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.0780906135082563,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.22912850875324786,
+        "wacc": 0.10431464690442974,
+        "wc_change_percent_sales": 0.01,
+        "cogs_percent_sales": 0.5437804375914015,
+        "calibration_adjustment": 0.23201786145305348
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-29T10:48:59.785661",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 620280628284.2139,
+      "equity_value": 610370628284.2139,
+      "terminal_value": 725208550276.7518,
+      "discounted_terminal_value": 441569180296.50354,
+      "sum_pv_cash_flows": 178711447987.7104,
+      "audit_metrics": {
+        "roic_path": [
+          0.46942008084913917,
+          0.4045886625661972,
+          0.3520733957818883,
+          0.3077463367461488,
+          0.271874037523815
+        ],
+        "invested_capital_path": [
+          197206800000.0,
+          247111864000.0,
+          301009333120.0,
+          358140650387.2,
+          417557220345.088,
+          478756287401.71265
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 309896400000.0,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.3781289489003422,
+          "ebit": 117180800000.00002,
+          "nopat": 92572832000.00002,
+          "depreciation": 24199999999.999996,
+          "capex": 71006100000.0,
+          "change_in_wc": 3098964000.0,
+          "fcff": 42667768000.000015,
+          "discount_factor": 0.9055390171661306,
+          "pv_fcff": 38637328699.392494
+        },
+        {
+          "year": 2.0,
+          "revenue": 334688112000.0,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.3781289489003422,
+          "ebit": 126555264000.00002,
+          "nopat": 99978658560.00002,
+          "depreciation": 26135999999.999996,
+          "capex": 76686588000.0,
+          "change_in_wc": 3346881120.0,
+          "fcff": 46081189440.000015,
+          "discount_factor": 0.8200009116102019,
+          "pv_fcff": 37786617348.88242
+        },
+        {
+          "year": 3.0,
+          "revenue": 354769398720.0,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.3781289489003422,
+          "ebit": 134148579840.00002,
+          "nopat": 105977378073.60002,
+          "depreciation": 27704159999.999996,
+          "capex": 81287783280.0,
+          "change_in_wc": 3547693987.2000003,
+          "fcff": 48846060806.400024,
+          "discount_factor": 0.7425428195748334,
+          "pv_fcff": 36270291716.30804
+        },
+        {
+          "year": 4.0,
+          "revenue": 368960174668.8,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.3781289489003422,
+          "ebit": 139514523033.6,
+          "nopat": 110216473196.544,
+          "depreciation": 28812326399.999996,
+          "capex": 84539294611.2,
+          "change_in_wc": 3689601746.6879997,
+          "fcff": 50799903238.656006,
+          "discount_factor": 0.6724014950415621,
+          "pv_fcff": 34157930885.638992
+        },
+        {
+          "year": 5.0,
+          "revenue": 380028979908.864,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.3781289489003422,
+          "ebit": 143699958724.60803,
+          "nopat": 113522967392.44035,
+          "depreciation": 29676696192.0,
+          "capex": 87075473449.53601,
+          "change_in_wc": 3800289799.08864,
+          "fcff": 52323900335.81572,
+          "discount_factor": 0.608885788960973,
+          "pv_fcff": 31859279337.488476
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 281724000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.3781289489003422,
+        "terminal_value_pct_of_ev": 0.7118861369537655,
+        "implied_terminal_multiple_fcf": 13.859986461681,
+        "implied_terminal_multiple_nopat": 6.388209953759934,
+        "reinvestment_rate_terminal_year": 0.5390897407135604,
+        "assumptions_used": {
+          "wacc": 0.10431464690442974,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.0780906135082563,
+          "capex_percent_sales": 0.22912850875324786,
+          "wc_change_percent_sales": 0.01
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:48:59.786372",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: True. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.4%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 4939000000.0,
+          "equity": 3158723305620.8135,
+          "wacc": 0.10431464690442974,
+          "cost_of_equity": 0.10442834399224427,
+          "beta": 1.0997880628761207
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 493900000.0,
+            "cash": 5505000000.0,
+            "liquidity_ratio": 0.08971843778383289,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 46175000000.0,
+            "crash_fcf": 10229710000.0,
+            "earnings_power_value": 82288855374.09254,
+            "floor_value": 82288855374.09254,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.6,
+            "financial_leverage_score": 0.0062544256297615685,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10431464690442974,
+            "2": 0.10431464690442974,
+            "3": 0.10431464690442974,
+            "4": 0.10431464690442974,
+            "5": 0.10431464690442974
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 1.09,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+        "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.084705608684617,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 246253666666.66666,
+        "deferred_revenue_trend": "Deferred revenue stands at $64.6B with a 12.1% growth rate. The D8 Revenue Score of 1.00 confirms that deferred revenue trends are healthy and supportive of overall revenue growth, showing no signs of aggressive accounting or pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, Microsoft's continuing research and product development are not materially dependent on any single license or third-party agreement. There are no disclosed patent cliffs or material contract expirations within the next 5 years.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Microsoft exhibits strong structural growth driven by cloud and AI, though statistically flagged as a cyclical peak with a Z-score of 2.08. The quality of growth is high, evidenced by a 12.1% increase in deferred revenue and a perfect D8 domain score of 1.00, indicating no pull-forward risk. Intangible risk is minimal, as the company is not materially dependent on any single patent or license, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "terminal_value": 725208550276.7518,
+          "discounted_terminal_value": 441569180296.50354,
+          "sum_pv_cash_flows": 178711447987.7104,
+          "audit_metrics": {
+            "roic_path": [
+              0.46942008084913917,
+              0.4045886625661972,
+              0.3520733957818883,
+              0.3077463367461488,
+              0.271874037523815
+            ],
+            "invested_capital_path": [
+              197206800000.0,
+              247111864000.0,
+              301009333120.0,
+              358140650387.2,
+              417557220345.088,
+              478756287401.71265
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 281724000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.3781289489003422,
+            "terminal_value_pct_of_ev": 0.7118861369537655,
+            "implied_terminal_multiple_fcf": 13.859986461681,
+            "implied_terminal_multiple_nopat": 6.388209953759934,
+            "reinvestment_rate_terminal_year": 0.5390897407135604,
+            "assumptions_used": {
+              "wacc": 0.10431464690442974,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0780906135082563,
+              "capex_percent_sales": 0.22912850875324786,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 82.12320087740437,
+          "upside_percent": -0.806766665778646,
+          "assumptions_used": {
+            "wacc": 0.10431464690442974,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0780906135082563,
+            "capex_percent_sales": 0.22912850875324786,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0780906135082563,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.22912850875324786,
+          "wacc": 0.10431464690442974,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5437804375914015,
+          "calibration_adjustment": 0.23201786145305348
+        },
+        "base_financials": {
+          "net_sales": 281724000000.0,
+          "cogs": 87831000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 9910000000.0
+        },
+        "calculated_upside": -0.806766665778646
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $620,280,628,284",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:49:01.233760",
+    "agent": "ValuationNode",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: True. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.4%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $620,280,628,284",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "terminal_value": 725208550276.7518,
+          "discounted_terminal_value": 441569180296.50354,
+          "sum_pv_cash_flows": 178711447987.7104,
+          "audit_metrics": {
+            "roic_path": [
+              0.46942008084913917,
+              0.4045886625661972,
+              0.3520733957818883,
+              0.3077463367461488,
+              0.271874037523815
+            ],
+            "invested_capital_path": [
+              197206800000.0,
+              247111864000.0,
+              301009333120.0,
+              358140650387.2,
+              417557220345.088,
+              478756287401.71265
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 281724000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.3781289489003422,
+            "terminal_value_pct_of_ev": 0.7118861369537655,
+            "implied_terminal_multiple_fcf": 13.859986461681,
+            "implied_terminal_multiple_nopat": 6.388209953759934,
+            "reinvestment_rate_terminal_year": 0.5390897407135604,
+            "assumptions_used": {
+              "wacc": 0.10431464690442974,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0780906135082563,
+              "capex_percent_sales": 0.22912850875324786,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 82.12320087740437,
+          "upside_percent": -0.806766665778646,
+          "assumptions_used": {
+            "wacc": 0.10431464690442974,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0780906135082563,
+            "capex_percent_sales": 0.22912850875324786,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0780906135082563,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.22912850875324786,
+          "wacc": 0.10431464690442974,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5437804375914015,
+          "calibration_adjustment": 0.23201786145305348
+        },
+        "base_financials": {
+          "net_sales": 281724000000.0,
+          "cogs": 87831000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 9910000000.0
+        },
+        "calculated_upside": -0.806766665778646
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 4939000000.0,
+          "equity": 3158723305620.8135,
+          "wacc": 0.10431464690442974,
+          "cost_of_equity": 0.10442834399224427,
+          "beta": 1.0997880628761207
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 493900000.0,
+            "cash": 5505000000.0,
+            "liquidity_ratio": 0.08971843778383289,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 46175000000.0,
+            "crash_fcf": 10229710000.0,
+            "earnings_power_value": 82288855374.09254,
+            "floor_value": 82288855374.09254,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.6,
+            "financial_leverage_score": 0.0062544256297615685,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10431464690442974,
+            "2": 0.10431464690442974,
+            "3": 0.10431464690442974,
+            "4": 0.10431464690442974,
+            "5": 0.10431464690442974
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 1.09,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+        "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.084705608684617,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 246253666666.66666,
+        "deferred_revenue_trend": "Deferred revenue stands at $64.6B with a 12.1% growth rate. The D8 Revenue Score of 1.00 confirms that deferred revenue trends are healthy and supportive of overall revenue growth, showing no signs of aggressive accounting or pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, Microsoft's continuing research and product development are not materially dependent on any single license or third-party agreement. There are no disclosed patent cliffs or material contract expirations within the next 5 years.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Microsoft exhibits strong structural growth driven by cloud and AI, though statistically flagged as a cyclical peak with a Z-score of 2.08. The quality of growth is high, evidenced by a 12.1% increase in deferred revenue and a perfect D8 domain score of 1.00, indicating no pull-forward risk. Intangible risk is minimal, as the company is not materially dependent on any single patent or license, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 246253666666.66666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:48:59.787343",
+          "current_price": 424.9949951171875,
+          "shares_diluted": 7432377656.0,
+          "market_cap": 3158723305620.8135,
+          "risk_free_rate": 0.04394000053405762,
+          "beta": 1.0997880628761207,
+          "wacc_base": 0.10431464690442974,
+          "revenue": 246253666666.66666,
+          "ebitda": 150528000000.0,
+          "ebit": 128528000000.0,
+          "nopat": 101537120000.0,
+          "roic": 0.2828147061579371,
+          "fcf": 71611000000.0,
+          "net_debt": 9910000000.0,
+          "bull_ev": 6164607305043.768,
+          "bull_intrinsic_per_share": 828.092649473377,
+          "bull_upside": 0.9484762385143852,
+          "bull_wacc": 0.09931464690442973,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 40.95322667572656,
+          "bull_justified_ev_ebitda": 9.83716117374592,
+          "bull_roic_wacc_spread": 0.18350005925350735,
+          "bull_tv_pct_of_ev": 0.7720504948494955,
+          "bull_implied_tv_ebitda": 9.83716117374592,
+          "base_ev": 3490135010397.523,
+          "base_intrinsic_per_share": 468.25190692348787,
+          "base_upside": 0.10178216756263864,
+          "base_wacc": 0.10431464690442974,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 23.18595218429477,
+          "base_justified_ev_ebitda": 8.170837448853963,
+          "base_roic_wacc_spread": 0.17850005925350734,
+          "base_tv_pct_of_ev": 0.7257639966177213,
+          "base_implied_tv_ebitda": 8.170837448853963,
+          "bear_ev": 507728826919.694,
+          "bear_intrinsic_per_share": 66.97975398462367,
+          "bear_upside": -0.842398722916361,
+          "bear_wacc": 0.11931464690442974,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 3.372985935637848,
+          "bear_justified_ev_ebitda": 5.8579164313097145,
+          "bear_roic_wacc_spread": 0.16350005925350736,
+          "bear_tv_pct_of_ev": 0.3930292320877126,
+          "bear_implied_tv_ebitda": 2.0935697803422255
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "MSFT",
+            "scenario": "bull",
+            "enterprise_value": 6164607305043.768,
+            "equity_value": 6143433079043.768,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 826.5770878965367,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": 0.9449101692800348,
+            "upside_pct": 0.9449101692800348,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          },
+          "base": {
+            "ticker": "MSFT",
+            "scenario": "base",
+            "enterprise_value": 3490135010397.523,
+            "equity_value": 3468960784397.523,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 466.73634534664757,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": 0.09821609832828825,
+            "upside_pct": 0.09821609832828825,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          },
+          "bear": {
+            "ticker": "MSFT",
+            "scenario": "bear",
+            "enterprise_value": 507728826919.694,
+            "equity_value": 486554600919.694,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 65.46419240778337,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": -0.8459647921507114,
+            "upside_pct": -0.8459647921507114,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 826.5770878965367,
+          "base": 466.73634534664757,
+          "bear": 65.46419240778337
+        },
+        "margin_of_safety": {
+          "bull": 0.9449101692800348,
+          "base": 0.09821609832828825,
+          "bear": -0.8459647921507114
+        },
+        "reverse_dcf": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "current_price": 424.9949951171875,
+          "current_ev": 3168633305620.8135,
+          "current_ev_ebitda": 21.050125595376365,
+          "wacc": 0.10351420905774451,
+          "ebit_margin": 0.5219333451549283,
+          "implied_cagr_10y": 0.1744937340264205,
+          "implied_cagr_5y": 0.1744937340264205,
+          "historical_cagr_5y": 0.20384107923383943,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 21.050125595376365,
+          "forward_ev_ebitda_justified": 9.068077328983415,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.1744937340264205,
+        "historical_cagr": 0.20384107923383943,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.4%) is below historical (20.4%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 21.050125595376365,
+          "market_ev_ebit": 24.653253031408045,
+          "market_p_sales": 11.212120038125304,
+          "market_p_e": 31.018965606300707,
+          "market_peg": 1.5217229874806943,
+          "justified_ev_ebitda": 7.831861295117837,
+          "justified_ev_ebit": 9.172432598589394,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 13.218264300258529,
+          "ev_ebitda_premium_pct": 1.6877551583425545,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -0.9498744046236354,
+          "roic": 0.2828147061579371,
+          "wacc": 0.10351420905774451,
+          "roic_wacc_spread": 0.17930049710019258,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6149123950361395,
+          "growth_rate": 0.20384107923383943,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 21.050125595376365,
+        "ev_ebitda_justified": 7.831861295117837,
+        "ev_ebitda_premium_pct": 1.6877551583425545,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.17930049710019258,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.2828147061579371,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: MSFT ===\nPrice: $424.99  |  Bear=$65  Base=$467  Bull=$827\nMoS:  Bear=-84.6%  Base=+9.8%  Bull=+94.5%\nRDCF: implied=17.4% hist=20.4% [fair_value]\nEV/EBITDA: 21.1x market vs 7.8x justified (+169%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: MSFT \u2014 Base IV=$467/share MoS=+9.8% ImpliedCAGR=17.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:49:20.321315",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: True. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.4%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $620,280,628,284",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: MSFT \u2014 Base IV=$467/share MoS=+9.8% ImpliedCAGR=17.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "terminal_value": 725208550276.7518,
+          "discounted_terminal_value": 441569180296.50354,
+          "sum_pv_cash_flows": 178711447987.7104,
+          "audit_metrics": {
+            "roic_path": [
+              0.46942008084913917,
+              0.4045886625661972,
+              0.3520733957818883,
+              0.3077463367461488,
+              0.271874037523815
+            ],
+            "invested_capital_path": [
+              197206800000.0,
+              247111864000.0,
+              301009333120.0,
+              358140650387.2,
+              417557220345.088,
+              478756287401.71265
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 281724000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.3781289489003422,
+            "terminal_value_pct_of_ev": 0.7118861369537655,
+            "implied_terminal_multiple_fcf": 13.859986461681,
+            "implied_terminal_multiple_nopat": 6.388209953759934,
+            "reinvestment_rate_terminal_year": 0.5390897407135604,
+            "assumptions_used": {
+              "wacc": 0.10431464690442974,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0780906135082563,
+              "capex_percent_sales": 0.22912850875324786,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 82.12320087740437,
+          "upside_percent": -0.806766665778646,
+          "assumptions_used": {
+            "wacc": 0.10431464690442974,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0780906135082563,
+            "capex_percent_sales": 0.22912850875324786,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0780906135082563,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.22912850875324786,
+          "wacc": 0.10431464690442974,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5437804375914015,
+          "calibration_adjustment": 0.23201786145305348
+        },
+        "base_financials": {
+          "net_sales": 281724000000.0,
+          "cogs": 87831000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 9910000000.0
+        },
+        "calculated_upside": -0.806766665778646
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 4939000000.0,
+          "equity": 3158723305620.8135,
+          "wacc": 0.10431464690442974,
+          "cost_of_equity": 0.10442834399224427,
+          "beta": 1.0997880628761207
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 493900000.0,
+            "cash": 5505000000.0,
+            "liquidity_ratio": 0.08971843778383289,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 46175000000.0,
+            "crash_fcf": 10229710000.0,
+            "earnings_power_value": 82288855374.09254,
+            "floor_value": 82288855374.09254,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.6,
+            "financial_leverage_score": 0.0062544256297615685,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10431464690442974,
+            "2": 0.10431464690442974,
+            "3": 0.10431464690442974,
+            "4": 0.10431464690442974,
+            "5": 0.10431464690442974
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 246253666666.66666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:48:59.787343",
+          "current_price": 424.9949951171875,
+          "shares_diluted": 7432377656.0,
+          "market_cap": 3158723305620.8135,
+          "risk_free_rate": 0.04394000053405762,
+          "beta": 1.0997880628761207,
+          "wacc_base": 0.10431464690442974,
+          "revenue": 246253666666.66666,
+          "ebitda": 150528000000.0,
+          "ebit": 128528000000.0,
+          "nopat": 101537120000.0,
+          "roic": 0.2828147061579371,
+          "fcf": 71611000000.0,
+          "net_debt": 9910000000.0,
+          "bull_ev": 6164607305043.768,
+          "bull_intrinsic_per_share": 828.092649473377,
+          "bull_upside": 0.9484762385143852,
+          "bull_wacc": 0.09931464690442973,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 40.95322667572656,
+          "bull_justified_ev_ebitda": 9.83716117374592,
+          "bull_roic_wacc_spread": 0.18350005925350735,
+          "bull_tv_pct_of_ev": 0.7720504948494955,
+          "bull_implied_tv_ebitda": 9.83716117374592,
+          "base_ev": 3490135010397.523,
+          "base_intrinsic_per_share": 468.25190692348787,
+          "base_upside": 0.10178216756263864,
+          "base_wacc": 0.10431464690442974,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 23.18595218429477,
+          "base_justified_ev_ebitda": 8.170837448853963,
+          "base_roic_wacc_spread": 0.17850005925350734,
+          "base_tv_pct_of_ev": 0.7257639966177213,
+          "base_implied_tv_ebitda": 8.170837448853963,
+          "bear_ev": 507728826919.694,
+          "bear_intrinsic_per_share": 66.97975398462367,
+          "bear_upside": -0.842398722916361,
+          "bear_wacc": 0.11931464690442974,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 3.372985935637848,
+          "bear_justified_ev_ebitda": 5.8579164313097145,
+          "bear_roic_wacc_spread": 0.16350005925350736,
+          "bear_tv_pct_of_ev": 0.3930292320877126,
+          "bear_implied_tv_ebitda": 2.0935697803422255
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "MSFT",
+            "scenario": "bull",
+            "enterprise_value": 6164607305043.768,
+            "equity_value": 6143433079043.768,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 826.5770878965367,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": 0.9449101692800348,
+            "upside_pct": 0.9449101692800348,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          },
+          "base": {
+            "ticker": "MSFT",
+            "scenario": "base",
+            "enterprise_value": 3490135010397.523,
+            "equity_value": 3468960784397.523,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 466.73634534664757,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": 0.09821609832828825,
+            "upside_pct": 0.09821609832828825,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          },
+          "bear": {
+            "ticker": "MSFT",
+            "scenario": "bear",
+            "enterprise_value": 507728826919.694,
+            "equity_value": 486554600919.694,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 65.46419240778337,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": -0.8459647921507114,
+            "upside_pct": -0.8459647921507114,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 826.5770878965367,
+          "base": 466.73634534664757,
+          "bear": 65.46419240778337
+        },
+        "margin_of_safety": {
+          "bull": 0.9449101692800348,
+          "base": 0.09821609832828825,
+          "bear": -0.8459647921507114
+        },
+        "reverse_dcf": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "current_price": 424.9949951171875,
+          "current_ev": 3168633305620.8135,
+          "current_ev_ebitda": 21.050125595376365,
+          "wacc": 0.10351420905774451,
+          "ebit_margin": 0.5219333451549283,
+          "implied_cagr_10y": 0.1744937340264205,
+          "implied_cagr_5y": 0.1744937340264205,
+          "historical_cagr_5y": 0.20384107923383943,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 21.050125595376365,
+          "forward_ev_ebitda_justified": 9.068077328983415,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.1744937340264205,
+        "historical_cagr": 0.20384107923383943,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.4%) is below historical (20.4%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 21.050125595376365,
+          "market_ev_ebit": 24.653253031408045,
+          "market_p_sales": 11.212120038125304,
+          "market_p_e": 31.018965606300707,
+          "market_peg": 1.5217229874806943,
+          "justified_ev_ebitda": 7.831861295117837,
+          "justified_ev_ebit": 9.172432598589394,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 13.218264300258529,
+          "ev_ebitda_premium_pct": 1.6877551583425545,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -0.9498744046236354,
+          "roic": 0.2828147061579371,
+          "wacc": 0.10351420905774451,
+          "roic_wacc_spread": 0.17930049710019258,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6149123950361395,
+          "growth_rate": 0.20384107923383943,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 21.050125595376365,
+        "ev_ebitda_justified": 7.831861295117837,
+        "ev_ebitda_premium_pct": 1.6877551583425545,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.17930049710019258,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.2828147061579371,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: MSFT ===\nPrice: $424.99  |  Bear=$65  Base=$467  Bull=$827\nMoS:  Bear=-84.6%  Base=+9.8%  Bull=+94.5%\nRDCF: implied=17.4% hist=20.4% [fair_value]\nEV/EBITDA: 21.1x market vs 7.8x justified (+169%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 1.09,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+        "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.084705608684617,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 246253666666.66666,
+        "deferred_revenue_trend": "Deferred revenue stands at $64.6B with a 12.1% growth rate. The D8 Revenue Score of 1.00 confirms that deferred revenue trends are healthy and supportive of overall revenue growth, showing no signs of aggressive accounting or pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, Microsoft's continuing research and product development are not materially dependent on any single license or third-party agreement. There are no disclosed patent cliffs or material contract expirations within the next 5 years.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Microsoft exhibits strong structural growth driven by cloud and AI, though statistically flagged as a cyclical peak with a Z-score of 2.08. The quality of growth is high, evidenced by a 12.1% increase in deferred revenue and a perfect D8 domain score of 1.00, indicating no pull-forward risk. Intangible risk is minimal, as the company is not materially dependent on any single patent or license, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $424.99 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.4%\n  \u2022 Company's robust historical CAGR: 20.4%\n  \u2022 Ratio (implied / historical): 0.9x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.4%) is below historical (20.4%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 21.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.8x\n  \u2022 Premium to justified multiple: +169%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $65/share vs current price $424.99\n  \u2022 Downside in bear case: -84.6%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Premium / FOMO",
+          "bear_case_summary": "While Microsoft's implied 10-year revenue CAGR of 17.4% is slightly below its historical 20.4% rate (a 0.9x ratio), sustaining this hyper-growth on a multi-hundred-billion dollar revenue base defies the law of large numbers. The true danger lies in the valuation multiple: MSFT trades at an EV/EBITDA of 21.1x, a staggering 169% premium over its mathematically justified multiple of 7.8x based on ROIC, WACC, and growth. This massive divergence indicates the stock is priced for absolute perfection, driven by an AI narrative premium rather than fundamentals. If AI monetization fails to outpace the massive, margin-dilutive CapEx required for infrastructure, or if cloud growth decelerates even slightly, the speculative premium will collapse. A reversion to the justified 7.8x multiple paves a direct path to the bear case intrinsic value of $65 per share, representing a catastrophic 84.6% downside.",
+          "sentiment_score": -8
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Narrative Premium / FOMO] Sentiment: -8/10. Implied CAGR 17.4% vs 20.4% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:49:40.923907",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/MSFT_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-29T10:49:40.926339",
+    "agent": "Lead",
+    "trace_id": "trace_MSFT_1777474045",
+    "inputs": {
+      "ticker": "MSFT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for MSFT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.5/10. OpLev 6.6/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: True. Pass-through: True. Sub risk: 2.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.08 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.4%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $620,280,628,284",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: MSFT \u2014 Base IV=$467/share MoS=+9.8% ImpliedCAGR=17.4% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Narrative Premium / FOMO] Sentiment: -8/10. Implied CAGR 17.4% vs 20.4% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "terminal_value": 725208550276.7518,
+          "discounted_terminal_value": 441569180296.50354,
+          "sum_pv_cash_flows": 178711447987.7104,
+          "audit_metrics": {
+            "roic_path": [
+              0.46942008084913917,
+              0.4045886625661972,
+              0.3520733957818883,
+              0.3077463367461488,
+              0.271874037523815
+            ],
+            "invested_capital_path": [
+              197206800000.0,
+              247111864000.0,
+              301009333120.0,
+              358140650387.2,
+              417557220345.088,
+              478756287401.71265
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 281724000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.3781289489003422,
+            "terminal_value_pct_of_ev": 0.7118861369537655,
+            "implied_terminal_multiple_fcf": 13.859986461681,
+            "implied_terminal_multiple_nopat": 6.388209953759934,
+            "reinvestment_rate_terminal_year": 0.5390897407135604,
+            "assumptions_used": {
+              "wacc": 0.10431464690442974,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.0780906135082563,
+              "capex_percent_sales": 0.22912850875324786,
+              "wc_change_percent_sales": 0.01
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector)."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 82.12320087740437,
+          "upside_percent": -0.806766665778646,
+          "assumptions_used": {
+            "wacc": 0.10431464690442974,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.0780906135082563,
+            "capex_percent_sales": 0.22912850875324786,
+            "wc_change_percent_sales": 0.01
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 309896400000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 117180800000.00002,
+              "nopat": 92572832000.00002,
+              "depreciation": 24199999999.999996,
+              "capex": 71006100000.0,
+              "change_in_wc": 3098964000.0,
+              "fcff": 42667768000.000015,
+              "discount_factor": 0.9055390171661306,
+              "pv_fcff": 38637328699.392494
+            },
+            {
+              "year": 2.0,
+              "revenue": 334688112000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 126555264000.00002,
+              "nopat": 99978658560.00002,
+              "depreciation": 26135999999.999996,
+              "capex": 76686588000.0,
+              "change_in_wc": 3346881120.0,
+              "fcff": 46081189440.000015,
+              "discount_factor": 0.8200009116102019,
+              "pv_fcff": 37786617348.88242
+            },
+            {
+              "year": 3.0,
+              "revenue": 354769398720.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 134148579840.00002,
+              "nopat": 105977378073.60002,
+              "depreciation": 27704159999.999996,
+              "capex": 81287783280.0,
+              "change_in_wc": 3547693987.2000003,
+              "fcff": 48846060806.400024,
+              "discount_factor": 0.7425428195748334,
+              "pv_fcff": 36270291716.30804
+            },
+            {
+              "year": 4.0,
+              "revenue": 368960174668.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 139514523033.6,
+              "nopat": 110216473196.544,
+              "depreciation": 28812326399.999996,
+              "capex": 84539294611.2,
+              "change_in_wc": 3689601746.6879997,
+              "fcff": 50799903238.656006,
+              "discount_factor": 0.6724014950415621,
+              "pv_fcff": 34157930885.638992
+            },
+            {
+              "year": 5.0,
+              "revenue": 380028979908.864,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.3781289489003422,
+              "ebit": 143699958724.60803,
+              "nopat": 113522967392.44035,
+              "depreciation": 29676696192.0,
+              "capex": 87075473449.53601,
+              "change_in_wc": 3800289799.08864,
+              "fcff": 52323900335.81572,
+              "discount_factor": 0.608885788960973,
+              "pv_fcff": 31859279337.488476
+            }
+          ],
+          "enterprise_value": 620280628284.2139,
+          "equity_value": 610370628284.2139,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.0780906135082563,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.22912850875324786,
+          "wacc": 0.10431464690442974,
+          "wc_change_percent_sales": 0.01,
+          "cogs_percent_sales": 0.5437804375914015,
+          "calibration_adjustment": 0.23201786145305348
+        },
+        "base_financials": {
+          "net_sales": 281724000000.0,
+          "cogs": 87831000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 9910000000.0
+        },
+        "calculated_upside": -0.806766665778646
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 4939000000.0,
+          "equity": 3158723305620.8135,
+          "wacc": 0.10431464690442974,
+          "cost_of_equity": 0.10442834399224427,
+          "beta": 1.0997880628761207
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 493900000.0,
+            "cash": 5505000000.0,
+            "liquidity_ratio": 0.08971843778383289,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 46175000000.0,
+            "crash_fcf": 10229710000.0,
+            "earnings_power_value": 82288855374.09254,
+            "floor_value": 82288855374.09254,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 6.6,
+            "financial_leverage_score": 0.0062544256297615685,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10431464690442974,
+            "2": 0.10431464690442974,
+            "3": 0.10431464690442974,
+            "4": 0.10431464690442974,
+            "5": 0.10431464690442974
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 246253666666.66666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T14:48:59.787343",
+          "current_price": 424.9949951171875,
+          "shares_diluted": 7432377656.0,
+          "market_cap": 3158723305620.8135,
+          "risk_free_rate": 0.04394000053405762,
+          "beta": 1.0997880628761207,
+          "wacc_base": 0.10431464690442974,
+          "revenue": 246253666666.66666,
+          "ebitda": 150528000000.0,
+          "ebit": 128528000000.0,
+          "nopat": 101537120000.0,
+          "roic": 0.2828147061579371,
+          "fcf": 71611000000.0,
+          "net_debt": 9910000000.0,
+          "bull_ev": 6164607305043.768,
+          "bull_intrinsic_per_share": 828.092649473377,
+          "bull_upside": 0.9484762385143852,
+          "bull_wacc": 0.09931464690442973,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 40.95322667572656,
+          "bull_justified_ev_ebitda": 9.83716117374592,
+          "bull_roic_wacc_spread": 0.18350005925350735,
+          "bull_tv_pct_of_ev": 0.7720504948494955,
+          "bull_implied_tv_ebitda": 9.83716117374592,
+          "base_ev": 3490135010397.523,
+          "base_intrinsic_per_share": 468.25190692348787,
+          "base_upside": 0.10178216756263864,
+          "base_wacc": 0.10431464690442974,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 23.18595218429477,
+          "base_justified_ev_ebitda": 8.170837448853963,
+          "base_roic_wacc_spread": 0.17850005925350734,
+          "base_tv_pct_of_ev": 0.7257639966177213,
+          "base_implied_tv_ebitda": 8.170837448853963,
+          "bear_ev": 507728826919.694,
+          "bear_intrinsic_per_share": 66.97975398462367,
+          "bear_upside": -0.842398722916361,
+          "bear_wacc": 0.11931464690442974,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 3.372985935637848,
+          "bear_justified_ev_ebitda": 5.8579164313097145,
+          "bear_roic_wacc_spread": 0.16350005925350736,
+          "bear_tv_pct_of_ev": 0.3930292320877126,
+          "bear_implied_tv_ebitda": 2.0935697803422255
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "MSFT",
+            "scenario": "bull",
+            "enterprise_value": 6164607305043.768,
+            "equity_value": 6143433079043.768,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 826.5770878965367,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": 0.9449101692800348,
+            "upside_pct": 0.9449101692800348,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          },
+          "base": {
+            "ticker": "MSFT",
+            "scenario": "base",
+            "enterprise_value": 3490135010397.523,
+            "equity_value": 3468960784397.523,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 466.73634534664757,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": 0.09821609832828825,
+            "upside_pct": 0.09821609832828825,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          },
+          "bear": {
+            "ticker": "MSFT",
+            "scenario": "bear",
+            "enterprise_value": 507728826919.694,
+            "equity_value": 486554600919.694,
+            "shares_diluted": 7432377656.0,
+            "intrinsic_per_share": 65.46419240778337,
+            "current_price": 424.9949951171875,
+            "margin_of_safety": -0.8459647921507114,
+            "upside_pct": -0.8459647921507114,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40152000000.0,
+            "bridge_cash_(net_of_haircuts)": 18977774000.0,
+            "cash_gross": 30242000000.0,
+            "cash_wc_haircut": 8451720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 2812506000.0,
+            "cash_net_accessible": 18977774000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 18977774000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 826.5770878965367,
+          "base": 466.73634534664757,
+          "bear": 65.46419240778337
+        },
+        "margin_of_safety": {
+          "bull": 0.9449101692800348,
+          "base": 0.09821609832828825,
+          "bear": -0.8459647921507114
+        },
+        "reverse_dcf": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "current_price": 424.9949951171875,
+          "current_ev": 3168633305620.8135,
+          "current_ev_ebitda": 21.050125595376365,
+          "wacc": 0.10351420905774451,
+          "ebit_margin": 0.5219333451549283,
+          "implied_cagr_10y": 0.1744937340264205,
+          "implied_cagr_5y": 0.1744937340264205,
+          "historical_cagr_5y": 0.20384107923383943,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 21.050125595376365,
+          "forward_ev_ebitda_justified": 9.068077328983415,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.1744937340264205,
+        "historical_cagr": 0.20384107923383943,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (17.4%) is below historical (20.4%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "MSFT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 21.050125595376365,
+          "market_ev_ebit": 24.653253031408045,
+          "market_p_sales": 11.212120038125304,
+          "market_p_e": 31.018965606300707,
+          "market_peg": 1.5217229874806943,
+          "justified_ev_ebitda": 7.831861295117837,
+          "justified_ev_ebit": 9.172432598589394,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 13.218264300258529,
+          "ev_ebitda_premium_pct": 1.6877551583425545,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -0.9498744046236354,
+          "roic": 0.2828147061579371,
+          "wacc": 0.10351420905774451,
+          "roic_wacc_spread": 0.17930049710019258,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6149123950361395,
+          "growth_rate": 0.20384107923383943,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 21.050125595376365,
+        "ev_ebitda_justified": 7.831861295117837,
+        "ev_ebitda_premium_pct": 1.6877551583425545,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.17930049710019258,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.2828147061579371,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: MSFT ===\nPrice: $424.99  |  Bear=$65  Base=$467  Bull=$827\nMoS:  Bear=-84.6%  Base=+9.8%  Bull=+94.5%\nRDCF: implied=17.4% hist=20.4% [fair_value]\nEV/EBITDA: 21.1x market vs 7.8x justified (+169%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $424.99 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.4%\n  \u2022 Company's robust historical CAGR: 20.4%\n  \u2022 Ratio (implied / historical): 0.9x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.4%) is below historical (20.4%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 21.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.8x\n  \u2022 Premium to justified multiple: +169%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $65/share vs current price $424.99\n  \u2022 Downside in bear case: -84.6%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Premium / FOMO",
+          "bear_case_summary": "While Microsoft's implied 10-year revenue CAGR of 17.4% is slightly below its historical 20.4% rate (a 0.9x ratio), sustaining this hyper-growth on a multi-hundred-billion dollar revenue base defies the law of large numbers. The true danger lies in the valuation multiple: MSFT trades at an EV/EBITDA of 21.1x, a staggering 169% premium over its mathematically justified multiple of 7.8x based on ROIC, WACC, and growth. This massive divergence indicates the stock is priced for absolute perfection, driven by an AI narrative premium rather than fundamentals. If AI monetization fails to outpace the massive, margin-dilutive CapEx required for infrastructure, or if cloud growth decelerates even slightly, the speculative premium will collapse. A reversion to the justified 7.8x multiple paves a direct path to the bear case intrinsic value of $65 per share, representing a catastrophic 84.6% downside.",
+          "sentiment_score": -8
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+        "moat_score": 9.5,
+        "moat_attributes": {
+          "switching_costs": 10.0,
+          "network_effects": 9.0,
+          "cost_advantage": 9.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo).",
+        "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+        "revenue_segments": [
+          {
+            "segment": "Productivity and Business Processes",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+          },
+          {
+            "segment": "Intelligent Cloud",
+            "pct_revenue": null,
+            "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+          },
+          {
+            "segment": "More Personal Computing",
+            "pct_revenue": null,
+            "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+          }
+        ],
+        "key_customers": [
+          "Large global enterprises",
+          "Small and medium organizations",
+          "Public-sector institutions",
+          "OEMs (Dell, HP, Lenovo)",
+          "Individual consumers"
+        ],
+        "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+        "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act.",
+        "operating_leverage_score": 6.6
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 1.09,
+        "upstream_value_leak": true,
+        "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+        "substitution_risk_score": 2.0,
+        "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+        "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+        "pass_through_capability": true,
+        "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.084705608684617,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 246253666666.66666,
+        "deferred_revenue_trend": "Deferred revenue stands at $64.6B with a 12.1% growth rate. The D8 Revenue Score of 1.00 confirms that deferred revenue trends are healthy and supportive of overall revenue growth, showing no signs of aggressive accounting or pull-forward risk.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "Based on the 10-K filing, Microsoft's continuing research and product development are not materially dependent on any single license or third-party agreement. There are no disclosed patent cliffs or material contract expirations within the next 5 years.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Microsoft exhibits strong structural growth driven by cloud and AI, though statistically flagged as a cyclical peak with a Z-score of 2.08. The quality of growth is high, evidenced by a 12.1% increase in deferred revenue and a perfect D8 domain score of 1.00, indicating no pull-forward risk. Intangible risk is minimal, as the company is not materially dependent on any single patent or license, resulting in no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "UNITED STATES SECURITIES AND EXCHANGE COMMISSION Washington, D.C. 20549 FORM 10-K\n\n| \u2612 | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n|   | For the Fiscal Year Ended June 30, 2025                                                  |\n|:--|:-----------------------------------------------------------------------------------------|\n|   | OR                                                                                       |\n| \u2610 | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n|   | For the Transition Period From                  to                                       |\n\nCommission File Number 001-37845 MICROSOFT CORPORATION\n\n| Washington               |     | 91-1144442 |\n| (STATE OF INCORPORATION) |     | -I.R.S. ID |\n\nONE MICROSOFT WAY , REDMOND , Washington 98052-6399 ( 425 ) 882-8080 www.microsoft.com/investor\n\n| Securities registered pursuant to Section 12(b) of the Act: |     |                | ...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "MSFT",
+        "generated_at": "2026-04-29T10:49:40.919778",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 6.6,
+            "cost_structure": "Microsoft exhibits strong operating leverage (Score: 6.6/10) driven by massive fixed costs in R&D (80,000 employees) and datacenter infrastructure, contrasted with low variable costs for software distribution and cloud multi-tenancy. As revenue scales, particularly in Azure and Microsoft 365, the incremental cost of delivering software or cloud compute is minimal, allowing revenue growth to flow disproportionately to EBIT. The 10-K explicitly notes cloud economies of scale where large datacenters lower unit costs and multi-tenancy reduces application maintenance labor.",
+            "business_description": "Microsoft is a global technology company that develops and supports a broad portfolio of software, cloud services, devices, and AI solutions. It serves a highly diversified customer base, from consumers to large enterprises, generating revenue primarily through cloud consumption, subscription-based software licensing, and hardware sales.",
+            "revenue_segments": [
+              {
+                "segment": "Productivity and Business Processes",
+                "pct_revenue": null,
+                "growth_trend": "Growing (driven by Microsoft 365 Commercial, Copilot, and Dynamics 365)"
+              },
+              {
+                "segment": "Intelligent Cloud",
+                "pct_revenue": null,
+                "growth_trend": "Growing (driven by Azure consumption and AI workloads)"
+              },
+              {
+                "segment": "More Personal Computing",
+                "pct_revenue": null,
+                "growth_trend": "Stable/Growing (driven by Xbox Game Pass, Search ads, and AI PCs)"
+              }
+            ],
+            "key_customers": [
+              "Large global enterprises",
+              "Small and medium organizations",
+              "Public-sector institutions",
+              "OEMs (Dell, HP, Lenovo)",
+              "Individual consumers"
+            ],
+            "competitive_landscape": "Competes primarily with Amazon (AWS) and Google (GCP) in cloud infrastructure, and Apple in devices/OS. Microsoft differentiates itself through its comprehensive, integrated technology stack spanning hybrid cloud, productivity applications, and end-to-end security, all unified by pervasive AI capabilities.",
+            "regulatory_risk": "Microsoft faces evolving global regulatory scrutiny regarding data privacy, AI, and antitrust, including specific compliance obligations under the EU Digital Markets Act and Digital Services Act."
+          },
+          "value_chain": {
+            "power_ratio": 1.09,
+            "upstream_leak": true,
+            "strategic_leverage": 9.0,
+            "bottleneck_analysis": "The critical supplier bottleneck is in graphics processing units (GPUs) for datacenters, primarily supplied by NVIDIA. The 10-K explicitly notes dependence on 'servers, including graphics processing units (GPUs)' and states there are 'few qualified suppliers for certain components.' NVIDIA holds immense leverage due to its near-monopoly in high-end AI training chips. If they raise prices, Microsoft faces higher CapEx and margin pressure, though MSFT is actively mitigating this by developing custom in-house silicon (e.g., Maia).",
+            "substitution_risk_score": 2.0,
+            "top_substitutes": "1. Amazon Web Services (AWS) for cloud infrastructure; 2. Google Workspace / Google Cloud for enterprise productivity and AI; 3. Open-source software and alternative operating systems (Linux, macOS). A realistic switching scenario involves a multi-year, high-cost migration of enterprise workloads, data egress fees, and extensive staff retraining, which heavily deters substitution.",
+            "pricing_power_assessment": "Microsoft demonstrates strong price leadership and price-making ability. The company successfully passes through costs via regular price increases on Microsoft 365 Commercial, Azure services, and premium AI add-ons like Microsoft 365 Copilot without material churn. This is protected by multi-year Enterprise Agreements and extremely high switching costs.",
+            "pass_through_capability": true,
+            "analysis_summary": "Microsoft holds a dominant platform position with exceptional strategic leverage. Buyer power is low due to deep enterprise lock-in, high switching costs, and mission-critical reliance on the Microsoft Cloud and productivity suite. The substitution threat is minimal given the integrated ecosystem. Rivalry is intense but limited to a few hyperscalers (AWS, Google). The primary vulnerability is high supplier power from GPU manufacturers (NVIDIA), creating an upstream bottleneck, though Microsoft's massive scale, pricing power, and custom silicon investments provide strong long-term mitigation."
+          },
+          "moat": {
+            "score": 9.5,
+            "switching_costs": 10.0,
+            "network_effects": 9.0,
+            "cost_advantage": 9.0,
+            "intangibles": 10.0,
+            "evidence": "The 10-K highlights 3-year Enterprise Agreements and Software Assurance that lock in enterprise customers. Cloud economies of scale provide a distinct cost advantage ('datacenters that deploy computational resources at significantly lower cost per unit'). Network effects are evident in LinkedIn's professional network and the Xbox gaming ecosystem. Intangibles are supported by a massive patent portfolio and proprietary AI integrations (Copilot) across the tech stack.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "Microsoft demonstrates pricing power through its ability to consistently upsell customers to higher-tier subscriptions (e.g., Microsoft 365 E5) and introduce premium add-ons like Microsoft 365 Copilot without material churn, supported by the mission-critical nature of its productivity and cloud infrastructure."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 2.084705608684617,
+            "is_peak": true
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue stands at $64.6B with a 12.1% growth rate. The D8 Revenue Score of 1.00 confirms that deferred revenue trends are healthy and supportive of overall revenue growth, showing no signs of aggressive accounting or pull-forward risk.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "Based on the 10-K filing, Microsoft's continuing research and product development are not materially dependent on any single license or third-party agreement. There are no disclosed patent cliffs or material contract expirations within the next 5 years.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Microsoft exhibits strong structural growth driven by cloud and AI, though statistically flagged as a cyclical peak with a Z-score of 2.08. The quality of growth is high, evidenced by a 12.1% increase in deferred revenue and a perfect D8 domain score of 1.00, indicating no pull-forward risk. Intangible risk is minimal, as the company is not materially dependent on any single patent or license, resulting in no terminal haircut."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 281.724,
+            "ebitda_bn": 150.528,
+            "fcf_bn": 71.611,
+            "nopat_bn": 101.53712,
+            "invested_capital_bn": 359.02348,
+            "net_debt_bn": 9.91,
+            "sbc_bn": 11.974,
+            "fiscal_year": 2025,
+            "data_quality": 0.98
+          },
+          "ratios": {
+            "gross_margin_pct": 68.8237423861652,
+            "ebit_margin_pct": 45.62195624085985,
+            "ebitda_margin_pct": 53.43101759168548,
+            "fcf_margin_pct": 25.418849654271558,
+            "roic": 0.2828147061579371,
+            "roe": 0.2964722734140952,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": 0.41700295937584075,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 2,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 4939000000.0,
+            "equity": 3158723305620.8135,
+            "wacc": 0.10431464690442974,
+            "cost_of_equity": 0.10442834399224427,
+            "beta": 1.0997880628761207
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 493900000.0,
+              "cash": 5505000000.0,
+              "liquidity_ratio": 0.08971843778383289,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 46175000000.0,
+              "crash_fcf": 10229710000.0,
+              "earnings_power_value": 82288855374.09254,
+              "floor_value": 82288855374.09254,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 6.6,
+              "financial_leverage_score": 0.0062544256297615685,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.10431464690442974,
+              "2": 0.10431464690442974,
+              "3": 0.10431464690442974,
+              "4": 0.10431464690442974,
+              "5": 0.10431464690442974
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier accounts for more than 10% of revenue. The customer base is highly diversified across individual consumers, small and medium organizations, large global enterprises, public-sector institutions, and OEMs (e.g., Dell, HP, Lenovo)."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 610370628284.2139,
+            "upside_percent": -0.806766665778646,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 65.46419240778337,
+                "margin_of_safety": -0.8459647921507114,
+                "ev": 507728826919.694
+              },
+              "base": {
+                "intrinsic_per_share": 466.73634534664757,
+                "margin_of_safety": 0.09821609832828825,
+                "ev": 3490135010397.523
+              },
+              "bull": {
+                "intrinsic_per_share": 826.5770878965367,
+                "margin_of_safety": 0.9449101692800348,
+                "ev": 6164607305043.768
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.1744937340264205,
+              "historical_cagr": 0.20384107923383943,
+              "signal": "fair_value",
+              "reasons": [
+                "Implied CAGR (17.4%) is below historical (20.4%). Market is not pricing in full continuation of historical trajectory."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 21.050125595376365,
+              "justified_ev_ebitda": 7.831861295117837,
+              "premium_pct": 1.6877551583425545,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.17930049710019258,
+              "value_creation": "creating",
+              "roic": 0.2828147061579371,
+              "wacc": 0.10431464690442974
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": 246253666666.66666,
+              "concentration_risk": false,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 9.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": true,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.10431464690442974,
+            "beta": 1.0997880628761207,
+            "risk_free_rate": 0.04394000053405762
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Narrative Premium / FOMO",
+            "bear_case_summary": "While Microsoft's implied 10-year revenue CAGR of 17.4% is slightly below its historical 20.4% rate (a 0.9x ratio), sustaining this hyper-growth on a multi-hundred-billion dollar revenue base defies the law of large numbers. The true danger lies in the valuation multiple: MSFT trades at an EV/EBITDA of 21.1x, a staggering 169% premium over its mathematically justified multiple of 7.8x based on ROIC, WACC, and growth. This massive divergence indicates the stock is priced for absolute perfection, driven by an AI narrative premium rather than fundamentals. If AI monetization fails to outpace the massive, margin-dilutive CapEx required for infrastructure, or if cloud growth decelerates even slightly, the speculative premium will collapse. A reversion to the justified 7.8x multiple paves a direct path to the bear case intrinsic value of $65 per share, representing a catastrophic 84.6% downside.",
+            "sentiment_score": -8,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $424.99 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 17.4%\n  \u2022 Company's robust historical CAGR: 20.4%\n  \u2022 Ratio (implied / historical): 0.9x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (17.4%) is below historical (20.4%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 21.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 7.8x\n  \u2022 Premium to justified multiple: +169%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $65/share vs current price $424.99\n  \u2022 Downside in bear case: -84.6%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 6,
+            "margin_of_safety": 0.09821609832828825,
+            "narrative": "While the implied 10-year CAGR of 17.4% is mathematically supported by historical performance (20.4%) and strong deferred revenue growth (+12.1%), sustaining this rate on a massive revenue base faces natural decay pressures due to the law of large numbers. However, Microsoft's exceptional moat (9.5/10), driven by enterprise lock-in, cloud economies of scale, and AI integration, combined with high operating leverage, provides a structural buffer against rapid decay. The growth is high-quality with no pull-forward risk.\n\nThe Contrarian correctly identifies the severe multiple risk; trading at a 169% premium to its mathematically justified EV/EBITDA multiple leaves zero room for execution missteps or AI monetization delays. However, the bear case's reliance on a 7.8x justified multiple is fundamentally flawed. It ignores Microsoft's +17.9% ROIC-WACC spread, 9.5/10 moat, and immense pricing power. A 7.8x multiple is characteristic of a commoditized, low-return business, not a global hypers...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Implied CAGR (17.4%) within 1.3x of historical.",
+              "\u274c FAIL: EV/EBITDA at +169% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "MSFT",
+              "p1_moat": 5,
+              "p2_health": 5,
+              "p3_tailwind": 5,
+              "p4_mos": 4,
+              "p5_leadership": 2,
+              "raw_total": 21,
+              "capped_total": 21,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "conviction",
+              "position_size_pct": "Strong \u2014 minor valuation or quality gap (capped at 75% due to reflexivity flag)",
+              "conviction_score": 6,
+              "reflexivity_flags": [
+                "High-SBC company (16.7% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 9.0/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +17.9pp \u2014 exceptional value creation",
+                "FCF margin 25.4% \u2014 fortress cash generation",
+                "Net Debt/EBITDA 0.1\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 20.4% \u2014 hypergrowth, structural demand",
+                "\u26a0 Cyclicality peak detected \u2014 base revenue likely inflated",
+                "Sector 'Technology' \u2014 confirmed secular tailwind"
+              ],
+              "p4_reasons": [
+                "Base MoS +29.3% \u2014 15-30% margin of safety \u2014 strong entry point"
+              ],
+              "p5_reasons": [
+                "SBC 16.7% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 6.6/10",
+                "Upstream value leak detected \u2014 suppliers capture excess margin"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for MSFT. Conviction: 6.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

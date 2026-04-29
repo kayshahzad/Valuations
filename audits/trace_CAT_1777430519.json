@@ -1,0 +1,3243 @@
+[
+  {
+    "timestamp": "2026-04-28T22:42:07.506316",
+    "agent": "Librarian",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:42:38.292039",
+    "agent": "Forensic",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:42:58.980083",
+    "agent": "ValueChain",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.002,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+        "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+        "pass_through_capability": true,
+        "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:18.708295",
+    "agent": "StrategicContext",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.002,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+        "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+        "pass_through_capability": true,
+        "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 1.465953397929509,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 42.7% to $3.3B, significantly outpacing the 3-year revenue CAGR of 0.3%. The D8 Revenue Score of 1.00 confirms that deferred revenue is healthy and there are no quality issues.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Caterpillar owns various patents and trademarks but explicitly states it does not regard its business as dependent upon any single patent or group of patents. No specific patent cliffs, exclusivity dates, or material contract expirations are disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Caterpillar is operating below a cyclical peak with a Revenue Z-Score of 1.47. Growth quality is robust, evidenced by a 42.7% increase in deferred revenue and a perfect D8 domain score of 1.00, signaling no pull-forward risk. Intangible risk is minimal, as the company's operations are not dependent on any single patent or group of patents, leading to no material revenue at risk from near-term expirations."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=1.47 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:19.906739",
+    "agent": "Strategist",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.47 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.002,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+        "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+        "pass_through_capability": true,
+        "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.465953397929509,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 42.7% to $3.3B, significantly outpacing the 3-year revenue CAGR of 0.3%. The D8 Revenue Score of 1.00 confirms that deferred revenue is healthy and there are no quality issues.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Caterpillar owns various patents and trademarks but explicitly states it does not regard its business as dependent upon any single patent or group of patents. No specific patent cliffs, exclusivity dates, or material contract expirations are disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Caterpillar is operating below a cyclical peak with a Revenue Z-Score of 1.47. Growth quality is robust, evidenced by a 42.7% increase in deferred revenue and a perfect D8 domain score of 1.00, signaling no pull-forward risk. Intangible risk is minimal, as the company's operations are not dependent on any single patent or group of patents, leading to no material revenue at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 380544547950.9292,
+          "wacc": 0.10097364630660008,
+          "cost_of_equity": 0.10097364630660008,
+          "beta": 1.0442480980195044
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 4867000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 8823000000.0,
+            "crash_fcf": 1150635000.0,
+            "earnings_power_value": 9511451751.10113,
+            "floor_value": 9511451751.10113,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10097364630660008,
+            "2": 0.10097364630660008,
+            "3": 0.10097364630660008,
+            "4": 0.10097364630660008,
+            "5": 0.10097364630660008
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 10.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:20.789173",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "base": {
+        "net_sales": 29540000000.0,
+        "cogs": 23886000000.0,
+        "interest_expense": 0.0,
+        "net_debt": -4867000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.12339201083276913,
+        "da_percent_sales": 0.07907921462423832,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.0,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 0.8570751523358159,
+        "calibration_adjustment": 0.0484766418415707
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T22:43:20.789348",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 4123775831.043145,
+      "equity_value": 8990775831.043144,
+      "terminal_value": 4814070471.587498,
+      "discounted_terminal_value": 3128815495.336791,
+      "sum_pv_cash_flows": 994960335.706354,
+      "audit_metrics": {
+        "roic_path": [
+          -0.0739225747170907,
+          -0.08725112270919502,
+          -0.10279717467978476,
+          -0.12123627391942474,
+          -0.14509589998970782
+        ],
+        "invested_capital_path": [
+          20678000000.0,
+          18920750000.0,
+          17022920000.0,
+          15011220200.0,
+          12919052408.0,
+          10764119582.24
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 32494000000.000004,
+          "revenue_growth": 0.1,
+          "ebit_margin": -0.05954637779282333,
+          "ebit": -1934900000.0000017,
+          "nopat": -1528571000.0000014,
+          "depreciation": 2569600000.0000005,
+          "capex": 0.0,
+          "change_in_wc": 812350000.0000001,
+          "fcff": 228678999.99999893,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 209797247.70642102
+        },
+        {
+          "year": 2.0,
+          "revenue": 35093520000.00001,
+          "revenue_growth": 0.08,
+          "ebit_margin": -0.05954637779282333,
+          "ebit": -2089692000.000002,
+          "nopat": -1650856680.0000017,
+          "depreciation": 2775168000.0000005,
+          "capex": 0.0,
+          "change_in_wc": 877338000.0000002,
+          "fcff": 246973319.99999857,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 207872502.31461877
+        },
+        {
+          "year": 3.0,
+          "revenue": 37199131200.00001,
+          "revenue_growth": 0.06,
+          "ebit_margin": -0.05954637779282333,
+          "ebit": -2215073520.000002,
+          "nopat": -1749908080.8000016,
+          "depreciation": 2941678080.0000005,
+          "capex": 0.0,
+          "change_in_wc": 929978280.0000002,
+          "fcff": 261791719.19999862,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 202151240.78302383
+        },
+        {
+          "year": 4.0,
+          "revenue": 38687096448.00001,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": -0.05954637779282333,
+          "ebit": -2303676460.800002,
+          "nopat": -1819904404.0320017,
+          "depreciation": 3059345203.200001,
+          "capex": 0.0,
+          "change_in_wc": 967177411.2000003,
+          "fcff": 272263387.96799874,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 192878248.08655494
+        },
+        {
+          "year": 5.0,
+          "revenue": 39847709341.44001,
+          "revenue_growth": 0.03,
+          "ebit_margin": -0.05954637779282333,
+          "ebit": -2372786754.6240025,
+          "nopat": -1874501536.152962,
+          "depreciation": 3151125559.296001,
+          "capex": 0.0,
+          "change_in_wc": 996192733.5360003,
+          "fcff": 280431289.60703874,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 182261096.81573543
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 29540000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": -0.05954637779282333,
+        "terminal_value_pct_of_ev": 0.7587258918837326,
+        "implied_terminal_multiple_fcf": 17.166666666666664,
+        "implied_terminal_multiple_nopat": -2.5681869973109817,
+        "reinvestment_rate_terminal_year": 1.1496031260569504,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.07907921462423832,
+          "capex_percent_sales": 0.0,
+          "wc_change_percent_sales": 0.025
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:20.791015",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.47 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 380544547950.9292,
+          "wacc": 0.10097364630660008,
+          "cost_of_equity": 0.10097364630660008,
+          "beta": 1.0442480980195044
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 4867000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 8823000000.0,
+            "crash_fcf": 1150635000.0,
+            "earnings_power_value": 9511451751.10113,
+            "floor_value": 9511451751.10113,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10097364630660008,
+            "2": 0.10097364630660008,
+            "3": 0.10097364630660008,
+            "4": 0.10097364630660008,
+            "5": 0.10097364630660008
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.002,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+        "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+        "pass_through_capability": true,
+        "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.465953397929509,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 42.7% to $3.3B, significantly outpacing the 3-year revenue CAGR of 0.3%. The D8 Revenue Score of 1.00 confirms that deferred revenue is healthy and there are no quality issues.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Caterpillar owns various patents and trademarks but explicitly states it does not regard its business as dependent upon any single patent or group of patents. No specific patent cliffs, exclusivity dates, or material contract expirations are disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Caterpillar is operating below a cyclical peak with a Revenue Z-Score of 1.47. Growth quality is robust, evidenced by a 42.7% increase in deferred revenue and a perfect D8 domain score of 1.00, signaling no pull-forward risk. Intangible risk is minimal, as the company's operations are not dependent on any single patent or group of patents, leading to no material revenue at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "terminal_value": 4814070471.587498,
+          "discounted_terminal_value": 3128815495.336791,
+          "sum_pv_cash_flows": 994960335.706354,
+          "audit_metrics": {
+            "roic_path": [
+              -0.0739225747170907,
+              -0.08725112270919502,
+              -0.10279717467978476,
+              -0.12123627391942474,
+              -0.14509589998970782
+            ],
+            "invested_capital_path": [
+              20678000000.0,
+              18920750000.0,
+              17022920000.0,
+              15011220200.0,
+              12919052408.0,
+              10764119582.24
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 29540000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": -0.05954637779282333,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": -2.5681869973109817,
+            "reinvestment_rate_terminal_year": 1.1496031260569504,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.07907921462423832,
+              "capex_percent_sales": 0.0,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 19.323061783137494,
+          "upside_percent": -0.9763739203258005,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.07907921462423832,
+            "capex_percent_sales": 0.0,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12339201083276913,
+          "da_percent_sales": 0.07907921462423832,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.8570751523358159,
+          "calibration_adjustment": 0.0484766418415707
+        },
+        "base_financials": {
+          "net_sales": 29540000000.0,
+          "cogs": 23886000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -4867000000.0
+        },
+        "calculated_upside": -0.9763739203258005
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $4,123,775,831",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:22.171864",
+    "agent": "ValuationNode",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.47 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $4,123,775,831",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "terminal_value": 4814070471.587498,
+          "discounted_terminal_value": 3128815495.336791,
+          "sum_pv_cash_flows": 994960335.706354,
+          "audit_metrics": {
+            "roic_path": [
+              -0.0739225747170907,
+              -0.08725112270919502,
+              -0.10279717467978476,
+              -0.12123627391942474,
+              -0.14509589998970782
+            ],
+            "invested_capital_path": [
+              20678000000.0,
+              18920750000.0,
+              17022920000.0,
+              15011220200.0,
+              12919052408.0,
+              10764119582.24
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 29540000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": -0.05954637779282333,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": -2.5681869973109817,
+            "reinvestment_rate_terminal_year": 1.1496031260569504,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.07907921462423832,
+              "capex_percent_sales": 0.0,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 19.323061783137494,
+          "upside_percent": -0.9763739203258005,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.07907921462423832,
+            "capex_percent_sales": 0.0,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12339201083276913,
+          "da_percent_sales": 0.07907921462423832,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.8570751523358159,
+          "calibration_adjustment": 0.0484766418415707
+        },
+        "base_financials": {
+          "net_sales": 29540000000.0,
+          "cogs": 23886000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -4867000000.0
+        },
+        "calculated_upside": -0.9763739203258005
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 380544547950.9292,
+          "wacc": 0.10097364630660008,
+          "cost_of_equity": 0.10097364630660008,
+          "beta": 1.0442480980195044
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 4867000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 8823000000.0,
+            "crash_fcf": 1150635000.0,
+            "earnings_power_value": 9511451751.10113,
+            "floor_value": 9511451751.10113,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10097364630660008,
+            "2": 0.10097364630660008,
+            "3": 0.10097364630660008,
+            "4": 0.10097364630660008,
+            "5": 0.10097364630660008
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.002,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+        "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+        "pass_through_capability": true,
+        "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.465953397929509,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 42.7% to $3.3B, significantly outpacing the 3-year revenue CAGR of 0.3%. The D8 Revenue Score of 1.00 confirms that deferred revenue is healthy and there are no quality issues.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Caterpillar owns various patents and trademarks but explicitly states it does not regard its business as dependent upon any single patent or group of patents. No specific patent cliffs, exclusivity dates, or material contract expirations are disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Caterpillar is operating below a cyclical peak with a Revenue Z-Score of 1.47. Growth quality is robust, evidenced by a 42.7% increase in deferred revenue and a perfect D8 domain score of 1.00, signaling no pull-forward risk. Intangible risk is minimal, as the company's operations are not dependent on any single patent or group of patents, leading to no material revenue at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:43:20.792104",
+          "current_price": 817.8699951171875,
+          "shares_diluted": 465287332.0,
+          "market_cap": 380544547950.9292,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.0442480980195044,
+          "wacc_base": 0.10097364630660008,
+          "revenue": 67589000000.0,
+          "ebitda": 13861000000.0,
+          "ebit": 11599000000.0,
+          "nopat": 9163210000.0,
+          "roic": 0.21120307160548918,
+          "fcf": 8918000000.0,
+          "net_debt": 20716000000.0,
+          "bull_ev": 176455982116.24625,
+          "bull_intrinsic_per_share": 334.7178644361765,
+          "bull_upside": -0.5907444136176963,
+          "bull_wacc": 0.09597364630660007,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 12.73039334220087,
+          "bull_justified_ev_ebitda": 9.931107376035829,
+          "bull_roic_wacc_spread": 0.1152294252988891,
+          "bull_tv_pct_of_ev": 0.5678003888170026,
+          "bull_implied_tv_ebitda": 9.931107376035827,
+          "base_ev": 130954458733.70273,
+          "base_intrinsic_per_share": 236.92555363553876,
+          "base_upside": -0.7103139190213339,
+          "base_wacc": 0.10097364630660008,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.447691994351255,
+          "base_justified_ev_ebitda": 8.18680379141604,
+          "base_roic_wacc_spread": 0.1102294252988891,
+          "base_tv_pct_of_ev": 0.502903735644823,
+          "base_implied_tv_ebitda": 8.18680379141604,
+          "bear_ev": 70218091530.01067,
+          "bear_intrinsic_per_share": 106.39037026267172,
+          "bear_upside": -0.8699177486668555,
+          "bear_wacc": 0.11597364630660008,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.06587486689349,
+          "bear_justified_ev_ebitda": 5.8833457065049295,
+          "bear_roic_wacc_spread": 0.0952294252988891,
+          "bear_tv_pct_of_ev": 0.3830878486966847,
+          "bear_implied_tv_ebitda": 5.8833457065049295
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "CAT",
+            "scenario": "bull",
+            "enterprise_value": 176455982116.24625,
+            "equity_value": 152784172116.24625,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 328.3652092128015,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.5985117302588511,
+            "upside_pct": -0.5985117302588511,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          },
+          "base": {
+            "ticker": "CAT",
+            "scenario": "base",
+            "enterprise_value": 130954458733.70273,
+            "equity_value": 107282648733.70273,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 230.5728984121638,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.7180812356624888,
+            "upside_pct": -0.7180812356624888,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          },
+          "bear": {
+            "ticker": "CAT",
+            "scenario": "bear",
+            "enterprise_value": 70218091530.01067,
+            "equity_value": 46546281530.010666,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 100.03771503929676,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.8776850653080104,
+            "upside_pct": -0.8776850653080104,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 328.3652092128015,
+          "base": 230.5728984121638,
+          "bear": 100.03771503929676
+        },
+        "margin_of_safety": {
+          "bull": -0.5985117302588511,
+          "base": -0.7180812356624888,
+          "bear": -0.8776850653080104
+        },
+        "reverse_dcf": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "current_price": 817.8699951171875,
+          "current_ev": 401260547950.9292,
+          "current_ev_ebitda": 28.948888821219914,
+          "wacc": 0.09579542772470699,
+          "ebit_margin": 0.17161076506532127,
+          "implied_cagr_10y": 0.21603095236318642,
+          "implied_cagr_5y": 0.21603095236318642,
+          "historical_cagr_5y": 0.04559685606389596,
+          "sector_75th_cagr": 0.09,
+          "implied_tv_ebitda": 28.948888821219914,
+          "forward_ev_ebitda_justified": 9.60066469111672,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.21603095236318642,
+        "historical_cagr": 0.04559685606389596,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (21.6%) is 2.4x the sector 75th percentile (9.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.948888821219914,
+          "market_ev_ebit": 34.59440882411666,
+          "market_p_sales": 5.63027338695541,
+          "market_p_e": 42.84446610571146,
+          "market_peg": 9.396364092662987,
+          "justified_ev_ebitda": 8.232551895130696,
+          "justified_ev_ebit": 9.838037918648727,
+          "justified_p_sales": 2.146268537848184,
+          "ev_ebitda_premium": 20.71633692608922,
+          "ev_ebitda_premium_pct": 2.516393117223142,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 16.948888821219914,
+          "roic": 0.21120307160548918,
+          "wacc": 0.09579542772470699,
+          "roic_wacc_spread": 0.11540764388078219,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5828270326816247,
+          "growth_rate": 0.04559685606389596,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 28.948888821219914,
+        "ev_ebitda_justified": 8.232551895130696,
+        "ev_ebitda_premium_pct": 2.516393117223142,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.11540764388078219,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.21120307160548918,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: CAT ===\nPrice: $817.87  |  Bear=$100  Base=$231  Bull=$328\nMoS:  Bear=-87.8%  Base=-71.8%  Bull=-59.9%\nRDCF: implied=21.6% hist=4.6% [flag]\nEV/EBITDA: 28.9x market vs 8.2x justified (+252%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: CAT \u2014 Base IV=$231/share MoS=-71.8% ImpliedCAGR=21.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:35.377491",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.47 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $4,123,775,831",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: CAT \u2014 Base IV=$231/share MoS=-71.8% ImpliedCAGR=21.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "terminal_value": 4814070471.587498,
+          "discounted_terminal_value": 3128815495.336791,
+          "sum_pv_cash_flows": 994960335.706354,
+          "audit_metrics": {
+            "roic_path": [
+              -0.0739225747170907,
+              -0.08725112270919502,
+              -0.10279717467978476,
+              -0.12123627391942474,
+              -0.14509589998970782
+            ],
+            "invested_capital_path": [
+              20678000000.0,
+              18920750000.0,
+              17022920000.0,
+              15011220200.0,
+              12919052408.0,
+              10764119582.24
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 29540000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": -0.05954637779282333,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": -2.5681869973109817,
+            "reinvestment_rate_terminal_year": 1.1496031260569504,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.07907921462423832,
+              "capex_percent_sales": 0.0,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 19.323061783137494,
+          "upside_percent": -0.9763739203258005,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.07907921462423832,
+            "capex_percent_sales": 0.0,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12339201083276913,
+          "da_percent_sales": 0.07907921462423832,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.8570751523358159,
+          "calibration_adjustment": 0.0484766418415707
+        },
+        "base_financials": {
+          "net_sales": 29540000000.0,
+          "cogs": 23886000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -4867000000.0
+        },
+        "calculated_upside": -0.9763739203258005
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 380544547950.9292,
+          "wacc": 0.10097364630660008,
+          "cost_of_equity": 0.10097364630660008,
+          "beta": 1.0442480980195044
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 4867000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 8823000000.0,
+            "crash_fcf": 1150635000.0,
+            "earnings_power_value": 9511451751.10113,
+            "floor_value": 9511451751.10113,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10097364630660008,
+            "2": 0.10097364630660008,
+            "3": 0.10097364630660008,
+            "4": 0.10097364630660008,
+            "5": 0.10097364630660008
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:43:20.792104",
+          "current_price": 817.8699951171875,
+          "shares_diluted": 465287332.0,
+          "market_cap": 380544547950.9292,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.0442480980195044,
+          "wacc_base": 0.10097364630660008,
+          "revenue": 67589000000.0,
+          "ebitda": 13861000000.0,
+          "ebit": 11599000000.0,
+          "nopat": 9163210000.0,
+          "roic": 0.21120307160548918,
+          "fcf": 8918000000.0,
+          "net_debt": 20716000000.0,
+          "bull_ev": 176455982116.24625,
+          "bull_intrinsic_per_share": 334.7178644361765,
+          "bull_upside": -0.5907444136176963,
+          "bull_wacc": 0.09597364630660007,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 12.73039334220087,
+          "bull_justified_ev_ebitda": 9.931107376035829,
+          "bull_roic_wacc_spread": 0.1152294252988891,
+          "bull_tv_pct_of_ev": 0.5678003888170026,
+          "bull_implied_tv_ebitda": 9.931107376035827,
+          "base_ev": 130954458733.70273,
+          "base_intrinsic_per_share": 236.92555363553876,
+          "base_upside": -0.7103139190213339,
+          "base_wacc": 0.10097364630660008,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.447691994351255,
+          "base_justified_ev_ebitda": 8.18680379141604,
+          "base_roic_wacc_spread": 0.1102294252988891,
+          "base_tv_pct_of_ev": 0.502903735644823,
+          "base_implied_tv_ebitda": 8.18680379141604,
+          "bear_ev": 70218091530.01067,
+          "bear_intrinsic_per_share": 106.39037026267172,
+          "bear_upside": -0.8699177486668555,
+          "bear_wacc": 0.11597364630660008,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.06587486689349,
+          "bear_justified_ev_ebitda": 5.8833457065049295,
+          "bear_roic_wacc_spread": 0.0952294252988891,
+          "bear_tv_pct_of_ev": 0.3830878486966847,
+          "bear_implied_tv_ebitda": 5.8833457065049295
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "CAT",
+            "scenario": "bull",
+            "enterprise_value": 176455982116.24625,
+            "equity_value": 152784172116.24625,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 328.3652092128015,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.5985117302588511,
+            "upside_pct": -0.5985117302588511,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          },
+          "base": {
+            "ticker": "CAT",
+            "scenario": "base",
+            "enterprise_value": 130954458733.70273,
+            "equity_value": 107282648733.70273,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 230.5728984121638,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.7180812356624888,
+            "upside_pct": -0.7180812356624888,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          },
+          "bear": {
+            "ticker": "CAT",
+            "scenario": "bear",
+            "enterprise_value": 70218091530.01067,
+            "equity_value": 46546281530.010666,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 100.03771503929676,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.8776850653080104,
+            "upside_pct": -0.8776850653080104,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 328.3652092128015,
+          "base": 230.5728984121638,
+          "bear": 100.03771503929676
+        },
+        "margin_of_safety": {
+          "bull": -0.5985117302588511,
+          "base": -0.7180812356624888,
+          "bear": -0.8776850653080104
+        },
+        "reverse_dcf": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "current_price": 817.8699951171875,
+          "current_ev": 401260547950.9292,
+          "current_ev_ebitda": 28.948888821219914,
+          "wacc": 0.09579542772470699,
+          "ebit_margin": 0.17161076506532127,
+          "implied_cagr_10y": 0.21603095236318642,
+          "implied_cagr_5y": 0.21603095236318642,
+          "historical_cagr_5y": 0.04559685606389596,
+          "sector_75th_cagr": 0.09,
+          "implied_tv_ebitda": 28.948888821219914,
+          "forward_ev_ebitda_justified": 9.60066469111672,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.21603095236318642,
+        "historical_cagr": 0.04559685606389596,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (21.6%) is 2.4x the sector 75th percentile (9.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.948888821219914,
+          "market_ev_ebit": 34.59440882411666,
+          "market_p_sales": 5.63027338695541,
+          "market_p_e": 42.84446610571146,
+          "market_peg": 9.396364092662987,
+          "justified_ev_ebitda": 8.232551895130696,
+          "justified_ev_ebit": 9.838037918648727,
+          "justified_p_sales": 2.146268537848184,
+          "ev_ebitda_premium": 20.71633692608922,
+          "ev_ebitda_premium_pct": 2.516393117223142,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 16.948888821219914,
+          "roic": 0.21120307160548918,
+          "wacc": 0.09579542772470699,
+          "roic_wacc_spread": 0.11540764388078219,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5828270326816247,
+          "growth_rate": 0.04559685606389596,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 28.948888821219914,
+        "ev_ebitda_justified": 8.232551895130696,
+        "ev_ebitda_premium_pct": 2.516393117223142,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.11540764388078219,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.21120307160548918,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: CAT ===\nPrice: $817.87  |  Bear=$100  Base=$231  Bull=$328\nMoS:  Bear=-87.8%  Base=-71.8%  Bull=-59.9%\nRDCF: implied=21.6% hist=4.6% [flag]\nEV/EBITDA: 28.9x market vs 8.2x justified (+252%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.002,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+        "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+        "pass_through_capability": true,
+        "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.465953397929509,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 42.7% to $3.3B, significantly outpacing the 3-year revenue CAGR of 0.3%. The D8 Revenue Score of 1.00 confirms that deferred revenue is healthy and there are no quality issues.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Caterpillar owns various patents and trademarks but explicitly states it does not regard its business as dependent upon any single patent or group of patents. No specific patent cliffs, exclusivity dates, or material contract expirations are disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Caterpillar is operating below a cyclical peak with a Revenue Z-Score of 1.47. Growth quality is robust, evidenced by a 42.7% increase in deferred revenue and a perfect D8 domain score of 1.00, signaling no pull-forward risk. Intangible risk is minimal, as the company's operations are not dependent on any single patent or group of patents, leading to no material revenue at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $817.87 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 21.6%\n  \u2022 Company's robust historical CAGR: 4.6%\n  \u2022 Ratio (implied / historical): 4.7x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (21.6%) is 2.4x the sector 75th percentile (9.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.2x\n  \u2022 Premium to justified multiple: +252%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $100/share vs current price $817.87\n  \u2022 Downside in bear case: -87.8%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The current market valuation of CAT at $817.87 represents a severe detachment from mathematical reality, driven by extreme Growth Extrapolation Bias. To justify this price, CAT must achieve a 10-year revenue CAGR of 21.6%\u2014a staggering 4.7x its historical growth rate of 4.6% and 2.4x the sector's 75th percentile (9.0%). For a mature, capital-intensive, and highly cyclical heavy machinery manufacturer, sustaining hyper-growth at this scale is virtually impossible without an unprecedented and undocumented expansion of its Total Addressable Market. Furthermore, the Multiple Decomposition framework reveals a massive speculative premium: CAT is trading at an EV/EBITDA of 28.9x, which is a 252% premium over its mathematically justified multiple of 8.2x based on its ROIC, WACC, and realistic growth prospects. The path to the bear case intrinsic value of $100/share (-87.8% downside) will likely be triggered by a cyclical macroeconomic slowdown, leading to a violent mean reversion in both earnin...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 21.6% vs 4.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:56.818354",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/CAT_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:43:56.819686",
+    "agent": "Lead",
+    "trace_id": "trace_CAT_1777430519",
+    "inputs": {
+      "ticker": "CAT",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for CAT.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 7.5/10. OpLev 1.7/10 (Python). Pricing power: False. Concentration: False. Segments: 4.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 8.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=1.47 (DuckDB) peak=False haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 10.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $4,123,775,831",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: CAT \u2014 Base IV=$231/share MoS=-71.8% ImpliedCAGR=21.6% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 21.6% vs 4.6% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "terminal_value": 4814070471.587498,
+          "discounted_terminal_value": 3128815495.336791,
+          "sum_pv_cash_flows": 994960335.706354,
+          "audit_metrics": {
+            "roic_path": [
+              -0.0739225747170907,
+              -0.08725112270919502,
+              -0.10279717467978476,
+              -0.12123627391942474,
+              -0.14509589998970782
+            ],
+            "invested_capital_path": [
+              20678000000.0,
+              18920750000.0,
+              17022920000.0,
+              15011220200.0,
+              12919052408.0,
+              10764119582.24
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 29540000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": -0.05954637779282333,
+            "terminal_value_pct_of_ev": 0.7587258918837326,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": -2.5681869973109817,
+            "reinvestment_rate_terminal_year": 1.1496031260569504,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.07907921462423832,
+              "capex_percent_sales": 0.0,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 19.323061783137494,
+          "upside_percent": -0.9763739203258005,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.07907921462423832,
+            "capex_percent_sales": 0.0,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 32494000000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -1934900000.0000017,
+              "nopat": -1528571000.0000014,
+              "depreciation": 2569600000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 812350000.0000001,
+              "fcff": 228678999.99999893,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 209797247.70642102
+            },
+            {
+              "year": 2.0,
+              "revenue": 35093520000.00001,
+              "revenue_growth": 0.08,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2089692000.000002,
+              "nopat": -1650856680.0000017,
+              "depreciation": 2775168000.0000005,
+              "capex": 0.0,
+              "change_in_wc": 877338000.0000002,
+              "fcff": 246973319.99999857,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 207872502.31461877
+            },
+            {
+              "year": 3.0,
+              "revenue": 37199131200.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2215073520.000002,
+              "nopat": -1749908080.8000016,
+              "depreciation": 2941678080.0000005,
+              "capex": 0.0,
+              "change_in_wc": 929978280.0000002,
+              "fcff": 261791719.19999862,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 202151240.78302383
+            },
+            {
+              "year": 4.0,
+              "revenue": 38687096448.00001,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2303676460.800002,
+              "nopat": -1819904404.0320017,
+              "depreciation": 3059345203.200001,
+              "capex": 0.0,
+              "change_in_wc": 967177411.2000003,
+              "fcff": 272263387.96799874,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 192878248.08655494
+            },
+            {
+              "year": 5.0,
+              "revenue": 39847709341.44001,
+              "revenue_growth": 0.03,
+              "ebit_margin": -0.05954637779282333,
+              "ebit": -2372786754.6240025,
+              "nopat": -1874501536.152962,
+              "depreciation": 3151125559.296001,
+              "capex": 0.0,
+              "change_in_wc": 996192733.5360003,
+              "fcff": 280431289.60703874,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 182261096.81573543
+            }
+          ],
+          "enterprise_value": 4123775831.043145,
+          "equity_value": 8990775831.043144,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.12339201083276913,
+          "da_percent_sales": 0.07907921462423832,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.8570751523358159,
+          "calibration_adjustment": 0.0484766418415707
+        },
+        "base_financials": {
+          "net_sales": 29540000000.0,
+          "cogs": 23886000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -4867000000.0
+        },
+        "calculated_upside": -0.9763739203258005
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 0.0,
+          "equity": 380544547950.9292,
+          "wacc": 0.10097364630660008,
+          "cost_of_equity": 0.10097364630660008,
+          "beta": 1.0442480980195044
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 0.0,
+            "cash": 4867000000.0,
+            "liquidity_ratio": 0.0,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 8823000000.0,
+            "crash_fcf": 1150635000.0,
+            "earnings_power_value": 9511451751.10113,
+            "floor_value": 9511451751.10113,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 1.7,
+            "financial_leverage_score": 0.0,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.10097364630660008,
+            "2": 0.10097364630660008,
+            "3": 0.10097364630660008,
+            "4": 0.10097364630660008,
+            "5": 0.10097364630660008
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": false,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 8.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:43:20.792104",
+          "current_price": 817.8699951171875,
+          "shares_diluted": 465287332.0,
+          "market_cap": 380544547950.9292,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.0442480980195044,
+          "wacc_base": 0.10097364630660008,
+          "revenue": 67589000000.0,
+          "ebitda": 13861000000.0,
+          "ebit": 11599000000.0,
+          "nopat": 9163210000.0,
+          "roic": 0.21120307160548918,
+          "fcf": 8918000000.0,
+          "net_debt": 20716000000.0,
+          "bull_ev": 176455982116.24625,
+          "bull_intrinsic_per_share": 334.7178644361765,
+          "bull_upside": -0.5907444136176963,
+          "bull_wacc": 0.09597364630660007,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 12.73039334220087,
+          "bull_justified_ev_ebitda": 9.931107376035829,
+          "bull_roic_wacc_spread": 0.1152294252988891,
+          "bull_tv_pct_of_ev": 0.5678003888170026,
+          "bull_implied_tv_ebitda": 9.931107376035827,
+          "base_ev": 130954458733.70273,
+          "base_intrinsic_per_share": 236.92555363553876,
+          "base_upside": -0.7103139190213339,
+          "base_wacc": 0.10097364630660008,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 9.447691994351255,
+          "base_justified_ev_ebitda": 8.18680379141604,
+          "base_roic_wacc_spread": 0.1102294252988891,
+          "base_tv_pct_of_ev": 0.502903735644823,
+          "base_implied_tv_ebitda": 8.18680379141604,
+          "bear_ev": 70218091530.01067,
+          "bear_intrinsic_per_share": 106.39037026267172,
+          "bear_upside": -0.8699177486668555,
+          "bear_wacc": 0.11597364630660008,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.06587486689349,
+          "bear_justified_ev_ebitda": 5.8833457065049295,
+          "bear_roic_wacc_spread": 0.0952294252988891,
+          "bear_tv_pct_of_ev": 0.3830878486966847,
+          "bear_implied_tv_ebitda": 5.8833457065049295
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "CAT",
+            "scenario": "bull",
+            "enterprise_value": 176455982116.24625,
+            "equity_value": 152784172116.24625,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 328.3652092128015,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.5985117302588511,
+            "upside_pct": -0.5985117302588511,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          },
+          "base": {
+            "ticker": "CAT",
+            "scenario": "base",
+            "enterprise_value": 130954458733.70273,
+            "equity_value": 107282648733.70273,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 230.5728984121638,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.7180812356624888,
+            "upside_pct": -0.7180812356624888,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          },
+          "bear": {
+            "ticker": "CAT",
+            "scenario": "bear",
+            "enterprise_value": 70218091530.01067,
+            "equity_value": 46546281530.010666,
+            "shares_diluted": 465287332.0,
+            "intrinsic_per_share": 100.03771503929676,
+            "current_price": 817.8699951171875,
+            "margin_of_safety": -0.8776850653080104,
+            "upside_pct": -0.8776850653080104,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -30696000000.0,
+            "bridge_cash_(net_of_haircuts)": 7024190000.0,
+            "cash_gross": 9980000000.0,
+            "cash_wc_haircut": 2027670000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 928140000.0,
+            "cash_net_accessible": 7024190000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 7024190000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 328.3652092128015,
+          "base": 230.5728984121638,
+          "bear": 100.03771503929676
+        },
+        "margin_of_safety": {
+          "bull": -0.5985117302588511,
+          "base": -0.7180812356624888,
+          "bear": -0.8776850653080104
+        },
+        "reverse_dcf": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "current_price": 817.8699951171875,
+          "current_ev": 401260547950.9292,
+          "current_ev_ebitda": 28.948888821219914,
+          "wacc": 0.09579542772470699,
+          "ebit_margin": 0.17161076506532127,
+          "implied_cagr_10y": 0.21603095236318642,
+          "implied_cagr_5y": 0.21603095236318642,
+          "historical_cagr_5y": 0.04559685606389596,
+          "sector_75th_cagr": 0.09,
+          "implied_tv_ebitda": 28.948888821219914,
+          "forward_ev_ebitda_justified": 9.60066469111672,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.21603095236318642,
+        "historical_cagr": 0.04559685606389596,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (21.6%) is 2.4x the sector 75th percentile (9.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "CAT",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.948888821219914,
+          "market_ev_ebit": 34.59440882411666,
+          "market_p_sales": 5.63027338695541,
+          "market_p_e": 42.84446610571146,
+          "market_peg": 9.396364092662987,
+          "justified_ev_ebitda": 8.232551895130696,
+          "justified_ev_ebit": 9.838037918648727,
+          "justified_p_sales": 2.146268537848184,
+          "ev_ebitda_premium": 20.71633692608922,
+          "ev_ebitda_premium_pct": 2.516393117223142,
+          "sector_median_ev_ebitda": 12,
+          "vs_sector_premium": 16.948888821219914,
+          "roic": 0.21120307160548918,
+          "wacc": 0.09579542772470699,
+          "roic_wacc_spread": 0.11540764388078219,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.5828270326816247,
+          "growth_rate": 0.04559685606389596,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 28.948888821219914,
+        "ev_ebitda_justified": 8.232551895130696,
+        "ev_ebitda_premium_pct": 2.516393117223142,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.11540764388078219,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.21120307160548918,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: CAT ===\nPrice: $817.87  |  Bear=$100  Base=$231  Bull=$328\nMoS:  Bear=-87.8%  Base=-71.8%  Bull=-59.9%\nRDCF: implied=21.6% hist=4.6% [flag]\nEV/EBITDA: 28.9x market vs 8.2x justified (+252%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $817.87 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 21.6%\n  \u2022 Company's robust historical CAGR: 4.6%\n  \u2022 Ratio (implied / historical): 4.7x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (21.6%) is 2.4x the sector 75th percentile (9.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.2x\n  \u2022 Premium to justified multiple: +252%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $100/share vs current price $817.87\n  \u2022 Downside in bear case: -87.8%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The current market valuation of CAT at $817.87 represents a severe detachment from mathematical reality, driven by extreme Growth Extrapolation Bias. To justify this price, CAT must achieve a 10-year revenue CAGR of 21.6%\u2014a staggering 4.7x its historical growth rate of 4.6% and 2.4x the sector's 75th percentile (9.0%). For a mature, capital-intensive, and highly cyclical heavy machinery manufacturer, sustaining hyper-growth at this scale is virtually impossible without an unprecedented and undocumented expansion of its Total Addressable Market. Furthermore, the Multiple Decomposition framework reveals a massive speculative premium: CAT is trading at an EV/EBITDA of 28.9x, which is a 252% premium over its mathematically justified multiple of 8.2x based on its ROIC, WACC, and realistic growth prospects. The path to the bear case intrinsic value of $100/share (-87.8% downside) will likely be triggered by a cyclical macroeconomic slowdown, leading to a violent mean reversion in both earnin...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+        "moat_score": 7.5,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 4.0,
+          "cost_advantage": 7.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base.",
+        "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+        "revenue_segments": [
+          {
+            "segment": "Construction Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Resource Industries",
+            "pct_revenue": null,
+            "growth_trend": "Cyclical"
+          },
+          {
+            "segment": "Power & Energy",
+            "pct_revenue": null,
+            "growth_trend": "Growing (largest backlog increase)"
+          },
+          {
+            "segment": "Financial Products",
+            "pct_revenue": null,
+            "growth_trend": "Stable"
+          }
+        ],
+        "key_customers": [
+          "Independent dealer network (150 dealers globally)",
+          "Heavy and general construction firms",
+          "Mining and quarry operators",
+          "Oil, gas, and power generation companies"
+        ],
+        "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+        "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures.",
+        "operating_leverage_score": 1.7
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 8.0,
+        "power_ratio": 0.002,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+        "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+        "pass_through_capability": true,
+        "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 1.465953397929509,
+        "is_cyclical_peak": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue grew by 42.7% to $3.3B, significantly outpacing the 3-year revenue CAGR of 0.3%. The D8 Revenue Score of 1.00 confirms that deferred revenue is healthy and there are no quality issues.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "According to the 10-K, Caterpillar owns various patents and trademarks but explicitly states it does not regard its business as dependent upon any single patent or group of patents. No specific patent cliffs, exclusivity dates, or material contract expirations are disclosed.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Caterpillar is operating below a cyclical peak with a Revenue Z-Score of 1.47. Growth quality is robust, evidenced by a 42.7% increase in deferred revenue and a perfect D8 domain score of 1.00, signaling no pull-forward risk. Intangible risk is minimal, as the company's operations are not dependent on any single patent or group of patents, leading to no material revenue at risk from near-term expirations."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n\n#### FORM 10-K\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### OR\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 1-768\n\n#### CATERPILLAR INC.\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n| Delaware                                       |     |                             |            |     |         |     | 37-0602744             |     |           |\n| (State or other jurisdiction of incorporation) |     |                             |            |     |         |     | -IRS Employer I.D. No. |     |           |\n|                                                |     | 5205 N. O'Connor Boulevard, | Suite 100, |     | Irving, |...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "CAT",
+        "generated_at": "2026-04-28T22:43:56.816971",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 1.7,
+            "cost_structure": "With an operating leverage score of 1.7/10, Caterpillar exhibits a highly fixed cost structure. Major fixed cost drivers include a massive global workforce of 118,000 employees, heavy manufacturing facility overhead, and significant R&D requirements for emissions compliance and advanced technology. Furthermore, stock-based compensation (SBC) consumes an alarming 271.4% of FCF. Because top-line revenue growth is nearly flat (0.3% 3Y CAGR), these high fixed costs severely restrict the flow-through of incremental revenue to EBIT, limiting margin expansion despite a growing backlog.",
+            "business_description": "Caterpillar is a leading manufacturer of heavy construction and mining equipment, off-highway diesel and natural gas engines, industrial gas turbines, and diesel-electric locomotives. The company generates revenue by selling machinery, power systems, and aftermarket parts primarily through a global network of independent dealers, while also providing retail and wholesale financing solutions via its Financial Products segment.",
+            "revenue_segments": [
+              {
+                "segment": "Construction Industries",
+                "pct_revenue": null,
+                "growth_trend": "Cyclical"
+              },
+              {
+                "segment": "Resource Industries",
+                "pct_revenue": null,
+                "growth_trend": "Cyclical"
+              },
+              {
+                "segment": "Power & Energy",
+                "pct_revenue": null,
+                "growth_trend": "Growing (largest backlog increase)"
+              },
+              {
+                "segment": "Financial Products",
+                "pct_revenue": null,
+                "growth_trend": "Stable"
+              }
+            ],
+            "key_customers": [
+              "Independent dealer network (150 dealers globally)",
+              "Heavy and general construction firms",
+              "Mining and quarry operators",
+              "Oil, gas, and power generation companies"
+            ],
+            "competitive_landscape": "Top global competitors include Komatsu Ltd., Deere & Company, and Volvo Construction Equipment. Caterpillar differentiates itself through its unmatched global independent dealer network, integrated Cat Financial services, and a focus on lowering the total cost of ownership over the machine's lifetime.",
+            "regulatory_risk": "The company faces significant regulatory exposure to federal, state, and international environmental laws governing air emissions standards for internal combustion engines, requiring ongoing R&D and capital expenditures."
+          },
+          "value_chain": {
+            "power_ratio": 0.002,
+            "upstream_leak": false,
+            "strategic_leverage": 8.0,
+            "bottleneck_analysis": "Critical suppliers provide raw steel, iron castings, forgings, and electronic components. While supply chain constraints exist, suppliers generally lack pricing power over Caterpillar due to CAT's massive scale and global strategic sourcing. If suppliers raise prices, CAT typically passes these costs to buyers.",
+            "substitution_risk_score": 4.0,
+            "top_substitutes": "1. Used or refurbished machinery. 2. Equipment rental or leasing instead of purchasing. 3. Lower-cost regional competitor brands like Sany or XCMG.",
+            "pricing_power_assessment": "Caterpillar exhibits strong price leadership, supported by its premium brand, extensive global dealer network, and focus on total cost of ownership. It successfully implements price hikes to offset raw material inflation, demonstrating high pass-through capability.",
+            "pass_through_capability": true,
+            "analysis_summary": "Caterpillar holds a dominant position in the heavy machinery value chain. Supplier power is low to moderate, managed through global scale and diversified sourcing. Buyer power is mitigated by deep lock-in via the proprietary dealer network and aftermarket parts dependency. Substitution threat is moderate, primarily from used equipment and lower-cost regional competitors. Rivalry is intense but CAT maintains price leadership and a strong economic moat, yielding high strategic leverage."
+          },
+          "moat": {
+            "score": 7.5,
+            "switching_costs": 8.0,
+            "network_effects": 4.0,
+            "cost_advantage": 7.0,
+            "intangibles": 9.0,
+            "evidence": "Caterpillar's moat is supported by its massive independent global distribution network of 150 dealers across 190 countries, which is extremely difficult for new entrants to replicate. Intangibles are strong, backed by numerous patents, trademarks, and a premium brand reputation. Switching costs are reinforced by integrated financing through Cat Financial and a reliance on proprietary aftermarket parts and services. The firm's order backlog grew significantly to $51.2 billion, indicating strong customer reliance and demand.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The 10-K explicitly states that 'the intensity of competition results in price discounting in a particular industry or region,' which puts pressure on margins. There is no specific evidence provided in the text regarding recent price hikes, net retention rates, or contract escalators that occurred without material churn."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 1.465953397929509,
+            "is_peak": false
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue grew by 42.7% to $3.3B, significantly outpacing the 3-year revenue CAGR of 0.3%. The D8 Revenue Score of 1.00 confirms that deferred revenue is healthy and there are no quality issues.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "According to the 10-K, Caterpillar owns various patents and trademarks but explicitly states it does not regard its business as dependent upon any single patent or group of patents. No specific patent cliffs, exclusivity dates, or material contract expirations are disclosed.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Caterpillar is operating below a cyclical peak with a Revenue Z-Score of 1.47. Growth quality is robust, evidenced by a 42.7% increase in deferred revenue and a perfect D8 domain score of 1.00, signaling no pull-forward risk. Intangible risk is minimal, as the company's operations are not dependent on any single patent or group of patents, leading to no material revenue at risk from near-term expirations."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 67.589,
+            "ebitda_bn": 13.861,
+            "fcf_bn": 8.918,
+            "nopat_bn": 9.16321,
+            "invested_capital_bn": 43.38578,
+            "net_debt_bn": 20.716,
+            "sbc_bn": 0.242,
+            "fiscal_year": 2025,
+            "data_quality": 0.97
+          },
+          "ratios": {
+            "gross_margin_pct": 99.92750299604965,
+            "ebit_margin_pct": 17.161076506532126,
+            "ebitda_margin_pct": 20.507774933791,
+            "fcf_margin_pct": 13.194454718963144,
+            "roic": 0.21120307160548918,
+            "roe": 0.416643212308847,
+            "sbc_pct_fcf": 2.71361291769455,
+            "share_dilution_pct": 1.5044057597249088,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 0.9,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 0.0,
+            "equity": 380544547950.9292,
+            "wacc": 0.10097364630660008,
+            "cost_of_equity": 0.10097364630660008,
+            "beta": 1.0442480980195044
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 0.0,
+              "cash": 4867000000.0,
+              "liquidity_ratio": 0.0,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 8823000000.0,
+              "crash_fcf": 1150635000.0,
+              "earnings_power_value": 9511451751.10113,
+              "floor_value": 9511451751.10113,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 1.7,
+              "financial_leverage_score": 0.0,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.10097364630660008,
+              "2": 0.10097364630660008,
+              "3": 0.10097364630660008,
+              "4": 0.10097364630660008,
+              "5": 0.10097364630660008
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier is identified as exceeding 10% of revenue. The company relies on a highly diversified network of 150 independent dealers globally and sources raw materials (like steel) from a wide, global supply base."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 8990775831.043144,
+            "upside_percent": -0.9763739203258005,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 100.03771503929676,
+                "margin_of_safety": -0.8776850653080104,
+                "ev": 70218091530.01067
+              },
+              "base": {
+                "intrinsic_per_share": 230.5728984121638,
+                "margin_of_safety": -0.7180812356624888,
+                "ev": 130954458733.70273
+              },
+              "bull": {
+                "intrinsic_per_share": 328.3652092128015,
+                "margin_of_safety": -0.5985117302588511,
+                "ev": 176455982116.24625
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.21603095236318642,
+              "historical_cagr": 0.04559685606389596,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (21.6%) is 2.4x the sector 75th percentile (9.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 28.948888821219914,
+              "justified_ev_ebitda": 8.232551895130696,
+              "premium_pct": 2.516393117223142,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.11540764388078219,
+              "value_creation": "creating",
+              "roic": 0.21120307160548918,
+              "wacc": 0.10097364630660008
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": false,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 8.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.10097364630660008,
+            "beta": 1.0442480980195044,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+            "bear_case_summary": "The current market valuation of CAT at $817.87 represents a severe detachment from mathematical reality, driven by extreme Growth Extrapolation Bias. To justify this price, CAT must achieve a 10-year revenue CAGR of 21.6%\u2014a staggering 4.7x its historical growth rate of 4.6% and 2.4x the sector's 75th percentile (9.0%). For a mature, capital-intensive, and highly cyclical heavy machinery manufacturer, sustaining hyper-growth at this scale is virtually impossible without an unprecedented and undocumented expansion of its Total Addressable Market. Furthermore, the Multiple Decomposition framework reveals a massive speculative premium: CAT is trading at an EV/EBITDA of 28.9x, which is a 252% premium over its mathematically justified multiple of 8.2x based on its ROIC, WACC, and realistic growth prospects. The path to the bear case intrinsic value of $100/share (-87.8% downside) will likely be triggered by a cyclical macroeconomic slowdown, leading to a violent mean reversion in both earnin...(truncated)",
+            "sentiment_score": -9,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $817.87 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 21.6%\n  \u2022 Company's robust historical CAGR: 4.6%\n  \u2022 Ratio (implied / historical): 4.7x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (21.6%) is 2.4x the sector 75th percentile (9.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 8.2x\n  \u2022 Premium to justified multiple: +252%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $100/share vs current price $817.87\n  \u2022 Downside in bear case: -87.8%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 0,
+            "margin_of_safety": -0.7180812356624888,
+            "narrative": "The implied 10-year revenue CAGR of 21.6% is mathematically detached from reality for a mature, capital-intensive industrial manufacturer. With a historical CAGR of 4.6% and a recent 3-year CAGR of just 0.3%, CAT's growth is fundamentally constrained by global macroeconomic cycles and heavy machinery TAM limits. While the company possesses a strong economic moat (7.5/10) driven by its global dealer network and aftermarket lock-in, this moat defends existing ROIC (+11.5% spread) rather than generating hyper-growth. The required growth trajectory implies an unprecedented and unjustifiable TAM expansion, making growth decay to historical low-single digits a near certainty.\n\nThe Contrarian is entirely correct regarding the extreme Growth Extrapolation Bias and the speculative +252% EV/EBITDA premium; a 21.6% implied CAGR is impossible for CAT to sustain. The mean reversion thesis is highly probable given the fixed cost structure (OpLev 1.7/10) and flat top-line growth. However, the Bear's ...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u274c FAIL: Implied CAGR (21.6%) is 4.7x historical (4.6%). Requires TAM justification.",
+              "\u274c FAIL: EV/EBITDA at +252% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "CAT",
+              "p1_moat": 4,
+              "p2_health": 4,
+              "p3_tailwind": 1,
+              "p4_mos": 1,
+              "p5_leadership": 5,
+              "raw_total": 15,
+              "capped_total": 15,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern",
+              "conviction_score": 0,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 8.0/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +11.6pp \u2014 strong value creation",
+                "FCF margin 13.2% \u2014 strong FCF",
+                "Net Debt/EBITDA 1.5\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 4.6% \u2014 moderate growth",
+                "Market implied CAGR 4.8\u00d7 historical \u2014 tailwind fully priced, no entry benefit"
+              ],
+              "p4_reasons": [
+                "Base MoS -70.3% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 2.7% of FCF \u2014 minimal dilution",
+                "Operating leverage 7.0/10",
+                "Strategic leverage 8.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for CAT. Conviction: 0.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,3200 @@
+[
+  {
+    "timestamp": "2026-04-28T22:30:59.064418",
+    "agent": "Librarian",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:31:23.087146",
+    "agent": "Forensic",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:31:41.860433",
+    "agent": "ValueChain",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.015,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+        "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+        "pass_through_capability": true,
+        "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:02.645454",
+    "agent": "StrategicContext",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.015,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+        "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+        "pass_through_capability": true,
+        "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 2.046889161801436,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 643222666666.6666,
+        "deferred_revenue_trend": "Deferred revenue grew by 13.7% to $20.6B. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy and shows no signs of pull-forward risk, supporting high-quality revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No 10-K text or patent data was available to identify specific expirations. However, Amazon's core businesses (e-commerce, AWS, advertising) rely on scale, network effects, and infrastructure rather than expiring patents or exclusive contracts. Therefore, material revenue risk from intangible decay is estimated to be negligible, though this estimate carries uncertainty due to missing source documents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Amazon's revenue Z-score of 2.05 triggers a cyclical peak flag, though this is driven by consistent structural growth rather than true cyclicality. The quality of growth is robust, evidenced by a 13.7% increase in deferred revenue and a perfect D8 score of 1.00, indicating no pull-forward risk. Intangible risk is estimated at 0.0%, as the company's competitive advantage stems from scale and network effects rather than expiring patents, avoiding any terminal haircut."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=2.05 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:03.908539",
+    "agent": "Strategist",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.05 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.015,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+        "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+        "pass_through_capability": true,
+        "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.046889161801436,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 643222666666.6666,
+        "deferred_revenue_trend": "Deferred revenue grew by 13.7% to $20.6B. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy and shows no signs of pull-forward risk, supporting high-quality revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No 10-K text or patent data was available to identify specific expirations. However, Amazon's core businesses (e-commerce, AWS, advertising) rely on scale, network effects, and infrastructure rather than expiring patents or exclusive contracts. Therefore, material revenue risk from intangible decay is estimated to be negligible, though this estimate carries uncertainty due to missing source documents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Amazon's revenue Z-score of 2.05 triggers a cyclical peak flag, though this is driven by consistent structural growth rather than true cyclicality. The quality of growth is robust, evidenced by a 13.7% increase in deferred revenue and a perfect D8 score of 1.00, indicating no pull-forward risk. Intangible risk is estimated at 0.0%, as the company's competitive advantage stems from scale and network effects rather than expiring patents, avoiding any terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 109000000.0,
+          "equity": 2792879323477.7876,
+          "wacc": 0.12096313462453946,
+          "cost_of_equity": 0.1209666222731436,
+          "beta": 1.4077567519566592
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 10900000.0,
+            "cash": 3444000000.0,
+            "liquidity_ratio": 0.003164924506387921,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5257000000.0,
+            "crash_fcf": 595265000.0,
+            "earnings_power_value": 4222841678.3261127,
+            "floor_value": 5257000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.2,
+            "financial_leverage_score": 0.0001561112921474452,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12096313462453946,
+            "2": 0.12096313462453946,
+            "3": 0.12096313462453946,
+            "4": 0.12096313462453946,
+            "5": 0.12096313462453946
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 12.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:04.922061",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "base": {
+        "net_sales": 24509000000.0,
+        "cogs": 18978000000.0,
+        "interest_expense": 0.0,
+        "net_debt": -3335000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.0,
+        "da_percent_sales": 0.015422905871312578,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.0152188991798931,
+        "wacc": 0.09,
+        "wc_change_percent_sales": 0.025,
+        "cogs_percent_sales": 0.9539352890774817,
+        "calibration_adjustment": 0.17960749112570887
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-28T22:32:04.922166",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": -286337505.9940609,
+      "equity_value": 3048662494.005939,
+      "terminal_value": -334268638.49806416,
+      "discounted_terminal_value": -217251679.61510727,
+      "sum_pv_cash_flows": -69085826.37895359,
+      "audit_metrics": {
+        "roic_path": [
+          0.03803961227071111,
+          0.03954202116461637,
+          0.04028291922755223,
+          0.040234057289315284,
+          0.039800771058280913
+        ],
+        "invested_capital_path": [
+          17156299999.999998,
+          17824797500.0,
+          18546774800.0,
+          19312070738.0,
+          20107978513.52,
+          20927763522.3056
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 26959900000.000004,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.030641805051205714,
+          "ebit": 826100000.0000011,
+          "nopat": 652619000.0000008,
+          "depreciation": 415800000.00000006,
+          "capex": 410300000.00000006,
+          "change_in_wc": 673997500.0000001,
+          "fcff": -15878499.999999166,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": -14567431.192659784
+        },
+        {
+          "year": 2.0,
+          "revenue": 29116692000.000008,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.030641805051205714,
+          "ebit": 892188000.0000012,
+          "nopat": 704828520.000001,
+          "depreciation": 449064000.0000001,
+          "capex": 443124000.0000001,
+          "change_in_wc": 727917300.0000002,
+          "fcff": -17148779.999999404,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": -14433785.034929216
+        },
+        {
+          "year": 3.0,
+          "revenue": 30863693520.00001,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.030641805051205714,
+          "ebit": 945719280.0000014,
+          "nopat": 747118231.2000011,
+          "depreciation": 476007840.0000002,
+          "capex": 469711440.0000002,
+          "change_in_wc": 771592338.0000004,
+          "fcff": -18177706.799999356,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": -14036524.896353174
+        },
+        {
+          "year": 4.0,
+          "revenue": 32098241260.800014,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.030641805051205714,
+          "ebit": 983548051.2000016,
+          "nopat": 777002960.4480013,
+          "depreciation": 495048153.6000002,
+          "capex": 488499897.6000002,
+          "change_in_wc": 802456031.5200005,
+          "fcff": -18904815.071999073,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": -13392647.607529446
+        },
+        {
+          "year": 5.0,
+          "revenue": 33061188498.624016,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.030641805051205714,
+          "ebit": 1013054492.7360016,
+          "nopat": 800313049.2614413,
+          "depreciation": 509899598.20800024,
+          "capex": 503154894.52800024,
+          "change_in_wc": 826529712.4656005,
+          "fcff": -19471959.524159074,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": -12655437.647481974
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 24509000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.030641805051205714,
+        "terminal_value_pct_of_ev": 0.758725891883732,
+        "implied_terminal_multiple_fcf": 17.16666666666667,
+        "implied_terminal_multiple_nopat": -0.41767235809354814,
+        "reinvestment_rate_terminal_year": 1.0243304286268087,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.015422905871312578,
+          "capex_percent_sales": 0.0152188991798931,
+          "wc_change_percent_sales": 0.025
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:04.923930",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.05 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 109000000.0,
+          "equity": 2792879323477.7876,
+          "wacc": 0.12096313462453946,
+          "cost_of_equity": 0.1209666222731436,
+          "beta": 1.4077567519566592
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 10900000.0,
+            "cash": 3444000000.0,
+            "liquidity_ratio": 0.003164924506387921,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5257000000.0,
+            "crash_fcf": 595265000.0,
+            "earnings_power_value": 4222841678.3261127,
+            "floor_value": 5257000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.2,
+            "financial_leverage_score": 0.0001561112921474452,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12096313462453946,
+            "2": 0.12096313462453946,
+            "3": 0.12096313462453946,
+            "4": 0.12096313462453946,
+            "5": 0.12096313462453946
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.015,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+        "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+        "pass_through_capability": true,
+        "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.046889161801436,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 643222666666.6666,
+        "deferred_revenue_trend": "Deferred revenue grew by 13.7% to $20.6B. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy and shows no signs of pull-forward risk, supporting high-quality revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No 10-K text or patent data was available to identify specific expirations. However, Amazon's core businesses (e-commerce, AWS, advertising) rely on scale, network effects, and infrastructure rather than expiring patents or exclusive contracts. Therefore, material revenue risk from intangible decay is estimated to be negligible, though this estimate carries uncertainty due to missing source documents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Amazon's revenue Z-score of 2.05 triggers a cyclical peak flag, though this is driven by consistent structural growth rather than true cyclicality. The quality of growth is robust, evidenced by a 13.7% increase in deferred revenue and a perfect D8 score of 1.00, indicating no pull-forward risk. Intangible risk is estimated at 0.0%, as the company's competitive advantage stems from scale and network effects rather than expiring patents, avoiding any terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "terminal_value": -334268638.49806416,
+          "discounted_terminal_value": -217251679.61510727,
+          "sum_pv_cash_flows": -69085826.37895359,
+          "audit_metrics": {
+            "roic_path": [
+              0.03803961227071111,
+              0.03954202116461637,
+              0.04028291922755223,
+              0.040234057289315284,
+              0.039800771058280913
+            ],
+            "invested_capital_path": [
+              17156299999.999998,
+              17824797500.0,
+              18546774800.0,
+              19312070738.0,
+              20107978513.52,
+              20927763522.3056
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 24509000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.030641805051205714,
+            "terminal_value_pct_of_ev": 0.758725891883732,
+            "implied_terminal_multiple_fcf": 17.16666666666667,
+            "implied_terminal_multiple_nopat": -0.41767235809354814,
+            "reinvestment_rate_terminal_year": 1.0243304286268087,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.015422905871312578,
+              "capex_percent_sales": 0.0152188991798931,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 0.28348437823406397,
+          "upside_percent": -0.9989084159482708,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.015422905871312578,
+            "capex_percent_sales": 0.0152188991798931,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.015422905871312578,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0152188991798931,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9539352890774817,
+          "calibration_adjustment": 0.17960749112570887
+        },
+        "base_financials": {
+          "net_sales": 24509000000.0,
+          "cogs": 18978000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -3335000000.0
+        },
+        "calculated_upside": -0.9989084159482708
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-286,337,506",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:06.300248",
+    "agent": "ValuationNode",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.05 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-286,337,506",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "terminal_value": -334268638.49806416,
+          "discounted_terminal_value": -217251679.61510727,
+          "sum_pv_cash_flows": -69085826.37895359,
+          "audit_metrics": {
+            "roic_path": [
+              0.03803961227071111,
+              0.03954202116461637,
+              0.04028291922755223,
+              0.040234057289315284,
+              0.039800771058280913
+            ],
+            "invested_capital_path": [
+              17156299999.999998,
+              17824797500.0,
+              18546774800.0,
+              19312070738.0,
+              20107978513.52,
+              20927763522.3056
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 24509000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.030641805051205714,
+            "terminal_value_pct_of_ev": 0.758725891883732,
+            "implied_terminal_multiple_fcf": 17.16666666666667,
+            "implied_terminal_multiple_nopat": -0.41767235809354814,
+            "reinvestment_rate_terminal_year": 1.0243304286268087,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.015422905871312578,
+              "capex_percent_sales": 0.0152188991798931,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 0.28348437823406397,
+          "upside_percent": -0.9989084159482708,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.015422905871312578,
+            "capex_percent_sales": 0.0152188991798931,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.015422905871312578,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0152188991798931,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9539352890774817,
+          "calibration_adjustment": 0.17960749112570887
+        },
+        "base_financials": {
+          "net_sales": 24509000000.0,
+          "cogs": 18978000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -3335000000.0
+        },
+        "calculated_upside": -0.9989084159482708
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 109000000.0,
+          "equity": 2792879323477.7876,
+          "wacc": 0.12096313462453946,
+          "cost_of_equity": 0.1209666222731436,
+          "beta": 1.4077567519566592
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 10900000.0,
+            "cash": 3444000000.0,
+            "liquidity_ratio": 0.003164924506387921,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5257000000.0,
+            "crash_fcf": 595265000.0,
+            "earnings_power_value": 4222841678.3261127,
+            "floor_value": 5257000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.2,
+            "financial_leverage_score": 0.0001561112921474452,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12096313462453946,
+            "2": 0.12096313462453946,
+            "3": 0.12096313462453946,
+            "4": 0.12096313462453946,
+            "5": 0.12096313462453946
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.015,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+        "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+        "pass_through_capability": true,
+        "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.046889161801436,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 643222666666.6666,
+        "deferred_revenue_trend": "Deferred revenue grew by 13.7% to $20.6B. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy and shows no signs of pull-forward risk, supporting high-quality revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No 10-K text or patent data was available to identify specific expirations. However, Amazon's core businesses (e-commerce, AWS, advertising) rely on scale, network effects, and infrastructure rather than expiring patents or exclusive contracts. Therefore, material revenue risk from intangible decay is estimated to be negligible, though this estimate carries uncertainty due to missing source documents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Amazon's revenue Z-score of 2.05 triggers a cyclical peak flag, though this is driven by consistent structural growth rather than true cyclicality. The quality of growth is robust, evidenced by a 13.7% increase in deferred revenue and a perfect D8 score of 1.00, indicating no pull-forward risk. Intangible risk is estimated at 0.0%, as the company's competitive advantage stems from scale and network effects rather than expiring patents, avoiding any terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 643222666666.6666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:32:04.924817",
+          "current_price": 259.70001220703125,
+          "shares_diluted": 10754251799.0,
+          "market_cap": 2792879323477.7876,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.4077567519566592,
+          "wacc_base": 0.12096313462453946,
+          "revenue": 643222666666.6666,
+          "ebitda": 146341000000.0,
+          "ebit": 80585000000.0,
+          "nopat": 63662150000.0,
+          "roic": 0.15748544657020352,
+          "fcf": 112514000000.0,
+          "net_debt": -21162000000.0,
+          "bull_ev": 3117353963397.3965,
+          "bull_intrinsic_per_share": 291.8395460750915,
+          "bull_upside": 0.12375638181502593,
+          "bull_wacc": 0.11596313462453946,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 21.30198620617186,
+          "bull_justified_ev_ebitda": 6.421262773154325,
+          "bull_roic_wacc_spread": 0.04152231194566407,
+          "bull_tv_pct_of_ev": 0.6187441967206653,
+          "bull_implied_tv_ebitda": 6.421262773154325,
+          "base_ev": 1836584776825.1875,
+          "base_intrinsic_per_share": 172.74533008404478,
+          "base_upside": -0.33482740868593697,
+          "base_wacc": 0.12096313462453946,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 12.550035716751884,
+          "base_justified_ev_ebitda": 5.724850293986814,
+          "base_roic_wacc_spread": 0.03652231194566406,
+          "base_tv_pct_of_ev": 0.5574302789545559,
+          "base_implied_tv_ebitda": 5.724850293986814,
+          "bear_ev": 599592757324.7175,
+          "bear_intrinsic_per_share": 57.7217986826791,
+          "bear_upside": -0.7777366346957904,
+          "bear_wacc": 0.13596313462453946,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 4.097230149614377,
+          "bear_justified_ev_ebitda": 4.403451443874596,
+          "bear_roic_wacc_spread": 0.021522311945664063,
+          "bear_tv_pct_of_ev": 0.40781382331443083,
+          "bear_implied_tv_ebitda": 4.403451443874596
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "AMZN",
+            "scenario": "bull",
+            "enterprise_value": 3117353963397.3965,
+            "equity_value": 3108934913397.3965,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 289.08890841541256,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": 0.11316478562562664,
+            "upside_pct": 0.11316478562562664,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          },
+          "base": {
+            "ticker": "AMZN",
+            "scenario": "base",
+            "enterprise_value": 1836584776825.1875,
+            "equity_value": 1828165726825.1875,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 169.99469242436578,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": -0.3454190048753365,
+            "upside_pct": -0.3454190048753365,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          },
+          "bear": {
+            "ticker": "AMZN",
+            "scenario": "bear",
+            "enterprise_value": 599592757324.7175,
+            "equity_value": 591173707324.7175,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 54.9711610230001,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": -0.7883282308851899,
+            "upside_pct": -0.7883282308851899,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 289.08890841541256,
+          "base": 169.99469242436578,
+          "bear": 54.9711610230001
+        },
+        "margin_of_safety": {
+          "bull": 0.11316478562562664,
+          "base": -0.3454190048753365,
+          "bear": -0.7883282308851899
+        },
+        "reverse_dcf": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "current_price": 259.70001220703125,
+          "current_ev": 2771717323477.7876,
+          "current_ev_ebitda": 18.940128354171335,
+          "wacc": 0.11891425776684612,
+          "ebit_margin": 0.1252832093396377,
+          "implied_cagr_10y": 0.27991605643348244,
+          "implied_cagr_5y": 0.27991605643348244,
+          "historical_cagr_5y": 0.20544460333913395,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 18.940128354171335,
+          "forward_ev_ebitda_justified": 6.935808021022649,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.27991605643348244,
+        "historical_cagr": 0.20544460333913395,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (28.0%) is 1.6x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 18.940128354171335,
+          "market_ev_ebit": 34.394953446395576,
+          "market_p_sales": 3.8956421091744557,
+          "market_p_e": 35.95827634193109,
+          "market_peg": 1.7502662886974751,
+          "justified_ev_ebitda": 3.896830361729272,
+          "justified_ev_ebit": 7.076578171692292,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 15.043297992442064,
+          "ev_ebitda_premium_pct": 3.860393344340089,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -3.0598716458286646,
+          "roic": 0.15748544657020352,
+          "wacc": 0.11891425776684612,
+          "roic_wacc_spread": 0.0385711888033574,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.36596793106511505,
+          "growth_rate": 0.20544460333913395,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 18.940128354171335,
+        "ev_ebitda_justified": 3.896830361729272,
+        "ev_ebitda_premium_pct": 3.860393344340089,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.0385711888033574,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.15748544657020352,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: AMZN ===\nPrice: $259.70  |  Bear=$55  Base=$170  Bull=$289\nMoS:  Bear=-78.8%  Base=-34.5%  Bull=+11.3%\nRDCF: implied=28.0% hist=20.5% [flag]\nEV/EBITDA: 18.9x market vs 3.9x justified (+386%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: AMZN \u2014 Base IV=$170/share MoS=-34.5% ImpliedCAGR=28.0% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:24.157618",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.05 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-286,337,506",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: AMZN \u2014 Base IV=$170/share MoS=-34.5% ImpliedCAGR=28.0% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "terminal_value": -334268638.49806416,
+          "discounted_terminal_value": -217251679.61510727,
+          "sum_pv_cash_flows": -69085826.37895359,
+          "audit_metrics": {
+            "roic_path": [
+              0.03803961227071111,
+              0.03954202116461637,
+              0.04028291922755223,
+              0.040234057289315284,
+              0.039800771058280913
+            ],
+            "invested_capital_path": [
+              17156299999.999998,
+              17824797500.0,
+              18546774800.0,
+              19312070738.0,
+              20107978513.52,
+              20927763522.3056
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 24509000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.030641805051205714,
+            "terminal_value_pct_of_ev": 0.758725891883732,
+            "implied_terminal_multiple_fcf": 17.16666666666667,
+            "implied_terminal_multiple_nopat": -0.41767235809354814,
+            "reinvestment_rate_terminal_year": 1.0243304286268087,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.015422905871312578,
+              "capex_percent_sales": 0.0152188991798931,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 0.28348437823406397,
+          "upside_percent": -0.9989084159482708,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.015422905871312578,
+            "capex_percent_sales": 0.0152188991798931,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.015422905871312578,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0152188991798931,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9539352890774817,
+          "calibration_adjustment": 0.17960749112570887
+        },
+        "base_financials": {
+          "net_sales": 24509000000.0,
+          "cogs": 18978000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -3335000000.0
+        },
+        "calculated_upside": -0.9989084159482708
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 109000000.0,
+          "equity": 2792879323477.7876,
+          "wacc": 0.12096313462453946,
+          "cost_of_equity": 0.1209666222731436,
+          "beta": 1.4077567519566592
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 10900000.0,
+            "cash": 3444000000.0,
+            "liquidity_ratio": 0.003164924506387921,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5257000000.0,
+            "crash_fcf": 595265000.0,
+            "earnings_power_value": 4222841678.3261127,
+            "floor_value": 5257000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.2,
+            "financial_leverage_score": 0.0001561112921474452,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12096313462453946,
+            "2": 0.12096313462453946,
+            "3": 0.12096313462453946,
+            "4": 0.12096313462453946,
+            "5": 0.12096313462453946
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 643222666666.6666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:32:04.924817",
+          "current_price": 259.70001220703125,
+          "shares_diluted": 10754251799.0,
+          "market_cap": 2792879323477.7876,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.4077567519566592,
+          "wacc_base": 0.12096313462453946,
+          "revenue": 643222666666.6666,
+          "ebitda": 146341000000.0,
+          "ebit": 80585000000.0,
+          "nopat": 63662150000.0,
+          "roic": 0.15748544657020352,
+          "fcf": 112514000000.0,
+          "net_debt": -21162000000.0,
+          "bull_ev": 3117353963397.3965,
+          "bull_intrinsic_per_share": 291.8395460750915,
+          "bull_upside": 0.12375638181502593,
+          "bull_wacc": 0.11596313462453946,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 21.30198620617186,
+          "bull_justified_ev_ebitda": 6.421262773154325,
+          "bull_roic_wacc_spread": 0.04152231194566407,
+          "bull_tv_pct_of_ev": 0.6187441967206653,
+          "bull_implied_tv_ebitda": 6.421262773154325,
+          "base_ev": 1836584776825.1875,
+          "base_intrinsic_per_share": 172.74533008404478,
+          "base_upside": -0.33482740868593697,
+          "base_wacc": 0.12096313462453946,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 12.550035716751884,
+          "base_justified_ev_ebitda": 5.724850293986814,
+          "base_roic_wacc_spread": 0.03652231194566406,
+          "base_tv_pct_of_ev": 0.5574302789545559,
+          "base_implied_tv_ebitda": 5.724850293986814,
+          "bear_ev": 599592757324.7175,
+          "bear_intrinsic_per_share": 57.7217986826791,
+          "bear_upside": -0.7777366346957904,
+          "bear_wacc": 0.13596313462453946,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 4.097230149614377,
+          "bear_justified_ev_ebitda": 4.403451443874596,
+          "bear_roic_wacc_spread": 0.021522311945664063,
+          "bear_tv_pct_of_ev": 0.40781382331443083,
+          "bear_implied_tv_ebitda": 4.403451443874596
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "AMZN",
+            "scenario": "bull",
+            "enterprise_value": 3117353963397.3965,
+            "equity_value": 3108934913397.3965,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 289.08890841541256,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": 0.11316478562562664,
+            "upside_pct": 0.11316478562562664,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          },
+          "base": {
+            "ticker": "AMZN",
+            "scenario": "base",
+            "enterprise_value": 1836584776825.1875,
+            "equity_value": 1828165726825.1875,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 169.99469242436578,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": -0.3454190048753365,
+            "upside_pct": -0.3454190048753365,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          },
+          "bear": {
+            "ticker": "AMZN",
+            "scenario": "bear",
+            "enterprise_value": 599592757324.7175,
+            "equity_value": 591173707324.7175,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 54.9711610230001,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": -0.7883282308851899,
+            "upside_pct": -0.7883282308851899,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 289.08890841541256,
+          "base": 169.99469242436578,
+          "bear": 54.9711610230001
+        },
+        "margin_of_safety": {
+          "bull": 0.11316478562562664,
+          "base": -0.3454190048753365,
+          "bear": -0.7883282308851899
+        },
+        "reverse_dcf": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "current_price": 259.70001220703125,
+          "current_ev": 2771717323477.7876,
+          "current_ev_ebitda": 18.940128354171335,
+          "wacc": 0.11891425776684612,
+          "ebit_margin": 0.1252832093396377,
+          "implied_cagr_10y": 0.27991605643348244,
+          "implied_cagr_5y": 0.27991605643348244,
+          "historical_cagr_5y": 0.20544460333913395,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 18.940128354171335,
+          "forward_ev_ebitda_justified": 6.935808021022649,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.27991605643348244,
+        "historical_cagr": 0.20544460333913395,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (28.0%) is 1.6x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 18.940128354171335,
+          "market_ev_ebit": 34.394953446395576,
+          "market_p_sales": 3.8956421091744557,
+          "market_p_e": 35.95827634193109,
+          "market_peg": 1.7502662886974751,
+          "justified_ev_ebitda": 3.896830361729272,
+          "justified_ev_ebit": 7.076578171692292,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 15.043297992442064,
+          "ev_ebitda_premium_pct": 3.860393344340089,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -3.0598716458286646,
+          "roic": 0.15748544657020352,
+          "wacc": 0.11891425776684612,
+          "roic_wacc_spread": 0.0385711888033574,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.36596793106511505,
+          "growth_rate": 0.20544460333913395,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 18.940128354171335,
+        "ev_ebitda_justified": 3.896830361729272,
+        "ev_ebitda_premium_pct": 3.860393344340089,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.0385711888033574,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.15748544657020352,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: AMZN ===\nPrice: $259.70  |  Bear=$55  Base=$170  Bull=$289\nMoS:  Bear=-78.8%  Base=-34.5%  Bull=+11.3%\nRDCF: implied=28.0% hist=20.5% [flag]\nEV/EBITDA: 18.9x market vs 3.9x justified (+386%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.015,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+        "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+        "pass_through_capability": true,
+        "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.046889161801436,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 643222666666.6666,
+        "deferred_revenue_trend": "Deferred revenue grew by 13.7% to $20.6B. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy and shows no signs of pull-forward risk, supporting high-quality revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No 10-K text or patent data was available to identify specific expirations. However, Amazon's core businesses (e-commerce, AWS, advertising) rely on scale, network effects, and infrastructure rather than expiring patents or exclusive contracts. Therefore, material revenue risk from intangible decay is estimated to be negligible, though this estimate carries uncertainty due to missing source documents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Amazon's revenue Z-score of 2.05 triggers a cyclical peak flag, though this is driven by consistent structural growth rather than true cyclicality. The quality of growth is robust, evidenced by a 13.7% increase in deferred revenue and a perfect D8 score of 1.00, indicating no pull-forward risk. Intangible risk is estimated at 0.0%, as the company's competitive advantage stems from scale and network effects rather than expiring patents, avoiding any terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $259.70 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 28.0%\n  \u2022 Company's robust historical CAGR: 20.5%\n  \u2022 Ratio (implied / historical): 1.4x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (28.0%) is 1.6x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 18.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 3.9x\n  \u2022 Premium to justified multiple: +386%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $55/share vs current price $259.70\n  \u2022 Downside in bear case: -78.8%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market price of $259.70 mathematically requires an impossible implied 10-year revenue CAGR of 28.0%. For a mega-cap company of Amazon's scale, this is a staggering 1.4x its historical CAGR of 20.5% and 1.6x the sector's 75th percentile of 18.0%. Compounding at 28% for a decade requires Amazon to add trillions to its top line, effectively demanding it capture an unrealistic share of global GDP. Furthermore, the Liberti Formula reveals a massive disconnect: the market assigns an EV/EBITDA multiple of 18.9x against a mathematically justified multiple of just 3.9x, representing a +386% speculative premium driven by AI and cloud narrative FOMO. Qualitatively, achieving this requires AWS to maintain hyper-growth against fierce competition from Azure and GCP, while the retail segment must expand margins despite consumer fatigue and regulatory antitrust scrutiny. If AWS growth normalizes and the AI CapEx burden compresses ROIC, the narrative premium will collapse. Reverting to the justifie...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 28.0% vs 20.5% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:41.229703",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/AMZN_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-28T22:32:41.231321",
+    "agent": "Lead",
+    "trace_id": "trace_AMZN_1777429855",
+    "inputs": {
+      "ticker": "AMZN",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for AMZN.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 9.0/10. OpLev 2.2/10 (Python). Pricing power: True. Concentration: False. Segments: 3.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 3.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=2.05 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 12.1%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $-286,337,506",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: AMZN \u2014 Base IV=$170/share MoS=-34.5% ImpliedCAGR=28.0% Multiple=speculative_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Growth Extrapolation Bias and Narrative Premium] Sentiment: -9/10. Implied CAGR 28.0% vs 20.5% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "terminal_value": -334268638.49806416,
+          "discounted_terminal_value": -217251679.61510727,
+          "sum_pv_cash_flows": -69085826.37895359,
+          "audit_metrics": {
+            "roic_path": [
+              0.03803961227071111,
+              0.03954202116461637,
+              0.04028291922755223,
+              0.040234057289315284,
+              0.039800771058280913
+            ],
+            "invested_capital_path": [
+              17156299999.999998,
+              17824797500.0,
+              18546774800.0,
+              19312070738.0,
+              20107978513.52,
+              20927763522.3056
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 24509000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.030641805051205714,
+            "terminal_value_pct_of_ev": 0.758725891883732,
+            "implied_terminal_multiple_fcf": 17.16666666666667,
+            "implied_terminal_multiple_nopat": -0.41767235809354814,
+            "reinvestment_rate_terminal_year": 1.0243304286268087,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.015422905871312578,
+              "capex_percent_sales": 0.0152188991798931,
+              "wc_change_percent_sales": 0.025
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 0.28348437823406397,
+          "upside_percent": -0.9989084159482708,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.015422905871312578,
+            "capex_percent_sales": 0.0152188991798931,
+            "wc_change_percent_sales": 0.025
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 26959900000.000004,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 826100000.0000011,
+              "nopat": 652619000.0000008,
+              "depreciation": 415800000.00000006,
+              "capex": 410300000.00000006,
+              "change_in_wc": 673997500.0000001,
+              "fcff": -15878499.999999166,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": -14567431.192659784
+            },
+            {
+              "year": 2.0,
+              "revenue": 29116692000.000008,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 892188000.0000012,
+              "nopat": 704828520.000001,
+              "depreciation": 449064000.0000001,
+              "capex": 443124000.0000001,
+              "change_in_wc": 727917300.0000002,
+              "fcff": -17148779.999999404,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": -14433785.034929216
+            },
+            {
+              "year": 3.0,
+              "revenue": 30863693520.00001,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 945719280.0000014,
+              "nopat": 747118231.2000011,
+              "depreciation": 476007840.0000002,
+              "capex": 469711440.0000002,
+              "change_in_wc": 771592338.0000004,
+              "fcff": -18177706.799999356,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": -14036524.896353174
+            },
+            {
+              "year": 4.0,
+              "revenue": 32098241260.800014,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 983548051.2000016,
+              "nopat": 777002960.4480013,
+              "depreciation": 495048153.6000002,
+              "capex": 488499897.6000002,
+              "change_in_wc": 802456031.5200005,
+              "fcff": -18904815.071999073,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": -13392647.607529446
+            },
+            {
+              "year": 5.0,
+              "revenue": 33061188498.624016,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.030641805051205714,
+              "ebit": 1013054492.7360016,
+              "nopat": 800313049.2614413,
+              "depreciation": 509899598.20800024,
+              "capex": 503154894.52800024,
+              "change_in_wc": 826529712.4656005,
+              "fcff": -19471959.524159074,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": -12655437.647481974
+            }
+          ],
+          "enterprise_value": -286337505.9940609,
+          "equity_value": 3048662494.005939,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.0,
+          "da_percent_sales": 0.015422905871312578,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.0152188991798931,
+          "wacc": 0.09,
+          "wc_change_percent_sales": 0.025,
+          "cogs_percent_sales": 0.9539352890774817,
+          "calibration_adjustment": 0.17960749112570887
+        },
+        "base_financials": {
+          "net_sales": 24509000000.0,
+          "cogs": 18978000000.0,
+          "interest_expense": 0.0,
+          "net_debt": -3335000000.0
+        },
+        "calculated_upside": -0.9989084159482708
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 109000000.0,
+          "equity": 2792879323477.7876,
+          "wacc": 0.12096313462453946,
+          "cost_of_equity": 0.1209666222731436,
+          "beta": 1.4077567519566592
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 10900000.0,
+            "cash": 3444000000.0,
+            "liquidity_ratio": 0.003164924506387921,
+            "refinancing_risk_score": 0,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 5257000000.0,
+            "crash_fcf": 595265000.0,
+            "earnings_power_value": 4222841678.3261127,
+            "floor_value": 5257000000.0,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 2.2,
+            "financial_leverage_score": 0.0001561112921474452,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.12096313462453946,
+            "2": 0.12096313462453946,
+            "3": 0.12096313462453946,
+            "4": 0.12096313462453946,
+            "5": 0.12096313462453946
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.0,
+          "growth_decay_reduction": 0.01,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": 643222666666.6666,
+          "concentration_risk": false,
+          "has_pricing_power": true,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-29T02:32:04.924817",
+          "current_price": 259.70001220703125,
+          "shares_diluted": 10754251799.0,
+          "market_cap": 2792879323477.7876,
+          "risk_free_rate": 0.043540000915527344,
+          "beta": 1.4077567519566592,
+          "wacc_base": 0.12096313462453946,
+          "revenue": 643222666666.6666,
+          "ebitda": 146341000000.0,
+          "ebit": 80585000000.0,
+          "nopat": 63662150000.0,
+          "roic": 0.15748544657020352,
+          "fcf": 112514000000.0,
+          "net_debt": -21162000000.0,
+          "bull_ev": 3117353963397.3965,
+          "bull_intrinsic_per_share": 291.8395460750915,
+          "bull_upside": 0.12375638181502593,
+          "bull_wacc": 0.11596313462453946,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 21.30198620617186,
+          "bull_justified_ev_ebitda": 6.421262773154325,
+          "bull_roic_wacc_spread": 0.04152231194566407,
+          "bull_tv_pct_of_ev": 0.6187441967206653,
+          "bull_implied_tv_ebitda": 6.421262773154325,
+          "base_ev": 1836584776825.1875,
+          "base_intrinsic_per_share": 172.74533008404478,
+          "base_upside": -0.33482740868593697,
+          "base_wacc": 0.12096313462453946,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 12.550035716751884,
+          "base_justified_ev_ebitda": 5.724850293986814,
+          "base_roic_wacc_spread": 0.03652231194566406,
+          "base_tv_pct_of_ev": 0.5574302789545559,
+          "base_implied_tv_ebitda": 5.724850293986814,
+          "bear_ev": 599592757324.7175,
+          "bear_intrinsic_per_share": 57.7217986826791,
+          "bear_upside": -0.7777366346957904,
+          "bear_wacc": 0.13596313462453946,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 4.097230149614377,
+          "bear_justified_ev_ebitda": 4.403451443874596,
+          "bear_roic_wacc_spread": 0.021522311945664063,
+          "bear_tv_pct_of_ev": 0.40781382331443083,
+          "bear_implied_tv_ebitda": 4.403451443874596
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "AMZN",
+            "scenario": "bull",
+            "enterprise_value": 3117353963397.3965,
+            "equity_value": 3108934913397.3965,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 289.08890841541256,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": 0.11316478562562664,
+            "upside_pct": 0.11316478562562664,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          },
+          "base": {
+            "ticker": "AMZN",
+            "scenario": "base",
+            "enterprise_value": 1836584776825.1875,
+            "equity_value": 1828165726825.1875,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 169.99469242436578,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": -0.3454190048753365,
+            "upside_pct": -0.3454190048753365,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          },
+          "bear": {
+            "ticker": "AMZN",
+            "scenario": "bear",
+            "enterprise_value": 599592757324.7175,
+            "equity_value": 591173707324.7175,
+            "shares_diluted": 10754251799.0,
+            "intrinsic_per_share": 54.9711610230001,
+            "current_price": 259.70001220703125,
+            "margin_of_safety": -0.7883282308851899,
+            "upside_pct": -0.7883282308851899,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -65648000000.0,
+            "bridge_cash_(net_of_haircuts)": 57228950000.0,
+            "cash_gross": 86810000000.0,
+            "cash_wc_haircut": 21507720000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 8073330000.0,
+            "cash_net_accessible": 57228950000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 57228950000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 289.08890841541256,
+          "base": 169.99469242436578,
+          "bear": 54.9711610230001
+        },
+        "margin_of_safety": {
+          "bull": 0.11316478562562664,
+          "base": -0.3454190048753365,
+          "bear": -0.7883282308851899
+        },
+        "reverse_dcf": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "current_price": 259.70001220703125,
+          "current_ev": 2771717323477.7876,
+          "current_ev_ebitda": 18.940128354171335,
+          "wacc": 0.11891425776684612,
+          "ebit_margin": 0.1252832093396377,
+          "implied_cagr_10y": 0.27991605643348244,
+          "implied_cagr_5y": 0.27991605643348244,
+          "historical_cagr_5y": 0.20544460333913395,
+          "sector_75th_cagr": 0.18,
+          "implied_tv_ebitda": 18.940128354171335,
+          "forward_ev_ebitda_justified": 6.935808021022649,
+          "signal": "flag"
+        },
+        "implied_cagr": 0.27991605643348244,
+        "historical_cagr": 0.20544460333913395,
+        "reverse_dcf_signal": "flag",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (28.0%) is 1.6x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+        ],
+        "multiples": {
+          "ticker": "AMZN",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 18.940128354171335,
+          "market_ev_ebit": 34.394953446395576,
+          "market_p_sales": 3.8956421091744557,
+          "market_p_e": 35.95827634193109,
+          "market_peg": 1.7502662886974751,
+          "justified_ev_ebitda": 3.896830361729272,
+          "justified_ev_ebit": 7.076578171692292,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 15.043297992442064,
+          "ev_ebitda_premium_pct": 3.860393344340089,
+          "sector_median_ev_ebitda": 22,
+          "vs_sector_premium": -3.0598716458286646,
+          "roic": 0.15748544657020352,
+          "wacc": 0.11891425776684612,
+          "roic_wacc_spread": 0.0385711888033574,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.36596793106511505,
+          "growth_rate": 0.20544460333913395,
+          "signal": "speculative_premium"
+        },
+        "ev_ebitda_market": 18.940128354171335,
+        "ev_ebitda_justified": 3.896830361729272,
+        "ev_ebitda_premium_pct": 3.860393344340089,
+        "multiple_signal": "speculative_premium",
+        "roic_wacc_spread": 0.0385711888033574,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.15748544657020352,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: AMZN ===\nPrice: $259.70  |  Bear=$55  Base=$170  Bull=$289\nMoS:  Bear=-78.8%  Base=-34.5%  Bull=+11.3%\nRDCF: implied=28.0% hist=20.5% [flag]\nEV/EBITDA: 18.9x market vs 3.9x justified (+386%)\nAdj: WACC+0.000 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $259.70 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 28.0%\n  \u2022 Company's robust historical CAGR: 20.5%\n  \u2022 Ratio (implied / historical): 1.4x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (28.0%) is 1.6x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 18.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 3.9x\n  \u2022 Premium to justified multiple: +386%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $55/share vs current price $259.70\n  \u2022 Downside in bear case: -78.8%\n",
+        "structured_analysis": {
+          "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+          "bear_case_summary": "The market price of $259.70 mathematically requires an impossible implied 10-year revenue CAGR of 28.0%. For a mega-cap company of Amazon's scale, this is a staggering 1.4x its historical CAGR of 20.5% and 1.6x the sector's 75th percentile of 18.0%. Compounding at 28% for a decade requires Amazon to add trillions to its top line, effectively demanding it capture an unrealistic share of global GDP. Furthermore, the Liberti Formula reveals a massive disconnect: the market assigns an EV/EBITDA multiple of 18.9x against a mathematically justified multiple of just 3.9x, representing a +386% speculative premium driven by AI and cloud narrative FOMO. Qualitatively, achieving this requires AWS to maintain hyper-growth against fierce competition from Azure and GCP, while the retail segment must expand margins despite consumer fatigue and regulatory antitrust scrutiny. If AWS growth normalizes and the AI CapEx burden compresses ROIC, the narrative premium will collapse. Reverting to the justifie...(truncated)",
+          "sentiment_score": -9
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+        "moat_score": 9.0,
+        "moat_attributes": {
+          "switching_costs": 8.0,
+          "network_effects": 10.0,
+          "cost_advantage": 9.0,
+          "intangibles": 9.0
+        },
+        "moat_evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+        "has_pricing_power": true,
+        "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network.",
+        "concentration_risk": false,
+        "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients.",
+        "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+        "revenue_segments": [
+          {
+            "segment": "North America",
+            "pct_revenue": 60.0,
+            "growth_trend": "Growing steadily"
+          },
+          {
+            "segment": "International",
+            "pct_revenue": 23.0,
+            "growth_trend": "Growing moderately"
+          },
+          {
+            "segment": "AWS",
+            "pct_revenue": 17.0,
+            "growth_trend": "Growing rapidly"
+          }
+        ],
+        "key_customers": [
+          "Consumers and Prime members",
+          "Third-party marketplace sellers",
+          "Enterprise and startup AWS cloud customers",
+          "Digital advertising clients"
+        ],
+        "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+        "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers.",
+        "operating_leverage_score": 2.2
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.015,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+        "substitution_risk_score": 3.0,
+        "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+        "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+        "pass_through_capability": true,
+        "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 2.046889161801436,
+        "is_cyclical_peak": true,
+        "recommended_base_revenue": 643222666666.6666,
+        "deferred_revenue_trend": "Deferred revenue grew by 13.7% to $20.6B. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy and shows no signs of pull-forward risk, supporting high-quality revenue growth.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "No 10-K text or patent data was available to identify specific expirations. However, Amazon's core businesses (e-commerce, AWS, advertising) rely on scale, network effects, and infrastructure rather than expiring patents or exclusive contracts. Therefore, material revenue risk from intangible decay is estimated to be negligible, though this estimate carries uncertainty due to missing source documents.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Amazon's revenue Z-score of 2.05 triggers a cyclical peak flag, though this is driven by consistent structural growth rather than true cyclicality. The quality of growth is robust, evidenced by a 13.7% increase in deferred revenue and a perfect D8 score of 1.00, indicating no pull-forward risk. Intangible risk is estimated at 0.0%, as the company's competitive advantage stems from scale and network effects rather than expiring patents, avoiding any terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "### UNITED STATES\n\n### SECURITIES AND EXCHANGE COMMISSION\n\n#### Washington, D.C. 20549\n<div align='center'>____________________________________</div>\n\n#### FORM 10-K\n<div align='center'>____________________________________</div>\n\n(Mark One)\n\n| \u2612 |     | ANNUAL REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the fiscal year ended December 31, 2025\n\n#### or\n| \u2610 |     | TRANSITION REPORT PURSUANT TO SECTION 13 OR 15(d) OF THE SECURITIES EXCHANGE ACT OF 1934 |\n\n#### For the transition period from to .\n\n#### Commission File No. 000-22513\n<div align='center'>____________________________________</div>\n\n#### AMAZON.COM, INC.\n<div align='center'>(Exact name of registrant as specified in its charter)</div>\n\n| Delaware                        |     | 91-1646860         |\n| (State or other jurisdiction of \n incorporation or organization)  |     | -I.R.S. Employer   \n Identification No. |\n\n#### 410 Terry Avenue North\n\n#### Seattle, Washington 98109-5210\n<div...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "AMZN",
+        "generated_at": "2026-04-28T22:32:41.227988",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 2.2,
+            "cost_structure": "Amazon's operating leverage score of 2.2/10 reflects its highly capital-intensive business model. Major fixed cost drivers include massive investments in AWS data centers, global fulfillment and logistics networks, and high R&D and headcount costs. While AWS and advertising exhibit high margins, the core e-commerce business has substantial variable costs including shipping, third-party seller payouts, and retail COGS. This requires continuous heavy capex to support revenue growth, limiting the flow-through of incremental revenue to EBIT compared to pure-play software companies.",
+            "business_description": "Amazon is a diversified technology company operating primarily in e-commerce, cloud computing, and digital advertising. The company generates revenue through direct retail sales, fees charged to third-party sellers for fulfillment and commissions, subscription services like Amazon Prime, and enterprise cloud infrastructure via AWS.",
+            "revenue_segments": [
+              {
+                "segment": "North America",
+                "pct_revenue": 60.0,
+                "growth_trend": "Growing steadily"
+              },
+              {
+                "segment": "International",
+                "pct_revenue": 23.0,
+                "growth_trend": "Growing moderately"
+              },
+              {
+                "segment": "AWS",
+                "pct_revenue": 17.0,
+                "growth_trend": "Growing rapidly"
+              }
+            ],
+            "key_customers": [
+              "Consumers and Prime members",
+              "Third-party marketplace sellers",
+              "Enterprise and startup AWS cloud customers",
+              "Digital advertising clients"
+            ],
+            "competitive_landscape": "Amazon competes with Walmart and Target in retail, Microsoft Azure and Google Cloud in cloud computing, and Google and Meta in digital advertising. It differentiates itself through its massive logistics infrastructure enabling rapid delivery, the sticky Prime subscription ecosystem, and AWS's market-leading breadth of cloud services.",
+            "regulatory_risk": "Amazon faces significant antitrust scrutiny and ongoing investigations from the FTC and European regulators regarding its dual role as a marketplace operator and competitor to third-party sellers."
+          },
+          "value_chain": {
+            "power_ratio": 0.015,
+            "upstream_leak": false,
+            "strategic_leverage": 9.0,
+            "bottleneck_analysis": "Critical suppliers include NVIDIA for AWS AI compute and third-party logistics providers. NVIDIA holds significant pricing power due to high demand for GPUs, which could compress AWS margins if costs cannot be passed through. However, Amazon's scale and development of custom silicon (Trainium, Inferentia) mitigate this bottleneck.",
+            "substitution_risk_score": 3.0,
+            "top_substitutes": "1. Microsoft Azure and Google Cloud for AWS. 2. Walmart and Target for e-commerce. 3. Shopify for third-party seller services. Switching scenarios require significant migration costs for cloud or loss of Prime fulfillment benefits for retail.",
+            "pricing_power_assessment": "Strong pricing power evidenced by historical Prime membership fee increases without material churn, and AWS's ability to maintain premium pricing despite cloud competition. High switching costs in AWS and Prime ecosystem lock-in support price leadership.",
+            "pass_through_capability": true,
+            "analysis_summary": "Amazon holds a dominant strategic position across its dual monopolies in e-commerce and cloud computing. Buyer power is low due to high switching costs in AWS and Prime ecosystem lock-in. Supplier power is generally low due to Amazon's massive scale, though AI compute suppliers like NVIDIA currently hold moderate leverage. Substitution threat is low-to-moderate, primarily from Microsoft in cloud and Walmart in retail. Overall, Amazon exhibits immense platform leverage, strong pricing power, and deep competitive moats."
+          },
+          "moat": {
+            "score": 9.0,
+            "switching_costs": 8.0,
+            "network_effects": 10.0,
+            "cost_advantage": 9.0,
+            "intangibles": 9.0,
+            "evidence": "Amazon benefits from powerful network effects in its third-party marketplace, connecting millions of sellers with hundreds of millions of buyers. Prime membership boasts retention rates historically exceeding 90 percent, creating an ecosystem lock-in. AWS exhibits high switching costs due to deeply integrated enterprise cloud architectures and proprietary databases. The company's logistics network provides an insurmountable cost advantage and delivery speed that competitors cannot easily replicate.",
+            "has_pricing_power": true,
+            "pricing_power_evidence": "Amazon has successfully raised the price of its US Prime membership from $119 to $139 in 2022, and increased fulfillment fees for third-party sellers multiple times, without experiencing material churn in its subscriber base or seller network."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 2.046889161801436,
+            "is_peak": true
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue grew by 13.7% to $20.6B. With a D8 Revenue Score of 1.00, the deferred revenue trend is healthy and shows no signs of pull-forward risk, supporting high-quality revenue growth.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "No 10-K text or patent data was available to identify specific expirations. However, Amazon's core businesses (e-commerce, AWS, advertising) rely on scale, network effects, and infrastructure rather than expiring patents or exclusive contracts. Therefore, material revenue risk from intangible decay is estimated to be negligible, though this estimate carries uncertainty due to missing source documents.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Amazon's revenue Z-score of 2.05 triggers a cyclical peak flag, though this is driven by consistent structural growth rather than true cyclicality. The quality of growth is robust, evidenced by a 13.7% increase in deferred revenue and a perfect D8 score of 1.00, indicating no pull-forward risk. Intangible risk is estimated at 0.0%, as the company's competitive advantage stems from scale and network effects rather than expiring patents, avoiding any terminal haircut."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 716.924,
+            "ebitda_bn": 146.341,
+            "fcf_bn": 112.514,
+            "nopat_bn": 63.66215,
+            "invested_capital_bn": 404.24148,
+            "net_debt_bn": -21.162,
+            "sbc_bn": 19.467,
+            "fiscal_year": 2025,
+            "data_quality": 0.99
+          },
+          "ratios": {
+            "gross_margin_pct": 50.28566486824266,
+            "ebit_margin_pct": 11.24038252311263,
+            "ebitda_margin_pct": 20.41234496264597,
+            "fcf_margin_pct": 15.693992668678966,
+            "roic": 0.15748544657020352,
+            "roe": 0.1889482198679041,
+            "sbc_pct_fcf": null,
+            "share_dilution_pct": 0.8946044171093095,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": null,
+            "sloan_accrual": null,
+            "domain_scores": {
+              "D1_NonRecurring": 0.9,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 1,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 109000000.0,
+            "equity": 2792879323477.7876,
+            "wacc": 0.12096313462453946,
+            "cost_of_equity": 0.1209666222731436,
+            "beta": 1.4077567519566592
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 10900000.0,
+              "cash": 3444000000.0,
+              "liquidity_ratio": 0.003164924506387921,
+              "refinancing_risk_score": 0,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 5257000000.0,
+              "crash_fcf": 595265000.0,
+              "earnings_power_value": 4222841678.3261127,
+              "floor_value": 5257000000.0,
+              "floor_price_per_share": 0
+            },
+            "leverage": {
+              "operating_leverage_score": 2.2,
+              "financial_leverage_score": 0.0001561112921474452,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.12096313462453946,
+              "2": 0.12096313462453946,
+              "3": 0.12096313462453946,
+              "4": 0.12096313462453946,
+              "5": 0.12096313462453946
+            }
+          },
+          "concentration_risk": false,
+          "concentration_details": "No single customer or supplier accounts for more than 10 percent of Amazon's total revenue. The customer base is highly diversified across millions of consumers, third-party sellers, and enterprise AWS clients."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 3048662494.005939,
+            "upside_percent": -0.9989084159482708,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 54.9711610230001,
+                "margin_of_safety": -0.7883282308851899,
+                "ev": 599592757324.7175
+              },
+              "base": {
+                "intrinsic_per_share": 169.99469242436578,
+                "margin_of_safety": -0.3454190048753365,
+                "ev": 1836584776825.1875
+              },
+              "bull": {
+                "intrinsic_per_share": 289.08890841541256,
+                "margin_of_safety": 0.11316478562562664,
+                "ev": 3117353963397.3965
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.27991605643348244,
+              "historical_cagr": 0.20544460333913395,
+              "signal": "flag",
+              "reasons": [
+                "Implied CAGR (28.0%) is 1.6x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 18.940128354171335,
+              "justified_ev_ebitda": 3.896830361729272,
+              "premium_pct": 3.860393344340089,
+              "signal": "speculative_premium",
+              "roic_wacc_spread": 0.0385711888033574,
+              "value_creation": "creating",
+              "roic": 0.15748544657020352,
+              "wacc": 0.12096313462453946
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.0,
+              "growth_decay_reduction": 0.01,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": 643222666666.6666,
+              "concentration_risk": false,
+              "has_pricing_power": true,
+              "strategic_leverage_score": 9.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": true,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "is_cyclical_peak \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.12096313462453946,
+            "beta": 1.4077567519566592,
+            "risk_free_rate": 0.043540000915527344
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Growth Extrapolation Bias and Narrative Premium",
+            "bear_case_summary": "The market price of $259.70 mathematically requires an impossible implied 10-year revenue CAGR of 28.0%. For a mega-cap company of Amazon's scale, this is a staggering 1.4x its historical CAGR of 20.5% and 1.6x the sector's 75th percentile of 18.0%. Compounding at 28% for a decade requires Amazon to add trillions to its top line, effectively demanding it capture an unrealistic share of global GDP. Furthermore, the Liberti Formula reveals a massive disconnect: the market assigns an EV/EBITDA multiple of 18.9x against a mathematically justified multiple of just 3.9x, representing a +386% speculative premium driven by AI and cloud narrative FOMO. Qualitatively, achieving this requires AWS to maintain hyper-growth against fierce competition from Azure and GCP, while the retail segment must expand margins despite consumer fatigue and regulatory antitrust scrutiny. If AWS growth normalizes and the AI CapEx burden compresses ROIC, the narrative premium will collapse. Reverting to the justifie...(truncated)",
+            "sentiment_score": -9,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $259.70 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 28.0%\n  \u2022 Company's robust historical CAGR: 20.5%\n  \u2022 Ratio (implied / historical): 1.4x\n  \u2022 Reverse DCF signal: FLAG\n\n  Reverse DCF assessment:\n    - Implied CAGR (28.0%) is 1.6x the sector 75th percentile (18.0%). Market is pricing extraordinary growth \u2014 framework requires explicit TAM justification and documented override.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 18.9x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 3.9x\n  \u2022 Premium to justified multiple: +386%\n  \u2022 Multiple signal: SPECULATIVE_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $55/share vs current price $259.70\n  \u2022 Downside in bear case: -78.8%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": 2,
+            "margin_of_safety": -0.3454190048753365,
+            "narrative": "The implied 10-year CAGR of 28.0% is mathematically untenable for a company of Amazon's scale. Historically compounding at 20.5%, accelerating growth by 1.4x over the next decade defies the law of large numbers and would require Amazon to consume an implausible percentage of global GDP. While AWS and Advertising provide structural tailwinds, the core retail segment's maturity dictates an inevitable growth decay curve closer to the low-teens.\n\nThe Contrarian is absolutely correct that the market price embeds an impossible 28% revenue CAGR and a massive +386% speculative premium on the EV/EBITDA multiple. The narrative FOMO surrounding AI is masking the heavy CapEx burden required to sustain it. However, the Bear's justified multiple of 3.9x is overly punitive; it ignores the ongoing mix-shift toward high-margin AWS and Advertising revenues, which structurally elevates Amazon's margin profile and warrants a higher baseline multiple. Nonetheless, at $260, the stock is priced for a reality...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u26a0\ufe0f CAUTION: Implied CAGR (28.0%) exceeds historical (20.5%) by 1.4x.",
+              "\u274c FAIL: EV/EBITDA at +386% premium. Signal: speculative_premium."
+            ],
+            "pillar_scores": {
+              "ticker": "AMZN",
+              "p1_moat": 5,
+              "p2_health": 4,
+              "p3_tailwind": 5,
+              "p4_mos": 1,
+              "p5_leadership": 2,
+              "raw_total": 17,
+              "capped_total": 17,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "monitor",
+              "position_size_pct": "Investable quality \u2014 price or risk concern (capped at 75% due to reflexivity flag)",
+              "conviction_score": 2,
+              "reflexivity_flags": [
+                "High-SBC company (17.3% of FCF) \u2014 talent retention through equity creates reflexivity risk. Bear case widened: stock decline triggers attrition \u2192 revenue impairment."
+              ],
+              "reflexivity_cap": true,
+              "p1_reasons": [
+                "Moat 9.0/10 \u2014 Multi-layered moats confirmed \u2014 network effects + switching costs + data flywheel"
+              ],
+              "p2_reasons": [
+                "ROIC-WACC spread +3.9pp \u2014 modest value creation",
+                "FCF margin 15.7% \u2014 strong FCF",
+                "Net cash position (-0.1\u00d7 EBITDA)"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 20.5% \u2014 strong growth for mature stage",
+                "Sector 'Technology' \u2014 confirmed secular tailwind"
+              ],
+              "p4_reasons": [
+                "Base MoS -35.7% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 17.3% of FCF \u2014 severe dilution, employees compensated at shareholder expense",
+                "Operating leverage 7.0/10",
+                "Upstream value leak detected \u2014 suppliers capture excess margin"
+              ],
+              "lifecycle_stage": "mature",
+              "lifecycle_label": "MATURE"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for AMZN. Conviction: 2.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]
