@@ -275,6 +275,22 @@ class CleaningEngine:
         record.raw = dict(raw_wide)
         record.clean = dict(raw_wide)  # start with raw; domains adjust in-place
 
+        # 2b. VALIDATION GATE (Layers 1-3)
+        try:
+            from aletheia.data.data_quality_validator import DataQualityValidator
+            validator = DataQualityValidator()
+            validation_result = validator.validate(ticker, fiscal_year, raw_wide)
+            if not validation_result["passed"]:
+                for failure in validation_result["all_failures"]:
+                    record.error(f"Validation Failure: {failure}")
+                record.overall_quality_score = 0.0
+                if self.verbose:
+                    print(f"  ✗ VALIDATION GATE FAILED: {validation_result['all_failures']}")
+                # Halt further cleaning domains
+                return record
+        except ImportError:
+            pass
+
         # 3. Apply all 10 domains sequentially
         self._domain1_nonrecurring(record)
         self._domain2_jva_separation(record, ticker, fiscal_year)

@@ -24,236 +24,9 @@ from pathlib import Path
 from typing import Dict, Optional
 
 
-# Tags that canonically represent cash outflows but may be reported as negative numbers.
-# We normalize these to positive magnitudes at ingest so max() resolution logic works.
-SIGNED_OUTFLOW_TAGS = {
-    "PaymentsToAcquirePropertyPlantAndEquipment",
-    "PaymentsForCapitalImprovements",
-    "PaymentsToAcquireProductiveAssets",
-    "PropertyPlantAndEquipmentAdditions",
-    "PaymentsToAcquireOtherPropertyPlantAndEquipment",
-    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
-}
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Canonical tag name normalization
-# Maps what canonical_transformer.py actually writes → standard names
-# the cleaning engine expects
-# ─────────────────────────────────────────────────────────────────────────────
-
-# These are the actual standard_tag values written by RosettaStoneTransformer
-# mapped to the PascalCase names the cleaning engine uses internally.
-# Extend this as new tag names appear in the canonical parquet.
-
-CANONICAL_TO_CLEAN = {
-    # Income statement
-    "revenue":          "Revenue",
-    "Revenue":          "Revenue",
-    "cogs":             "COGS",
-    "COGS":             "COGS",
-    "sga":              "SG&A",
-    "SG&A":             "SG&A",
-    "rd":               "R&D",
-    "R&D":              "R&D",
-    "opex":             "OperatingExpenses",
-    "ebit":             "OperatingIncome",   # transformer writes 'ebit', maps to OperatingIncome
-    "EBIT":             "OperatingIncome",
-    "OperatingIncome":  "OperatingIncome",
-    "operating_income": "OperatingIncome",
-    "net_income":       "NetIncome",
-    "NetIncome":        "NetIncome",
-    "tax_rate":         "TaxExpense",        # transformer writes raw tax expense as 'tax_rate'
-    "depreciation":     "Depreciation",
-    "Depreciation":     "Depreciation",
-    "medical_claims":   "MedicalClaims",
-
-    # Balance sheet
-    "cash":             "Cash",
-    "Cash":             "Cash",
-    "assets":           "TotalAssets",
-    "TotalAssets":      "TotalAssets",
-    "liabilities":      "TotalLiabilities",
-    "TotalLiabilities": "TotalLiabilities",
-    "equity":           "TotalEquity",
-    "TotalEquity":      "TotalEquity",
-    "debt_long":        "LongTermDebt",
-    "LongTermDebt":     "LongTermDebt",
-    "debt_current":     "ShortTermDebt",
-    "total_debt":       "TotalDebt",
-    "Assets":           "TotalAssets",
-    "Liabilities":      "TotalLiabilities",
-    "LiabilitiesCurrent": "CurrentLiabilities",
-
-    # Cash flow
-    "capex":            "CapEx",
-    "CapEx":            "CapEx",
-    "operating_cf":     "OperatingCF",
-    "OperatingCF":      "OperatingCF",
-}
-
-# Direct XBRL tag → clean name mapping for tags the transformer
-# may not have captured but exist in raw XBRL facts.
-# These are pulled directly from raw JSON when needed.
-XBRL_TO_CLEAN = {
-    # Revenue (priority ordered — first match wins)
-    "Revenues":                     "Revenue",
-    "Revenue":                      "Revenue",
-    "RevenueFromContractWithCustomerExcludingAssessedTax": "Revenue",
-    "RevenueFromContractsWithCustomers": "Revenue",
-    "SalesRevenueNet":              "Revenue",
-    "SalesRevenueGoodsNet":         "Revenue",
-    "RevenueFromContractWithCustomerIncludingAssessedTax": "Revenue",
-
-    # Operating income
-    "OperatingIncomeLoss":          "OperatingIncome",
-    "ProfitLossFromOperatingActivities": "OperatingIncome",
-    "OperatingProfit":              "OperatingIncome",
-    "ProfitLossBeforeTax":          "OperatingIncome",
-
-    # Net income
-    "NetIncomeLoss":                "NetIncome",
-    "ProfitLoss":                   "NetIncome",
-    "ProfitLossAttributableToOwnersOfParent": "NetIncome",
-
-    # Tax
-    "IncomeTaxExpenseBenefit":      "TaxExpense",
-    "IncomeTaxesPaid":              "CashTaxesPaid",
-    "IncomeTaxesPaidNet":           "CashTaxesPaid",
-
-    # COGS / Cost of Revenue
-    "CostOfGoodsAndServicesSold":   "COGS",
-    "CostOfRevenue":                "COGS",
-    "CostOfGoodsSold":              "COGS",
-    "CostOfSales":                  "COGS",
-
-    # Pre-tax income
-    "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest":
-                                    "PretaxIncome",
-
-    # SBC
-    "ShareBasedCompensation":       "SBC",
-    "AllocatedShareBasedCompensationExpense": "SBC",
-
-    # Depreciation
-    "DepreciationDepletionAndAmortization": "Depreciation",
-    "DepreciationAndAmortization":  "Depreciation",
-    "DepreciationAmortizationAndAccretionNet": "Depreciation",
-    "DepreciationExpense": "Depreciation",
-    "AmortisationExpense": "Depreciation",
-    "Depreciation": "Depreciation_Tangible",
-
-    # CapEx
-    "PaymentsToAcquirePropertyPlantAndEquipment": "CapEx",
-    "PaymentsToAcquireProductiveAssets": "CapEx",
-    "PropertyPlantAndEquipmentAdditions": "CapEx",
-    "PaymentsForCapitalImprovements": "CapEx",
-    "PaymentsToAcquireOtherPropertyPlantAndEquipment": "CapEx",
-    "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities": "CapEx",
-
-    # Operating Expenses (for fallback EBIT)
-    "OperatingExpenses": "OperatingExpenses",
-
-    # Buybacks
-    "PaymentsForRepurchaseOfCommonStock": "Buybacks",
-
-    # Cash flows
-    "NetCashProvidedByUsedInOperatingActivities": "OperatingCF",
-    "CashFlowsFromUsedInOperatingActivities": "OperatingCF",
-    "NetCashProvidedByUsedInInvestingActivities": "InvestingCF",
-    "NetCashProvidedByUsedInFinancingActivities": "FinancingCF",
-
-    # Balance sheet
-    "CashAndCashEquivalentsAtCarryingValue": "Cash",
-    "Assets":                       "TotalAssets",
-    "Liabilities":                  "TotalLiabilities",
-    "StockholdersEquity":           "TotalEquity",
-    "EquityAttributableToOwnersOfParent": "TotalEquity",
-    "Equity":                       "TotalEquity",
-    "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest": "TotalEquity",
-    "LongTermDebtNoncurrent":       "LongTermDebt",
-    "LongTermDebt":                 "LongTermDebt",
-    "AssetsCurrent":                "CurrentAssets",
-    "LiabilitiesCurrent":           "CurrentLiabilities",
-    "AccountsReceivableNetCurrent": "AccountsReceivable",
-    "InventoryNet":                 "Inventory",
-    "GoodwillAndIntangibleAssetsDisclosureAbstract": None,  # skip
-    "Goodwill":                     "Goodwill",
-    "PropertyPlantAndEquipmentNet": "PPE",
-
-    # Shares
-    "WeightedAverageNumberOfDilutedSharesOutstanding": "SharesDiluted",
-    "WeightedAverageNumberOfSharesOutstandingBasic":   "SharesBasic",
-    "CommonStockSharesOutstanding": "SharesOutstanding",
-
-    # SBC
-    "ShareBasedCompensation":       "SBC",
-
-    # Lease (ASC 842)
-    "OperatingLeaseRightOfUseAsset":       "ROU_Asset",
-    "OperatingLeaseLiabilityCurrent":      "LeaseLiabilityCurrent",
-    "OperatingLeaseLiabilityNoncurrent":   "LeaseLiabilityNoncurrent",
-    "OperatingLeaseCost":                  "LeaseCost",
-
-    # Pension
-    "DefinedBenefitPlanBenefitObligation": "PensionObligation",
-    "DefinedBenefitPlanFairValueOfPlanAssets": "PensionPlanAssets",
-    "DefinedBenefitPlanServiceCost":       "PensionServiceCost",
-    "DefinedBenefitPlanInterestCost":      "PensionInterestCost",
-    "DefinedBenefitPlanFundedStatusOfPlan": "PensionFundedStatus",
-
-    # Restructuring / non-recurring
-    "RestructuringCharges":                "RestructuringCharges",
-    "AssetImpairmentCharges":              "ImpairmentLoss",
-    "GoodwillImpairmentLoss":             "GoodwillImpairment",
-
-    # JVA
-    "IncomeLossFromEquityMethodInvestments": "JVA_Income",
-
-    # Tax sustainability
-    "OperatingLossCarryforwards":         "NOL_Carryforward",
-    "DeferredTaxAssetsOperatingLossCarryforwards": "NOL_Carryforward",
-    "InventoryLIFOReserve":               "LIFO_Reserve",
-    "CapitalizedComputerSoftwareNet":     "CapitalizedSoftware",
-    "AmortizationOfIntangibleAssets":     "IntangibleAmortization",
-
-    # Deferred revenue
-    "DeferredRevenueCurrent":             "DeferredRevenue",
-    "ContractWithCustomerLiabilityCurrent": "DeferredRevenue",
-
-    # Cost of revenue
-    "CostOfGoodsAndServicesSold":         "COGS",
-    "CostOfRevenue":                      "COGS",
-    "CostOfGoodsSold":                    "COGS",
-    "CostOfProductsSold":                 "COGS",
-    "CostOfServices":                     "COGS",
-    "FuelAndPurchasedPower":              "COGS",
-    "UtilitiesOperatingExpenseFuelUsed":  "COGS",
-    "GrossProfit":                        "GrossProfit",
-    "SellingGeneralAndAdministrativeExpense": "SG&A",
-    "ResearchAndDevelopmentExpense":      "R&D",
-    # Healthcare / Managed Care specific tags
-    "PolicyholderBenefitsAndClaimsIncurredNet": "COGS",
-    "HealthCareOrganizationMedicalClaimsExpense": "MedicalClaims",
-    "BenefitsLossesAndExpenses":          "MedicalClaims",
-    "HealthCareCostsMedical":             "MedicalClaims",
-    # Net income variants
-    "NetIncomeLossAttributableToParentNetOfTax": "NetIncome",
-    "IncomeLossFromContinuingOperations": "NetIncome",
-
-    # Non-operating
-    "NonoperatingIncomeExpense":          "NonOperatingIncome",
-    "OtherNonoperatingIncomeExpense":     "OtherNonOperatingIncome",
-    "InterestExpense":                    "InterestExpense",
-    
-    # Financing / Cash Flow tags
-    "FinanceLeasePrincipalPayments": "FinanceLeasePrincipalPayments",
-    "RepaymentsOfLongTermCapitalLeaseObligations": "RepaymentsOfLongTermCapitalLeaseObligations",
-}
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# TagResolver class
-# ─────────────────────────────────────────────────────────────────────────────
+from config.tag_mappings import FIELD_MAPPINGS, CANONICAL_ALIASES
+from config.sign_conventions import get_sign_convention
+from config.industry_routing import get_industry
 
 class TagResolver:
     """
@@ -262,14 +35,6 @@ class TagResolver:
     2. Supplemental metrics from raw XBRL that the transformer did not capture
        (SBC, lease liabilities, pension, operating cash flows, etc.)
     """
-
-    CLEAN_NAME_RESOLUTION = {
-        "COGS":        "max",   # sub-components shadow total — take largest
-        "Depreciation": "sum",  # tangible + intangible = total D&A
-        "Revenue":     "max",   # same tag reported under multiple names
-        # Note: SBC is another candidate for 'sum', but AllocatedShareBasedCompensationExpense
-        # is already the comprehensive total. This dict serves as an extension point for future split-tag patterns.
-    }
 
     def __init__(self, raw_dir: str = "valuation_data/raw/sec"):
         self.raw_dir = Path(raw_dir)
@@ -282,10 +47,8 @@ class TagResolver:
         """
         normalized = {}
         for raw_key, value in wide_dict.items():
-            clean_key = CANONICAL_TO_CLEAN.get(raw_key, raw_key)
+            clean_key = CANONICAL_ALIASES.get(raw_key, raw_key)
             if clean_key and value is not None:
-                # If we already have this key (e.g. both 'revenue' and 'Revenue'),
-                # prefer non-zero value
                 if clean_key not in normalized or (normalized[clean_key] == 0 and value != 0):
                     normalized[clean_key] = value
         return normalized
@@ -315,31 +78,41 @@ class TagResolver:
         combined_facts.update(us_gaap)
 
         enriched = dict(wide_dict)
+        industry = get_industry(ticker)
 
-        # Collect all candidates for each clean_name
-        candidates: Dict[str, list[float]] = {}
-
-        for xbrl_tag, clean_name in XBRL_TO_CLEAN.items():
-            if clean_name is None:
+        from config.tag_mappings import RESOLUTION_STRATEGY
+        
+        for clean_name, rules in FIELD_MAPPINGS.items():
+            # Never overwrite a valid value already set by canonical transformer
+            if enriched.get(clean_name) not in (None, 0.0):
                 continue
-            if xbrl_tag not in combined_facts:
-                continue
-            val = self._extract_value(combined_facts[xbrl_tag], fiscal_year, tag_name=xbrl_tag)
-            
-            # Normalize sign for cash outflows
-            if val is not None and xbrl_tag in SIGNED_OUTFLOW_TAGS:
-                val = abs(val)
                 
-            if val is not None and val > 0:
-                candidates.setdefault(clean_name, []).append(val)
-
-        # Resolve: apply strategy (sum or max) for each clean_name
-        # Never overwrite a value already in enriched from the canonical transformer
-        for clean_name, values in candidates.items():
-            strategy = self.CLEAN_NAME_RESOLUTION.get(clean_name, "max")
-            resolved = sum(values) if strategy == "sum" else max(values)
-            if clean_name not in enriched or enriched[clean_name] in (None, 0.0):
-                enriched[clean_name] = resolved
+            priority_list = rules.get(industry, rules.get("default", []))
+            sign_convention = get_sign_convention(clean_name)
+            strategy = RESOLUTION_STRATEGY.get(clean_name, "first")
+            
+            candidates = []
+            for xbrl_tag in priority_list:
+                if xbrl_tag not in combined_facts:
+                    continue
+                    
+                val = self._extract_value(combined_facts[xbrl_tag], fiscal_year, tag_name=xbrl_tag)
+                
+                if val is not None:
+                    # Normalize sign for cash outflows
+                    if sign_convention == "abs":
+                        val = abs(val)
+                        
+                    if val != 0:
+                        candidates.append(val)
+                        if strategy == "first":
+                            break # First valid match wins!
+                            
+            if candidates:
+                if strategy == "max":
+                    enriched[clean_name] = max(candidates)
+                else:
+                    enriched[clean_name] = candidates[0]
 
         return enriched
 
