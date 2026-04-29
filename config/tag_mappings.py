@@ -166,10 +166,10 @@ FIELD_MAPPINGS = {
     },
     "TotalEquity": {
         "default": [
+            "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
             "StockholdersEquity",
             "EquityAttributableToOwnersOfParent",
-            "Equity",
-            "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest"
+            "Equity"
         ]
     },
     "RedeemableNoncontrollingInterest": {
