@@ -30,19 +30,7 @@ from aletheia.tools.search import search_sentiment
 # Python calculation — operating leverage from DuckDB margins
 # ─────────────────────────────────────────────────────────────────────────────
 
-def compute_operating_leverage_score(gross_margin_pct: float,
-                                     ebit_margin_pct: float) -> float:
-    """
-    Operating leverage = how much gross profit flows through to EBIT.
-    Formula: ebit_margin / gross_margin → scaled to 0-10.
-    Source: DuckDB derived_EBIT_Margin_Pct and derived_GrossMargin_Pct.
-    """
-    if not gross_margin_pct or gross_margin_pct <= 0:
-        return 5.0
-    if ebit_margin_pct is None:
-        return 5.0
-    ratio = ebit_margin_pct / gross_margin_pct
-    return round(max(0.0, min(10.0, ratio * 10.0)), 1)
+from aletheia.tools.forensic_metrics import compute_operating_leverage_score
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -167,9 +155,11 @@ def build_db_context_str(db: dict) -> str:
     if not db:
         return "DuckDB data unavailable."
 
-    def fmt(v, pct=False, bn=False):
+    def fmt(v, pct=False, bn=False, pre_pct=False):
         if v is None:
             return "N/A"
+        if pre_pct:
+            return f"{v:.1f}%"
         if pct:
             return f"{v:.1%}"
         if bn:
@@ -181,14 +171,15 @@ def build_db_context_str(db: dict) -> str:
         f"  Revenue:            {fmt(db.get('revenue'), bn=True)}",
         f"  EBITDA:             {fmt(db.get('ebitda'), bn=True)}",
         f"  FCF:                {fmt(db.get('fcf'), bn=True)}",
-        f"  Gross Margin:       {fmt(db.get('gross_margin_pct'), pct=True)}",
-        f"  EBIT Margin:        {fmt(db.get('ebit_margin_pct'), pct=True)}",
-        f"  FCF Margin:         {fmt(db.get('fcf_margin_pct'), pct=True)}",
+        f"  Gross Margin:       {fmt(db.get('gross_margin_pct'), pre_pct=True)}",
+        f"  EBIT Margin:        {fmt(db.get('ebit_margin_pct'), pre_pct=True)}",
+        f"  FCF Margin:         {fmt(db.get('fcf_margin_pct'), pre_pct=True)}",
         f"  ROIC:               {fmt(db.get('roic'), pct=True)}",
         f"  ROE:                {fmt(db.get('roe'), pct=True)}",
         f"  Net Debt:           {fmt(db.get('net_debt'), bn=True)}",
-        f"  SBC % of FCF:       {fmt(db.get('sbc_pct_fcf'), pct=True)}",
-        f"  Share Dilution:     {fmt(db.get('share_dilution_pct'), pct=True)}",
+        f"  DSO (Days Sales):   {fmt(db.get('dso'))}",
+        f"  SBC % of FCF:       {fmt(db.get('sbc_pct_fcf'), pre_pct=True)}",
+        f"  Share Dilution:     {fmt(db.get('share_dilution_pct'), pre_pct=True)}",
         f"  3Y Revenue CAGR:    {fmt(db.get('rev_cagr_3y'), pct=True)}",
         f"  Deferred Revenue:   {fmt(db.get('deferred_revenue'), bn=True)}",
         f"  Deferred Rev Growth:{fmt(db.get('deferred_rev_growth'), pct=True)}",

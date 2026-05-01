@@ -255,7 +255,7 @@ class QuantitativeScreens:
         long_term_debt = get(record, "LongTermDebt", "LongTermDebtNoncurrent")
         total_equity = get(record, "TotalEquity")
         current_assets = get(record, "CurrentAssets", "AssetsCurrent")
-        current_liab = get(record, "CurrentLiabilities", "LiabilitiesCurrent")
+        current_liab = get(record, "LiabilitiesCurrent")
         net_income = get(record, "NetIncome", "NetIncomeLoss")
         cash_ops = get(record, "OperatingCF", "NetCashProvidedByUsedInOperatingActivities")
 
@@ -273,7 +273,7 @@ class QuantitativeScreens:
         p_long_term_debt = get(prior, "LongTermDebt", "LongTermDebtNoncurrent")
         p_total_equity = get(prior, "TotalEquity")
         p_current_assets = get(prior, "CurrentAssets", "AssetsCurrent")
-        p_current_liab = get(prior, "CurrentLiabilities", "LiabilitiesCurrent")
+        p_current_liab = get(prior, "LiabilitiesCurrent")
 
         components = {}
         available = 0

@@ -277,30 +277,4 @@ def intake_agent(state):
     print("---INTAKE AGENT (Canonical -> Serving Base)---")
     ticker = state.get("ticker", "AAPL")
     
-    # 1. Load Parquet
-    loader = CanonicalLoader()
-    df = loader.load_financials(ticker)
-    
-    if df.empty:
-        return {"messages": [HumanMessage(content=f"Intake: No data for {ticker}.")]}
-        
-    # 2. Process to Base Schema
-    engine = FinancialEngine(df)
-    raw_ttm = engine.get_ttm(datetime.now().date())
-    
-    if not raw_ttm:
-        return {"messages": [HumanMessage(content=f"Intake: Failed to determine base period.")]}
-        
-    translator = EconomicRealityTranslator()
-    serving_base = translator.translate(raw_ttm)
-    
-    # 3. Write to Disk
-    writer = ServingBaseWriter()
-    writer.save_base(ticker, serving_base)
-    
-    # 4. Update State
-    output = {
-        "messages": [HumanMessage(content=f"Intake: Generated Base Truth (FY{serving_base['meta'].get('fy')}).")]
-    }
-    tracer.log_step("Intake", state, output)
-    return output
+    return {"serving_base": {}, "messages": [HumanMessage(content=f"Intake: DB is source of truth.")]}

@@ -31,11 +31,9 @@ from typing import Optional, Dict, List
 
 import numpy as np
 import pandas as pd
-import yfinance as yf
 
 warnings.filterwarnings("ignore")
 
-UNIVERSE = ["AAPL", "MSFT", "NVDA", "GOOGL", "META", "AMZN", "TSLA", "CNC"]
 REPORT_DIR = Path("valuation_data/serving/latest")
 
 
@@ -111,12 +109,12 @@ def load_ticker_row(ticker: str) -> TickerRow:
     row = TickerRow(ticker=ticker)
 
     # ── Live market data ──────────────────────────────────────────────────────
+    from aletheia.data.market_data import get_current_price, get_market_cap
     try:
-        info = yf.Ticker(ticker).fast_info
-        row.price = float(info.last_price or 0)
-        row.market_cap_bn = float((info.market_cap or 0) / 1e9)
+        row.price = get_current_price(ticker)
+        row.market_cap_bn = get_market_cap(ticker) / 1e9
     except Exception as e:
-        row.errors.append(f"yfinance: {e}")
+        row.errors.append(f"market_data: {e}")
 
     # ── Serving report (Phase 2 + agent outputs) ──────────────────────────────
     report_path = REPORT_DIR / f"{ticker}_report.json"
@@ -199,8 +197,9 @@ def load_ticker_row(ticker: str) -> TickerRow:
 
 class UniversePortfolio:
 
-    def __init__(self, tickers: List[str] = None):
-        self.tickers = tickers or UNIVERSE
+    def __init__(self, snapshot: 'UniverseSnapshot'):
+        self.snapshot = snapshot
+        self.tickers = snapshot.tickers
 
     def load_all(self) -> List[TickerRow]:
         rows = []
@@ -437,18 +436,4 @@ class UniversePortfolio:
 # CLI
 # ─────────────────────────────────────────────────────────────────────────────
 
-if __name__ == "__main__":
-    import sys
-    tickers = sys.argv[1:] if len(sys.argv) > 1 else UNIVERSE
-    up = UniversePortfolio(tickers=tickers)
-    up.print_universe()
-
-    # Also run 34-metric screening
-    print("\n\nRUNNING 34-METRIC UNIFIED SCREENING FRAMEWORK...")
-    from aletheia.tools.screening_ratios import ScreeningEngine
-    engine = ScreeningEngine(verbose=False)
-    cards = engine.score_universe(tickers)
-    print(engine.universe_table(cards))
-
-    # Save to CSV
-    up.to_csv()
+# CLI entrypoint removed to avoid architectural violations.

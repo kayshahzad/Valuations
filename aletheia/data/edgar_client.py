@@ -321,7 +321,7 @@ class EdgarIngester:
             db = InvestmentDatabase(verbose=False)
             tickers_in_db = db.query(
                 "SELECT ticker, COUNT(*) as years, MAX(fiscal_year) as latest "
-                "FROM cleaned_financials GROUP BY ticker ORDER BY ticker"
+                "FROM company_records GROUP BY ticker ORDER BY ticker"
             )
             db.close()
             if not tickers_in_db.empty:
@@ -590,7 +590,7 @@ class EdgarIngester:
             db = InvestmentDatabase(verbose=False)
             summary = db.query(
                 "SELECT ticker, COUNT(*) as years, MAX(fiscal_year) as latest_fy "
-                "FROM cleaned_financials GROUP BY ticker ORDER BY ticker"
+                "FROM company_records GROUP BY ticker ORDER BY ticker"
             )
             db.close()
             if not summary.empty:

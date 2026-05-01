@@ -25,7 +25,7 @@ Terminal value — both methods computed and cross-checked:
 Usage:
     from aletheia.tools.dcf_engine import DCFEngine
     engine = DCFEngine()
-    result = engine.run("AAPL")
+    result = engine.run("TICKER")
     print(result.summary())
 """
 
@@ -36,7 +36,8 @@ from typing import Optional, Dict, List, Tuple
 
 import numpy as np
 import pandas as pd
-import yfinance as yf
+
+
 
 warnings.filterwarnings("ignore")
 
@@ -63,8 +64,9 @@ class ScenarioAssumptions:
     name: str                          # "bull", "base", "bear"
 
     # Revenue
-    revenue_cagr_y1_5: float           # Years 1-5 revenue CAGR
-    revenue_cagr_y6_10: float          # Years 6-10 revenue CAGR (fade)
+    revenue_growth_rates: List[float]
+    revenue_cagr_y1_5: float           # Years 1-5 revenue CAGR (for metadata)
+    revenue_cagr_y6_10: float          # Years 6-10 revenue CAGR (for metadata)
 
     # Margins
     ebit_margin_terminal: float        # Terminal EBIT margin
@@ -82,8 +84,24 @@ class ScenarioAssumptions:
     # Tax
     tax_rate: float                    # Cash tax rate
 
+    # ROIC Methodology
+    base_roic: float = 0.10            # Historical starting ROIC
+
     # Justification (required for assumption discipline)
     justification: str = ""
+
+    @property
+    def terminal_roic(self) -> float:
+        """
+        Returns the terminal ROIC used to calculate the Liberti reinvestment-rate 
+        terminal value.
+        
+        Methodology Choice: This framework rejects the standard academic assumption 
+        that competitive advantages erode and ROIC fades to WACC over the projection 
+        period. Instead, it explicitly holds the company's historical `base_roic` 
+        constant into perpetuity (floored at 8%), assuming genuine moats persist.
+        """
+        return max(self.base_roic, 0.08)
 
 
 @dataclass
@@ -132,6 +150,7 @@ class ScenarioResult:
     roic_wacc_spread: float = 0.0
 
     warnings: List[str] = field(default_factory=list)
+    metadata: Dict[str, str] = field(default_factory=dict)
 
 
 @dataclass
@@ -163,14 +182,28 @@ class DCFResult:
     base: Optional[ScenarioResult] = None
     bear: Optional[ScenarioResult] = None
 
+    confidence: str = "high"
+    warnings: List[str] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
+
+    @property
+    def wacc(self) -> float:
+        """
+        Returns the baseline WACC (`wacc_base`) for public API consistency 
+        with MultipleDecomposition and ReverseDCF. 
+        Note: The DCF Engine projects three distinct scenarios simultaneously. 
+        For scenario-specific WACCs (e.g. including the 150bps Bear stress), 
+        refer to `result.bull.assumptions.wacc` or `result.bear.assumptions.wacc`.
+        """
+        return self.wacc_base
 
     def ev_to_equity(self, ev: float, net_debt: float,
                      pension_deficit: float = 0.0,
                      lease_debt: float = 0.0,
                      jva_value: float = 0.0) -> float:
         """Convert EV to equity value. Equity bridge is in equity_bridge.py."""
-        return ev - net_debt - pension_deficit - lease_debt + jva_value
+        equity = ev - net_debt - pension_deficit - lease_debt + jva_value
+        return max(0.0, equity) # Non-recourse equity cannot be negative
 
     def intrinsic_per_share(self, ev: float, net_debt: float) -> Optional[float]:
         if self.shares_diluted and self.shares_diluted > 0:
@@ -266,49 +299,16 @@ class DCFResult:
 # WACC computation
 # ─────────────────────────────────────────────────────────────────────────────
 
-def _fetch_risk_free_rate() -> float:
-    """Fetch current 10-year US Treasury yield from yfinance (^TNX)."""
-    try:
-        tnx = yf.Ticker("^TNX")
-        rate = tnx.fast_info.last_price / 100   # TNX is in percentage points
-        if rate and 0.001 < rate < 0.20:
-            return rate
-    except Exception:
-        pass
-    return 0.042   # Fallback: ~4.2% if fetch fails
+from aletheia.data.market_data import get_risk_free_rate, get_beta
 
+def _fetch_risk_free_rate() -> float:
+    """Fetch current 10-year US Treasury yield from market_data."""
+    return get_risk_free_rate()
 
 def _compute_beta(ticker: str, period: str = BETA_PERIOD,
                   interval: str = BETA_INTERVAL) -> float:
-    """
-    Compute 5-year weekly beta via OLS regression of stock returns vs SPY.
-    Beta = Cov(stock, SPY) / Var(SPY)
-    """
-    try:
-        stock_hist = yf.Ticker(ticker).history(period=period, interval=interval)
-        spy_hist = yf.Ticker("SPY").history(period=period, interval=interval)
-
-        if len(stock_hist) < 52 or len(spy_hist) < 52:
-            return 1.0
-
-        stock_ret = stock_hist["Close"].pct_change().dropna()
-        spy_ret = spy_hist["Close"].pct_change().dropna()
-
-        # Align on common dates
-        aligned = pd.concat([stock_ret, spy_ret], axis=1).dropna()
-        aligned.columns = ["stock", "spy"]
-
-        if len(aligned) < 52:
-            return 1.0
-
-        cov_matrix = np.cov(aligned["stock"], aligned["spy"])
-        beta = cov_matrix[0, 1] / cov_matrix[1, 1]
-
-        # Bound beta: negative beta or beta > 4 is unreliable
-        return float(np.clip(beta, 0.3, 2.0))   # Cap at 2.0 — 5Y window captures extreme volatility periods
-
-    except Exception:
-        return 1.0
+    """Compute 5-year weekly beta from market_data."""
+    return get_beta(ticker, period=period, interval=interval)
 
 
 def compute_wacc(
@@ -373,8 +373,9 @@ def _build_assumptions(
     tax_rate: float,
     wacc_base: float,
     hist_revenue_cagr: float,
+    profile: "ValuationProfile",
+    lifecycle: str = "mature",
     terminal_growth_adj: float = 0.0,
-    terminal_growth_cap: Optional[float] = None,
     growth_decay_reduction: float = 0.0,
 ) -> ScenarioAssumptions:
     """
@@ -383,88 +384,92 @@ def _build_assumptions(
     Bull: above-trend growth, margin expansion, WACC compressed
     Base: consensus + historical discipline
     Bear: margin compression, WACC expansion, mean reversion
-
-    The framework rule: bear case built adversarially (not as a downward
-    shift of base case). Spread between bull and bear must be meaningful.
     """
+    forecast_years = profile.forecast_years
     ebit_margin = ebit / revenue if revenue > 0 else 0.15
 
+    applies_cyclical_haircut = lifecycle == "cyclical_industrial"
+    cagr_y1_5_factor = 0.70 if applies_cyclical_haircut else 1.0
+    cagr_y6_10_factor = 0.40 if applies_cyclical_haircut else 1.0
+    terminal_g_delta = -0.005 if applies_cyclical_haircut else 0.0
+
+    # Margin and decay logic based on profile
+    margin_rev_base = 1.0 - profile.terminal_margin_decay
+    margin_rev_bull = margin_rev_base + profile.bull_margin_compression
+    margin_rev_bear = margin_rev_base + profile.bear_margin_compression
+    
+    decay_base = profile.decay_base
+    decay_bull = profile.decay_bull
+    decay_bear = profile.decay_bear
+
     if scenario_name == "bull":
-        terminal_g = min(0.035 + terminal_growth_adj, MAX_TERMINAL_G)
-        if terminal_growth_cap is not None:
-            terminal_g = min(terminal_g, terminal_growth_cap)
+        # Assume terminal growth is higher in bull scenario, bounded by profile
+        bull_terminal_g = profile.terminal_growth + 0.01
+        terminal_g = min(bull_terminal_g + terminal_growth_adj + terminal_g_delta, MAX_TERMINAL_G)
+        if profile.terminal_growth_cap is not None:
+            terminal_g = min(terminal_g, profile.terminal_growth_cap)
             
-        return ScenarioAssumptions(
-            name="bull",
-            revenue_cagr_y1_5=min(hist_revenue_cagr * 1.25, 0.35),
-            revenue_cagr_y6_10=min(hist_revenue_cagr * 0.80 + growth_decay_reduction, 0.18),
-            ebit_margin_current=ebit_margin,
-            ebit_margin_terminal=min(ebit_margin * 1.15, 0.55),
-            capex_pct_revenue=capex_pct * 0.90,   # Operating leverage benefit
-            da_pct_revenue=da_pct,
-            nwc_pct_revenue=nwc_pct,
-            wacc=max(wacc_base - 0.005, 0.06),    # 50bps compression
-            terminal_growth=terminal_g,
-            tax_rate=tax_rate,
-            justification=(
-                f"Bull: {hist_revenue_cagr*1.25:.1%} revenue CAGR Y1-5 "
-                f"(1.25x historical {hist_revenue_cagr:.1%}), "
-                f"margin expansion to {min(ebit_margin*1.15,0.55):.1%}, "
-                f"WACC compressed 50bps to {max(wacc_base-0.005,0.06):.2%}"
-            ),
-        )
-
+        y1_5 = min(hist_revenue_cagr * (1.0 + profile.bull_growth_haircut), 0.45) * cagr_y1_5_factor
+        y6_10 = min(hist_revenue_cagr * decay_bull + growth_decay_reduction, 0.25) * cagr_y6_10_factor
+        
+        ebit_margin_term = min(ebit_margin * margin_rev_bull, 0.65)
+        capex_pct_rev = capex_pct * 0.90
+        wacc = max(wacc_base + profile.bull_wacc_adjustment, 0.06)
+        
     elif scenario_name == "base":
-        terminal_g = DEFAULT_TERMINAL_G + terminal_growth_adj
-        if terminal_growth_cap is not None:
-            terminal_g = min(terminal_g, terminal_growth_cap)
+        terminal_g = profile.terminal_growth + terminal_growth_adj + terminal_g_delta
+        if profile.terminal_growth_cap is not None:
+            terminal_g = min(terminal_g, profile.terminal_growth_cap)
 
-        return ScenarioAssumptions(
-            name="base",
-            revenue_cagr_y1_5=hist_revenue_cagr,
-            revenue_cagr_y6_10=hist_revenue_cagr * 0.60 + growth_decay_reduction,
-            ebit_margin_current=ebit_margin,
-            ebit_margin_terminal=ebit_margin * 1.05,   # Modest improvement
-            capex_pct_revenue=capex_pct,
-            da_pct_revenue=da_pct,
-            nwc_pct_revenue=nwc_pct,
-            wacc=wacc_base,
-            terminal_growth=terminal_g,
-            tax_rate=tax_rate,
-            justification=(
-                f"Base: historical revenue CAGR {hist_revenue_cagr:.1%}, "
-                f"stable margins at {ebit_margin:.1%}, "
-                f"WACC {wacc_base:.2%}, g={DEFAULT_TERMINAL_G:.1%}"
-            ),
-        )
+        y1_5 = hist_revenue_cagr * cagr_y1_5_factor
+        y6_10 = (hist_revenue_cagr * decay_base + growth_decay_reduction) * cagr_y6_10_factor
+        
+        ebit_margin_term = ebit_margin * margin_rev_base
+        capex_pct_rev = capex_pct
+        wacc = wacc_base
 
-    else:  # bear — built adversarially
-        # Bear WACC: base + 150bps, capped at 16% absolute
-        # Cap prevents economically irrational stress for low-margin cos (CNC)
-        terminal_g = 0.015 + terminal_growth_adj
-        if terminal_growth_cap is not None:
-            terminal_g = min(terminal_g, terminal_growth_cap)
+    else:  # bear
+        bear_terminal_g = max(profile.terminal_growth - 0.01, 0.015)
+        terminal_g = bear_terminal_g + terminal_growth_adj + terminal_g_delta
+        if profile.terminal_growth_cap is not None:
+            terminal_g = min(terminal_g, profile.terminal_growth_cap)
 
-        bear_wacc = min(wacc_base + 0.015, 0.16)
-        return ScenarioAssumptions(
-            name="bear",
-            revenue_cagr_y1_5=max(hist_revenue_cagr * 0.50, 0.01),
-            revenue_cagr_y6_10=max(hist_revenue_cagr * 0.25 + growth_decay_reduction, 0.005),
-            ebit_margin_current=ebit_margin,
-            ebit_margin_terminal=ebit_margin * 0.80,   # 200bps compression
-            capex_pct_revenue=capex_pct * 1.15,        # Rising capex intensity
-            da_pct_revenue=da_pct,
-            nwc_pct_revenue=nwc_pct * 1.10,
-            wacc=bear_wacc,                             # +150bps capped at 16%
-            terminal_growth=terminal_g,                 # Below-trend growth
-            tax_rate=min(tax_rate + 0.03, 0.30),       # Tax headwind
-            justification=(
-                f"Bear: revenue CAGR {max(hist_revenue_cagr*0.50,0.01):.1%} "
-                f"(50% of historical), margin compression to "
-                f"{ebit_margin*0.80:.1%}, WACC +150bps to "
-                f"{min(wacc_base+0.015,0.18):.2%}, g=1.5%"
-            ),
-        )
+        y1_5 = max(hist_revenue_cagr * (1.0 + profile.bear_growth_haircut), 0.01) * cagr_y1_5_factor
+        y6_10 = max(hist_revenue_cagr * decay_bear + growth_decay_reduction, 0.005) * cagr_y6_10_factor
+        
+        ebit_margin_term = ebit_margin * margin_rev_bear
+        capex_pct_rev = capex_pct * 1.15
+        wacc = min(wacc_base + profile.bear_wacc_adjustment, 0.16)
+
+    # Compute array of explicit growth rates
+    growth_rates = []
+    for i in range(1, forecast_years + 1):
+        if i <= 5:
+            growth_rates.append(y1_5)
+        elif i <= 10:
+            growth_rates.append(y6_10)
+        else:
+            # Interpolate smoothly from y6_10 to terminal_g
+            progress = (i - 10) / (forecast_years - 10)
+            interp_g = y6_10 - (y6_10 - terminal_g) * progress
+            growth_rates.append(interp_g)
+
+    return ScenarioAssumptions(
+        name=scenario_name,
+        revenue_growth_rates=growth_rates,
+        revenue_cagr_y1_5=y1_5,
+        revenue_cagr_y6_10=y6_10,
+        ebit_margin_current=ebit_margin,
+        ebit_margin_terminal=ebit_margin_term,
+        capex_pct_revenue=capex_pct_rev,
+        da_pct_revenue=da_pct,
+        nwc_pct_revenue=nwc_pct if scenario_name != "bear" else nwc_pct * 1.10,
+        wacc=wacc,
+        terminal_growth=terminal_g,
+        tax_rate=tax_rate if scenario_name != "bear" else min(tax_rate + 0.03, 0.30),
+        base_roic=roic,
+        justification=f"{scenario_name.capitalize()}: {y1_5:.1%} Y1-5 CAGR, margin {ebit_margin_term/ebit_margin if ebit_margin > 0 else 1.0:.2f}x, g={terminal_g:.1%}"
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -493,19 +498,29 @@ def _project_scenario(
     g = assumptions.terminal_growth
     tax = assumptions.tax_rate
 
+    effective_roic = max(base_roic, 0.08)
+    terminal_nopat_margin = assumptions.ebit_margin_terminal * (1 - tax)
+    
+    # Terminal Reinvestment (as % of revenue) = (g / ROIC) * NOPAT Margin
+    terminal_reinvest_margin = terminal_nopat_margin * (g / effective_roic)
+    
+    # Terminal CapEx = D&A + Terminal Reinvestment - Terminal ΔNWC
+    # ΔNWC as % of revenue = g * nwc_pct_revenue
+    terminal_capex_pct = terminal_reinvest_margin + assumptions.da_pct_revenue - (g * assumptions.nwc_pct_revenue)
+    terminal_capex_pct = max(terminal_capex_pct, assumptions.da_pct_revenue * 0.5) # Floor to partial maintenance
+
     projections = []
     cumulative_pv = 0.0
     prev_nwc = base_nwc
 
     for yr in range(1, forecast_years + 1):
-        # Revenue growth — two-stage fade
-        if yr <= 5:
-            cagr = assumptions.revenue_cagr_y1_5
+        # Revenue growth — pulled from pre-calculated array (handles 15yr interpolation)
+        # Note: yr is 1-indexed, so we use yr - 1 for array access
+        if len(assumptions.revenue_growth_rates) >= yr:
+            cagr = assumptions.revenue_growth_rates[yr - 1]
         else:
-            # Linear fade from Y1-5 rate to Y6-10 rate
-            fade_factor = (yr - 5) / 5
-            cagr = (assumptions.revenue_cagr_y1_5 * (1 - fade_factor) +
-                    assumptions.revenue_cagr_y6_10 * fade_factor)
+            # Fallback in case of mismatch
+            cagr = assumptions.terminal_growth
 
         if yr == 1:
             revenue = base_revenue * (1 + cagr)
@@ -525,7 +540,12 @@ def _project_scenario(
 
         # Reinvestment (Liberti CFA formula components)
         da = revenue * assumptions.da_pct_revenue
-        capex = revenue * assumptions.capex_pct_revenue
+        
+        # Gradual convergence of CapEx from current intensity to terminal intensity
+        progression = yr / forecast_years
+        current_capex_pct = assumptions.capex_pct_revenue * (1 - progression) + terminal_capex_pct * progression
+        capex = revenue * current_capex_pct
+        
         nwc = revenue * assumptions.nwc_pct_revenue
         delta_nwc = nwc - prev_nwc
         prev_nwc = nwc
@@ -573,7 +593,8 @@ def _project_scenario(
         reinvest_tv = gordon_tv
 
     # Use reinvestment-rate TV (preferred — Liberti) if it is within 50% of Gordon
-    if gordon_tv > 0 and abs(reinvest_tv - gordon_tv) / gordon_tv < 0.50:
+    # or if Gordon TV goes negative (fallback logic).
+    if (gordon_tv > 0 and abs(reinvest_tv - gordon_tv) / gordon_tv < 0.50) or (gordon_tv < 0 and reinvest_tv > 0):
         tv_used = reinvest_tv
     else:
         tv_used = gordon_tv   # Fall back to Gordon if large divergence
@@ -620,6 +641,11 @@ class DCFEngine:
     Reads from InvestmentDatabase and runs three-scenario DCF.
     No manual inputs required — all assumptions derived from clean data.
     """
+    
+    # Note: This contract is dynamically consumed by test_structured_ingestion.py
+    REQUIRED_CLEAN_FIELDS = [
+        "Revenue", "OperatingIncome", "Depreciation", "CapEx", "TotalAssets", "TotalEquity"
+    ]
 
     def __init__(
         self,
@@ -633,18 +659,27 @@ class DCFEngine:
         self.mrp = mrp
         self.verbose = verbose
 
-    def run(self, ticker: str, fiscal_year: Optional[int] = None, **kwargs) -> DCFResult:
+    def run(self, calc_input: 'CalculationInput', fiscal_year: Optional[int] = None, **kwargs) -> DCFResult:
+        max_growth_rate = kwargs.get('max_growth_rate', 0.50)
         """
         Run full three-scenario DCF for a ticker.
 
         Args:
-            ticker: e.g. "AAPL"
+            calc_input: CalculationInput containing dataframe, classification, valuation_profile, and known_issues
             fiscal_year: specific year to value (defaults to latest)
 
         Returns:
             DCFResult with bull/base/bear scenarios
         """
-        from aletheia.data.database import InvestmentDatabase
+        from aletheia.data.exceptions import MissingFieldError
+
+        ticker = calc_input.classification.ticker
+        meta = calc_input.classification
+        lifecycle = meta.lifecycle
+        profile = calc_input.valuation_profile
+        
+        if meta and meta.business_model in ["ddm_required", "embedded_value_required", "routing_required"]:
+            raise NotImplementedError(f"DCFEngine: ticker {ticker} requires specialized model ({meta.business_model}) — see KNOWN_ISSUES")
 
         result = DCFResult(ticker=ticker, fiscal_year=fiscal_year or 0)
 
@@ -653,17 +688,11 @@ class DCFEngine:
             print(f"  DCF Engine: {ticker}")
             print(f"{'='*60}")
 
-        # ── Step 1: Load cleaned data from database ───────────────────────────
-        try:
-            db = InvestmentDatabase(verbose=False)
-            df = db.get_latest(ticker)
-            db.close()
-        except Exception as e:
-            result.errors.append(f"Database load failed: {e}")
-            return result
+        # ── Step 1: Extract DataFrame ───────────────────────────
+        df = calc_input.df
 
         if df.empty:
-            result.errors.append(f"No data in database for {ticker}")
+            result.errors.append(f"No data in dataframe for {ticker}")
             return result
 
         # Use requested year or latest
@@ -685,13 +714,32 @@ class DCFEngine:
             if val is not None and not (isinstance(val, float) and np.isnan(val)):
                 return float(val)
             return fallback
+            
+        def get_with_provenance(field: str) -> Tuple[Optional[float], str]:
+            raw_val = get(f"raw_{field}")
+            if raw_val is not None:
+                return raw_val, "raw"
+            
+            derived_val = get(f"derived_{field}")
+            if derived_val is not None:
+                return derived_val, "derived"
+                
+            return None, "missing"
 
-        revenue = get("clean_Revenue", 0.0)
+        revenue = get("clean_Revenue")
+        if revenue is None:
+            raise MissingFieldError(f"Missing required field 'Revenue' for {ticker}")
+            
         if "base_revenue_override" in kwargs:
             revenue = kwargs["base_revenue_override"]
 
-        ebit = get("clean_NormalizedEBIT", 0.0)
-        ebitda = get("derived_EBITDA", ebit)
+        ebit, ebit_prov = get_with_provenance("OperatingIncome")
+        if ebit_prov == "missing":
+            raise MissingFieldError(f"Missing required field 'OperatingIncome' for {ticker}")
+
+        ebitda, ebitda_prov = get_with_provenance("EBITDA")
+        if ebitda_prov == "missing": ebitda = ebit
+        
         nopat = get("clean_NOPAT", ebit * 0.79)
         roic = get("derived_ROIC", 0.12)
         fcf = get("derived_FCF", 0.0)
@@ -701,23 +749,14 @@ class DCFEngine:
         long_term_debt = get("raw_LongTermDebt", 0.0)
         total_equity_book = get("raw_TotalEquity", 0.0)
 
-        # Reinvestment ratios from DB
-        import json
-        clean_json_str = latest.get("clean_json", "{}")
-        try:
-            clean_data = json.loads(clean_json_str) if isinstance(clean_json_str, str) else {}
-        except Exception:
-            clean_data = {}
+        da, da_prov = get_with_provenance("Depreciation")
+        capex, capex_prov = get_with_provenance("CapEx")
 
-        da = clean_data.get("Depreciation", None)
-        capex = clean_data.get("CapEx", None)
-
-        if da is None or capex is None:
+        if da_prov == "missing" or capex_prov == "missing":
             print(f"❌ PIPELINE HALTED: DCFEngine missing critical inputs for {ticker}")
-            raise ValueError(
+            raise MissingFieldError(
                 f"DCFEngine: missing D&A or CapEx for {ticker}. "
-                f"da={da}, capex={capex}. "
-                f"Check tag_misses.jsonl for the unresolved XBRL tag."
+                f"da_prov={da_prov}, capex_prov={capex_prov}. "
             )
 
         nwc = revenue * 0.03   # Structural NWC estimate
@@ -726,40 +765,71 @@ class DCFEngine:
         da_pct = da / revenue if revenue > 0 else 0.03
         nwc_pct = 0.03
 
-        # Historical revenue CAGR — robust multi-period median
-        # Uses median of available lookback periods (3Y, 5Y, 7Y, 10Y)
-        # to remove base-year distortion (e.g. COVID boom anchoring).
-        # Professional standard: never use a single lookback period.
-        hist_revenues = df[df["fiscal_year"] <= fiscal_year].sort_values(
-            "fiscal_year"
-        )["clean_Revenue"].dropna()
-
-        rev_now = float(hist_revenues.iloc[-1]) if len(hist_revenues) > 0 else 0.0
+        # Historical revenue CAGR — Phase 4.5 Exact-Day Math
+        # Uses exact period_end_date differences instead of integer fiscal_years.
+        # Tracks data integrity (n_years_used vs n_years_attempted) to drop suspect records.
+        hist_revenues_df = df[df["fiscal_year"] <= fiscal_year].sort_values("fiscal_year").dropna(subset=["clean_Revenue"])
+        
         cagr_candidates = []
+        if not hist_revenues_df.empty:
+            row_now = hist_revenues_df.iloc[-1]
+            rev_now = float(row_now["clean_Revenue"])
+            date_now_str = row_now.get("period_end_date")
+            
+            if pd.notna(date_now_str) and rev_now > 0:
+                try:
+                    date_now = pd.to_datetime(date_now_str)
+                    
+                    for lookback in [3, 5, 7, 10]:
+                        n_years_attempted = lookback
+                        n_years_used = 0
+                        rev_past = None
+                        date_past = None
+                        
+                        # Find the actual record N years ago by walking backwards
+                        # Note: If history is patchy, this drops records but counts them as attempted.
+                        if len(hist_revenues_df) >= lookback:
+                            target_row = hist_revenues_df.iloc[-lookback - 1] if len(hist_revenues_df) > lookback else hist_revenues_df.iloc[0]
+                            # Count the number of valid intermediate records to check density
+                            subset = hist_revenues_df.iloc[-lookback-1:]
+                            n_years_used = subset["period_end_date"].notna().sum() - 1 # exclude current year
+                            
+                            rev_past_val = target_row["clean_Revenue"]
+                            date_past_str = target_row.get("period_end_date")
+                            
+                            if pd.notna(date_past_str) and float(rev_past_val) > 0:
+                                rev_past = float(rev_past_val)
+                                date_past = pd.to_datetime(date_past_str)
+                                
+                                days_between = (date_now - date_past).days
+                                if days_between > 0:
+                                    cagr = (rev_now / rev_past) ** (365.25 / days_between) - 1
+                                    cagr_candidates.append((cagr, n_years_used, n_years_attempted, lookback))
+                except Exception as e:
+                    if self.verbose:
+                        print(f"  [WARN] Failed exact-date CAGR parsing: {e}")
 
-        for lookback in [3, 5, 7, 10]:
-            if len(hist_revenues) >= lookback:
-                rev_past = float(hist_revenues.iloc[-lookback])
-                if rev_past > 0 and rev_now > 0:
-                    cagr = (rev_now / rev_past) ** (1 / lookback) - 1
-                    cagr_candidates.append(cagr)
+        forecast_years_applied = profile.forecast_years
 
-        if len(cagr_candidates) >= 3:
-            # Drop highest and lowest to remove outlier base years,
-            # then take the median of the remainder
-            cagr_sorted = sorted(cagr_candidates)
-            trimmed = cagr_sorted[1:-1]   # Remove min and max
-            hist_cagr = float(np.median(trimmed))
-        elif len(cagr_candidates) > 0:
-            hist_cagr = float(np.median(cagr_candidates))
+        # Select the longest lookback that meets the 70% data integrity threshold
+        valid_cagrs = [c for c in cagr_candidates if c[1] >= c[2] * 0.7]
+        
+        if valid_cagrs:
+            # Sort by lookback period (longest first)
+            valid_cagrs.sort(key=lambda x: x[3], reverse=True)
+            selected = valid_cagrs[0]
+            hist_cagr = selected[0]
+            if self.verbose:
+                print(f"  Selected {selected[3]}Y Exact-Date CAGR: {hist_cagr:.1%} (Data density: {selected[1]}/{selected[2]})")
         else:
-            hist_cagr = 0.08
+            print(f"  [WARN] Missing or sparse SEC history for {ticker}. Using lifecycle default ({lifecycle}).")
+            hist_cagr = profile.growth_rate
 
-        hist_cagr = float(np.clip(hist_cagr, 0.01, 0.28))
+        hist_cagr = float(np.clip(hist_cagr, 0.01, max_growth_rate))
 
         if self.verbose:
             cagr_str = ", ".join(
-                f"{c:.1%}" for c in cagr_candidates
+                f"{c[0]:.1%}" for c in cagr_candidates
             )
             print(f"  CAGR candidates ({len(cagr_candidates)} periods): [{cagr_str}]")
             print(f"  Robust CAGR (trimmed median): {hist_cagr:.1%}")
@@ -780,14 +850,15 @@ class DCFEngine:
             print(f"  5Y CAGR: {hist_cagr:.1%}")
 
         # ── Step 3: Fetch live market data ────────────────────────────────────
+        from aletheia.data.market_data import get_current_price, get_market_cap, get_shares_outstanding
         try:
-            yf_ticker = yf.Ticker(ticker)
-            info = yf_ticker.fast_info
-            current_price = float(info.last_price or 0)
-            market_cap = float(info.market_cap or 0)
-            shares_diluted = market_cap / current_price if current_price > 0 else 0.0
+            current_price = get_current_price(ticker)
+            market_cap = get_market_cap(ticker)
+            shares_diluted = get("clean_SharesDiluted")
+            if not shares_diluted or shares_diluted <= 0:
+                shares_diluted = get_shares_outstanding(ticker)
         except Exception as e:
-            result.errors.append(f"yfinance fetch failed: {e}")
+            result.errors.append(f"market_data fetch failed: {e}")
             current_price = 0.0
             market_cap = 0.0
             shares_diluted = 0.0
@@ -848,8 +919,9 @@ class DCFEngine:
                 tax_rate=tax_rate,
                 wacc_base=wacc_base,
                 hist_revenue_cagr=hist_cagr,
+                profile=profile,
+                lifecycle=lifecycle,
                 terminal_growth_adj=kwargs.get("terminal_growth_adj", 0.0),
-                terminal_growth_cap=kwargs.get("terminal_growth_cap"),
                 growth_decay_reduction=kwargs.get("growth_decay_reduction", 0.0),
             )
 
@@ -861,7 +933,7 @@ class DCFEngine:
                 base_capex=capex,
                 base_nwc=nwc,
                 latest_fy=fiscal_year,
-                forecast_years=self.forecast_years,
+                forecast_years=forecast_years_applied,
             )
 
             # Multiple decomposition (Liberti formula)
@@ -883,6 +955,20 @@ class DCFEngine:
             implied_ev_ebit = ev / ebit if ebit > 0 else 0.0
             roic_wacc_spread = roic - w
 
+            metadata = {
+                "lifecycle_category": lifecycle,
+                "growth_default": profile.growth_rate,
+                "hist_cagr": hist_cagr,
+                "forecast_years": forecast_years_applied,
+                "terminal_growth_cap": profile.terminal_growth_cap
+            }
+            
+            ticker_issues = calc_input.known_issues
+            if ticker_issues:
+                metadata["data_quality_warnings"] = " | ".join([issue.description for issue in ticker_issues])
+            if lifecycle == "cyclical_industrial":
+                metadata["cyclical_haircut_methodology"] = "projection_growth_penalty (peak-cycle distortion expected)"
+                
             scenario_result = ScenarioResult(
                 assumptions=assumptions,
                 projections=projections,
@@ -893,6 +979,7 @@ class DCFEngine:
                 implied_ev_ebit=implied_ev_ebit,
                 justified_ev_ebitda=justified_ev_ebitda,
                 roic_wacc_spread=roic_wacc_spread,
+                metadata=metadata
             )
 
             # Sanity checks
@@ -921,19 +1008,27 @@ class DCFEngine:
                     print(f"  ({upside:+.1%} vs ${current_price:.0f})", end="")
                 print()
 
+        # ── Step 6: Apply Bear Case Structural Floor ────────────────────────────
+        # Ensure bear scenario doesn't produce penny-stock values if company
+        # has massive net cash reserves. Floor EV at 20% of net cash.
+        if result.bear and net_debt < 0:
+            net_cash = abs(net_debt)
+            floor_ev = net_cash * 0.20
+            if result.bear.enterprise_value < floor_ev:
+                result.bear.enterprise_value = floor_ev
+                result.bear.warnings.append(
+                    f"Bear EV floored at 20% of Net Cash (${floor_ev/1e9:.1f}B)"
+                )
+
+        # ── Step 7: Apply Earnings Quality Metadata ────────────────────────────
+        issues = calc_input.known_issues
+        quality_issues = [i for i in issues if i.issue_type == "earnings_quality"]
+        if quality_issues:
+            result.confidence = "low"
+            result.warnings.extend(i.description for i in quality_issues)
+
         return result
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# CLI
-# ─────────────────────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    import sys
-    tickers = sys.argv[1:] if len(sys.argv) > 1 else ["AAPL"]
-    engine = DCFEngine(verbose=True)
-    for t in tickers:
-        result = engine.run(t)
-        print()
-        print(result.summary())
-        print()
+# CLI entrypoint removed to avoid architectural violations (no config imports allowed here).
+# Use scratch/run_valuation_phase.py instead.

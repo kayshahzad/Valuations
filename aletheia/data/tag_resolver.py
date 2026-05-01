@@ -96,7 +96,7 @@ class TagResolver:
                 if xbrl_tag not in combined_facts:
                     continue
                     
-                val = self._extract_value(combined_facts[xbrl_tag], fiscal_year, tag_name=xbrl_tag)
+                val, end_date = self._extract_value(combined_facts[xbrl_tag], fiscal_year, tag_name=xbrl_tag)
                 
                 if val is not None:
                     # Normalize sign for cash outflows
@@ -104,15 +104,21 @@ class TagResolver:
                         val = abs(val)
                         
                     if val != 0:
-                        candidates.append(val)
+                        candidates.append((val, end_date))
                         if strategy == "first":
                             break # First valid match wins!
                             
             if candidates:
                 if strategy == "max":
-                    enriched[clean_name] = max(candidates)
+                    best_val, best_end = max(candidates, key=lambda x: x[0])
                 else:
-                    enriched[clean_name] = candidates[0]
+                    best_val, best_end = candidates[0]
+                    
+                enriched[clean_name] = best_val
+                
+                # Anchor period_end_date explicitly to the Revenue extraction
+                if clean_name == "Revenue" and best_end:
+                    enriched["period_end_date"] = best_end
 
         return enriched
 
@@ -133,6 +139,9 @@ class TagResolver:
 
     def _log_missing_tags(self, enriched: Dict[str, float], ticker: str, fiscal_year: int):
         """Audit log for missing critical XBRL tags."""
+        from config.tag_mappings import FIELD_MAPPINGS
+        from config.industry_routing import get_industry
+        
         required_tags = [
             "Revenue", "OperatingIncome", "NetIncome", 
             "OperatingCF", "Depreciation", "CapEx", 
@@ -143,9 +152,25 @@ class TagResolver:
         if missing:
             log_path = Path("valuation_data/logs/tag_misses.jsonl")
             log_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            industry = get_industry(ticker)
+            period_end_date = enriched.get("period_end_date", "unknown")
+            
             with open(log_path, "a") as f:
                 for tag in missing:
-                    entry = {"ticker": ticker, "fiscal_year": fiscal_year, "missing_tag": tag}
+                    # Lookup which xbrl tags were attempted for this field/industry combo
+                    field_config = FIELD_MAPPINGS.get(tag, {})
+                    industry_tags = field_config.get(industry, [])
+                    default_tags = field_config.get("default", [])
+                    attempted = industry_tags + default_tags
+                    
+                    entry = {
+                        "ticker": ticker, 
+                        "fiscal_year": fiscal_year, 
+                        "period_end_date": period_end_date,
+                        "missing_field": tag,
+                        "attempted_xbrl_tags": attempted
+                    }
                     f.write(json.dumps(entry) + "\n")
 
     def _extract_value(self, concept: dict, fiscal_year: int, tag_name: str = "") -> Optional[float]:
@@ -248,11 +273,13 @@ class TagResolver:
                             best_unit = unit_type
                         
         best_val = best_val_exact if best_val_exact is not None else best_val_offset
+        best_end = best_end_date_exact if best_val_exact is not None else best_end_date_offset
+
         if best_val is not None and best_unit != "USD" and best_unit not in ("shares", "pure"):
             from aletheia.data.fx_converter import convert_to_usd
             best_val = convert_to_usd(best_val, best_unit, fiscal_year)
             
-        return best_val
+        return best_val, best_end
 
     def _get_cik(self, ticker: str) -> Optional[str]:
         """Resolve ticker → CIK with caching."""

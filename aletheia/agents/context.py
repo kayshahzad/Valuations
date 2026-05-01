@@ -39,6 +39,9 @@ class StrategicContextReport(BaseModel):
         description="Z-Score of latest revenue vs historical mean. Python-computed from DuckDB.")
     is_cyclical_peak: bool = Field(
         description="True if Z-Score > 2.0. Python rule.")
+    applies_cyclical_haircut: bool = Field(
+        default=False,
+        description="True if Z-Score > industry threshold. Python rule.")
     recommended_base_revenue: Optional[float] = Field(
         description="3-year average revenue if peak. Python numpy mean from DuckDB.")
 
@@ -68,94 +71,17 @@ class StrategicContextReport(BaseModel):
 # Python calculations from DuckDB — replaces yfinance statements
 # ─────────────────────────────────────────────────────────────────────────────
 
-def calculate_z_score_from_db(ticker: str):
-    """
-    Calculate revenue Z-score from DuckDB clean_Revenue multi-year series.
-
-    KEY IMPROVEMENT over original:
-    - Original used yfinance income_statement JSON (unreliable parsing)
-    - This uses clean_Revenue from DuckDB (already cleaned, multi-year)
-    - get_latest() returns ALL fiscal years ordered by year
-
-    Returns: (z_score, is_peak, avg_3yr, df_context)
-    """
-    try:
-        from aletheia.data.database import InvestmentDatabase
-        db = InvestmentDatabase(verbose=False)
-        df = db.get_latest(ticker)
-        db.close()
-
-        if df.empty or "clean_Revenue" not in df.columns:
-            return 0.0, False, None, {}
-
-        rev_series = df.sort_values("fiscal_year")["clean_Revenue"].dropna()
-        revenues = [float(r) for r in rev_series if r and not np.isnan(r)]
-
-        if len(revenues) < 3:
-            return 0.0, False, None, {}
-
-        mean = np.mean(revenues)
-        std  = np.std(revenues)
-        z_score = float((revenues[-1] - mean) / std if std > 0 else 0.0)
-        is_peak = bool(z_score > 2.0)
-        avg_3yr = float(np.mean(revenues[-3:]))
-
-        # Additional context from latest row
-        latest_row = df[df["fiscal_year"] == df["fiscal_year"].max()].iloc[0]
-
-        def _g(col):
-            v = latest_row.get(col)
-            return float(v) if v is not None and not (
-                isinstance(v, float) and np.isnan(v)) else None
-
-        # Deferred revenue from clean_json
-        deferred_rev = None
-        deferred_rev_growth = None
-        d8_score = _g("domain_score_D8_Revenue")
-        try:
-            clean_data = json.loads(latest_row.get("clean_json") or "{}")
-            deferred_rev = clean_data.get("DeferredRevenue")
-            deferred_rev_growth = clean_data.get("DeferredRevenue_Growth")
-        except Exception:
-            pass
-
-        # Intangible amortization from raw_json
-        intangible_amort = None
-        try:
-            raw_data = json.loads(latest_row.get("raw_json") or "{}")
-            intangible_amort = raw_data.get("AmortizationOfIntangibleAssets")
-        except Exception:
-            pass
-
-        db_context = {
-            "fiscal_years":      sorted(df["fiscal_year"].tolist()),
-            "revenues":          revenues,
-            "latest_revenue":    revenues[-1],
-            "avg_3yr":           avg_3yr,
-            "revenue_cagr_3y":   (revenues[-1] / revenues[-3]) ** (1/3) - 1
-                                 if len(revenues) >= 3 and revenues[-3] > 0 else None,
-            "deferred_revenue":  deferred_rev,
-            "deferred_rev_growth": deferred_rev_growth,
-            "d8_revenue_score":  d8_score,
-            "intangible_amort":  intangible_amort,
-            "data_quality":      _g("overall_quality_score"),
-            "gross_margin_pct":  _g("derived_GrossMargin_Pct"),
-            "fcf_margin_pct":    _g("derived_FCF_Margin_Pct"),
-        }
-
-        return z_score, is_peak, avg_3yr, db_context
-
-    except Exception as e:
-        print(f"  ✗ DB z-score calculation failed: {e}")
-        return 0.0, False, None, {}
+from aletheia.tools.cyclicality import calculate_z_score
 
 
-def build_db_context_str(z_score, is_peak, avg_3yr, db: dict) -> str:
+def build_db_context_str(z_score, is_peak, applies_cyclical_haircut, avg_3yr, db: dict) -> str:
     """Format DuckDB data for LLM prompt."""
 
-    def fmt(v, pct=False, bn=False):
+    def fmt(v, pct=False, bn=False, pre_pct=False):
         if v is None:
             return "N/A"
+        if pre_pct:
+            return f"{v:.1f}%"
         if pct:
             return f"{v:.1%}"
         if bn and abs(v) > 1e8:
@@ -183,10 +109,14 @@ QUANTITATIVE DATA FROM INTAKE PIPELINE:
   Latest Revenue:        {fmt(db.get('latest_revenue'), bn=True)}
   3Y Average Revenue:    {fmt(avg_3yr, bn=True)}
   3Y Revenue CAGR:       {fmt(db.get('revenue_cagr_3y'), pct=True)}
+  ROIC:                  {fmt(db.get('roic'), pct=True)}
+  WACC:                  {fmt(db.get('wacc'), pct=True)}
   Revenue Z-Score:       {z_score:.2f}
   Is Cyclical Peak:      {is_peak} (Z > 2.0)
-  Gross Margin:          {fmt(db.get('gross_margin_pct'), pct=True)}
-  FCF Margin:            {fmt(db.get('fcf_margin_pct'), pct=True)}
+  Applies Haircut:       {applies_cyclical_haircut} (Industry-adjusted)
+  Gross Margin:          {fmt(db.get('gross_margin_pct'), pre_pct=True)}
+  FCF Margin:            {fmt(db.get('fcf_margin_pct'), pre_pct=True)}
+  Reinvestment Rate:     {fmt(db.get('reinvestment_rate'), pct=True)}
   Deferred Revenue:      {fmt(db.get('deferred_revenue'), bn=True)}
   Deferred Rev Growth:   {fmt(db.get('deferred_rev_growth'), pct=True)}
   D8 Revenue Score:      {d8_str} {d8_interp}
@@ -221,11 +151,19 @@ def strategic_context_agent(state):
     ticker = state["ticker"]
 
     # ── 1. Python calculations from DuckDB ────────────────────────────────────
-    z_score, is_peak, avg_3yr, db = calculate_z_score_from_db(ticker)
+    from aletheia.data.database import InvestmentDatabase
+    from config.ticker_classification import UNIVERSE
+    from config.known_issues import KNOWN_ISSUES
+    from aletheia.contracts.interfaces import CalculationInput
+    
+    db_inst = InvestmentDatabase(verbose=False)
+    df = db_inst.get_latest(ticker)
+    calc_input = CalculationInput(df=df, classification=UNIVERSE.get(ticker), known_issues=KNOWN_ISSUES.get(ticker, []))
+    z_score, is_peak, applies_cyclical_haircut, avg_3yr, db = calculate_z_score(calc_input)
     print(f"  ✓ Z-score (DuckDB): {z_score:.2f} | peak={is_peak} | "
           f"3yr_avg={'${:.1f}B'.format(avg_3yr/1e9) if avg_3yr else 'N/A'}")
 
-    db_context_str = build_db_context_str(z_score, is_peak, avg_3yr, db)
+    db_context_str = build_db_context_str(z_score, is_peak, applies_cyclical_haircut, avg_3yr, db)
 
     # ── 2. Primary source: 10-K text for patent analysis ─────────────────────
     raw_10k = state.get("raw_10k_text", "")
@@ -246,7 +184,8 @@ def strategic_context_agent(state):
         result = {
             "revenue_z_score":           z_score,
             "is_cyclical_peak":          is_peak,
-            "recommended_base_revenue":  avg_3yr if is_peak else None,
+            "applies_cyclical_haircut":  applies_cyclical_haircut,
+            "recommended_base_revenue":  avg_3yr if applies_cyclical_haircut else None,
             "deferred_revenue_trend":    "Mock: stable.",
             "quality_of_growth_risk":    False,
             "intangible_risk_assessment": "Mock: no major patent cliffs.",
@@ -327,7 +266,8 @@ Return StrategicContextReport JSON.
         # Overwrite Python-computed fields — LLM cannot alter these
         report.revenue_z_score        = z_score
         report.is_cyclical_peak       = is_peak
-        report.recommended_base_revenue = avg_3yr if is_peak else None
+        report.applies_cyclical_haircut = applies_cyclical_haircut
+        report.recommended_base_revenue = avg_3yr if applies_cyclical_haircut else None
 
         output = {
             "strategic_context_report": report.dict(),

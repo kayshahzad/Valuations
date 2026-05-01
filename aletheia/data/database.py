@@ -39,8 +39,10 @@ Usage:
 
 import datetime
 import json
+import traceback
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Literal
+from dataclasses import dataclass
 
 import pandas as pd
 
@@ -52,8 +54,21 @@ except ImportError:
     print("⚠ DuckDB not installed. Run: pip install duckdb")
     print("  Database features will be unavailable until installed.")
 
-from aletheia.data.cleaning_engine import CleanedRecord, CleaningFlag
-from aletheia.data.quantitative_screens import ScreenResult
+from aletheia.data.cleaning_engine import CleanedRecord, CleaningFlag, CleaningEngine
+from aletheia.data.quantitative_screens import ScreenResult, QuantitativeScreens
+from aletheia.data.exceptions import IngestionError, MissingFieldError, ValidationError, SourceFetchError
+from aletheia.data.ingestion_validator import IngestionValidator
+
+
+@dataclass
+class CalculationOutput:
+    ticker: str
+    fiscal_year: int
+    status: Literal["success", "missing_fields", "validation_failed", "error"]
+    cleaned_record: Optional[CleanedRecord] = None
+    screen_result: Optional[ScreenResult] = None
+    error_detail: Optional[str] = None
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -112,7 +127,7 @@ class InvestmentDatabase:
                 ticker                  VARCHAR NOT NULL,
                 fiscal_year             INTEGER NOT NULL,
                 version                 INTEGER NOT NULL DEFAULT 1,
-                period_end_date         VARCHAR,
+                period_end_date         DATE,
                 cleaned_at              VARCHAR NOT NULL,
 
                 -- Quality
@@ -133,6 +148,9 @@ class InvestmentDatabase:
 
                 -- Derived metrics
                 derived_EBITDA          DOUBLE,
+                derived_OperatingIncome DOUBLE,
+                derived_Depreciation    DOUBLE,
+                derived_CapEx           DOUBLE,
                 derived_FCF             DOUBLE,
                 derived_FCFF            DOUBLE,
                 derived_ROIC            DOUBLE,
@@ -174,6 +192,13 @@ class InvestmentDatabase:
                 raw_TotalEquity         DOUBLE,
                 raw_LongTermDebt        DOUBLE,
                 raw_Cash                DOUBLE,
+                raw_Depreciation        DOUBLE,
+                raw_CapEx               DOUBLE,
+                raw_RnD                 DOUBLE,
+                raw_COGS                DOUBLE,
+                raw_OperatingIncome     DOUBLE,
+                raw_TotalLiabilities    DOUBLE,
+                raw_LiabilitiesCurrent  DOUBLE,
 
                 -- Serialized full record (for deep inspection)
                 raw_json                VARCHAR,
@@ -284,7 +309,28 @@ class InvestmentDatabase:
         # Latest version of each company/year
         self._conn.execute("""
             CREATE OR REPLACE VIEW company_records_latest AS
-            SELECT cr.*
+            WITH latest_screens AS (
+                SELECT ticker, fiscal_year,
+                    beneish_m_score, beneish_flagged,
+                    sloan_accrual_ratio, sloan_flagged,
+                    epv, epv_per_share, epv_to_price_ratio, epv_signal,
+                    any_flagged,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY ticker, fiscal_year
+                        ORDER BY screened_at DESC
+                    ) AS rn
+                FROM screen_results
+            )
+            SELECT cr.*, 
+                   ls.beneish_m_score,
+                   ls.beneish_flagged,
+                   ls.sloan_accrual_ratio,
+                   ls.sloan_flagged,
+                   ls.epv,
+                   ls.epv_per_share,
+                   ls.epv_to_price_ratio,
+                   ls.epv_signal,
+                   ls.any_flagged
             FROM company_records cr
             INNER JOIN (
                 SELECT ticker, fiscal_year, MAX(version) AS max_version
@@ -294,6 +340,10 @@ class InvestmentDatabase:
             ON cr.ticker = latest.ticker
             AND cr.fiscal_year = latest.fiscal_year
             AND cr.version = latest.max_version
+            LEFT JOIN latest_screens ls
+            ON cr.ticker = ls.ticker 
+            AND cr.fiscal_year = ls.fiscal_year
+            AND ls.rn = 1
         """)
 
         # Flagged companies requiring review
@@ -403,6 +453,9 @@ class InvestmentDatabase:
 
             # Derived
             "derived_EBITDA": record.derived.get("EBITDA"),
+            "derived_OperatingIncome": record.derived.get("OperatingIncome"),
+            "derived_Depreciation": record.derived.get("Depreciation"),
+            "derived_CapEx": record.derived.get("CapEx"),
             "derived_FCF": record.derived.get("FCF"),
             "derived_FCFF": record.derived.get("FCFF"),
             "derived_ROIC": record.derived.get("ROIC"),
@@ -444,6 +497,13 @@ class InvestmentDatabase:
             "raw_TotalEquity": record.raw.get("TotalEquity"),
             "raw_LongTermDebt": record.raw.get("LongTermDebt"),
             "raw_Cash": record.raw.get("Cash"),
+            "raw_Depreciation": record.raw.get("Depreciation"),
+            "raw_CapEx": record.raw.get("CapEx"),
+            "raw_RnD": record.raw.get("R&D"),
+            "raw_COGS": record.raw.get("COGS"),
+            "raw_OperatingIncome": record.raw.get("OperatingIncome"),
+            "raw_TotalLiabilities": record.raw.get("TotalLiabilities"),
+            "raw_LiabilitiesCurrent": record.raw.get("LiabilitiesCurrent"),
 
             # Full serialized record
             "raw_json": json.dumps({k: v for k, v in record.raw.items() if v is not None}),
@@ -453,7 +513,7 @@ class InvestmentDatabase:
         }
 
         df = pd.DataFrame([row])
-        self._conn.execute("INSERT INTO company_records SELECT * FROM df")
+        self._conn.execute("INSERT INTO company_records BY NAME SELECT * FROM df")
 
         # Write cleaning flags
         self._upsert_flags(record, version)
@@ -645,6 +705,63 @@ class InvestmentDatabase:
 # Pipeline runner — wires everything together
 # ─────────────────────────────────────────────────────────────────────────────
 
+def process_ticker(
+    ticker: str,
+    fiscal_year: int,
+    engine: CleaningEngine,
+    screens: QuantitativeScreens,
+    prior_record: Optional[CleanedRecord] = None,
+    current_price: Optional[float] = None,
+    wacc_override: Optional[float] = None
+) -> CalculationOutput:
+    """
+    Pure calculation function. Processes a single ticker and fiscal year.
+    No DB interaction. Returns explicitly formatted CalculationOutput.
+    """
+    try:
+        # Clean record
+        record = engine.clean(ticker, fiscal_year, prior_year_record=prior_record)
+        
+        # Phase 2 Validation Gate
+        val_result = IngestionValidator.validate(record)
+
+        if not val_result.is_valid:
+            status = "validation_failed"
+            # Format structured failures into a readable string for error_detail
+            error_details = []
+            for f in val_result.failures:
+                error_details.append(f"{f.field}: {f.reason}")
+            error_detail = "; ".join(error_details)
+            return CalculationOutput(ticker, fiscal_year, status, record, None, error_detail)
+
+        # In this codebase, validation/missing fields logic inside engine sets blocking_errors
+        if record.blocking_errors:
+            status = "validation_failed"
+            error_detail = "; ".join(record.blocking_errors)
+            return CalculationOutput(ticker, fiscal_year, status, record, None, error_detail)
+
+        # Run screens
+        screen_result = screens.run_all(
+            record,
+            prior_record=prior_record,
+            current_price=current_price,
+            wacc_override=wacc_override,
+        )
+
+        return CalculationOutput(ticker, fiscal_year, "success", record, screen_result, None)
+
+    except IngestionError as e:
+        # Expected operational errors
+        if isinstance(e, MissingFieldError):
+            status = "missing_fields"
+        elif isinstance(e, ValidationError):
+            status = "validation_failed"
+        else:
+            status = "error"
+        return CalculationOutput(ticker, fiscal_year, status, None, None, str(e))
+    # Note: We do NOT catch Exception (e.g. KeyError, AttributeError). They are bugs and will crash the process.
+
+
 def run_pipeline(
     tickers: List[str],
     db: InvestmentDatabase = None,
@@ -652,36 +769,19 @@ def run_pipeline(
     current_prices: Dict[str, float] = None,
     wacc_estimates: Dict[str, float] = None,
     verbose: bool = True,
-) -> Dict[str, List[CleanedRecord]]:
+) -> Dict[str, List[CalculationOutput]]:
     """
-    Full Phase 1 pipeline for a list of tickers.
-
-    Runs:
-        1. CleaningEngine.clean_all_years() — all 10 domains
-        2. QuantitativeScreens.run_all() — Beneish, Sloan, EPV
-        3. InvestmentDatabase.upsert_record() + upsert_screens()
-
-    Args:
-        tickers: List of ticker symbols
-        db: Existing InvestmentDatabase instance (creates one if None)
-        canonical_dir: Path to canonical Parquet files
-        current_prices: Dict of {ticker: price} for EPV ratio
-        wacc_estimates: Dict of {ticker: wacc} for EPV calculation
-        verbose: Print progress
-
-    Returns:
-        Dict of {ticker: [CleanedRecord, ...]} for all years processed
+    Dumb orchestrator for the Phase 1 pipeline.
+    Iterates over tickers, determines fiscal years, calls process_ticker,
+    and commits storage per-ticker immediately upon success.
     """
-    from aletheia.data.cleaning_engine import CleaningEngine
-    from aletheia.data.quantitative_screens import QuantitativeScreens
-
     if db is None:
         db = InvestmentDatabase(verbose=verbose)
 
     engine = CleaningEngine(canonical_dir=canonical_dir, verbose=verbose)
     screens = QuantitativeScreens(verbose=verbose)
 
-    all_records = {}
+    all_outputs = {}
     prices = current_prices or {}
     waccs = wacc_estimates or {}
 
@@ -691,37 +791,85 @@ def run_pipeline(
             print(f"  Processing: {ticker}")
             print(f"{'#'*60}")
 
-        # Clean all years
-        records = engine.clean_all_years(ticker)
+        # For sequential processing, we still need to figure out which years exist 
+        # and process them in order to pass the prior_record properly.
+        # This belongs in the orchestrator.
+        parquet_path = Path(canonical_dir) / f"{ticker.upper()}.parquet"
+        years = set()
+        if parquet_path.exists():
+            try:
+                df = pd.read_parquet(parquet_path)
+                if "fy" in df.columns:
+                    years.update(df["fy"].dropna().unique().astype(int).tolist())
+            except Exception:
+                pass
+        
+        # Also check raw facts for years
+        raw_facts = engine._load_raw_facts(ticker)
+        if raw_facts:
+            us_gaap = raw_facts.get("facts", {}).get("us-gaap", {})
+            ifrs = raw_facts.get("facts", {}).get("ifrs-full", {})
+            all_facts = {}
+            all_facts.update(ifrs)
+            all_facts.update(us_gaap)
+            for concept in all_facts.values():
+                for unit_type, units in concept.get("units", {}).items():
+                    if unit_type not in ("USD", "shares", "pure", "EUR", "TWD", "CAD", "GBP", "JPY", "CHF"):
+                        continue
+                    for unit in units:
+                        if unit.get("form") in ("10-K", "20-F", "40-F") and unit.get("fy"):
+                            years.add(int(unit["fy"]))
 
-        if not records:
+        if not years:
             if verbose:
-                print(f"  ⚠ No data for {ticker}")
+                print(f"  ⚠ No data found for {ticker}")
             continue
 
-        all_records[ticker] = records
+        years = sorted(list(years))
+        ticker_outputs = []
+        prior = None
 
-        # Screen and store each year
-        for i, record in enumerate(records):
-            prior = records[i - 1] if i > 0 else None
+        for fy in years:
+            try:
+                # Call pure calculation function
+                output = process_ticker(
+                    ticker, int(fy), engine, screens,
+                    prior_record=prior,
+                    current_price=prices.get(ticker),
+                    wacc_override=waccs.get(ticker)
+                )
+                ticker_outputs.append(output)
 
-            # Run screens
-            screen_result = screens.run_all(
-                record,
-                prior_record=prior,
-                current_price=prices.get(ticker),
-                wacc_override=waccs.get(ticker),
-            )
+                if output.status == "success" and output.cleaned_record and output.screen_result:
+                    # Commit storage per ticker immediately upon success
+                    db.upsert_record(output.cleaned_record)
+                    db.upsert_screens(output.screen_result)
+                    prior = output.cleaned_record
+                else:
+                    # Quarantine semantics: absent from main table.
+                    # Handled natively by NOT calling upsert_record.
+                    # We can log or write to quarantine table here.
+                    if verbose:
+                        print(f"  ⚠ {ticker} FY{fy} failed with status '{output.status}': {output.error_detail}")
+                    # Prior record remains whatever it was (or None)
+                    prior = None
+                    
+            except IngestionError as e:
+                # Only catch IngestionError to prevent a single ticker from crashing the run.
+                # Code bugs like KeyError will crash the orchestrator loudly.
+                if verbose:
+                    print(f"  ⚠ {ticker} FY{fy} raised IngestionError: {str(e)}")
+                output = CalculationOutput(ticker, int(fy), "error", None, None, str(e))
+                ticker_outputs.append(output)
+                prior = None
 
-            # Write to database
-            db.upsert_record(record)
-            db.upsert_screens(screen_result)
+        all_outputs[ticker] = ticker_outputs
 
     if verbose:
         print(f"\n{'='*60}")
         print(db.summary())
 
-    return all_records
+    return all_outputs
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -13,6 +13,7 @@ from aletheia.agents.value_chain import value_chain_agent
 from aletheia.agents.context import strategic_context_agent
 from aletheia.agents.contrarian import contrarian_agent
 from aletheia.agents.fundamentalist import fundamentalist_agent
+from aletheia.agents.valuation_node import valuation_node
 from aletheia.agents.lead import lead_agent
 from aletheia.utils.tracing import tracer
 
@@ -48,6 +49,9 @@ def run_pipeline(ticker="AAPL"):
     # 3. Fundamentalist (Valuation)
     print("\n--- Running Valuation ---")
     out = fundamentalist_agent(state)
+    state.update(out)
+    
+    out = valuation_node(state)
     state.update(out)
     
     # 4. Lead (Consolidation)

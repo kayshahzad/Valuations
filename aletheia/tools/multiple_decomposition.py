@@ -24,7 +24,7 @@ Also computes:
 Usage:
     from aletheia.tools.multiple_decomposition import MultipleDecomposition
     md = MultipleDecomposition()
-    result = md.run("AAPL")
+    result = md.run("TICKER")
     print(result.summary())
 """
 
@@ -33,9 +33,25 @@ from dataclasses import dataclass, field
 from typing import Optional, List, Dict
 
 import numpy as np
-import yfinance as yf
 
 warnings.filterwarnings("ignore")
+
+from typing import Tuple
+
+def _compute_justified_ev_ebitda(
+    nopat: float, ebitda: float, roic: float, wacc: float, g_terminal: float
+) -> Tuple[float, float]:
+    """
+    Compute justified EV/EBITDA and cash conversion ratio using the Liberti formula.
+    EV/EBITDA = [ NOPAT * (1 - g/ROIC) / EBITDA ] / (WACC - g)
+    Returns: (justified_ev_ebitda, cash_conversion_ratio)
+    """
+    effective_roic = max(roic, 0.08)
+    if ebitda > 0 and wacc > g_terminal:
+        cash_conv = nopat * (1 - g_terminal / effective_roic) / ebitda
+        justified_ev_ebitda = max(cash_conv / (wacc - g_terminal), 0.0)
+        return justified_ev_ebitda, cash_conv
+    return 0.0, 0.0
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -208,7 +224,7 @@ class MultipleDecomposition:
 
     def run(
         self,
-        ticker: str,
+        calc_input: 'CalculationInput',
         fiscal_year: Optional[int] = None,
         wacc_override: Optional[float] = None,
         growth_override: Optional[float] = None,
@@ -217,7 +233,7 @@ class MultipleDecomposition:
         Decompose current multiples and compute justified values.
 
         Args:
-            ticker: e.g. "AAPL"
+            calc_input: CalculationInput containing df and metadata
             fiscal_year: defaults to latest
             wacc_override: use this WACC instead of computing
             growth_override: use this g instead of historical CAGR
@@ -225,18 +241,11 @@ class MultipleDecomposition:
         Returns:
             MultipleResult with full decomposition and signal
         """
-        from aletheia.data.database import InvestmentDatabase
-
+        ticker = calc_input.classification.ticker if calc_input.classification else "UNKNOWN"
         result = MultipleResult(ticker=ticker, fiscal_year=fiscal_year or 0)
 
         # ── Load data ─────────────────────────────────────────────────────────
-        try:
-            db = InvestmentDatabase(verbose=False)
-            df = db.get_latest(ticker)
-            db.close()
-        except Exception as e:
-            result.warnings.append(f"DB load failed: {e}")
-            return result
+        df = calc_input.df
 
         if df.empty:
             result.warnings.append(f"No data for {ticker}")
@@ -296,16 +305,10 @@ class MultipleDecomposition:
         result.reinvestment_rate = reinvestment_rate
 
         # Sector
-        try:
-            import csv
-            with open("config/universe.csv") as f:
-                reader = csv.DictReader(f)
-                for r in reader:
-                    if r.get("ticker", "").upper() == ticker.upper():
-                        result.sector = r.get("sector", "Default")
-                        break
-        except Exception:
-            pass
+        if calc_input.classification:
+            result.sector = calc_input.classification.sector
+        else:
+            result.sector = "Default"
 
         sector_mults = SECTOR_MEDIAN_MULTIPLES.get(
             result.sector, SECTOR_MEDIAN_MULTIPLES["Default"]
@@ -313,13 +316,12 @@ class MultipleDecomposition:
         result.sector_median_ev_ebitda = sector_mults["ev_ebitda"]
 
         # ── Live market data ──────────────────────────────────────────────────
+        from aletheia.data.market_data import get_current_price, get_market_cap
         try:
-            yf_ticker = yf.Ticker(ticker)
-            info = yf_ticker.fast_info
-            current_price = float(info.last_price or 0)
-            market_cap = float(info.market_cap or 0)
+            current_price = get_current_price(ticker)
+            market_cap = get_market_cap(ticker)
         except Exception as e:
-            result.warnings.append(f"yfinance failed: {e}")
+            result.warnings.append(f"market_data failed: {e}")
             current_price = 0.0
             market_cap = 0.0
 
@@ -365,7 +367,6 @@ class MultipleDecomposition:
 
         # ── Liberti formula — justified EV/EBITDA ────────────────────────────
         # EV/EBITDA = [ NOPAT × (1 - g/ROIC) / EBITDA ] / (WACC - g)
-        effective_roic = max(roic, 0.08)
         w = wacc
         g_terminal = self.terminal_growth   # Use terminal growth for justified multiple
 
@@ -376,17 +377,12 @@ class MultipleDecomposition:
             else "neutral"
         )
 
-        if ebitda > 0 and w > g_terminal:
-            # Cash conversion component
-            cash_conv = nopat * (1 - g_terminal / effective_roic) / ebitda
-            result.cash_conversion_ratio = cash_conv
+        justified_ev_ebitda, cash_conv = _compute_justified_ev_ebitda(
+            nopat=nopat, ebitda=ebitda, roic=roic, wacc=w, g_terminal=g_terminal
+        )
+        result.justified_ev_ebitda = justified_ev_ebitda
+        result.cash_conversion_ratio = cash_conv
 
-            # Justified multiple
-            justified_ev_ebitda = cash_conv / (w - g_terminal)
-            result.justified_ev_ebitda = max(justified_ev_ebitda, 0.0)
-        else:
-            result.cash_conversion_ratio = 0.0
-            result.justified_ev_ebitda = 0.0
 
         # Justified EV/EBIT = EV/EBITDA × (EBITDA/EBIT)
         if ebit > 0 and ebitda > 0:
@@ -504,45 +500,4 @@ class MultipleDecomposition:
 
         return result
 
-    def run_universe(self, tickers: List[str]) -> Dict[str, MultipleResult]:
-        """Run decomposition for all tickers and return comparison."""
-        results = {}
-        for ticker in tickers:
-            if self.verbose:
-                print(f"\n{'='*60}")
-                print(f"  Multiple Decomposition: {ticker}")
-            results[ticker] = self.run(ticker)
-        return results
 
-    def comparison_table(self, results: Dict[str, MultipleResult]) -> str:
-        """Generate a comparison table across all tickers."""
-        lines = [
-            f"\n{'MULTIPLE COMPARISON TABLE':^80}",
-            f"{'─'*80}",
-            f"{'Ticker':>8} | {'EV/EBITDA':>9} | {'Justified':>9} | "
-            f"{'Premium':>8} | {'ROIC':>6} | {'WACC':>6} | {'Signal':>18}",
-            f"{'─'*80}",
-        ]
-        for ticker, r in sorted(results.items()):
-            lines.append(
-                f"{ticker:>8} | {r.market_ev_ebitda:>9.1f}x | "
-                f"{r.justified_ev_ebitda:>9.1f}x | "
-                f"{r.ev_ebitda_premium_pct:>+7.0%}  | "
-                f"{r.roic:>5.1%} | "
-                f"{r.wacc:>5.1%} | "
-                f"{r.signal:>18}"
-            )
-        lines.append(f"{'─'*80}")
-        return "\n".join(lines)
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# CLI
-# ─────────────────────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    import sys
-    tickers = sys.argv[1:] if len(sys.argv) > 1 else ["AAPL", "MSFT", "NVDA"]
-    md = MultipleDecomposition(verbose=True)
-    results = md.run_universe(tickers)
-    print(md.comparison_table(results))

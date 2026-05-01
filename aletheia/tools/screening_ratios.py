@@ -15,11 +15,11 @@ Output: ScreeningCard — one per ticker, all 34 metrics with
 Usage:
     from aletheia.tools.screening_ratios import ScreeningEngine
     engine = ScreeningEngine()
-    card = engine.score("AAPL")
+    card = engine.score("TICKER")
     print(card.summary())
 
     # Full universe
-    universe = engine.score_universe(["AAPL","MSFT","NVDA","CNC"])
+    universe = engine.score_universe(["TICKER1", "TICKER2"])
     print(engine.universe_table(universe))
 """
 
@@ -31,7 +31,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import yfinance as yf
 
 warnings.filterwarnings("ignore")
 
@@ -179,9 +178,9 @@ def _get_json(row, key, fallback=None):
 def _cagr(series: pd.Series, years: int) -> Optional[float]:
     """Compute CAGR from a pandas Series over `years` lookback."""
     clean = series.dropna()
-    if len(clean) < years:
+    if len(clean) < years + 1:
         return None
-    v0 = float(clean.iloc[-years])
+    v0 = float(clean.iloc[-(years + 1)])
     v1 = float(clean.iloc[-1])
     if v0 <= 0 or v1 <= 0:
         return None
@@ -248,13 +247,10 @@ class ScreeningEngine:
         self.verbose = verbose
 
     # ─────────────────────────────────────────────────────────────────────────
-    def score(self, ticker: str, fiscal_year: int = None) -> ScreeningCard:
+    def score(self, calc_input: 'CalculationInput', fiscal_year: int = None) -> ScreeningCard:
         """Compute full screening scorecard for one ticker."""
-        from aletheia.data.database import InvestmentDatabase
-
-        db = InvestmentDatabase(verbose=False)
-        df = db.get_latest(ticker)
-        db.close()
+        ticker = calc_input.classification.ticker if calc_input.classification else "UNKNOWN"
+        df = calc_input.df
 
         if df.empty:
             card = ScreeningCard(ticker=ticker, fiscal_year=0)
@@ -269,11 +265,13 @@ class ScreeningEngine:
         row = df[df["fiscal_year"] == fy].iloc[0]
 
         # ── Live market data ──────────────────────────────────────────────────
+        from aletheia.data.market_data import get_current_price, get_market_cap, get_shares_outstanding
         try:
-            info = yf.Ticker(ticker).fast_info
-            price = float(info.last_price or 0)
-            mktcap = float(info.market_cap or 0)
-            shares = mktcap / price if price > 0 else 0
+            price = get_current_price(ticker)
+            mktcap = get_market_cap(ticker)
+            shares = get("clean_SharesDiluted")
+            if not shares or shares <= 0:
+                shares = get_shares_outstanding(ticker)
         except Exception:
             price = mktcap = shares = 0.0
 
@@ -283,6 +281,43 @@ class ScreeningEngine:
             current_price=price,
             market_cap=mktcap,
         )
+
+        # ── Inject DCF Engine outputs ─────────────────────────────────────────
+        from aletheia.tools.dcf_engine import DCFEngine
+        try:
+            dcf_result = DCFEngine(verbose=False).run(calc_input)
+            wacc = dcf_result.wacc
+            terminal_growth = dcf_result.base.assumptions.terminal_growth_rate
+        except Exception as e:
+            if self.verbose:
+                print(f"[WARN] DCF dynamic inputs failed for {ticker}: {e}")
+            wacc = 0.09
+            terminal_growth = 0.025
+
+        return self._compute_metrics(
+            card=card,
+            all_years_df=all_years_df,
+            fy=fy,
+            row=row,
+            price=price,
+            mktcap=mktcap,
+            shares=shares,
+            wacc=wacc,
+            terminal_growth=terminal_growth
+        )
+
+    def _compute_metrics(
+        self,
+        card: ScreeningCard,
+        all_years_df: pd.DataFrame,
+        fy: int,
+        row: pd.Series,
+        price: float,
+        mktcap: float,
+        shares: float,
+        wacc: float,
+        terminal_growth: float
+    ) -> ScreeningCard:
 
         # ── Extract base values ───────────────────────────────────────────────
         revenue      = _safe(row.get("clean_Revenue"))
@@ -374,10 +409,8 @@ class ScreeningEngine:
             om_trend = float(ebit_m_clean.iloc[-1] - ebit_m_clean.iloc[-4])
 
         # EBITDA cash conversion ratio (Liberti)
-        g = 0.025  # terminal growth proxy
         effective_roic = max(roic, 0.08) if roic else 0.08
-        wacc = 0.09  # proxy — ideally from DCF engine
-        cash_conv = nopat * (1 - g / effective_roic) / ebitda if (nopat and ebitda and ebitda > 0) else None
+        cash_conv = nopat * (1 - terminal_growth / effective_roic) / ebitda if (nopat and ebitda and ebitda > 0) else None
 
         # ── BUILD METRICS — exact same order as Table 36 ──────────────────────
 
@@ -573,128 +606,4 @@ class ScreeningEngine:
 
         return card
 
-    # ─────────────────────────────────────────────────────────────────────────
-    def score_universe(self, tickers: List[str]) -> Dict[str, ScreeningCard]:
-        """Score all tickers and return dict of {ticker: ScreeningCard}."""
-        results = {}
-        for ticker in tickers:
-            if self.verbose:
-                print(f"  Scoring {ticker}...")
-            try:
-                results[ticker] = self.score(ticker)
-            except Exception as e:
-                print(f"  ✗ {ticker} failed: {e}")
-        return results
-
-    # ─────────────────────────────────────────────────────────────────────────
-    def universe_table(self, cards: Dict[str, ScreeningCard]) -> str:
-        """
-        Generate a compact universe comparison table.
-        Shows key metrics side by side for all tickers.
-        """
-        # Key metrics to show in the table
-        KEY_METRICS = [
-            ("P/E Ratio",         "P/E"),
-            ("PEG Ratio",         "PEG"),
-            ("EV/EBITDA (clean)", "EV/EBITDA"),
-            ("EV/FCF",            "EV/FCF"),
-            ("Revenue CAGR (robust)", "Rev CAGR"),
-            ("ROIC vs WACC",      "ROIC"),
-            ("Gross Margin %",    "GM%"),
-            ("FCF Margin %",      "FCF Marg"),
-            ("Net Debt / EBITDA", "ND/EBITDA"),
-            ("Debt-to-Equity",    "D/E"),
-            ("Current Ratio",     "Curr Ratio"),
-            ("Interest Coverage", "Int Cov"),
-            ("SBC as % of FCF",   "SBC/FCF"),
-            ("EPS Leverage Signal","EPS Lev"),
-        ]
-
-        tickers = list(cards.keys())
-        col_w = 11
-
-        lines = [
-            f"\n{'UNIVERSE SCREENING TABLE — Graham + Lynch + Malkiel + Liberti':^{15 + len(tickers)*col_w}}",
-            f"{'─'*(15 + len(tickers)*col_w)}",
-        ]
-
-        # Header row
-        hdr = f"{'Metric':<15}"
-        for t in tickers:
-            hdr += f"{t:>{col_w}}"
-        lines.append(hdr)
-        lines.append(f"{'─'*(15 + len(tickers)*col_w)}")
-
-        # Metric rows
-        for metric_name, short in KEY_METRICS:
-            row = f"{short:<15}"
-            for t in tickers:
-                card = cards.get(t)
-                if not card:
-                    row += f"{'N/A':>{col_w}}"
-                    continue
-                m = card.get(metric_name)
-                if not m or m.value is None:
-                    row += f"{'—':>{col_w}}"
-                else:
-                    # Format value
-                    v = m.value
-                    if "%" in metric_name or "Margin" in metric_name or "CAGR" in metric_name or "Leverage" in metric_name:
-                        s = f"{v:.1f}%"
-                    elif "Ratio" in metric_name or "Coverage" in metric_name or "EV/" in metric_name or "P/" in metric_name or "PEG" in metric_name:
-                        s = f"{v:.1f}x"
-                    elif "Billions" in metric_name:
-                        s = f"${v:.0f}B"
-                    else:
-                        s = f"{v:.2f}"
-                    sig = m.signal
-                    row += f"{sig}{s:>{col_w-1}}"
-            lines.append(row)
-
-        lines.append(f"{'─'*(15 + len(tickers)*col_w)}")
-
-        # Score summary row
-        score_row = f"{'Score':15}"
-        for t in tickers:
-            card = cards.get(t)
-            if card:
-                score_row += f"{card.passes}✓{card.flags}⚠{card.fails}✗:>{col_w-6}"
-                score_row += f"  {card.passes}✓ {card.flags}⚠ {card.fails}✗"[:col_w]
-            else:
-                score_row += f"{'N/A':>{col_w}}"
-        lines.append(score_row)
-
-        lines.append(f"\n  Legend: ✓ Pass  ⚠ Flag  ✗ Fail  — Not available")
-        lines.append(f"  Thresholds: Graham (value/safety) | Lynch (GARP) | Malkiel (market-aware) | Liberti (institutional EV)")
-
-        return "\n".join(lines)
-
-    def to_dataframe(self, cards: Dict[str, ScreeningCard]) -> pd.DataFrame:
-        """Convert all screening cards to a pandas DataFrame for DB storage."""
-        rows = [card.to_dict() for card in cards.values()]
-        return pd.DataFrame(rows)
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# CLI
-# ─────────────────────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    import sys
-
-    tickers = sys.argv[1:] if len(sys.argv) > 1 else [
-        "AAPL", "MSFT", "NVDA", "GOOGL", "META", "AMZN", "TSLA", "CNC"
-    ]
-
-    print(f"Running unified screening for: {tickers}")
-    engine = ScreeningEngine(verbose=True)
-
-    # Score all
-    cards = engine.score_universe(tickers)
-
-    # Print individual scorecards
-    for ticker, card in cards.items():
-        print(card.summary())
-
-    # Print universe table
-    print(engine.universe_table(cards))
+# CLI entrypoint removed to avoid architectural violations.

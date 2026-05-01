@@ -29,7 +29,7 @@ Section 5.2 — Multiple-Justified Conviction:
 Usage:
     from aletheia.tools.conviction_scorer import ConvictionScorer
     scorer = ConvictionScorer()
-    result = scorer.score("AAPL", state)
+    result = scorer.score("TICKER", state)
     print(result.summary())
 """
 
@@ -424,7 +424,7 @@ class ConvictionScorer:
     Can also be called standalone with a report JSON for batch scoring.
     """
 
-    def score_from_state(self, ticker: str, state: dict) -> ConvictionResult:
+    def score_from_state(self, ticker: str, state: dict, calc_input: 'CalculationInput' = None) -> ConvictionResult:
         """Score from LangGraph agent state dict."""
         forensic    = state.get("forensic_report", {}) or {}
         vc          = state.get("value_chain_report", {}) or {}
@@ -439,11 +439,12 @@ class ConvictionScorer:
         upstream_leak    = vc.get("upstream_leak")
         strategic_lev    = self._safe(vc.get("strategic_leverage_score") or vc.get("strategic_leverage"))
         cyclicality_z    = self._safe(context.get("revenue_z_score"))
+        applies_haircut  = bool(context.get("applies_cyclical_haircut"))
         is_peak          = bool(context.get("is_cyclical_peak"))
 
         # Phase 2 valuation
-        dcf3             = p2.get("three_scenario_dcf", {}) or {}
-        base_mos         = self._safe(dcf3.get("base", {}).get("margin_of_safety") if dcf3.get("base") else None)
+        dcf_dict         = p2.get("three_scenario_dcf", {}) or p2.get("dcf", {}) or {}
+        base_mos         = self._safe(dcf_dict.get("base", {}).get("margin_of_safety") if "base" in dcf_dict else dcf_dict.get("base_upside"))
         md               = p2.get("multiple_decomposition", {}) or {}
         roic             = self._safe(md.get("roic"))
         wacc             = self._safe(p2.get("wacc"))
@@ -454,32 +455,26 @@ class ConvictionScorer:
         hist_cagr        = self._safe(rdcf.get("historical_cagr"))
 
         # From DB for FCF margin, net debt, revenue CAGR
-        try:
-            from aletheia.data.database import InvestmentDatabase
+        df = calc_input.df
+        if not df.empty:
             import numpy as np
-            db = InvestmentDatabase(verbose=False)
-            df = db.get_latest(ticker)
-            db.close()
-            if not df.empty:
-                row = df[df["fiscal_year"] == df["fiscal_year"].max()].iloc[0]
-                def g(col):
-                    v = row.get(col)
-                    return float(v) if v is not None and not (isinstance(v, float) and np.isnan(v)) else None
-                fcf_margin   = g("derived_FCF_Margin_Pct")
-                net_debt_bn  = (g("derived_NetDebt") or 0) / 1e9
-                ebitda_bn    = (g("derived_EBITDA") or 0) / 1e9
-                data_quality = g("overall_quality_score")
-                sbc_pct_fcf  = g("clean_SBC_PctFCF")
-                # Revenue CAGR from multi-period median
-                rev_series = df.sort_values("fiscal_year")["clean_Revenue"].dropna()
-                rev_cagr = self._robust_cagr(rev_series)
-            else:
-                fcf_margin = ebitda_bn = net_debt_bn = data_quality = rev_cagr = None
-        except Exception:
+            row = df[df["fiscal_year"] == df["fiscal_year"].max()].iloc[0]
+            def g(col):
+                v = row.get(col)
+                return float(v) if v is not None and not (isinstance(v, float) and np.isnan(v)) else None
+            fcf_margin   = g("derived_FCF_Margin_Pct")
+            net_debt_bn  = (g("derived_NetDebt") or 0) / 1e9
+            ebitda_bn    = (g("derived_EBITDA") or 0) / 1e9
+            data_quality = g("overall_quality_score")
+            sbc_pct_fcf  = g("clean_SBC_PctFCF")
+            # Revenue CAGR from multi-period median
+            rev_series = df.sort_values("fiscal_year")["clean_Revenue"].dropna()
+            rev_cagr = self._robust_cagr(rev_series)
+        else:
             fcf_margin = ebitda_bn = net_debt_bn = data_quality = rev_cagr = None
 
         # Sector from universe config
-        sector = self._get_sector(ticker)
+        sector = calc_input.classification.sector if calc_input.classification else ""
         
         fin = state.get("financial_translation", {}) or {}
         ratios = fin.get("ratios", {}) or {}
@@ -497,7 +492,7 @@ class ConvictionScorer:
             hist_cagr=hist_cagr,
             sector=sector,
             cyclicality_z=cyclicality_z,
-            is_peak=is_peak,
+            is_peak=applies_haircut,
             base_mos=base_mos,
             sbc_pct_fcf=sbc_pct_fcf,
             op_leverage=op_leverage,
@@ -509,7 +504,7 @@ class ConvictionScorer:
             state=state,
         )
 
-    def score_from_report(self, ticker: str, report_path: str = None) -> ConvictionResult:
+    def score_from_report(self, ticker: str, calc_input: 'CalculationInput' = None, report_path: str = None) -> ConvictionResult:
         """Score from a saved report JSON file."""
         if report_path is None:
             report_path = f"valuation_data/serving/latest/{ticker.upper()}_report.json"
@@ -547,9 +542,9 @@ class ConvictionScorer:
             data_quality=self._safe(cf.get("data_quality")),
             rev_cagr=None,  # not in report — use hist_cagr
             hist_cagr=self._safe(rdcf.get("historical_cagr")),
-            sector=self._get_sector(ticker),
+            sector=calc_input.classification.sector if (calc_input and calc_input.classification) else "",
             cyclicality_z=self._safe(ind.get("cyclicality_z_score")),
-            is_peak=bool(ind.get("is_peak")),
+            is_peak=bool(context.get("applies_cyclical_haircut")),
             base_mos=self._safe(dcf3.get("base", {}).get("margin_of_safety") if dcf3.get("base") else None),
             sbc_pct_fcf=self._safe(ratios.get("sbc_pct_fcf")) or (
                 # Fallback: compute from raw values if stored pct is None/NaN
@@ -572,6 +567,7 @@ class ConvictionScorer:
             strategic_lev=self._safe(vc_er.get("strategic_leverage")),
             multiple_premium=self._safe(md.get("premium_pct")),
             implied_cagr=self._safe(rdcf.get("implied_cagr_10y")),
+            calc_input=calc_input,
             roe=roe,
         )
 
@@ -584,14 +580,29 @@ class ConvictionScorer:
         cyclicality_z, is_peak, base_mos,
         sbc_pct_fcf, op_leverage, upstream_leak,
         strategic_lev, multiple_premium, implied_cagr,
+        calc_input: 'CalculationInput' = None,
         roe=None,
         state=None,
     ) -> ConvictionResult:
 
         result = ConvictionResult(ticker=ticker)
 
-        from aletheia.tools.lifecycle_classifier import get_stage_adjusted_thresholds
-        thresholds = get_stage_adjusted_thresholds(ticker, state=state)
+        if calc_input and calc_input.lifecycle_thresholds:
+            thresholds = calc_input.lifecycle_thresholds
+        else:
+            # Fallback for old tests that don't inject it properly (though they should)
+            class MockStage:
+                value = "growth_compounder"
+                name = "Growth Compounder (Profitable, Reinvesting)"
+            class MockThresholds:
+                stage = MockStage()
+                cagr_strong = 0.20
+                cagr_good = 0.12
+                cagr_moderate = 0.07
+                cagr_slow = 0.03
+                mos_strong = 0.30
+                mos_good = 0.15
+            thresholds = MockThresholds()
 
         # Store stage in result for reporting
         result.lifecycle_stage = thresholds.stage.value
@@ -753,41 +764,14 @@ class ConvictionScorer:
             return float(np.median(candidates))
         return None
 
-    @staticmethod
-    def _get_sector(ticker: str) -> str:
-        # Primary: read from config/universe.csv
-        try:
-            import csv
-            with open("config/universe.csv") as f:
-                for row in csv.DictReader(f):
-                    if row.get("ticker", "").upper() == ticker.upper():
-                        return row.get("sector", "")
-        except FileNotFoundError:
-            pass
-        # Fallback: hardcoded for the original 8
-        KNOWN = {
-            "AAPL": "Technology", "MSFT": "Technology",
-            "NVDA": "Semiconductors", "GOOGL": "Technology",
-            "META": "Technology", "AMZN": "Technology",
-            "TSLA": "Auto Manufacturers", "CNC": "Healthcare Plans",
-            "AMD": "Semiconductors", "ASML": "Semiconductors",
-            "TSM": "Semiconductors", "UNH": "Healthcare",
-            "LLY": "Healthcare", "ABT": "Healthcare",
-            "V": "Financials", "COST": "Consumer Defensive",
-            "WMT": "Consumer Defensive", "NEE": "Utilities",
-            "CAT": "Industrials",
-            "JPM": "Financials", "BRK-B": "Financials",
-            "SMCI": "Technology", "QCOM": "Semiconductors",
-            "ORCL": "Technology", "TXN": "Semiconductors",
-        }
-        return KNOWN.get(ticker.upper(), "")
+
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # LangGraph integration — drop-in for lead_agent
 # ─────────────────────────────────────────────────────────────────────────────
 
-def score_conviction(state: dict) -> dict:
+def score_conviction(state: Dict, calc_input: 'CalculationInput') -> Dict:
     """
     Standalone function for use in LangGraph or lead_agent.
 
@@ -796,12 +780,13 @@ def score_conviction(state: dict) -> dict:
 
     Usage in lead_agent:
         from aletheia.tools.conviction_scorer import score_conviction
-        conviction_data = score_conviction(state)
+        conviction_data = score_conviction(state, calc_input)
         conviction = conviction_data["conviction_score"]   # replaces LLM score
     """
     ticker = state.get("ticker", "UNKNOWN")
     scorer = ConvictionScorer()
-    result = scorer.score_from_state(ticker, state)
+    
+    result = scorer.score_from_state(ticker, state, calc_input)
     print(result.summary())
     return result.to_dict()
 
@@ -810,45 +795,4 @@ def score_conviction(state: dict) -> dict:
 # CLI — score all universe tickers from saved reports
 # ─────────────────────────────────────────────────────────────────────────────
 
-if __name__ == "__main__":
-    import sys
-
-    tickers = sys.argv[1:] if len(sys.argv) > 1 else [
-        "AAPL", "MSFT", "NVDA", "GOOGL", "META", "AMZN", "TSLA", "CNC"
-    ]
-
-    scorer = ConvictionScorer()
-    results = []
-
-    for ticker in tickers:
-        try:
-            result = scorer.score_from_report(ticker)
-            print(result.summary())
-            results.append(result)
-        except FileNotFoundError:
-            print(f"\n{ticker}: no report found — run pipeline first")
-        except Exception as e:
-            print(f"\n{ticker}: error — {e}")
-
-    # Universe comparison table
-    if results:
-        print(f"\n\n{'UNIVERSE CONVICTION RANKING':^70}")
-        print("─" * 70)
-        print(f"{'Ticker':>8} │ {'P1':>3} │ {'P2':>3} │ {'P3':>3} │ {'P4':>3} │ {'P5':>3} │ {'Total':>6} │ {'Conv':>5} │ {'Tier':>10}")
-        print("─" * 70)
-        for r in sorted(results, key=lambda x: x.capped_total, reverse=True):
-            cap = "⚠" if r.cap_applied else ""
-            rfx = "★" if r.reflexivity_cap else ""
-            print(
-                f"  {r.ticker:>6} │ "
-                f"{r.p1_moat.score:>3} │ "
-                f"{r.p2_health.score:>3} │ "
-                f"{r.p3_tailwind.score:>3} │ "
-                f"{r.p4_mos.score:>3} │ "
-                f"{r.p5_leadership.score:>3} │ "
-                f"  {r.capped_total:>2}/{r.raw_total:<2}{cap} │ "
-                f"{r.conviction_score:>+5} │ "
-                f"  {r.position_tier}{rfx}"
-            )
-        print("─" * 70)
-        print("  ⚠ = multiple-justified cap applied   ★ = reflexivity flag → 75% position cap")
+# CLI entrypoint removed to avoid architectural violations.

@@ -4,6 +4,8 @@ tag_mappings.py
 Maps canonical target fields (e.g., Revenue, CapEx) to a priority-ordered list of raw XBRL tags.
 The extraction logic will evaluate the list in order and select the first valid tag.
 This acts as an executable specification.
+
+Convention: We standardize on PascalCase (e.g., CapEx, LiabilitiesCurrent) for direct XBRL/accounting line items and lowercase/underscores for purely internal derived tags.
 """
 
 FIELD_MAPPINGS = {
@@ -66,7 +68,8 @@ FIELD_MAPPINGS = {
 
     "R&D": {
         "default": [
-            "ResearchAndDevelopmentExpense"
+            "ResearchAndDevelopmentExpense",
+            "ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost"
         ]
     },
 
@@ -78,12 +81,15 @@ FIELD_MAPPINGS = {
 
     "IntangibleAmortization": {
         "default": [
-            "AmortizationOfIntangibleAssets"
+            "AmortizationOfIntangibleAssets",
+            "FinanceLeaseRightOfUseAssetAmortization",
+            "CapitalizedComputerSoftwareAmortization"
         ]
     },
 
     "Depreciation": {
         "default": [
+            "Depreciation",
             "DepreciationDepletionAndAmortization",
             "DepreciationAndAmortization",
             "DepreciationAmortizationAndAccretionNet",
@@ -151,7 +157,9 @@ FIELD_MAPPINGS = {
     # Balance Sheet Fields
     "Cash": {
         "default": [
-            "CashAndCashEquivalentsAtCarryingValue"
+            "CashAndCashEquivalentsAtCarryingValue",
+            "CashAndCashEquivalents",
+            "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
         ]
     },
     "TotalAssets": {
@@ -186,12 +194,14 @@ FIELD_MAPPINGS = {
     },
     "CurrentAssets": {
         "default": [
-            "AssetsCurrent"
+            "AssetsCurrent",
+            "CurrentAssets"
         ]
     },
-    "CurrentLiabilities": {
+    "LiabilitiesCurrent": {
         "default": [
-            "LiabilitiesCurrent"
+            "LiabilitiesCurrent",
+            "CurrentLiabilities"
         ]
     },
     "AccountsReceivable": {
@@ -257,7 +267,12 @@ FIELD_MAPPINGS = {
     "PensionServiceCost": {"default": ["DefinedBenefitPlanServiceCost"]},
     "PensionInterestCost": {"default": ["DefinedBenefitPlanInterestCost"]},
     "PensionFundedStatus": {"default": ["DefinedBenefitPlanFundedStatusOfPlan"]},
-    "JVA_Income": {"default": ["IncomeLossFromEquityMethodInvestments"]}
+    "JVA_Income": {"default": ["IncomeLossFromEquityMethodInvestments"]},
+    "AcquiredInProcessRnD": {
+        "default": [
+            "ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff"
+        ]
+    }
 }
 
 RESOLUTION_STRATEGY = {

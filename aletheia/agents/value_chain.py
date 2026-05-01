@@ -134,9 +134,11 @@ def value_chain_agent(state):
     # ── 1. Load from DuckDB ───────────────────────────────────────────────────
     db = load_db_context(ticker)
 
-    def fmt(v, pct=False, bn=False):
+    def fmt(v, pct=False, bn=False, pre_pct=False):
         if v is None:
             return "N/A"
+        if pre_pct:
+            return f"{v:.1f}%"
         if pct:
             return f"{v:.1%}"
         if bn:
@@ -146,11 +148,11 @@ def value_chain_agent(state):
     db_context = f"""
 FINANCIAL FACTS FROM INTAKE PIPELINE (FY{db.get('fiscal_year', '?')}):
   Revenue:           {fmt(db.get('revenue'), bn=True)}
-  Gross Margin:      {fmt(db.get('gross_margin_pct'), pct=True)} ({db.get('gross_margin_trend', 'N/A')} 3Y trend)
-  EBIT Margin:       {fmt(db.get('ebit_margin_pct'), pct=True)}
-  FCF Margin:        {fmt(db.get('fcf_margin_pct'), pct=True)}
+  Gross Margin:      {fmt(db.get('gross_margin_pct'), pre_pct=True)} ({db.get('gross_margin_trend', 'N/A')} 3Y trend)
+  EBIT Margin:       {fmt(db.get('ebit_margin_pct'), pre_pct=True)}
+  FCF Margin:        {fmt(db.get('fcf_margin_pct'), pre_pct=True)}
   ROIC:              {fmt(db.get('roic'), pct=True)}
-  SBC % of FCF:      {fmt(db.get('sbc_pct_fcf'), pct=True)}
+  SBC % of FCF:      {fmt(db.get('sbc_pct_fcf'), pre_pct=True)}
   Net Debt:          {fmt(db.get('net_debt'), bn=True)}
 """
 

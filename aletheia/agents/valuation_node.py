@@ -52,10 +52,10 @@ def compute_dcf_adjustments(forensic: dict, vc: dict, ctx: dict) -> dict:
 
     # ── Cyclical peak base revenue ────────────────────────────────────────────
     # Source: context. recommended_base_revenue is Python numpy mean — not LLM
-    is_cyclical_peak = bool(ctx.get("is_cyclical_peak", False))
+    applies_cyclical_haircut = bool(ctx.get("applies_cyclical_haircut", False))
     recommended_base_rev = ctx.get("recommended_base_revenue")
     base_revenue_override = recommended_base_rev if (
-        is_cyclical_peak and recommended_base_rev) else None
+        applies_cyclical_haircut and recommended_base_rev) else None
 
     return {
         # Magnitudes — Python rules
@@ -69,14 +69,15 @@ def compute_dcf_adjustments(forensic: dict, vc: dict, ctx: dict) -> dict:
         "has_pricing_power":         has_pricing_power,
         "strategic_leverage_score":  strategic_leverage,
         "terminal_haircut":          terminal_haircut,
-        "is_cyclical_peak":          is_cyclical_peak,
+        "is_cyclical_peak":          bool(ctx.get("is_cyclical_peak", False)),
+        "applies_cyclical_haircut":  applies_cyclical_haircut,
         # Audit trail
         "rules": {
             "wacc_penalty":      "concentration_risk → +150bps (Framework §10.3)",
             "growth_decay":      "has_pricing_power → decay_rate - 0.01",
             "terminal_growth":   "strategic_leverage 1-10 → lookup table ±0.5-1.0%",
             "terminal_cap":      "terminal_haircut → cap at 2.0%",
-            "base_revenue":      "is_cyclical_peak → DuckDB 3Y numpy average",
+            "base_revenue":      "applies_cyclical_haircut → DuckDB 3Y numpy average",
         }
     }
 
@@ -130,6 +131,9 @@ def valuation_node(state: dict) -> dict:
             dcf_kwargs["base_revenue_override"] = adj["base_revenue_override"]
             print(f"  ℹ Peak: using DuckDB 3Y avg "
                   f"${adj['base_revenue_override']/1e9:.1f}B as base year")
+        
+        if adj.get("applies_cyclical_haircut"):
+            dcf_kwargs["applies_cyclical_haircut"] = True
 
         dcf_result = engine.run(ticker, **dcf_kwargs)
         if dcf_result.errors:
@@ -181,6 +185,8 @@ def valuation_node(state: dict) -> dict:
         rdcf_kwargs = {}
         if adj["base_revenue_override"]:
             rdcf_kwargs["base_revenue_override"] = adj["base_revenue_override"]
+        if adj.get("applies_cyclical_haircut"):
+            rdcf_kwargs["applies_cyclical_haircut"] = True
 
         rdcf_result = rdcf.run(ticker, **rdcf_kwargs)
         phase2["reverse_dcf"]        = rdcf_result.to_dict()

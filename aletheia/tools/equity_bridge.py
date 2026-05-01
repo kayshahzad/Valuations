@@ -30,7 +30,7 @@ Cash haircuts (Liberti):
 Usage:
     from aletheia.tools.equity_bridge import EquityBridge
     bridge = EquityBridge()
-    result = bridge.build("AAPL", enterprise_value=3_000_000_000_000)
+    result = bridge.build("TICKER", enterprise_value=3_000_000_000_000)
     print(result.summary())
 """
 
@@ -39,7 +39,6 @@ from dataclasses import dataclass, field
 from typing import Optional, List, Dict
 
 import numpy as np
-import yfinance as yf
 
 warnings.filterwarnings("ignore")
 
@@ -180,7 +179,7 @@ class EquityBridge:
 
     def build(
         self,
-        ticker: str,
+        calc_input: 'CalculationInput',
         enterprise_value: float,
         fiscal_year: Optional[int] = None,
         scenario_name: str = "base",
@@ -191,7 +190,7 @@ class EquityBridge:
         Build equity bridge for a given EV.
 
         Args:
-            ticker: e.g. "AAPL"
+            calc_input: CalculationInput containing df and metadata
             enterprise_value: from DCFEngine (bull/base/bear)
             fiscal_year: defaults to latest in DB
             scenario_name: label for this bridge ("bull", "base", "bear")
@@ -201,8 +200,7 @@ class EquityBridge:
         Returns:
             EquityBridgeResult with full bridge and per-share intrinsic value
         """
-        from aletheia.data.database import InvestmentDatabase
-
+        ticker = calc_input.classification.ticker if calc_input.classification else "UNKNOWN"
         result = EquityBridgeResult(
             ticker=ticker,
             enterprise_value=enterprise_value,
@@ -210,20 +208,18 @@ class EquityBridge:
         )
 
         # ── Load DB data ──────────────────────────────────────────────────────
-        try:
-            db = InvestmentDatabase(verbose=False)
-            df = db.get_latest(ticker)
-            db.close()
-        except Exception as e:
-            result.warnings.append(f"DB load failed: {e}")
-            return result
+        df = calc_input.df
 
         if df.empty:
             result.warnings.append(f"No data for {ticker}")
             return result
 
         fy = fiscal_year or int(df["fiscal_year"].max())
-        row = df[df["fiscal_year"] == fy].iloc[0]
+        try:
+            row = df[df["fiscal_year"] == fy].iloc[0]
+        except Exception as e:
+            result.warnings.append(f"Failed to extract row for FY {fy}: {e}")
+            return result
 
         def get(col, fallback=0.0):
             val = row.get(col)
@@ -365,15 +361,14 @@ class EquityBridge:
             result.data_quality = np.mean([i.confidence for i in items])
 
         # ── Per-share intrinsic value ─────────────────────────────────────────
-        try:
-            yf_ticker = yf.Ticker(ticker)
-            info = yf_ticker.fast_info
-            current_price = float(info.last_price or 0)
-            market_cap = float(info.market_cap or 0)
-            shares = market_cap / current_price if current_price > 0 else 0.0
-        except Exception:
-            current_price = 0.0
-            shares = 0.0
+        from aletheia.data.market_data import get_current_price, get_shares_outstanding
+        current_price = get_current_price(ticker)
+        
+        shares = get("raw_SharesBasic")
+        if not shares or shares <= 0:
+            shares = get("clean_SharesDiluted")
+        if not shares or shares <= 0:
+            shares = get_shares_outstanding(ticker)
 
         result.current_price = current_price
         result.shares_diluted = shares
@@ -417,7 +412,7 @@ class EquityBridge:
 
     def build_for_dcf(
         self,
-        ticker: str,
+        calc_input: 'CalculationInput',
         dcf_result,   # DCFResult from dcf_engine.py
         fiscal_year: Optional[int] = None,
         overseas_cash_fraction: float = 0.60,
@@ -426,7 +421,7 @@ class EquityBridge:
         Convenience method: build equity bridges for all three DCF scenarios.
 
         Args:
-            ticker: stock ticker
+            calc_input: CalculationInput containing df and metadata
             dcf_result: DCFResult object from DCFEngine.run()
             fiscal_year: year to use for bridge inputs
 
@@ -440,7 +435,7 @@ class EquityBridge:
                 continue
             ev = scenario.enterprise_value
             bridges[scenario_name] = self.build(
-                ticker=ticker,
+                calc_input=calc_input,
                 enterprise_value=ev,
                 fiscal_year=fiscal_year,
                 scenario_name=scenario_name,
@@ -449,31 +444,4 @@ class EquityBridge:
         return bridges
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# CLI
-# ─────────────────────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    import sys
-    from aletheia.tools.dcf_engine import DCFEngine
-
-    tickers = sys.argv[1:] if len(sys.argv) > 1 else ["AAPL"]
-
-    for ticker in tickers:
-        print(f"\n{'='*60}")
-        print(f"  Equity Bridge: {ticker}")
-        print(f"{'='*60}")
-
-        engine = DCFEngine(verbose=False)
-        dcf = engine.run(ticker)
-
-        bridge = EquityBridge(verbose=True)
-        bridges = bridge.build_for_dcf(ticker, dcf)
-
-        print(f"\n{'─'*60}")
-        print("SCENARIO COMPARISON")
-        print(f"{'─'*60}")
-        for name, b in bridges.items():
-            print(f"  {name.upper():4s}: IV=${b.intrinsic_per_share:,.0f}"
-                  f"  MoS={b.margin_of_safety:+.1%}"
-                  f"  EqVal=${b.equity_value/1e9:.0f}B")
+# CLI entrypoint removed to avoid architectural violations.

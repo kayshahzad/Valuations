@@ -26,7 +26,7 @@ Flags:
 Usage:
     from aletheia.tools.reverse_dcf import ReverseDCF
     rdcf = ReverseDCF()
-    result = rdcf.run("AAPL")
+    result = rdcf.run("TICKER")
     print(result.summary())
 """
 
@@ -35,7 +35,6 @@ from dataclasses import dataclass, field
 from typing import Optional, List, Tuple
 
 import numpy as np
-import yfinance as yf
 from scipy.optimize import brentq
 
 warnings.filterwarnings("ignore")
@@ -195,17 +194,19 @@ class ReverseDCF:
 
     def run(
         self,
-        ticker: str,
+        calc_input: 'CalculationInput',
         fiscal_year: Optional[int] = None,
         wacc_override: Optional[float] = None,
         margin_override: Optional[float] = None,
+        current_price: Optional[float] = None,
+        market_cap: Optional[float] = None,
         **kwargs
     ) -> ReverseDCFResult:
         """
         Solve for implied growth rate from current market price.
 
         Args:
-            ticker: e.g. "AAPL"
+            calc_input: CalculationInput containing df and metadata
             fiscal_year: defaults to latest
             wacc_override: use this WACC instead of computing from market data
             margin_override: use this EBIT margin instead of historical
@@ -213,18 +214,14 @@ class ReverseDCF:
         Returns:
             ReverseDCFResult with implied growth and signal
         """
-        from aletheia.data.database import InvestmentDatabase
+        ticker = calc_input.classification.ticker if calc_input.classification else "UNKNOWN"
+        applies_cyclical_haircut = (calc_input.classification.lifecycle == "cyclical_industrial") if calc_input.classification else False
+        max_growth_rate = kwargs.get('max_growth_rate', 0.50)
 
         result = ReverseDCFResult(ticker=ticker, fiscal_year=fiscal_year or 0)
 
         # ── Load data ─────────────────────────────────────────────────────────
-        try:
-            db = InvestmentDatabase(verbose=False)
-            df = db.get_latest(ticker)
-            db.close()
-        except Exception as e:
-            result.errors.append(f"DB load failed: {e}")
-            return result
+        df = calc_input.df
 
         if df.empty:
             result.errors.append(f"No data for {ticker}")
@@ -280,33 +277,32 @@ class ReverseDCF:
             hist_cagr = float(np.median(cagr_candidates2))
         else:
             hist_cagr = 0.08
-        result.historical_cagr_5y = float(np.clip(hist_cagr, 0.0, 0.80))
+        result.historical_cagr_5y = float(np.clip(hist_cagr, 0.0, max_growth_rate))
 
         # Sector
-        try:
-            universe_path = "config/universe.csv"
-            import csv
-            with open(universe_path) as f:
-                reader = csv.DictReader(f)
-                for row_csv in reader:
-                    if row_csv.get("ticker", "").upper() == ticker.upper():
-                        result.sector = row_csv.get("sector", "Default")
-                        break
-        except Exception:
-            pass
+        if calc_input.classification:
+            result.sector = calc_input.classification.sector
+        else:
+            result.sector = "Default"
         result.sector_75th_cagr = SECTOR_75TH_CAGR.get(
             result.sector, SECTOR_75TH_CAGR["Default"]
         )
 
-        # ── Fetch live market data ────────────────────────────────────────────
-        try:
-            yf_ticker = yf.Ticker(ticker)
-            info = yf_ticker.fast_info
-            current_price = float(info.last_price or 0)
-            market_cap = float(info.market_cap or 0)
-        except Exception as e:
-            result.errors.append(f"yfinance failed: {e}")
-            return result
+        # ── Fetch market data ─────────────────────────────────────────────────
+        if current_price is None or market_cap is None:
+            import warnings
+            warnings.warn(
+                "ReverseDCF.run() is deprecated for direct calls. Use run_live() or run_snapshot() "
+                "to explicitly declare state determinism. Defaulting to live market data.", 
+                DeprecationWarning, stacklevel=2
+            )
+            from aletheia.data.market_data import get_current_price, get_market_cap
+            try:
+                current_price = current_price or get_current_price(ticker)
+                market_cap = market_cap or get_market_cap(ticker)
+            except Exception as e:
+                result.errors.append(f"market_data failed: {e}")
+                return result
 
         result.current_price = current_price
         result.market_cap = market_cap
@@ -348,14 +344,18 @@ class ReverseDCF:
             """Project 10Y FCFF and compute model EV for a given CAGR."""
             prev_nwc = revenue * nwc_pct
             pv_total = 0.0
+            
+            cagr_y1_5_factor = 0.70 if applies_cyclical_haircut else 1.0
+            cagr_y6_10_factor = 0.40 if applies_cyclical_haircut else 1.0
+            terminal_g_delta = -0.005 if applies_cyclical_haircut else 0.0
 
             for yr in range(1, self.FORECAST_YEARS + 1):
                 # Two-stage: Y1-5 at full CAGR, Y6-10 fading to 60%
                 if yr <= 5:
-                    effective_cagr = cagr
+                    effective_cagr = cagr * cagr_y1_5_factor
                 else:
                     fade = (yr - 5) / 5
-                    effective_cagr = cagr * (1 - fade * 0.40)
+                    effective_cagr = cagr * (1 - fade * 0.40) * cagr_y6_10_factor
 
                 if yr == 1:
                     rev = revenue * (1 + effective_cagr)
@@ -374,7 +374,7 @@ class ReverseDCF:
 
             # Terminal value
             final_nopat = rev * ebit_margin * (1 - tax_rate)
-            g = self.TERMINAL_GROWTH
+            g = self.TERMINAL_GROWTH + terminal_g_delta
             effective_roic = max(roic, 0.08)
             if wacc > g:
                 tv = final_nopat * (1 - g / effective_roic) / (wacc - g)
@@ -478,11 +478,15 @@ class ReverseDCF:
         for m in [ebit_margin * 0.80, ebit_margin, ebit_margin * 1.20]:
             for w in [0.07, 0.09, 0.11]:
                 def obj_grid(cagr, margin=m, w=w):
+                    cagr_y1_5_factor = 0.70 if applies_cyclical_haircut else 1.0
+                    cagr_y6_10_factor = 0.40 if applies_cyclical_haircut else 1.0
+                    terminal_g_delta = -0.005 if applies_cyclical_haircut else 0.0
+
                     prev_nwc_g = revenue * nwc_pct
                     pv = 0.0
                     rev_g = revenue
                     for yr in range(1, self.FORECAST_YEARS + 1):
-                        eff_cagr = cagr if yr <= 5 else cagr * (1 - (yr-5)/5 * 0.40)
+                        eff_cagr = (cagr * cagr_y1_5_factor) if yr <= 5 else (cagr * (1 - (yr-5)/5 * 0.40) * cagr_y6_10_factor)
                         rev_g = rev_g * (1 + eff_cagr)
                         n = rev_g * margin * (1 - tax_rate)
                         d = rev_g * da_pct
@@ -491,7 +495,8 @@ class ReverseDCF:
                         pv += (n + d - c - (nwc_g - prev_nwc_g)) / (1+w)**yr
                         prev_nwc_g = nwc_g
                     final_n = rev_g * margin * (1 - tax_rate)
-                    tv_g = final_n * (1 - 0.025/max(roic,0.08)) / (w - 0.025) if w > 0.025 else final_n * 15
+                    tg = 0.025 + terminal_g_delta
+                    tv_g = final_n * (1 - tg/max(roic,0.08)) / (w - tg) if w > tg else final_n * 15
                     return pv + tv_g / (1+w)**self.FORECAST_YEARS - current_ev
 
                 try:
@@ -520,11 +525,4 @@ class ReverseDCF:
 # CLI
 # ─────────────────────────────────────────────────────────────────────────────
 
-if __name__ == "__main__":
-    import sys
-    tickers = sys.argv[1:] if len(sys.argv) > 1 else ["AAPL"]
-    rdcf = ReverseDCF(verbose=True)
-    for ticker in tickers:
-        print(f"\n{'='*60}")
-        result = rdcf.run(ticker)
-        print()
+# CLI entrypoint removed to avoid architectural violations.

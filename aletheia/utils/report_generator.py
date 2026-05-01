@@ -107,7 +107,7 @@ class ReportGenerator:
 
         md = f"""# 📑 Investment Memo: {ticker}
 **Date**: {self._safe_date(meta)}
-**Conviction Score**: {conviction}/10
+**Conviction Score**: {conviction} (on -10 to +10 scale)
 **Status**: CONFIDENTIAL
 
 ---
@@ -233,7 +233,7 @@ class ReportGenerator:
             "**Status**: GENERATED",
             "\n---\n",
             "## 1. 📝 Investment Thesis",
-            f"### Conviction Score: {conviction}/10",
+            f"### Conviction Score: {conviction} (on -10 to +10 scale)",
             narrative,
             "\n---\n",
         ]

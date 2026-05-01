@@ -58,6 +58,10 @@ def lead_agent(state):
 
     ticker = state["ticker"]
 
+    # ── Verify required upstream context ──────────────────────────────────────
+    if "forensic_report" not in state or "value_chain_report" not in state:
+        raise ValueError("FATAL: Pipeline execution halted. 'forensic_report' or 'value_chain_report' missing from active state. lead.py requires active context, not stale JSON.")
+
     # ── Gather all agent outputs ──────────────────────────────────────────────
     strat      = state.get("strategist_report", {}) or {}
     forensic   = state.get("forensic_report", {}) or {}
@@ -157,8 +161,8 @@ def lead_agent(state):
                     "cash_tax_rate":       _g("clean_CashTaxRate"),
                 },
                 "quality_screens": {
-                    "beneish_m_score": p2.get("dcf", {}).get("beneish_m_score"),
-                    "sloan_accrual":   p2.get("dcf", {}).get("sloan_accrual_ratio"),
+                    "beneish_m_score": _g("beneish_m_score"),
+                    "sloan_accrual":   _g("sloan_accrual_ratio"),
                     "domain_scores": {
                         k.replace("domain_score_", ""): _g(k)
                         for k in _df.columns if k.startswith("domain_score_")
@@ -181,6 +185,18 @@ def lead_agent(state):
     capital_structure = dict(strat) if strat else {}
     capital_structure["concentration_risk"]    = forensic.get("concentration_risk")
     capital_structure["concentration_details"] = forensic.get("concentration_details", "")
+
+    try:
+        # Calculate floor price per share
+        shares = p2.get("bridge", {}).get("base", {}).get("shares_diluted")
+        if not shares:
+            shares = p2.get("three_scenario_dcf", {}).get("base", {}).get("shares_diluted")
+            
+        floor_val = capital_structure.get("risk_factors", {}).get("downside", {}).get("floor_value")
+        if shares and floor_val:
+            capital_structure["risk_factors"]["downside"]["floor_price_per_share"] = floor_val / shares
+    except Exception:
+        pass
 
     # ── Constitution checks ───────────────────────────────────────────────────
     params         = val.get("assumptions_used", {})
@@ -315,7 +331,7 @@ Be specific and mathematical. Return structured JSON.
     from aletheia.tools.conviction_scorer import ConvictionScorer
     _scorer = ConvictionScorer()
     try:
-        conviction_data = _scorer.score_from_report(ticker).to_dict()
+        conviction_data = _scorer.score_from_state(ticker, state).to_dict()
     except Exception as _e:
         print(f"⚠ Conviction scorer fallback: {_e}")
         from aletheia.tools.conviction_scorer import score_conviction

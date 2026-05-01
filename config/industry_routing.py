@@ -9,7 +9,9 @@ TICKER_TO_INDUSTRY = {
     "UNH": "healthcare",
     "CNC": "healthcare",
     "JPM": "bank",
-    "NEE": "utility"
+    "NEE": "utility",
+    "BRK-B": "insurance",
+    "TSM": "semiconductors"
 }
 
 def get_industry(ticker: str) -> str:

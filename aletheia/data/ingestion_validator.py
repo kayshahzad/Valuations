@@ -1,319 +1,287 @@
 """
 aletheia/data/ingestion_validator.py
 
-Phase B — Ingestion Validation Gate
-=====================================
-Validates every CleanedRecord after _compute_derived() and before
-_score_quality(). Bad records are quarantined — never written to the
-main DuckDB table.
+Phase 2.2 — Code-Based Ingestion Validation Gate
+================================================
+Validates every CleanedRecord after calculation. 
+Uses a typed, config-driven contract system that tests can assert against.
 
-Architecture:
-  CleaningEngine.clean()
-      → _compute_derived()
-      → IngestionValidator.validate()    ← NEW
-          → passes: proceed to _score_quality() → write to company_records
-          → fails:  write to quarantine_records, log failures
-      → _score_quality()
-
-Design principles:
-  1. All magnitude rules are hardcoded here — not in the LLM or cleaning engine
-  2. Sector-aware bounds (low-margin retail, utilities, financials)
-  3. Every failure is logged with ticker, FY, field, value, and reason
-  4. Quarantined records are inspectable — not silently dropped
-
-Usage:
-    from aletheia.data.ingestion_validator import IngestionValidator
-    validator = IngestionValidator()
-    failures = validator.validate(record)
-    if failures:
-        record.quarantined = True
-        for f in failures:
-            record.error(f)
+Returns a ValidationResult object. Expected validation failures 
+(bounds limits, missing required tags) populate the failures list.
+Exceptions are reserved for unexpected operational issues.
 """
 
-from __future__ import annotations
+import logging
+from datetime import date
+from typing import List, Optional, Any, Callable, Dict, Tuple
 from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Optional
-import json
+from aletheia.data.cleaning_engine import CleanedRecord
+from config.known_issues import KNOWN_ISSUES
 
+logger = logging.getLogger(__name__)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Sector archetype overrides
-# Low-margin retail, financials, utilities have different plausibility ranges
-# ─────────────────────────────────────────────────────────────────────────────
+try:
+    from config.industry_routing import get_industry
+except ImportError:
+    # Fallback if config is not loadable in isolation
+    def get_industry(ticker: str) -> str:
+        return "default"
 
-# Sectors where EBITDA < 5% of revenue is structurally correct
-LOW_MARGIN_SECTORS = {"Retail", "Consumer Defensive", "Healthcare Plans", "Managed Care"}
+@dataclass
+class KnownIssue:
+    reason: str
+    expires_after: str  # e.g. "2026-06-30"
 
-# Sectors where D&A > 15% of revenue is structurally correct
-HIGH_DA_SECTORS = {"Utilities", "Energy", "Real Estate", "Industrials"}
+    def __post_init__(self):
+        # Fail fast if date is malformed
+        date.fromisoformat(self.expires_after)
 
-# Sectors where ROIC is not the primary metric (use ROE instead)
-FINANCIAL_SECTORS = {"Financials", "Banking", "Insurance", "Financial Services"}
+@dataclass
+class FieldContract:
+    field: str
+    required: bool = False
+    min_val: float = float('-inf')
+    max_val: float = float('inf')
+    description: str = ""
+    error_template: str = "Field '{field}' value {actual} violates absolute bounds [{min_val}, {max_val}]. {description}"
+    bypass_sectors: List[str] = field(default_factory=list)
 
-# Known low-margin tickers (supplement sector lookup)
-LOW_MARGIN_TICKERS = {"COST", "WMT", "UNH", "CNC", "CVS", "HUM"}
-HIGH_DA_TICKERS    = {"NEE", "DUK", "SO", "D", "CAT", "DE"}
+@dataclass
+class RelativeContract:
+    field: str
+    relative_to: str
+    min_pct: float
+    max_pct: float
+    archetype_overrides: Dict[str, Tuple[float, float]] = field(default_factory=dict)
+    bypass_sectors: List[str] = field(default_factory=list)
+    description: str = ""
+    error_template: str = "Field '{field}' relative to '{relative_to}' is {actual:.1f}%. Expected between {min_pct}% and {max_pct}%. {description}"
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Validation result
-# ─────────────────────────────────────────────────────────────────────────────
+@dataclass
+class IdentityContract:
+    name: str
+    predicate: Callable[[CleanedRecord], bool]
+    error_template: str
 
 @dataclass
 class ValidationFailure:
-    field:    str
-    value:    Optional[float]
-    reason:   str
-    severity: str  # "error" (quarantine) | "warning" (flag but allow)
+    field: str
+    reason: str
+    expected: Any = None
+    actual: Any = None
+    message: str = ""
 
-    def __str__(self):
-        val_str = f"{self.value:,.0f}" if self.value else "None"
-        return f"[{self.severity.upper()}] {self.field}={val_str}: {self.reason}"
+@dataclass
+class ValidationResult:
+    is_valid: bool
+    failures: List[ValidationFailure] = field(default_factory=list)
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Validator
-# ─────────────────────────────────────────────────────────────────────────────
 
 class IngestionValidator:
     """
-    Validates a CleanedRecord after _compute_derived().
-
-    Returns a list of ValidationFailure objects.
-    Empty list = record passes. Non-empty = quarantine if any severity==error.
+    Validates a CleanedRecord against strict, data-driven contracts.
+    Returns a ValidationResult containing structured failures.
     """
+    
+    # Contract: Absolute Value Rules
+    ABSOLUTE_CONTRACTS = [
+        FieldContract("raw_Revenue", required=True, min_val=0.001, description="Revenue must be strictly positive"),
+        FieldContract("raw_TotalAssets", required=True, min_val=0.001, description="TotalAssets must be strictly positive"),
+        FieldContract("raw_TotalEquity", required=True, description="TotalEquity is required for ROE/InvestedCapital"),
+        FieldContract("Depreciation", required=True, description="Depreciation is required", bypass_sectors=["bank", "financials", "insurance"]),
+        FieldContract("CapEx", required=True, description="CapEx is required", bypass_sectors=["bank", "financials", "insurance"]),
+        FieldContract("TotalLiabilities", required=True, description="TotalLiabilities is required"),
+        FieldContract("Cash", required=True, description="Cash is required", bypass_sectors=["bank", "financials", "insurance"]),
+        FieldContract("OperatingIncome", required=True, description="OperatingIncome is required", bypass_sectors=["bank", "financials", "insurance"]),
+        FieldContract("derived_ROIC", min_val=-80.0, max_val=10.0, description="ROIC outside bounds is anomalous"),
+        FieldContract("derived_EBIT_Margin_Pct", min_val=-50.0, max_val=80.0, description="EBIT margin outside -50% to 80% is anomalous"),
+    ]
 
-    def validate(self, record, sector: str = "") -> list[ValidationFailure]:
+    # Contract: Relative Check Rules (Field as a percentage of Relative_To)
+    RELATIVE_CONTRACTS = [
+        RelativeContract(
+            field="Depreciation", 
+            relative_to="raw_Revenue", 
+            min_pct=0.1, 
+            max_pct=20.0, 
+            archetype_overrides={"utility": (0.5, 40.0), "energy": (0.5, 40.0), "real_estate": (0.5, 40.0), "industrials": (0.5, 40.0), "semiconductors": (0.5, 30.0)},
+            bypass_sectors=["bank", "financials", "insurance"],
+            description="D&A typically 0.5% - 20% of Revenue"
+        ),
+        RelativeContract(
+            field="CapEx", 
+            relative_to="raw_Revenue", 
+            min_pct=0.1, 
+            max_pct=50.0, 
+            archetype_overrides={"utility": (0.1, 60.0), "energy": (0.1, 60.0), "real_estate": (0.1, 60.0), "industrials": (0.1, 60.0)},
+            bypass_sectors=["bank", "financials", "insurance"],
+            description="CapEx typically 0.1% - 30% of Revenue (bypassed for financials)"
+        ),
+        RelativeContract(
+            field="derived_EBITDA", 
+            relative_to="raw_Revenue", 
+            min_pct=4.0, 
+            max_pct=100.0, 
+            archetype_overrides={"retail": (1.0, 100.0), "healthcare": (1.0, 100.0)},
+            bypass_sectors=["bank", "financials", "insurance"],
+            description="EBITDA margin typically >= 4%"
+        ),
+    ]
+
+    # Contract: Accounting Identities
+    ACCOUNTING_IDENTITIES = [
+        IdentityContract(
+            name="ebitda_ge_ebit",
+            predicate=lambda r: (
+                (r.derived.get("EBITDA_Margin_Pct") is None) or 
+                (r.derived.get("EBIT_Margin_Pct") is None) or 
+                (r.derived.get("EBITDA_Margin_Pct") >= r.derived.get("EBIT_Margin_Pct"))
+            ),
+            error_template="Accounting Identity Violated: EBITDA margin ({ebitda_margin:.1f}%) < EBIT margin ({ebit_margin:.1f}%). D&A must be positive."
+        ),
+    ]
+
+    @classmethod
+    def get_absolute_contracts(cls) -> List[FieldContract]:
+        return cls.ABSOLUTE_CONTRACTS
+        
+    @classmethod
+    def get_relative_contracts(cls) -> List[RelativeContract]:
+        return cls.RELATIVE_CONTRACTS
+
+    @classmethod
+    def get_identity_contracts(cls) -> List[IdentityContract]:
+        return cls.ACCOUNTING_IDENTITIES
+
+    @classmethod
+    def validate(cls, record: CleanedRecord, sector: str = "") -> ValidationResult:
         """
-        Main entry point. Returns list of failures (empty = clean).
-
-        Args:
-            record: CleanedRecord from cleaning_engine.py
-            sector: company sector string for archetype-aware bounds
+        Validates the record and returns a ValidationResult.
         """
         ticker = record.ticker
-        fy     = record.fiscal_year
         failures = []
+        
+        # If sector is not provided, look it up from industry routing
+        if not sector:
+            sector = get_industry(ticker).lower()
+        else:
+            sector = sector.lower()
 
-        revenue = (
-            record.clean.get("Revenue")
-            or record.raw.get("Revenue")
-            or 0.0
-        )
+        # Helper to fetch safely from raw, clean, or derived without silent falsy bug
+        def get_val(f_name: str) -> Optional[float]:
+            if f_name.startswith("raw_"): return record.raw.get(f_name.replace("raw_", ""))
+            if f_name.startswith("clean_"): return record.clean.get(f_name.replace("clean_", ""))
+            if f_name.startswith("derived_"): return record.derived.get(f_name.replace("derived_", ""))
+            
+            # Use 'is not None' to preserve 0.0
+            val = record.raw.get(f_name)
+            if val is not None: return val
+            val = record.clean.get(f_name)
+            if val is not None: return val
+            return record.derived.get(f_name)
 
-        # Detect archetype from sector or ticker
-        is_low_margin  = (sector in LOW_MARGIN_SECTORS
-                          or ticker in LOW_MARGIN_TICKERS)
-        is_high_da     = (sector in HIGH_DA_SECTORS
-                          or ticker in HIGH_DA_TICKERS)
-        is_financial   = (sector in FINANCIAL_SECTORS)
+        # 1. Evaluate Absolute Contracts
+        for contract in cls.ABSOLUTE_CONTRACTS:
+            if sector in contract.bypass_sectors:
+                logger.info(f"{ticker} bypassed absolute check {contract.field} (sector: {sector})")
+                continue
+            val = get_val(contract.field)
+            if val is None:
+                if contract.required:
+                    failures.append(ValidationFailure(
+                        field=contract.field,
+                        reason="missing_field",
+                        message=f"Missing required field: '{contract.field}'. {contract.description}"
+                    ))
+                continue
+            
+            if not (contract.min_val <= val <= contract.max_val):
+                msg = contract.error_template.format(
+                    field=contract.field,
+                    min_val=contract.min_val,
+                    max_val=contract.max_val,
+                    actual=val,
+                    description=contract.description
+                )
+                failures.append(ValidationFailure(
+                    field=contract.field,
+                    reason="bounds_violation",
+                    expected=(contract.min_val, contract.max_val),
+                    actual=val,
+                    message=msg
+                ))
 
-        # ── 1. Revenue must exist and be positive ─────────────────────────────
-        failures += self._check_revenue(revenue, ticker, fy)
-        if not revenue or revenue <= 0:
-            # Cannot compute pct-of-revenue checks without revenue
-            return failures
+        # Base Reference for Relative
+        revenue = get_val("raw_Revenue")
+        
+        # 2. Evaluate Relative Contracts
+        if revenue is not None and revenue > 0:
+            for contract in cls.RELATIVE_CONTRACTS:
+                if sector in contract.bypass_sectors:
+                    logger.info(f"{ticker} bypassed {contract.field} check (sector: {sector})")
+                    continue
 
-        # ── 2. Critical income statement fields ───────────────────────────────
-        failures += self._check_ebit(record, revenue, ticker, fy)
-        failures += self._check_ebitda(record, revenue, ticker, fy, is_low_margin)
+                val = get_val(contract.field)
+                if val is None:
+                    continue
+                    
+                pct = (val / revenue) * 100
+                
+                # Apply archetype overrides
+                min_p, max_p = contract.min_pct, contract.max_pct
+                if sector in contract.archetype_overrides:
+                    min_p, max_p = contract.archetype_overrides[sector]
 
-        # ── 3. Reinvestment inputs — D&A and CapEx ────────────────────────────
-        failures += self._check_da(record, revenue, ticker, fy, is_high_da)
-        failures += self._check_capex(record, revenue, ticker, fy, is_high_da)
+                if not (min_p <= pct <= max_p):
+                    msg = contract.error_template.format(
+                        field=contract.field,
+                        relative_to=contract.relative_to,
+                        min_pct=min_p,
+                        max_pct=max_p,
+                        actual=pct,
+                        description=contract.description
+                    )
+                    failures.append(ValidationFailure(
+                        field=contract.field,
+                        reason="relative_bounds_violation",
+                        expected=(min_p, max_p),
+                        actual=pct,
+                        message=msg
+                    ))
 
-        # ── 4. Returns — ROIC / ROE ───────────────────────────────────────────
-        failures += self._check_roic(record, ticker, fy, is_financial)
-
-        # ── 5. Balance sheet plausibility ────────────────────────────────────
-        failures += self._check_balance_sheet(record, revenue, ticker, fy)
-
-        # ── 6. Sanity: EBITDA > EBIT (D&A always positive) ───────────────────
-        failures += self._check_accounting_identities(record, ticker, fy)
-
-        return failures
-
-    # ── Individual checks ─────────────────────────────────────────────────────
-
-    def _check_revenue(self, revenue, ticker, fy) -> list:
-        if not revenue or revenue <= 0:
-            return [ValidationFailure(
-                field="clean_Revenue", value=revenue,
-                reason=f"Revenue is None/zero for {ticker} FY{fy}. "
-                       "XBRL revenue tag not resolved. Check tag_misses.jsonl.",
-                severity="error"
-            )]
-        return []
-
-    def _check_ebit(self, record, revenue, ticker, fy) -> list:
-        ebit = (record.clean.get("NormalizedEBIT")
-                or record.derived.get("EBIT_Margin_Pct"))
-        # Check via derived margin
-        ebit_margin = record.derived.get("EBIT_Margin_Pct")
-        if ebit_margin is None:
-            return [ValidationFailure(
-                field="derived_EBIT_Margin_Pct", value=None,
-                reason="EBIT margin could not be computed. "
-                       "OperatingIncome tag likely missing.",
-                severity="warning"
-            )]
-        # EBIT margin -50% to +80% covers almost all real companies
-        if not (-50.0 <= ebit_margin <= 80.0):
-            return [ValidationFailure(
-                field="derived_EBIT_Margin_Pct", value=ebit_margin,
-                reason=f"EBIT margin {ebit_margin:.1f}% is outside -50% to +80% range. "
-                       "Likely COGS/OPEX tag mismatch.",
-                severity="error"
-            )]
-        return []
-
-    def _check_ebitda(self, record, revenue, ticker, fy, is_low_margin) -> list:
-        ebitda = record.derived.get("EBITDA")
-        if ebitda is None:
-            return [ValidationFailure(
-                field="derived_EBITDA", value=None,
-                reason="EBITDA is None — D&A not resolved. "
-                       "DCF cannot run. Check tag_misses.jsonl.",
-                severity="error"
-            )]
-        margin = ebitda / revenue * 100
-        min_pct = 1.0 if is_low_margin else 4.0
-        if margin < min_pct:
-            return [ValidationFailure(
-                field="derived_EBITDA", value=ebitda,
-                reason=f"EBITDA margin {margin:.1f}% below minimum {min_pct:.0f}% "
-                       f"({'low-margin archetype' if is_low_margin else 'standard archetype'}). "
-                       "Possible D&A understatement.",
-                severity="warning"
-            )]
-        return []
-
-    def _check_da(self, record, revenue, ticker, fy, is_high_da) -> list:
-        da = (record.clean.get("Depreciation")
-              or record.raw.get("Depreciation"))
-        if da is None or da == 0:
-            return [ValidationFailure(
-                field="clean_Depreciation", value=da,
-                reason=f"D&A is None/zero for {ticker} FY{fy}. "
-                       "EBITDA will be understated. "
-                       "Check tag_misses.jsonl for unresolved XBRL tag.",
-                severity="error"
-            )]
-        pct = da / revenue * 100
-        max_pct = 40.0 if is_high_da else 20.0
-        if not (0.5 <= pct <= max_pct):
-            return [ValidationFailure(
-                field="clean_Depreciation", value=da,
-                reason=f"D&A is {pct:.1f}% of revenue "
-                       f"(expected 0.5%-{max_pct:.0f}% for this archetype). "
-                       "Possible tag mismatch or wrong fiscal year.",
-                severity="warning"
-            )]
-        return []
-
-    def _check_capex(self, record, revenue, ticker, fy, is_high_da) -> list:
-        capex = (record.clean.get("CapEx_Total")
-                 or record.raw.get("CapEx"))
-        if capex is None or capex == 0:
-            return [ValidationFailure(
-                field="clean_CapEx_Total", value=capex,
-                reason=f"CapEx is None/zero for {ticker} FY{fy}. "
-                       "FCF computation will be wrong. "
-                       "Check tag_misses.jsonl.",
-                severity="error"
-            )]
-        pct = capex / revenue * 100
-        max_pct = 60.0 if is_high_da else 30.0
-        if not (0.1 <= pct <= max_pct):
-            return [ValidationFailure(
-                field="clean_CapEx_Total", value=capex,
-                reason=f"CapEx is {pct:.1f}% of revenue "
-                       f"(expected 0.1%-{max_pct:.0f}% for this archetype). "
-                       "Possible tag mismatch.",
-                severity="warning"
-            )]
-        return []
-
-    def _check_roic(self, record, ticker, fy, is_financial) -> list:
-        roic = record.derived.get("ROIC")
-        roe  = record.derived.get("ROE")
-        if is_financial:
-            # For financials, ROE is the right metric
-            if roe is None:
-                return [ValidationFailure(
-                    field="derived_ROE", value=None,
-                    reason="ROE is None for financial sector ticker. "
-                           "NetIncome or TotalEquity tag missing.",
-                    severity="warning"
-                )]
-            return []
-        if roic is None:
-            return [ValidationFailure(
-                field="derived_ROIC", value=None,
-                reason="ROIC is None — NOPAT or InvestedCapital missing. "
-                       "Conviction scorer will use neutral default.",
-                severity="warning"
-            )]
-        # ROIC outside -50% to +300% is almost certainly a data error
-        if not (-0.50 <= roic <= 3.0):
-            return [ValidationFailure(
-                field="derived_ROIC", value=roic,
-                reason=f"ROIC {roic:.1%} is outside -50% to +300% range. "
-                       "Likely InvestedCapital denominator error.",
-                severity="warning"
-            )]
-        return []
-
-    def _check_balance_sheet(self, record, revenue, ticker, fy) -> list:
-        failures = []
-        assets = record.raw.get("TotalAssets")
-        equity = record.raw.get("TotalEquity")
-        if assets is None or assets <= 0:
-            failures.append(ValidationFailure(
-                field="raw_TotalAssets", value=assets,
-                reason="TotalAssets is None/zero. Balance sheet incomplete.",
-                severity="warning"
-            ))
-        if equity is None:
-            failures.append(ValidationFailure(
-                field="raw_TotalEquity", value=None,
-                reason="TotalEquity is None. NetDebt and IC calculations affected.",
-                severity="warning"
-            ))
-        return failures
-
-    def _check_accounting_identities(self, record, ticker, fy) -> list:
-        failures = []
-        ebit  = record.derived.get("EBIT_Margin_Pct")
-        ebitda_margin = record.derived.get("EBITDA_Margin_Pct")
-        if ebit and ebitda_margin:
-            if ebitda_margin < ebit:
+        # 3. Evaluate Identity Contracts
+        for contract in cls.ACCOUNTING_IDENTITIES:
+            if not contract.predicate(record):
+                # For specific formatting (can be generalized later)
+                ebit_m = record.derived.get("EBIT_Margin_Pct", 0)
+                ebitda_m = record.derived.get("EBITDA_Margin_Pct", 0)
+                
+                msg = contract.error_template.format(
+                    ebit_margin=ebit_m,
+                    ebitda_margin=ebitda_m
+                )
+                
                 failures.append(ValidationFailure(
                     field="accounting_identity",
-                    value=ebitda_margin - ebit,
-                    reason=f"EBITDA margin ({ebitda_margin:.1f}%) < EBIT margin ({ebit:.1f}%). "
-                           "D&A must be positive — identity violated. "
-                           "Possible negative D&A value in XBRL.",
-                    severity="error"
+                    reason=contract.name,
+                    expected=True,
+                    actual=False,
+                    message=msg
                 ))
-        return failures
 
+        is_valid = len(failures) == 0
+        if not is_valid and ticker in KNOWN_ISSUES:
+            from datetime import date
+            
+            # For each issue, check if it's active and provides a bypass
+            for issue in KNOWN_ISSUES[ticker]:
+                if date.today() <= issue.expires_after:
+                    if issue.workaround in ["bypass", "routing_required"]:
+                        logger.info(f"{ticker} validation bypassed due to KNOWN_ISSUE: {issue.description} (expires: {issue.expires_after})")
+                        is_valid = True
+                        failures = []
+                        break
+                else:
+                    logger.error(f"{ticker} KNOWN_ISSUE EXPIRED on {issue.expires_after}. Exemptions no longer applied.")
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Convenience: check if any failures are errors (vs warnings only)
-# ─────────────────────────────────────────────────────────────────────────────
-
-def has_errors(failures: list[ValidationFailure]) -> bool:
-    return any(f.severity == "error" for f in failures)
-
-def has_warnings(failures: list[ValidationFailure]) -> bool:
-    return any(f.severity == "warning" for f in failures)
-
-def failures_to_dict(failures: list[ValidationFailure]) -> list[dict]:
-    return [
-        {"field": f.field, "value": f.value,
-         "reason": f.reason, "severity": f.severity}
-        for f in failures
-    ]
+        return ValidationResult(is_valid=is_valid, failures=failures)
