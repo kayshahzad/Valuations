@@ -331,7 +331,7 @@ def main():
     missing   = health.get("tickers_missing", [])
 
     # ── Global State Initialization ───────────────────────────────────────────
-    views = ["◈  Universe", "◉  Deep Dive", "▦  Financials", "◧  Screening", "◨  Constitution", "📝  Thesis Builder", "◩  Reports"]
+    views = ["◈  Universe", "◉  Deep Dive", "▦  Financials", "◇  Scenarios", "◧  Screening", "◨  Constitution", "📝  Thesis Builder", "◩  Reports"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
     if "active_view" not in st.session_state:
@@ -1156,7 +1156,198 @@ def main():
                     st.caption(a["justification"])
 
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 4 — SCREENING
+    # TAB 4 — SCENARIOS (typed agent-proposed scenarios with full provenance)
+    # ──────────────────────────────────────────────────────────────────────────
+    elif active_view == "◇  Scenarios":
+
+        selected = st.session_state.active_ticker
+        if not selected:
+            st.info("Select a ticker from the sidebar.")
+            return
+
+        full_report = fetch_ticker(selected)
+        if not full_report:
+            st.warning(
+                f"No agent report yet for {selected}. "
+                "Click '▶ Run pipeline for {selected}' in the sidebar to generate one."
+            )
+            return
+
+        val4 = full_report.get("4_valuation_synthesis", {}) or {}
+        scenarios = val4.get("agent_scenarios", []) or []
+        p2v = val4.get("phase2_valuation", {}) or {}
+        base_dcf = p2v.get("three_scenario_dcf", {}).get("base", {}) or {}
+        # IPS sometimes isn't persisted under three_scenario_dcf.base; the
+        # full DCFResult dict (under val4 / Financials tab path) has the
+        # canonical base_intrinsic_per_share. Use it as a fallback so the
+        # reference card never displays "—" when base data exists.
+        base_ips = (
+            base_dcf.get("intrinsic_per_share")
+            or fetch_financials_bundle(selected).get("dcf_scenarios", {})
+                                                .get("base", {}).get("IPS")
+        )
+        base_mos = base_dcf.get("margin_of_safety")
+        base_ev = (
+            base_dcf.get("ev")
+            or fetch_financials_bundle(selected).get("dcf_scenarios", {})
+                                                .get("base", {}).get("EV")
+        )
+
+        # ── Header ──────────────────────────────────────────────────────────
+        st.markdown(f"### Agent-proposed scenarios — {selected}")
+        st.caption(
+            "Typed, bounded hypotheses produced by forensic / value_chain / "
+            "context agents. Each scenario is evaluated by DCFEngine on a cloned "
+            "ValuationProfile — agents propose, calc layer computes."
+        )
+
+        # Base reference card
+        if base_ips is not None or base_ev is not None:
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Base IPS", f"${base_ips:,.2f}" if base_ips else "—")
+            c2.metric(
+                "Base MoS",
+                f"{base_mos*100:+.1f}%" if base_mos is not None else "—",
+            )
+            c3.metric("Base EV", f"${base_ev/1e9:,.1f}B" if base_ev else "—")
+            st.markdown("---")
+
+        if not scenarios:
+            st.info(
+                "No agent-proposed scenarios in the saved report. This is "
+                "valid — agents prefer empty when no high-conviction "
+                "alternate hypothesis exists. Re-run the pipeline if you "
+                "want fresh narrative output."
+            )
+            return
+
+        # ── Summary table ────────────────────────────────────────────────────
+        rows = []
+        for s in scenarios:
+            ips = s.get("intrinsic_per_share_base")
+            ups = s.get("upside_pct_base")
+            ovs = s.get("overrides_applied", {}) or {}
+            override_keys = ", ".join(sorted(ovs.keys())) if ovs else "—"
+            rows.append({
+                "Name":          s.get("name", ""),
+                "Type":          s.get("scenario_type", ""),
+                "Proposed by":   s.get("proposed_by", ""),
+                "IPS":           ips,
+                "Upside (%)":    ups,
+                "Δ vs Base IPS": (ips - base_ips) if (ips is not None and base_ips is not None) else None,
+                "Overrides":     override_keys,
+                "Error":         s.get("error") or "",
+            })
+        summary_df = pd.DataFrame(rows)
+        st.markdown("#### Summary")
+        st.dataframe(
+            summary_df.style.format(
+                {
+                    "IPS": "${:,.2f}",
+                    "Upside (%)": "{:+.1f}%",
+                    "Δ vs Base IPS": "{:+,.2f}",
+                },
+                na_rep="—",
+            ),
+            hide_index=True,
+            use_container_width=True,
+        )
+
+        # ── Per-scenario detail expanders ────────────────────────────────────
+        st.markdown("#### Detail")
+        type_color = {"bull": "#10b981", "bear": "#ef4444", "base_alternative": "#f59e0b"}
+        for s in scenarios:
+            name = s.get("name", "(unnamed)")
+            stype = s.get("scenario_type", "")
+            proposer = s.get("proposed_by", "")
+            color = type_color.get(stype, "#71717a")
+            ips = s.get("intrinsic_per_share_base")
+            ups = s.get("upside_pct_base")
+
+            head = (
+                f"**{name}** · "
+                f"<span style='color:{color}; font-weight:600'>{stype.upper()}</span> · "
+                f"by `{proposer}`"
+            )
+            if ips is not None:
+                head += f"  →  IPS = ${ips:,.2f}"
+            if ups is not None:
+                head += f" ({ups:+.1f}%)"
+            err = s.get("error")
+
+            with st.expander(name, expanded=(len(scenarios) <= 3)):
+                st.markdown(head, unsafe_allow_html=True)
+                st.markdown("**Rationale**")
+                st.write(s.get("rationale", "(no rationale provided)"))
+
+                ovs = s.get("overrides_applied", {}) or {}
+                if ovs:
+                    st.markdown("**Overrides applied**")
+                    ov_rows = []
+                    for k, v in sorted(ovs.items()):
+                        if k.endswith("_pct") or k in ("revenue_growth_y1_5", "revenue_growth_y6_10", "terminal_growth"):
+                            display = f"{v*100:.2f}%"
+                        elif k == "terminal_margin_decay":
+                            display = f"{v:.2f} (terminal/current)"
+                        elif k == "base_revenue_normalization":
+                            display = f"${v/1e9:,.2f}B"
+                        else:
+                            display = str(v)
+                        ov_rows.append((k, display))
+                    st.dataframe(
+                        pd.DataFrame(ov_rows, columns=["Field", "Value"]),
+                        hide_index=True,
+                        use_container_width=True,
+                    )
+
+                if err:
+                    st.error(f"DCF eval error: {err}")
+                    continue
+
+                dcf = s.get("dcf") or {}
+                if dcf:
+                    st.markdown("**DCF outcomes (this scenario)**")
+                    sc_rows = [
+                        ("Bull EV ($B)",  dcf.get("bull_ev")/1e9 if dcf.get("bull_ev") else None),
+                        ("Base EV ($B)",  dcf.get("base_ev")/1e9 if dcf.get("base_ev") else None),
+                        ("Bear EV ($B)",  dcf.get("bear_ev")/1e9 if dcf.get("bear_ev") else None),
+                        ("Base IPS",      dcf.get("base_intrinsic_per_share")),
+                        ("Base WACC",     dcf.get("base_wacc")),
+                        ("Base g_term",   dcf.get("base_terminal_g")),
+                        ("Base TV%EV",    dcf.get("base_tv_pct_of_ev")),
+                        ("Base EV/EBITDA", dcf.get("base_ev_ebitda")),
+                    ]
+                    sc_df = pd.DataFrame(sc_rows, columns=["Metric", "Value"])
+
+                    def _fmt(row):
+                        m, v = row["Metric"], row["Value"]
+                        if v is None:
+                            return "—"
+                        if "$B" in m:
+                            return f"{v:,.1f}B"
+                        if "IPS" in m:
+                            return f"${v:,.2f}"
+                        if "WACC" in m or "g_term" in m or "TV%EV" in m:
+                            return f"{v*100:.2f}%"
+                        if "EV/EBITDA" in m:
+                            return f"{v:.1f}x"
+                        return f"{v}"
+
+                    sc_df["Value"] = sc_df.apply(_fmt, axis=1)
+                    st.dataframe(sc_df, hide_index=True, use_container_width=True)
+
+        st.markdown("---")
+        st.caption(
+            f"Provenance: each scenario is a typed `ScenarioOverride` produced by "
+            f"the named agent during the most recent pipeline run, evaluated by "
+            f"`scenario_eval_node` against `DCFEngine`. Architecture invariant: "
+            f"agents propose only bounded forward-looking assumption fields "
+            f"(growth, margin decay, terminal g, revenue normalization). They "
+            f"never override WACC, ROIC, tax rate, or beta."
+        )
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # TAB 5 — SCREENING
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "◧  Screening":
 
@@ -1225,7 +1416,7 @@ def main():
                     st.markdown("<br>", unsafe_allow_html=True)
 
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 5 — CONSTITUTION
+    # TAB 6 — CONSTITUTION
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "◨  Constitution":
         st.markdown("#### Constitution Compliance")
@@ -1278,7 +1469,7 @@ def main():
 
     # ──────────────────────────────────────────────────────────────────────────
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 6 — THESIS BUILDER
+    # TAB 7 — THESIS BUILDER
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "📝  Thesis Builder":
         st.markdown("#### Interactive Thesis Builder")
@@ -1406,7 +1597,7 @@ def main():
                     st.info("Could not fetch version history.")
 
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 7 — REPORTS
+    # TAB 8 — REPORTS
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "◩  Reports":
         report_ticker = st.session_state.active_ticker
