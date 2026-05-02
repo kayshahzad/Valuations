@@ -19,6 +19,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
 from typing import Dict, List, Literal, Optional
+
+from aletheia.contracts.interfaces import ScenarioOverride
 from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
 from aletheia.tools.search import search_sentiment
@@ -80,6 +82,18 @@ class ValueChainReport(BaseModel):
     analysis_summary: str = Field(
         description="Porter Five Forces executive summary: supplier power, "
                     "buyer power, substitution threat, rivalry, overall position.")
+
+    # ── Phase C: typed scenarios ─────────────────────────────────────────────
+    # Value-chain agent may propose 0-2 alternate DCF scenarios driven by
+    # value-chain shifts (supplier-power changes, substitution risk
+    # materializing, etc.). Bounded fields only — no WACC/ROIC/tax overrides.
+    scenarios: List[ScenarioOverride] = Field(
+        default_factory=list,
+        description="0-2 alternate DCF scenarios anchored in value-chain "
+                    "dynamics. Empty list preferred when no high-conviction "
+                    "hypothesis exists.",
+        max_length=2,
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -261,6 +275,24 @@ YOUR TASKS
 
 DO NOT return recommended_terminal_growth_adj — that float is computed
 by Python in valuation_node from your strategic_leverage_score.
+
+6. ALTERNATE SCENARIOS (optional, 0–2 max)
+   If a value-chain shift meaningfully changes the DCF assumptions (e.g.
+   supplier consolidation forces margin compression; substitution risk
+   materializes; downstream concentration breaks pricing power), propose
+   an alternate scenario via the `scenarios` field. Each scenario must
+   specify:
+     - name: short label (e.g. "Supplier squeeze", "Substitution wave")
+     - scenario_type: "bull" / "bear" / "base_alternative"
+     - proposed_by: must be "value_chain"
+     - rationale: 1–2 sentence justification grounded in Porter analysis
+     - bounded overrides (set ONLY the fields you have a thesis on):
+         * revenue_growth_y1_5    [0.0, 0.45]
+         * revenue_growth_y6_10   [0.0, 0.25]
+         * terminal_margin_decay  [0.5, 1.0]   (terminal/current ratio)
+         * terminal_growth        [0.0, 0.04]
+   You may NOT override WACC, ROIC, tax rate, or beta. Prefer an EMPTY
+   list if no high-conviction alternate hypothesis exists.
 
 Return ValueChainReport JSON.
 """)

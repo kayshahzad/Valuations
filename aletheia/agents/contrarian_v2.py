@@ -143,7 +143,7 @@ BEAR CASE INTRINSIC VALUE:
 You are The Contrarian — the adversarial voice of the investment committee.
 Your goal is to construct the strongest possible bear case for {ticker}.
 
-You have TWO sources of evidence:
+You have THREE sources of evidence:
 
 1. MATHEMATICAL CHALLENGES (from Reverse DCF and Multiple Decomposition):
 {quant_challenge}
@@ -151,29 +151,58 @@ You have TWO sources of evidence:
 2. QUALITATIVE BEAR CASE (from live search):
 {web_results}
 
+3. AGENT-PROPOSED ALTERNATE SCENARIOS (already evaluated by DCFEngine —
+   these are typed, bounded hypotheses with concrete IPS implications):
+{scenario_summary}
+
 YOUR TASKS:
 1. **Bias Detection**: What cognitive bias is driving the current valuation?
    - If implied CAGR >> historical CAGR: "Growth Extrapolation Bias"
    - If multiple premium >> 100%: "Narrative Premium / FOMO"
    - If web results show consensus optimism: "Herding Bias"
 
-2. **Bear Case Synthesis**: Combine the mathematical and qualitative challenges:
-   - Start with the quantitative impossibility: what would the company need to do
-     to justify the implied growth rate? Is that realistic?
+2. **Bear Case Synthesis**: Combine the mathematical, qualitative, and
+   scenario-based challenges:
+   - Start with the quantitative impossibility from Reverse DCF
    - Layer in the qualitative risks from web search
+   - REFERENCE ANY BEAR/BASE_ALTERNATIVE SCENARIOS BY NAME and cite the
+     resulting IPS — e.g. "In the 'AI capex peak' scenario proposed by
+     forensic_agent, IV drops to $X (-Y% vs current price)"
    - What is the most likely path to the bear case intrinsic value?
 
-3. **Sentiment Score**: Rate -10 to +10 based on ALL evidence combined.
-   - Factor in: implied CAGR ratio, multiple premium, qualitative risks
+3. **Sentiment Score**: Rate -10 to +10 based on ALL evidence combined,
+   including the worst-case agent scenario IPS.
 
-CRITICAL: Be specific and mathematical. "The market prices in {implied_cagr} CAGR,
-which is X times the historical rate of {historical_cagr}" is a better challenge
-than a vague concern about valuation.
+CRITICAL: Be specific and mathematical. Cite numbers from scenarios where
+they exist. "The 'Patent cliff drag' scenario (proposed_by=context) lowers
+IPS to $X" is a stronger challenge than vague concern.
 
 Return structured JSON.
 """)
 
     chain = prompt | structured_llm
+
+    # Build a compact scenario summary string for the prompt. We want the
+    # LLM to be able to reference scenarios by name with their IPS impact.
+    scenarios = state.get("scenario_results") or []
+    if scenarios:
+        scenario_lines = []
+        for s in scenarios:
+            ips = s.get("intrinsic_per_share_base")
+            ups = s.get("upside_pct_base")
+            ips_str = f"IPS=${ips:,.2f}" if ips is not None else "IPS=N/A"
+            ups_str = f"upside={ups:+.1f}%" if ups is not None else "upside=N/A"
+            err = s.get("error")
+            line = (
+                f"  - '{s['name']}' ({s['scenario_type']}, by {s['proposed_by']}): "
+                f"{ips_str} {ups_str}. Rationale: {s['rationale']}"
+            )
+            if err:
+                line += f" [eval error: {err}]"
+            scenario_lines.append(line)
+        scenario_summary = "\n".join(scenario_lines)
+    else:
+        scenario_summary = "(no agent-proposed scenarios)"
 
     try:
         report: ContrarianOutput = chain.invoke({
@@ -182,6 +211,7 @@ Return structured JSON.
             "web_results": raw_web_results,
             "implied_cagr": f"{implied_cagr:.1%}" if implied_cagr else "N/A",
             "historical_cagr": f"{historical_cagr:.1%}" if historical_cagr else "N/A",
+            "scenario_summary": scenario_summary,
         })
 
         output = {

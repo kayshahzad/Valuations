@@ -37,6 +37,9 @@ from aletheia.tools.forensic_metrics import compute_operating_leverage_score
 # Schema — no LLM-generated floats for DCF inputs
 # ─────────────────────────────────────────────────────────────────────────────
 
+from aletheia.contracts.interfaces import ScenarioOverride  # noqa: E402
+
+
 class RevenueSegment(BaseModel):
     model_config = {"frozen": True}
     segment: str
@@ -103,6 +106,19 @@ class ForensicReport(BaseModel):
     regulatory_risk: str = Field(
         description="Meaningful regulatory exposure in one sentence. "
                     "'No material regulatory risk identified.' if none.")
+
+    # ── Phase C: typed scenarios ─────────────────────────────────────────────
+    # Forensic agent may propose 0-2 alternate DCF scenarios alongside its
+    # narrative. Each scenario carries bounded overrides that the calc layer
+    # applies to a fresh DCFEngine run. NEVER WACC/ROIC/tax — only the
+    # bounded fields on ScenarioOverride are accepted.
+    scenarios: List[ScenarioOverride] = Field(
+        default_factory=list,
+        description="0-2 alternate DCF scenarios with rationale. Empty list "
+                    "is valid (and preferred when no high-conviction "
+                    "alternate hypothesis exists).",
+        max_length=2,
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -338,6 +354,25 @@ YOUR TASKS — narrative and boolean judgments only
 
 DO NOT return wacc_penalty or growth_sustainability_boost floats.
 Those are computed by Python rules in valuation_node.
+
+6. ALTERNATE SCENARIOS (optional, 0–2 max)
+   If a forensic finding meaningfully changes the DCF assumptions (e.g. an
+   accounting-quality issue suggests revenue growth was front-loaded; a
+   moat-erosion signal implies terminal margin compression), propose an
+   alternate scenario via the `scenarios` field. Each scenario must specify:
+     - name: short label (e.g. "Accounting reset", "Moat compression")
+     - scenario_type: one of "bull" / "bear" / "base_alternative"
+     - proposed_by: must be "forensic"
+     - rationale: 1–2 sentence justification grounded in your findings
+     - bounded overrides (set ONLY the fields you have a thesis on):
+         * revenue_growth_y1_5    [0.0, 0.45]
+         * revenue_growth_y6_10   [0.0, 0.25]
+         * terminal_margin_decay  [0.5, 1.0]   (terminal/current ratio)
+         * terminal_growth        [0.0, 0.04]
+         * base_revenue_normalization (USD absolute, > 0)
+   You may NOT override WACC, ROIC, tax rate, or beta — those are
+   measurements, not hypotheses. Prefer an EMPTY list if no high-conviction
+   alternate hypothesis exists. Quality over quantity.
 
 Return ForensicReport JSON.
 """)

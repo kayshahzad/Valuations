@@ -24,6 +24,8 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
 from typing import Dict, List, Literal, Optional
+
+from aletheia.contracts.interfaces import ScenarioOverride
 from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
 from aletheia.tools.search import search_sentiment
@@ -85,6 +87,19 @@ class StrategicContextReport(BaseModel):
 
     summary: str = Field(
         description="One paragraph: cyclicality status, growth quality, intangible risk.")
+
+    # ── Phase C: typed scenarios ─────────────────────────────────────────────
+    # Strategic-context agent may propose 0-2 alternate DCF scenarios driven
+    # by macro/cyclical/regulatory shifts (e.g. cyclical-peak normalization,
+    # patent-cliff drag, terminal-growth haircut). Bounded fields only —
+    # no WACC/ROIC/tax overrides.
+    scenarios: List[ScenarioOverride] = Field(
+        default_factory=list,
+        description="0-2 alternate DCF scenarios anchored in macro/cyclical/"
+                    "regulatory context. Empty list preferred when no "
+                    "high-conviction hypothesis exists.",
+        max_length=2,
+    )
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -275,6 +290,25 @@ YOUR TASKS — narrative and booleans only
 CRITICAL: Do NOT change revenue_z_score, is_cyclical_peak, or
 recommended_base_revenue — those are Python-computed facts. Return them
 exactly as provided.
+
+5. ALTERNATE SCENARIOS (optional, 0–2 max)
+   If a macro/cyclical/regulatory factor meaningfully changes DCF
+   assumptions (e.g. cyclical peak normalization, patent cliff, terminal
+   growth haircut from saturation), propose an alternate scenario via
+   the `scenarios` field. Each scenario must specify:
+     - name: short label (e.g. "Mid-cycle reversion", "Patent cliff drag")
+     - scenario_type: "bull" / "bear" / "base_alternative"
+     - proposed_by: must be "context"
+     - rationale: 1–2 sentence justification grounded in macro context
+     - bounded overrides (set ONLY the fields you have a thesis on):
+         * revenue_growth_y1_5    [0.0, 0.45]
+         * revenue_growth_y6_10   [0.0, 0.25]
+         * terminal_margin_decay  [0.5, 1.0]   (terminal/current ratio)
+         * terminal_growth        [0.0, 0.04]
+         * base_revenue_normalization (USD absolute, > 0; useful when
+           is_cyclical_peak=True — propose mid-cycle base)
+   You may NOT override WACC, ROIC, tax rate, or beta. Prefer an EMPTY
+   list if no high-conviction alternate hypothesis exists.
 
 Return StrategicContextReport JSON.
 """)

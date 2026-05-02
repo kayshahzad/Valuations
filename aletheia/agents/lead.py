@@ -413,6 +413,12 @@ Be specific and mathematical. Return structured JSON.
                 "constitution_checks": compliance_log,
                 "pillar_scores":      pillar_scores,
             },
+            # Phase C — Agent-proposed alternate scenarios with provenance.
+            # Each entry already contains: name, scenario_type, proposed_by,
+            # rationale, overrides_applied, dcf, intrinsic_per_share_base,
+            # upside_pct_base. Lead persists them as-is so contrarian/UI
+            # can reference them by name.
+            "agent_scenarios":      state.get("scenario_results", []),
         },
     }
 

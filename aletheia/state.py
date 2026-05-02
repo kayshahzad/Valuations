@@ -49,6 +49,13 @@ class AgentState(TypedDict):
     conviction: Dict[str, Any]
     calc_bypassed: Optional[str]
 
+    # ── Scenario eval (Phase C) ────────────────────────────────────────────
+    # List of evaluated agent-proposed scenarios. Empty when no agent
+    # proposed any. Each entry is the per-scenario summary written by
+    # scenario_eval_node (name, type, proposed_by, rationale, overrides
+    # applied, full DCF result dict, IPS / upside summary).
+    scenario_results: List[Dict[str, Any]]
+
     # Intelligence Repository
     sector_context: str # Loaded from knowledge_base
     rules_content: str # Loaded from RULES.md
