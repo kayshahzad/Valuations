@@ -330,9 +330,12 @@ FIELD_MAPPINGS = {
             "CashAndCashEquivalentsAtCarryingValue",
             "CashAndCashEquivalents",
         ],
-        # IFRS filers may use these.
+        # IFRS 20-F filers (TSM, ASML) report under us-gaap
+        # CashAndCashEquivalentsAtCarryingValue in addition to the IFRS
+        # canonical tag, so we search both.
         "ifrs": [
             "CashAndCashEquivalents",
+            "CashAndCashEquivalentsAtCarryingValue",
         ],
     },
 

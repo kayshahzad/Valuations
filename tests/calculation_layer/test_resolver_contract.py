@@ -71,10 +71,10 @@ def test_period_end_date_missing_excluded_from_cagr():
     
     # Create synthetic dataframe with a missing date record
     df = pd.DataFrame([
-        {"fiscal_year": 2021, "period_end_date": "2021-12-31", "period_end_date_missing": False, "clean_Revenue": 100.0, "derived_OperatingIncome": 20.0, "derived_EBITDA": 25.0, "derived_Depreciation_Total": 5.0, "raw_CapEx": 6.0, "raw_TotalAssets": 500.0, "raw_TotalEquity": 250.0},
-        {"fiscal_year": 2022, "period_end_date": "2022-12-31", "period_end_date_missing": True,  "clean_Revenue": 110.0, "derived_OperatingIncome": 22.0, "derived_EBITDA": 27.5, "derived_Depreciation_Total": 5.5, "raw_CapEx": 6.6, "raw_TotalAssets": 550.0, "raw_TotalEquity": 275.0},  # Should be dropped
-        {"fiscal_year": 2023, "period_end_date": "2023-12-31", "period_end_date_missing": False, "clean_Revenue": 120.0, "derived_OperatingIncome": 24.0, "derived_EBITDA": 30.0, "derived_Depreciation_Total": 6.0, "raw_CapEx": 7.2, "raw_TotalAssets": 600.0, "raw_TotalEquity": 300.0},
-        {"fiscal_year": 2024, "period_end_date": "2024-12-31", "period_end_date_missing": False, "clean_Revenue": 130.0, "derived_OperatingIncome": 26.0, "derived_EBITDA": 32.5, "derived_Depreciation_Total": 6.5, "raw_CapEx": 7.8, "raw_TotalAssets": 650.0, "raw_TotalEquity": 325.0},
+        {"fiscal_year": 2021, "period_end_date": "2021-12-31", "period_end_date_missing": False, "clean_Revenue": 100.0, "derived_OperatingIncome": 20.0, "derived_EBITDA": 25.0, "derived_Depreciation_Total": 5.0, "raw_CapEx": 6.0, "raw_TotalAssets": 500.0, "raw_TotalEquity": 250.0, "clean_SharesDiluted": 100.0, "raw_NetIncome": 15.0},
+        {"fiscal_year": 2022, "period_end_date": "2022-12-31", "period_end_date_missing": True,  "clean_Revenue": 110.0, "derived_OperatingIncome": 22.0, "derived_EBITDA": 27.5, "derived_Depreciation_Total": 5.5, "raw_CapEx": 6.6, "raw_TotalAssets": 550.0, "raw_TotalEquity": 275.0, "clean_SharesDiluted": 100.0, "raw_NetIncome": 16.5},  # Should be dropped
+        {"fiscal_year": 2023, "period_end_date": "2023-12-31", "period_end_date_missing": False, "clean_Revenue": 120.0, "derived_OperatingIncome": 24.0, "derived_EBITDA": 30.0, "derived_Depreciation_Total": 6.0, "raw_CapEx": 7.2, "raw_TotalAssets": 600.0, "raw_TotalEquity": 300.0, "clean_SharesDiluted": 100.0, "raw_NetIncome": 18.0},
+        {"fiscal_year": 2024, "period_end_date": "2024-12-31", "period_end_date_missing": False, "clean_Revenue": 130.0, "derived_OperatingIncome": 26.0, "derived_EBITDA": 32.5, "derived_Depreciation_Total": 6.5, "raw_CapEx": 7.8, "raw_TotalAssets": 650.0, "raw_TotalEquity": 325.0, "clean_SharesDiluted": 100.0, "raw_NetIncome": 19.5},
     ])
     
     # We don't need a full run, we just want to exercise the CAGR path.

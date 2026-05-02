@@ -14,8 +14,10 @@ from __future__ import annotations
 
 import logging
 import statistics
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Optional
+
+import pandas as pd
 
 import numpy as np
 
@@ -66,7 +68,7 @@ class MoatFingerprint:
         }
 
 
-def _select_window(df) -> "pd.DataFrame":
+def _select_window(df: pd.DataFrame) -> pd.DataFrame:
     """Last N years (most recent), capped at WINDOW_MAX_YEARS."""
     sorted_df = df.sort_values("fiscal_year")
     return sorted_df.tail(WINDOW_MAX_YEARS)
@@ -170,55 +172,10 @@ def _is_cyclical(classification) -> bool:
     return classification.sector in CYCLICAL_SECTORS
 
 
-def _compute_peer_median_gm_cv(ticker: str) -> Optional[float]:
-    """
-    Pull the GM CV for every cyclical ticker in UNIVERSE except `ticker`,
-    then return the median. Returns None if peer set < CYCLICAL_PEER_SET_MIN.
-    """
-    from config.ticker_classification import UNIVERSE
-    from aletheia.data.database import InvestmentDatabase
-
-    peers = [
-        t for t, c in UNIVERSE.items()
-        if t != ticker and (
-            c.lifecycle in CYCLICAL_LIFECYCLES or c.sector in CYCLICAL_SECTORS
-        )
-    ]
-    if len(peers) < CYCLICAL_PEER_SET_MIN - 1:
-        # The -1 is because the target ticker itself counts in the original
-        # peer-set sizing. With <3 cyclicals total in the universe (target + N
-        # peers), peer set is too small.
-        return None
-
-    db = InvestmentDatabase(verbose=False)
-    cvs: List[float] = []
-    try:
-        for peer in peers:
-            try:
-                df = db.get_latest(peer)
-            except Exception:
-                continue
-            if df.empty or "derived_GrossMargin_Pct" not in df.columns:
-                continue
-            window = _select_window(df)
-            gms = [
-                float(v) for v in window["derived_GrossMargin_Pct"]
-                if v is not None and not (isinstance(v, float) and np.isnan(v))
-            ]
-            if len(gms) < WINDOW_MIN_YEARS:
-                continue
-            cv = _coefficient_of_variation(gms)
-            if cv is not None:
-                cvs.append(cv)
-    finally:
-        db.close()
-
-    if len(cvs) < CYCLICAL_PEER_SET_MIN - 1:
-        return None
-    return float(np.median(cvs))
-
-
-def compute_moat_fingerprint(calc_input: CalculationInput) -> MoatFingerprint:
+def compute_moat_fingerprint(
+    calc_input: CalculationInput,
+    cyclical_peer_gm_cv_median: Optional[float] = None,
+) -> MoatFingerprint:
     """
     Compute the moat fingerprint per the locked methodology.
 
@@ -298,8 +255,12 @@ def compute_moat_fingerprint(calc_input: CalculationInput) -> MoatFingerprint:
 
     fallback_used: Optional[str] = None
     if _is_cyclical(classification):
-        peer_median = _compute_peer_median_gm_cv(ticker)
-        if peer_median is None:
+        # The cyclical peer median is INJECTED by the caller (calc_node) — the
+        # calc layer must not import config to discover peers. When the caller
+        # didn't supply a median (peer set too small per the methodology
+        # MD's CYCLICAL_PEER_SET_MIN rule), we fall back to absolute GM
+        # thresholds and log the deterministic warning.
+        if cyclical_peer_gm_cv_median is None:
             logger.warning(
                 "[WARN] cyclical peer set too small for %s, "
                 "using absolute GM thresholds", ticker
@@ -311,7 +272,7 @@ def compute_moat_fingerprint(calc_input: CalculationInput) -> MoatFingerprint:
             gm_score = _score_gm_stability_absolute(cv)
             fallback_used = "absolute_gm_thresholds"
         else:
-            gm_score = _score_gm_stability_relative(cv, peer_median)
+            gm_score = _score_gm_stability_relative(cv, cyclical_peer_gm_cv_median)
     else:
         gm_score = _score_gm_stability_absolute(cv)
 

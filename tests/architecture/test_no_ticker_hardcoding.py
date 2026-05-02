@@ -43,7 +43,10 @@ def test_calc_tools_accept_synthetic_classifications():
     from config.ticker_classification import TickerClassification
     import pandas as pd
     
-    # Create a synthetic dataframe representing a valid ingested company record
+    # Create a synthetic dataframe representing a valid ingested company record.
+    # Field names match what DCFEngine reads via get_with_provenance:
+    #   - get("clean_X") for X in {Revenue, NOPAT, SharesDiluted}
+    #   - get_with_provenance(X) checks raw_X first, then derived_X
     synthetic_df = pd.DataFrame([{
         "fiscal_year": 2024,
         "clean_Revenue": 100e9,
@@ -57,8 +60,11 @@ def test_calc_tools_accept_synthetic_classifications():
         "raw_LongTermDebt": 10e9,
         "raw_TotalEquity": 40e9,
         "raw_Depreciation_Total_Aggregate": 5e9,
+        "derived_Depreciation_Total": 5e9,
         "raw_CapEx": 6e9,
-        "period_end_date": "2024-12-31"
+        "clean_SharesDiluted": 1e9,
+        "raw_NetIncome": 12e9,
+        "period_end_date": "2024-12-31",
     }])
     
     lifecycles = [

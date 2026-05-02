@@ -41,7 +41,7 @@ State written:
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from langchain_core.messages import HumanMessage
 
@@ -186,11 +186,61 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
         print(f"  ✗ OpLeverage failed: {e}")
 
     # ── Step 6: Moat fingerprint (deterministic, see MOAT_FINGERPRINT_METHODOLOGY.md) ─
+    # Per the architecture lock, the calc layer (aletheia/tools/) must not
+    # import config. The peer-set lookup for cyclical names happens here in
+    # the agent layer (which CAN import config) and is INJECTED into the
+    # fingerprint tool as cyclical_peer_gm_cv_median.
     moat_fingerprint: Dict[str, Any] = {}
     mf = None
     try:
-        from aletheia.tools.moat_fingerprint import compute_moat_fingerprint
-        mf = compute_moat_fingerprint(calc_input)
+        from aletheia.tools.moat_fingerprint import (
+            compute_moat_fingerprint,
+            CYCLICAL_LIFECYCLES,
+            CYCLICAL_SECTORS,
+            CYCLICAL_PEER_SET_MIN,
+            WINDOW_MIN_YEARS,
+            _select_window,
+            _coefficient_of_variation,
+        )
+        peer_median: Optional[float] = None
+        cls = calc_input.classification
+        if cls and (cls.lifecycle in CYCLICAL_LIFECYCLES or cls.sector in CYCLICAL_SECTORS):
+            from config.ticker_classification import UNIVERSE
+            from aletheia.data.database import InvestmentDatabase
+            import numpy as np
+            peer_tickers = [
+                t for t, c in UNIVERSE.items()
+                if t != cls.ticker and (
+                    c.lifecycle in CYCLICAL_LIFECYCLES or c.sector in CYCLICAL_SECTORS
+                )
+            ]
+            if len(peer_tickers) >= CYCLICAL_PEER_SET_MIN - 1:
+                _db = InvestmentDatabase(verbose=False)
+                cvs: list = []
+                try:
+                    for peer in peer_tickers:
+                        try:
+                            pdf = _db.get_latest(peer)
+                        except Exception:
+                            continue
+                        if pdf.empty or "derived_GrossMargin_Pct" not in pdf.columns:
+                            continue
+                        window = _select_window(pdf)
+                        gms = [
+                            float(v) for v in window["derived_GrossMargin_Pct"]
+                            if v is not None and not (isinstance(v, float) and np.isnan(v))
+                        ]
+                        if len(gms) < WINDOW_MIN_YEARS:
+                            continue
+                        cv = _coefficient_of_variation(gms)
+                        if cv is not None:
+                            cvs.append(cv)
+                finally:
+                    _db.close()
+                if len(cvs) >= CYCLICAL_PEER_SET_MIN - 1:
+                    peer_median = float(np.median(cvs))
+
+        mf = compute_moat_fingerprint(calc_input, cyclical_peer_gm_cv_median=peer_median)
         moat_fingerprint = mf.to_dict()
         if mf.score is not None:
             print(f"  ✓ MoatFP: score={mf.score}/5 "
