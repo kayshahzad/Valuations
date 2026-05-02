@@ -21,6 +21,7 @@ class ValuationProfile:
     bull_growth_haircut: float = 0.25
     bull_margin_compression: float = 0.10
     bull_wacc_adjustment: float = -0.005
+    max_historical_cagr: float = 0.50
 
 @dataclass
 class UniverseSnapshot:

@@ -13,6 +13,13 @@ class TickerClassification:
     notes: str
     last_reviewed: date
 
+    # Filing taxonomy. True for 20-F filers using IFRS (TSM, ASML in current
+    # universe). The TagResolver uses this to select IFRS priority lists in
+    # FIELD_MAPPINGS instead of US-GAAP defaults. Defaults to False because
+    # the universe is overwhelmingly US-GAAP; mark as True per-ticker only
+    # when the filer's primary taxonomy is IFRS.
+    is_ifrs_filer: bool = False
+
 UNIVERSE: Dict[str, TickerClassification] = {
     # --- Technology / Software / Hardware ---
     "MSFT": TickerClassification("MSFT", "Technology", "Software", "growth_compounder", "fcff_compatible", "Mature compounder, AAA-rated, high ROIC", date.today()),
@@ -26,8 +33,8 @@ UNIVERSE: Dict[str, TickerClassification] = {
     # --- Semiconductors ---
     "NVDA": TickerClassification("NVDA", "Semiconductors", "Semiconductors", "secular_hyper_growth", "fcff_compatible", "Current-cycle AI capex linked", date.today()),
     "AMD": TickerClassification("AMD", "Semiconductors", "Semiconductors", "secular_hyper_growth", "fcff_compatible", "Current-cycle AI capex linked", date.today()),
-    "ASML": TickerClassification("ASML", "Semiconductors", "Semiconductor Equipment", "high_growth_compounder", "fcff_compatible", "Semi capital equipment, AI structural growth", date.today()),
-    "TSM": TickerClassification("TSM", "Semiconductors", "Semiconductors", "high_growth_compounder", "fcff_compatible", "Foundry, AI structural growth", date.today()),
+    "ASML": TickerClassification("ASML", "Semiconductors", "Semiconductor Equipment", "high_growth_compounder", "fcff_compatible", "Semi capital equipment, AI structural growth", date.today(), is_ifrs_filer=True),
+    "TSM": TickerClassification("TSM", "Semiconductors", "Semiconductors", "high_growth_compounder", "fcff_compatible", "Foundry, AI structural growth", date.today(), is_ifrs_filer=True),
     "QCOM": TickerClassification("QCOM", "Semiconductors", "Semiconductors", "mature", "fcff_compatible", "Mobile comms maturity", date.today()),
     "TXN": TickerClassification("TXN", "Semiconductors", "Semiconductors", "mature", "fcff_compatible", "Analog semi maturity", date.today()),
 

@@ -38,7 +38,7 @@ class TestCalculationCorrectness:
         
         # Assemble inputs as the engine would
         base_revenue = clean.get("Revenue", raw.get("Revenue"))
-        base_da = clean.get("Depreciation", raw.get("Depreciation", 0.0))
+        base_da = clean.get("Depreciation_Total", raw.get("Depreciation_Total_Aggregate", 0.0))
         base_capex = clean.get("CapEx", raw.get("CapEx", 0.0))
         
         # For simplicity in testing, use known assumptions that match MSFT profile

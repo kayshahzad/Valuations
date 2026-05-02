@@ -56,7 +56,7 @@ def test_calc_tools_accept_synthetic_classifications():
         "derived_InvestedCapital": 50e9,
         "raw_LongTermDebt": 10e9,
         "raw_TotalEquity": 40e9,
-        "raw_Depreciation": 5e9,
+        "raw_Depreciation_Total_Aggregate": 5e9,
         "raw_CapEx": 6e9,
         "period_end_date": "2024-12-31"
     }])

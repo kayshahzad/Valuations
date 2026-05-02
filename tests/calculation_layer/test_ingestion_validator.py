@@ -24,7 +24,7 @@ def create_valid_record(ticker="AAPL") -> CleanedRecord:
             "TotalLiabilities": 3000.0,
             "Cash": 1000.0,
             "OperatingIncome": 200.0,
-            "Depreciation": 50.0,
+            "Depreciation_Total_Aggregate": 50.0,
             "CapEx": 100.0,
         },
         derived={
@@ -47,7 +47,8 @@ class TestIngestionValidator:
         assert len(rel_contracts) > 0
         assert len(ident_contracts) > 0
         assert any(c.field == "raw_Revenue" for c in abs_contracts)
-        assert any(c.field == "Depreciation" for c in rel_contracts)
+        assert any(c.field == "CapEx" for c in rel_contracts)
+        assert any(c.name == "dna_presence" for c in ident_contracts)
         assert any(c.name == "ebitda_ge_ebit" for c in ident_contracts)
 
     def test_valid_record_passes(self, make_calc_input):
@@ -59,18 +60,16 @@ class TestIngestionValidator:
     def test_valid_zero_does_not_fall_through(self, make_calc_input):
         """Ensure get_val preserves 0.0 and doesn't silently fall back."""
         record = create_valid_record()
-        record.raw["Depreciation"] = 0.0 # Valid if low D&A, but let's check it doesn't pull from derived
-        record.derived["Depreciation"] = 500.0 # This would violate bounds if it fell through
+        record.raw["CapEx"] = 0.0 # Valid if low CapEx
+        record.derived["CapEx"] = 500.0 # This would violate bounds if it fell through (50%)
         
-        # At 0.0, pct = 0.0%, which is < 0.5% min_pct, so it will actually fail validation.
-        # This proves 0.0 was used, instead of 500.0 (which would be 50%, also failing, but let's make 500.0 valid)
-        record.derived["Depreciation"] = 100.0 # 10% (Valid)
+        record.derived["CapEx"] = 100.0 # 10% (Valid)
         
         result = IngestionValidator.validate(record)
-        # 0.0 is < 0.5% (the min for standard), so it should fail relative bounds.
+        # 0.0 is < 0.1% (the min for CapEx), so it should fail relative bounds.
         # If it fell through to 100.0, it would pass.
         assert result.is_valid is False
-        assert result.failures[0].field == "Depreciation"
+        assert result.failures[0].field == "CapEx"
         assert result.failures[0].actual == 0.0
 
     def test_missing_required_raw_field(self, make_calc_input):
@@ -98,43 +97,42 @@ class TestIngestionValidator:
         assert failure.actual == 0.0
         assert "violates absolute bounds" in failure.message
 
-    def test_relative_bounds_violation_da(self, make_calc_input):
+    def test_relative_bounds_violation_capex(self, make_calc_input):
         record = create_valid_record()
-        record.raw["Depreciation"] = 250.0
+        record.raw["CapEx"] = 600.0 # 60% of revenue, > 50% max
         
         result = IngestionValidator.validate(record)
         assert result.is_valid is False
         
         failure = result.failures[0]
-        assert failure.field == "Depreciation"
+        assert failure.field == "CapEx"
         assert failure.reason == "relative_bounds_violation"
-        assert failure.actual == 25.0
+        assert failure.actual == 60.0
 
     def test_unknown_ticker_uses_default(self, make_calc_input):
         record = create_valid_record(ticker="UNKNOWN_123")
         
-        record.raw["Depreciation"] = 200.0
+        record.raw["CapEx"] = 400.0 # 40%, valid for default
         result = IngestionValidator.validate(record)
         assert result.is_valid is True
 
-        record.raw["Depreciation"] = 250.0
+        record.raw["CapEx"] = 600.0 # 60%, invalid for default
         result = IngestionValidator.validate(record)
         assert result.is_valid is False
-        assert result.failures[0].field == "Depreciation"
+        assert result.failures[0].field == "CapEx"
 
-    def test_archetype_override_da_for_utilities(self, make_calc_input):
-        record = create_valid_record(ticker="DUMMY_UTIL") # High DA ticker (utility in industry_routing)
-        # D&A is 250 (25%). For utility, max is 40%, so this should pass!
-        record.raw["Depreciation"] = 250.0
+    def test_archetype_override_capex_for_utilities(self, make_calc_input):
+        record = create_valid_record(ticker="DUMMY_UTIL") # High CapEx ticker (utility in industry_routing)
+        record.raw["CapEx"] = 550.0 # 55%. For utility, max is 60%, so this should pass!
         
         result = IngestionValidator.validate(record, sector="utility")
         assert result.is_valid is True
 
-        # Now push it above 40% (450 = 45%)
-        record.raw["Depreciation"] = 450.0
+        # Now push it above 60% (650 = 65%)
+        record.raw["CapEx"] = 650.0
         result = IngestionValidator.validate(record, sector="utility")
         assert result.is_valid is False
-        assert result.failures[0].field == "Depreciation"
+        assert result.failures[0].field == "CapEx"
 
     def test_jpm_financial_sector_routing(self, make_calc_input):
         record = create_valid_record(ticker="JPM") # Bank in industry_routing
@@ -171,7 +169,7 @@ class TestIngestionValidator:
             {"ticker": "AAPL", "fy": 2023, "standard_tag": "NetIncome", "value": 150.0},
             {"ticker": "AAPL", "fy": 2023, "standard_tag": "EBIT", "value": 200.0},
             {"ticker": "AAPL", "fy": 2023, "standard_tag": "OperatingIncome", "value": 200.0},
-            {"ticker": "AAPL", "fy": 2023, "standard_tag": "Depreciation", "value": 50.0},
+            {"ticker": "AAPL", "fy": 2023, "standard_tag": "Depreciation_Total_Aggregate", "value": 50.0},
             {"ticker": "AAPL", "fy": 2023, "standard_tag": "CapEx", "value": 100.0},
         ])
         

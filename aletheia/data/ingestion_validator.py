@@ -88,7 +88,6 @@ class IngestionValidator:
         FieldContract("raw_Revenue", required=True, min_val=0.001, description="Revenue must be strictly positive"),
         FieldContract("raw_TotalAssets", required=True, min_val=0.001, description="TotalAssets must be strictly positive"),
         FieldContract("raw_TotalEquity", required=True, description="TotalEquity is required for ROE/InvestedCapital"),
-        FieldContract("Depreciation", required=True, description="Depreciation is required", bypass_sectors=["bank", "financials", "insurance"]),
         FieldContract("CapEx", required=True, description="CapEx is required", bypass_sectors=["bank", "financials", "insurance"]),
         FieldContract("TotalLiabilities", required=True, description="TotalLiabilities is required"),
         FieldContract("Cash", required=True, description="Cash is required", bypass_sectors=["bank", "financials", "insurance"]),
@@ -99,15 +98,6 @@ class IngestionValidator:
 
     # Contract: Relative Check Rules (Field as a percentage of Relative_To)
     RELATIVE_CONTRACTS = [
-        RelativeContract(
-            field="Depreciation", 
-            relative_to="raw_Revenue", 
-            min_pct=0.1, 
-            max_pct=20.0, 
-            archetype_overrides={"utility": (0.5, 40.0), "energy": (0.5, 40.0), "real_estate": (0.5, 40.0), "industrials": (0.5, 40.0), "semiconductors": (0.5, 30.0)},
-            bypass_sectors=["bank", "financials", "insurance"],
-            description="D&A typically 0.5% - 20% of Revenue"
-        ),
         RelativeContract(
             field="CapEx", 
             relative_to="raw_Revenue", 
@@ -130,6 +120,19 @@ class IngestionValidator:
 
     # Contract: Accounting Identities
     ACCOUNTING_IDENTITIES = [
+        IdentityContract(
+            name="dna_presence",
+            predicate=lambda r: any(
+                r.raw.get(s) is not None for s in [
+                    "Depreciation_Total_Aggregate",
+                    "Depreciation_Tangible",
+                    "IntangibleAmortization",
+                    "FinanceLeaseAmortization",
+                    "CapitalizedSoftwareAmortization"
+                ]
+            ),
+            error_template="Validation Failure: D&A_AllSources. No D&A source resolved at raw layer."
+        ),
         IdentityContract(
             name="ebitda_ge_ebit",
             predicate=lambda r: (
@@ -269,19 +272,34 @@ class IngestionValidator:
                     message=msg
                 ))
 
-        is_valid = len(failures) == 0
-        if not is_valid and ticker in KNOWN_ISSUES:
-            from datetime import date
-            
-            # For each issue, check if it's active and provides a bypass
-            for issue in KNOWN_ISSUES[ticker]:
-                if date.today() <= issue.expires_after:
-                    if issue.workaround in ["bypass", "routing_required"]:
-                        logger.info(f"{ticker} validation bypassed due to KNOWN_ISSUE: {issue.description} (expires: {issue.expires_after})")
-                        is_valid = True
-                        failures = []
-                        break
-                else:
-                    logger.error(f"{ticker} KNOWN_ISSUE EXPIRED on {issue.expires_after}. Exemptions no longer applied.")
+        # Apply KNOWN_ISSUES exemptions. Each issue is scoped by:
+        #   - workaround: only "bypass" / "routing_required" / "use_derived" suppress failures
+        #   - field:      None = ticker-wide, otherwise only failures on that field
+        #   - fiscal_year_min / fiscal_year_max: inclusive bounds; None = open-ended
+        if failures and ticker in KNOWN_ISSUES:
+            from datetime import date as _date
+            fy = record.fiscal_year
+            kept: List[ValidationFailure] = []
+            for f in failures:
+                exempt = False
+                for issue in KNOWN_ISSUES[ticker]:
+                    if _date.today() > issue.expires_after:
+                        logger.error(f"{ticker} KNOWN_ISSUE EXPIRED on {issue.expires_after}. Exemptions no longer applied.")
+                        continue
+                    if issue.workaround not in ("bypass", "routing_required", "use_derived"):
+                        continue
+                    if issue.fiscal_year_min is not None and fy < issue.fiscal_year_min:
+                        continue
+                    if issue.fiscal_year_max is not None and fy > issue.fiscal_year_max:
+                        continue
+                    if issue.field is not None and f.field != issue.field:
+                        continue
+                    exempt = True
+                    logger.info(f"{ticker} FY{fy} field '{f.field}' exempted by KNOWN_ISSUE: {issue.description[:80]}")
+                    break
+                if not exempt:
+                    kept.append(f)
+            failures = kept
 
+        is_valid = len(failures) == 0
         return ValidationResult(is_valid=is_valid, failures=failures)

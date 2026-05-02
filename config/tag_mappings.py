@@ -1,15 +1,39 @@
 """
-tag_mappings.py
+config/tag_mappings.py
 
-Maps canonical target fields (e.g., Revenue, CapEx) to a priority-ordered list of raw XBRL tags.
-The extraction logic will evaluate the list in order and select the first valid tag.
-This acts as an executable specification.
+Canonical XBRL field mappings for the Aletheia data ingestion pipeline.
 
-Convention: We standardize on PascalCase (e.g., CapEx, LiabilitiesCurrent) for direct XBRL/accounting line items and lowercase/underscores for purely internal derived tags.
+Each entry in FIELD_MAPPINGS maps a canonical target field (e.g., 'Revenue', 'CapEx')
+to a priority-ordered list of raw XBRL tags. The TagResolver evaluates the list
+in order and selects the first tag where the filer reports a non-null value.
+
+Resolution semantics:
+- "valid" means: tag is present in the filer's payload AND value is not null.
+  A reported zero IS valid (filer explicitly reports zero).
+- If no tag in the priority list resolves, the field returns None and the
+  cleaning engine may attempt derivation (e.g., OperatingIncome fallback).
+
+Sector overrides:
+- A field can specify per-sector priority lists keyed by industry classification
+  from config.ticker_classification.UNIVERSE.
+- The cleaning engine selects the override matching the ticker's classification
+  before falling back to "default".
+
+Convention:
+- PascalCase keys for direct XBRL/accounting line items
+  (e.g., 'CapEx', 'LiabilitiesCurrent', 'OperatingIncome')
+- lowercase_with_underscores in CANONICAL_ALIASES for cleaning engine internals
+  that need normalization to PascalCase
 """
 
 FIELD_MAPPINGS = {
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Income Statement - Revenue & Costs
+    # ─────────────────────────────────────────────────────────────────────────
+
     "Revenue": {
+        # Priority: ASC 606-compliant tag first (post-2018 standard), then legacy.
         "default": [
             "RevenueFromContractWithCustomerExcludingAssessedTax",
             "RevenueFromContractsWithCustomers",
@@ -17,30 +41,31 @@ FIELD_MAPPINGS = {
             "Revenue",
             "SalesRevenueNet",
             "SalesRevenueGoodsNet",
-            "RevenueFromContractWithCustomerIncludingAssessedTax"
-        ]
-    },
-    
-    "OperatingIncome": {
-        "default": [
-            "OperatingIncomeLoss",
-            "ProfitLossFromOperatingActivities",
-            "OperatingProfit",
-            "ProfitLossBeforeTax"
-        ]
-    },
-    
-    "NetIncome": {
-        "default": [
-            "NetIncomeLoss",
-            "NetIncomeLossAttributableToParentNetOfTax",
-            "ProfitLoss",
-            "ProfitLossAttributableToOwnersOfParent",
-            "IncomeLossFromContinuingOperations"
-        ]
+            "RevenueFromContractWithCustomerIncludingAssessedTax",
+        ],
+        # IFRS filers (TSM, ASML 20-Fs) use these.
+        # 20-F filers report under SEC's us-gaap namespace even when reporting
+        # under IFRS, so the us-gaap revenue tags must also be searched.
+        "ifrs": [
+            "Revenue",
+            "RevenueFromContractsWithCustomers",
+            "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "Revenues",
+            "SalesRevenueNet",
+            "SalesRevenueGoodsNet",
+        ],
+        # Utility filers (NEE) primarily use the regulated/unregulated combined
+        # tag; the standard ASC 606 tag is only present from 2018 onwards.
+        "utilities": [
+            "RegulatedAndUnregulatedOperatingRevenue",
+            "RevenueFromContractWithCustomerIncludingAssessedTax",
+            "RevenueFromContractWithCustomerExcludingAssessedTax",
+            "Revenues",
+        ],
     },
 
     "COGS": {
+        # Standard goods/services COGS. Excludes D&A and SG&A.
         "default": [
             "CostOfGoodsAndServicesSold",
             "CostOfRevenue",
@@ -48,240 +73,760 @@ FIELD_MAPPINGS = {
             "CostOfGoodsSold",
             "CostOfProductsSold",
             "CostOfServices",
-            "FuelAndPurchasedPower",
-            "UtilitiesOperatingExpenseFuelUsed"
         ],
+        # Healthcare/managed care: cost equivalent is medical claims expense.
         "healthcare": [
             "PolicyholderBenefitsAndClaimsIncurredNet",
             "HealthCareOrganizationMedicalClaimsExpense",
             "BenefitsLossesAndExpenses",
             "HealthCareCostsMedical",
-            "CostOfGoodsAndServicesSold"
-        ]
+            "CostOfGoodsAndServicesSold",
+        ],
+        # Utilities: fuel and purchased power is the operating cost equivalent.
+        "utilities": [
+            "FuelAndPurchasedPower",
+            "UtilitiesOperatingExpenseFuelUsed",
+            "CostOfGoodsAndServicesSold",
+            "CostOfRevenue",
+        ],
+        # Banks: no traditional COGS; interest expense is the funding cost equivalent.
+        # Banks should be routed to financial-sector calc paths, not standard FCFF.
+        "financials": [
+            "InterestExpense",
+        ],
     },
 
     "SG&A": {
+        # SG&A is sometimes broken into Selling vs G&A; the aggregated tag is canonical.
         "default": [
-            "SellingGeneralAndAdministrativeExpense"
-        ]
+            "SellingGeneralAndAdministrativeExpense",
+            "GeneralAndAdministrativeExpense",
+        ],
     },
 
     "R&D": {
+        # Standard GAAP R&D first; "Excluding IPR&D" only as fallback for filers
+        # that don't report the standard tag (LLY).
         "default": [
             "ResearchAndDevelopmentExpense",
-            "ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost"
-        ]
+            "ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost",
+        ],
     },
 
-    "Depreciation_Tangible": {
+    "OperatingExpenses": {
+        # Aggregated operating expenses (some filers report only this, not components).
         "default": [
-            "Depreciation"
-        ]
+            "OperatingExpenses",
+            "CostsAndExpenses",
+        ],
+    },
+
+    "OperatingIncome": {
+        # OperatingIncomeLoss is the canonical US-GAAP tag.
+        # Note: ProfitLossBeforeTax intentionally excluded — it includes non-operating items.
+        # When all these are absent (LLY case), cleaning engine derives via:
+        #   OperatingIncome = Revenue - COGS - SG&A - R&D
+        "default": [
+            "OperatingIncomeLoss",
+            "ProfitLossFromOperatingActivities",
+            "OperatingProfit",
+        ],
+    },
+
+    "NetIncome": {
+        # Parent-attributed net income preferred (excludes NCI portion).
+        # Filers with discontinued ops (ABT pre-2013, etc.) often only file
+        # *IncludingPortionAttributableToNoncontrollingInterest under the
+        # IncomeLossFromContinuingOperations* family for older fiscal years.
+        "default": [
+            "NetIncomeLoss",
+            "NetIncomeLossAttributableToParentNetOfTax",
+            "ProfitLoss",
+            "ProfitLossAttributableToOwnersOfParent",
+            "IncomeLossFromContinuingOperations",
+            "IncomeLossFromContinuingOperationsIncludingPortionAttributableToNoncontrollingInterest",
+        ],
+    },
+
+    "PretaxIncome": {
+        # Income before taxes - used for tax rate calculation, NOT as OperatingIncome fallback.
+        "default": [
+            "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest",
+            "IncomeLossFromContinuingOperationsBeforeIncomeTaxesMinorityInterestAndIncomeLossFromEquityMethodInvestments",
+            "IncomeLossBeforeIncomeTaxes",
+            "ProfitLossBeforeTax",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Income Statement - D&A Components (split for semantic clarity)
+    # ─────────────────────────────────────────────────────────────────────────
+    #
+    # CRITICAL: These three fields are SEMANTICALLY DISTINCT.
+    # - Depreciation_Tangible: physical asset depreciation only (D)
+    # - IntangibleAmortization: intangible asset amortization only (A)
+    # - Depreciation_Total: derived in cleaning engine as the sum
+    #
+    # Calc tools should read Depreciation_Total, not the individual components.
+    # The cleaning engine prefers the canonical aggregate tag when reported,
+    # and falls back to summing components when not.
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "Depreciation_Tangible": {
+        # Standalone depreciation of physical PPE. AAPL reports this.
+        "default": [
+            "Depreciation",
+            "DepreciationExpense",
+        ],
     },
 
     "IntangibleAmortization": {
+        # Amortization of intangibles, lease ROU assets, capitalized software.
+        # These are summed by the cleaning engine to construct full A.
         "default": [
             "AmortizationOfIntangibleAssets",
-            "FinanceLeaseRightOfUseAssetAmortization",
-            "CapitalizedComputerSoftwareAmortization"
-        ]
+        ],
     },
 
-    "Depreciation": {
+    "FinanceLeaseAmortization": {
+        # Finance lease ROU asset amortization. Separate component for full D&A reconstruction.
         "default": [
-            "Depreciation",
+            "FinanceLeaseRightOfUseAssetAmortization",
+        ],
+    },
+
+    "CapitalizedSoftwareAmortization": {
+        # Software development amortization. Component of full D&A.
+        "default": [
+            "CapitalizedComputerSoftwareAmortization",
+        ],
+    },
+
+    "Depreciation_Total_Aggregate": {
+        # The canonical aggregated D&A tag, when filer reports a single combined value.
+        # Cleaning engine prefers this over component summation when present.
+        "default": [
             "DepreciationDepletionAndAmortization",
             "DepreciationAndAmortization",
             "DepreciationAmortizationAndAccretionNet",
+            "DepreciationAmortizationAndDepletionNet",
+        ],
+        "ifrs": [
+            "DepreciationAndAmortisationExpense",
             "DepreciationExpense",
-            "AmortisationExpense"
-        ]
+            "AmortisationExpense",
+            "DepreciationDepletionAndAmortization",
+            "DepreciationAndAmortization",
+        ],
     },
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # Income Statement - Other
+    # ─────────────────────────────────────────────────────────────────────────
+
     "SBC": {
+        # Stock-based compensation. AllocatedShareBasedCompensationExpense is preferred
+        # because it captures the period's expense; ShareBasedCompensation may include
+        # cumulative or grant-date values for some filers.
         "default": [
             "AllocatedShareBasedCompensationExpense",
-            "ShareBasedCompensation"
-        ]
+            "ShareBasedCompensation",
+            "ShareBasedCompensationExpense",
+        ],
+    },
+
+    "InterestExpense": {
+        "default": [
+            "InterestExpense",
+            "InterestExpenseDebt",
+        ],
+    },
+
+    "NonOperatingIncome": {
+        "default": [
+            "NonoperatingIncomeExpense",
+        ],
+    },
+
+    "OtherNonOperatingIncome": {
+        "default": [
+            "OtherNonoperatingIncomeExpense",
+        ],
+    },
+
+    "RestructuringCharges": {
+        "default": [
+            "RestructuringCharges",
+            "RestructuringCosts",
+        ],
+    },
+
+    "ImpairmentLoss": {
+        "default": [
+            "AssetImpairmentCharges",
+            "ImpairmentOfLongLivedAssetsHeldForUse",
+        ],
+    },
+
+    "GoodwillImpairment": {
+        "default": [
+            "GoodwillImpairmentLoss",
+        ],
+    },
+
+    "AcquiredInProcessRnD": {
+        # IPR&D charges - separate from standard R&D for LLY-class derivations.
+        "default": [
+            "ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff",
+            "InProcessResearchAndDevelopmentExpense",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Tax
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "TaxExpense": {
+        # GAAP tax expense from income statement.
+        "default": [
+            "IncomeTaxExpenseBenefit",
+            "IncomeTaxExpense",
+        ],
+    },
+
+    "CashTaxesPaid": {
+        # Cash taxes from cash flow statement - used for clean_CashTaxRate.
+        "default": [
+            "IncomeTaxesPaid",
+            "IncomeTaxesPaidNet",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Balance Sheet - Assets
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "TotalAssets": {
+        "default": [
+            "Assets",
+        ],
+        "ifrs": [
+            "Assets",
+            "TotalAssets",
+        ],
+    },
+
+    "CurrentAssets": {
+        "default": [
+            "AssetsCurrent",
+            "CurrentAssets",
+        ],
+    },
+
+    "Cash": {
+        # Restricted cash deliberately excluded - it's captured separately and
+        # subtracted via the Equity Bridge cash haircut (Section 3.3).
+        "default": [
+            "CashAndCashEquivalentsAtCarryingValue",
+            "CashAndCashEquivalents",
+        ],
+        # IFRS filers may use these.
+        "ifrs": [
+            "CashAndCashEquivalents",
+        ],
+    },
+
+    "RestrictedCash": {
+        # Captured separately so the Equity Bridge can subtract it explicitly.
+        "default": [
+            "RestrictedCashAndCashEquivalents",
+            "RestrictedCash",
+            "RestrictedCashCurrent",
+            "RestrictedCashNoncurrent",
+        ],
+    },
+
+    "ShortTermInvestments": {
+        # Marketable securities on the asset side - included in Equity Bridge as
+        # accessible cash.
+        "default": [
+            "ShortTermInvestments",
+            "MarketableSecuritiesCurrent",
+            "AvailableForSaleSecuritiesCurrent",
+        ],
+    },
+
+    "AccountsReceivable": {
+        "default": [
+            "AccountsReceivableNetCurrent",
+            "ReceivablesNetCurrent",
+        ],
+    },
+
+    "Inventory": {
+        "default": [
+            "InventoryNet",
+            "InventoryGross",
+        ],
+    },
+
+    "PPE": {
+        # Property, plant, equipment - net of accumulated depreciation.
+        "default": [
+            "PropertyPlantAndEquipmentNet",
+            "PropertyPlantAndEquipmentNetExcludingProperties",
+        ],
+    },
+
+    "PPE_Gross": {
+        # Gross PPE before accumulated depreciation - used for asset turnover analysis.
+        "default": [
+            "PropertyPlantAndEquipmentGross",
+        ],
+    },
+
+    "AccumulatedDepreciation": {
+        "default": [
+            "AccumulatedDepreciationDepletionAndAmortizationPropertyPlantAndEquipment",
+        ],
+    },
+
+    "Goodwill": {
+        "default": [
+            "Goodwill",
+        ],
+    },
+
+    "IntangibleAssetsNet": {
+        "default": [
+            "IntangibleAssetsNetExcludingGoodwill",
+            "FiniteLivedIntangibleAssetsNet",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Balance Sheet - Liabilities
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "TotalLiabilities": {
+        "default": [
+            "Liabilities",
+        ],
+        "ifrs": [
+            "Liabilities",
+            "TotalLiabilities",
+        ],
+    },
+
+    "LiabilitiesCurrent": {
+        # Banks/insurers don't classify liabilities as current/noncurrent.
+        # Field stays null for those tickers; calc layer routes them differently.
+        "default": [
+            "LiabilitiesCurrent",
+            "CurrentLiabilities",
+        ],
+    },
+
+    "LongTermDebt": {
+        "default": [
+            "LongTermDebtNoncurrent",
+            "LongTermDebt",
+            "LongTermDebtAndCapitalLeaseObligations",
+        ],
+    },
+
+    "ShortTermDebt": {
+        # Current portion of debt - used by Equity Bridge.
+        "default": [
+            "DebtCurrent",
+            "ShortTermBorrowings",
+            "LongTermDebtCurrent",
+            "CommercialPaper",
+        ],
+    },
+
+    "TotalDebt": {
+        # Aggregated debt - if filer reports a single total. Cleaning engine
+        # prefers LongTermDebt + ShortTermDebt summation when components exist.
+        "default": [
+            "DebtLongtermAndShorttermCombinedAmount",
+        ],
+    },
+
+    "AccountsPayable": {
+        "default": [
+            "AccountsPayableCurrent",
+        ],
+    },
+
+    "DeferredRevenue": {
+        # Note: NOT subtracted from invested capital (deferred revenue is operating).
+        "default": [
+            "DeferredRevenueCurrent",
+            "ContractWithCustomerLiabilityCurrent",
+            "ContractWithCustomerLiability",
+        ],
+    },
+
+    "DeferredRevenueNoncurrent": {
+        "default": [
+            "DeferredRevenueNoncurrent",
+            "ContractWithCustomerLiabilityNoncurrent",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Balance Sheet - Equity
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "TotalEquity": {
+        # Includes NCI portion (the "including" variant) - canonical for invested capital.
+        "default": [
+            "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
+            "StockholdersEquity",
+            "EquityAttributableToOwnersOfParent",
+            "Equity",
+        ],
+    },
+
+    "EquityParentOnly": {
+        # Parent-only equity, excludes NCI - used for ROE.
+        "default": [
+            "StockholdersEquity",
+            "EquityAttributableToOwnersOfParent",
+        ],
+    },
+
+    "MinorityInterest": {
+        # NCI - subtracted in Equity Bridge per Section 3.3.
+        "default": [
+            "MinorityInterest",
+            "StockholdersEquityNoncontrollingInterest",
+        ],
+    },
+
+    "RedeemableNoncontrollingInterest": {
+        "default": [
+            "RedeemableNoncontrollingInterestEquityCarryingAmount",
+            "TemporaryEquityCarryingAmountAttributableToNoncontrollingInterests",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Cash Flow Statement
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "OperatingCF": {
+        # The *ContinuingOperations variant is the legacy tag used by filers
+        # that previously had discontinued operations on the books (CAT, BRK-B,
+        # TXN, etc., for fiscal years pre-2018). Listed last so the modern
+        # consolidated tag wins when both are reported.
+        "default": [
+            "NetCashProvidedByUsedInOperatingActivities",
+            "CashFlowsFromUsedInOperatingActivities",
+            "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations",
+        ],
+    },
+
+    "InvestingCF": {
+        "default": [
+            "NetCashProvidedByUsedInInvestingActivities",
+            "CashFlowsFromUsedInInvestingActivities",
+            "NetCashProvidedByUsedInInvestingActivitiesContinuingOperations",
+        ],
+    },
+
+    "FinancingCF": {
+        "default": [
+            "NetCashProvidedByUsedInFinancingActivities",
+            "CashFlowsFromUsedInFinancingActivities",
+            "NetCashProvidedByUsedInFinancingActivitiesContinuingOperations",
+        ],
     },
 
     "CapEx": {
+        # Standard PPE acquisition. Not a single tag for utilities (NEE) -
+        # utility CapEx aggregation is handled in cleaning_engine via known_issues.
         "default": [
             "PaymentsToAcquirePropertyPlantAndEquipment",
             "PaymentsToAcquireProductiveAssets",
             "PropertyPlantAndEquipmentAdditions",
             "PaymentsForCapitalImprovements",
             "PaymentsToAcquireOtherPropertyPlantAndEquipment",
-            "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities"
-        ]
-    },
-
-    "OperatingCF": {
-        "default": [
-            "NetCashProvidedByUsedInOperatingActivities",
-            "CashFlowsFromUsedInOperatingActivities"
-        ]
-    },
-
-    "InvestingCF": {
-        "default": [
-            "NetCashProvidedByUsedInInvestingActivities"
-        ]
-    },
-
-    "FinancingCF": {
-        "default": [
-            "NetCashProvidedByUsedInFinancingActivities"
-        ]
-    },
-
-    "TaxExpense": {
-        "default": [
-            "IncomeTaxExpenseBenefit"
-        ]
-    },
-    
-    "CashTaxesPaid": {
-        "default": [
-            "IncomeTaxesPaid",
-            "IncomeTaxesPaidNet"
-        ]
+            "PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities",
+        ],
     },
 
     "Buybacks": {
         "default": [
-            "PaymentsForRepurchaseOfCommonStock"
-        ]
-    },
-    
-    # Balance Sheet Fields
-    "Cash": {
-        "default": [
-            "CashAndCashEquivalentsAtCarryingValue",
-            "CashAndCashEquivalents",
-            "CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents"
-        ]
-    },
-    "TotalAssets": {
-        "default": [
-            "Assets"
-        ]
-    },
-    "TotalLiabilities": {
-        "default": [
-            "Liabilities"
-        ]
-    },
-    "TotalEquity": {
-        "default": [
-            "StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest",
-            "StockholdersEquity",
-            "EquityAttributableToOwnersOfParent",
-            "Equity"
-        ]
-    },
-    "RedeemableNoncontrollingInterest": {
-        "default": [
-            "RedeemableNoncontrollingInterestEquityCarryingAmount",
-            "TemporaryEquityCarryingAmountAttributableToNoncontrollingInterests"
-        ]
-    },
-    "LongTermDebt": {
-        "default": [
-            "LongTermDebtNoncurrent",
-            "LongTermDebt"
-        ]
-    },
-    "CurrentAssets": {
-        "default": [
-            "AssetsCurrent",
-            "CurrentAssets"
-        ]
-    },
-    "LiabilitiesCurrent": {
-        "default": [
-            "LiabilitiesCurrent",
-            "CurrentLiabilities"
-        ]
-    },
-    "AccountsReceivable": {
-        "default": [
-            "AccountsReceivableNetCurrent"
-        ]
-    },
-    "Inventory": {
-        "default": [
-            "InventoryNet"
-        ]
-    },
-    "Goodwill": {
-        "default": [
-            "Goodwill"
-        ]
-    },
-    "PPE": {
-        "default": [
-            "PropertyPlantAndEquipmentNet"
-        ]
+            "PaymentsForRepurchaseOfCommonStock",
+            "PaymentsForRepurchaseOfEquity",
+        ],
     },
 
+    "DividendsPaid": {
+        # Used for DDM-required tickers (UNH, CNC) once that calc path lands.
+        "default": [
+            "PaymentsOfDividends",
+            "PaymentsOfDividendsCommonStock",
+        ],
+    },
+
+    "FinanceLeasePrincipalPayments": {
+        "default": [
+            "FinanceLeasePrincipalPayments",
+            "RepaymentsOfLongTermCapitalLeaseObligations",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
     # Shares
+    # ─────────────────────────────────────────────────────────────────────────
+
     "SharesDiluted": {
         "default": [
-            "WeightedAverageNumberOfDilutedSharesOutstanding"
-        ]
+            "WeightedAverageNumberOfDilutedSharesOutstanding",
+        ],
     },
+
+    # Diluted EPS — used as a derivation fallback in cleaning_engine when the
+    # direct share-count tag isn't filed (foreign filers, some dei-only filers).
+    "DilutedEPS": {
+        "default": [
+            "EarningsPerShareDiluted",
+            "DilutedEarningsLossPerShare",
+        ],
+        "ifrs": [
+            "DilutedEarningsLossPerShare",
+            "EarningsPerShareDiluted",
+        ],
+    },
+
     "SharesBasic": {
         "default": [
-            "WeightedAverageNumberOfSharesOutstandingBasic"
-        ]
+            "WeightedAverageNumberOfSharesOutstandingBasic",
+        ],
     },
+
     "SharesOutstanding": {
+        # Period-end shares, not weighted average. Used for floor scenarios per Bug 1.5.
+        # `EntityCommonStockSharesOutstanding` is the dei-namespace fallback that
+        # some filers (e.g. V) use instead of the us-gaap canonical tag.
         "default": [
-            "CommonStockSharesOutstanding"
-        ]
+            "CommonStockSharesOutstanding",
+            "CommonStockSharesIssued",
+            "EntityCommonStockSharesOutstanding",
+        ],
     },
 
-    # Misc supplemental tags
-    "RestructuringCharges": {"default": ["RestructuringCharges"]},
-    "ImpairmentLoss": {"default": ["AssetImpairmentCharges"]},
-    "GoodwillImpairment": {"default": ["GoodwillImpairmentLoss"]},
-    "PretaxIncome": {"default": ["IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest"]},
-    "NOL_Carryforward": {"default": ["OperatingLossCarryforwards", "DeferredTaxAssetsOperatingLossCarryforwards"]},
-    "LIFO_Reserve": {"default": ["InventoryLIFOReserve"]},
-    "CapitalizedSoftware": {"default": ["CapitalizedComputerSoftwareNet"]},
-    "DeferredRevenue": {"default": ["DeferredRevenueCurrent", "ContractWithCustomerLiabilityCurrent"]},
-    "NonOperatingIncome": {"default": ["NonoperatingIncomeExpense"]},
-    "OtherNonOperatingIncome": {"default": ["OtherNonoperatingIncomeExpense"]},
-    "InterestExpense": {"default": ["InterestExpense"]},
-    "FinanceLeasePrincipalPayments": {"default": ["FinanceLeasePrincipalPayments"]},
-    "RepaymentsOfLongTermCapitalLeaseObligations": {"default": ["RepaymentsOfLongTermCapitalLeaseObligations"]},
+    # ─────────────────────────────────────────────────────────────────────────
+    # Leases (Section 3.3 Domain 5)
+    # ─────────────────────────────────────────────────────────────────────────
 
-    # Lease and Pension
-    "ROU_Asset": {"default": ["OperatingLeaseRightOfUseAsset"]},
-    "LeaseLiabilityCurrent": {"default": ["OperatingLeaseLiabilityCurrent"]},
-    "LeaseLiabilityNoncurrent": {"default": ["OperatingLeaseLiabilityNoncurrent"]},
-    "LeaseCost": {"default": ["OperatingLeaseCost"]},
-    "PensionObligation": {"default": ["DefinedBenefitPlanBenefitObligation"]},
-    "PensionPlanAssets": {"default": ["DefinedBenefitPlanFairValueOfPlanAssets"]},
-    "PensionServiceCost": {"default": ["DefinedBenefitPlanServiceCost"]},
-    "PensionInterestCost": {"default": ["DefinedBenefitPlanInterestCost"]},
-    "PensionFundedStatus": {"default": ["DefinedBenefitPlanFundedStatusOfPlan"]},
-    "JVA_Income": {"default": ["IncomeLossFromEquityMethodInvestments"]},
-    "AcquiredInProcessRnD": {
+    "ROU_Asset_Operating": {
         "default": [
-            "ResearchAndDevelopmentAssetAcquiredOtherThanThroughBusinessCombinationWrittenOff"
-        ]
-    }
+            "OperatingLeaseRightOfUseAsset",
+        ],
+    },
+
+    "ROU_Asset_Finance": {
+        "default": [
+            "FinanceLeaseRightOfUseAsset",
+        ],
+    },
+
+    "LeaseLiabilityCurrent_Operating": {
+        "default": [
+            "OperatingLeaseLiabilityCurrent",
+        ],
+    },
+
+    "LeaseLiabilityNoncurrent_Operating": {
+        "default": [
+            "OperatingLeaseLiabilityNoncurrent",
+        ],
+    },
+
+    "LeaseLiabilityCurrent_Finance": {
+        "default": [
+            "FinanceLeaseLiabilityCurrent",
+        ],
+    },
+
+    "LeaseLiabilityNoncurrent_Finance": {
+        "default": [
+            "FinanceLeaseLiabilityNoncurrent",
+        ],
+    },
+
+    "LeaseCost": {
+        "default": [
+            "OperatingLeaseCost",
+            "LeaseCost",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Pension (Section 3.3 Domain 6)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "PensionObligation": {
+        "default": [
+            "DefinedBenefitPlanBenefitObligation",
+        ],
+    },
+
+    "PensionPlanAssets": {
+        "default": [
+            "DefinedBenefitPlanFairValueOfPlanAssets",
+        ],
+    },
+
+    "PensionServiceCost": {
+        "default": [
+            "DefinedBenefitPlanServiceCost",
+        ],
+    },
+
+    "PensionInterestCost": {
+        "default": [
+            "DefinedBenefitPlanInterestCost",
+        ],
+    },
+
+    "PensionFundedStatus": {
+        # Negative = deficit, positive = surplus. Subtracted from Equity Bridge if deficit.
+        "default": [
+            "DefinedBenefitPlanFundedStatusOfPlan",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # JVA / Equity Method Investments (Section 3.3 - separately valued)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "JVA_Income": {
+        # Income from equity-method investments - isolated from EBIT per framework.
+        "default": [
+            "IncomeLossFromEquityMethodInvestments",
+        ],
+    },
+
+    "JVA_Investment": {
+        # Carrying value of equity-method investments - added to Equity Bridge.
+        "default": [
+            "EquityMethodInvestments",
+            "InvestmentsInAffiliatesSubsidiariesAssociatesAndJointVentures",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Specialized
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "NOL_Carryforward": {
+        "default": [
+            "OperatingLossCarryforwards",
+            "DeferredTaxAssetsOperatingLossCarryforwards",
+        ],
+    },
+
+    "LIFO_Reserve": {
+        "default": [
+            "InventoryLIFOReserve",
+        ],
+    },
+
+    "CapitalizedSoftware": {
+        # Capitalized software on balance sheet (asset).
+        "default": [
+            "CapitalizedComputerSoftwareNet",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Healthcare-specific (managed care, insurers)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "MedicalClaims": {
+        # Used for managed care DDM/sector-specific work once that path lands.
+        "default": [
+            "PolicyholderBenefitsAndClaimsIncurredNet",
+            "HealthCareOrganizationMedicalClaimsExpense",
+        ],
+    },
+
+    "ClaimsReserve": {
+        "default": [
+            "LiabilityForClaimsAndClaimsAdjustmentExpense",
+            "LiabilityForFuturePolicyBenefit",
+        ],
+    },
+
+    "PolicyholderFunds": {
+        # Insurance float - load-bearing for embedded value calculations.
+        "default": [
+            "PolicyholderFunds",
+            "LiabilityForFuturePolicyBenefit",
+        ],
+    },
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Banking-specific (JPM)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    "InterestIncome": {
+        "default": [
+            "InterestIncomeOperating",
+            "InterestAndDividendIncomeOperating",
+        ],
+    },
+
+    "NetInterestIncome": {
+        "default": [
+            "InterestIncomeExpenseNet",
+            "InterestIncomeExpenseAfterProvisionForLoanLoss",
+        ],
+    },
+
+    "ProvisionForLoanLosses": {
+        "default": [
+            "ProvisionForLoanLeaseAndOtherLosses",
+            "ProvisionForLoanAndLeaseLosses",
+        ],
+    },
 }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Resolution strategies for fields that need non-standard merge behavior
+# ─────────────────────────────────────────────────────────────────────────────
 
 RESOLUTION_STRATEGY = {
+    # "first": Use the first valid tag in priority order (default behavior).
+    # "max": Some filers report Revenue under multiple non-mutually-exclusive tags
+    #        (e.g., both gross and net of assessed tax). Take the maximum to capture
+    #        the broadest revenue measurement, consistent with framework's revenue
+    #        normalization (Section 2.8).
+    # "sum": Aggregate values across the priority list (used for component summation).
+
     "Revenue": "max",
-    "COGS": "max"
+    "COGS": "max",
+
+    # All other fields default to "first" - the cleaning engine assumes "first"
+    # when a field is not explicitly listed here.
 }
 
-# The canonical transformer outputs lowercase variants of some tags (e.g. 'revenue', 'ebit').
-# This mapping normalizes those canonical names to the PascalCase keys in FIELD_MAPPINGS.
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Canonical aliases - normalize cleaning-engine internal names to FIELD_MAPPINGS keys
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# The canonical transformer in cleaning_engine outputs lowercase variants of some
+# tags. This mapping resolves those internal names to the PascalCase keys in
+# FIELD_MAPPINGS. Every alias on the right MUST exist as a key in FIELD_MAPPINGS.
+# ─────────────────────────────────────────────────────────────────────────────
+
 CANONICAL_ALIASES = {
     "revenue":          "Revenue",
     "cogs":             "COGS",
@@ -291,16 +836,123 @@ CANONICAL_ALIASES = {
     "ebit":             "OperatingIncome",
     "operating_income": "OperatingIncome",
     "net_income":       "NetIncome",
-    "tax_rate":         "TaxExpense",
-    "depreciation":     "Depreciation",
-    "medical_claims":   "MedicalClaims",
+    "pretax_income":    "PretaxIncome",
+    "tax_expense":      "TaxExpense",
+    "cash_taxes":       "CashTaxesPaid",
+
+    # D&A components - calc tools should read derived "Depreciation_Total"
+    "depreciation":           "Depreciation_Tangible",
+    "amortization":           "IntangibleAmortization",
+    "depreciation_aggregate": "Depreciation_Total_Aggregate",
+
+    # Balance sheet
     "cash":             "Cash",
+    "restricted_cash":  "RestrictedCash",
     "assets":           "TotalAssets",
-    "liabilities":      "TotalLiabilities",
-    "equity":           "TotalEquity",
+    "current_assets":   "CurrentAssets",
+    "ppe":              "PPE",
+    "ppe_gross":        "PPE_Gross",
+    "goodwill":         "Goodwill",
+    "intangibles":      "IntangibleAssetsNet",
+
+    "liabilities":           "TotalLiabilities",
+    "current_liabilities":   "LiabilitiesCurrent",
+    "equity":                "TotalEquity",
+    "equity_parent":         "EquityParentOnly",
+    "minority_interest":     "MinorityInterest",
+
     "debt_long":        "LongTermDebt",
     "debt_current":     "ShortTermDebt",
     "total_debt":       "TotalDebt",
+
+    # Cash flow
+    "operating_cf":     "OperatingCF",
+    "investing_cf":     "InvestingCF",
+    "financing_cf":     "FinancingCF",
     "capex":            "CapEx",
-    "operating_cf":     "OperatingCF"
+    "buybacks":         "Buybacks",
+    "dividends":        "DividendsPaid",
+
+    # Specialized
+    "sbc":                  "SBC",
+    "interest_expense":     "InterestExpense",
+    "non_op_income":        "NonOperatingIncome",
+    "restructuring":        "RestructuringCharges",
+    "impairment":           "ImpairmentLoss",
+    "goodwill_impairment":  "GoodwillImpairment",
+    "ipr_d":                "AcquiredInProcessRnD",
+
+    # Healthcare
+    "medical_claims":   "MedicalClaims",
+    "claims_reserve":   "ClaimsReserve",
+    "policyholder_funds": "PolicyholderFunds",
+
+    # Shares
+    "shares_diluted":     "SharesDiluted",
+    "shares_basic":       "SharesBasic",
+    "shares_outstanding": "SharesOutstanding",
+
+    # Leases
+    "rou_op":             "ROU_Asset_Operating",
+    "rou_finance":        "ROU_Asset_Finance",
+    "lease_liab_op_curr": "LeaseLiabilityCurrent_Operating",
+    "lease_liab_op_lt":   "LeaseLiabilityNoncurrent_Operating",
+    "lease_cost":         "LeaseCost",
+
+    # Pension
+    "pension_obligation":    "PensionObligation",
+    "pension_assets":        "PensionPlanAssets",
+    "pension_service_cost":  "PensionServiceCost",
+    "pension_funded_status": "PensionFundedStatus",
+
+    # JVA
+    "jva_income":     "JVA_Income",
+    "jva_investment": "JVA_Investment",
 }
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Validation - sanity checks at module load
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _validate_aliases():
+    """Every alias target must exist as a FIELD_MAPPINGS key. Fails at import time."""
+    missing = [
+        (k, v) for k, v in CANONICAL_ALIASES.items()
+        if v not in FIELD_MAPPINGS
+    ]
+    if missing:
+        raise ValueError(
+            f"CANONICAL_ALIASES contains targets not in FIELD_MAPPINGS: {missing}"
+        )
+
+
+def _validate_resolution_strategies():
+    """Every RESOLUTION_STRATEGY key must exist in FIELD_MAPPINGS."""
+    missing = [
+        k for k in RESOLUTION_STRATEGY.keys()
+        if k not in FIELD_MAPPINGS
+    ]
+    if missing:
+        raise ValueError(
+            f"RESOLUTION_STRATEGY references unknown fields: {missing}"
+        )
+
+
+def _validate_sector_keys():
+    """Every sector key in tag_mappings should match a real UNIVERSE.sector."""
+    from config.ticker_classification import UNIVERSE
+    used_sectors = {c.sector.lower() for c in UNIVERSE.values()}
+    for field, rules in FIELD_MAPPINGS.items():
+        for key in rules.keys():
+            if key in ("default", "ifrs"):
+                continue
+            assert key in used_sectors, (
+                f"FIELD_MAPPINGS['{field}']['{key}'] doesn't match any "
+                f"UNIVERSE sector. Sectors: {used_sectors}"
+            )
+
+
+_validate_aliases()
+_validate_resolution_strategies()
+_validate_sector_keys()

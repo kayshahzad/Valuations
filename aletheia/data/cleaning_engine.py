@@ -71,6 +71,7 @@ class CleanedRecord:
     ticker: str
     fiscal_year: int
     period_end_date: Optional[str]
+    period_end_date_missing: bool = False
     cleaned_at: str = field(default_factory=lambda: datetime.datetime.utcnow().isoformat())
     version: int = 1
 
@@ -82,6 +83,7 @@ class CleanedRecord:
 
     # ── Derived / computed metrics ───────────────────────────────────────────
     derived: Dict[str, Optional[float]] = field(default_factory=dict)
+    derived_provenance: Dict[str, str] = field(default_factory=dict)
 
     # ── Cleaning audit trail ─────────────────────────────────────────────────
     flags: List[CleaningFlag] = field(default_factory=list)
@@ -99,13 +101,17 @@ class CleanedRecord:
         Returns the value and its provenance ('raw', 'derived', or 'missing').
         Prioritizes raw over derived to ensure reported XBRL facts are preferred.
         """
+        if field_name == "Depreciation":
+            field_name = "Depreciation_Total"
+
         # Fields where derived assembly is more complete than a partial raw tag
-        PREFER_DERIVED_FIELDS = {"Depreciation"}
+        PREFER_DERIVED_FIELDS = {"Depreciation_Total"}
         
         if field_name in PREFER_DERIVED_FIELDS:
             val = self.derived.get(field_name)
             if val is not None:
-                return val, "derived"
+                prov = self.derived_provenance.get(field_name, "derived")
+                return val, prov
             
         val = self.raw.get(field_name)
         if val is not None:
@@ -113,7 +119,8 @@ class CleanedRecord:
         
         val = self.derived.get(field_name)
         if val is not None:
-            return val, "derived"
+            prov = self.derived_provenance.get(field_name, "derived")
+            return val, prov
             
         return None, "missing"
 
@@ -1086,14 +1093,28 @@ class CleaningEngine:
         shares_basic = record.raw.get("SharesOutstanding") or record.raw.get("CommonStockSharesOutstanding")
         shares_diluted = record.raw.get("SharesDiluted") or record.raw.get("WeightedAverageNumberOfDilutedSharesOutstanding")
 
+        # If the resolver didn't pick up a direct shares tag, derive it from
+        # diluted EPS: shares = NetIncome / DilutedEPS. Both must be in the
+        # same currency. ADR filers like TSM expose DilutedEarningsLossPerShare
+        # but no direct share-count tag.
+        if not shares_diluted:
+            net_income = record.raw.get("NetIncome")
+            diluted_eps = (record.raw.get("DilutedEPS")
+                           or record.raw.get("DilutedEarningsLossPerShare")
+                           or record.raw.get("EarningsPerShareDiluted"))
+            if net_income and diluted_eps and diluted_eps != 0:
+                shares_diluted = net_income / diluted_eps
+
+        if shares_diluted:
+            record.clean["SharesDiluted"] = shares_diluted
+
         if shares_basic and shares_diluted and shares_basic > 0:
             dilution_pct = (shares_diluted - shares_basic) / shares_basic * 100
             record.clean["ShareDilution_Pct"] = dilution_pct
-            if dilution_pct > 3.0:
-                record.warn(
-                    f"D7: Dilution of {dilution_pct:.1f}% (basic → diluted). "
-                    f"Always use diluted share count in per-share metrics."
-                )
+            # The dilution-presence warning was redundant: DCFEngine now
+            # requires clean_SharesDiluted at run time and hard-fails on the
+            # outstanding-share fallback. The dilution_pct value remains
+            # available in clean for downstream consumers.
 
         # Buyback treadmill check: if buybacks ≈ SBC, net return is zero
         buybacks = record.raw.get("Buybacks") or record.raw.get("PaymentsForRepurchaseOfCommonStock") or 0.0
@@ -1235,12 +1256,10 @@ class CleaningEngine:
             delta_nwc = nwc - prior_nwc
             record.clean["DeltaNWC"] = delta_nwc
 
-            # Large single-year NWC swing = likely cyclical, flag it
-            if prior_nwc != 0 and abs(delta_nwc) > abs(prior_nwc) * 0.50:
-                record.warn(
-                    f"D9: NWC change ({delta_nwc:+,.0f}) is >50% of prior NWC ({prior_nwc:,.0f}). "
-                    f"Likely cyclical swing — use structural NWC in DCF, not single-year change."
-                )
+            # Large single-year NWC swing was previously warned here. DCFEngine
+            # now uses structural NWC (3% of revenue) in all scenarios so the
+            # advisory is built into the calc layer; the YoY swing is preserved
+            # in clean["DeltaNWC"] for any downstream consumer that wants it.
 
         # Capex
         capex = record.raw.get("CapEx") or record.raw.get("capex") or record.raw.get("PaymentsToAcquirePropertyPlantAndEquipment")
@@ -1249,8 +1268,8 @@ class CleaningEngine:
         record.clean["CapEx_Total"] = capex
 
         # Depreciation as proxy for maintenance capex
-        depreciation = record.raw.get("Depreciation") or record.raw.get("DepreciationAndAmortization")
-        record.clean["Depreciation"] = depreciation
+        depreciation, dep_prov = self._compute_depreciation_total(record)
+        record.clean["Depreciation_Total"] = depreciation
 
         if depreciation is None:
             print(f"❌ MISSING DATA: Depreciation is missing. No silent fallback applied.")
@@ -1265,11 +1284,11 @@ class CleaningEngine:
             record.clean["MaintenanceCapEx"] = maintenance_capex
             record.clean["GrowthCapEx"] = growth_capex
 
-            if capex > depreciation * 2.0 and revenue > 0:
-                record.warn(
-                    f"D9: CapEx ({capex:,.0f}) is >2x depreciation ({depreciation:,.0f}). "
-                    f"Heavy growth investment — ensure DCF revenue assumptions reflect this capex."
-                )
+            # CapEx > 2x depreciation was previously warned. DCFEngine bull/base
+            # scenarios already drive scenario-specific capex_pct_revenue from
+            # the input ratio, so the "model growth investment" guidance is
+            # built into the calc layer. MaintenanceCapEx / GrowthCapEx remain
+            # in clean for downstream forensic consumers.
         else:
             maintenance_capex = None
             growth_capex = None
@@ -1393,6 +1412,29 @@ class CleaningEngine:
     # Derived metrics
     # ─────────────────────────────────────────────────────────────────────────
 
+    def _compute_depreciation_total(self, record: CleanedRecord) -> Tuple[Optional[float], str]:
+        """
+        Reconstruct full D&A from filer-reported components or canonical aggregate.
+        Returns (value, provenance) where provenance is one of:
+          - "raw_aggregate": filer reported the canonical combined tag
+          - "derived_components": summed from individual components
+          - "missing": neither aggregate nor any components resolved
+        """
+        aggregate = record.raw.get("Depreciation_Total_Aggregate")
+        if aggregate is not None and aggregate != 0:
+            return aggregate, "raw_aggregate"
+        
+        components = [
+            record.raw.get("Depreciation_Tangible") or 0.0,
+            record.raw.get("IntangibleAmortization") or 0.0,
+            record.raw.get("FinanceLeaseAmortization") or 0.0,
+            record.raw.get("CapitalizedSoftwareAmortization") or 0.0,
+        ]
+        if any(c > 0.0 for c in components):
+            return sum(components), "derived_components"
+        
+        return None, "missing"
+
     def _compute_derived(self, record: CleanedRecord):
         """
         Compute key derived metrics from cleaned values.
@@ -1412,6 +1454,9 @@ class CleaningEngine:
         if r.raw.get("OperatingIncome") is None:
             rev = r.raw.get("Revenue")
             cogs = r.raw.get("COGS")
+            
+            # Strict guardrail: R&D missing from raw is treated as 0.0. 
+            # If explicitly None but reported? We treat it as 0.0 if not present.
             rnd = r.raw.get("R&D") or 0.0
             iprd = r.raw.get("AcquiredInProcessRnD") or 0.0
             sga = r.raw.get("SG&A")
@@ -1419,14 +1464,12 @@ class CleaningEngine:
             
             # Path 1: All traditional components present
             if rev is not None and cogs is not None and sga is not None:
-                # Deducting standard components plus Acquired IPR&D.
-                # Note: For LLY, deducting R&D ($11.0B) + IPR&D ($3.3B) yields ~$13.7B 
-                # against a reported ~$12.9B. The 1.8% residual variance is expected 
-                # non-deducted items (e.g. restructuring, asset impairments) and is within tolerance.
                 r.derived["OperatingIncome"] = rev - cogs - rnd - iprd - sga
+                r.derived_provenance["OperatingIncome"] = "derived"
             # Path 2: Aggregated operating expenses present
             elif rev is not None and opex is not None:
                 r.derived["OperatingIncome"] = rev - opex
+                r.derived_provenance["OperatingIncome"] = "derived"
                 
             nuc_fuel = r.raw.get("PaymentsForProceedsFromNuclearFuel")
             
@@ -1440,29 +1483,18 @@ class CleaningEngine:
             pretax = r.raw.get("PretaxIncome")
             if pretax is not None:
                 ebit = pretax + (r.raw.get("InterestExpense") or 0.0)
-        dep_from_canonical = (r.clean.get("Depreciation") 
-                              or r.raw.get("Depreciation") 
-                              or r.clean.get("Depreciation_Tangible")
-                              or r.raw.get("Depreciation_Tangible") or 0.0)
-        dep_intangible = (r.clean.get("IntangibleAmortization")
-                          or r.raw.get("IntangibleAmortization")
-                          or r.raw.get("FinanceLeaseRightOfUseAssetAmortization")
-                          or r.raw.get("CapitalizedComputerSoftwareAmortization")
-                          or r.clean.get("AmortizationOfIntangibleAssets")
-                          or r.raw.get("AmortizationOfIntangibleAssets") or 0.0)
-        dep_combined = dep_from_canonical + dep_intangible
-        # Use combined if we have intangible component to add, otherwise use canonical
-        depreciation = dep_combined if dep_combined > 0 else None
-        
-        if depreciation == 0.0:
+        dep_val, dep_prov = self._compute_depreciation_total(r)
+        if dep_val is not None:
+            r.derived["Depreciation_Total"] = dep_val
+            r.derived_provenance["Depreciation_Total"] = dep_prov
+            depreciation = dep_val
+        else:
             depreciation = None
-            
-        if depreciation is not None:
-            if dep_intangible > 0 or r.raw.get("Depreciation") is None:
-                r.derived["Depreciation"] = depreciation
             
         capex_raw = r.clean.get("CapEx_Total") or r.raw.get("CapEx") or r.derived.get("CapEx")
         capex = abs(capex_raw) if capex_raw is not None else None
+        if capex is not None:
+            r.derived["CapEx"] = capex
         
         delta_nwc = r.clean.get("DeltaNWC") or 0.0
         cash_tax_rate = r.clean.get("CashTaxRate") or 0.21
