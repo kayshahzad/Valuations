@@ -23,7 +23,7 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
 from aletheia.tools.search import search_sentiment
@@ -34,16 +34,36 @@ from aletheia.tools.search import search_sentiment
 # ─────────────────────────────────────────────────────────────────────────────
 
 class StrategicContextReport(BaseModel):
-    # Python-computed — LLM must not alter
+    """
+    Strategic context narrative output.
+
+    ARCHITECTURE: pure-narrative agent. The numeric fields below
+    (revenue_z_score, recommended_base_revenue, revenue_at_risk_percent) are
+    deterministic values pulled from calc_node state — the LLM does NOT
+    compute them. Conviction reads cyclicality from calc_node directly,
+    not from this report.
+
+    The frozen Pydantic config + the test_no_agent_emitted_overrides lock test
+    prevent the addition of fields that mutate calc inputs.
+    """
+    model_config = {"frozen": True}
+
+    # ── Typed categorical assessments ──────────────────────────────────────
+    cyclicality_classification: Literal["cyclical", "non_cyclical", "ambiguous"] = "ambiguous"
+    growth_quality: Literal["high", "medium", "low", "uncertain"] = "uncertain"
+    intangible_decay_severity: Literal["high", "medium", "low", "none", "uncertain"] = "uncertain"
+
+    # ── Deterministic values (sourced from calc_node, NOT LLM-generated) ────
     revenue_z_score: float = Field(
-        description="Z-Score of latest revenue vs historical mean. Python-computed from DuckDB.")
+        description="Z-Score of latest revenue vs historical mean. "
+                    "Sourced from calc_node state, NOT LLM-generated.")
     is_cyclical_peak: bool = Field(
-        description="True if Z-Score > 2.0. Python rule.")
+        description="True if Z-Score > 2.0. Sourced from calc_node state.")
     applies_cyclical_haircut: bool = Field(
         default=False,
-        description="True if Z-Score > industry threshold. Python rule.")
+        description="True if Z-Score > sector threshold. Sourced from calc_node state.")
     recommended_base_revenue: Optional[float] = Field(
-        description="3-year average revenue if peak. Python numpy mean from DuckDB.")
+        description="3-year average revenue if peak. Sourced from calc_node state.")
 
     # LLM narrative
     deferred_revenue_trend: str = Field(

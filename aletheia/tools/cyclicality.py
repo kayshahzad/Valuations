@@ -33,14 +33,17 @@ def calculate_z_score(calc_input: 'CalculationInput') -> Tuple[float, bool, bool
     
     meta = calc_input.classification
     classification = "cyclical" # default
-    
-    if meta:
+
+    if not meta:
+        return 0.0, False, False, 0.0, {}
+
+    try:
         if meta.lifecycle == "cyclical_industrial":
             classification = "cyclical"
         elif meta.sector in ["Technology", "Healthcare", "Communication Services", "Financial Services", "Consumer Defensive"]:
-                classification = "non_cyclical"
-            elif meta.lifecycle in ["secular_hyper_growth", "hyper_growth"]:
-                classification = "ambiguous"
+            classification = "non_cyclical"
+        elif meta.lifecycle in ["secular_hyper_growth", "hyper_growth"]:
+            classification = "ambiguous"
 
         if classification == "non_cyclical":
             threshold = float('inf')
@@ -48,7 +51,7 @@ def calculate_z_score(calc_input: 'CalculationInput') -> Tuple[float, bool, bool
             threshold = 3.0
         else:
             threshold = 2.0
-            
+
         applies_cyclical_haircut = bool(z_score > threshold)
         is_peak = bool(z_score > 2.0)
         avg_3yr = float(np.mean(revenues[-3:]))

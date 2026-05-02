@@ -20,7 +20,7 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
 from aletheia.tools.search import search_sentiment
@@ -38,12 +38,33 @@ from aletheia.tools.forensic_metrics import compute_operating_leverage_score
 # ─────────────────────────────────────────────────────────────────────────────
 
 class RevenueSegment(BaseModel):
+    model_config = {"frozen": True}
     segment: str
     pct_revenue: Optional[float] = None
     growth_trend: str = "unknown"
 
+
 class ForensicReport(BaseModel):
-    # Narrative only — score computed in Python
+    """
+    Forensic narrative output.
+
+    ARCHITECTURE: pure-narrative agent. Numeric fields below (moat_score,
+    moat_attributes scores) are LLM-generated qualitative SIGNALS for narrative
+    color only. They are NOT consumed by ConvictionScorer or any calc-layer
+    tool — those use the deterministic moat_fingerprint computed in calc_node.
+
+    The frozen Pydantic config + the test_no_agent_emitted_overrides lock test
+    prevent the addition of fields that would mutate calc inputs (wacc_penalty,
+    growth_decay_reduction, base_revenue_override, etc.).
+    """
+    model_config = {"frozen": True}
+
+    # ── Typed categorical assessments (preferred for downstream consumption) ──
+    moat_assessment: Literal["wide", "narrow", "none", "uncertain"] = "uncertain"
+    accruals_quality: Literal["high", "medium", "low", "uncertain"] = "uncertain"
+    earnings_quality: Literal["high", "medium", "low", "uncertain"] = "uncertain"
+
+    # ── Narrative analysis ──────────────────────────────────────────────────
     operating_leverage_analysis: str = Field(
         description="Explain cost structure: fixed vs variable drivers, "
                     "how revenue growth flows to EBIT. Concrete examples.")

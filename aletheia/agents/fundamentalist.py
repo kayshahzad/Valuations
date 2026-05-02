@@ -1,20 +1,30 @@
-from pathlib import Path
 import json
-from datetime import datetime
-from typing import Dict, Any
 from langchain_core.messages import HumanMessage
-from aletheia.tools.pro_forma import ProFormaEngine
-from aletheia.utils.config import load_config
 from aletheia.utils.tracing import tracer
 
-from aletheia.tools.dcf_assumptions import load_archetype_templates, apply_archetype_overrides, build_base_assumptions
 
 def fundamentalist_agent(state):
     """
     The Fundamentalist: Valuation Engine.
-    Consumes InvestmentDatabase (Phase 1) + Strategist (WACC) to produce DCF.
+
+    Legacy ProForma path. Superseded by `valuation_node` which calls DCFEngine
+    directly. Kept in the workflow for backwards compatibility with the
+    `valuation_report` state field consumed by `lead_agent`. Skips silently if
+    the ProForma module is unavailable.
     """
     print("---FUNDAMENTALIST AGENT (Served)---")
+
+    try:
+        from aletheia.tools.pro_forma import ProFormaEngine
+        from aletheia.tools.dcf_assumptions import (
+            load_archetype_templates, build_base_assumptions
+        )
+    except ImportError as e:
+        print(f"  ⊘ ProForma path unavailable ({e}); valuation_node handles DCF.")
+        return {
+            "valuation_report": {},
+            "messages": [HumanMessage(content="Fundamentalist: skipped (ProForma not installed)")]
+        }
     
     ticker = state.get("ticker", "UNKNOWN")
     

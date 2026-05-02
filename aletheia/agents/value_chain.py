@@ -18,7 +18,7 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
 from aletheia.tools.search import search_sentiment
@@ -29,10 +29,29 @@ from aletheia.tools.search import search_sentiment
 # ─────────────────────────────────────────────────────────────────────────────
 
 class ValueChainReport(BaseModel):
+    """
+    Value-chain narrative output.
+
+    ARCHITECTURE: pure-narrative agent. The numeric `strategic_leverage_score`
+    (1-10) is a LLM-generated qualitative SIGNAL for narrative color only — it
+    is NOT consumed by ConvictionScorer or any calc-layer tool. Conviction P5
+    leadership pillar reads the deterministic operating-leverage score from
+    calc_node state instead.
+
+    The frozen Pydantic config + the test_no_agent_emitted_overrides lock test
+    prevent the addition of fields that mutate calc inputs.
+    """
+    model_config = {"frozen": True}
+
+    # ── Typed categorical assessments (preferred for downstream consumption) ──
+    strategic_position: Literal["dominant", "strong", "moderate", "weak", "uncertain"] = "uncertain"
+    upstream_power: Literal["high_supplier_power", "balanced", "high_buyer_power", "uncertain"] = "uncertain"
+    substitution_pressure: Literal["high", "medium", "low", "uncertain"] = "uncertain"
+
     strategic_leverage_score: float = Field(
         description="Score 1-10 Porter Five Forces. "
                     "10=Dominant platform. 1=Commodity price taker. "
-                    "This score feeds a Python lookup table for terminal growth adjustment.")
+                    "Narrative color only — does NOT feed conviction or calc.")
 
     # Upstream
     power_ratio: float = Field(
