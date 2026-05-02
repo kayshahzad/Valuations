@@ -172,14 +172,21 @@ def strategic_context_agent(state):
 
     # ── 1. Python calculations from DuckDB ────────────────────────────────────
     from aletheia.data.database import InvestmentDatabase
-    from config.ticker_classification import UNIVERSE
-    from config.known_issues import KNOWN_ISSUES
-    from aletheia.contracts.interfaces import CalculationInput
-    
-    db_inst = InvestmentDatabase(verbose=False)
-    df = db_inst.get_latest(ticker)
-    calc_input = CalculationInput(df=df, classification=UNIVERSE.get(ticker), known_issues=KNOWN_ISSUES.get(ticker, []))
-    z_score, is_peak, applies_cyclical_haircut, avg_3yr, db = calculate_z_score(calc_input)
+    # Prefer cyclicality results that calc_node already computed and put in
+    # state — agents READ from calc state per the architecture invariant.
+    cyc = state.get("cyclicality") or {}
+    if cyc and cyc.get("z_score") is not None:
+        z_score = cyc["z_score"]
+        is_peak = bool(cyc.get("is_peak"))
+        applies_cyclical_haircut = bool(cyc.get("applies_cyclical_haircut"))
+        avg_3yr = cyc.get("avg_3yr") or 0.0
+        db = cyc.get("db_context") or {}
+    else:
+        # Fallback: agent invoked outside the graph (legacy run_valuation.py
+        # or test). Build CalculationInput via the shared helper.
+        from aletheia.utils.calc_input_builder import make_calc_input
+        calc_input = make_calc_input(ticker)
+        z_score, is_peak, applies_cyclical_haircut, avg_3yr, db = calculate_z_score(calc_input)
     print(f"  ✓ Z-score (DuckDB): {z_score:.2f} | peak={is_peak} | "
           f"3yr_avg={'${:.1f}B'.format(avg_3yr/1e9) if avg_3yr else 'N/A'}")
 
@@ -283,11 +290,15 @@ Return StrategicContextReport JSON.
             "patent_context": patent_context or "Search unavailable.",
         })
 
-        # Overwrite Python-computed fields — LLM cannot alter these
-        report.revenue_z_score        = z_score
-        report.is_cyclical_peak       = is_peak
-        report.applies_cyclical_haircut = applies_cyclical_haircut
-        report.recommended_base_revenue = avg_3yr if applies_cyclical_haircut else None
+        # Overwrite Python-computed fields — LLM cannot alter these.
+        # Schema is frozen=True (architecture invariant), so produce a new
+        # instance via model_copy(update=...) rather than mutating in place.
+        report = report.model_copy(update={
+            "revenue_z_score":          z_score,
+            "is_cyclical_peak":         is_peak,
+            "applies_cyclical_haircut": applies_cyclical_haircut,
+            "recommended_base_revenue": avg_3yr if applies_cyclical_haircut else None,
+        })
 
         output = {
             "strategic_context_report": report.dict(),

@@ -160,6 +160,76 @@ def fetch_financials_bundle(ticker: str):
     from aletheia.ui.financials import ticker_detail
     return ticker_detail(ticker)
 
+
+def _run_pipeline_subprocess(ticker: str) -> None:
+    """
+    Spawn `python3 main.py --ticker {ticker}` and stream output to a
+    Streamlit progress UI. Stores result in session_state for sidebar render.
+    On completion, clears the API and financials caches so the next view
+    refresh picks up the new report.
+    """
+    import os
+    import subprocess
+    import sys
+    import time
+    from pathlib import Path
+
+    repo_root = Path(__file__).resolve().parent
+    cmd = [sys.executable, "main.py", "--ticker", ticker]
+    env = {**os.environ, "PYTHONPATH": str(repo_root)}
+
+    progress_container = st.empty()
+    log_lines: list[str] = []
+    started = time.time()
+
+    progress_container.info(f"▶ Running pipeline for {ticker}…")
+
+    proc = subprocess.Popen(
+        cmd,
+        cwd=str(repo_root),
+        env=env,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1,
+    )
+
+    with st.expander("Live pipeline output", expanded=True):
+        log_box = st.empty()
+        try:
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                log_lines.append(line.rstrip("\n"))
+                # Render a tail of the log to keep the box manageable
+                log_box.code("\n".join(log_lines[-60:]), language="text")
+        finally:
+            proc.wait()
+
+    elapsed = time.time() - started
+    rc = proc.returncode
+
+    if rc == 0:
+        progress_container.success(f"✓ Pipeline finished in {elapsed:.1f}s")
+        # Bust caches so subsequent views show the freshly written report
+        try:
+            fetch_ticker.clear()
+            fetch_dcf.clear()
+            fetch_fundamentals.clear()
+            fetch_screening.clear()
+            fetch_narrative.clear()
+            fetch_financials_bundle.clear()
+        except Exception:
+            pass
+    else:
+        progress_container.error(f"✗ Pipeline failed (exit code {rc}) after {elapsed:.1f}s")
+
+    st.session_state.last_pipeline_run = {
+        "ticker": ticker,
+        "returncode": rc,
+        "elapsed_s": elapsed,
+        "log_tail": "\n".join(log_lines[-40:]),
+    }
+
 def extract_moat_from_narrative(narrative: str) -> str:
     """Extract moat-relevant sentences from pipeline narrative."""
     if not narrative:
@@ -308,6 +378,25 @@ def main():
                     </div>
                 </div>
             """, unsafe_allow_html=True)
+
+    # ── Sidebar Run Pipeline ─────────────────────────────────────────────────
+    if st.session_state.active_ticker:
+        st.sidebar.markdown("<hr style='margin: 16px 0'>", unsafe_allow_html=True)
+        run_label = f"▶ Run pipeline for {st.session_state.active_ticker}"
+        if st.sidebar.button(run_label, use_container_width=True, key="run_pipeline_btn"):
+            _run_pipeline_subprocess(st.session_state.active_ticker)
+        if "last_pipeline_run" in st.session_state:
+            last = st.session_state.last_pipeline_run
+            if last["ticker"] == st.session_state.active_ticker:
+                if last["returncode"] == 0:
+                    st.sidebar.success(
+                        f"✓ Pipeline ran ({last['elapsed_s']:.1f}s). "
+                        "Refresh the active view to see new outputs."
+                    )
+                else:
+                    st.sidebar.error(f"✗ Exit code {last['returncode']}")
+                with st.sidebar.expander("Pipeline log (tail)", expanded=False):
+                    st.code(last["log_tail"], language="text")
 
     # ── Sidebar Top Investable ────────────────────────────────────────────────
     st.sidebar.markdown("<hr style='margin: 16px 0'>", unsafe_allow_html=True)

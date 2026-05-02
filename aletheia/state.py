@@ -41,10 +41,17 @@ class AgentState(TypedDict):
     value_chain_report: Dict[str, Any]
     strategic_context_report: Dict[str, Any] # New Agent Output
     final_report: Optional[LeadAgentOutput] # Now strongly typed
-    
+
+    # ── Calc node outputs (deterministic, written before any agent runs) ────
+    cyclicality: Dict[str, Any]
+    operating_leverage: Dict[str, Any]
+    moat_fingerprint: Dict[str, Any]
+    conviction: Dict[str, Any]
+    calc_bypassed: Optional[str]
+
     # Intelligence Repository
     sector_context: str # Loaded from knowledge_base
     rules_content: str # Loaded from RULES.md
-    
+
     raw_10k_text: str # For Long Context Task
     dcf_config: Optional[DCFConfig] # Dynamic inputs

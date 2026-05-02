@@ -328,14 +328,19 @@ Be specific and mathematical. Return structured JSON.
             narrative = f"LLM Generation Failed: {e}"
 
     # ── Conviction scorer ─────────────────────────────────────────────────────
-    from aletheia.tools.conviction_scorer import ConvictionScorer
-    _scorer = ConvictionScorer()
-    try:
-        conviction_data = _scorer.score_from_state(ticker, state).to_dict()
-    except Exception as _e:
-        print(f"⚠ Conviction scorer fallback: {_e}")
-        from aletheia.tools.conviction_scorer import score_conviction
-        conviction_data = score_conviction(state)
+    # calc_node already computed the deterministic conviction and put it in
+    # state["conviction"]. Lead READS from state per the architecture
+    # invariant (no LLM-in-the-loop survives). Fallback path only fires when
+    # calc_node didn't run (e.g. legacy run_valuation.py).
+    conviction_data = state.get("conviction") or {}
+    if not conviction_data:
+        try:
+            from aletheia.tools.conviction_scorer import ConvictionScorer
+            _scorer = ConvictionScorer()
+            conviction_data = _scorer.score_from_state(ticker, state).to_dict()
+        except Exception as _e:
+            print(f"⚠ Conviction scorer fallback: {_e}")
+            conviction_data = {}
 
     conviction    = conviction_data.get("conviction_score", 0)
     pillar_scores = conviction_data
