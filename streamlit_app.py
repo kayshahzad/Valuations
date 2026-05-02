@@ -148,6 +148,18 @@ def fetch_narrative(ticker: str):
 def fetch_health():
     return api_get("/health")
 
+
+@st.cache_data(ttl=600)
+def fetch_financials_bundle(ticker: str):
+    """
+    Read-only ticker_detail bundle for the Financials tab.
+    Reads from DuckDB and runs DCFEngine live. Cached for 10 min.
+    Independent of the agent-pipeline reports — works for any ticker
+    that has cleaned data in DuckDB, even if no agent run exists yet.
+    """
+    from aletheia.ui.financials import ticker_detail
+    return ticker_detail(ticker)
+
 def extract_moat_from_narrative(narrative: str) -> str:
     """Extract moat-relevant sentences from pipeline narrative."""
     if not narrative:
@@ -249,7 +261,7 @@ def main():
     missing   = health.get("tickers_missing", [])
 
     # ── Global State Initialization ───────────────────────────────────────────
-    views = ["◈  Universe", "◉  Deep Dive", "◧  Screening", "◨  Constitution", "📝  Thesis Builder", "◩  Reports"]
+    views = ["◈  Universe", "◉  Deep Dive", "▦  Financials", "◧  Screening", "◨  Constitution", "📝  Thesis Builder", "◩  Reports"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
     if "active_view" not in st.session_state:
@@ -780,7 +792,282 @@ def main():
 
 
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 3 — SCREENING
+    # TAB 3 — FINANCIALS (deterministic detail dump from DB + DCFEngine)
+    # ──────────────────────────────────────────────────────────────────────────
+    elif active_view == "▦  Financials":
+
+        selected = st.session_state.active_ticker
+        if not selected:
+            st.info("Select a ticker from the sidebar.")
+            return
+
+        bundle = fetch_financials_bundle(selected)
+        if not bundle or bundle.get("error"):
+            st.error(bundle.get("error") if bundle else "Failed to load financials.")
+            return
+
+        ident = bundle["identity"]
+        inc   = bundle["income_statement"]
+        bs    = bundle["balance_sheet"]
+        ret   = bundle["returns_capital"]
+        leases = bundle["lease_items"]
+
+        def _bn(v, dp=2):
+            if v is None: return "—"
+            return f"${v/1e9:,.{dp}f}B"
+
+        def _pct(v, dp=1):
+            if v is None: return "—"
+            return f"{v:.{dp}f}%" if abs(v) > 1.0 else f"{v*100:.{dp}f}%"
+
+        def _num(v, dp=2):
+            if v is None: return "—"
+            return f"{v:,.{dp}f}"
+
+        # ── Identity bar ────────────────────────────────────────────────────
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Ticker", ident["ticker"])
+        c2.metric("Latest FY", f"FY{ident['fiscal_year']}")
+        c3.metric("Quality", _num(ident['quality_score']) if ident['quality_score'] else "—")
+        c4.metric("Errors / Warnings", f"{ident['error_count']} / {ident['warning_count']}")
+
+        if ident["warnings"]:
+            with st.expander(f"⚠ {len(ident['warnings'])} warnings"):
+                for w in ident["warnings"]:
+                    st.markdown(f"- {w}")
+        if ident["errors"]:
+            with st.expander(f"❌ {len(ident['errors'])} errors", expanded=True):
+                for e in ident["errors"]:
+                    st.markdown(f"- {e}")
+        if bundle.get("bypass"):
+            st.warning(f"DCF not run: {bundle['bypass']}")
+
+        st.markdown("---")
+
+        # ── Income statement + balance sheet (side-by-side) ─────────────────
+        ls, rs = st.columns(2)
+        with ls:
+            st.markdown(f"#### Income Statement — FY{ident['fiscal_year']}")
+            inc_rows = [
+                ("Revenue",          _bn(inc["Revenue"])),
+                ("COGS",             _bn(inc["COGS"])),
+                ("Gross Margin",     _pct(inc["GrossMargin_Pct"])),
+                ("R&D",              _bn(inc["RnD"])),
+                ("SG&A",             _bn(inc["SGnA"])),
+                ("Operating Income", _bn(inc["OperatingIncome"])),
+                ("EBIT Margin",      _pct(inc["EBIT_Margin_Pct"])),
+                ("EBITDA",           _bn(inc["EBITDA"])),
+                ("EBITDA Margin",    _pct(inc["EBITDA_Margin_Pct"])),
+                ("D&A",              _bn(inc["DepreciationAmortization"])),
+                ("NOPAT",            _bn(inc["NOPAT"])),
+                ("Net Income",       _bn(inc["NetIncome"])),
+                ("Diluted EPS",      f"${_num(inc['DilutedEPS'])}" if inc["DilutedEPS"] else "—"),
+                ("OperatingCF",      _bn(inc["OperatingCF"])),
+                ("InvestingCF",      _bn(inc["InvestingCF"])),
+                ("FinancingCF",      _bn(inc["FinancingCF"])),
+                ("FCF",              _bn(inc["FCF"])),
+                ("FCFF",             _bn(inc["FCFF"])),
+                ("FCF Margin",       _pct(inc["FCF_Margin_Pct"])),
+                ("CapEx",            _bn(inc["CapEx"])),
+                ("Maintenance CapEx", _bn(inc["MaintenanceCapEx"])),
+                ("Growth CapEx",     _bn(inc["GrowthCapEx"])),
+            ]
+            st.dataframe(pd.DataFrame(inc_rows, columns=["Metric", "Value"]),
+                         hide_index=True, use_container_width=True)
+
+        with rs:
+            st.markdown(f"#### Balance Sheet — FY{ident['fiscal_year']}")
+            bs_rows = [
+                ("Total Assets",        _bn(bs["TotalAssets"])),
+                ("Cash",                _bn(bs["Cash"])),
+                ("Short-term Invest.",  _bn(bs["ShortTermInvestments"])),
+                ("AR",                  _bn(bs["AccountsReceivable"])),
+                ("Inventory",           _bn(bs["Inventory"])),
+                ("PPE (net)",           _bn(bs["PPE_Net"])),
+                ("PPE (gross)",         _bn(bs["PPE_Gross"])),
+                ("Accum. Depreciation", _bn(bs["AccumulatedDepreciation"])),
+                ("Total Liabilities",   _bn(bs["TotalLiabilities"])),
+                ("Current Liabilities", _bn(bs["LiabilitiesCurrent"])),
+                ("Short-term Debt",     _bn(bs["ShortTermDebt"])),
+                ("Long-term Debt",      _bn(bs["LongTermDebt"])),
+                ("AP",                  _bn(bs["AccountsPayable"])),
+                ("Total Equity",        _bn(bs["TotalEquity"])),
+                ("NWC",                 _bn(bs["NWC"])),
+                ("Net Debt",            _bn(bs["NetDebt"])),
+            ]
+            st.dataframe(pd.DataFrame(bs_rows, columns=["Metric", "Value"]),
+                         hide_index=True, use_container_width=True)
+
+        st.markdown("---")
+
+        # ── Returns / capital + lease items ────────────────────────────────
+        ls2, rs2 = st.columns(2)
+        with ls2:
+            st.markdown("#### Returns & Capital Structure")
+            ret_rows = [
+                ("ROIC",            _pct(ret["ROIC"])),
+                ("ROE",             _pct(ret["ROE"])),
+                ("Invested Capital", _bn(ret["InvestedCapital"])),
+                ("Diluted Shares",   _bn(ret["SharesDiluted"], dp=3) if ret["SharesDiluted"] else "—"),
+                ("Basic Shares",     _bn(ret["SharesBasic"], dp=3) if ret["SharesBasic"] else "—"),
+                ("Outstanding",      _bn(ret["SharesOutstanding"], dp=3) if ret["SharesOutstanding"] else "—"),
+                ("Buybacks",        _bn(ret["Buybacks"])),
+                ("SBC",             _bn(ret["SBC"])),
+                ("Net Buyback after SBC", _bn(ret["NetBuyback_AfterSBC"])),
+                ("SBC % of FCF",    _pct(ret["SBC_PctFCF"])),
+                ("Dilution %",      _pct(ret["DilutionPct"])),
+                ("Dividends Paid",  _bn(ret["DividendsPaid"])),
+            ]
+            st.dataframe(pd.DataFrame(ret_rows, columns=["Metric", "Value"]),
+                         hide_index=True, use_container_width=True)
+
+        with rs2:
+            st.markdown("#### Lease Items")
+            lease_rows = [
+                ("ROU Asset (Operating)", _bn(leases["ROUAsset_Operating"])),
+                ("ROU Asset (Finance)",   _bn(leases["ROUAsset_Finance"])),
+                ("Lease Liab Operating",  _bn(leases["LeaseLiability_Operating_Total"])),
+                ("Lease Liab Finance",    _bn(leases["LeaseLiability_Finance_Total"])),
+                ("Lease Cost",            _bn(leases["LeaseCost"])),
+            ]
+            st.dataframe(pd.DataFrame(lease_rows, columns=["Metric", "Value"]),
+                         hide_index=True, use_container_width=True)
+
+        st.markdown("---")
+
+        # ── Fiscal-year history ────────────────────────────────────────────
+        st.markdown("#### Fiscal-Year History")
+        hist = bundle["fiscal_history"]
+        if hist:
+            hist_df = pd.DataFrame([{
+                "FY":         r["fiscal_year"],
+                "Revenue ($B)":  (r["Revenue"]/1e9 if r["Revenue"] else None),
+                "EBITDA ($B)":   (r["EBITDA"]/1e9 if r["EBITDA"] else None),
+                "Net Income ($B)": (r["NetIncome"]/1e9 if r["NetIncome"] else None),
+                "CapEx ($B)":    (r["CapEx"]/1e9 if r["CapEx"] else None),
+                "FCF ($B)":      (r["FCF"]/1e9 if r["FCF"] else None),
+                "ROIC (%)":      (r["ROIC"]*100 if r["ROIC"] else None),
+                "Quality":       r["QualityScore"],
+            } for r in hist])
+            st.dataframe(
+                hist_df.style.format({
+                    "Revenue ($B)": "{:,.2f}", "EBITDA ($B)": "{:,.2f}",
+                    "Net Income ($B)": "{:,.2f}", "CapEx ($B)": "{:,.2f}",
+                    "FCF ($B)": "{:,.2f}", "ROIC (%)": "{:.1f}", "Quality": "{:.2f}",
+                }, na_rep="—"),
+                hide_index=True, use_container_width=True
+            )
+
+        # ── DCF section (only if we ran) ────────────────────────────────────
+        if bundle["dcf_inputs"]:
+            st.markdown("---")
+            st.markdown("#### DCF Analysis")
+
+            ls3, rs3 = st.columns([1, 1])
+            with ls3:
+                st.markdown("##### Inputs")
+                dcfi = bundle["dcf_inputs"]
+                inp_rows = [
+                    ("Current Price",   f"${_num(dcfi['current_price'])}"),
+                    ("Market Cap",      _bn(dcfi["market_cap"])),
+                    ("Diluted Shares",  _bn(dcfi["shares_diluted"], dp=3) if dcfi["shares_diluted"] else "—"),
+                    ("Risk-free Rate",  _pct(dcfi["risk_free_rate"])),
+                    ("Beta",            _num(dcfi["beta"])),
+                    ("WACC (base)",     _pct(dcfi["wacc_base"])),
+                    ("Tax Rate",        _pct(dcfi["tax_rate"])),
+                ]
+                st.dataframe(pd.DataFrame(inp_rows, columns=["Metric", "Value"]),
+                             hide_index=True, use_container_width=True)
+
+            with rs3:
+                st.markdown("##### Scenarios")
+                scens = bundle["dcf_scenarios"]
+                scen_rows = []
+                for name in ("bull", "base", "bear"):
+                    s = scens.get(name) or {}
+                    if s:
+                        scen_rows.append({
+                            "Scenario":     s["name"],
+                            "EV ($B)":      (s["EV"]/1e9 if s["EV"] else None),
+                            "IPS":          s["IPS"],
+                            "Upside (%)":   s["Upside_Pct"],
+                            "WACC (%)":     (s["WACC"]*100 if s["WACC"] else None),
+                            "g_term (%)":   (s["TerminalGrowth"]*100 if s["TerminalGrowth"] else None),
+                            "TV%EV":        (s["TV_Pct_EV"]*100 if s["TV_Pct_EV"] else None),
+                            "EV/EBITDA":    s["ImpliedEV_EBITDA"],
+                        })
+                if scen_rows:
+                    st.dataframe(
+                        pd.DataFrame(scen_rows).style.format({
+                            "EV ($B)": "{:,.0f}", "IPS": "${:,.2f}",
+                            "Upside (%)": "{:+.1f}%", "WACC (%)": "{:.2f}",
+                            "g_term (%)": "{:.2f}", "TV%EV": "{:.1f}",
+                            "EV/EBITDA": "{:.1f}x",
+                        }, na_rep="—"),
+                        hide_index=True, use_container_width=True
+                    )
+
+            # Projections
+            projs = bundle["projections"]
+            if projs:
+                st.markdown("##### Base-case Projections")
+                proj_df = pd.DataFrame([{
+                    "Yr": p["year"], "FY": p["fiscal_year"],
+                    "Revenue ($B)": p["revenue"]/1e9 if p["revenue"] else None,
+                    "EBIT ($B)":    p["ebit"]/1e9 if p["ebit"] else None,
+                    "NOPAT ($B)":   p["nopat"]/1e9 if p["nopat"] else None,
+                    "CapEx ($B)":   p["capex"]/1e9 if p["capex"] else None,
+                    "FCFF ($B)":    p["fcff"]/1e9 if p["fcff"] else None,
+                    "PV(FCFF) ($B)": p["pv_fcff"]/1e9 if p["pv_fcff"] else None,
+                } for p in projs])
+                st.dataframe(
+                    proj_df.style.format({
+                        "Revenue ($B)": "{:,.1f}", "EBIT ($B)": "{:,.1f}",
+                        "NOPAT ($B)": "{:,.1f}", "CapEx ($B)": "{:,.1f}",
+                        "FCFF ($B)": "{:,.1f}", "PV(FCFF) ($B)": "{:,.1f}",
+                    }, na_rep="—"),
+                    hide_index=True, use_container_width=True
+                )
+
+            ls4, rs4 = st.columns(2)
+            with ls4:
+                st.markdown("##### Terminal Value (Base)")
+                tv = bundle["terminal_value"]
+                tv_rows = [
+                    ("Gordon TV",            _bn(tv.get("gordon_tv"), dp=0)),
+                    ("Reinvestment TV",      _bn(tv.get("reinvestment_tv"), dp=0)),
+                    ("TV used",              _bn(tv.get("tv_used"), dp=0)),
+                    ("PV of TV",             _bn(tv.get("pv_tv"), dp=0)),
+                    ("TV % of EV",           _pct(tv.get("tv_pct_of_ev"))),
+                    ("Implied Terminal EV/EBITDA", f"{tv.get('implied_tv_ebitda_multiple', 0):.1f}x" if tv.get("implied_tv_ebitda_multiple") else "—"),
+                ]
+                st.dataframe(pd.DataFrame(tv_rows, columns=["Metric", "Value"]),
+                             hide_index=True, use_container_width=True)
+
+            with rs4:
+                st.markdown("##### Base Assumptions")
+                a = bundle["assumptions"]
+                a_rows = [
+                    ("CAGR Y1-5",         _pct(a.get("revenue_cagr_y1_5"))),
+                    ("CAGR Y6-10",        _pct(a.get("revenue_cagr_y6_10"))),
+                    ("EBIT margin start", _pct(a.get("ebit_margin_current"))),
+                    ("EBIT margin term.", _pct(a.get("ebit_margin_terminal"))),
+                    ("CapEx % revenue",   _pct(a.get("capex_pct_revenue"))),
+                    ("D&A % revenue",     _pct(a.get("da_pct_revenue"))),
+                    ("NWC % revenue",     _pct(a.get("nwc_pct_revenue"))),
+                    ("Tax rate",          _pct(a.get("tax_rate"))),
+                    ("WACC",              _pct(a.get("wacc"))),
+                    ("Terminal growth",   _pct(a.get("terminal_growth"))),
+                    ("Terminal ROIC",     _pct(a.get("terminal_roic"))),
+                    ("Base ROIC",         _pct(a.get("base_roic"))),
+                ]
+                st.dataframe(pd.DataFrame(a_rows, columns=["Metric", "Value"]),
+                             hide_index=True, use_container_width=True)
+                if a.get("justification"):
+                    st.caption(a["justification"])
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # TAB 4 — SCREENING
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "◧  Screening":
 
@@ -849,7 +1136,7 @@ def main():
                     st.markdown("<br>", unsafe_allow_html=True)
 
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 4 — CONSTITUTION
+    # TAB 5 — CONSTITUTION
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "◨  Constitution":
         st.markdown("#### Constitution Compliance")
@@ -902,7 +1189,7 @@ def main():
 
     # ──────────────────────────────────────────────────────────────────────────
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 5 — THESIS BUILDER
+    # TAB 6 — THESIS BUILDER
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "📝  Thesis Builder":
         st.markdown("#### Interactive Thesis Builder")
@@ -1030,7 +1317,7 @@ def main():
                     st.info("Could not fetch version history.")
 
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 6 — REPORTS
+    # TAB 7 — REPORTS
     # ──────────────────────────────────────────────────────────────────────────
     elif active_view == "◩  Reports":
         report_ticker = st.session_state.active_ticker
