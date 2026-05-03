@@ -158,7 +158,7 @@ class DCFResult:
     """Complete DCF output for all three scenarios."""
     ticker: str
     fiscal_year: int
-    run_date: str = field(default_factory=lambda: datetime.datetime.utcnow().isoformat())
+    run_date: str = field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).isoformat())
 
     # Market inputs
     current_price: float = 0.0

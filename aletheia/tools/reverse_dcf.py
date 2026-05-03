@@ -288,14 +288,11 @@ class ReverseDCF:
             result.sector, SECTOR_75TH_CAGR["Default"]
         )
 
-        # ── Fetch market data ─────────────────────────────────────────────────
+        # ── Fetch market data when caller didn't supply it ─────────────────
+        # No-arg call falls through to live market data fetch — that's the
+        # canonical behavior. Callers wanting deterministic snapshots pass
+        # current_price / market_cap explicitly.
         if current_price is None or market_cap is None:
-            import warnings
-            warnings.warn(
-                "ReverseDCF.run() is deprecated for direct calls. Use run_live() or run_snapshot() "
-                "to explicitly declare state determinism. Defaulting to live market data.", 
-                DeprecationWarning, stacklevel=2
-            )
             from aletheia.data.market_data import get_current_price, get_market_cap
             try:
                 current_price = current_price or get_current_price(ticker)

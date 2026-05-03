@@ -72,7 +72,7 @@ class CleanedRecord:
     fiscal_year: int
     period_end_date: Optional[str]
     period_end_date_missing: bool = False
-    cleaned_at: str = field(default_factory=lambda: datetime.datetime.utcnow().isoformat())
+    cleaned_at: str = field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).isoformat())
     version: int = 1
 
     # ── Raw resolved values (from canonical_transformer output) ──────────────
