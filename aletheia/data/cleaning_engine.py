@@ -1460,7 +1460,22 @@ class CleaningEngine:
         # Mirror to derived so legacy consumers still see the value
         if r.raw.get("TotalLiabilities") is not None and r.derived.get("TotalLiabilities") is None:
             r.derived["TotalLiabilities"] = r.raw["TotalLiabilities"]
-                
+
+        # Derive SG&A from components when the rolled-up tag isn't filed.
+        # MSFT files SellingAndMarketingExpense + GeneralAndAdministrativeExpense
+        # separately and does NOT file SellingGeneralAndAdministrativeExpense.
+        # AAPL/LLY file the rolled-up tag (preferred path; this branch is a no-op).
+        if r.raw.get("SG&A") is None:
+            sm = r.raw.get("SellingAndMarketing")
+            ga = r.raw.get("GeneralAndAdministrative")
+            if sm is not None and ga is not None:
+                r.raw["SG&A"] = sm + ga
+            elif ga is not None:
+                # Last-resort fallback: G&A alone is better than nothing for
+                # filers who report only that component, but flag it as
+                # under-reported for forensic agents to notice.
+                r.raw["SG&A"] = ga
+
         # Derive OperatingIncome
         if r.raw.get("OperatingIncome") is None:
             rev = r.raw.get("Revenue")

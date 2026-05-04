@@ -98,8 +98,27 @@ FIELD_MAPPINGS = {
 
     "SG&A": {
         # SG&A is sometimes broken into Selling vs G&A; the aggregated tag is canonical.
+        # Filers like MSFT report ONLY the components (SellingAndMarketingExpense +
+        # GeneralAndAdministrativeExpense, no rolled-up tag) — cleaning_engine
+        # derives the sum below when the rolled-up tag is None. We deliberately
+        # do NOT put GeneralAndAdministrativeExpense alone in this priority
+        # list because it's only half of SG&A and would silently under-resolve.
         "default": [
             "SellingGeneralAndAdministrativeExpense",
+        ],
+    },
+
+    "SellingAndMarketing": {
+        # Components used by cleaning_engine to derive SG&A when the rolled-up
+        # tag isn't filed (MSFT pattern).
+        "default": [
+            "SellingAndMarketingExpense",
+        ],
+    },
+
+    "GeneralAndAdministrative": {
+        # See SellingAndMarketing.
+        "default": [
             "GeneralAndAdministrativeExpense",
         ],
     },
