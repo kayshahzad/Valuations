@@ -287,7 +287,7 @@ class ScreeningEngine:
         try:
             dcf_result = DCFEngine(verbose=False).run(calc_input)
             wacc = dcf_result.wacc
-            terminal_growth = dcf_result.base.assumptions.terminal_growth_rate
+            terminal_growth = dcf_result.base.assumptions.terminal_growth
         except Exception as e:
             if self.verbose:
                 print(f"[WARN] DCF dynamic inputs failed for {ticker}: {e}")

@@ -360,7 +360,7 @@ def main():
             ps = report.get("4_valuation_synthesis", {}).get("investment_thesis", {}).get("pillar_scores", {})
             mos = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("three_scenario_dcf", {}).get("base", {}).get("margin_of_safety", 0)
             mos_pct = f"{mos:+.1%}" if mos else "—"
-            mos_color = "#10b981" if mos > 0 else "#ef4444" if mos < -0.1 else "#f59e0b"
+            mos_color = "#10b981" if (mos is not None and mos > 0) else "#ef4444" if (mos is not None and mos < -0.1) else "#f59e0b"
             
             st.sidebar.markdown(f"""
                 <div style="display: flex; justify-content: space-between; padding: 12px 10px; background: rgba(128, 128, 128, 0.15); border-radius: 6px; margin-top: 12px;">
@@ -403,7 +403,7 @@ def main():
     st.sidebar.markdown("### 🏆 Top Investable")
     
     if not df.empty and "base_mos" in df.columns:
-        investable = df[df["base_mos"] > 0]
+        investable = df[pd.to_numeric(df["base_mos"], errors="coerce") > 0]
         if not investable.empty:
             top_5 = investable.sort_values(by=["conviction", "base_mos"], ascending=[False, False]).head(5)
             
@@ -482,7 +482,7 @@ def main():
             avg_conv = df["conviction"].mean() if "conviction" in df.columns else 0
             st.metric("Avg Conviction", f"{avg_conv:.1f}", delta="out of ±10")
         with c4:
-            n_pos_mos = (df["base_mos"] > 0).sum() if "base_mos" in df.columns else 0
+            n_pos_mos = (pd.to_numeric(df["base_mos"], errors="coerce") > 0).sum() if "base_mos" in df.columns else 0
             st.metric("Positive MoS", int(n_pos_mos), delta="base IV > market price")
         with c5:
             n_underval = df["multiple_signal"].isin(["undervalued","fairly_valued"]).sum() if "multiple_signal" in df.columns else 0
@@ -671,8 +671,12 @@ def main():
                 ("BASE", dcf_data.get("base", {}), "#f59e0b"),
                 ("BULL", dcf_data.get("bull", {}), "#10b981"),
             ]
+            # `dict.get(k, default)` only returns default when k is absent —
+            # if the saved report stores `intrinsic_per_share: null` (which
+            # pre-Phase-B reports do), .get returns None and breaks max().
+            # Coerce None -> 0 explicitly.
             max_iv = max(
-                (s.get("intrinsic_per_share", 0) for _, s, _ in scenarios if s),
+                ((s.get("intrinsic_per_share") or 0) for _, s, _ in scenarios if s),
                 default=1,
             ) * 1.1 or 1
 
@@ -1487,8 +1491,15 @@ def main():
             # Fetch context and existing thesis
             report = fetch_ticker(thesis_ticker)
             if report:
-                snap_mos = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("three_scenario_dcf", {}).get("base", {}).get("margin_of_safety", 0)
-                snap_iv = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("three_scenario_dcf", {}).get("base", {}).get("intrinsic_per_share", 0)
+                # `dict.get("k", 0)` returns the default only when the key is
+                # absent — for `null` values stored in JSON, get() returns
+                # None and the downstream f-strings/arith crash. Coerce.
+                snap_mos = (report.get("4_valuation_synthesis", {}).get("phase2_valuation", {})
+                                  .get("three_scenario_dcf", {}).get("base", {})
+                                  .get("margin_of_safety") or 0)
+                snap_iv = (report.get("4_valuation_synthesis", {}).get("phase2_valuation", {})
+                                 .get("three_scenario_dcf", {}).get("base", {})
+                                 .get("intrinsic_per_share") or 0)
                 snap_price = snap_iv / (1 + snap_mos) if (1 + snap_mos) != 0 else 0
                 ps = report.get("4_valuation_synthesis", {}).get("investment_thesis", {}).get("pillar_scores", {})
                 
@@ -1510,7 +1521,9 @@ def main():
                 st.markdown("##### 1. Pipeline Math (Auto-Populated)")
                 c1, c2, c3 = st.columns(3)
                 c1.metric("Base IV", f"${snap_iv:.2f}", f"{snap_mos:+.1%} MoS")
-                spread = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("multiple_decomposition", {}).get("roic_wacc_spread", 0)
+                spread = (report.get("4_valuation_synthesis", {}).get("phase2_valuation", {})
+                                .get("multiple_decomposition", {})
+                                .get("roic_wacc_spread") or 0)
                 c2.metric("ROIC-WACC Spread", f"{spread*100:+.1f}pp")
                 c3.metric("Entry Price", f"${snap_price:.2f}")
 

@@ -441,8 +441,11 @@ def get_ticker_screening(ticker: str):
     """
     try:
         from aletheia.tools.screening_ratios import ScreeningEngine
+        from aletheia.utils.calc_input_builder import make_calc_input
         engine = ScreeningEngine(verbose=False)
-        card = engine.score(ticker.upper())
+        # Phase B: calc tools take CalculationInput, not a ticker string.
+        calc_input = make_calc_input(ticker.upper())
+        card = engine.score(calc_input)
         return ScreeningResponse(
             ticker=card.ticker,
             fiscal_year=card.fiscal_year,
@@ -478,17 +481,25 @@ def get_universe_screening():
     """
     try:
         from aletheia.tools.screening_ratios import ScreeningEngine
+        from aletheia.utils.calc_input_builder import make_calc_input
         engine = ScreeningEngine(verbose=False)
         available = [t for t in UNIVERSE if (REPORT_DIR / f"{t}_report.json").exists()]
-        cards = engine.score_universe(available)
 
+        # ScreeningEngine has no score_universe — iterate manually. Each
+        # call gets its own CalculationInput (Phase B contract).
         result = {}
-        for ticker, card in cards.items():
+        for ticker in available:
+            try:
+                card = engine.score(make_calc_input(ticker))
+            except Exception as inner:
+                # Skip but don't fail the whole universe response
+                result[ticker] = {"error": f"{type(inner).__name__}: {inner}"}
+                continue
             result[ticker] = {
                 "passes":   card.passes,
                 "flags":    card.flags,
                 "fails":    card.fails,
-                "available":card.available,
+                "available": card.available,
                 "metrics":  {m.name: {"value": m.value, "signal": m.signal}
                              for m in card.metrics},
             }
