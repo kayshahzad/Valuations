@@ -707,6 +707,18 @@ FIELD_MAPPINGS = {
         ],
     },
 
+    "FinanceLeaseLiability_Total": {
+        # Total finance-lease obligation when the filer reports a single rolled-up
+        # tag rather than current/noncurrent splits. MSFT filed this for $46.2B
+        # at FY2025 (Azure data centers); AAPL splits into current/noncurrent so
+        # this resolves None for them. cleaning_engine prefers the explicit
+        # current/noncurrent decomposition when both are present, and falls back
+        # to this total only when they aren't.
+        "default": [
+            "FinanceLeaseLiability",
+        ],
+    },
+
     "LeaseCost": {
         "default": [
             "OperatingLeaseCost",

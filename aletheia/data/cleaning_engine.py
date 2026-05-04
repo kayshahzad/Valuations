@@ -1616,8 +1616,20 @@ class CleaningEngine:
         # piece were both invisible before this fix.
         st_debt = r.raw.get("ShortTermDebt") or 0.0
         current_lt_debt = r.raw.get("CurrentPortionLongTermDebt") or 0.0
-        finance_lease_nc = r.raw.get("LeaseLiabilityNoncurrent_Finance") or 0.0
-        gross_debt = long_term_debt + st_debt + current_lt_debt + finance_lease_nc
+
+        # Finance lease debt — total of current + noncurrent.
+        # AAPL files them as separate tags; MSFT files only the consolidated
+        # `FinanceLeaseLiability` total. Prefer the explicit decomposition
+        # when both pieces are present; fall back to the consolidated total.
+        fl_curr = r.raw.get("LeaseLiabilityCurrent_Finance")
+        fl_nc = r.raw.get("LeaseLiabilityNoncurrent_Finance")
+        fl_total = r.raw.get("FinanceLeaseLiability_Total")
+        if fl_curr is not None or fl_nc is not None:
+            finance_lease_total = (fl_curr or 0.0) + (fl_nc or 0.0)
+        else:
+            finance_lease_total = fl_total or 0.0
+
+        gross_debt = long_term_debt + st_debt + current_lt_debt + finance_lease_total
 
         st_invest = r.raw.get("ShortTermInvestments") or 0.0
         lt_invest = r.raw.get("LongTermInvestments") or 0.0
