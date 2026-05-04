@@ -439,15 +439,16 @@ FIELD_MAPPINGS = {
     },
 
     "ShortTermDebt": {
-        # Genuine short-term obligations (commercial paper, ST notes).
-        # CommercialPaper is what AAPL actually files; LongTermDebtCurrent is
-        # the *current portion of LT debt*, which is a DIFFERENT concept and
-        # is intentionally last-fallback (only when nothing else resolves).
+        # Genuine short-term obligations only (commercial paper, ST notes).
+        # `DebtCurrent` is filer-dependent in semantics — for LLY it equals
+        # the current portion of LT debt ($1.5B when commercial paper = $0)
+        # — so it's NOT a reliable ShortTermDebt fallback. The "current
+        # portion of long-term debt" lives in its own field
+        # (CurrentPortionLongTermDebt). NetDebt sums BOTH; the raw fields
+        # stay semantically clean.
         "default": [
             "CommercialPaper",
-            "DebtCurrent",
             "ShortTermBorrowings",
-            "LongTermDebtCurrent",
         ],
     },
 
@@ -468,9 +469,27 @@ FIELD_MAPPINGS = {
         # The piece of long-term debt maturing within 12 months. NOT the same
         # as ShortTermDebt (commercial paper / ST notes); both should sit in
         # the gross-debt rollup for NetDebt purposes.
+        # Filer variation: AAPL uses LongTermDebtCurrent; LLY uses both
+        # the long-form Maturities-Repayments tag AND DebtCurrent (the
+        # latter for FY2025 specifically). DebtCurrent is last fallback —
+        # safe because filers with a real ShortTermDebt distinction
+        # (e.g. AAPL with CommercialPaper) don't file DebtCurrent at all.
         "default": [
             "LongTermDebtCurrent",
             "LongtermDebtCurrent",
+            "LongTermDebtMaturitiesRepaymentsOfPrincipalInNextTwelveMonths",
+            "LongtermDebtMaturitiesRepaymentsOfPrincipalAndCapitalLeaseObligationsInNextTwelveMonths",
+            "DebtCurrent",
+        ],
+    },
+
+    "LiabilitiesNoncurrent": {
+        # Used as an intermediate when filers (e.g. LLY) don't report a
+        # rolled-up `Liabilities` total directly. cleaning_engine derives
+        # TotalLiabilities = LiabilitiesCurrent + LiabilitiesNoncurrent in
+        # that case.
+        "default": [
+            "LiabilitiesNoncurrent",
         ],
     },
 

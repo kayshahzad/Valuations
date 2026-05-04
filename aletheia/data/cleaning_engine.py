@@ -1443,12 +1443,23 @@ class CleaningEngine:
         r = record  # shorthand
         
         # --- Missing Field Fallbacks ---
-        # Derive TotalLiabilities = TotalAssets - TotalEquity
+        # Derive TotalLiabilities. Filers like LLY don't report a rolled-up
+        # `Liabilities` tag in XBRL but do file `LiabilitiesCurrent` and
+        # `LiabilitiesNoncurrent`, so prefer that summation. Fall back to
+        # TotalAssets - TotalEquity only when neither component is present.
         if r.raw.get("TotalLiabilities") is None:
-            ta = r.raw.get("TotalAssets")
-            te = r.raw.get("TotalEquity")
-            if ta is not None and te is not None:
-                r.derived["TotalLiabilities"] = ta - te
+            lc = r.raw.get("LiabilitiesCurrent")
+            lnc = r.raw.get("LiabilitiesNoncurrent")
+            if lc is not None and lnc is not None:
+                r.raw["TotalLiabilities"] = lc + lnc
+            else:
+                ta = r.raw.get("TotalAssets")
+                te = r.raw.get("TotalEquity")
+                if ta is not None and te is not None:
+                    r.raw["TotalLiabilities"] = ta - te
+        # Mirror to derived so legacy consumers still see the value
+        if r.raw.get("TotalLiabilities") is not None and r.derived.get("TotalLiabilities") is None:
+            r.derived["TotalLiabilities"] = r.raw["TotalLiabilities"]
                 
         # Derive OperatingIncome
         if r.raw.get("OperatingIncome") is None:

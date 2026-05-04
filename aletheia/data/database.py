@@ -209,6 +209,7 @@ class InvestmentDatabase:
                 period_end_date_missing BOOLEAN DEFAULT FALSE,
                 raw_LongTermInvestments DOUBLE,
                 raw_CurrentPortionLongTermDebt DOUBLE,
+                raw_LiabilitiesNoncurrent DOUBLE,
 
                 -- Serialized full record (for deep inspection)
                 raw_json                VARCHAR,
@@ -524,6 +525,7 @@ class InvestmentDatabase:
             "period_end_date_missing": record.period_end_date_missing,
             "raw_LongTermInvestments": record.raw.get("LongTermInvestments"),
             "raw_CurrentPortionLongTermDebt": record.raw.get("CurrentPortionLongTermDebt"),
+            "raw_LiabilitiesNoncurrent": record.raw.get("LiabilitiesNoncurrent"),
 
             # Full serialized record
             "raw_json": json.dumps({k: v for k, v in record.raw.items() if v is not None}),
