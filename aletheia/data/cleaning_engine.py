@@ -1593,8 +1593,26 @@ class CleaningEngine:
         if net_income and total_equity and total_equity != 0:
             r.derived["ROE"] = net_income / total_equity
 
-        # Net Debt
-        net_debt = long_term_debt - cash
+        # Net Debt — enterprise-value definition.
+        # Gross debt:
+        #   long-term debt (noncurrent senior notes)
+        # + short-term debt (commercial paper / ST notes)
+        # + current portion of long-term debt (LT debt maturing < 12 mo)
+        # + finance lease noncurrent (debt-equivalent obligations)
+        # Liquid offsets:
+        #   cash + short-term investments + long-term marketable securities
+        # AAPL's $77B+ marketable-securities portfolio + $13B current LT-debt
+        # piece were both invisible before this fix.
+        st_debt = r.raw.get("ShortTermDebt") or 0.0
+        current_lt_debt = r.raw.get("CurrentPortionLongTermDebt") or 0.0
+        finance_lease_nc = r.raw.get("LeaseLiabilityNoncurrent_Finance") or 0.0
+        gross_debt = long_term_debt + st_debt + current_lt_debt + finance_lease_nc
+
+        st_invest = r.raw.get("ShortTermInvestments") or 0.0
+        lt_invest = r.raw.get("LongTermInvestments") or 0.0
+        liquid_assets = cash + st_invest + lt_invest
+
+        net_debt = gross_debt - liquid_assets
         r.derived["NetDebt"] = net_debt
 
         # Invested Capital (financing approach)

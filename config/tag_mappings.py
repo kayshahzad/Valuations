@@ -439,12 +439,38 @@ FIELD_MAPPINGS = {
     },
 
     "ShortTermDebt": {
-        # Current portion of debt - used by Equity Bridge.
+        # Genuine short-term obligations (commercial paper, ST notes).
+        # CommercialPaper is what AAPL actually files; LongTermDebtCurrent is
+        # the *current portion of LT debt*, which is a DIFFERENT concept and
+        # is intentionally last-fallback (only when nothing else resolves).
         "default": [
+            "CommercialPaper",
             "DebtCurrent",
             "ShortTermBorrowings",
             "LongTermDebtCurrent",
-            "CommercialPaper",
+        ],
+    },
+
+    "LongTermInvestments": {
+        # Marketable securities held > 12 months. Treasuries, corporate bonds,
+        # equities. Subtracted from gross debt for enterprise-value (NetDebt)
+        # purposes — same logic as cash equivalents, just longer-dated.
+        # AAPL's $77B portfolio sits here; missing it overstates NetDebt by ~$77B.
+        "default": [
+            "MarketableSecuritiesNoncurrent",
+            "LongTermInvestments",
+            "AvailableForSaleSecuritiesNoncurrent",
+            "InvestmentsNoncurrent",
+        ],
+    },
+
+    "CurrentPortionLongTermDebt": {
+        # The piece of long-term debt maturing within 12 months. NOT the same
+        # as ShortTermDebt (commercial paper / ST notes); both should sit in
+        # the gross-debt rollup for NetDebt purposes.
+        "default": [
+            "LongTermDebtCurrent",
+            "LongtermDebtCurrent",
         ],
     },
 
