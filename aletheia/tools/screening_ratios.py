@@ -265,15 +265,35 @@ class ScreeningEngine:
         row = df[df["fiscal_year"] == fy].iloc[0]
 
         # ── Live market data ──────────────────────────────────────────────────
+        # NOTE: this block had a long-standing bug — `get("clean_SharesDiluted")`
+        # called an undefined name, raising NameError that was silently caught
+        # by the broad `except Exception` below and wiped price/mktcap/shares
+        # to zero. That made every price-dependent ratio (P/E, P/B, PEG,
+        # EV/EBITDA-implied) return N/A across the entire universe. Fixed by
+        # reading shares from the cleaned-record row + handling each fetch
+        # independently so a single failure doesn't poison the others.
         from aletheia.data.market_data import get_current_price, get_market_cap, get_shares_outstanding
         try:
-            price = get_current_price(ticker)
-            mktcap = get_market_cap(ticker)
-            shares = get("clean_SharesDiluted")
-            if not shares or shares <= 0:
-                shares = get_shares_outstanding(ticker)
+            price = float(get_current_price(ticker) or 0.0)
         except Exception:
-            price = mktcap = shares = 0.0
+            price = 0.0
+        try:
+            mktcap = float(get_market_cap(ticker) or 0.0)
+        except Exception:
+            mktcap = 0.0
+        # Prefer cleaned-record diluted shares (already split-adjusted via the
+        # cleaning engine); fall back to live yfinance only if the FY value
+        # is missing or zero.
+        shares = _safe(row.get("clean_SharesDiluted")) or _safe(row.get("raw_SharesDiluted"))
+        if not shares or shares <= 0:
+            try:
+                shares = float(get_shares_outstanding(ticker) or 0.0)
+            except Exception:
+                shares = 0.0
+        # If yfinance gave us mktcap but we have shares too, sanity-check;
+        # otherwise infer mktcap from price × shares for downstream EV math.
+        if mktcap == 0 and price > 0 and shares > 0:
+            mktcap = price * shares
 
         card = ScreeningCard(
             ticker=ticker,
@@ -346,7 +366,22 @@ class ScreeningEngine:
         current_liab   = _get_json(row, "CurrentLiabilities") or _get_json(row, "LiabilitiesCurrent")
         std            = _get_json(row, "ShortTermDebt") or _get_json(row, "LiabilitiesCurrent") and 0
         interest_exp   = _get_json(row, "InterestExpense") or _get_json(row, "InterestAndDebtExpense")
-        dividends      = _get_json(row, "Dividends") or _get_json(row, "PaymentsOfDividendsCommonStock")
+        # Interest-expense fallback: AAPL/MSFT/LLY stopped filing InterestExpense
+        # as a standalone XBRL fact in FY2024+ (bundled into "Other income/
+        # expense, net"). When missing, estimate as LongTermDebt × proxy rate
+        # of 4.5% — same proxy DCFEngine uses for its WACC kd computation.
+        # Loses precision but better than N/A on Interest Coverage for
+        # AAPL/MSFT/LLY where Schwab DOES show $154M / $169M / $160M etc.
+        if interest_exp is None or interest_exp == 0:
+            ltd = _get_json(row, "LongTermDebt")
+            if ltd and ltd > 0:
+                interest_exp = ltd * 0.045
+        # Dividends: cleaning engine writes `DividendsPaid` (not the older
+        # `Dividends` or `PaymentsOfDividendsCommonStock` aliases). All 4
+        # validated tickers use DividendsPaid in raw_json.
+        dividends      = (_get_json(row, "DividendsPaid")
+                          or _get_json(row, "Dividends")
+                          or _get_json(row, "PaymentsOfDividendsCommonStock"))
         maint_capex    = _get_json(row, "MaintenanceCapEx")
         growth_capex   = _get_json(row, "GrowthCapEx")
 

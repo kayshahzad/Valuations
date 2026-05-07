@@ -141,6 +141,10 @@ class InvestmentDatabase:
                 clean_NOPAT             DOUBLE,
                 clean_EBITDA            DOUBLE,
                 clean_EBITDAR           DOUBLE,
+                clean_EBITDA_ExcludingSBC DOUBLE,
+                clean_SGA_Combined      DOUBLE,
+                clean_GeneralAndAdministrative DOUBLE,
+                clean_SellingAndMarketing DOUBLE,
                 clean_FCF               DOUBLE,
                 clean_FCFF              DOUBLE,
                 clean_CashTaxRate       DOUBLE,
@@ -218,6 +222,18 @@ class InvestmentDatabase:
                 errors_json             VARCHAR
             )
         """)
+
+        # Schema migrations: add columns introduced after the original
+        # CREATE TABLE without forcing a rebuild of existing DBs.
+        for col in (
+            "clean_EBITDA_ExcludingSBC",
+            "clean_SGA_Combined",
+            "clean_GeneralAndAdministrative",
+            "clean_SellingAndMarketing",
+        ):
+            self._conn.execute(
+                f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} DOUBLE"
+            )
 
         self._conn.execute("""
             CREATE TABLE IF NOT EXISTS cleaning_flags (
@@ -457,6 +473,10 @@ class InvestmentDatabase:
             "clean_NOPAT": record.clean.get("NOPAT"),
             "clean_EBITDA": record.clean.get("EBITDA"),
             "clean_EBITDAR": record.clean.get("EBITDAR"),
+            "clean_EBITDA_ExcludingSBC": record.clean.get("EBITDA_ExcludingSBC"),
+            "clean_SGA_Combined": record.clean.get("SGA_Combined"),
+            "clean_GeneralAndAdministrative": record.clean.get("GeneralAndAdministrative"),
+            "clean_SellingAndMarketing": record.clean.get("SellingAndMarketing"),
             "clean_FCF": record.clean.get("FCF"),
             "clean_FCFF": record.clean.get("FCFF"),
             "clean_CashTaxRate": record.clean.get("CashTaxRate"),

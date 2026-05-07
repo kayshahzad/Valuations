@@ -104,19 +104,56 @@ def _extract_summary(ticker: str, report: dict) -> dict:
     hist    = g(rdcf, "historical_cagr")
     ratio   = implied / hist if implied is not None and hist and hist > 0 else None
 
+    # The lead agent's `phase2_valuation.three_scenario_dcf` sometimes
+    # serializes `ev` but leaves `intrinsic_per_share` and `margin_of_safety`
+    # as None (NVDA latest run is the canonical example). When that happens
+    # we reconstruct IPS from the EV using the accounting identity:
+    #     IPS = (EV − net_debt) / shares_diluted
+    # The required pieces (net_debt, shares_diluted, current_price) are
+    # always serialized in `agent_scenarios[0]` even when the main scenarios
+    # don't have IPS.
+    agent_scenarios = report.get("4_valuation_synthesis", {}).get("agent_scenarios") or []
+    fallback_calc = agent_scenarios[0].get("dcf", {}) if agent_scenarios else {}
+    shares_diluted = fallback_calc.get("shares_diluted")
+    net_debt       = fallback_calc.get("net_debt")
+    current_price  = fallback_calc.get("current_price")
+
+    def _ips_for(scenario_key: str) -> Optional[float]:
+        """Return IPS from the scenario, or compute from EV if missing."""
+        s = dcf3.get(scenario_key, {}) or {}
+        ips = s.get("intrinsic_per_share")
+        if ips is not None:
+            return float(ips)
+        ev = s.get("ev")
+        if ev and shares_diluted:
+            equity_value = ev - (net_debt or 0)
+            return float(equity_value) / float(shares_diluted)
+        return None
+
+    def _mos_for(scenario_key: str) -> Optional[float]:
+        s = dcf3.get(scenario_key, {}) or {}
+        mos = s.get("margin_of_safety")
+        if mos is not None:
+            return float(mos)
+        ips = _ips_for(scenario_key)
+        if ips and current_price:
+            return (ips - current_price) / current_price
+        return None
+
     return {
         "ticker":              ticker,
         "generated_at":        report.get("generated_at"),
         # Conviction
         "conviction":          g(thesis, "conviction_score"),
         "moat":                g(er.get("moat", {}), "score"),
-        # DCF scenarios
-        "bear_iv":             g(dcf3.get("bear", {}), "intrinsic_per_share"),
-        "base_iv":             g(dcf3.get("base", {}), "intrinsic_per_share"),
-        "bull_iv":             g(dcf3.get("bull", {}), "intrinsic_per_share"),
-        "bear_mos":            g(dcf3.get("bear", {}), "margin_of_safety"),
-        "base_mos":            g(dcf3.get("base", {}), "margin_of_safety"),
-        "bull_mos":            g(dcf3.get("bull", {}), "margin_of_safety"),
+        # DCF scenarios — reconstructs IPS from EV when the agent serialized
+        # it as None (see _ips_for / _mos_for above).
+        "bear_iv":             _ips_for("bear"),
+        "base_iv":             _ips_for("base"),
+        "bull_iv":             _ips_for("bull"),
+        "bear_mos":            _mos_for("bear"),
+        "base_mos":            _mos_for("base"),
+        "bull_mos":            _mos_for("bull"),
         # Reverse DCF
         "implied_cagr":        implied,
         "historical_cagr":     hist,
@@ -190,6 +227,10 @@ class TickerSummary(BaseModel):
     fcf_margin: Optional[float]
     gross_margin: Optional[float]
     data_quality: Optional[float]
+    # Lifecycle status: indicates whether the LLM agent run has produced a
+    # *_report.json or whether the ticker is calc-only / not yet ingested.
+    agents_status: Optional[str] = None        # "ready" | "pending" | "not_ingested"
+    last_agent_run: Optional[str] = None       # ISO timestamp of the report file mtime
 
 
 class UniverseResponse(BaseModel):
@@ -293,31 +334,257 @@ def health():
     )
 
 
+def _calc_only_summary(ticker: str) -> Optional[Dict[str, Any]]:
+    """
+    Build a partial TickerSummary from the cleaned DB + DCFEngine output, for
+    tickers that have been ingested but never had the agents (LangGraph) run.
+
+    Populates whatever the calc layer can produce without the LLM:
+      - Fundamentals (Revenue, EBITDA, FCF, ROIC) — always from DB
+      - Historical revenue CAGR — always from DB (5y compounded)
+      - DCF outputs (Base IV, MoS, EV/EBITDA, multiple decomp) — when
+        DCFEngine succeeds
+      - Implied CAGR via reverse-DCF math — when DCFEngine succeeds
+
+    DCFEngine fails on filers it doesn't understand (e.g., AXP — no
+    `OperatingIncome` tag because card networks file pretax income).
+    Those tickers still get raw fundamentals from the DB so the row isn't
+    entirely blank.
+
+    Agent-driven fields (conviction, moat, pillar_total, narrative) stay
+    None. Returns None only if the ticker has no DB rows at all.
+    """
+    try:
+        from aletheia.utils.calc_input_builder import make_calc_input
+        from aletheia.tools.dcf_engine import DCFEngine
+        calc = make_calc_input(ticker)
+        if calc.df.empty:
+            return None
+    except Exception:
+        return None
+
+    df = calc.df.sort_values("fiscal_year")
+
+    # ── Always-available: raw fundamentals from the DB ──────────────────
+    # DCFEngine sometimes fails on schema-mismatch filers (AXP). We pull
+    # revenue/ebitda/fcf directly from the latest cleaned row as a baseline
+    # so the table cell is informative even when DCF can't run.
+    latest = df.iloc[-1]
+    raw_revenue = (latest.get("clean_Revenue") or 0) or None
+    raw_fcf     = (latest.get("derived_FCF") or latest.get("clean_FCF") or 0) or None
+
+    # Reconstruct EBITDA: prefer derived; if not present try op_inc + D&A
+    raw_ebitda = (latest.get("derived_EBITDA") or latest.get("clean_EBITDA") or 0) or None
+    raw_roic   = (latest.get("derived_ROIC") or 0) or None
+
+    # ── Historical CAGR — last 5 years revenue ──────────────────────────
+    hist_cagr = None
+    if len(df) >= 2:
+        revs = df["clean_Revenue"].tolist()[-5:]
+        revs = [float(r) for r in revs if r and r > 0]
+        if len(revs) >= 2:
+            n = len(revs) - 1
+            hist_cagr = (revs[-1] / revs[0]) ** (1.0 / n) - 1.0
+
+    # ── DCF-dependent fields ────────────────────────────────────────────
+    try:
+        result = DCFEngine(verbose=False).run(calc)
+    except Exception:
+        result = None
+
+    base = getattr(result, "base", None) if result else None
+    base_iv = None
+    base_mos = None
+    if base is not None and result is not None:
+        base_iv = result.intrinsic_per_share(base.enterprise_value, result.net_debt)
+        if base_iv and result.current_price:
+            base_mos = (base_iv - result.current_price) / result.current_price
+
+    revenue = getattr(result, "revenue", None) if result else raw_revenue
+    ebitda  = getattr(result, "ebitda",  None) if result else raw_ebitda
+    fcf     = getattr(result, "fcf",     None) if result else raw_fcf
+    roic    = getattr(result, "roic",    None) if result else raw_roic
+    wacc    = getattr(result, "wacc_base", None) if result else None
+
+    # Multiple decomp: market vs justified EV/EBITDA from the base scenario
+    market_ev_ebitda = float(base.implied_ev_ebitda) if base else None
+    just_ev_ebitda   = float(base.justified_ev_ebitda) if base else None
+    premium = (
+        market_ev_ebitda / just_ev_ebitda - 1.0
+        if (market_ev_ebitda and just_ev_ebitda) else None
+    )
+    if premium is None:
+        signal = None
+    elif premium < 0:
+        signal = "undervalued"
+    elif premium < 0.20:
+        signal = "fairly_valued"
+    elif premium < 0.50:
+        signal = "premium"
+    else:
+        signal = "high_premium"
+
+    # ── Implied CAGR via reverse DCF (when DCFEngine succeeded) ─────────
+    implied_cagr = None
+    if base is not None and result is not None and result.revenue and result.wacc_base:
+        try:
+            from aletheia.tools.testable import pure_reverse_dcf_math
+            current_ev = (result.market_cap or 0) + (result.net_debt or 0)
+            ebit_margin = (result.ebit / result.revenue) if (result.ebit and result.revenue) else 0.20
+            implied_cagr = pure_reverse_dcf_math(
+                current_ev=current_ev,
+                base_revenue=result.revenue,
+                ebit_margin=ebit_margin,
+                wacc=result.wacc_base,
+                tax_rate=0.21,
+                capex_pct=0.05,
+                da_pct=0.05,
+                nwc_pct=0.02,
+            )
+        except Exception:
+            implied_cagr = None
+
+    impl_hist_ratio = (
+        implied_cagr / hist_cagr
+        if (implied_cagr is not None and hist_cagr and hist_cagr > 0)
+        else None
+    )
+
+    return {
+        "ticker":              ticker,
+        "generated_at":        None,
+        "conviction":          None,
+        "moat":                None,
+        "base_iv":             float(base_iv) if base_iv else None,
+        "bear_iv":             None,
+        "bull_iv":             None,
+        "base_mos":            float(base_mos) if base_mos is not None else None,
+        "implied_cagr":        float(implied_cagr) if implied_cagr is not None else None,
+        "historical_cagr":     float(hist_cagr) if hist_cagr is not None else None,
+        "implied_hist_ratio":  float(impl_hist_ratio) if impl_hist_ratio is not None else None,
+        "rdcf_signal":         None,
+        "ev_ebitda":           market_ev_ebitda,
+        "justified_ev_ebitda": just_ev_ebitda,
+        "multiple_premium":    premium,
+        "multiple_signal":     signal,
+        "roic":                float(roic) if roic else None,
+        "wacc":                float(wacc) if wacc else None,
+        "value_creation":      None,
+        "revenue_bn":          float(revenue / 1e9) if revenue else None,
+        "ebitda_bn":           float(ebitda / 1e9) if ebitda else None,
+        "fcf_bn":              float(fcf / 1e9) if fcf else None,
+        "fcf_margin":          None,
+        "gross_margin":        None,
+        "data_quality":        float(latest.get("overall_quality_score") or 0) or None,
+        "agents_status":       "pending",
+        "last_agent_run":      None,
+    }
+
+
+def _placeholder_summary(ticker: str) -> Dict[str, Any]:
+    """Skeleton for tickers that are in the universe classification but have
+    no DB rows yet (e.g., bad SEC fetch or never ingested)."""
+    return {
+        "ticker":              ticker,
+        "generated_at":        None,
+        "conviction":          None,
+        "moat":                None,
+        "base_iv":             None,
+        "bear_iv":             None,
+        "bull_iv":             None,
+        "base_mos":            None,
+        "implied_cagr":        None,
+        "historical_cagr":     None,
+        "implied_hist_ratio":  None,
+        "rdcf_signal":         None,
+        "ev_ebitda":           None,
+        "justified_ev_ebitda": None,
+        "multiple_premium":    None,
+        "multiple_signal":     None,
+        "roic":                None,
+        "wacc":                None,
+        "value_creation":      None,
+        "revenue_bn":          None,
+        "ebitda_bn":           None,
+        "fcf_bn":              None,
+        "fcf_margin":          None,
+        "gross_margin":        None,
+        "data_quality":        None,
+        "agents_status":       "not_ingested",
+        "last_agent_run":      None,
+    }
+
+
+def _ticker_universe_union() -> List[str]:
+    """Union of curated universe + runtime-added tickers + tickers with DB
+    rows. This is the source of truth for what the Universe tab displays."""
+    out = set()
+    # 1. Curated + runtime classifications
+    try:
+        from config.ticker_classification import get_extended_universe
+        out.update(get_extended_universe().keys())
+    except Exception:
+        pass
+    # 2. Anything with a cleaned DB row
+    try:
+        import duckdb
+        con = duckdb.connect("valuation_data/database/investment.duckdb", read_only=True)
+        rows = con.execute("SELECT DISTINCT ticker FROM company_records").fetchall()
+        out.update(r[0] for r in rows)
+        con.close()
+    except Exception:
+        pass
+    # 3. Anything with a serving report (defensive — handles drift between
+    # the DB and report files)
+    out.update(p.stem.replace("_report", "") for p in REPORT_DIR.glob("*_report.json"))
+    return sorted(out)
+
+
 @app.get("/universe", response_model=UniverseResponse, tags=["Universe"])
 def get_universe():
     """
     Full universe summary ranked by conviction → margin of safety.
-    Returns all tickers that have a report in the serving directory.
+    Returns the union of curated/runtime-classified tickers and tickers with
+    DB rows. Each ticker carries an `agents_status`:
+      - "ready"        — has *_report.json (full LLM analysis available)
+      - "pending"      — has DB rows but no agent run yet (calc-layer only)
+      - "not_ingested" — classified but no DB rows (placeholder)
     """
-    summaries = []
-    available = [
-        p.stem.replace("_report", "")
-        for p in REPORT_DIR.glob("*_report.json")
-    ]
-    for ticker in sorted(available):
-        try:
-            report = _load_report(ticker)
-            summaries.append(_extract_summary(ticker, report))
-        except HTTPException:
-            pass   # skip missing tickers
+    summaries: List[Dict[str, Any]] = []
+    universe = _ticker_universe_union()
 
-    # Sort: conviction desc, base_mos desc
+    for ticker in universe:
+        report_path = REPORT_DIR / f"{ticker}_report.json"
+        if report_path.exists():
+            try:
+                report = _load_report(ticker)
+                s = _extract_summary(ticker, report)
+                s["agents_status"] = "ready"
+                s["last_agent_run"] = datetime.fromtimestamp(
+                    report_path.stat().st_mtime
+                ).isoformat()
+                summaries.append(s)
+                continue
+            except HTTPException:
+                pass  # fall through to calc-only branch
+        # No report — try calc-only summary
+        s = _calc_only_summary(ticker)
+        if s is not None:
+            summaries.append(s)
+            continue
+        # Last resort — placeholder
+        summaries.append(_placeholder_summary(ticker))
+
+    # Sort: ready first by conviction desc / mos desc; then pending alpha;
+    # then not_ingested alpha. Stable sort on multiple keys.
+    status_rank = {"ready": 0, "pending": 1, "not_ingested": 2}
     summaries.sort(
         key=lambda x: (
-            x.get("conviction") or -99,
-            x.get("base_mos") or -99,
+            status_rank.get(x.get("agents_status"), 9),
+            -(x.get("conviction") or -99) if x.get("agents_status") == "ready" else 0,
+            -(x.get("base_mos") or -99) if x.get("agents_status") == "ready" else 0,
+            x.get("ticker", ""),
         ),
-        reverse=True,
     )
 
     return UniverseResponse(

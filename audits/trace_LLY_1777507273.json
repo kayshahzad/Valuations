@@ -1,0 +1,3104 @@
+[
+  {
+    "timestamp": "2026-04-29T20:01:16.743057",
+    "agent": "Librarian",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": ""
+    },
+    "output_delta": {
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:01:46.695804",
+    "agent": "Forensic",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "messages": [
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:02:12.003196",
+    "agent": "ValueChain",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.42,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+        "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+        "pass_through_capability": true,
+        "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+      },
+      "messages": [
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:08:27.998078",
+    "agent": "StrategicContext",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.42,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+        "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+        "pass_through_capability": true,
+        "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+      },
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "strategic_context_report": {
+        "revenue_z_score": 3.3692125332061775,
+        "is_cyclical_peak": true,
+        "applies_cyclical_haircut": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is 0 and the D8 Revenue Score is 1.00, indicating no pull-forward risk or deferred revenue quality issues. Revenue growth (24.1% CAGR) is driven by structural demand rather than accounting anomalies.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt does not contain specific patent expiration dates or revenue exposure percentages for key drugs (e.g., Mounjaro, Zepbound, Trulicity). However, it notes general risks from generic/biosimilar competition and compounding. Due to the lack of specific expiration disclosures in the provided text, the exact revenue at risk within 5 years cannot be definitively calculated, but is estimated at 0.0% for the purpose of this pipeline, with high uncertainty.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Lilly's revenue Z-score of 3.37 flags a statistical peak, but this reflects massive structural growth from its incretin franchise (Mounjaro/Zepbound) rather than traditional cyclicality, hence no industry haircut is applied. Growth quality is exceptionally clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is present via generic/biosimilar competition, but specific near-term patent cliffs within 5 years are not detailed in the provided text, resulting in a highly uncertain 0.0% estimated revenue at risk and no terminal haircut."
+      },
+      "messages": [
+        {
+          "content": "Context: Z=3.37 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:08:28.894891",
+    "agent": "Strategist",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=3.37 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {},
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.42,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+        "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+        "pass_through_capability": true,
+        "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 3.3692125332061775,
+        "is_cyclical_peak": true,
+        "applies_cyclical_haircut": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is 0 and the D8 Revenue Score is 1.00, indicating no pull-forward risk or deferred revenue quality issues. Revenue growth (24.1% CAGR) is driven by structural demand rather than accounting anomalies.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt does not contain specific patent expiration dates or revenue exposure percentages for key drugs (e.g., Mounjaro, Zepbound, Trulicity). However, it notes general risks from generic/biosimilar competition and compounding. Due to the lack of specific expiration disclosures in the provided text, the exact revenue at risk within 5 years cannot be definitively calculated, but is estimated at 0.0% for the purpose of this pipeline, with high uncertainty.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Lilly's revenue Z-score of 3.37 flags a statistical peak, but this reflects massive structural growth from its incretin franchise (Mounjaro/Zepbound) rather than traditional cyclicality, hence no industry haircut is applied. Growth quality is exceptionally clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is present via generic/biosimilar competition, but specific near-term patent cliffs within 5 years are not detailed in the provided text, resulting in a highly uncertain 0.0% estimated revenue at risk and no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 40868000000.0,
+          "equity": 760434789107.6355,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06873043610780802,
+          "beta": 0.596916992398711
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4086800000.0,
+            "cash": 7268000000.0,
+            "liquidity_ratio": 0.5623004953219592,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 26535000000.0,
+            "crash_fcf": 7224820000.0,
+            "earnings_power_value": 65680181818.181816,
+            "floor_value": 65680181818.181816,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 4.8,
+            "financial_leverage_score": 0.21497175345151312,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:08:28.919055",
+    "agent": "ProForma_Init",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "base": {
+        "net_sales": 65179000000.0,
+        "cogs": 11052000000.0,
+        "interest_expense": 0.0,
+        "net_debt": 33600000000.0
+      },
+      "assumptions": {
+        "revenue_growth_initial": 0.1,
+        "revenue_growth_decay": 0.02,
+        "terminal_growth_rate": 0.03,
+        "sga_percent_sales": 0.1702081958913147,
+        "da_percent_sales": 0.030638702649626412,
+        "tax_rate": 0.21,
+        "capex_percent_sales": 0.1202994829623038,
+        "wacc": 0.09,
+        "cogs_percent_sales": 0.43501741358412993,
+        "calibration_adjustment": 0.2654535970174442
+      }
+    },
+    "output_delta": {}
+  },
+  {
+    "timestamp": "2026-04-29T20:08:28.919159",
+    "agent": "ProForma_Complete",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {},
+    "output_delta": {
+      "enterprise_value": 256004971604.3423,
+      "equity_value": 222404971604.3423,
+      "terminal_value": 298858624928.77234,
+      "discounted_terminal_value": 194237600407.17422,
+      "sum_pv_cash_flows": 61767371197.168045,
+      "audit_metrics": {
+        "roic_path": [
+          0.4520484468047333,
+          0.4279202761763332,
+          0.40021653705756677,
+          0.3700633413028947,
+          0.3417473492589878
+        ],
+        "invested_capital_path": [
+          45625300000.0,
+          52053700000.0,
+          58996372000.0,
+          66355604320.0,
+          74009205932.8,
+          81892415593.98401
+        ],
+        "gravity_adjustment": 0.0
+      },
+      "projections": [
+        {
+          "year": 1.0,
+          "revenue": 71696900000.0,
+          "revenue_growth": 0.1,
+          "ebit_margin": 0.36413568787492895,
+          "ebit": 26107399999.999992,
+          "nopat": 20624845999.999996,
+          "depreciation": 2196700000.0,
+          "capex": 8625100000.0,
+          "change_in_wc": 0.0,
+          "fcff": 14196445999.999996,
+          "discount_factor": 0.9174311926605504,
+          "pv_fcff": 13024262385.321096
+        },
+        {
+          "year": 2.0,
+          "revenue": 77432652000.0,
+          "revenue_growth": 0.08,
+          "ebit_margin": 0.36413568787492895,
+          "ebit": 28195991999.999992,
+          "nopat": 22274833679.999996,
+          "depreciation": 2372436000.0,
+          "capex": 9315108000.0,
+          "change_in_wc": 0.0,
+          "fcff": 15332161679.999996,
+          "discount_factor": 0.84167999326656,
+          "pv_fcff": 12904773739.584206
+        },
+        {
+          "year": 3.0,
+          "revenue": 82078611120.0,
+          "revenue_growth": 0.06,
+          "ebit_margin": 0.36413568787492895,
+          "ebit": 29887751519.999992,
+          "nopat": 23611323700.799995,
+          "depreciation": 2514782160.0,
+          "capex": 9874014480.0,
+          "change_in_wc": 0.0,
+          "fcff": 16252091380.799995,
+          "discount_factor": 0.7721834800610642,
+          "pv_fcff": 12549596480.696566
+        },
+        {
+          "year": 4.0,
+          "revenue": 85361755564.8,
+          "revenue_growth": 0.039999999999999994,
+          "ebit_margin": 0.36413568787492895,
+          "ebit": 31083261580.79999,
+          "nopat": 24555776648.831993,
+          "depreciation": 2615373446.4,
+          "capex": 10268975059.2,
+          "change_in_wc": 0.0,
+          "fcff": 16902175036.031994,
+          "discount_factor": 0.7084252110651963,
+          "pv_fcff": 11973926917.361856
+        },
+        {
+          "year": 5.0,
+          "revenue": 87922608231.744,
+          "revenue_growth": 0.03,
+          "ebit_margin": 0.36413568787492895,
+          "ebit": 32015759428.22399,
+          "nopat": 25292449948.296955,
+          "depreciation": 2693834649.792,
+          "capex": 10577044310.976,
+          "change_in_wc": 0.0,
+          "fcff": 17409240287.112953,
+          "discount_factor": 0.6499313862983452,
+          "pv_fcff": 11314811674.204323
+        }
+      ],
+      "diagnostics": {
+        "base_revenue": 65179000000.0,
+        "base_ebit": null,
+        "base_ebit_margin": 0.36413568787492895,
+        "terminal_value_pct_of_ev": 0.7587258918837325,
+        "implied_terminal_multiple_fcf": 17.166666666666664,
+        "implied_terminal_multiple_nopat": 11.81612004925192,
+        "reinvestment_rate_terminal_year": 0.31168232722804334,
+        "assumptions_used": {
+          "wacc": 0.09,
+          "tax_rate": 0.21,
+          "terminal_growth_rate": 0.03,
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "ebit_margin_target": null,
+          "ebit_margin_convergence_years": 5,
+          "da_percent_sales": 0.030638702649626412,
+          "capex_percent_sales": 0.1202994829623038,
+          "wc_change_percent_sales": 0.0
+        },
+        "warnings": [
+          "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+          "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+        ]
+      }
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:08:28.919805",
+    "agent": "Fundamentalist",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=3.37 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {},
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 40868000000.0,
+          "equity": 760434789107.6355,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06873043610780802,
+          "beta": 0.596916992398711
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4086800000.0,
+            "cash": 7268000000.0,
+            "liquidity_ratio": 0.5623004953219592,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 26535000000.0,
+            "crash_fcf": 7224820000.0,
+            "earnings_power_value": 65680181818.181816,
+            "floor_value": 65680181818.181816,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 4.8,
+            "financial_leverage_score": 0.21497175345151312,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.42,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+        "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+        "pass_through_capability": true,
+        "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 3.3692125332061775,
+        "is_cyclical_peak": true,
+        "applies_cyclical_haircut": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is 0 and the D8 Revenue Score is 1.00, indicating no pull-forward risk or deferred revenue quality issues. Revenue growth (24.1% CAGR) is driven by structural demand rather than accounting anomalies.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt does not contain specific patent expiration dates or revenue exposure percentages for key drugs (e.g., Mounjaro, Zepbound, Trulicity). However, it notes general risks from generic/biosimilar competition and compounding. Due to the lack of specific expiration disclosures in the provided text, the exact revenue at risk within 5 years cannot be definitively calculated, but is estimated at 0.0% for the purpose of this pipeline, with high uncertainty.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Lilly's revenue Z-score of 3.37 flags a statistical peak, but this reflects massive structural growth from its incretin franchise (Mounjaro/Zepbound) rather than traditional cyclicality, hence no industry haircut is applied. Growth quality is exceptionally clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is present via generic/biosimilar competition, but specific near-term patent cliffs within 5 years are not detailed in the provided text, resulting in a highly uncertain 0.0% estimated revenue at risk and no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "terminal_value": 298858624928.77234,
+          "discounted_terminal_value": 194237600407.17422,
+          "sum_pv_cash_flows": 61767371197.168045,
+          "audit_metrics": {
+            "roic_path": [
+              0.4520484468047333,
+              0.4279202761763332,
+              0.40021653705756677,
+              0.3700633413028947,
+              0.3417473492589878
+            ],
+            "invested_capital_path": [
+              45625300000.0,
+              52053700000.0,
+              58996372000.0,
+              66355604320.0,
+              74009205932.8,
+              81892415593.98401
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 65179000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.36413568787492895,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": 11.81612004925192,
+            "reinvestment_rate_terminal_year": 0.31168232722804334,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.030638702649626412,
+              "capex_percent_sales": 0.1202994829623038,
+              "wc_change_percent_sales": 0.0
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 248.95407663860036,
+          "upside_percent": -0.7075291993606279,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.030638702649626412,
+            "capex_percent_sales": 0.1202994829623038,
+            "wc_change_percent_sales": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.1702081958913147,
+          "da_percent_sales": 0.030638702649626412,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.1202994829623038,
+          "wacc": 0.09,
+          "cogs_percent_sales": 0.43501741358412993,
+          "calibration_adjustment": 0.2654535970174442
+        },
+        "base_financials": {
+          "net_sales": 65179000000.0,
+          "cogs": 11052000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 33600000000.0
+        },
+        "calculated_upside": -0.7075291993606279
+      },
+      "messages": [
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $256,004,971,604",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:08:29.517343",
+    "agent": "ValuationNode",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=3.37 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $256,004,971,604",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "terminal_value": 298858624928.77234,
+          "discounted_terminal_value": 194237600407.17422,
+          "sum_pv_cash_flows": 61767371197.168045,
+          "audit_metrics": {
+            "roic_path": [
+              0.4520484468047333,
+              0.4279202761763332,
+              0.40021653705756677,
+              0.3700633413028947,
+              0.3417473492589878
+            ],
+            "invested_capital_path": [
+              45625300000.0,
+              52053700000.0,
+              58996372000.0,
+              66355604320.0,
+              74009205932.8,
+              81892415593.98401
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 65179000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.36413568787492895,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": 11.81612004925192,
+            "reinvestment_rate_terminal_year": 0.31168232722804334,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.030638702649626412,
+              "capex_percent_sales": 0.1202994829623038,
+              "wc_change_percent_sales": 0.0
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 248.95407663860036,
+          "upside_percent": -0.7075291993606279,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.030638702649626412,
+            "capex_percent_sales": 0.1202994829623038,
+            "wc_change_percent_sales": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.1702081958913147,
+          "da_percent_sales": 0.030638702649626412,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.1202994829623038,
+          "wacc": 0.09,
+          "cogs_percent_sales": 0.43501741358412993,
+          "calibration_adjustment": 0.2654535970174442
+        },
+        "base_financials": {
+          "net_sales": 65179000000.0,
+          "cogs": 11052000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 33600000000.0
+        },
+        "calculated_upside": -0.7075291993606279
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 40868000000.0,
+          "equity": 760434789107.6355,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06873043610780802,
+          "beta": 0.596916992398711
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4086800000.0,
+            "cash": 7268000000.0,
+            "liquidity_ratio": 0.5623004953219592,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 26535000000.0,
+            "crash_fcf": 7224820000.0,
+            "earnings_power_value": 65680181818.181816,
+            "floor_value": 65680181818.181816,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 4.8,
+            "financial_leverage_score": 0.21497175345151312,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.42,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+        "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+        "pass_through_capability": true,
+        "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 3.3692125332061775,
+        "is_cyclical_peak": true,
+        "applies_cyclical_haircut": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is 0 and the D8 Revenue Score is 1.00, indicating no pull-forward risk or deferred revenue quality issues. Revenue growth (24.1% CAGR) is driven by structural demand rather than accounting anomalies.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt does not contain specific patent expiration dates or revenue exposure percentages for key drugs (e.g., Mounjaro, Zepbound, Trulicity). However, it notes general risks from generic/biosimilar competition and compounding. Due to the lack of specific expiration disclosures in the provided text, the exact revenue at risk within 5 years cannot be definitively calculated, but is estimated at 0.0% for the purpose of this pipeline, with high uncertainty.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Lilly's revenue Z-score of 3.37 flags a statistical peak, but this reflects massive structural growth from its incretin franchise (Mounjaro/Zepbound) rather than traditional cyclicality, hence no industry haircut is applied. Growth quality is exceptionally clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is present via generic/biosimilar competition, but specific near-term patent cliffs within 5 years are not detailed in the provided text, resulting in a highly uncertain 0.0% estimated revenue at risk and no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "applies_cyclical_haircut": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "applies_cyclical_haircut \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-30T00:08:28.920393",
+          "current_price": 851.2100219726562,
+          "shares_diluted": 893357420.0,
+          "market_cap": 760434789107.6355,
+          "risk_free_rate": 0.035900001525878904,
+          "beta": 0.596916992398711,
+          "wacc_base": 0.105,
+          "revenue": 65179000000.0,
+          "ebitda": 28216000000.0,
+          "ebit": 25731000000.0,
+          "nopat": 20327490000.0,
+          "roic": 0.3308587210186173,
+          "fcf": 8972000000.0,
+          "net_debt": 33600000000.0,
+          "bull_ev": 1059225447959.0039,
+          "bull_intrinsic_per_share": 1148.0572333064674,
+          "bull_upside": 0.3487355689796459,
+          "bull_wacc": 0.09999999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 37.539886871243404,
+          "bull_justified_ev_ebitda": 10.843076761540244,
+          "bull_roic_wacc_spread": 0.23085872101861732,
+          "bull_tv_pct_of_ev": 0.7283056317083664,
+          "bull_implied_tv_ebitda": 10.843076761540244,
+          "base_ev": 592960491683.2549,
+          "base_intrinsic_per_share": 626.132921897324,
+          "base_upside": -0.2644201715972777,
+          "base_wacc": 0.105,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 21.0150443607618,
+          "base_justified_ev_ebitda": 8.918996034748083,
+          "base_roic_wacc_spread": 0.22585872101861731,
+          "base_tv_pct_of_ev": 0.6639203883474033,
+          "base_implied_tv_ebitda": 8.918996034748085,
+          "bear_ev": 142850904821.38477,
+          "bear_intrinsic_per_share": 122.29249164504031,
+          "bear_upside": -0.8563310011768532,
+          "bear_wacc": 0.12,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.062762433420215,
+          "bear_justified_ev_ebitda": 6.509118179297745,
+          "bear_roic_wacc_spread": 0.2108587210186173,
+          "bear_tv_pct_of_ev": 0.3991528017854309,
+          "bear_implied_tv_ebitda": 3.8551452846038146
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "LLY",
+            "scenario": "bull",
+            "enterprise_value": 1059225447959.0039,
+            "equity_value": 1022994153959.0039,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 1145.1118343641272,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": 0.3452753196095617,
+            "upside_pct": 0.3452753196095617,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          },
+          "base": {
+            "ticker": "LLY",
+            "scenario": "base",
+            "enterprise_value": 592960491683.2549,
+            "equity_value": 556729197683.2549,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 623.1875229549836,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": -0.26788042096736203,
+            "upside_pct": -0.26788042096736203,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          },
+          "bear": {
+            "ticker": "LLY",
+            "scenario": "bear",
+            "enterprise_value": 142850904821.38477,
+            "equity_value": 106619610821.38477,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 119.34709270269985,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": -0.8597912505469376,
+            "upside_pct": -0.8597912505469376,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 1145.1118343641272,
+          "base": 623.1875229549836,
+          "bear": 119.34709270269985
+        },
+        "margin_of_safety": {
+          "bull": 0.3452753196095617,
+          "base": -0.26788042096736203,
+          "bear": -0.8597912505469376
+        },
+        "reverse_dcf": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "current_price": 851.2100219726562,
+          "current_ev": 794034789107.6355,
+          "current_ev_ebitda": 28.141295332706108,
+          "wacc": 0.06683671168368142,
+          "ebit_margin": 0.39477439052455543,
+          "implied_cagr_10y": 0.10401157706152042,
+          "implied_cagr_5y": 0.10401157706152042,
+          "historical_cagr_5y": 0.17343354037041459,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 28.141295332706108,
+          "forward_ev_ebitda_justified": 16.976518465966418,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.10401157706152042,
+        "historical_cagr": 0.17343354037041459,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (10.4%) is below historical (17.3%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.141295332706108,
+          "market_ev_ebit": 30.859072290530314,
+          "market_p_sales": 11.666867995944024,
+          "market_p_e": 36.84277079009862,
+          "market_peg": 2.124316364147952,
+          "justified_ev_ebitda": 15.918753171210863,
+          "justified_ev_ebit": 17.456124498810215,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 12.222542161495245,
+          "ev_ebitda_premium_pct": 0.7678077566778136,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 14.141295332706108,
+          "roic": 0.3308587210186173,
+          "wacc": 0.06683671168368142,
+          "roic_wacc_spread": 0.26402200933493586,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6659882867876382,
+          "growth_rate": 0.17343354037041459,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 28.141295332706108,
+        "ev_ebitda_justified": 15.918753171210863,
+        "ev_ebitda_premium_pct": 0.7678077566778136,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.26402200933493586,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.3308587210186173,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: LLY ===\nPrice: $851.21  |  Bear=$119  Base=$623  Bull=$1,145\nMoS:  Bear=-86.0%  Base=-26.8%  Bull=+34.5%\nRDCF: implied=10.4% hist=17.3% [fair_value]\nEV/EBITDA: 28.1x market vs 15.9x justified (+77%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "messages": [
+        {
+          "content": "ValuationNode: LLY \u2014 Base IV=$623/share MoS=-26.8% ImpliedCAGR=10.4% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:08:48.383490",
+    "agent": "ContrarianV2",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=3.37 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $256,004,971,604",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: LLY \u2014 Base IV=$623/share MoS=-26.8% ImpliedCAGR=10.4% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "terminal_value": 298858624928.77234,
+          "discounted_terminal_value": 194237600407.17422,
+          "sum_pv_cash_flows": 61767371197.168045,
+          "audit_metrics": {
+            "roic_path": [
+              0.4520484468047333,
+              0.4279202761763332,
+              0.40021653705756677,
+              0.3700633413028947,
+              0.3417473492589878
+            ],
+            "invested_capital_path": [
+              45625300000.0,
+              52053700000.0,
+              58996372000.0,
+              66355604320.0,
+              74009205932.8,
+              81892415593.98401
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 65179000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.36413568787492895,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": 11.81612004925192,
+            "reinvestment_rate_terminal_year": 0.31168232722804334,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.030638702649626412,
+              "capex_percent_sales": 0.1202994829623038,
+              "wc_change_percent_sales": 0.0
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 248.95407663860036,
+          "upside_percent": -0.7075291993606279,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.030638702649626412,
+            "capex_percent_sales": 0.1202994829623038,
+            "wc_change_percent_sales": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.1702081958913147,
+          "da_percent_sales": 0.030638702649626412,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.1202994829623038,
+          "wacc": 0.09,
+          "cogs_percent_sales": 0.43501741358412993,
+          "calibration_adjustment": 0.2654535970174442
+        },
+        "base_financials": {
+          "net_sales": 65179000000.0,
+          "cogs": 11052000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 33600000000.0
+        },
+        "calculated_upside": -0.7075291993606279
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 40868000000.0,
+          "equity": 760434789107.6355,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06873043610780802,
+          "beta": 0.596916992398711
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4086800000.0,
+            "cash": 7268000000.0,
+            "liquidity_ratio": 0.5623004953219592,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 26535000000.0,
+            "crash_fcf": 7224820000.0,
+            "earnings_power_value": 65680181818.181816,
+            "floor_value": 65680181818.181816,
+            "floor_price_per_share": 0
+          },
+          "leverage": {
+            "operating_leverage_score": 4.8,
+            "financial_leverage_score": 0.21497175345151312,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "applies_cyclical_haircut": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "applies_cyclical_haircut \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-30T00:08:28.920393",
+          "current_price": 851.2100219726562,
+          "shares_diluted": 893357420.0,
+          "market_cap": 760434789107.6355,
+          "risk_free_rate": 0.035900001525878904,
+          "beta": 0.596916992398711,
+          "wacc_base": 0.105,
+          "revenue": 65179000000.0,
+          "ebitda": 28216000000.0,
+          "ebit": 25731000000.0,
+          "nopat": 20327490000.0,
+          "roic": 0.3308587210186173,
+          "fcf": 8972000000.0,
+          "net_debt": 33600000000.0,
+          "bull_ev": 1059225447959.0039,
+          "bull_intrinsic_per_share": 1148.0572333064674,
+          "bull_upside": 0.3487355689796459,
+          "bull_wacc": 0.09999999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 37.539886871243404,
+          "bull_justified_ev_ebitda": 10.843076761540244,
+          "bull_roic_wacc_spread": 0.23085872101861732,
+          "bull_tv_pct_of_ev": 0.7283056317083664,
+          "bull_implied_tv_ebitda": 10.843076761540244,
+          "base_ev": 592960491683.2549,
+          "base_intrinsic_per_share": 626.132921897324,
+          "base_upside": -0.2644201715972777,
+          "base_wacc": 0.105,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 21.0150443607618,
+          "base_justified_ev_ebitda": 8.918996034748083,
+          "base_roic_wacc_spread": 0.22585872101861731,
+          "base_tv_pct_of_ev": 0.6639203883474033,
+          "base_implied_tv_ebitda": 8.918996034748085,
+          "bear_ev": 142850904821.38477,
+          "bear_intrinsic_per_share": 122.29249164504031,
+          "bear_upside": -0.8563310011768532,
+          "bear_wacc": 0.12,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.062762433420215,
+          "bear_justified_ev_ebitda": 6.509118179297745,
+          "bear_roic_wacc_spread": 0.2108587210186173,
+          "bear_tv_pct_of_ev": 0.3991528017854309,
+          "bear_implied_tv_ebitda": 3.8551452846038146
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "LLY",
+            "scenario": "bull",
+            "enterprise_value": 1059225447959.0039,
+            "equity_value": 1022994153959.0039,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 1145.1118343641272,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": 0.3452753196095617,
+            "upside_pct": 0.3452753196095617,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          },
+          "base": {
+            "ticker": "LLY",
+            "scenario": "base",
+            "enterprise_value": 592960491683.2549,
+            "equity_value": 556729197683.2549,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 623.1875229549836,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": -0.26788042096736203,
+            "upside_pct": -0.26788042096736203,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          },
+          "bear": {
+            "ticker": "LLY",
+            "scenario": "bear",
+            "enterprise_value": 142850904821.38477,
+            "equity_value": 106619610821.38477,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 119.34709270269985,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": -0.8597912505469376,
+            "upside_pct": -0.8597912505469376,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 1145.1118343641272,
+          "base": 623.1875229549836,
+          "bear": 119.34709270269985
+        },
+        "margin_of_safety": {
+          "bull": 0.3452753196095617,
+          "base": -0.26788042096736203,
+          "bear": -0.8597912505469376
+        },
+        "reverse_dcf": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "current_price": 851.2100219726562,
+          "current_ev": 794034789107.6355,
+          "current_ev_ebitda": 28.141295332706108,
+          "wacc": 0.06683671168368142,
+          "ebit_margin": 0.39477439052455543,
+          "implied_cagr_10y": 0.10401157706152042,
+          "implied_cagr_5y": 0.10401157706152042,
+          "historical_cagr_5y": 0.17343354037041459,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 28.141295332706108,
+          "forward_ev_ebitda_justified": 16.976518465966418,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.10401157706152042,
+        "historical_cagr": 0.17343354037041459,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (10.4%) is below historical (17.3%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.141295332706108,
+          "market_ev_ebit": 30.859072290530314,
+          "market_p_sales": 11.666867995944024,
+          "market_p_e": 36.84277079009862,
+          "market_peg": 2.124316364147952,
+          "justified_ev_ebitda": 15.918753171210863,
+          "justified_ev_ebit": 17.456124498810215,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 12.222542161495245,
+          "ev_ebitda_premium_pct": 0.7678077566778136,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 14.141295332706108,
+          "roic": 0.3308587210186173,
+          "wacc": 0.06683671168368142,
+          "roic_wacc_spread": 0.26402200933493586,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6659882867876382,
+          "growth_rate": 0.17343354037041459,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 28.141295332706108,
+        "ev_ebitda_justified": 15.918753171210863,
+        "ev_ebitda_premium_pct": 0.7678077566778136,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.26402200933493586,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.3308587210186173,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: LLY ===\nPrice: $851.21  |  Bear=$119  Base=$623  Bull=$1,145\nMoS:  Bear=-86.0%  Base=-26.8%  Bull=+34.5%\nRDCF: implied=10.4% hist=17.3% [fair_value]\nEV/EBITDA: 28.1x market vs 15.9x justified (+77%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {},
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.42,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+        "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+        "pass_through_capability": true,
+        "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 3.3692125332061775,
+        "is_cyclical_peak": true,
+        "applies_cyclical_haircut": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is 0 and the D8 Revenue Score is 1.00, indicating no pull-forward risk or deferred revenue quality issues. Revenue growth (24.1% CAGR) is driven by structural demand rather than accounting anomalies.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt does not contain specific patent expiration dates or revenue exposure percentages for key drugs (e.g., Mounjaro, Zepbound, Trulicity). However, it notes general risks from generic/biosimilar competition and compounding. Due to the lack of specific expiration disclosures in the provided text, the exact revenue at risk within 5 years cannot be definitively calculated, but is estimated at 0.0% for the purpose of this pipeline, with high uncertainty.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Lilly's revenue Z-score of 3.37 flags a statistical peak, but this reflects massive structural growth from its incretin franchise (Mounjaro/Zepbound) rather than traditional cyclicality, hence no industry haircut is applied. Growth quality is exceptionally clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is present via generic/biosimilar competition, but specific near-term patent cliffs within 5 years are not detailed in the provided text, resulting in a highly uncertain 0.0% estimated revenue at risk and no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $851.21 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 10.4%\n  \u2022 Company's robust historical CAGR: 17.3%\n  \u2022 Ratio (implied / historical): 0.6x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (10.4%) is below historical (17.3%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 15.9x\n  \u2022 Premium to justified multiple: +77%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $119/share vs current price $851.21\n  \u2022 Downside in bear case: -86.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Premium / FOMO",
+          "bear_case_summary": "The market is pricing LLY at a dangerous 77% premium to its mathematically justified EV/EBITDA multiple (28.1x vs 15.9x). While the implied 10-year revenue CAGR of 10.4% is below the historical 17.3%, sustaining double-digit growth at LLY's current mega-cap scale requires flawless execution of its GLP-1 franchise. The bear case assumes the obesity narrative is fully priced in, leaving the stock highly vulnerable to pricing pressures, government intervention, and fierce competition from next-generation oral weight-loss drugs. If margins compress and the multiple reverts to its justified 15.9x baseline, the stock faces a catastrophic path to its bear case intrinsic value of $119 per share, representing an 86.0% downside.",
+          "sentiment_score": -7
+        }
+      },
+      "messages": [
+        {
+          "content": "Contrarian (Phase 3): [Narrative Premium / FOMO] Sentiment: -7/10. Implied CAGR 10.4% vs 17.3% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:09:07.570912",
+    "agent": "ServingReportWriter",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY"
+    },
+    "output_delta": {
+      "status": "saved",
+      "path": "valuation_data/serving/latest/LLY_report.json"
+    }
+  },
+  {
+    "timestamp": "2026-04-29T20:09:07.572346",
+    "agent": "Lead",
+    "trace_id": "trace_LLY_1777507273",
+    "inputs": {
+      "ticker": "LLY",
+      "messages": [
+        {
+          "content": "Librarian: Retrieved 10-K text for LLY.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Forensic: Moat 8.5/10. OpLev 4.8/10 (Python). Pricing power: False. Concentration: True. Segments: 1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Value Chain: Leverage 9.0/10. Upstream leak: False. Pass-through: True. Sub risk: 4.0/10.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Context: Z=3.37 (DuckDB) peak=True haircut=False at_risk=0% (estimate) growth_risk=False",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Strategist: Calculated WACC 9.0%.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Fundamentalist: DCF Completed. EV: $256,004,971,604",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "ValuationNode: LLY \u2014 Base IV=$623/share MoS=-26.8% ImpliedCAGR=10.4% Multiple=high_premium",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        },
+        {
+          "content": "Contrarian (Phase 3): [Narrative Premium / FOMO] Sentiment: -7/10. Implied CAGR 10.4% vs 17.3% historical.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ],
+      "valuation_report": {
+        "dcf_result": {
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "terminal_value": 298858624928.77234,
+          "discounted_terminal_value": 194237600407.17422,
+          "sum_pv_cash_flows": 61767371197.168045,
+          "audit_metrics": {
+            "roic_path": [
+              0.4520484468047333,
+              0.4279202761763332,
+              0.40021653705756677,
+              0.3700633413028947,
+              0.3417473492589878
+            ],
+            "invested_capital_path": [
+              45625300000.0,
+              52053700000.0,
+              58996372000.0,
+              66355604320.0,
+              74009205932.8,
+              81892415593.98401
+            ],
+            "gravity_adjustment": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "diagnostics": {
+            "base_revenue": 65179000000.0,
+            "base_ebit": null,
+            "base_ebit_margin": 0.36413568787492895,
+            "terminal_value_pct_of_ev": 0.7587258918837325,
+            "implied_terminal_multiple_fcf": 17.166666666666664,
+            "implied_terminal_multiple_nopat": 11.81612004925192,
+            "reinvestment_rate_terminal_year": 0.31168232722804334,
+            "assumptions_used": {
+              "wacc": 0.09,
+              "tax_rate": 0.21,
+              "terminal_growth_rate": 0.03,
+              "revenue_growth_initial": 0.1,
+              "revenue_growth_decay": 0.02,
+              "ebit_margin_target": null,
+              "ebit_margin_convergence_years": 5,
+              "da_percent_sales": 0.030638702649626412,
+              "capex_percent_sales": 0.1202994829623038,
+              "wc_change_percent_sales": 0.0
+            },
+            "warnings": [
+              "Base EBIT margin derived from (1 - cogs% - sga% - da%) (verify for your sector).",
+              "Terminal value contributes 76% of EV (high). Consider longer explicit forecast or revise drivers."
+            ]
+          }
+        },
+        "dcf_model": {
+          "intrinsic_value": 248.95407663860036,
+          "upside_percent": -0.7075291993606279,
+          "assumptions_used": {
+            "wacc": 0.09,
+            "tax_rate": 0.21,
+            "terminal_growth_rate": 0.03,
+            "revenue_growth_initial": 0.1,
+            "revenue_growth_decay": 0.02,
+            "ebit_margin_target": null,
+            "ebit_margin_convergence_years": 5,
+            "da_percent_sales": 0.030638702649626412,
+            "capex_percent_sales": 0.1202994829623038,
+            "wc_change_percent_sales": 0.0
+          },
+          "projections": [
+            {
+              "year": 1.0,
+              "revenue": 71696900000.0,
+              "revenue_growth": 0.1,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 26107399999.999992,
+              "nopat": 20624845999.999996,
+              "depreciation": 2196700000.0,
+              "capex": 8625100000.0,
+              "change_in_wc": 0.0,
+              "fcff": 14196445999.999996,
+              "discount_factor": 0.9174311926605504,
+              "pv_fcff": 13024262385.321096
+            },
+            {
+              "year": 2.0,
+              "revenue": 77432652000.0,
+              "revenue_growth": 0.08,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 28195991999.999992,
+              "nopat": 22274833679.999996,
+              "depreciation": 2372436000.0,
+              "capex": 9315108000.0,
+              "change_in_wc": 0.0,
+              "fcff": 15332161679.999996,
+              "discount_factor": 0.84167999326656,
+              "pv_fcff": 12904773739.584206
+            },
+            {
+              "year": 3.0,
+              "revenue": 82078611120.0,
+              "revenue_growth": 0.06,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 29887751519.999992,
+              "nopat": 23611323700.799995,
+              "depreciation": 2514782160.0,
+              "capex": 9874014480.0,
+              "change_in_wc": 0.0,
+              "fcff": 16252091380.799995,
+              "discount_factor": 0.7721834800610642,
+              "pv_fcff": 12549596480.696566
+            },
+            {
+              "year": 4.0,
+              "revenue": 85361755564.8,
+              "revenue_growth": 0.039999999999999994,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 31083261580.79999,
+              "nopat": 24555776648.831993,
+              "depreciation": 2615373446.4,
+              "capex": 10268975059.2,
+              "change_in_wc": 0.0,
+              "fcff": 16902175036.031994,
+              "discount_factor": 0.7084252110651963,
+              "pv_fcff": 11973926917.361856
+            },
+            {
+              "year": 5.0,
+              "revenue": 87922608231.744,
+              "revenue_growth": 0.03,
+              "ebit_margin": 0.36413568787492895,
+              "ebit": 32015759428.22399,
+              "nopat": 25292449948.296955,
+              "depreciation": 2693834649.792,
+              "capex": 10577044310.976,
+              "change_in_wc": 0.0,
+              "fcff": 17409240287.112953,
+              "discount_factor": 0.6499313862983452,
+              "pv_fcff": 11314811674.204323
+            }
+          ],
+          "enterprise_value": 256004971604.3423,
+          "equity_value": 222404971604.3423,
+          "implied_growth": "N/A"
+        },
+        "assumptions_used": {
+          "revenue_growth_initial": 0.1,
+          "revenue_growth_decay": 0.02,
+          "terminal_growth_rate": 0.03,
+          "sga_percent_sales": 0.1702081958913147,
+          "da_percent_sales": 0.030638702649626412,
+          "tax_rate": 0.21,
+          "capex_percent_sales": 0.1202994829623038,
+          "wacc": 0.09,
+          "cogs_percent_sales": 0.43501741358412993,
+          "calibration_adjustment": 0.2654535970174442
+        },
+        "base_financials": {
+          "net_sales": 65179000000.0,
+          "cogs": 11052000000.0,
+          "interest_expense": 0.0,
+          "net_debt": 33600000000.0
+        },
+        "calculated_upside": -0.7075291993606279
+      },
+      "strategist_report": {
+        "capital_stack": {
+          "debt_current": 0.0,
+          "debt_long": 40868000000.0,
+          "equity": 760434789107.6355,
+          "wacc": 0.09,
+          "cost_of_equity": 0.06873043610780802,
+          "beta": 0.596916992398711
+        },
+        "risk_factors": {
+          "liquidity": {
+            "maturities_next_2y": 4086800000.0,
+            "cash": 7268000000.0,
+            "liquidity_ratio": 0.5623004953219592,
+            "refinancing_risk_score": 1,
+            "liquidity_alert": false
+          },
+          "downside": {
+            "tangible_book_value": 26535000000.0,
+            "crash_fcf": 7224820000.0,
+            "earnings_power_value": 65680181818.181816,
+            "floor_value": 65680181818.181816,
+            "floor_price_per_share": 73.52060927437287
+          },
+          "leverage": {
+            "operating_leverage_score": 4.8,
+            "financial_leverage_score": 0.21497175345151312,
+            "double_leverage_flag": false
+          },
+          "wacc_schedule": {
+            "1": 0.09,
+            "2": 0.09,
+            "3": 0.09,
+            "4": 0.09,
+            "5": 0.09
+          }
+        }
+      },
+      "phase2_valuation": {
+        "dcf_adjustments": {
+          "wacc_penalty": 0.015,
+          "growth_decay_reduction": 0.0,
+          "terminal_growth_adj": 0.005,
+          "terminal_growth_cap": null,
+          "base_revenue_override": null,
+          "concentration_risk": true,
+          "has_pricing_power": false,
+          "strategic_leverage_score": 9.0,
+          "terminal_haircut": false,
+          "is_cyclical_peak": true,
+          "applies_cyclical_haircut": false,
+          "rules": {
+            "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+            "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+            "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+            "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+            "base_revenue": "applies_cyclical_haircut \u2192 DuckDB 3Y numpy average"
+          }
+        },
+        "dcf": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "run_date": "2026-04-30T00:08:28.920393",
+          "current_price": 851.2100219726562,
+          "shares_diluted": 893357420.0,
+          "market_cap": 760434789107.6355,
+          "risk_free_rate": 0.035900001525878904,
+          "beta": 0.596916992398711,
+          "wacc_base": 0.105,
+          "revenue": 65179000000.0,
+          "ebitda": 28216000000.0,
+          "ebit": 25731000000.0,
+          "nopat": 20327490000.0,
+          "roic": 0.3308587210186173,
+          "fcf": 8972000000.0,
+          "net_debt": 33600000000.0,
+          "bull_ev": 1059225447959.0039,
+          "bull_intrinsic_per_share": 1148.0572333064674,
+          "bull_upside": 0.3487355689796459,
+          "bull_wacc": 0.09999999999999999,
+          "bull_terminal_g": 0.04,
+          "bull_ev_ebitda": 37.539886871243404,
+          "bull_justified_ev_ebitda": 10.843076761540244,
+          "bull_roic_wacc_spread": 0.23085872101861732,
+          "bull_tv_pct_of_ev": 0.7283056317083664,
+          "bull_implied_tv_ebitda": 10.843076761540244,
+          "base_ev": 592960491683.2549,
+          "base_intrinsic_per_share": 626.132921897324,
+          "base_upside": -0.2644201715972777,
+          "base_wacc": 0.105,
+          "base_terminal_g": 0.030000000000000002,
+          "base_ev_ebitda": 21.0150443607618,
+          "base_justified_ev_ebitda": 8.918996034748083,
+          "base_roic_wacc_spread": 0.22585872101861731,
+          "base_tv_pct_of_ev": 0.6639203883474033,
+          "base_implied_tv_ebitda": 8.918996034748085,
+          "bear_ev": 142850904821.38477,
+          "bear_intrinsic_per_share": 122.29249164504031,
+          "bear_upside": -0.8563310011768532,
+          "bear_wacc": 0.12,
+          "bear_terminal_g": 0.02,
+          "bear_ev_ebitda": 5.062762433420215,
+          "bear_justified_ev_ebitda": 6.509118179297745,
+          "bear_roic_wacc_spread": 0.2108587210186173,
+          "bear_tv_pct_of_ev": 0.3991528017854309,
+          "bear_implied_tv_ebitda": 3.8551452846038146
+        },
+        "bridge": {
+          "bull": {
+            "ticker": "LLY",
+            "scenario": "bull",
+            "enterprise_value": 1059225447959.0039,
+            "equity_value": 1022994153959.0039,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 1145.1118343641272,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": 0.3452753196095617,
+            "upside_pct": 0.3452753196095617,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          },
+          "base": {
+            "ticker": "LLY",
+            "scenario": "base",
+            "enterprise_value": 592960491683.2549,
+            "equity_value": 556729197683.2549,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 623.1875229549836,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": -0.26788042096736203,
+            "upside_pct": -0.26788042096736203,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          },
+          "bear": {
+            "ticker": "LLY",
+            "scenario": "bear",
+            "enterprise_value": 142850904821.38477,
+            "equity_value": 106619610821.38477,
+            "shares_diluted": 893357420.0,
+            "intrinsic_per_share": 119.34709270269985,
+            "current_price": 851.2100219726562,
+            "margin_of_safety": -0.8597912505469376,
+            "upside_pct": -0.8597912505469376,
+            "data_quality": 0.8999999999999999,
+            "bridge_long-term_debt": -40868000000.0,
+            "bridge_cash_(net_of_haircuts)": 4636706000.0,
+            "cash_gross": 7268000000.0,
+            "cash_wc_haircut": 1955370000.0,
+            "cash_restricted_haircut": 0.0,
+            "cash_overseas_tax_haircut": 675924000.0,
+            "cash_net_accessible": 4636706000.0,
+            "cash_marketable_securities": 0.0,
+            "cash_total_value": 4636706000.0
+          }
+        },
+        "intrinsic_per_share": {
+          "bull": 1145.1118343641272,
+          "base": 623.1875229549836,
+          "bear": 119.34709270269985
+        },
+        "margin_of_safety": {
+          "bull": 0.3452753196095617,
+          "base": -0.26788042096736203,
+          "bear": -0.8597912505469376
+        },
+        "reverse_dcf": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "current_price": 851.2100219726562,
+          "current_ev": 794034789107.6355,
+          "current_ev_ebitda": 28.141295332706108,
+          "wacc": 0.06683671168368142,
+          "ebit_margin": 0.39477439052455543,
+          "implied_cagr_10y": 0.10401157706152042,
+          "implied_cagr_5y": 0.10401157706152042,
+          "historical_cagr_5y": 0.17343354037041459,
+          "sector_75th_cagr": 0.12,
+          "implied_tv_ebitda": 28.141295332706108,
+          "forward_ev_ebitda_justified": 16.976518465966418,
+          "signal": "fair_value"
+        },
+        "implied_cagr": 0.10401157706152042,
+        "historical_cagr": 0.17343354037041459,
+        "reverse_dcf_signal": "fair_value",
+        "reverse_dcf_reasons": [
+          "Implied CAGR (10.4%) is below historical (17.3%). Market is not pricing in full continuation of historical trajectory."
+        ],
+        "multiples": {
+          "ticker": "LLY",
+          "fiscal_year": 2025,
+          "market_ev_ebitda": 28.141295332706108,
+          "market_ev_ebit": 30.859072290530314,
+          "market_p_sales": 11.666867995944024,
+          "market_p_e": 36.84277079009862,
+          "market_peg": 2.124316364147952,
+          "justified_ev_ebitda": 15.918753171210863,
+          "justified_ev_ebit": 17.456124498810215,
+          "justified_p_sales": 0.0,
+          "ev_ebitda_premium": 12.222542161495245,
+          "ev_ebitda_premium_pct": 0.7678077566778136,
+          "sector_median_ev_ebitda": 14,
+          "vs_sector_premium": 14.141295332706108,
+          "roic": 0.3308587210186173,
+          "wacc": 0.06683671168368142,
+          "roic_wacc_spread": 0.26402200933493586,
+          "value_creation": "creating",
+          "cash_conversion_ratio": 0.6659882867876382,
+          "growth_rate": 0.17343354037041459,
+          "signal": "high_premium"
+        },
+        "ev_ebitda_market": 28.141295332706108,
+        "ev_ebitda_justified": 15.918753171210863,
+        "ev_ebitda_premium_pct": 0.7678077566778136,
+        "multiple_signal": "high_premium",
+        "roic_wacc_spread": 0.26402200933493586,
+        "value_creation": "creating",
+        "multiple_decomposition": {
+          "roic": 0.3308587210186173,
+          "wacc": null
+        },
+        "summary": "=== Phase 2 Valuation: LLY ===\nPrice: $851.21  |  Bear=$119  Base=$623  Bull=$1,145\nMoS:  Bear=-86.0%  Base=-26.8%  Bull=+34.5%\nRDCF: implied=10.4% hist=17.3% [fair_value]\nEV/EBITDA: 28.1x market vs 15.9x justified (+77%)\nAdj: WACC+0.015 terminal+0.005 cap=None",
+        "errors": []
+      },
+      "contrarian_report": {
+        "raw_results": "Search failed: dlopen(/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so, 0x0002): tried: '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64')), '/System/Volumes/Preboot/Cryptexes/OS/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (no such file), '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/primp/primp.abi3.so' (mach-o file, but is an incompatible architecture (have 'x86_64', need 'arm64e' or 'arm64e.v1' or 'arm64' or 'arm64'))",
+        "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $851.21 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 10.4%\n  \u2022 Company's robust historical CAGR: 17.3%\n  \u2022 Ratio (implied / historical): 0.6x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (10.4%) is below historical (17.3%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 15.9x\n  \u2022 Premium to justified multiple: +77%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $119/share vs current price $851.21\n  \u2022 Downside in bear case: -86.0%\n",
+        "structured_analysis": {
+          "bias_detected": "Narrative Premium / FOMO",
+          "bear_case_summary": "The market is pricing LLY at a dangerous 77% premium to its mathematically justified EV/EBITDA multiple (28.1x vs 15.9x). While the implied 10-year revenue CAGR of 10.4% is below the historical 17.3%, sustaining double-digit growth at LLY's current mega-cap scale requires flawless execution of its GLP-1 franchise. The bear case assumes the obesity narrative is fully priced in, leaving the stock highly vulnerable to pricing pressures, government intervention, and fierce competition from next-generation oral weight-loss drugs. If margins compress and the multiple reverts to its justified 15.9x baseline, the stock faces a catastrophic path to its bear case intrinsic value of $119 per share, representing an 86.0% downside.",
+          "sentiment_score": -7
+        }
+      },
+      "forensic_report": {
+        "operating_leverage_analysis": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+        "moat_score": 8.5,
+        "moat_attributes": {
+          "switching_costs": 7.0,
+          "network_effects": 2.0,
+          "cost_advantage": 6.0,
+          "intangibles": 10.0
+        },
+        "moat_evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+        "has_pricing_power": false,
+        "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results.",
+        "concentration_risk": true,
+        "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution.",
+        "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+        "revenue_segments": [
+          {
+            "segment": "Human Pharmaceutical Products",
+            "pct_revenue": 100.0,
+            "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+          }
+        ],
+        "key_customers": [
+          "McKesson Corporation",
+          "Cencora, Inc.",
+          "Cardinal Health, Inc."
+        ],
+        "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+        "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products.",
+        "operating_leverage_score": 4.8
+      },
+      "value_chain_report": {
+        "strategic_leverage_score": 9.0,
+        "power_ratio": 0.42,
+        "upstream_value_leak": false,
+        "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+        "substitution_risk_score": 4.0,
+        "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+        "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+        "pass_through_capability": true,
+        "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+      },
+      "strategic_context_report": {
+        "revenue_z_score": 3.3692125332061775,
+        "is_cyclical_peak": true,
+        "applies_cyclical_haircut": false,
+        "recommended_base_revenue": null,
+        "deferred_revenue_trend": "Deferred revenue is 0 and the D8 Revenue Score is 1.00, indicating no pull-forward risk or deferred revenue quality issues. Revenue growth (24.1% CAGR) is driven by structural demand rather than accounting anomalies.",
+        "quality_of_growth_risk": false,
+        "intangible_risk_assessment": "The provided 10-K excerpt does not contain specific patent expiration dates or revenue exposure percentages for key drugs (e.g., Mounjaro, Zepbound, Trulicity). However, it notes general risks from generic/biosimilar competition and compounding. Due to the lack of specific expiration disclosures in the provided text, the exact revenue at risk within 5 years cannot be definitively calculated, but is estimated at 0.0% for the purpose of this pipeline, with high uncertainty.",
+        "revenue_at_risk_percent": 0.0,
+        "terminal_haircut": false,
+        "summary": "Lilly's revenue Z-score of 3.37 flags a statistical peak, but this reflects massive structural growth from its incretin franchise (Mounjaro/Zepbound) rather than traditional cyclicality, hence no industry haircut is applied. Growth quality is exceptionally clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is present via generic/biosimilar competition, but specific near-term patent cliffs within 5 years are not detailed in the provided text, resulting in a highly uncertain 0.0% estimated revenue at risk and no terminal haircut."
+      },
+      "final_report": "",
+      "raw_10k_text": "#### United States\n\n#### Securities and Exchange Commission\n\n#### Washington, D.C. 20549\n\n#### Form 10-K\n<div align='center'>Annual report pursuant to Section 13 or 15(d) of the Securities Exchange Act of 1934</div>\n\n#### for the fiscal year ended December 31, 2025\n\n#### Commission file number 001-06351\n\n### ELI LILLY AND COMPANY\n<div align='center'>(Exact name of Registrant as specified in its charter)</div>\n\n|                                 |     | Indiana |     | 35-0470950          |\n| (State or other jurisdiction of |     |         |     | (I.R.S. Employer    |\n| incorporation or organization)  |     |         |     | Identification No.) |\n\n<div align='center'>Lilly Corporate Center, Indianapolis, Indiana 46285\n\n(Address and zip code of principal executive offices)\n\nRegistrant's telephone number, including area code ( 317) 276-2000</div>\n\nSecurities registered pursuant to Section 12(b) of the Exchange Act:\n\n| Title of Each Class         |     | Trading Symbol(s) |     | Name of E...(truncated)"
+    },
+    "output_delta": {
+      "final_report": {
+        "ticker": "LLY",
+        "generated_at": "2026-04-29T20:09:07.569458",
+        "1_economic_reality": {
+          "business_model": {
+            "operating_leverage_score": 4.8,
+            "cost_structure": "Eli Lilly exhibits a moderate operating leverage score (4.8/10) characterized by exceptionally high gross margins (83.0%) offset by massive fixed operating expenses. The primary fixed cost drivers are extensive R&D investments for clinical trials and pipeline development, alongside significant SG&A expenses for global sales forces and marketing. Because variable manufacturing costs are low, incremental revenue growth from blockbuster drugs flows highly efficiently to operating income, though this is partially dampened by continuous reinvestment requirements.",
+            "business_description": "Eli Lilly and Company discovers, develops, manufactures, and markets human pharmaceutical products globally, focusing on cardiometabolic health, oncology, immunology, and neuroscience. The company generates revenue by selling its medicines primarily to wholesale distributors, who then supply pharmacies, hospitals, and healthcare professionals.",
+            "revenue_segments": [
+              {
+                "segment": "Human Pharmaceutical Products",
+                "pct_revenue": 100.0,
+                "growth_trend": "Strong growth driven by 24.1% 3Y CAGR and cardiometabolic portfolio"
+              }
+            ],
+            "key_customers": [
+              "McKesson Corporation",
+              "Cencora, Inc.",
+              "Cardinal Health, Inc."
+            ],
+            "competitive_landscape": "Lilly competes globally with major pharmaceutical companies, generic manufacturers, and biosimilar developers. It differentiates itself through massive R&D investments to develop novel modalities (like GLP-1/GIP receptor agonists) and by building direct-to-patient channels like LillyDirect.",
+            "regulatory_risk": "The company faces significant regulatory risks including FDA approval uncertainties, drug pricing interventions by the U.S. government, and the proliferation of counterfeit or mass-compounded versions of its products."
+          },
+          "value_chain": {
+            "power_ratio": 0.42,
+            "upstream_leak": false,
+            "strategic_leverage": 9.0,
+            "bottleneck_analysis": "The 10-K highlights risks regarding a 'consolidated supply chain' and reliance on 'third-party performance' and manufacturing. The critical bottlenecks are Contract Development and Manufacturing Organizations (CDMOs) and suppliers of specialized glass vials and autoinjector pens (e.g., Catalent, Stevanato). While these suppliers hold short-term leverage due to severe capacity constraints for GLP-1/GIP medicines, their gross margins (typically 30-40%) pale in comparison to Lilly's 83.0%. If suppliers raise prices, Lilly can easily absorb the cost without material impact to its own margins, meaning value does not leak upstream.",
+            "substitution_risk_score": 4.0,
+            "top_substitutes": "1. Competing branded GLP-1 receptor agonists (e.g., Novo Nordisk's Ozempic/Wegovy). 2. Compounded, counterfeit, or misbranded incretins (explicitly cited as a threat in the 10-K). 3. Bariatric surgery or emerging oral weight-loss therapeutics. A realistic switching scenario occurs if Pharmacy Benefit Managers (PBMs) exclude Lilly's drugs from formularies in favor of a competitor offering steeper rebates.",
+            "pricing_power_assessment": "Lilly exhibits massive price leadership, evidenced by its 83.0% gross margin, 39.5% EBIT margin, and 33.1% ROIC. While buyer power is highly concentrated among three wholesale distributors (McKesson, Cencora, Cardinal Health) and PBMs that demand heavy rebates, the unprecedented consumer demand for Mounjaro and Zepbound allows Lilly to maintain strong net pricing. Furthermore, the launch of 'LillyDirect' demonstrates an ability to bypass traditional distribution bottlenecks and capture more value directly from patients paying out-of-pocket.",
+            "pass_through_capability": true,
+            "analysis_summary": "Lilly occupies a highly dominant position in the pharmaceutical value chain, driven by its duopoly in the booming incretin (GLP-1/GIP) market. Supplier power is structurally low in terms of value capture, though physical manufacturing bottlenecks pose near-term supply risks. Buyer power is concentrated among three major U.S. distributors and PBMs, but Lilly is actively mitigating this through its LillyDirect platform. Substitution threats are contained to a single major peer (Novo Nordisk) and compounded alternatives. With an 83% gross margin and 33.1% ROIC, Lilly is a definitive price-maker with exceptional strategic leverage."
+          },
+          "moat": {
+            "score": 8.5,
+            "switching_costs": 7.0,
+            "network_effects": 2.0,
+            "cost_advantage": 6.0,
+            "intangibles": 10.0,
+            "evidence": "Lilly's moat is heavily reliant on intangible assets, specifically its extensive patent portfolio, FDA approvals, and regulatory data protection (e.g., 12-year exclusivity for new biologics under BPCIA, orphan drug designations). Switching costs exist for chronic treatments, though the 10-K notes that pharmacy benefit managers can force switching via formulary exclusions.",
+            "has_pricing_power": false,
+            "pricing_power_evidence": "The 10-K explicitly notes 'continued pricing pressures' and states that consolidated healthcare organizations force pharmaceutical companies to compete fiercely for formulary placement by providing rebates or other concessions, which negatively affects consolidated results."
+          },
+          "industry_structure": {
+            "cyclicality_z_score": 3.3692125332061775,
+            "is_peak": true
+          },
+          "strategic_context": {
+            "deferred_revenue_trend": "Deferred revenue is 0 and the D8 Revenue Score is 1.00, indicating no pull-forward risk or deferred revenue quality issues. Revenue growth (24.1% CAGR) is driven by structural demand rather than accounting anomalies.",
+            "quality_of_growth_risk": false,
+            "intangible_risk_assessment": "The provided 10-K excerpt does not contain specific patent expiration dates or revenue exposure percentages for key drugs (e.g., Mounjaro, Zepbound, Trulicity). However, it notes general risks from generic/biosimilar competition and compounding. Due to the lack of specific expiration disclosures in the provided text, the exact revenue at risk within 5 years cannot be definitively calculated, but is estimated at 0.0% for the purpose of this pipeline, with high uncertainty.",
+            "revenue_at_risk_percent": 0.0,
+            "terminal_haircut": false,
+            "summary": "Lilly's revenue Z-score of 3.37 flags a statistical peak, but this reflects massive structural growth from its incretin franchise (Mounjaro/Zepbound) rather than traditional cyclicality, hence no industry haircut is applied. Growth quality is exceptionally clean with a D8 score of 1.00 and no deferred revenue pull-forward risk. Intangible risk is present via generic/biosimilar competition, but specific near-term patent cliffs within 5 years are not detailed in the provided text, resulting in a highly uncertain 0.0% estimated revenue at risk and no terminal haircut."
+          }
+        },
+        "2_financial_translation": {
+          "clean_financials": {
+            "revenue_bn": 65.179,
+            "ebitda_bn": 28.216,
+            "fcf_bn": 8.972,
+            "nopat_bn": 20.32749,
+            "invested_capital_bn": 61.43858,
+            "net_debt_bn": 33.6,
+            "sbc_bn": 0.626,
+            "fiscal_year": 2025,
+            "data_quality": 0.94
+          },
+          "ratios": {
+            "gross_margin_pct": 83.04361834333143,
+            "ebit_margin_pct": 39.477439052455544,
+            "ebitda_margin_pct": 43.29001672317771,
+            "fcf_margin_pct": 13.76516976326731,
+            "roic": 0.3308587210186173,
+            "roe": 0.7778405879027699,
+            "sbc_pct_fcf": 6.977262594739189,
+            "share_dilution_pct": null,
+            "cash_tax_rate": null
+          },
+          "quality_screens": {
+            "beneish_m_score": -1.8477,
+            "sloan_accrual": 0.1548,
+            "domain_scores": {
+              "D1_NonRecurring": 1.0,
+              "D2_JVA": 1.0,
+              "D3_EBITNorm": 1.0,
+              "D4_AccountingPolicy": 1.0,
+              "D5_Lease": 1.0,
+              "D6_Pension": 1.0,
+              "D7_SBC": 1.0,
+              "D8_Revenue": 1.0,
+              "D9_WorkingCapital": 1.0,
+              "D10_Tax": 1.0
+            }
+          },
+          "cleaning_flags": {
+            "warning_count": 4,
+            "error_count": 0,
+            "pension_deficit_bn": 0.0,
+            "lease_debt_bn": 0.0,
+            "jva_income_bn": 0.0
+          }
+        },
+        "3_capital_structure_risk": {
+          "capital_stack": {
+            "debt_current": 0.0,
+            "debt_long": 40868000000.0,
+            "equity": 760434789107.6355,
+            "wacc": 0.09,
+            "cost_of_equity": 0.06873043610780802,
+            "beta": 0.596916992398711
+          },
+          "risk_factors": {
+            "liquidity": {
+              "maturities_next_2y": 4086800000.0,
+              "cash": 7268000000.0,
+              "liquidity_ratio": 0.5623004953219592,
+              "refinancing_risk_score": 1,
+              "liquidity_alert": false
+            },
+            "downside": {
+              "tangible_book_value": 26535000000.0,
+              "crash_fcf": 7224820000.0,
+              "earnings_power_value": 65680181818.181816,
+              "floor_value": 65680181818.181816,
+              "floor_price_per_share": 73.52060927437287
+            },
+            "leverage": {
+              "operating_leverage_score": 4.8,
+              "financial_leverage_score": 0.21497175345151312,
+              "double_leverage_flag": false
+            },
+            "wacc_schedule": {
+              "1": 0.09,
+              "2": 0.09,
+              "3": 0.09,
+              "4": 0.09,
+              "5": 0.09
+            }
+          },
+          "concentration_risk": true,
+          "concentration_details": "Three U.S. wholesale distributors (McKesson Corporation, Cencora, Inc., and Cardinal Health, Inc.) each account for a significant percentage of consolidated revenue. Loss of any could severely disrupt U.S. product distribution."
+        },
+        "4_valuation_synthesis": {
+          "dcf_model": {
+            "intrinsic_value": 222404971604.3423,
+            "upside_percent": -0.7075291993606279,
+            "implied_growth": "Pending Expectations Engine"
+          },
+          "phase2_valuation": {
+            "three_scenario_dcf": {
+              "bear": {
+                "intrinsic_per_share": 119.34709270269985,
+                "margin_of_safety": -0.8597912505469376,
+                "ev": 142850904821.38477
+              },
+              "base": {
+                "intrinsic_per_share": 623.1875229549836,
+                "margin_of_safety": -0.26788042096736203,
+                "ev": 592960491683.2549
+              },
+              "bull": {
+                "intrinsic_per_share": 1145.1118343641272,
+                "margin_of_safety": 0.3452753196095617,
+                "ev": 1059225447959.0039
+              }
+            },
+            "reverse_dcf": {
+              "implied_cagr_10y": 0.10401157706152042,
+              "historical_cagr": 0.17343354037041459,
+              "signal": "fair_value",
+              "reasons": [
+                "Implied CAGR (10.4%) is below historical (17.3%). Market is not pricing in full continuation of historical trajectory."
+              ]
+            },
+            "multiple_decomposition": {
+              "market_ev_ebitda": 28.141295332706108,
+              "justified_ev_ebitda": 15.918753171210863,
+              "premium_pct": 0.7678077566778136,
+              "signal": "high_premium",
+              "roic_wacc_spread": 0.26402200933493586,
+              "value_creation": "creating",
+              "roic": 0.3308587210186173,
+              "wacc": 0.105
+            },
+            "dcf_adjustments": {
+              "wacc_penalty": 0.015,
+              "growth_decay_reduction": 0.0,
+              "terminal_growth_adj": 0.005,
+              "terminal_growth_cap": null,
+              "base_revenue_override": null,
+              "concentration_risk": true,
+              "has_pricing_power": false,
+              "strategic_leverage_score": 9.0,
+              "terminal_haircut": false,
+              "is_cyclical_peak": true,
+              "applies_cyclical_haircut": false,
+              "rules": {
+                "wacc_penalty": "concentration_risk \u2192 +150bps (Framework \u00a710.3)",
+                "growth_decay": "has_pricing_power \u2192 decay_rate - 0.01",
+                "terminal_growth": "strategic_leverage 1-10 \u2192 lookup table \u00b10.5-1.0%",
+                "terminal_cap": "terminal_haircut \u2192 cap at 2.0%",
+                "base_revenue": "applies_cyclical_haircut \u2192 DuckDB 3Y numpy average"
+              }
+            },
+            "wacc": 0.105,
+            "beta": 0.596916992398711,
+            "risk_free_rate": 0.035900001525878904
+          },
+          "contrarian_analysis": {
+            "bias_detected": "Narrative Premium / FOMO",
+            "bear_case_summary": "The market is pricing LLY at a dangerous 77% premium to its mathematically justified EV/EBITDA multiple (28.1x vs 15.9x). While the implied 10-year revenue CAGR of 10.4% is below the historical 17.3%, sustaining double-digit growth at LLY's current mega-cap scale requires flawless execution of its GLP-1 franchise. The bear case assumes the obesity narrative is fully priced in, leaving the stock highly vulnerable to pricing pressures, government intervention, and fierce competition from next-generation oral weight-loss drugs. If margins compress and the multiple reverts to its justified 15.9x baseline, the stock faces a catastrophic path to its bear case intrinsic value of $119 per share, representing an 86.0% downside.",
+            "sentiment_score": -7,
+            "quant_challenge": "\nQUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):\n  The market price of $851.21 mathematically requires:\n  \u2022 Implied 10-year revenue CAGR: 10.4%\n  \u2022 Company's robust historical CAGR: 17.3%\n  \u2022 Ratio (implied / historical): 0.6x\n  \u2022 Reverse DCF signal: FAIR_VALUE\n\n  Reverse DCF assessment:\n    - Implied CAGR (10.4%) is below historical (17.3%). Market is not pricing in full continuation of historical trajectory.\n\nMULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):\n  \u2022 Market EV/EBITDA: 28.1x\n  \u2022 Mathematically justified EV/EBITDA (given ROIC, WACC, growth): 15.9x\n  \u2022 Premium to justified multiple: +77%\n  \u2022 Multiple signal: HIGH_PREMIUM\n\nBEAR CASE INTRINSIC VALUE:\n  \u2022 Bear case DCF: $119/share vs current price $851.21\n  \u2022 Downside in bear case: -86.0%\n"
+          },
+          "investment_thesis": {
+            "conviction_score": -1,
+            "margin_of_safety": -0.26788042096736203,
+            "narrative": "The implied 10-year revenue CAGR of 10.4% is highly realistic and mathematically conservative compared to LLY's historical 17.3% growth rate. The company's 8.5/10 moat, driven by its GLP-1/GIP duopoly, 83.0% gross margins, and massive +26.4% ROIC-WACC spread, provides a structural advantage to sustain double-digit growth. However, terminal decay risks remain elevated in the back half of the decade due to inevitable patent cliffs and the introduction of next-generation oral alternatives, which will eventually compress the currently exceptional 33.1% ROIC.\n\nThe Contrarian is correct that LLY's 77% EV/EBITDA premium (28.1x vs justified 15.9x) leaves zero room for execution missteps and exposes the stock to severe multiple contraction risk. However, the bear case overstates the fragility of the growth narrative. The implied 10.4% CAGR is actually below historical averages, indicating the market is paying for duration and certainty of cash flows rather than accelerating hyper-growth. Furthe...(truncated)",
+            "constitution_checks": [
+              "\u2705 PASS: Terminal Cap.",
+              "\u2705 PASS: Implied CAGR (10.4%) within 1.3x of historical.",
+              "\u26a0\ufe0f CAUTION: EV/EBITDA at +77% premium."
+            ],
+            "pillar_scores": {
+              "ticker": "LLY",
+              "p1_moat": 4,
+              "p2_health": 2,
+              "p3_tailwind": 4,
+              "p4_mos": 1,
+              "p5_leadership": 3,
+              "raw_total": 14,
+              "capped_total": 14,
+              "cap_applied": false,
+              "cap_reason": "",
+              "position_tier": "pass",
+              "position_size_pct": "Below minimum analytical threshold",
+              "conviction_score": -1,
+              "reflexivity_flags": [],
+              "reflexivity_cap": false,
+              "p1_reasons": [
+                "Moat 8.5/10 \u2014 Strong moat with at least 2 confirmed powers"
+              ],
+              "p2_reasons": [
+                "FCF margin 13.8% \u2014 strong FCF",
+                "Net Debt/EBITDA 1.2\u00d7 \u2014 conservative leverage"
+              ],
+              "p3_reasons": [
+                "Revenue CAGR 17.3% \u2014 strong growth compounder",
+                "Cyclicality Z-score 3.4 \u2014 elevated, applying penalty",
+                "Sector 'Healthcare' \u2014 confirmed secular tailwind"
+              ],
+              "p4_reasons": [
+                "Base MoS -26.4% \u2014 Significant premium \u2014 price embeds optimistic assumptions"
+              ],
+              "p5_reasons": [
+                "SBC 7.0% of FCF \u2014 elevated, investigate",
+                "Operating leverage 4.8/10",
+                "Strategic leverage 9.0/10 \u2014 dominant positioning"
+              ],
+              "lifecycle_stage": "growth_compounder",
+              "lifecycle_label": "GROWTH_COMPOUNDER"
+            }
+          }
+        }
+      },
+      "messages": [
+        {
+          "content": "Lead: Report generated for LLY. Conviction: -1.",
+          "additional_kwargs": {},
+          "response_metadata": {},
+          "type": "human",
+          "name": null,
+          "id": null
+        }
+      ]
+    }
+  }
+]

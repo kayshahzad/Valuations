@@ -500,6 +500,7 @@ class ConvictionScorer:
             strategic_lev=strategic_lev,
             multiple_premium=multiple_premium,
             implied_cagr=implied_cagr,
+            calc_input=calc_input,
             roe=roe,
             state=state,
         )

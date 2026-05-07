@@ -336,6 +336,18 @@ class CleaningEngine:
         # 4. Compute derived metrics (EBITDA, FCF, NOPAT, etc.)
         self._compute_derived(record)
 
+        # 4a. Apply cumulative split-adjustment to share counts and per-share
+        # metrics. XBRL filers report as-filed share counts (pre-split for
+        # fiscal years before a later split), but yfinance prices are
+        # split-adjusted — without this, IV-per-share for AAPL FY2009-FY2019
+        # is 28× too high, FY2014-FY2019 is 4× too high, SMCI pre-FY2024 is
+        # 10× too high, etc. Stores `_AsFiled` backups for audit.
+        try:
+            from aletheia.data.split_adjuster import apply_split_adjustment
+            apply_split_adjustment(record)
+        except ImportError:
+            pass
+
         # 4b. Recompute SBC_PctFCF now that FCF is available
         # Domain 7 runs before _compute_derived so FCF was None at that point.
         # We recompute here with the final derived FCF to ensure correctness.
@@ -1461,6 +1473,28 @@ class CleaningEngine:
         if r.raw.get("TotalLiabilities") is not None and r.derived.get("TotalLiabilities") is None:
             r.derived["TotalLiabilities"] = r.raw["TotalLiabilities"]
 
+        # ShortTermDebt double-count safeguard. The us-gaap `DebtCurrent` tag
+        # sometimes equals `LongTermDebtCurrent` exactly (the filer's "current
+        # debt" line is purely the maturing portion of LT debt, no separate
+        # commercial paper / ST notes). When that's the case, leaving both
+        # populated would double-count NetDebt by the current LT amount.
+        # Detect equality and zero out ShortTermDebt so the raw stays semantic.
+        st_debt_raw = r.raw.get("ShortTermDebt")
+        cltd = r.raw.get("CurrentPortionLongTermDebt")
+        if (st_debt_raw is not None and cltd is not None
+                and st_debt_raw > 0 and abs(st_debt_raw - cltd) < 1.0):
+            r.raw["ShortTermDebt"] = 0.0
+
+        # Mirror derived → raw for fields where the filer didn't file the
+        # rolled-up tag but the cleaning engine successfully derived it from
+        # components. Validators and downstream consumers read raw_<field>;
+        # without this mirror they miss values like LLY's OperatingIncome
+        # (LLY doesn't file `OperatingIncomeLoss`; we derive from
+        # Revenue − COGS − R&D − SG&A).
+        for fld in ("OperatingIncome",):
+            if r.raw.get(fld) is None and r.derived.get(fld) is not None:
+                r.raw[fld] = r.derived[fld]
+
         # Derive SG&A from components when the rolled-up tag isn't filed.
         # MSFT files SellingAndMarketingExpense + GeneralAndAdministrativeExpense
         # separately and does NOT file SellingGeneralAndAdministrativeExpense.
@@ -1475,6 +1509,21 @@ class CleaningEngine:
                 # filers who report only that component, but flag it as
                 # under-reported for forensic agents to notice.
                 r.raw["SG&A"] = ga
+
+        # SGA_Combined: cross-ticker comparable Selling + G&A figure that
+        # also captures filers (AMZN, others) who file marketing under
+        # `MarketingExpense` instead of `SellingAndMarketingExpense`. Distinct
+        # from `SG&A` (which is preserved as-is for OpInc derivation).
+        ga = r.raw.get("GeneralAndAdministrative")
+        sm = r.raw.get("SellingAndMarketing") or r.raw.get("Marketing")
+        if ga is not None or sm is not None:
+            r.derived["SGA_Combined"] = (ga or 0.0) + (sm or 0.0)
+            r.clean["SGA_Combined"] = r.derived["SGA_Combined"]
+        # Promote the granular components into clean for cross-ticker queries.
+        if ga is not None:
+            r.clean["GeneralAndAdministrative"] = ga
+        if sm is not None:
+            r.clean["SellingAndMarketing"] = sm
 
         # Derive OperatingIncome
         if r.raw.get("OperatingIncome") is None:
@@ -1547,6 +1596,16 @@ class CleaningEngine:
             if ebitda is not None:
                 r.derived["EBITDA_Liberti"] = ebitda + rd_expense
                 r.clean["EBITDA_Liberti"] = ebitda + rd_expense
+
+            # EBITDA excluding SBC = EBITDA + Stock-Based Compensation. Follows
+            # FMP's `ebitda` convention (treats SBC as a non-cash addback).
+            # Conventional EBITDA above remains the default; this is exposed
+            # as a parallel field for cross-source comparison and SaaS-peer
+            # multiples that quote EBITDA on this basis.
+            sbc = r.raw.get("SBC") or 0.0
+            if ebitda is not None:
+                r.derived["EBITDA_ExcludingSBC"] = ebitda + sbc
+                r.clean["EBITDA_ExcludingSBC"] = ebitda + sbc
 
         # FCF = Operating CF - CapEx
         if cash_ops is not None:
@@ -1636,13 +1695,24 @@ class CleaningEngine:
         # AAPL files them as separate tags; MSFT files only the consolidated
         # `FinanceLeaseLiability` total. Prefer the explicit decomposition
         # when both pieces are present; fall back to the consolidated total.
+        # Last-resort: derive PV from the undiscounted maturity schedule
+        # (PaymentsDue − UndiscountedExcessAmount). COST FY2022/FY2023 only
+        # filed the maturity table — without this fallback, ~$1.4B of finance
+        # lease drops out of gross debt.
         fl_curr = r.raw.get("LeaseLiabilityCurrent_Finance")
         fl_nc = r.raw.get("LeaseLiabilityNoncurrent_Finance")
         fl_total = r.raw.get("FinanceLeaseLiability_Total")
         if fl_curr is not None or fl_nc is not None:
             finance_lease_total = (fl_curr or 0.0) + (fl_nc or 0.0)
+        elif fl_total is not None:
+            finance_lease_total = fl_total
         else:
-            finance_lease_total = fl_total or 0.0
+            payments_due = r.raw.get("FinanceLeaseLiabilityPaymentsDue")
+            excess = r.raw.get("FinanceLeaseLiabilityUndiscountedExcessAmount") or 0.0
+            if payments_due is not None and payments_due > excess:
+                finance_lease_total = payments_due - excess
+            else:
+                finance_lease_total = 0.0
 
         gross_debt = long_term_debt + st_debt + current_lt_debt + finance_lease_total
 

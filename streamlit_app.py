@@ -12,7 +12,7 @@ Run (after starting the API):
 """
 
 import math
-from typing import Optional, Dict, Any
+from typing import Any, Dict, List, Optional
 
 import httpx
 import streamlit as st
@@ -97,9 +97,18 @@ hr { border-color: rgba(128,128,128,0.2); margin: 16px 0; }
 # ─────────────────────────────────────────────────────────────────────────────
 
 def api_get(path: str) -> Optional[Any]:
-    """Make a GET request to the FastAPI backend."""
+    """Make a GET request to the FastAPI backend.
+
+    A 404 means the ticker hasn't had its agent pipeline run yet (pending
+    tickers don't have a `_report.json`); we return `None` silently so
+    downstream renderers can fall back to placeholder content without a
+    red error banner. Other HTTP errors and connection failures still
+    surface to the user.
+    """
     try:
         r = httpx.get(f"{API_BASE}{path}", timeout=TIMEOUT)
+        if r.status_code == 404:
+            return None
         r.raise_for_status()
         return r.json()
     except httpx.ConnectError:
@@ -230,6 +239,131 @@ def _run_pipeline_subprocess(ticker: str) -> None:
         "log_tail": "\n".join(log_lines[-40:]),
     }
 
+
+def _run_add_ticker_pipeline_ui(ticker_input: str) -> None:
+    """
+    Drive the `add_ticker_pipeline` orchestrator from the Streamlit UI:
+    stream step updates into a status panel, render the SEC + FMP
+    validation tables inline, and stash a summary into `session_state`
+    for the sidebar.
+    """
+    import time
+    from aletheia.ui.add_ticker_pipeline import (
+        run_add_ticker_pipeline, StepUpdate, PipelineResult,
+    )
+
+    started = time.time()
+    final: Optional["PipelineResult"] = None
+    step_log: list[str] = []
+
+    with st.status(f"Adding {ticker_input.upper()}…", expanded=True) as status:
+        for evt in run_add_ticker_pipeline(ticker_input):
+            if isinstance(evt, StepUpdate):
+                glyph = {"running": "▷", "ok": "✓", "warning": "⚠", "error": "✗"}.get(evt.status, "•")
+                step_log.append(f"{glyph} **{evt.step}** — {evt.message}")
+                st.markdown(f"{glyph} **{evt.step}** — {evt.message}")
+                if evt.status == "running":
+                    pass
+                elif evt.status == "error":
+                    status.update(label=f"Failed on {evt.step}", state="error")
+            elif isinstance(evt, PipelineResult):
+                final = evt
+
+        elapsed = time.time() - started
+        if final and final.success:
+            status.update(label=f"✓ {final.ticker} added in {elapsed:.1f}s", state="complete")
+        else:
+            status.update(label=f"✗ Pipeline did not complete", state="error")
+
+    # Render validation results inline so the user sees them immediately
+    if final and final.success:
+        st.markdown(f"### Validation — {final.ticker} FY{final.fiscal_year}")
+        cols = st.columns(2)
+        with cols[0]:
+            st.markdown("**SEC XBRL** (raw bottom-line fields)")
+            _render_validation_table(final.sec_validation, source="sec")
+        with cols[1]:
+            st.markdown("**FMP** (statements + derived ratios)")
+            _render_validation_table(final.fmp_validation, source="fmp")
+
+        # Bust the API caches so the new ticker shows up in selectors etc.
+        try:
+            fetch_universe.clear()
+            fetch_health.clear()
+            fetch_ticker.clear()
+            fetch_dcf.clear()
+            fetch_fundamentals.clear()
+            fetch_screening.clear()
+        except Exception:
+            pass
+
+    # Stash a compact summary for the sidebar expander
+    st.session_state.last_add_ticker = {
+        "ticker": (final.ticker if final else ticker_input.upper()),
+        "success": bool(final and final.success),
+        "elapsed_s": elapsed,
+        "summary_md": "\n\n".join(step_log[-12:]) if step_log else "_no log_",
+    }
+
+    # Stash the full pipeline result + step log so the Quality Report screen
+    # can render them in detail. Auto-switch the active ticker + view to land
+    # the user on the report immediately.
+    if final and final.success:
+        st.session_state.last_add_ticker_full = {
+            "ticker": final.ticker,
+            "success": True,
+            "elapsed_s": elapsed,
+            "fiscal_year": final.fiscal_year,
+            "step_log": step_log,
+            "sec_validation": final.sec_validation,
+            "fmp_validation": final.fmp_validation,
+        }
+        st.session_state.active_ticker = final.ticker
+        st.session_state.active_view = "◊  Quality Report"
+        st.info(
+            f"**{final.ticker}** added. Switched view to **Quality Report** — "
+            "scroll down to see the full validation breakdown."
+        )
+
+
+def _render_validation_table(payload: Optional[Dict[str, Any]], source: str) -> None:
+    """Render either the SEC or FMP validation result as a compact table."""
+    if not payload:
+        st.caption("_no result_")
+        return
+    if payload.get("error"):
+        st.warning(payload["error"])
+        return
+
+    # Build a unified row list with section context.
+    if source == "sec":
+        rows = [{"section": "raw", **r} for r in (payload.get("rows") or [])]
+    else:
+        rows = []
+        for sect in ("income", "balance", "cashflow", "derived"):
+            for r in (payload.get(sect) or []):
+                rows.append({"section": sect, **r})
+
+    if not rows:
+        st.caption("_no rows_")
+        return
+
+    table = pd.DataFrame([
+        {
+            "section": r.get("section"),
+            "metric":  r.get("label"),
+            "value":   r.get("ours"),
+            "ref":     r.get("sec") if source == "sec" else r.get("fmp"),
+            "drift":   (f"{r['drift']*100:+.2f}%"
+                        if isinstance(r.get("drift"), (int, float)) and r["drift"] != float("inf")
+                        else "—"),
+            "flag":    r.get("flag"),
+        }
+        for r in rows
+    ])
+    st.dataframe(table, hide_index=True, use_container_width=True)
+
+
 def extract_moat_from_narrative(narrative: str) -> str:
     """Extract moat-relevant sentences from pipeline narrative."""
     if not narrative:
@@ -327,31 +461,49 @@ def main():
     if not health:
         return
 
-    available = health.get("tickers_available", [])
-    missing   = health.get("tickers_missing", [])
-
-    # ── Global State Initialization ───────────────────────────────────────────
-    views = ["◈  Universe", "◉  Deep Dive", "▦  Financials", "◇  Scenarios", "◧  Screening", "◨  Constitution", "📝  Thesis Builder", "◩  Reports"]
-    if "active_ticker" not in st.session_state:
-        st.session_state.active_ticker = available[0] if available else None
-    if "active_view" not in st.session_state:
-        st.session_state.active_view = views[0]
-
     # ── Fetch universe ────────────────────────────────────────────────────────
+    # The `/universe` endpoint returns the full union of ready + pending +
+    # not-ingested tickers (see api_main.py). We use it as the source of
+    # truth for the sidebar selector instead of the older `tickers_available`
+    # list from `/health` (which only counts tickers with *_report.json
+    # files and would hide pending tickers from the picker).
     universe_data = fetch_universe()
     if not universe_data:
         return
     ranked = universe_data.get("ranked", [])
     df = pd.DataFrame(ranked)
 
+    # Sidebar selector lists every ticker, with a status icon prefix so the
+    # analyst can see at a glance which are ready vs. pending agent-run.
+    available = [r["ticker"] for r in ranked]
+    status_by_ticker = {r["ticker"]: r.get("agents_status", "ready") for r in ranked}
+
+    # ── Global State Initialization ───────────────────────────────────────────
+    # Note: '🤖 Agents' tab removed — agent outputs are now surfaced on Deep
+    # Dive (lead thesis, contrarian, value chain, moat, strategic context all
+    # render there), and agent runs can be triggered from the Universe tab's
+    # ▶ Run agents footer or the sidebar's per-ticker pipeline button.
+    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◇  Scenarios", "◧  Screening", "◨  Constitution", "📝  Thesis Builder", "◩  Reports", "◊  Quality Report"]
+    if "active_ticker" not in st.session_state:
+        st.session_state.active_ticker = available[0] if available else None
+    if "active_view" not in st.session_state:
+        st.session_state.active_view = views[0]
+
     # ── Sidebar Global Selector ───────────────────────────────────────────────
     st.sidebar.markdown("### 🎯 Target Company")
     current_index = available.index(st.session_state.active_ticker) if st.session_state.active_ticker in available else 0
+    _STATUS_ICON = {"ready": "🟢", "pending": "🟡", "not_ingested": "⚪"}
+
+    def _format_ticker(t: str) -> str:
+        return f"{_STATUS_ICON.get(status_by_ticker.get(t, 'ready'), '·')}  {t}"
+
     st.session_state.active_ticker = st.sidebar.selectbox(
-        "Select Ticker", 
-        options=available, 
+        "Select Ticker",
+        options=available,
         index=current_index,
-        label_visibility="collapsed"
+        format_func=_format_ticker,
+        label_visibility="collapsed",
+        help="🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
     )
 
     if st.session_state.active_ticker:
@@ -398,35 +550,75 @@ def main():
                 with st.sidebar.expander("Pipeline log (tail)", expanded=False):
                     st.code(last["log_tail"], language="text")
 
+    # ── Sidebar: validation legend ────────────────────────────────────────────
+    st.sidebar.markdown("<hr style='margin: 16px 0'>", unsafe_allow_html=True)
+    with st.sidebar.expander("ℹ︎ Visual legend (badges, status, methods)", expanded=False):
+        from aletheia.ui.validation_badge import render_full_legend
+        render_full_legend()
+
+    # Add Ticker control consolidated into the Universe tab — see top of
+    # the ◈ Universe view. Removed from sidebar to avoid duplicate entry
+    # points and keep ticker-lifecycle actions next to the universe table
+    # they affect.
+
     # ── Sidebar Top Investable ────────────────────────────────────────────────
     st.sidebar.markdown("<hr style='margin: 16px 0'>", unsafe_allow_html=True)
     st.sidebar.markdown("### 🏆 Top Investable")
-    
+
     if not df.empty and "base_mos" in df.columns:
-        investable = df[pd.to_numeric(df["base_mos"], errors="coerce") > 0]
-        if not investable.empty:
-            top_5 = investable.sort_values(by=["conviction", "base_mos"], ascending=[False, False]).head(5)
-            
+        # Pending tickers have conviction=None, which becomes NaN in the
+        # DataFrame and breaks int() below. The "investable" ranking only
+        # makes sense for ready tickers (those with a full agent run); we
+        # filter to that cohort here.
+        candidates = df.copy()
+        if "agents_status" in candidates.columns:
+            candidates = candidates[candidates["agents_status"] == "ready"]
+        candidates = candidates[
+            pd.to_numeric(candidates.get("base_mos"), errors="coerce") > 0
+        ]
+        candidates = candidates[pd.notna(candidates.get("conviction"))]
+
+        if not candidates.empty:
+            top_5 = candidates.sort_values(
+                by=["conviction", "base_mos"], ascending=[False, False],
+            ).head(5)
+
             for _, row in top_5.iterrows():
+                conv_val = row.get("conviction")
+                conv_str = f"{int(conv_val):+d}" if pd.notna(conv_val) else "—"
+                mos_val = row.get("base_mos")
+                mos_str = f"{mos_val:+.1%}" if pd.notna(mos_val) else "—"
                 st.sidebar.markdown(f"""
                     <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
                         <span style="font-weight: 700; font-size: 14px; font-family: 'DM Mono', monospace;">{row['ticker']}</span>
-                        <span style="font-size: 12px; color: var(--text-color); opacity: 0.8;">Conv Score {int(row['conviction']):+d} • <span style="color: #059669; font-weight: 600;">{row['base_mos']:+.1%} MoS</span></span>
+                        <span style="font-size: 12px; color: var(--text-color); opacity: 0.8;">Conv Score {conv_str} • <span style="color: #059669; font-weight: 600;">{mos_str} MoS</span></span>
                     </div>
                 """, unsafe_allow_html=True)
-                
-            st.sidebar.caption(f"Showing top 5 of {len(investable)}/{len(df)} names with positive MoS")
+
+            n_ready = int((df.get("agents_status", pd.Series(dtype=str)) == "ready").sum()) \
+                      if "agents_status" in df.columns else len(df)
+            st.sidebar.caption(
+                f"Showing top 5 of {len(candidates)} positive-MoS names "
+                f"(of {n_ready} ready)"
+            )
         else:
-            st.sidebar.info("No companies currently offer a positive Margin of Safety.")
+            st.sidebar.info(
+                "No ready tickers currently offer a positive Margin of Safety."
+            )
 
     # ── Header ────────────────────────────────────────────────────────────────
+    n_ready   = sum(1 for s in status_by_ticker.values() if s == "ready")
+    n_pending = sum(1 for s in status_by_ticker.values() if s == "pending")
+    n_total   = len(available)
+
     hdr_col, btn_col = st.columns([4, 1])
     with hdr_col:
         st.markdown('<div class="aletheia-header">Aletheia</div>', unsafe_allow_html=True)
         st.markdown(
             f'<div class="aletheia-subtitle">'
-            f'Investment Intelligence · {len(available)} of {len(available)+len(missing)} Companies Ready'
-            f'</div>',
+            f'Investment Intelligence · {n_ready} of {n_total} agents ready'
+            + (f' · {n_pending} pending' if n_pending else '')
+            + '</div>',
             unsafe_allow_html=True,
         )
     with btn_col:
@@ -440,10 +632,17 @@ def main():
             unsafe_allow_html=True,
         )
 
-    if missing:
-        st.info(
-            f"Missing reports: {', '.join(missing)}. "
-            f"Run `python main.py --ticker {'|'.join(missing[:3])}` to generate."
+    # Soft hint (not an alert) when there are pending tickers — they show
+    # calc-layer numbers in the Universe tab and can be promoted to ready
+    # via the ▶ Run agents footer there.
+    pending_tickers = [t for t, s in status_by_ticker.items() if s == "pending"]
+    if pending_tickers:
+        st.caption(
+            f"⏳ {len(pending_tickers)} ticker(s) pending agent run — "
+            f"calc-layer numbers visible in **◈ Universe**, promote via "
+            f"the ▶ Run agents footer there. "
+            f"({', '.join(pending_tickers[:6])}"
+            f"{'…' if len(pending_tickers) > 6 else ''})"
         )
 
     st.markdown("---")
@@ -467,39 +666,85 @@ def main():
     st.session_state.active_view = active_view
 
     # ──────────────────────────────────────────────────────────────────────────
+    # TAB 0 — DASHBOARD (Phase 5: per-ticker analyst dashboard)
+    # ──────────────────────────────────────────────────────────────────────────
+    if active_view == "▷  Dashboard":
+        from aletheia.ui.dashboard import render_dashboard
+        render_dashboard(st.session_state.active_ticker)
+        return
+
+    # ──────────────────────────────────────────────────────────────────────────
     # TAB 1 — UNIVERSE
     # ──────────────────────────────────────────────────────────────────────────
     if active_view == "◈  Universe":
 
-        # Stats
+        # ── Status partitions ─────────────────────────────────────────────
+        ready_rows    = [r for r in ranked if r.get("agents_status") == "ready"]
+        pending_rows  = [r for r in ranked if r.get("agents_status") == "pending"]
+        notingst_rows = [r for r in ranked if r.get("agents_status") == "not_ingested"]
+        n_total = len(ranked)
+
+        # ── Stats strip — partition by status ─────────────────────────────
         c1, c2, c3, c4, c5 = st.columns(5)
         with c1:
-            st.metric("Tickers Available", len(ranked))
+            st.metric("Total in universe", n_total)
         with c2:
-            avg_mos = df["base_mos"].mean() if "base_mos" in df.columns else 0
-            st.metric("Avg Margin of Safety", f"{avg_mos:+.1%}")
+            st.metric("✓ Ready (agents run)", len(ready_rows))
         with c3:
-            avg_conv = df["conviction"].mean() if "conviction" in df.columns else 0
-            st.metric("Avg Conviction", f"{avg_conv:.1f}", delta="out of ±10")
+            st.metric("⏳ Pending agents", len(pending_rows),
+                      delta=f"{len(notingst_rows)} not ingested" if notingst_rows else None,
+                      delta_color="off")
         with c4:
-            n_pos_mos = (pd.to_numeric(df["base_mos"], errors="coerce") > 0).sum() if "base_mos" in df.columns else 0
-            st.metric("Positive MoS", int(n_pos_mos), delta="base IV > market price")
+            ready_mos = [r.get("base_mos") for r in ready_rows if r.get("base_mos") is not None]
+            avg_mos = sum(ready_mos) / len(ready_mos) if ready_mos else 0
+            st.metric("Avg MoS (ready)", f"{avg_mos:+.1%}")
         with c5:
-            n_underval = df["multiple_signal"].isin(["undervalued","fairly_valued"]).sum() if "multiple_signal" in df.columns else 0
-            st.metric("Attractive Multiple", int(n_underval), delta="below justified")
+            ready_conv = [r.get("conviction") for r in ready_rows if r.get("conviction") is not None]
+            avg_conv = sum(ready_conv) / len(ready_conv) if ready_conv else 0
+            st.metric("Avg conviction", f"{avg_conv:+.1f}", delta="out of ±10", delta_color="off")
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Ranked table
-        st.markdown("#### Universe Rankings")
+        # ── Add ticker bar ────────────────────────────────────────────────
+        with st.container(border=True):
+            ac1, ac2 = st.columns([4, 1])
+            with ac1:
+                new_ticker = st.text_input(
+                    "Add a new ticker",
+                    key="universe_add_ticker_input",
+                    placeholder="e.g. NFLX — pulls SEC filings, runs cleaning + DCF + validation",
+                    max_chars=10,
+                    label_visibility="collapsed",
+                )
+            with ac2:
+                add_clicked = st.button(
+                    "▶ Add ticker",
+                    key="universe_add_ticker_btn",
+                    use_container_width=True,
+                    disabled=not new_ticker,
+                )
+        if add_clicked and new_ticker:
+            _run_add_ticker_pipeline_ui(new_ticker)
+            fetch_universe.clear()
+            fetch_health.clear()
+            st.rerun()
+
+        # ── Ranked table ──────────────────────────────────────────────────
+        st.markdown(f"#### Universe rankings — {n_total} tickers")
 
         display_rows = []
         for r in ranked:
+            status = r.get("agents_status") or "ready"
+            status_icon = {"ready": "🟢", "pending": "🟡", "not_ingested": "⚪"}.get(status, "·")
             hist = r.get("historical_cagr")
             impl = r.get("implied_cagr")
             ratio = impl / hist if hist and hist > 0 and impl is not None else None
+            last_run = r.get("last_agent_run")
+            last_run_short = last_run[:10] if last_run else "—"
             display_rows.append({
+                "Status":    status_icon,
                 "Ticker":    r["ticker"],
+                "Last run":  last_run_short,
                 "Conv":      f"{int(r['conviction']):+d}" if r.get("conviction") is not None else "—",
                 "Base IV":   money(r.get("base_iv")),
                 "MoS":       pct(r.get("base_mos")),
@@ -513,76 +758,121 @@ def main():
                 "ROIC":      pct(r.get("roic")),
                 "Moat":      f"{r['moat']:.1f}" if r.get("moat") else "—",
                 "FCF":       bn(r.get("fcf_bn")),
+                "_status":   status,   # used for styling, hidden via column_config
             })
 
+        rankings_df = pd.DataFrame(display_rows)
+
+        # Style: pending/not_ingested rows render at reduced opacity so the
+        # ready cohort visually leads.
+        def _row_style(row: pd.Series) -> List[str]:
+            base = [""] * len(row)
+            if row.get("_status") in ("pending", "not_ingested"):
+                base = ["color: rgba(120,120,128,0.65)"] * len(row)
+            return base
+
+        styler = rankings_df.style.apply(_row_style, axis=1)
         st.dataframe(
-            pd.DataFrame(display_rows),
+            styler,
             use_container_width=True,
             hide_index=True,
+            column_config={
+                "_status": None,  # hide the helper column
+                "Status":  st.column_config.TextColumn("●", width="small",
+                                                      help="🟢 ready · 🟡 pending agents · ⚪ not ingested"),
+                "Last run": st.column_config.TextColumn("Last run", width="small"),
+            },
         )
+
+        # ── Run agents footer ─────────────────────────────────────────────
+        if pending_rows:
+            with st.container(border=True):
+                rc1, rc2 = st.columns([4, 1])
+                with rc1:
+                    pending_tickers = [r["ticker"] for r in pending_rows]
+                    selected_pending = st.selectbox(
+                        f"Run agents for one of {len(pending_tickers)} pending tickers",
+                        options=pending_tickers,
+                        key="universe_run_agents_select",
+                        help="Runs the LangGraph workflow (~2-3 min, costs LLM tokens). After completion the ticker promotes from ⏳ to ✓.",
+                    )
+                with rc2:
+                    run_clicked = st.button(
+                        "▶ Run agents",
+                        key="universe_run_agents_btn",
+                        use_container_width=True,
+                        type="primary",
+                    )
+                if run_clicked and selected_pending:
+                    _run_pipeline_subprocess(selected_pending)
+                    fetch_universe.clear()
+                    fetch_health.clear()
+                    st.rerun()
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        # Charts
-        ch1, ch2 = st.columns(2)
-        tickers = [r["ticker"] for r in ranked]
+        # ── Charts (ready tickers only — pending lacks the required inputs) ─
+        if ready_rows:
+            st.caption("Charts below show **ready tickers only** — pending tickers don't yet have the LLM-derived inputs (implied CAGR, justified multiple).")
+            ch1, ch2 = st.columns(2)
+            tickers = [r["ticker"] for r in ready_rows]
 
-        with ch1:
-            st.markdown("#### Implied vs Historical CAGR")
-            fig = go.Figure()
-            fig.add_bar(
-                name="Historical", x=tickers,
-                y=[r.get("historical_cagr") or 0 for r in ranked],
-                marker_color="#3b82f6", opacity=0.85,
-            )
-            fig.add_bar(
-                name="Implied (market)", x=tickers,
-                y=[r.get("implied_cagr") or 0 for r in ranked],
-                marker_color="#f59e0b", opacity=0.85,
-            )
-            layout = dict(CHART_LAYOUT)
-            layout.update(
-                barmode="group",
-                yaxis=dict(**CHART_LAYOUT.get("yaxis", {}), tickformat=".0%"),
-                legend=dict(orientation="h", y=1.1, font=dict(size=10)),
-                height=260,
-            )
-            fig.update_layout(**layout)
-            st.plotly_chart(fig, use_container_width=True)
+            with ch1:
+                st.markdown("#### Implied vs Historical CAGR")
+                fig = go.Figure()
+                fig.add_bar(
+                    name="Historical", x=tickers,
+                    y=[r.get("historical_cagr") or 0 for r in ready_rows],
+                    marker_color="#3b82f6", opacity=0.85,
+                )
+                fig.add_bar(
+                    name="Implied (market)", x=tickers,
+                    y=[r.get("implied_cagr") or 0 for r in ready_rows],
+                    marker_color="#f59e0b", opacity=0.85,
+                )
+                layout = dict(CHART_LAYOUT)
+                layout.update(
+                    barmode="group",
+                    yaxis=dict(**CHART_LAYOUT.get("yaxis", {}), tickformat=".0%"),
+                    legend=dict(orientation="h", y=1.1, font=dict(size=10)),
+                    height=260,
+                )
+                fig.update_layout(**layout)
+                st.plotly_chart(fig, use_container_width=True)
 
-        with ch2:
-            st.markdown("#### EV/EBITDA — Market vs Justified")
-            fig2 = go.Figure()
-            ev_vals   = [r.get("ev_ebitda") for r in ranked]
-            just_vals = [r.get("justified_ev_ebitda") for r in ranked]
-            fig2.add_scatter(
-                name="Market EV/EBITDA", x=tickers, y=ev_vals,
-                mode="markers+text",
-                marker=dict(size=14, color="#f59e0b", symbol="diamond"),
-                text=[f"{v:.1f}×" if v else "" for v in ev_vals],
-                textposition="top center", textfont=dict(size=10),
-            )
-            fig2.add_scatter(
-                name="Justified (Liberti)", x=tickers, y=just_vals,
-                mode="markers+text",
-                marker=dict(size=10, color="#10b981", symbol="circle"),
-                text=[f"{v:.1f}×" if v else "" for v in just_vals],
-                textposition="bottom center", textfont=dict(size=10),
-            )
-            for r in ranked:
-                if r.get("ev_ebitda") and r.get("justified_ev_ebitda"):
-                    fig2.add_shape(
-                        type="line",
-                        x0=r["ticker"], x1=r["ticker"],
-                        y0=r["justified_ev_ebitda"], y1=r["ev_ebitda"],
-                        line=dict(color="#27272a", width=1.5, dash="dot"),
-                    )
-            fig2.update_layout(
-                **CHART_LAYOUT,
-                legend=dict(orientation="h", y=1.1, font=dict(size=10)),
-                height=260,
-            )
-            st.plotly_chart(fig2, use_container_width=True)
+            with ch2:
+                st.markdown("#### EV/EBITDA — Market vs Justified")
+                fig2 = go.Figure()
+                ev_vals   = [r.get("ev_ebitda") for r in ready_rows]
+                just_vals = [r.get("justified_ev_ebitda") for r in ready_rows]
+                fig2.add_scatter(
+                    name="Market EV/EBITDA", x=tickers, y=ev_vals,
+                    mode="markers+text",
+                    marker=dict(size=14, color="#f59e0b", symbol="diamond"),
+                    text=[f"{v:.1f}×" if v else "" for v in ev_vals],
+                    textposition="top center", textfont=dict(size=10),
+                )
+                fig2.add_scatter(
+                    name="Justified (Liberti)", x=tickers, y=just_vals,
+                    mode="markers+text",
+                    marker=dict(size=10, color="#10b981", symbol="circle"),
+                    text=[f"{v:.1f}×" if v else "" for v in just_vals],
+                    textposition="bottom center", textfont=dict(size=10),
+                )
+                for r in ready_rows:
+                    if r.get("ev_ebitda") and r.get("justified_ev_ebitda"):
+                        fig2.add_shape(
+                            type="line",
+                            x0=r["ticker"], x1=r["ticker"],
+                            y0=r["justified_ev_ebitda"], y1=r["ev_ebitda"],
+                            line=dict(color="rgba(120,120,128,0.4)", width=1.5, dash="dot"),
+                        )
+                fig2.update_layout(
+                    **CHART_LAYOUT,
+                    legend=dict(orientation="h", y=1.1, font=dict(size=10)),
+                    height=260,
+                )
+                st.plotly_chart(fig2, use_container_width=True)
 
     # ──────────────────────────────────────────────────────────────────────────
     # TAB 2 — DEEP DIVE
@@ -594,295 +884,23 @@ def main():
             st.info("Select a ticker from the sidebar to begin analysis.")
             return
 
-        # Fetch all sections from API
         dcf_data  = fetch_dcf(selected)
         fund_data = fetch_fundamentals(selected)
-        narr_data = fetch_narrative(selected)
         full      = fetch_ticker(selected)
-
         if not dcf_data:
             return
 
-        er = full.get("1_economic_reality", {}) if full else {}
-        val4 = full.get("4_valuation_synthesis", {}) if full else {}
-        p2v = val4.get("phase2_valuation", {})
-
-        strategic_context = er.get("strategic_context", {})
-        contrarian_analysis = val4.get("contrarian_analysis", {})
-        adj = p2v.get("dcf_adjustments", {}) or {}
-        investment_thesis = val4.get("investment_thesis", {})
-        pillar_scores = investment_thesis.get("pillar_scores", {})
-
-        vc = er.get("value_chain", {}) or {}
-        moat = er.get("moat", {}) or {}
-
-        # Row from universe
+        # Universe row for ranking-derived signals (multiple_signal, value_creation, etc.)
         row = next((r for r in ranked if r["ticker"] == selected), {})
 
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        # Header
-        st.markdown(
-            f'<div style="font-family:Syne,sans-serif;font-size:36px;'
-            f'font-weight:800;letter-spacing:-1px;color:var(--text-color)">{selected}</div>',
-            unsafe_allow_html=True,
+        from aletheia.ui.deep_dive_view import render_deep_dive_view
+        render_deep_dive_view(
+            ticker=selected,
+            dcf=dcf_data,
+            fund=fund_data or {},
+            full_report=full or {},
+            universe_row=row,
         )
-
-        m1, m2, m3, m4 = st.columns(4)
-        conv = investment_thesis.get("conviction_score") if investment_thesis else None
-        m1.metric("Conviction", f"{int(conv):+d} / 10" if conv is not None else "—",
-                  delta=row.get("value_creation","").upper() or None)
-        m2.metric("Base IV", money(dcf_data["base"]["intrinsic_per_share"]) if dcf_data.get("base") else "—",
-                  delta=pct(dcf_data["base"]["margin_of_safety"]) if dcf_data.get("base") else None)
-        m3.metric("ROIC", pct(fund_data.get("roic")) if fund_data else "—",
-                  delta=f"WACC {pct(dcf_data.get('wacc'))}")
-        m4.metric("Multiple Signal", SIGNAL_LABEL.get(row.get("multiple_signal",""), "—"),
-                  delta=f"{row.get('ev_ebitda',0):.1f}× vs {row.get('justified_ev_ebitda',0):.1f}× justified"
-                  if row.get("ev_ebitda") else None, delta_color="inverse")
-
-        st.markdown("---")
-
-        if pillar_scores:
-            p_cols = st.columns(5)
-            pillars = [
-                ("Moat", pillar_scores.get("p1_moat", 0)),
-                ("Health", pillar_scores.get("p2_health", 0)),
-                ("Tailwind", pillar_scores.get("p3_tailwind", 0)),
-                ("MoS", pillar_scores.get("p4_mos", 0)),
-                ("Leadership", pillar_scores.get("p5_leadership", 0)),
-            ]
-            for i, (name, score) in enumerate(pillars):
-                with p_cols[i]:
-                    sc_val = int(score) if score is not None else 0
-                    sc_color = "#10b981" if sc_val > 3 else "#f59e0b" if sc_val > 1 else "#ef4444"
-                    st.markdown(
-                        f'<div style="text-align:center;font-family:DM Mono,monospace;font-size:11px;color:#71717a;margin-bottom:4px">{name}</div>'
-                        f'<div style="text-align:center;font-weight:700;font-size:18px;color:{sc_color}">{sc_val}</div>',
-                        unsafe_allow_html=True
-                    )
-            st.markdown("<br>", unsafe_allow_html=True)
-
-        left, right = st.columns([1, 1.6])
-
-        with left:
-            st.markdown("##### 3-Scenario DCF")
-            scenarios = [
-                ("BEAR", dcf_data.get("bear", {}), "#ef4444"),
-                ("BASE", dcf_data.get("base", {}), "#f59e0b"),
-                ("BULL", dcf_data.get("bull", {}), "#10b981"),
-            ]
-            # `dict.get(k, default)` only returns default when k is absent —
-            # if the saved report stores `intrinsic_per_share: null` (which
-            # pre-Phase-B reports do), .get returns None and breaks max().
-            # Coerce None -> 0 explicitly.
-            max_iv = max(
-                ((s.get("intrinsic_per_share") or 0) for _, s, _ in scenarios if s),
-                default=1,
-            ) * 1.1 or 1
-
-            for name, scenario, color in scenarios:
-                if scenario:
-                    iv = scenario.get("intrinsic_per_share", 0) or 0
-                    pct_width = min(iv / max_iv * 100, 100)
-                    mos_val = scenario.get("margin_of_safety")
-                    mos_str = f" ({mos_val:+.1%})" if mos_val else ""
-                    st.markdown(
-                        f'<div style="display:flex;justify-content:space-between;'
-                        f'font-family:DM Mono,monospace;font-size:11px;margin-bottom:3px">'
-                        f'<span style="color:{color}">{name}</span>'
-                        f'<span style="color:#fafafa">${iv:,.0f}{mos_str}</span></div>'
-                        f'<div style="background:#27272a;border-radius:3px;height:6px;margin-bottom:10px">'
-                        f'<div style="width:{pct_width:.1f}%;height:100%;background:{color};border-radius:3px"></div></div>',
-                        unsafe_allow_html=True,
-                    )
-
-            st.markdown("<br>", unsafe_allow_html=True)
-
-            # Moat
-            moat_score = moat.get("score") or row.get("moat")
-            moat_color = "#f59e0b" if moat_score and moat_score >= 9 else "#10b981" if moat_score and moat_score >= 7 else "#ef4444"
-            st.markdown("##### Moat")
-            st.markdown(
-                f'<div style="text-align:center;padding:8px 0">'
-                f'<div style="font-family:Syne,sans-serif;font-size:52px;'
-                f'font-weight:800;color:{moat_color};line-height:1">'
-                f'{moat_score:.1f}</div>'
-                f'<div style="font-family:DM Mono,monospace;font-size:10px;'
-                f'color:#71717a;margin-top:4px">/ 10  ·  {row.get("value_creation","").upper()}</div>'
-                f'</div>',
-                unsafe_allow_html=True,
-            )
-            
-            # Moat Breakdown
-            ca = "✅" if moat.get("cost_advantage") else "❌"
-            nt = "✅" if moat.get("network_effects") else "❌"
-            sw = "✅" if moat.get("switching_costs") else "❌"
-            it = "✅" if moat.get("intangibles") else "❌"
-            
-            st.markdown(
-                f'<div style="display:flex;justify-content:space-between;font-family:DM Mono,monospace;font-size:11px;margin-top:8px">'
-                f'<span>Cost Adv: {ca}</span><span>Network: {nt}</span>'
-                f'<span>Switching: {sw}</span><span>Intangible: {it}</span></div>',
-                unsafe_allow_html=True
-            )
-            if moat.get("evidence"):
-                st.markdown(f'<div style="font-size:11px;color:#a1a1aa;margin-top:12px;line-height:1.4"><i>"{moat.get("evidence")}"</i></div>', unsafe_allow_html=True)
-
-            # ROIC vs WACC
-            r_roic = fund_data.get("roic") or row.get("roic") or 0
-            r_wacc = dcf_data.get("wacc") or row.get("wacc") or 0.09
-            spread = r_roic - r_wacc
-            st.markdown(
-                f'<div style="font-family:DM Mono,monospace;font-size:11px;'
-                f'display:flex;flex-direction:column;gap:6px;margin-top:16px">'
-                f'<div style="display:flex;justify-content:space-between">'
-                f'<span style="color:#71717a">ROIC</span>'
-                f'<span style="color:#10b981">{r_roic*100:.1f}%</span></div>'
-                f'<div style="display:flex;justify-content:space-between">'
-                f'<span style="color:#71717a">WACC</span>'
-                f'<span style="color:#fafafa">{r_wacc*100:.1f}%</span></div>'
-                f'<div style="display:flex;justify-content:space-between;'
-                f'border-top:1px solid #27272a;padding-top:6px">'
-                f'<span style="color:#71717a">Spread</span>'
-                f'<span style="color:{"#10b981" if spread > 0 else "#ef4444"}">'
-                f'{spread*100:+.1f}pp</span></div></div>',
-                unsafe_allow_html=True,
-            )
-
-            # Value chain
-            st.markdown("<br>", unsafe_allow_html=True)
-            st.markdown("##### Value Chain (Porter)")
-            st.markdown(
-                f'<div style="font-family:DM Mono,monospace;font-size:11px;'
-                f'display:flex;flex-direction:column;gap:5px">'
-                + (f'<div style="display:flex;justify-content:space-between">'
-                   f'<span style="color:#71717a">Strategic Leverage</span>'
-                   f'<span>{vc.get("strategic_leverage","—")}</span></div>' if vc.get("strategic_leverage") else "")
-                + (f'<div style="display:flex;justify-content:space-between">'
-                   f'<span style="color:#71717a">Power Ratio</span>'
-                   f'<span>{vc.get("power_ratio","—")}</span></div>' if vc.get("power_ratio") is not None else "")
-                + (f'<div style="display:flex;justify-content:space-between">'
-                   f'<span style="color:#71717a">Upstream Leak</span>'
-                   f'<span style="color:{"#ef4444" if vc.get("upstream_leak") else "#10b981"}">'
-                   f'{"YES ⚠" if vc.get("upstream_leak") else "NO ✓"}</span></div>' if vc else "")
-                + '</div>',
-                unsafe_allow_html=True,
-            )
-            
-            # Strategic Context
-            if strategic_context:
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown("##### Strategic Context")
-                sc = strategic_context
-                
-                rev_at_risk = sc.get("revenue_at_risk_percent")
-                rev_at_risk_str = f"{rev_at_risk*100:.1f}%" if rev_at_risk is not None else "N/A"
-                q_risk = sc.get("quality_of_growth_risk", False)
-                def_rev = sc.get("deferred_revenue_trend", "N/A")
-                t_haircut = sc.get("terminal_haircut", False)
-                
-                st.markdown(
-                    f'<div style="font-family:DM Mono,monospace;font-size:11px;display:flex;flex-direction:column;gap:5px">'
-                    f'<div style="display:flex;justify-content:space-between"><span style="color:#71717a">Rev at Risk</span><span>{rev_at_risk_str}</span></div>'
-                    f'<div style="display:flex;justify-content:space-between"><span style="color:#71717a">Quality Risk</span><span style="color:{"#ef4444" if q_risk else "#10b981"}">{q_risk}</span></div>'
-                    f'<div style="display:flex;justify-content:space-between"><span style="color:#71717a">Def Rev Trend</span><span>{def_rev}</span></div>'
-                    f'<div style="display:flex;justify-content:space-between"><span style="color:#71717a">Terminal Haircut</span><span>{t_haircut}</span></div>'
-                    f'</div>',
-                    unsafe_allow_html=True
-                )
-                if sc.get("summary"):
-                    st.markdown(f'<div style="font-size:11px;color:#a1a1aa;margin-top:12px;line-height:1.4"><i>"{sc.get("summary")}"</i></div>', unsafe_allow_html=True)
-
-
-        with right:
-            # Fundamentals
-            st.markdown("##### Fundamentals — Phase 1 Cleaned")
-            if fund_data:
-                fm1, fm2, fm3, fm4 = st.columns(4)
-                fm1.metric("Revenue", bn(fund_data.get("revenue_bn")))
-                fm2.metric("EBITDA",  bn(fund_data.get("ebitda_bn")))
-                fm3.metric("FCF",     bn(fund_data.get("fcf_bn")))
-                fm4.metric("FCF Margin", pct(fund_data.get("fcf_margin"), 1) if fund_data.get("fcf_margin") else "—")
-
-            st.markdown("<br>", unsafe_allow_html=True)
-
-            # Reverse DCF chart
-            st.markdown("##### Reverse DCF — Growth Priced In")
-            rdcf = dcf_data.get("reverse_dcf") or {}
-            impl  = rdcf.get("implied_cagr_10y") or 0
-            hist  = rdcf.get("historical_cagr") or 0
-
-            fig_cagr = go.Figure()
-            fig_cagr.add_bar(
-                x=["Historical CAGR", "Market Implied CAGR"],
-                y=[hist, impl],
-                marker_color=["#3b82f6", "#f59e0b"],
-                text=[f"{hist:.1%}", f"{impl:.1%}"],
-                textposition="outside", textfont=dict(size=11),
-            )
-            layout_cagr = dict(CHART_LAYOUT)
-            layout_cagr.update(
-                showlegend=False,
-                yaxis=dict(**CHART_LAYOUT.get("yaxis", {}), tickformat=".0%"),
-                height=200,
-            )
-            fig_cagr.update_layout(**layout_cagr)
-            st.plotly_chart(fig_cagr, use_container_width=True)
-
-            rdcf_sig = rdcf.get("signal", "")
-            ratio_str = f"{impl/hist:.1f}×" if hist and hist > 0 else "N/A"
-            st.markdown(
-                f'<div style="background:#111113;border:1px solid #27272a;border-radius:6px;'
-                f'padding:12px;font-family:DM Mono,monospace;font-size:11px;color:#a1a1aa;margin-top:-8px">'
-                f'Market implies <span style="color:#f59e0b">{impl:.1%}</span> CAGR vs '
-                f'historical <span style="color:#3b82f6">{hist:.1%}</span> → '
-                f'<span style="color:{"#ef4444" if hist > 0 and impl/hist > 2 else "#f59e0b" if hist > 0 and impl/hist > 1.3 else "#10b981"}">'
-                f'{ratio_str} historical</span>. '
-                + signal_html(rdcf_sig, small=True) + '</div>',
-                unsafe_allow_html=True,
-            )
-
-            # DCF Adjustments
-            if adj:
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown("##### DCF Overrides & Adjustments")
-                adj_html = '<div style="background:#111113;border:1px solid #27272a;border-radius:6px;padding:12px;font-family:DM Mono,monospace;font-size:11px;display:flex;flex-direction:column;gap:6px">'
-                for k, v in adj.items():
-                    if k != "rules" and v is not None:
-                        # format value nicely
-                        disp_v = f"{v:.4f}" if isinstance(v, float) and v < 1 and v > -1 else f"{v}"
-                        adj_html += f'<div style="display:flex;justify-content:space-between"><span style="color:#71717a">{k}</span><span style="color:#fafafa">{disp_v}</span></div>'
-                adj_html += '</div>'
-                st.markdown(adj_html, unsafe_allow_html=True)
-
-            st.markdown("<br>", unsafe_allow_html=True)
-
-            # Narrative
-            narrative = investment_thesis.get("narrative") if investment_thesis else None
-            if narrative:
-                st.markdown("##### Lead Agent Investment Thesis")
-                st.markdown(
-                    f'<div style="background:#111113;border:1px solid #27272a;'
-                    f'border-radius:8px;padding:16px;font-size:13px;'
-                    f'color:#a1a1aa;line-height:1.7">{narrative}</div>',
-                    unsafe_allow_html=True,
-                )
-
-            # Contrarian View
-            if contrarian_analysis:
-                st.markdown("<br>", unsafe_allow_html=True)
-                st.markdown("##### Contrarian Bear Case")
-                ca = contrarian_analysis
-                st.markdown(
-                    f'<div style="background:rgba(239, 68, 68, 0.05);border:1px solid rgba(239, 68, 68, 0.2);'
-                    f'border-radius:8px;padding:16px;font-size:12px;'
-                    f'color:#fca5a5;line-height:1.6">'
-                    f'<div style="margin-bottom:8px"><b>Bias Detected:</b> {ca.get("bias_detected", "None")}</div>'
-                    f'<div><b>Bear Case:</b> {ca.get("bear_case_summary", "")}</div>'
-                    f'</div>',
-                    unsafe_allow_html=True,
-                )
-
 
     # ──────────────────────────────────────────────────────────────────────────
     # TAB 3 — FINANCIALS (deterministic detail dump from DB + DCFEngine)
@@ -899,265 +917,8 @@ def main():
             st.error(bundle.get("error") if bundle else "Failed to load financials.")
             return
 
-        ident = bundle["identity"]
-        inc   = bundle["income_statement"]
-        bs    = bundle["balance_sheet"]
-        ret   = bundle["returns_capital"]
-        leases = bundle["lease_items"]
-
-        def _bn(v, dp=2):
-            if v is None: return "—"
-            return f"${v/1e9:,.{dp}f}B"
-
-        def _pct(v, dp=1):
-            if v is None: return "—"
-            return f"{v:.{dp}f}%" if abs(v) > 1.0 else f"{v*100:.{dp}f}%"
-
-        def _num(v, dp=2):
-            if v is None: return "—"
-            return f"{v:,.{dp}f}"
-
-        # ── Identity bar ────────────────────────────────────────────────────
-        c1, c2, c3, c4 = st.columns(4)
-        c1.metric("Ticker", ident["ticker"])
-        c2.metric("Latest FY", f"FY{ident['fiscal_year']}")
-        c3.metric("Quality", _num(ident['quality_score']) if ident['quality_score'] else "—")
-        c4.metric("Errors / Warnings", f"{ident['error_count']} / {ident['warning_count']}")
-
-        if ident["warnings"]:
-            with st.expander(f"⚠ {len(ident['warnings'])} warnings"):
-                for w in ident["warnings"]:
-                    st.markdown(f"- {w}")
-        if ident["errors"]:
-            with st.expander(f"❌ {len(ident['errors'])} errors", expanded=True):
-                for e in ident["errors"]:
-                    st.markdown(f"- {e}")
-        if bundle.get("bypass"):
-            st.warning(f"DCF not run: {bundle['bypass']}")
-
-        st.markdown("---")
-
-        # ── Income statement + balance sheet (side-by-side) ─────────────────
-        ls, rs = st.columns(2)
-        with ls:
-            st.markdown(f"#### Income Statement — FY{ident['fiscal_year']}")
-            inc_rows = [
-                ("Revenue",          _bn(inc["Revenue"])),
-                ("COGS",             _bn(inc["COGS"])),
-                ("Gross Margin",     _pct(inc["GrossMargin_Pct"])),
-                ("R&D",              _bn(inc["RnD"])),
-                ("SG&A",             _bn(inc["SGnA"])),
-                ("Operating Income", _bn(inc["OperatingIncome"])),
-                ("EBIT Margin",      _pct(inc["EBIT_Margin_Pct"])),
-                ("EBITDA",           _bn(inc["EBITDA"])),
-                ("EBITDA Margin",    _pct(inc["EBITDA_Margin_Pct"])),
-                ("D&A",              _bn(inc["DepreciationAmortization"])),
-                ("NOPAT",            _bn(inc["NOPAT"])),
-                ("Net Income",       _bn(inc["NetIncome"])),
-                ("Diluted EPS",      f"${_num(inc['DilutedEPS'])}" if inc["DilutedEPS"] else "—"),
-                ("OperatingCF",      _bn(inc["OperatingCF"])),
-                ("InvestingCF",      _bn(inc["InvestingCF"])),
-                ("FinancingCF",      _bn(inc["FinancingCF"])),
-                ("FCF",              _bn(inc["FCF"])),
-                ("FCFF",             _bn(inc["FCFF"])),
-                ("FCF Margin",       _pct(inc["FCF_Margin_Pct"])),
-                ("CapEx",            _bn(inc["CapEx"])),
-                ("Maintenance CapEx", _bn(inc["MaintenanceCapEx"])),
-                ("Growth CapEx",     _bn(inc["GrowthCapEx"])),
-            ]
-            st.dataframe(pd.DataFrame(inc_rows, columns=["Metric", "Value"]),
-                         hide_index=True, use_container_width=True)
-
-        with rs:
-            st.markdown(f"#### Balance Sheet — FY{ident['fiscal_year']}")
-            bs_rows = [
-                ("Total Assets",        _bn(bs["TotalAssets"])),
-                ("Cash",                _bn(bs["Cash"])),
-                ("Short-term Invest.",  _bn(bs["ShortTermInvestments"])),
-                ("AR",                  _bn(bs["AccountsReceivable"])),
-                ("Inventory",           _bn(bs["Inventory"])),
-                ("PPE (net)",           _bn(bs["PPE_Net"])),
-                ("PPE (gross)",         _bn(bs["PPE_Gross"])),
-                ("Accum. Depreciation", _bn(bs["AccumulatedDepreciation"])),
-                ("Total Liabilities",   _bn(bs["TotalLiabilities"])),
-                ("Current Liabilities", _bn(bs["LiabilitiesCurrent"])),
-                ("Short-term Debt",     _bn(bs["ShortTermDebt"])),
-                ("Long-term Debt",      _bn(bs["LongTermDebt"])),
-                ("AP",                  _bn(bs["AccountsPayable"])),
-                ("Total Equity",        _bn(bs["TotalEquity"])),
-                ("NWC",                 _bn(bs["NWC"])),
-                ("Net Debt",            _bn(bs["NetDebt"])),
-            ]
-            st.dataframe(pd.DataFrame(bs_rows, columns=["Metric", "Value"]),
-                         hide_index=True, use_container_width=True)
-
-        st.markdown("---")
-
-        # ── Returns / capital + lease items ────────────────────────────────
-        ls2, rs2 = st.columns(2)
-        with ls2:
-            st.markdown("#### Returns & Capital Structure")
-            ret_rows = [
-                ("ROIC",            _pct(ret["ROIC"])),
-                ("ROE",             _pct(ret["ROE"])),
-                ("Invested Capital", _bn(ret["InvestedCapital"])),
-                ("Diluted Shares",   _bn(ret["SharesDiluted"], dp=3) if ret["SharesDiluted"] else "—"),
-                ("Basic Shares",     _bn(ret["SharesBasic"], dp=3) if ret["SharesBasic"] else "—"),
-                ("Outstanding",      _bn(ret["SharesOutstanding"], dp=3) if ret["SharesOutstanding"] else "—"),
-                ("Buybacks",        _bn(ret["Buybacks"])),
-                ("SBC",             _bn(ret["SBC"])),
-                ("Net Buyback after SBC", _bn(ret["NetBuyback_AfterSBC"])),
-                ("SBC % of FCF",    _pct(ret["SBC_PctFCF"])),
-                ("Dilution %",      _pct(ret["DilutionPct"])),
-                ("Dividends Paid",  _bn(ret["DividendsPaid"])),
-            ]
-            st.dataframe(pd.DataFrame(ret_rows, columns=["Metric", "Value"]),
-                         hide_index=True, use_container_width=True)
-
-        with rs2:
-            st.markdown("#### Lease Items")
-            lease_rows = [
-                ("ROU Asset (Operating)", _bn(leases["ROUAsset_Operating"])),
-                ("ROU Asset (Finance)",   _bn(leases["ROUAsset_Finance"])),
-                ("Lease Liab Operating",  _bn(leases["LeaseLiability_Operating_Total"])),
-                ("Lease Liab Finance",    _bn(leases["LeaseLiability_Finance_Total"])),
-                ("Lease Cost",            _bn(leases["LeaseCost"])),
-            ]
-            st.dataframe(pd.DataFrame(lease_rows, columns=["Metric", "Value"]),
-                         hide_index=True, use_container_width=True)
-
-        st.markdown("---")
-
-        # ── Fiscal-year history ────────────────────────────────────────────
-        st.markdown("#### Fiscal-Year History")
-        hist = bundle["fiscal_history"]
-        if hist:
-            hist_df = pd.DataFrame([{
-                "FY":         r["fiscal_year"],
-                "Revenue ($B)":  (r["Revenue"]/1e9 if r["Revenue"] else None),
-                "EBITDA ($B)":   (r["EBITDA"]/1e9 if r["EBITDA"] else None),
-                "Net Income ($B)": (r["NetIncome"]/1e9 if r["NetIncome"] else None),
-                "CapEx ($B)":    (r["CapEx"]/1e9 if r["CapEx"] else None),
-                "FCF ($B)":      (r["FCF"]/1e9 if r["FCF"] else None),
-                "ROIC (%)":      (r["ROIC"]*100 if r["ROIC"] else None),
-                "Quality":       r["QualityScore"],
-            } for r in hist])
-            st.dataframe(
-                hist_df.style.format({
-                    "Revenue ($B)": "{:,.2f}", "EBITDA ($B)": "{:,.2f}",
-                    "Net Income ($B)": "{:,.2f}", "CapEx ($B)": "{:,.2f}",
-                    "FCF ($B)": "{:,.2f}", "ROIC (%)": "{:.1f}", "Quality": "{:.2f}",
-                }, na_rep="—"),
-                hide_index=True, use_container_width=True
-            )
-
-        # ── DCF section (only if we ran) ────────────────────────────────────
-        if bundle["dcf_inputs"]:
-            st.markdown("---")
-            st.markdown("#### DCF Analysis")
-
-            ls3, rs3 = st.columns([1, 1])
-            with ls3:
-                st.markdown("##### Inputs")
-                dcfi = bundle["dcf_inputs"]
-                inp_rows = [
-                    ("Current Price",   f"${_num(dcfi['current_price'])}"),
-                    ("Market Cap",      _bn(dcfi["market_cap"])),
-                    ("Diluted Shares",  _bn(dcfi["shares_diluted"], dp=3) if dcfi["shares_diluted"] else "—"),
-                    ("Risk-free Rate",  _pct(dcfi["risk_free_rate"])),
-                    ("Beta",            _num(dcfi["beta"])),
-                    ("WACC (base)",     _pct(dcfi["wacc_base"])),
-                    ("Tax Rate",        _pct(dcfi["tax_rate"])),
-                ]
-                st.dataframe(pd.DataFrame(inp_rows, columns=["Metric", "Value"]),
-                             hide_index=True, use_container_width=True)
-
-            with rs3:
-                st.markdown("##### Scenarios")
-                scens = bundle["dcf_scenarios"]
-                scen_rows = []
-                for name in ("bull", "base", "bear"):
-                    s = scens.get(name) or {}
-                    if s:
-                        scen_rows.append({
-                            "Scenario":     s["name"],
-                            "EV ($B)":      (s["EV"]/1e9 if s["EV"] else None),
-                            "IPS":          s["IPS"],
-                            "Upside (%)":   s["Upside_Pct"],
-                            "WACC (%)":     (s["WACC"]*100 if s["WACC"] else None),
-                            "g_term (%)":   (s["TerminalGrowth"]*100 if s["TerminalGrowth"] else None),
-                            "TV%EV":        (s["TV_Pct_EV"]*100 if s["TV_Pct_EV"] else None),
-                            "EV/EBITDA":    s["ImpliedEV_EBITDA"],
-                        })
-                if scen_rows:
-                    st.dataframe(
-                        pd.DataFrame(scen_rows).style.format({
-                            "EV ($B)": "{:,.0f}", "IPS": "${:,.2f}",
-                            "Upside (%)": "{:+.1f}%", "WACC (%)": "{:.2f}",
-                            "g_term (%)": "{:.2f}", "TV%EV": "{:.1f}",
-                            "EV/EBITDA": "{:.1f}x",
-                        }, na_rep="—"),
-                        hide_index=True, use_container_width=True
-                    )
-
-            # Projections
-            projs = bundle["projections"]
-            if projs:
-                st.markdown("##### Base-case Projections")
-                proj_df = pd.DataFrame([{
-                    "Yr": p["year"], "FY": p["fiscal_year"],
-                    "Revenue ($B)": p["revenue"]/1e9 if p["revenue"] else None,
-                    "EBIT ($B)":    p["ebit"]/1e9 if p["ebit"] else None,
-                    "NOPAT ($B)":   p["nopat"]/1e9 if p["nopat"] else None,
-                    "CapEx ($B)":   p["capex"]/1e9 if p["capex"] else None,
-                    "FCFF ($B)":    p["fcff"]/1e9 if p["fcff"] else None,
-                    "PV(FCFF) ($B)": p["pv_fcff"]/1e9 if p["pv_fcff"] else None,
-                } for p in projs])
-                st.dataframe(
-                    proj_df.style.format({
-                        "Revenue ($B)": "{:,.1f}", "EBIT ($B)": "{:,.1f}",
-                        "NOPAT ($B)": "{:,.1f}", "CapEx ($B)": "{:,.1f}",
-                        "FCFF ($B)": "{:,.1f}", "PV(FCFF) ($B)": "{:,.1f}",
-                    }, na_rep="—"),
-                    hide_index=True, use_container_width=True
-                )
-
-            ls4, rs4 = st.columns(2)
-            with ls4:
-                st.markdown("##### Terminal Value (Base)")
-                tv = bundle["terminal_value"]
-                tv_rows = [
-                    ("Gordon TV",            _bn(tv.get("gordon_tv"), dp=0)),
-                    ("Reinvestment TV",      _bn(tv.get("reinvestment_tv"), dp=0)),
-                    ("TV used",              _bn(tv.get("tv_used"), dp=0)),
-                    ("PV of TV",             _bn(tv.get("pv_tv"), dp=0)),
-                    ("TV % of EV",           _pct(tv.get("tv_pct_of_ev"))),
-                    ("Implied Terminal EV/EBITDA", f"{tv.get('implied_tv_ebitda_multiple', 0):.1f}x" if tv.get("implied_tv_ebitda_multiple") else "—"),
-                ]
-                st.dataframe(pd.DataFrame(tv_rows, columns=["Metric", "Value"]),
-                             hide_index=True, use_container_width=True)
-
-            with rs4:
-                st.markdown("##### Base Assumptions")
-                a = bundle["assumptions"]
-                a_rows = [
-                    ("CAGR Y1-5",         _pct(a.get("revenue_cagr_y1_5"))),
-                    ("CAGR Y6-10",        _pct(a.get("revenue_cagr_y6_10"))),
-                    ("EBIT margin start", _pct(a.get("ebit_margin_current"))),
-                    ("EBIT margin term.", _pct(a.get("ebit_margin_terminal"))),
-                    ("CapEx % revenue",   _pct(a.get("capex_pct_revenue"))),
-                    ("D&A % revenue",     _pct(a.get("da_pct_revenue"))),
-                    ("NWC % revenue",     _pct(a.get("nwc_pct_revenue"))),
-                    ("Tax rate",          _pct(a.get("tax_rate"))),
-                    ("WACC",              _pct(a.get("wacc"))),
-                    ("Terminal growth",   _pct(a.get("terminal_growth"))),
-                    ("Terminal ROIC",     _pct(a.get("terminal_roic"))),
-                    ("Base ROIC",         _pct(a.get("base_roic"))),
-                ]
-                st.dataframe(pd.DataFrame(a_rows, columns=["Metric", "Value"]),
-                             hide_index=True, use_container_width=True)
-                if a.get("justification"):
-                    st.caption(a["justification"])
+        from aletheia.ui.financials_view import render_financials_view
+        render_financials_view(selected, bundle)
 
     # ──────────────────────────────────────────────────────────────────────────
     # TAB 4 — SCENARIOS (typed agent-proposed scenarios with full provenance)
@@ -1394,21 +1155,23 @@ def main():
                     "—": "#6c757d", # Grey (N/A)
                 }
 
+                from aletheia.ui.validation_badge import status_marker
                 for cat, metrics in by_cat.items():
                     st.markdown(f"**{cat}**")
                     for m in metrics:
                         sig = m["signal"]
                         dot = {"✓": "🟢", "⚠": "🟡", "✗": "🔴", "—": "⚪"}.get(sig, "⚪")
                         grade_color = SIGNAL_COLORS.get(sig, "#6c757d")
-                        
+
                         disp_val = m.get("display_value", f"{m['value']:.2f}" if m["value"] is not None else "N/A")
                         note_html = f"<div style='font-size:11px; color:#6c757d; font-style:italic; margin-top:2px'>← {m.get('note', '')}</div>" if m.get("note") else ""
-                        
+                        validation_mark = status_marker(screen_ticker, m["name"])
+
                         st.markdown(f"""
                             <div style='margin-bottom:8px; padding-bottom:6px; border-bottom:1px solid #1c1c1f'>
                                 <div style='display:flex; justify-content:space-between; align-items:baseline'>
                                     <span>
-                                        {dot} <span style='font-size:13px; font-weight:500; margin-left:4px'>{m["name"]}</span>
+                                        {dot} <span style='font-size:13px; font-weight:500; margin-left:4px'>{m["name"]}<span style='color:#10b981; font-weight:700; margin-left:3px' title='Externally validated'>{validation_mark}</span></span>
                                         <span style='font-family:DM Mono,monospace; font-size:10px; color:#52525b; margin-left:8px'>[{m["authority"]}]</span>
                                     </span>
                                     <span style='font-family:DM Mono,monospace; font-size:15px; font-weight:700; color:{grade_color}'>{disp_val}</span>
@@ -1658,6 +1421,10 @@ def main():
             st.markdown(f"#### {report_ticker} Executive Report")
             html_content = html_bytes.decode("utf-8")
             st.components.v1.html(html_content, height=900, scrolling=True)
+
+    elif active_view == "◊  Quality Report":
+        from aletheia.ui.quality_report import render_quality_report
+        render_quality_report(st.session_state.active_ticker)
 
 
 if __name__ == "__main__":

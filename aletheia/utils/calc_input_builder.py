@@ -15,7 +15,10 @@ import pandas as pd
 from aletheia.contracts.interfaces import CalculationInput, ValuationProfile
 from config.ticker_classification import UNIVERSE
 from config.known_issues import KNOWN_ISSUES
-from config.valuation_defaults import LIFECYCLE_PROFILES
+from config.valuation_defaults import (
+    LIFECYCLE_PROFILES,
+    TERMINAL_GROWTH_CAP_BY_LIFECYCLE,
+)
 from config.lifecycle_thresholds import STAGE_THRESHOLDS, Stage
 
 
@@ -37,11 +40,15 @@ def make_calc_input(ticker: str, df: Optional[pd.DataFrame] = None) -> Calculati
     issues = KNOWN_ISSUES.get(ticker, [])
     lifecycle = classification.lifecycle or "mature"
     profile_cfg = LIFECYCLE_PROFILES.get(lifecycle, LIFECYCLE_PROFILES["mature"])
+    # Terminal growth cap is per-lifecycle (sub-profile differentiation).
+    # Software/cloud gets 5.5%, pharma 5%, consumer 4%, mature 3.5%.
+    tg_cap = TERMINAL_GROWTH_CAP_BY_LIFECYCLE.get(lifecycle, 0.04)
     vp = ValuationProfile(
         growth_rate=profile_cfg.growth_rate,
         terminal_growth=profile_cfg.terminal_growth,
         forecast_years=profile_cfg.forecast_years,
         terminal_margin_decay=profile_cfg.terminal_margin_decay,
+        terminal_growth_cap=tg_cap,
     )
 
     try:

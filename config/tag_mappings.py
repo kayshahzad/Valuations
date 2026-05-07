@@ -123,6 +123,17 @@ FIELD_MAPPINGS = {
         ],
     },
 
+    "Marketing": {
+        # Standalone marketing line. AMZN files MarketingExpense (not under
+        # SellingAndMarketingExpense); V files MarketingAndAdvertisingExpense.
+        # Used by the derived SGA_Combined field for cross-ticker comparability.
+        "default": [
+            "MarketingExpense",
+            "MarketingAndAdvertisingExpense",
+            "AdvertisingExpense",
+        ],
+    },
+
     "R&D": {
         # Standard GAAP R&D first; "Excluding IPR&D" only as fallback for filers
         # that don't report the standard tag (LLY).
@@ -394,9 +405,14 @@ FIELD_MAPPINGS = {
 
     "PPE": {
         # Property, plant, equipment - net of accumulated depreciation.
+        # GOOGL switched to a combined PPE-and-finance-lease tag starting FY2025.
+        # The combined tag is functionally PPE+FinanceLeaseROU (gross of operating
+        # lease ROU); slightly higher than pure PPE-only but the closest available
+        # representation when the filer doesn't file PropertyPlantAndEquipmentNet.
         "default": [
             "PropertyPlantAndEquipmentNet",
             "PropertyPlantAndEquipmentNetExcludingProperties",
+            "PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization",
         ],
     },
 
@@ -450,24 +466,36 @@ FIELD_MAPPINGS = {
     },
 
     "LongTermDebt": {
+        # Noncurrent long-term debt obligations. Most filers report
+        # `LongTermDebtNoncurrent`; convertible-note issuers (SMCI: $4.6B FY2025)
+        # may report ONLY `ConvertibleLongTermNotesPayable` with no
+        # LongTermDebtNoncurrent at all — without this fallback, NetDebt drops
+        # the convertibles entirely. Edge case: a filer with both senior notes
+        # AND convertible notes filed under separate tags would miss the
+        # convertibles here (resolver picks LongTermDebtNoncurrent first); not
+        # present in current 25-ticker universe.
         "default": [
             "LongTermDebtNoncurrent",
             "LongTermDebt",
             "LongTermDebtAndCapitalLeaseObligations",
+            "ConvertibleLongTermNotesPayable",
         ],
     },
 
     "ShortTermDebt": {
         # Genuine short-term obligations only (commercial paper, ST notes).
-        # `DebtCurrent` is filer-dependent in semantics — for LLY it equals
-        # the current portion of LT debt ($1.5B when commercial paper = $0)
-        # — so it's NOT a reliable ShortTermDebt fallback. The "current
-        # portion of long-term debt" lives in its own field
-        # (CurrentPortionLongTermDebt). NetDebt sums BOTH; the raw fields
-        # stay semantically clean.
+        # Resolution order:
+        #   1. CommercialPaper — modern filers using the explicit tag (AAPL).
+        #   2. ShortTermBorrowings — older convention; CAT FY2025 still uses it.
+        #   3. DebtCurrent — broad tag that for LLY/ORCL FY2025 cleanly captures
+        #      true short-term debt because they don't separately file
+        #      LongTermDebtCurrent. Cleaning_engine has a safeguard that zeroes
+        #      ShortTermDebt when it duplicates CurrentPortionLongTermDebt
+        #      (handles the historical LLY / SMCI double-count case).
         "default": [
             "CommercialPaper",
             "ShortTermBorrowings",
+            "DebtCurrent",
         ],
     },
 
@@ -476,11 +504,21 @@ FIELD_MAPPINGS = {
         # equities. Subtracted from gross debt for enterprise-value (NetDebt)
         # purposes — same logic as cash equivalents, just longer-dated.
         # AAPL's $77B portfolio sits here; missing it overstates NetDebt by ~$77B.
+        # ASML (20-F filer) carries no marketable-security tags — falls through
+        # to EquityMethodInvestments (associates/JV book, €822M FY2025).
+        # GOOGL files the consolidated `OtherLongTermInvestments` (38B FY2024,
+        # 68B FY2025) covering debt + equity-FvNi + private-equity stakes; their
+        # `MarketableSecuritiesNoncurrent` is just the debt-securities slice
+        # ($266M) — picking that would miss $37B of equity investments.
+        # `OtherLongTermInvestments` ranks first; filers that file the standard
+        # tag (AAPL/MSFT) don't file OtherLongTermInvestments at all.
         "default": [
+            "OtherLongTermInvestments",
             "MarketableSecuritiesNoncurrent",
             "LongTermInvestments",
             "AvailableForSaleSecuritiesNoncurrent",
             "InvestmentsNoncurrent",
+            "EquityMethodInvestments",
         ],
     },
 
@@ -735,6 +773,26 @@ FIELD_MAPPINGS = {
         # to this total only when they aren't.
         "default": [
             "FinanceLeaseLiability",
+        ],
+    },
+
+    "FinanceLeaseLiabilityPaymentsDue": {
+        # Sum of all undiscounted future minimum lease payments (maturity table).
+        # Used by cleaning_engine as a last-resort derivation source when neither
+        # the consolidated FinanceLeaseLiability nor the current/noncurrent split
+        # is filed. COST FY2022/FY2023 fall into this case: they only filed the
+        # maturity schedule, not the BS line item. PV ≈ PaymentsDue − UndiscountedExcessAmount.
+        "default": [
+            "FinanceLeaseLiabilityPaymentsDue",
+        ],
+    },
+
+    "FinanceLeaseLiabilityUndiscountedExcessAmount": {
+        # The interest-discount portion of the maturity schedule. Subtracting
+        # this from PaymentsDue yields the present-value lease liability that
+        # would normally appear on the balance sheet.
+        "default": [
+            "FinanceLeaseLiabilityUndiscountedExcessAmount",
         ],
     },
 

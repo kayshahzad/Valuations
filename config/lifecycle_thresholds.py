@@ -3,18 +3,24 @@ from enum import Enum
 from typing import Dict, List
 
 class Stage(str, Enum):
-    STARTUP           = "startup"
-    HYPERGROWTH       = "hypergrowth"
-    GROWTH_COMPOUNDER = "growth_compounder"
-    MATURE            = "mature"
-    DECLINING         = "declining"
+    STARTUP                     = "startup"
+    HYPERGROWTH                 = "hypergrowth"
+    GROWTH_COMPOUNDER           = "growth_compounder"
+    GROWTH_COMPOUNDER_SOFTWARE  = "growth_compounder_software"
+    GROWTH_COMPOUNDER_CONSUMER  = "growth_compounder_consumer"
+    GROWTH_COMPOUNDER_PHARMA    = "growth_compounder_pharma"
+    MATURE                      = "mature"
+    DECLINING                   = "declining"
 
 STAGE_LABELS = {
-    Stage.STARTUP:           "Startup / Pre-revenue",
-    Stage.HYPERGROWTH:       "Hypergrowth (Scaling, Pre-profit)",
-    Stage.GROWTH_COMPOUNDER: "Growth Compounder (Profitable, Reinvesting)",
-    Stage.MATURE:            "Mature Cash Cow",
-    Stage.DECLINING:         "Declining / Turnaround",
+    Stage.STARTUP:                    "Startup / Pre-revenue",
+    Stage.HYPERGROWTH:                "Hypergrowth (Scaling, Pre-profit)",
+    Stage.GROWTH_COMPOUNDER:          "Growth Compounder (Profitable, Reinvesting)",
+    Stage.GROWTH_COMPOUNDER_SOFTWARE: "Growth Compounder — Software / Cloud",
+    Stage.GROWTH_COMPOUNDER_CONSUMER: "Growth Compounder — Consumer / Retail",
+    Stage.GROWTH_COMPOUNDER_PHARMA:   "Growth Compounder — Pharma / Healthcare",
+    Stage.MATURE:                     "Mature Cash Cow",
+    Stage.DECLINING:                  "Declining / Turnaround",
 }
 
 @dataclass
@@ -104,6 +110,64 @@ STAGE_THRESHOLDS: Dict[Stage, StageThresholds] = {
         cagr_moderate=0.07,
         cagr_slow=0.03,
         primary_metrics=["roic", "derived_ROIC", "fcf_margin_pct", "revenue_cagr", "ev_ebitda", "justified_ev_ebitda"],
+        secondary_metrics=["gross_margin_pct", "sbc_pct_fcf", "net_debt_bn"],
+        not_applicable=[],
+        wacc_adjustment_bps=0,
+    ),
+    # Growth-compounder sub-profiles inherit the parent stage's scoring
+    # buckets (cagr_*, fcf_*, etc.) — those govern conviction-pillar
+    # thresholds and are about quality discrimination, not DCF projection.
+    # The DCF projection differentiation lives in LIFECYCLE_PROFILES.
+    Stage.GROWTH_COMPOUNDER_SOFTWARE: StageThresholds(
+        stage=Stage.GROWTH_COMPOUNDER_SOFTWARE,
+        primary_lens="ROIC vs WACC + reinvestment efficiency (software/cloud)",
+        roic_applicable=True,
+        fcf_margin_applicable=True,
+        p2_roic_weight=0.40,
+        p2_fcf_weight=0.35,
+        p2_debt_weight=0.25,
+        cagr_strong=0.20,
+        cagr_good=0.12,
+        cagr_moderate=0.07,
+        cagr_slow=0.03,
+        primary_metrics=["roic", "derived_ROIC", "fcf_margin_pct", "revenue_cagr",
+                         "ev_ebitda", "justified_ev_ebitda"],
+        secondary_metrics=["gross_margin_pct", "sbc_pct_fcf", "net_debt_bn"],
+        not_applicable=[],
+        wacc_adjustment_bps=0,
+    ),
+    Stage.GROWTH_COMPOUNDER_CONSUMER: StageThresholds(
+        stage=Stage.GROWTH_COMPOUNDER_CONSUMER,
+        primary_lens="ROIC vs WACC + reinvestment efficiency (consumer/retail)",
+        roic_applicable=True,
+        fcf_margin_applicable=True,
+        p2_roic_weight=0.40,
+        p2_fcf_weight=0.35,
+        p2_debt_weight=0.25,
+        cagr_strong=0.20,
+        cagr_good=0.12,
+        cagr_moderate=0.07,
+        cagr_slow=0.03,
+        primary_metrics=["roic", "derived_ROIC", "fcf_margin_pct", "revenue_cagr",
+                         "ev_ebitda", "justified_ev_ebitda"],
+        secondary_metrics=["gross_margin_pct", "sbc_pct_fcf", "net_debt_bn"],
+        not_applicable=[],
+        wacc_adjustment_bps=0,
+    ),
+    Stage.GROWTH_COMPOUNDER_PHARMA: StageThresholds(
+        stage=Stage.GROWTH_COMPOUNDER_PHARMA,
+        primary_lens="ROIC vs WACC + reinvestment efficiency (pharma/healthcare)",
+        roic_applicable=True,
+        fcf_margin_applicable=True,
+        p2_roic_weight=0.40,
+        p2_fcf_weight=0.35,
+        p2_debt_weight=0.25,
+        cagr_strong=0.20,
+        cagr_good=0.12,
+        cagr_moderate=0.07,
+        cagr_slow=0.03,
+        primary_metrics=["roic", "derived_ROIC", "fcf_margin_pct", "revenue_cagr",
+                         "ev_ebitda", "justified_ev_ebitda"],
         secondary_metrics=["gross_margin_pct", "sbc_pct_fcf", "net_debt_bn"],
         not_applicable=[],
         wacc_adjustment_bps=0,

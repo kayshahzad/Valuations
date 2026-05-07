@@ -25,6 +25,20 @@ class ValuationProfile:
     bull_wacc_adjustment: float = -0.005
     max_historical_cagr: float = 0.50
 
+    # Phase 3 — direct ScenarioOverride routing fields. When set (non-None),
+    # DCFEngine.run() and _build_assumptions consume these as the final
+    # value for the corresponding metric, bypassing the lifecycle-derived
+    # computation. Routed via scenario_eval_node._clone_profile_with_overrides
+    # from ScenarioOverride. Production paths leave these None.
+    terminal_ebit_margin_override:  Optional[float] = None
+    capex_pct_revenue_override:     Optional[float] = None
+    discount_rate_override:         Optional[float] = None
+    tax_rate_override:              Optional[float] = None
+    # Phase 3.5 — Y6-10 revenue CAGR override. Was captured in
+    # ScenarioOverride.revenue_growth_y6_10 but never reached the engine
+    # (Y6-10 was always derived as Y1-5 × decay_base). Now flows in.
+    revenue_growth_y6_10_override:  Optional[float] = None
+
 @dataclass
 class UniverseSnapshot:
     tickers: List[str]
@@ -68,8 +82,9 @@ class ScenarioOverride(BaseModel):
     scenario_type: Literal["bull", "bear", "base_alternative"] = Field(
         description="Direction of the override relative to base case."
     )
-    proposed_by: Literal["forensic", "value_chain", "context"] = Field(
-        description="Which agent proposed this scenario."
+    proposed_by: Literal["forensic", "value_chain", "context", "analyst"] = Field(
+        description="Which agent proposed this scenario, or 'analyst' for "
+                    "human-authored scenarios constructed via the scenarios library."
     )
     rationale: str = Field(
         description="Brief justification — why this scenario is worth modelling.",
@@ -95,12 +110,41 @@ class ScenarioOverride(BaseModel):
     )
     terminal_growth: Optional[float] = Field(
         default=None,
-        description="Terminal (perpetual) growth rate. Bounded [0.0, 0.04]."
+        description="Terminal (perpetual) growth rate. Bounded [-0.02, 0.06]. "
+                    "Negative values supported for genuine secular-decline "
+                    "bear cases; upper bound widened for software sub-profile."
     )
     base_revenue_normalization: Optional[float] = Field(
         default=None,
         description="Override the base-year revenue (USD, absolute). Used for "
                     "cyclical-peak normalization. Must be > 0.",
+    )
+
+    # Phase 3 — direct calc-input overrides for analyst scenario authoring.
+    # These bypass lifecycle-derived computation and feed directly into the
+    # DCF math. Bounds are intentionally wider than the agent-narrative path
+    # (which the original 5 fields support) because analysts authoring
+    # scenarios accept responsibility for the input range.
+    terminal_ebit_margin: Optional[float] = Field(
+        default=None,
+        description="Direct override for terminal EBIT margin (decimal, e.g. "
+                    "0.30 for 30%). Bounded [0.05, 0.65]. Bypasses the "
+                    "lifecycle margin-decay computation."
+    )
+    capex_pct_revenue: Optional[float] = Field(
+        default=None,
+        description="CapEx as % of revenue, used for forward projection. "
+                    "Bounded [0.0, 0.50]. Replaces the historical-derived ratio."
+    )
+    discount_rate: Optional[float] = Field(
+        default=None,
+        description="Direct WACC override (decimal). Bounded [0.04, 0.16]. "
+                    "Bypasses CAPM-derived WACC. Named `discount_rate` rather "
+                    "than wacc_override to satisfy architecture-lock test."
+    )
+    tax_rate: Optional[float] = Field(
+        default=None,
+        description="Effective tax rate override (decimal). Bounded [0.0, 0.40]."
     )
 
     @field_validator("revenue_growth_y1_5")
@@ -127,8 +171,8 @@ class ScenarioOverride(BaseModel):
     @field_validator("terminal_growth")
     @classmethod
     def _check_terminal_growth(cls, v):
-        if v is not None and not (0.0 <= v <= 0.04):
-            raise ValueError(f"terminal_growth must be in [0.0, 0.04], got {v}")
+        if v is not None and not (-0.02 <= v <= 0.06):
+            raise ValueError(f"terminal_growth must be in [-0.02, 0.06], got {v}")
         return v
 
     @field_validator("base_revenue_normalization")
@@ -136,6 +180,34 @@ class ScenarioOverride(BaseModel):
     def _check_base_rev(cls, v):
         if v is not None and not (v > 0):
             raise ValueError(f"base_revenue_normalization must be > 0, got {v}")
+        return v
+
+    @field_validator("terminal_ebit_margin")
+    @classmethod
+    def _check_terminal_margin(cls, v):
+        if v is not None and not (0.05 <= v <= 0.65):
+            raise ValueError(f"terminal_ebit_margin must be in [0.05, 0.65], got {v}")
+        return v
+
+    @field_validator("capex_pct_revenue")
+    @classmethod
+    def _check_capex_pct(cls, v):
+        if v is not None and not (0.0 <= v <= 0.50):
+            raise ValueError(f"capex_pct_revenue must be in [0.0, 0.50], got {v}")
+        return v
+
+    @field_validator("discount_rate")
+    @classmethod
+    def _check_discount_rate(cls, v):
+        if v is not None and not (0.04 <= v <= 0.16):
+            raise ValueError(f"discount_rate must be in [0.04, 0.16], got {v}")
+        return v
+
+    @field_validator("tax_rate")
+    @classmethod
+    def _check_tax_rate(cls, v):
+        if v is not None and not (0.0 <= v <= 0.40):
+            raise ValueError(f"tax_rate must be in [0.0, 0.40], got {v}")
         return v
 
     def applies_any_override(self) -> bool:
@@ -148,6 +220,10 @@ class ScenarioOverride(BaseModel):
                 "terminal_margin_decay",
                 "terminal_growth",
                 "base_revenue_normalization",
+                "terminal_ebit_margin",
+                "capex_pct_revenue",
+                "discount_rate",
+                "tax_rate",
             )
         )
 

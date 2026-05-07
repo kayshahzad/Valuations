@@ -46,7 +46,7 @@ warnings.filterwarnings("ignore")
 # Constants
 # ─────────────────────────────────────────────────────────────────────────────
 
-MARKET_RISK_PREMIUM = 0.055       # Damodaran long-run ERP estimate
+MARKET_RISK_PREMIUM = 0.0475      # Damodaran current-consensus ERP (was 0.055)
 DEFAULT_WACC        = 0.09        # Fallback if WACC computation fails
 DEFAULT_TERMINAL_G  = 0.025       # 2.5% long-run nominal GDP growth
 MAX_TERMINAL_G      = 0.04        # Hard cap — requires megatrend justification
@@ -301,6 +301,54 @@ class DCFResult:
 
 from aletheia.data.market_data import get_risk_free_rate, get_beta
 
+def _compute_smoothed_capex_pct(
+    df: pd.DataFrame,
+    latest_revenue: float,
+    latest_capex: float,
+) -> float:
+    """
+    CapEx as % of revenue using a 5-year rolling average across the cleaned
+    history. Reduces sensitivity to peak-cycle CapEx (Azure / AI infrastructure
+    buildout, factory expansion cycles) being misinterpreted as steady-state.
+
+    Falls back to single-year ratio if <3 years of history available, or if
+    the smoothed value is unreasonable (negative, zero, or > 100%).
+    """
+    fallback = latest_capex / latest_revenue if latest_revenue > 0 else 0.04
+    if df is None or df.empty:
+        return fallback
+
+    if "fiscal_year" in df.columns:
+        ordered = df.sort_values("fiscal_year").tail(5)
+    else:
+        ordered = df.tail(5)
+
+    if len(ordered) < 3:
+        return fallback
+
+    capex_col = "derived_CapEx" if "derived_CapEx" in ordered.columns else None
+    rev_col   = "clean_Revenue" if "clean_Revenue" in ordered.columns else None
+    if capex_col is None or rev_col is None:
+        return fallback
+
+    ratios: List[float] = []
+    for _, row in ordered.iterrows():
+        c = row.get(capex_col)
+        r = row.get(rev_col)
+        if c is None or r is None or pd.isna(c) or pd.isna(r) or r <= 0:
+            continue
+        ratio = abs(float(c)) / float(r)
+        if 0.0 < ratio < 1.0:
+            ratios.append(ratio)
+
+    if len(ratios) < 3:
+        return fallback
+    smoothed = sum(ratios) / len(ratios)
+    if not (0.0 < smoothed < 1.0):
+        return fallback
+    return smoothed
+
+
 def _fetch_risk_free_rate() -> float:
     """Fetch current 10-year US Treasury yield from market_data."""
     return get_risk_free_rate()
@@ -438,6 +486,31 @@ def _build_assumptions(
         ebit_margin_term = ebit_margin * margin_rev_bear
         capex_pct_rev = capex_pct * 1.15
         wacc = min(wacc_base + profile.bear_wacc_adjustment, 0.16)
+
+    # Phase 3 — direct calc-input overrides from ScenarioOverride. Routed
+    # through ValuationProfile by scenario_eval_node._clone_profile_with_overrides.
+    # When set, these win over lifecycle-derived computation.
+    if profile.terminal_ebit_margin_override is not None:
+        ebit_margin_term = profile.terminal_ebit_margin_override
+    if profile.capex_pct_revenue_override is not None:
+        capex_pct_rev = profile.capex_pct_revenue_override
+    if profile.discount_rate_override is not None:
+        wacc = profile.discount_rate_override
+    # Phase 3.5 — Y6-10 CAGR override (closes the long-standing routing gap).
+    # Applies to all three scenarios identically; analysts wanting different
+    # Y6-10 values per scenario should construct three separate scenarios.
+    if getattr(profile, "revenue_growth_y6_10_override", None) is not None:
+        y6_10 = profile.revenue_growth_y6_10_override
+
+    # Numerical guardrail: terminal value formula divides by (WACC − g);
+    # when historical Rf was near zero (2020-2021), software sub-profile g=5%
+    # combined with WACC ~6% produces a 1% spread that explodes the terminal
+    # value. Enforce a minimum 200bps spread by lowering terminal_g when
+    # needed. This is a robustness fix, not a methodology change — at
+    # WACC < 7% with high-g lifecycles, the math is meaningless without it.
+    MIN_TERMINAL_SPREAD = 0.02
+    if (wacc - terminal_g) < MIN_TERMINAL_SPREAD:
+        terminal_g = max(0.0, wacc - MIN_TERMINAL_SPREAD)
 
     # Compute array of explicit growth rates
     growth_rates = []
@@ -650,13 +723,34 @@ class DCFEngine:
         self,
         db_path: str = "valuation_data/database/investment.duckdb",
         forecast_years: int = 10,
-        mrp: float = MARKET_RISK_PREMIUM,
+        mrp: Optional[float] = None,
         verbose: bool = True,
+        as_of_date: Optional[datetime.date] = None,
+        risk_free_rate: Optional[float] = None,
+        beta: Optional[float] = None,
     ):
+        """
+        WACC inputs:
+          - If `as_of_date` is provided, historical-macro lookups fill any
+            missing rf/mrp/beta. Used by the backtest harness.
+          - If `as_of_date` is None (production path), missing rf/mrp/beta
+            fall through to live market_data lookups (today's values).
+          - Explicit kwargs always win over both lookups.
+        """
         self.db_path = db_path
         self.forecast_years = forecast_years
-        self.mrp = mrp
         self.verbose = verbose
+        self._as_of_date = as_of_date
+        self._rf_override = risk_free_rate
+        self._beta_override = beta
+        # Resolve MRP at construction so callers see a stable value
+        if mrp is not None:
+            self.mrp = mrp
+        elif as_of_date is not None:
+            from aletheia.data.historical_macro import get_equity_risk_premium
+            self.mrp = get_equity_risk_premium(as_of_date)
+        else:
+            self.mrp = MARKET_RISK_PREMIUM
 
     def run(self, calc_input: 'CalculationInput', fiscal_year: Optional[int] = None) -> DCFResult:
         """
@@ -754,6 +848,9 @@ class DCFEngine:
         net_debt = get("derived_NetDebt", 0.0)
         invested_capital = get("derived_InvestedCapital", 0.0)
         tax_rate = get("clean_CashTaxRate") or get("clean_GAAP_TaxRate") or 0.21
+        # Phase 3 — analyst tax_rate override from ScenarioOverride
+        if profile.tax_rate_override is not None:
+            tax_rate = profile.tax_rate_override
         long_term_debt = get("raw_LongTermDebt", 0.0)
         total_equity_book = get("raw_TotalEquity", 0.0)
 
@@ -769,7 +866,11 @@ class DCFEngine:
 
         nwc = revenue * 0.03   # Structural NWC estimate
 
-        capex_pct = capex / revenue if revenue > 0 else 0.04
+        # CapEx intensity — smoothed via 5-year rolling average rather than
+        # latest single year. Reduces sensitivity to peak-cycle CapEx (e.g.
+        # MSFT FY2025 22.9% Azure data-center buildout) being misinterpreted
+        # as steady-state. Falls back to single-year if <3y of history.
+        capex_pct = _compute_smoothed_capex_pct(df, revenue, capex)
         da_pct = da / revenue if revenue > 0 else 0.03
         nwc_pct = 0.03
 
@@ -898,8 +999,25 @@ class DCFEngine:
             print(f"  Mkt Cap: ${market_cap/1e9:.1f}B")
 
         # ── Step 4: Compute WACC ──────────────────────────────────────────────
-        rf = _fetch_risk_free_rate()
-        beta = _compute_beta(ticker)
+        # Historical-macro path: use injected rf/beta if provided, else look
+        # them up from historical_macro by self._as_of_date, else fall back
+        # to live market_data (production current-date behavior).
+        if self._rf_override is not None:
+            rf = self._rf_override
+        elif self._as_of_date is not None:
+            from aletheia.data.historical_macro import get_risk_free_rate as _hist_rf
+            rf = _hist_rf(self._as_of_date)
+        else:
+            rf = _fetch_risk_free_rate()
+
+        if self._beta_override is not None:
+            beta = self._beta_override
+        elif self._as_of_date is not None:
+            from aletheia.data.historical_macro import compute_historical_beta
+            hist_b = compute_historical_beta(ticker, self._as_of_date)
+            beta = hist_b if hist_b is not None else _compute_beta(ticker)
+        else:
+            beta = _compute_beta(ticker)
 
         # Interest expense proxy — kd from net debt and a spread
         interest_expense = long_term_debt * 0.04   # Rough proxy

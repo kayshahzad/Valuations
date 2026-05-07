@@ -165,14 +165,15 @@ def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for _, r in history_df.sort_values("fiscal_year").iterrows():
         rows.append({
-            "fiscal_year": int(r["fiscal_year"]),
-            "Revenue":     _f(r.get("clean_Revenue")),
-            "EBITDA":      _f(r.get("derived_EBITDA")),
-            "NetIncome":   _f(r.get("raw_NetIncome")),
-            "CapEx":       _f(r.get("derived_CapEx")) or _f(r.get("raw_CapEx")),
-            "FCF":         _f(r.get("derived_FCF")) or _f(r.get("clean_FCF")),
-            "ROIC":        _f(r.get("derived_ROIC")),
-            "QualityScore": _f(r.get("overall_quality_score")),
+            "fiscal_year":     int(r["fiscal_year"]),
+            "period_end_date": str(r.get("period_end_date") or "")[:10],
+            "Revenue":         _f(r.get("clean_Revenue")),
+            "EBITDA":          _f(r.get("derived_EBITDA")),
+            "NetIncome":       _f(r.get("raw_NetIncome")),
+            "CapEx":           _f(r.get("derived_CapEx")) or _f(r.get("raw_CapEx")),
+            "FCF":             _f(r.get("derived_FCF")) or _f(r.get("clean_FCF")),
+            "ROIC":            _f(r.get("derived_ROIC")),
+            "QualityScore":    _f(r.get("overall_quality_score")),
         })
     return rows
 

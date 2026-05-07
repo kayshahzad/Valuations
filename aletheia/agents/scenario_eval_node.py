@@ -108,6 +108,22 @@ def _clone_profile_with_overrides(
         # 0.5 means terminal is half of current.
         updates["terminal_margin_decay"] = max(0.0, 1.0 - ov.terminal_margin_decay)
 
+    # Phase 3 — direct calc-input overrides for analyst scenarios. Routed
+    # through ValuationProfile so DCFEngine.run() reads them via the same
+    # path as lifecycle defaults.
+    if ov.terminal_ebit_margin is not None:
+        updates["terminal_ebit_margin_override"] = ov.terminal_ebit_margin
+    if ov.capex_pct_revenue is not None:
+        updates["capex_pct_revenue_override"] = ov.capex_pct_revenue
+    if ov.discount_rate is not None:
+        updates["discount_rate_override"] = ov.discount_rate
+    if ov.tax_rate is not None:
+        updates["tax_rate_override"] = ov.tax_rate
+    # Phase 3.5 — close the long-standing y6_10 routing gap. Previously
+    # the override was captured but never reached the engine.
+    if ov.revenue_growth_y6_10 is not None:
+        updates["revenue_growth_y6_10_override"] = ov.revenue_growth_y6_10
+
     return replace(base, **updates)
 
 
@@ -164,6 +180,10 @@ def _evaluate_scenario(
             "terminal_margin_decay",
             "terminal_growth",
             "base_revenue_normalization",
+            "terminal_ebit_margin",
+            "capex_pct_revenue",
+            "discount_rate",
+            "tax_rate",
         )
         if getattr(ov, f) is not None
     }
