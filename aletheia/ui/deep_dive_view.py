@@ -268,9 +268,14 @@ def _hero_strip(
     # Conviction
     with cols[0]:
         if conv is not None:
+            # `dict.get(k, default)` returns the default only when the key
+            # is MISSING — not when the value is None. JNJ's universe_row
+            # has value_creation explicitly set to None; without the
+            # `or ""` coercion below, `None.upper()` crashed the entire
+            # Deep Dive render.
+            vc_label = (universe_row.get("value_creation") or "").upper() or None
             st.metric("Conviction", f"{int(conv):+d} / 10",
-                      delta=universe_row.get("value_creation", "").upper() or None,
-                      delta_color="off")
+                      delta=vc_label, delta_color="off")
         else:
             st.metric("Conviction", "—")
     # Base IV / MoS
