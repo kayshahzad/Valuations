@@ -64,6 +64,21 @@ _PANEL_BG_AMBER = "rgba(245,158,11,0.08)"
 _PANEL_BG_RED   = "rgba(239,68,68,0.06)"
 
 
+# ── Inline subsection label (replaces former st.expander pattern) ────────
+# Per UX feedback: collapsible expanders forced analysts to click to see
+# content already on the page. Replaced with always-visible labeled
+# subsections — same hierarchy, no click required.
+
+def _inline_label(label: str, color: Optional[str] = None) -> None:
+    c = color or _MUTED_TEXT
+    st.markdown(
+        f"<div style='font-family:DM Mono,monospace;font-size:11px;"
+        f"color:{c};text-transform:uppercase;letter-spacing:0.6px;"
+        f"font-weight:600;margin:14px 0 6px 0;'>{label}</div>",
+        unsafe_allow_html=True,
+    )
+
+
 # ── Formatters ────────────────────────────────────────────────────────────
 
 def _money(v: Optional[float]) -> str:
@@ -271,11 +286,27 @@ def _hero_strip(
                          if (roic is not None and wacc is not None) else None),
                   delta_color="off")
     # Multiple signal
+    # Full signal taxonomy — mirrors streamlit_app.py:SIGNAL_LABEL so every
+    # value the reverse_dcf module emits ("speculative_premium",
+    # "priced_for_growth", "deep_value", etc.) renders with a human label.
+    # Fallback: upper-case the raw signal so unmapped values still display.
+    _SIG_LABELS = {
+        "undervalued":         "UNDERVALUED",
+        "fairly_valued":       "FAIR VALUE",
+        "fair_value":          "FAIR VALUE",
+        "deep_value":          "DEEP VALUE",
+        "priced_for_growth":   "GROWTH PRICED",
+        "speculative_premium": "SPECULATIVE",
+        "moderate_premium":    "MODERATE PREMIUM",
+        "premium":             "PREMIUM",
+        "high_premium":        "HIGH PREMIUM",
+        "caution":             "CAUTION",
+        "flag":                "FLAG",
+        "high_quality":        "HIGH QUALITY",
+        "neutral":             "NEUTRAL",
+    }
     with cols[3]:
-        sig_label = {"undervalued": "UNDERVALUED",
-                     "fairly_valued": "FAIR",
-                     "premium": "PREMIUM",
-                     "high_premium": "HIGH PREMIUM"}.get(sig, "—")
+        sig_label = _SIG_LABELS.get(sig) or (sig.upper() if sig else "—")
         st.metric(f"{_dot(ticker, 'EV/EBITDA')} Multiple signal", sig_label,
                   delta=(f"{ev_eb:.1f}× vs {just:.1f}× justified"
                          if (ev_eb and just) else None),
@@ -338,9 +369,16 @@ def _pillar_section(pillar_scores: Dict[str, Any]) -> None:
             unsafe_allow_html=True,
         )
         if reasons:
-            with st.expander("rationale", expanded=False):
-                for r in (reasons[:3] if isinstance(reasons, list) else []):
-                    st.markdown(f"- {r}")
+            reason_items = "".join(
+                f'<li style="margin-bottom:4px;">{r}</li>'
+                for r in (reasons[:3] if isinstance(reasons, list) else [])
+            )
+            st.markdown(
+                f'<ul style="margin:6px 0 14px 178px;padding-left:18px;'
+                f'color:{_MUTED_TEXT};font-size:12px;line-height:1.6;">'
+                f'{reason_items}</ul>',
+                unsafe_allow_html=True,
+            )
 
 
 # ── 3-scenario DCF triangle ───────────────────────────────────────────────
@@ -458,12 +496,14 @@ def _moat_block(moat: Dict[str, Any], universe_row: Dict[str, Any]) -> None:
 
     # Pricing power — separate signal that often matters for the moat.
     if moat.get("has_pricing_power") or moat.get("pricing_power_evidence"):
-        with st.expander("💪 Pricing power evidence", expanded=False):
-            if moat.get("has_pricing_power"):
-                st.markdown(f"<span style='color:{_GREEN};font-weight:600'>✓ Pricing power confirmed</span>",
-                            unsafe_allow_html=True)
-            if moat.get("pricing_power_evidence"):
-                st.markdown(moat["pricing_power_evidence"])
+        _inline_label("Pricing power evidence")
+        if moat.get("has_pricing_power"):
+            st.markdown(
+                f"<span style='color:{_GREEN};font-weight:600'>✓ Pricing power confirmed</span>",
+                unsafe_allow_html=True,
+            )
+        if moat.get("pricing_power_evidence"):
+            st.markdown(moat["pricing_power_evidence"])
 
 
 # ── Value chain block ─────────────────────────────────────────────────────
@@ -489,16 +529,16 @@ def _value_chain_block(vc: Dict[str, Any]) -> None:
         st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
     if vc.get("analysis_summary"):
         st.caption(f"_{vc.get('analysis_summary')}_")
-    # Expandable detail blocks for the verbose narrative fields.
+    # Verbose narrative fields rendered inline (no click-to-expand).
     if vc.get("bottleneck_analysis"):
-        with st.expander("🔧 Bottleneck analysis", expanded=False):
-            st.markdown(vc["bottleneck_analysis"])
+        _inline_label("Bottleneck analysis")
+        st.markdown(vc["bottleneck_analysis"])
     if vc.get("top_substitutes"):
-        with st.expander("🔄 Top substitutes", expanded=False):
-            st.markdown(vc["top_substitutes"])
+        _inline_label("Top substitutes")
+        st.markdown(vc["top_substitutes"])
     if vc.get("pricing_power_assessment"):
-        with st.expander("💰 Pricing power assessment", expanded=False):
-            st.markdown(vc["pricing_power_assessment"])
+        _inline_label("Pricing power assessment")
+        st.markdown(vc["pricing_power_assessment"])
 
 
 # ── Strategic context block ───────────────────────────────────────────────
@@ -516,13 +556,13 @@ def _strategic_context_block(sc: Dict[str, Any]) -> None:
     st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
     if sc.get("summary"):
         st.caption(f"_{sc.get('summary')}_")
-    # Verbose narrative fields go into expanders.
+    # Verbose narrative fields rendered inline.
     if sc.get("deferred_revenue_trend") and len(str(sc.get("deferred_revenue_trend"))) > 20:
-        with st.expander("📈 Deferred-revenue trend", expanded=False):
-            st.markdown(sc["deferred_revenue_trend"])
+        _inline_label("Deferred-revenue trend")
+        st.markdown(sc["deferred_revenue_trend"])
     if sc.get("intangible_risk_assessment"):
-        with st.expander("🔐 Intangible / patent risk", expanded=False):
-            st.markdown(sc["intangible_risk_assessment"])
+        _inline_label("Intangible / patent risk")
+        st.markdown(sc["intangible_risk_assessment"])
 
 
 # ── Reverse DCF chart ─────────────────────────────────────────────────────
@@ -532,7 +572,11 @@ def _reverse_dcf_chart(rdcf: Dict[str, Any]) -> None:
         return
     st.markdown("##### Reverse DCF — growth priced in")
     impl = rdcf.get("implied_cagr_10y") or 0
-    hist = rdcf.get("historical_cagr") or 0
+    # The live `/dcf` endpoint emits `historical_cagr_5y` (from
+    # ReverseDCFResult.to_dict), while the agent-written JSON report stores
+    # it as `historical_cagr`. Read both so the chart populates regardless
+    # of source.
+    hist = rdcf.get("historical_cagr") or rdcf.get("historical_cagr_5y") or 0
 
     fig = go.Figure()
     fig.add_bar(
@@ -633,6 +677,234 @@ def _thesis_narrative(narrative: str) -> None:
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Structured thesis (from thesis_synthesizer agent)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _confidence_color(conf: Optional[str]) -> str:
+    return {
+        "high":                 _GREEN,
+        "medium":               _AMBER,
+        "low":                  _RED,
+        "insufficient_signal":  _MUTED_TEXT,
+    }.get(conf or "", _MUTED_TEXT)
+
+
+def _priority_color(priority: Optional[str]) -> str:
+    return {"red": _RED, "amber": _AMBER, "green": _GREEN}.get(
+        priority or "", _MUTED_TEXT
+    )
+
+
+def _cited_signals_chips(signals: list) -> str:
+    """Inline pills listing the upstream-signal field paths a claim cites.
+    Renders compactly to keep the visual weight on the claim text."""
+    if not signals:
+        return ""
+    chips = []
+    for s in signals[:6]:   # cap at 6 to avoid overwhelm
+        chips.append(
+            f'<span style="font-family:DM Mono,monospace;font-size:10px;'
+            f'color:{_MUTED_TEXT};background:{_BAR_BG};padding:2px 6px;'
+            f'border-radius:3px;margin-right:4px;">{s}</span>'
+        )
+    extra = ""
+    if len(signals) > 6:
+        extra = (f' <span style="font-family:DM Mono,monospace;font-size:10px;'
+                 f'color:{_MUTED_TEXT};">+{len(signals) - 6} more</span>')
+    return (
+        f'<div style="margin-top:8px;line-height:2;">'
+        f'<span style="font-family:DM Mono,monospace;font-size:10px;'
+        f'color:{_MUTED_TEXT};text-transform:uppercase;letter-spacing:0.5px;'
+        f'margin-right:8px;">Cites:</span>'
+        + "".join(chips) + extra +
+        "</div>"
+    )
+
+
+def _case_card(label: str, color: str, claim_dict: Dict[str, Any]) -> None:
+    """One bordered card for bull / bear / base case. Shows the claim text
+    with the cited_signals chip row underneath."""
+    if not isinstance(claim_dict, dict):
+        return
+    claim_text = claim_dict.get("claim", "") or ""
+    signals = claim_dict.get("cited_signals") or []
+    if not claim_text:
+        return
+    st.markdown(
+        f"""
+<div style='border:1px solid {_BAR_BG};border-left:4px solid {color};
+            padding:16px 20px;border-radius:0 6px 6px 0;color:inherit;
+            margin-bottom:12px;'>
+  <div style='font-family:DM Mono,monospace;font-size:11px;
+              color:{color};letter-spacing:0.7px;text-transform:uppercase;
+              margin-bottom:8px;font-weight:700;'>{label}</div>
+  <div style='font-size:15px;line-height:1.75;'>{claim_text}</div>
+  {_cited_signals_chips(signals)}
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+_ACTION_COLOR = {
+    "BUY":       _GREEN,
+    "ACCUMULATE": _GREEN,
+    "ADD":        _GREEN,
+    "HOLD":      _AMBER,
+    "WATCH":     _AMBER,
+    "REVIEW":    _AMBER,
+    "TRIM":       _RED,
+    "SELL":       _RED,
+    "EXIT":       _RED,
+    "PASS":       _RED,
+}
+
+
+def _decision_conditions_table(conditions: list) -> None:
+    """Card-style decision-condition rows.
+
+    Streamlit's `:color[text]` markdown only accepts named colors, so the
+    earlier `st.dataframe` approach rendered raw hex markup as literal text.
+    Switched to bordered cards: colored left-border encodes priority,
+    action chip on the right encodes direction. Reads top-to-bottom rather
+    than as a dense table — easier on the eye and matches the case-card
+    visual language above.
+    """
+    if not conditions:
+        return
+    st.markdown("##### Decision conditions")
+    st.caption("What triggers a position change")
+
+    rows_html = []
+    for dc in conditions:
+        if not isinstance(dc, dict):
+            continue
+        priority = (dc.get("priority") or "").lower()
+        action = (dc.get("action") or "").upper()
+        trigger = dc.get("trigger", "") or "—"
+        observable = dc.get("observable", "") or ""
+        p_color = _priority_color(priority)
+        a_color = _ACTION_COLOR.get(action, _MUTED_TEXT)
+
+        observable_html = (
+            f'<div style="font-family:DM Mono,monospace;font-size:11px;'
+            f'color:{_MUTED_TEXT};margin-top:6px;line-height:1.5;">'
+            f'observable · {observable}</div>'
+        ) if observable else ""
+
+        action_chip = (
+            f'<span style="display:inline-block;font-family:DM Mono,monospace;'
+            f'font-size:10px;font-weight:700;letter-spacing:0.6px;'
+            f'color:{a_color};border:1px solid {a_color};'
+            f'padding:3px 9px;border-radius:3px;white-space:nowrap;">'
+            f'{action or "—"}</span>'
+        )
+
+        priority_chip = (
+            f'<span style="display:inline-block;font-family:DM Mono,monospace;'
+            f'font-size:10px;font-weight:600;letter-spacing:0.5px;'
+            f'text-transform:uppercase;color:{p_color};margin-right:10px;">'
+            f'● {priority or "—"}</span>'
+        )
+
+        rows_html.append(
+            f'<div style="border:1px solid {_BAR_BG};border-left:4px solid {p_color};'
+            f'border-radius:0 6px 6px 0;padding:14px 18px;margin-bottom:8px;'
+            f'color:inherit;display:flex;align-items:flex-start;gap:14px;">'
+            f'  <div style="flex:1;min-width:0;">'
+            f'    <div style="margin-bottom:4px;">{priority_chip}</div>'
+            f'    <div style="font-size:14px;line-height:1.6;">{trigger}</div>'
+            f'    {observable_html}'
+            f'  </div>'
+            f'  <div style="flex-shrink:0;padding-top:2px;">{action_chip}</div>'
+            f'</div>'
+        )
+
+    if not rows_html:
+        return
+    st.markdown("".join(rows_html), unsafe_allow_html=True)
+
+
+def _structured_thesis_section(thesis: Dict[str, Any]) -> None:
+    """Render the thesis_synthesizer output: thesis statement, bull/bear/base
+    cards with cited_signals, decision conditions, required analyst judgment,
+    and update conditions.
+
+    Renders nothing if the section is empty (pre-thesis_synthesizer reports
+    or schema-mismatched tickers where the thesis fell back to mock)."""
+    if not thesis or not thesis.get("thesis_statement"):
+        return
+
+    st.markdown("##### Structured investment thesis")
+
+    # Header strip — confidence + horizon
+    confidence = thesis.get("thesis_confidence", "")
+    horizon = thesis.get("time_horizon", "")
+    conf_color = _confidence_color(confidence)
+    st.markdown(
+        f"""
+<div style='font-family:DM Mono,monospace;font-size:11px;
+            color:{_MUTED_TEXT};margin-bottom:12px;letter-spacing:0.3px;'>
+  Confidence: <span style='color:{conf_color};font-weight:700'>{(confidence or "—").upper()}</span>
+  &nbsp;·&nbsp; Horizon: <span style='color:inherit;font-weight:700'>{(horizon or "—").replace("_", " ").upper()}</span>
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Thesis statement (one sentence, prominent)
+    st.markdown(
+        f"""
+<div style='border-left:4px solid {conf_color};padding:16px 22px;
+            background:{_BAR_BG};border-radius:0 6px 6px 0;
+            font-size:16px;line-height:1.7;color:inherit;
+            margin-bottom:24px;font-weight:500;'>
+{thesis.get('thesis_statement', '')}
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # Bull / Base / Bear cards (in that order — most-positive first matches
+    # the rest of the dashboard's bull→base→bear ordering)
+    _case_card("BULL CASE", _GREEN, thesis.get("bull_case") or {})
+    _case_card("BASE CASE", _AMBER, thesis.get("base_case") or {})
+    _case_card("BEAR CASE", _RED,   thesis.get("bear_case") or {})
+
+    # Decision conditions
+    conditions = thesis.get("decision_conditions") or []
+    if conditions:
+        st.markdown("<div style='margin-top:24px;'></div>", unsafe_allow_html=True)
+        _decision_conditions_table(conditions)
+
+    # Required analyst judgment + update conditions in a two-column layout
+    raj = thesis.get("required_analyst_judgment") or []
+    upd = thesis.get("update_conditions") or []
+    if raj or upd:
+        st.markdown("<div style='margin-top:24px;'></div>", unsafe_allow_html=True)
+        col_a, col_b = st.columns(2)
+        with col_a:
+            if raj:
+                st.markdown("##### Required analyst judgment")
+                st.caption("Gaps the framework defers to the analyst")
+                for r in raj:
+                    st.markdown(f"- {r}")
+        with col_b:
+            if upd:
+                st.markdown("##### Update conditions")
+                st.caption("What would invalidate this thesis")
+                for u in upd:
+                    st.markdown(f"- {u}")
+
+    # Quality flag callout — only shown if the agent surfaced one
+    flags = thesis.get("_quality_flags") or []
+    if flags:
+        st.warning(
+            "Thesis quality flags: " + " · ".join(flags)
+        )
+
+
 def _contrarian_block(ca: Dict[str, Any]) -> None:
     if not ca:
         return
@@ -664,8 +936,8 @@ def _contrarian_block(ca: Dict[str, Any]) -> None:
 
     # Quant challenge — the formal adversarial reverse-DCF reasoning.
     if ca.get("quant_challenge"):
-        with st.expander("🧮 Quantitative adversarial challenge", expanded=False):
-            st.markdown(ca["quant_challenge"])
+        _inline_label("Quantitative adversarial challenge")
+        st.markdown(ca["quant_challenge"])
 
 
 # ── Business Snapshot ─────────────────────────────────────────────────────
@@ -726,20 +998,20 @@ def _business_snapshot(bm: Dict[str, Any]) -> None:
 
     # Key customers as bullets
     if custs:
-        with st.expander("🤝 Key customers", expanded=False):
-            for c in custs:
-                st.markdown(f"- {c}")
+        _inline_label("Key customers")
+        for c in custs:
+            st.markdown(f"- {c}")
 
-    # Competitive landscape, cost structure, regulatory risk in expanders
+    # Competitive landscape, cost structure, regulatory risk inline.
     if bm.get("competitive_landscape"):
-        with st.expander("⚔️ Competitive landscape", expanded=False):
-            st.markdown(bm["competitive_landscape"])
+        _inline_label("Competitive landscape")
+        st.markdown(bm["competitive_landscape"])
     if bm.get("cost_structure"):
-        with st.expander("💸 Cost structure", expanded=False):
-            st.markdown(bm["cost_structure"])
+        _inline_label("Cost structure")
+        st.markdown(bm["cost_structure"])
     if bm.get("regulatory_risk"):
-        with st.expander("⚖️ Regulatory risk", expanded=False):
-            st.markdown(bm["regulatory_risk"])
+        _inline_label("Regulatory risk")
+        st.markdown(bm["regulatory_risk"])
 
 
 # ── Industry / cyclicality banner ─────────────────────────────────────────
@@ -804,6 +1076,102 @@ def _multiple_decomposition(md: Dict[str, Any]) -> None:
         cols[3].metric("ROIC − WACC", "—")
 
 
+# ── Reality Checks (Feature 1: GDP comparison) ───────────────────────────
+
+# Severity → visual treatment. Reuses the same panel-tint/border tokens
+# as the cyclicality alert and contrarian block so visual semantics stay
+# consistent across the page.
+_SEVERITY_STYLE = {
+    "critical": {"icon": "🔴", "color": _RED,   "bg": _PANEL_BG_RED},
+    "warning":  {"icon": "🟠", "color": _AMBER, "bg": _PANEL_BG_AMBER},
+    "caution":  {"icon": "🟡", "color": _AMBER, "bg": _PANEL_BG_AMBER},
+    "info":     {"icon": "🟢", "color": _GREEN, "bg": "rgba(16,185,129,0.04)"},
+    "n_a":      {"icon": "⚪", "color": _MUTED_TEXT, "bg": "rgba(120,120,128,0.05)"},
+    "skipped":  {"icon": "·",  "color": _MUTED_TEXT, "bg": "rgba(120,120,128,0.05)"},
+}
+
+
+def _reality_checks_section(
+    ticker: str,
+    base_revenue: Optional[float],
+    cagr_y1_5: Optional[float],
+    cagr_y6_10: Optional[float],
+) -> None:
+    """
+    Reality Checks — interrogate the DCF projection against external
+    constraints (GDP, TAM, history). Currently runs the GDP check
+    (Feature 1); other checks (TAM, inflection, analogs) will plug in
+    here as they ship.
+    """
+    try:
+        from aletheia.tools.reality_checks import (
+            run_all_checks, overall_severity,
+        )
+    except Exception:
+        return
+
+    results = run_all_checks(ticker, base_revenue, cagr_y1_5, cagr_y6_10)
+    if not results:
+        return
+
+    overall = overall_severity(results)
+    overall_style = _SEVERITY_STYLE.get(overall, _SEVERITY_STYLE["info"])
+
+    # Section header — colored based on the highest severity in the section
+    st.markdown(
+        f"##### 🔍 Reality Checks  "
+        f"<span style='color:inherit;opacity:0.7;font-family:DM Mono,monospace;"
+        f"font-size:13px;font-weight:400'>"
+        f"<span style='color:{overall_style['color']}'>● {overall.upper()}</span></span>",
+        unsafe_allow_html=True,
+    )
+
+    for r in results:
+        style = _SEVERITY_STYLE.get(r.severity, _SEVERITY_STYLE["info"])
+        # Each check renders as a panel-bordered block with headline + detail.
+        st.markdown(
+            f"""
+<div style='background:{style["bg"]};border-left:4px solid {style["color"]};
+            padding:14px 16px;border-radius:0 6px 6px 0;color:inherit;
+            font-size:14px;line-height:1.6;margin:8px 0'>
+  <div style='font-weight:600;margin-bottom:6px'>
+    <span style='color:{style["color"]}'>{style["icon"]} {r.headline}</span>
+  </div>
+  <div style='opacity:0.9;font-size:13px'>{r.detail}</div>
+</div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        # Numeric data behind the headline — rendered inline.
+        if r.data:
+            _inline_label("Computation detail")
+            rows = []
+            for k, v in r.data.items():
+                if k == "thresholds":
+                    continue   # skip the threshold dict — render below
+                if isinstance(v, float):
+                    if abs(v) >= 1e9:
+                        disp = f"${v/1e9:,.1f}B"
+                    elif abs(v) < 1:
+                        disp = f"{v*100:+.2f}%" if "ratio" in k or "to_gdp" in k else f"{v:.4f}"
+                    else:
+                        disp = f"{v:,.2f}"
+                else:
+                    disp = str(v)
+                rows.append({"Field": k, "Value": disp})
+            if rows:
+                st.dataframe(pd.DataFrame(rows), hide_index=True,
+                             use_container_width=True)
+            if isinstance(r.data.get("thresholds"), dict):
+                th = r.data["thresholds"]
+                st.caption(
+                    "Thresholds: "
+                    + " · ".join(f"{lvl} ≥ {pct*100:.1f}%"
+                                 for lvl, pct in th.items())
+                )
+
+
 # ── Capital structure & risk ──────────────────────────────────────────────
 
 def _capital_risk_section(section3: Dict[str, Any]) -> None:
@@ -843,52 +1211,50 @@ def _capital_risk_section(section3: Dict[str, Any]) -> None:
     opl = lev.get("operating_leverage_score")
     cols[3].metric("Operating leverage", f"{opl:.1f}/10" if opl else "—")
 
-    # Liquidity table
+    # Liquidity, downside, leverage detail tables — rendered inline.
     if liq:
-        with st.expander("💧 Liquidity detail", expanded=False):
-            rows = [
-                {"Field": "Cash", "Value": _bn((liq.get("cash") or 0) / 1e9)},
-                {"Field": "Maturities next 2y",
-                 "Value": _bn((liq.get("maturities_next_2y") or 0) / 1e9)},
-                {"Field": "Liquidity ratio (cash / maturities)",
-                 "Value": f"{liq.get('liquidity_ratio'):.3f}" if liq.get("liquidity_ratio") is not None else "—"},
-                {"Field": "Refinancing risk",
-                 "Value": f"{liq.get('refinancing_risk_score', 0)}/10"},
-                {"Field": "Liquidity alert",
-                 "Value": "YES ⚠" if liq.get("liquidity_alert") else "NO ✓"},
-            ]
-            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        _inline_label("Liquidity detail")
+        rows = [
+            {"Field": "Cash", "Value": _bn((liq.get("cash") or 0) / 1e9)},
+            {"Field": "Maturities next 2y",
+             "Value": _bn((liq.get("maturities_next_2y") or 0) / 1e9)},
+            {"Field": "Liquidity ratio (cash / maturities)",
+             "Value": f"{liq.get('liquidity_ratio'):.3f}" if liq.get("liquidity_ratio") is not None else "—"},
+            {"Field": "Refinancing risk",
+             "Value": f"{liq.get('refinancing_risk_score', 0)}/10"},
+            {"Field": "Liquidity alert",
+             "Value": "YES ⚠" if liq.get("liquidity_alert") else "NO ✓"},
+        ]
+        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
-    # Downside detail
     if down:
-        with st.expander("📉 Downside / floor analysis", expanded=False):
-            rows = [
-                {"Field": "Tangible book value",
-                 "Value": _bn((down.get("tangible_book_value") or 0) / 1e9)},
-                {"Field": "Crash FCF",
-                 "Value": _bn((down.get("crash_fcf") or 0) / 1e9)},
-                {"Field": "Earnings Power Value (EPV)",
-                 "Value": _bn((down.get("earnings_power_value") or 0) / 1e9)},
-                {"Field": "Floor value",
-                 "Value": _bn((down.get("floor_value") or 0) / 1e9)},
-                {"Field": "Floor price per share",
-                 "Value": (f"${down.get('floor_price_per_share'):,.2f}"
-                           if down.get("floor_price_per_share") else "—")},
-            ]
-            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        _inline_label("Downside / floor analysis")
+        rows = [
+            {"Field": "Tangible book value",
+             "Value": _bn((down.get("tangible_book_value") or 0) / 1e9)},
+            {"Field": "Crash FCF",
+             "Value": _bn((down.get("crash_fcf") or 0) / 1e9)},
+            {"Field": "Earnings Power Value (EPV)",
+             "Value": _bn((down.get("earnings_power_value") or 0) / 1e9)},
+            {"Field": "Floor value",
+             "Value": _bn((down.get("floor_value") or 0) / 1e9)},
+            {"Field": "Floor price per share",
+             "Value": (f"${down.get('floor_price_per_share'):,.2f}"
+                       if down.get("floor_price_per_share") else "—")},
+        ]
+        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
-    # Leverage detail
     if lev:
-        with st.expander("⚖️ Leverage detail", expanded=False):
-            rows = [
-                {"Field": "Operating leverage score",
-                 "Value": f"{lev.get('operating_leverage_score'):.2f}/10" if lev.get("operating_leverage_score") else "—"},
-                {"Field": "Financial leverage score",
-                 "Value": f"{lev.get('financial_leverage_score'):.4f}" if lev.get("financial_leverage_score") is not None else "—"},
-                {"Field": "Double-leverage flag",
-                 "Value": "YES ⚠" if lev.get("double_leverage_flag") else "NO ✓"},
-            ]
-            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        _inline_label("Leverage detail")
+        rows = [
+            {"Field": "Operating leverage score",
+             "Value": f"{lev.get('operating_leverage_score'):.2f}/10" if lev.get("operating_leverage_score") else "—"},
+            {"Field": "Financial leverage score",
+             "Value": f"{lev.get('financial_leverage_score'):.4f}" if lev.get("financial_leverage_score") is not None else "—"},
+            {"Field": "Double-leverage flag",
+             "Value": "YES ⚠" if lev.get("double_leverage_flag") else "NO ✓"},
+        ]
+        st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
 
     # Concentration risk — surface as a callout when True (NVDA / TSMC dependency case)
     if section3.get("concentration_risk"):
@@ -915,11 +1281,18 @@ def _constitution_checks(checks: list) -> None:
     n_fail = sum(1 for c in checks if "FAIL" in str(c) or "❌" in str(c))
     n_warn = len(checks) - n_pass - n_fail
 
-    label = (f"{'✅' if n_fail == 0 else '⚠' if n_fail < 2 else '❌'} "
-             f"Constitution checks  ·  {n_pass} pass · {n_warn} warn · {n_fail} fail")
-    with st.expander(label, expanded=(n_fail > 0)):
-        for c in checks:
-            st.markdown(f"- {c}")
+    glyph = "✅" if n_fail == 0 else "⚠" if n_fail < 2 else "❌"
+    st.markdown(
+        f"##### {glyph} Constitution checks "
+        f"<span style='font-family:DM Mono,monospace;font-size:12px;"
+        f"color:{_MUTED_TEXT};font-weight:500;'>"
+        f"&nbsp;&nbsp;<span style='color:{_GREEN}'>{n_pass} pass</span> · "
+        f"<span style='color:{_AMBER}'>{n_warn} warn</span> · "
+        f"<span style='color:{_RED}'>{n_fail} fail</span></span>",
+        unsafe_allow_html=True,
+    )
+    for c in checks:
+        st.markdown(f"- {c}")
 
 
 # ── Reverse-DCF reasons ──────────────────────────────────────────────────
@@ -928,9 +1301,9 @@ def _rdcf_reasons(rdcf: Dict[str, Any]) -> None:
     reasons = rdcf.get("reasons") or []
     if not reasons:
         return
-    with st.expander("📋 Reverse-DCF reasoning", expanded=False):
-        for r in reasons:
-            st.markdown(f"- {r}")
+    _inline_label("Reverse-DCF reasoning")
+    for r in reasons:
+        st.markdown(f"- {r}")
 
 
 # ── Main render ───────────────────────────────────────────────────────────
@@ -956,6 +1329,7 @@ def render_deep_dive_view(
     investment_thesis  = val.get("investment_thesis") or {}
     pillar_scores      = investment_thesis.get("pillar_scores") or {}
     contrarian         = val.get("contrarian_analysis") or {}
+    thesis_synth       = val.get("thesis_synthesis") or {}   # from thesis_synthesizer agent
     p2v                = val.get("phase2_valuation") or {}
     adj                = p2v.get("dcf_adjustments") or {}
     md                 = p2v.get("multiple_decomposition") or {}
@@ -1013,8 +1387,35 @@ def render_deep_dive_view(
         _adjustments_block(adj)
         st.markdown("<br>", unsafe_allow_html=True)
         _thesis_narrative(investment_thesis.get("narrative") or "")
+        # Structured thesis from thesis_synthesizer (added in week-5
+        # consolidation). Renders nothing for tickers without a populated
+        # thesis_synthesis block (pre-consolidation reports / mock fallbacks).
+        if thesis_synth.get("thesis_statement"):
+            st.markdown("<br>", unsafe_allow_html=True)
+            _structured_thesis_section(thesis_synth)
         st.markdown("<br>", unsafe_allow_html=True)
         _contrarian_block(contrarian)
+
+    # ── Reality Checks (new — Feature 1: GDP comparison) ─────────────────
+    # Pulls the actual base-case CAGR + base revenue from the financials
+    # bundle's `assumptions` block. For tickers without a saved assumptions
+    # set (pending / not ingested), the check skips with a neutral message.
+    base_revenue = None
+    cagr_y1_5 = None
+    cagr_y6_10 = None
+    try:
+        # Prefer the financials bundle (has both raw revenue + DCF assumptions).
+        from aletheia.ui.financials import ticker_detail
+        bundle = ticker_detail(ticker)
+        asn = bundle.get("assumptions") or {}
+        cagr_y1_5  = asn.get("revenue_cagr_y1_5")
+        cagr_y6_10 = asn.get("revenue_cagr_y6_10")
+        base_revenue = (bundle.get("income_statement") or {}).get("Revenue")
+    except Exception:
+        pass
+
+    st.markdown("---")
+    _reality_checks_section(ticker, base_revenue, cagr_y1_5, cagr_y6_10)
 
     # ── Capital structure & risk (new) ────────────────────────────────────
     if section3:

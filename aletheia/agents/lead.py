@@ -1,14 +1,37 @@
-import os
 import json
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from langchain_core.messages import HumanMessage
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
-from aletheia.state import LeadAgentOutput
-from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
 from aletheia.utils.report_generator import ReportGenerator
+
+# NOTE: LLM imports (ChatGoogleGenerativeAI, ChatPromptTemplate, MODEL_NAME,
+# TEMPERATURE, LeadAgentOutput, os) were removed in the week-5 deterministic-
+# assembly migration. Lead no longer makes an LLM call; narrative is
+# assembled from thesis_synthesizer's structured output via pure Python.
+# If you find yourself wanting to re-add them, the architectural decision
+# was: lead is the assembly layer, not an analysis layer. New analysis
+# belongs in an upstream agent.
+
+
+def _capture_git_sha() -> str | None:
+    """Resolve the current commit SHA at module-import time. Cached for
+    the rest of the process so we don't pay the subprocess cost per run.
+    Returns None if not in a git checkout (e.g. CI sandbox)."""
+    try:
+        out = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True, text=True, timeout=2,
+            cwd=Path(__file__).resolve().parents[2],
+        )
+        sha = out.stdout.strip()
+        return sha if sha and out.returncode == 0 else None
+    except Exception:
+        return None
+
+
+_GIT_SHA = _capture_git_sha()
 
 
 class ServingReportWriter:
@@ -28,6 +51,49 @@ class ServingReportWriter:
         except Exception as e:
             tracer.log_step("ServingReportWriter", {"ticker": ticker},
                             {"status": "failed_json", "error": str(e)})
+
+        # Dual-write: persist LLM-authored payload to versioned DB.
+        # Deterministic blocks (financials, DCF, capital stack) are NOT
+        # written here — they're recomputed from company_records_latest
+        # at read time. The whitelist in upsert_agent_run rejects any
+        # accidental deterministic-field smuggling.
+        try:
+            from aletheia.data.database import InvestmentDatabase
+            synthesis = report.get("4_valuation_synthesis", {}) or {}
+            ft_clean  = (report.get("2_financial_translation", {}) or {}).get("clean_financials", {}) or {}
+            # Nest thesis_synthesis under investment_thesis so the
+            # full-pipeline write matches the partial-rerun write
+            # (api_main.py:/ticker/{T}/thesis_synthesis/refresh). The
+            # agent_runs schema only allows the 4 whitelisted keys, so
+            # the synthesizer's structured output rides inside
+            # investment_thesis. Readers (UI, staleness check) primarily
+            # use the serving JSON, but agent_runs is the audit trail —
+            # keeping both shapes aligned avoids a code-path-specific gap.
+            llm_payload = {
+                "economic_reality":    report.get("1_economic_reality") or {},
+                "contrarian_analysis": synthesis.get("contrarian_analysis") or {},
+                "investment_thesis":   {
+                    **(synthesis.get("investment_thesis") or {}),
+                    "thesis_synthesis": synthesis.get("thesis_synthesis") or {},
+                },
+                "agent_scenarios":     synthesis.get("agent_scenarios")     or [],
+            }
+            fy = ft_clean.get("fiscal_year") or 0
+            db = InvestmentDatabase(verbose=False)
+            version = db.upsert_agent_run(
+                ticker=ticker,
+                fiscal_year=int(fy) if fy else 0,
+                llm_payload=llm_payload,
+                git_sha=_GIT_SHA,
+            )
+            db.close()
+            print(f"✅ Lead: agent_runs row written (v{version})")
+        except Exception as e:
+            # Dual-write is additive — if it fails we still have the JSON.
+            # Don't fail the run for a DB write hiccup.
+            tracer.log_step("ServingReportWriter", {"ticker": ticker},
+                            {"status": "failed_agent_runs_db", "error": str(e)})
+            print(f"⚠ Lead: agent_runs DB write failed: {e}")
 
         try:
             html_path = self.html_gen.generate_html(ticker, report)
@@ -67,9 +133,11 @@ def lead_agent(state):
     forensic   = state.get("forensic_report", {}) or {}
     vc         = state.get("value_chain_report", {}) or {}
     context    = state.get("strategic_context_report", {}) or {}
-    val        = state.get("valuation_report", {}) or {}
     contrarian = state.get("contrarian_report", {}) or {}
     p2         = state.get("phase2_valuation", {}) or {}
+    # Note: `valuation_report` (legacy fundamentalist output) was removed in
+    # the agent-consolidation cleanup. Terminal growth and DCF assumptions
+    # now read directly from p2 (phase2_valuation, written by calc_node).
 
     p2_intrinsic = p2.get("intrinsic_per_share", {}) or {}
     p2_mos       = p2.get("margin_of_safety", {}) or {}
@@ -199,20 +267,23 @@ def lead_agent(state):
         pass
 
     # ── Constitution checks ───────────────────────────────────────────────────
-    params         = val.get("assumptions_used", {})
+    # Terminal-growth source: phase2.dcf.base_terminal_g (written by calc_node
+    # via DCFEngine.to_dict()). Previously read from valuation_report.
+    # assumptions_used.terminal_growth_rate, which became dead after fundamentalist
+    # was removed from the graph — that path silently returned 0 and the check
+    # vacuously PASSed for every ticker. Bug fixed in agent consolidation cleanup.
     compliance_log = []
 
-    term_g     = params.get("terminal_growth_rate", 0)
+    term_g     = (p2.get("dcf", {}) or {}).get("base_terminal_g") or 0
     moat_score = forensic.get("moat_score", 0)
     if term_g > 0.03 and moat_score <= 8:
         compliance_log.append(
             f"❌ FAIL: Terminal Cap. g ({term_g:.1%}) > 3% but Moat ({moat_score}) <= 8.")
     else:
-        compliance_log.append("✅ PASS: Terminal Cap.")
+        compliance_log.append(f"✅ PASS: Terminal Cap. (g={term_g:.1%}, moat={moat_score})")
 
     implied_cagr    = p2.get("implied_cagr")
     historical_cagr = p2.get("historical_cagr")
-    rdcf_signal     = p2.get("reverse_dcf_signal", "unknown")
     if implied_cagr and historical_cagr and historical_cagr > 0:
         ratio = implied_cagr / historical_cagr
         if ratio > 2.0:
@@ -239,8 +310,6 @@ def lead_agent(state):
         compliance_log.append(
             f"✅ PASS: Multiple premium {premium_pct:+.0%} within range.")
 
-    compliance_section = "\n".join(compliance_log)
-
     # ── Contrarian context ────────────────────────────────────────────────────
     contrarian_structured = contrarian.get("structured_analysis", {}) or {}
     contrarian_bear       = contrarian_structured.get("bear_case_summary", "")
@@ -248,84 +317,43 @@ def lead_agent(state):
     contrarian_sentiment  = contrarian_structured.get("sentiment_score")
     contrarian_quant      = contrarian.get("quant_challenge", "")
 
-    # ── Phase 2 context string ────────────────────────────────────────────────
-    p2_context = ""
-    if p2_intrinsic and implied_cagr:
-        bear_iv   = p2_intrinsic.get("bear", 0)
-        base_iv   = p2_intrinsic.get("base", 0)
-        bull_iv   = p2_intrinsic.get("bull", 0)
-        cur_price = p2.get("dcf", {}).get("current_price", 0)
-        p2_context = (
-            f"3-scenario DCF: Bear=${bear_iv:,.0f} | Base=${base_iv:,.0f} | "
-            f"Bull=${bull_iv:,.0f} vs Price=${cur_price:,.0f}. "
-            f"Base MoS={p2_mos.get('base', 0):+.1%}. "
-            f"Implied CAGR={implied_cagr:.1%} vs hist={historical_cagr:.1%} [{rdcf_signal}]. "
-            f"EV/EBITDA premium={premium_pct:+.0%} [{mult_signal}]. "
-            f"ROIC-WACC spread={p2.get('roic_wacc_spread', 0):+.1%} "
-            f"[{p2.get('value_creation', '?')}]."
+    # ── Deterministic narrative assembly (replaces lead's LLM call) ──────────
+    # Previously, lead made an LLM call producing growth_decay_assessment +
+    # contrarian_rebuttal, which were concatenated into `narrative`.
+    # thesis_synthesizer now produces a structured thesis_statement +
+    # base_case (with cited_signals enforcement) that strictly subsumes
+    # what the lead-LLM call produced.
+    #
+    # The week-5 deterministic-assembly migration drops lead's LLM call
+    # entirely and assembles `narrative` from thesis_synthesizer's output.
+    # This:
+    #   - Removes 1 LLM call per pipeline run (5 → 4 → 3 across the consolidation)
+    #   - Eliminates duplication (lead's LLM was producing parallel
+    #     bear-case rebuttal that thesis_synthesizer already emits via
+    #     bear_case.claim, and parallel growth-decay assessment that
+    #     thesis_synthesizer emits via base_case.claim)
+    #   - Inherits thesis_synthesizer's structural enforcement
+    #     (cited_signals, vocabulary check, AST lock)
+    #
+    # If thesis_synthesizer didn't run (e.g. legacy entry points that
+    # bypass the graph), narrative falls back to a structured summary
+    # built from phase2/contrarian state.
+    thesis = state.get("thesis_synthesis") or {}
+    if thesis and thesis.get("thesis_statement"):
+        narrative_parts = [thesis.get("thesis_statement", "")]
+        if thesis.get("base_case", {}).get("claim"):
+            narrative_parts.append(thesis["base_case"]["claim"])
+        if thesis.get("bear_case", {}).get("claim"):
+            narrative_parts.append("Bear case: " + thesis["bear_case"]["claim"])
+        narrative = "\n\n".join(p for p in narrative_parts if p)
+    else:
+        # Fallback for legacy paths that bypass thesis_synthesizer.
+        # Pure-Python summary from state — no LLM call.
+        narrative = (
+            f"Phase 2 valuation for {ticker}: {p2.get('summary', 'unavailable')}. "
+            f"Contrarian view: {contrarian_bias or 'no bias detected'}. "
+            f"Bear case: {(contrarian_bear or 'unavailable')[:300]}"
         )
-    else:
-        p2_context = p2.get("summary", "")
-
-    # ── LLM synthesis ─────────────────────────────────────────────────────────
-    dcf = val.get("dcf_result", {})
-
-    if not os.environ.get("GOOGLE_API_KEY"):
-        narrative = "Mock Narrative (No API Key)"
-    else:
-        llm = ChatGoogleGenerativeAI(model=MODEL_NAME, temperature=TEMPERATURE)
-        structured_llm = llm.with_structured_output(LeadAgentOutput)
-
-        prompt = ChatPromptTemplate.from_template("""You are the Lead Investment Committee (Aletheia).
-Synthesize a final investment thesis for {ticker}.
-
-CONSTITUTION COMPLIANCE:
-{compliance_check}
-
-PHASE 2 VALUATION:
-{p2_context}
-
-MOAT & BUSINESS QUALITY:
-  Moat score:      {moat_score}/10
-  Moat evidence:   {moat_evidence}
-  Pricing power:   {has_pricing_power}
-  Cost structure:  {cost_structure}
-  Business:        {business_description}
-  Value chain:     {vc_summary}
-  Strat context:   {context_summary}
-
-BEAR CASE (Contrarian):
-  Bias:    {contrarian_bias}
-  Summary: {contrarian_bear}
-
-TASKS:
-1. Conviction Score (-10 to +10) and Margin of Safety.
-2. Growth decay assessment — is implied CAGR realistic given moat and history?
-3. Contrarian rebuttal — where is the bear case wrong, where is it right?
-
-Be specific and mathematical. Return structured JSON.
-""")
-
-        chain = prompt | structured_llm
-
-        try:
-            res: LeadAgentOutput = chain.invoke({
-                "ticker":               ticker,
-                "compliance_check":     compliance_section,
-                "p2_context":           p2_context,
-                "moat_score":           forensic.get("moat_score", 0),
-                "moat_evidence":        forensic.get("moat_evidence", ""),
-                "has_pricing_power":    forensic.get("has_pricing_power", False),
-                "cost_structure":       forensic.get("operating_leverage_analysis", ""),
-                "business_description": forensic.get("business_description", ""),
-                "vc_summary":           vc.get("analysis_summary", ""),
-                "context_summary":      context.get("summary", ""),
-                "contrarian_bias":      contrarian_bias,
-                "contrarian_bear":      contrarian_bear,
-            })
-            narrative = f"{res.growth_decay_assessment}\n\n{res.contrarian_rebuttal}"
-        except Exception as e:
-            narrative = f"LLM Generation Failed: {e}"
 
     # ── Conviction scorer ─────────────────────────────────────────────────────
     # calc_node already computed the deterministic conviction and put it in
@@ -354,9 +382,15 @@ Be specific and mathematical. Return structured JSON.
         "3_capital_structure_risk": capital_structure,
         "4_valuation_synthesis": {
             "dcf_model": {
-                "intrinsic_value":  dcf.get("equity_value"),
-                # CLEANUP: use fundamentalist calculated_upside directly
-                "upside_percent":   val.get("calculated_upside"),
+                # `intrinsic_value` here historically held an EV (despite the
+                # name) emitted by the legacy fundamentalist→ProForma path.
+                # That field was a unit-confused leftover (EV in dollars, not
+                # per-share intrinsic) and is now superseded by
+                # `phase2_valuation.three_scenario_dcf.{bear,base,bull}.
+                # intrinsic_per_share`. Kept as None for legacy schema shape;
+                # remove entirely when the export pipeline drops the field.
+                "intrinsic_value":  None,
+                "upside_percent":   None,
                 "implied_growth":   "Pending Expectations Engine",
             },
             "phase2_valuation": {
@@ -408,11 +442,21 @@ Be specific and mathematical. Return structured JSON.
             },
             "investment_thesis": {
                 "conviction_score":   conviction,
-                "margin_of_safety":   p2_mos.get("base") or val.get("calculated_upside"),
+                # MoS source: phase2.three_scenario_dcf.base.margin_of_safety
+                # (calc_node-written). Previously fell back to legacy
+                # valuation_report.calculated_upside when fundamentalist ran.
+                "margin_of_safety":   p2_mos.get("base"),
                 "narrative":          narrative,
                 "constitution_checks": compliance_log,
                 "pillar_scores":      pillar_scores,
             },
+            # Structured thesis from thesis_synthesizer (added in week-1.5
+            # consolidation). Lead surfaces it into the final report so
+            # the Streamlit UI + export pipeline can render it. The legacy
+            # `investment_thesis` block above stays for now — week-5 work
+            # replaces lead's LLM synthesis with deterministic assembly,
+            # at which point the legacy block can fold into thesis_synthesis.
+            "thesis_synthesis":     state.get("thesis_synthesis", {}) or {},
             # Phase C — Agent-proposed alternate scenarios with provenance.
             # Each entry already contains: name, scenario_type, proposed_by,
             # rationale, overrides_applied, dcf, intrinsic_per_share_base,

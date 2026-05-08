@@ -1313,6 +1313,26 @@ Examples:
     parser.add_argument("--list",       action="store_true", help="List all active theses")
     args = parser.parse_args()
 
+    # ── Retirement banner ────────────────────────────────────────────────
+    # Free-text Thesis Builder retired in the dashboard-wiring change.
+    # Read operations (--list, --review, --export-pdf) remain functional
+    # for historical access. Write operations (default build, --update)
+    # are deprecated and will be hard-disabled in 1-2 weeks.
+    is_write_op = (not args.list) and (not args.review) and (not args.export_pdf)
+    if is_write_op:
+        print(
+            f"\n{C.RED}{C.BOLD}╔══════════════════════════════════════════════════════════════════╗{C.RESET}\n"
+            f"{C.RED}{C.BOLD}║  DEPRECATED — Free-text Thesis Builder is retiring               ║{C.RESET}\n"
+            f"{C.RED}{C.BOLD}╚══════════════════════════════════════════════════════════════════╝{C.RESET}\n"
+            f"  {C.GOLD}Structured analyst judgment now lives in the Qualitative\n"
+            f"  Dashboard (per-dimension assessments). The integrated thesis is\n"
+            f"  produced by the thesis_synthesizer agent and surfaced via\n"
+            f"  GET /ticker/<T>/summary -> 4_valuation_synthesis.thesis_synthesis.{C.RESET}\n"
+            f"\n  This CLI's write commands (default build, --update) will be\n"
+            f"  hard-disabled within 1-2 weeks. Read commands (--list, --review,\n"
+            f"  --export-pdf) remain available for historical access.\n"
+        )
+
     if args.list:
         list_theses()
         return

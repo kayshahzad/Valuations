@@ -153,9 +153,149 @@ def fetch_universe_screening():
 def fetch_narrative(ticker: str):
     return api_get(f"/ticker/{ticker}/narrative")
 
+
+# Short TTL — staleness becomes interesting immediately after a dashboard
+# submit; we want the banner to reflect current state without forcing
+# manual cache clears.
+@st.cache_data(ttl=30)
+def fetch_thesis_staleness(ticker: str):
+    return api_get(f"/ticker/{ticker}/thesis_synthesis/staleness")
+
+
+def render_thesis_staleness_banner(ticker: str, key_suffix: str = "") -> None:
+    """Show a staleness banner with a 'Refresh thesis' button when the
+    current dashboard fingerprint differs from the thesis's stamped one.
+
+    Uses a session-state defer pattern so the click → rerun → render
+    full-width progress → POST flow gives the user clear visual feedback
+    instead of a tiny spinner buried in a side column.
+
+    `key_suffix` is appended to the widget keys so the same banner can
+    render on multiple tabs without Streamlit duplicate-key errors.
+    """
+    pending_key = f"thesis_refresh_pending_{ticker}"
+    result_key  = f"thesis_refresh_result_{ticker}"
+
+    # Pass 2 — refresh was queued on a prior click; run the POST now so
+    # the page below renders normally first (visible st.status above it),
+    # not blocked behind a hidden spinner.
+    if st.session_state.get(pending_key):
+        st.session_state[pending_key] = False
+        with st.status(
+            "🔄 Refreshing thesis with current dashboard state…",
+            expanded=True,
+        ) as status:
+            status.write("Loading cached upstream outputs from serving JSON…")
+            status.write("Computing fresh dashboard projection (DuckDB read)…")
+            status.write("Calling thesis_synthesizer (one LLM call, ≈30 s)…")
+            try:
+                resp = httpx.post(
+                    f"{API_BASE}/ticker/{ticker}/thesis_synthesis/refresh",
+                    timeout=120,
+                )
+                if resp.status_code == 200:
+                    body = resp.json()
+                    status.update(
+                        label=(
+                            f"✓ Thesis refreshed (agent_runs v"
+                            f"{body.get('agent_runs_version', '?')})"
+                        ),
+                        state="complete",
+                    )
+                    st.session_state[result_key] = ("ok", "Thesis refreshed.")
+                    fetch_ticker.clear()
+                    fetch_thesis_staleness.clear()
+                    st.rerun()
+                else:
+                    try:
+                        detail = resp.json().get("detail", resp.text)
+                    except Exception:
+                        detail = resp.text or f"HTTP {resp.status_code}"
+                    status.update(
+                        label=f"Refresh failed (HTTP {resp.status_code})",
+                        state="error",
+                    )
+                    status.write(f"**Detail:** {detail}")
+                    if resp.status_code == 503 and "GOOGLE_API_KEY" in detail:
+                        status.write(
+                            "Set `GOOGLE_API_KEY` in the API server "
+                            "environment and restart, then retry. The "
+                            "existing thesis on disk was NOT modified."
+                        )
+                    st.session_state[result_key] = ("error", detail)
+            except httpx.TimeoutException:
+                status.update(
+                    label="Refresh timed out (>120 s)",
+                    state="error",
+                )
+                status.write(
+                    "The synthesizer didn't return within the timeout. "
+                    "The existing thesis on disk was NOT modified. "
+                    "If this persists, run the full pipeline instead."
+                )
+                st.session_state[result_key] = ("error", "timeout")
+            except Exception as exc:
+                status.update(label=f"Refresh error: {exc}", state="error")
+                st.session_state[result_key] = ("error", str(exc))
+        return
+
+    try:
+        st_state = fetch_thesis_staleness(ticker)
+    except Exception:
+        return
+    if not st_state or not st_state.get("thesis_present"):
+        return
+    if not st_state.get("is_stale"):
+        return
+
+    col_banner, col_btn = st.columns([4, 1])
+    with col_banner:
+        st.warning(
+            "**Thesis is stale** — the qualitative dashboard has changed "
+            "since this thesis was generated. Refresh to incorporate the "
+            "latest assessments (≈30 s, one LLM call).",
+            icon="⚠️",
+        )
+    with col_btn:
+        if st.button(
+            "🔄 Refresh thesis",
+            key=f"refresh_thesis_btn_{ticker}_{key_suffix}",
+            use_container_width=True,
+            type="primary",
+        ):
+            # Pass 1 — defer the POST to the next rerun so the full-width
+            # st.status above can render before the script blocks on the
+            # synthesizer call. Without this defer, the spinner sat in a
+            # tiny column and the page below appeared to "go blank."
+            st.session_state[pending_key] = True
+            st.rerun()
+
 @st.cache_data(ttl=300)
 def fetch_health():
     return api_get("/health")
+
+@st.cache_data(ttl=120)
+def fetch_qualitative(ticker: str):
+    """All 19 qualitative dimensions for a ticker. 2-min TTL because
+    HITL submissions need to appear quickly without a manual refresh."""
+    return api_get(f"/ticker/{ticker}/qualitative")
+
+@st.cache_data(ttl=120)
+def fetch_qualitative_categories(ticker: str):
+    return api_get(f"/qualitative/categories/{ticker}")
+
+def trigger_qualitative_recompute(ticker: str):
+    """POST to recompute deterministic dimensions and invalidate the
+    fetch caches so the UI reflects the new state on next render."""
+    try:
+        r = httpx.post(f"{API_BASE}/qualitative/recompute/{ticker}", timeout=30)
+        r.raise_for_status()
+        fetch_qualitative.clear()
+        fetch_qualitative_categories.clear()
+        return r.json()
+    except Exception as e:
+        st.error(f"Recompute failed: {e}")
+        return None
 
 
 @st.cache_data(ttl=600)
@@ -364,29 +504,6 @@ def _render_validation_table(payload: Optional[Dict[str, Any]], source: str) -> 
     st.dataframe(table, hide_index=True, use_container_width=True)
 
 
-def extract_moat_from_narrative(narrative: str) -> str:
-    """Extract moat-relevant sentences from pipeline narrative."""
-    if not narrative:
-        return ""
-    moat_keywords = ["moat", "switching cost", "network effect", "lock-in",
-                     "competitive advantage", "pricing power", "barrier"]
-    sentences = narrative.replace("\n", " ").split(". ")
-    relevant  = [s.strip() for s in sentences
-                 if any(kw in s.lower() for kw in moat_keywords)]
-    return ". ".join(relevant[:4]) + ("." if relevant else "")
-
-def extract_econ_from_narrative(narrative: str) -> str:
-    """Extract unit economics / TAM sentences from pipeline narrative."""
-    if not narrative:
-        return ""
-    econ_keywords = ["cagr", "tam", "market", "growth", "penetration",
-                     "revenue", "margin", "multiple", "expansion"]
-    sentences = narrative.replace("\n", " ").split(". ")
-    relevant  = [s.strip() for s in sentences
-                 if any(kw in s.lower() for kw in econ_keywords)]
-    return ". ".join(relevant[:4]) + ("." if relevant else "")
-
-
 # ─────────────────────────────────────────────────────────────────────────────
 # Display helpers
 # ─────────────────────────────────────────────────────────────────────────────
@@ -483,7 +600,7 @@ def main():
     # Dive (lead thesis, contrarian, value chain, moat, strategic context all
     # render there), and agent runs can be triggered from the Universe tab's
     # ▶ Run agents footer or the sidebar's per-ticker pipeline button.
-    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◇  Scenarios", "◧  Screening", "◨  Constitution", "📝  Thesis Builder", "◩  Reports", "◊  Quality Report"]
+    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
     if "active_view" not in st.session_state:
@@ -888,10 +1005,24 @@ def main():
         fund_data = fetch_fundamentals(selected)
         full      = fetch_ticker(selected)
         if not dcf_data:
+            # /dcf returns 404 (no cleaned data) or 422 (schema-mismatch
+            # filer like a card network or bank). api_get has already
+            # surfaced the error banner; this empty-state info clarifies
+            # next steps for the operator.
+            st.info(
+                f"**No DCF available for {selected}.** This ticker either "
+                "has not been ingested or uses a non-FCFF valuation "
+                "framework (banks, REITs, card networks). The Financials "
+                "tab still works."
+            )
             return
 
         # Universe row for ranking-derived signals (multiple_signal, value_creation, etc.)
         row = next((r for r in ranked if r["ticker"] == selected), {})
+
+        # Staleness banner — surfaces when the qualitative dashboard has
+        # changed since this thesis was generated (Phase 7).
+        render_thesis_staleness_banner(selected, key_suffix="deep_dive")
 
         from aletheia.ui.deep_dive_view import render_deep_dive_view
         render_deep_dive_view(
@@ -1194,7 +1325,11 @@ def main():
         )
         st.markdown("<br>", unsafe_allow_html=True)
 
-        for r in ranked:
+        # Skip pending/not_ingested tickers — constitution checks come
+        # from the agent run, which doesn't exist for them. Showing
+        # placeholder "no checks found" rows for 15 pending tickers
+        # would just be noise.
+        for r in [x for x in ranked if x.get("agents_status") == "ready"]:
             ticker = r["ticker"]
             narr = fetch_narrative(ticker)
             checks = narr.get("constitution_checks", []) if narr else []
@@ -1205,9 +1340,10 @@ def main():
             warn_count = sum(1 for c in checks if "CAUTION" in str(c) or "⚠" in str(c))
             pass_count = len(checks) - fail_count - warn_count
 
+            conv_str = f"{int(conv):+d}" if conv is not None else "—"
             with st.expander(
                 f"{ticker}  —  {pass_count}✅ {warn_count}⚠️ {fail_count}❌  "
-                f"| Conv {int(conv):+d}  |  {sig}",
+                f"| Conv {conv_str}  |  {sig}",
                 expanded=(fail_count == 0 and ticker in ["MSFT", "CNC"])
             ):
                 if not checks:
@@ -1236,13 +1372,58 @@ def main():
 
     # ──────────────────────────────────────────────────────────────────────────
     # ──────────────────────────────────────────────────────────────────────────
-    # TAB 7 — THESIS BUILDER
+    # TAB — QUALITATIVE  (19-dimension analytical framework, week-1 read-only)
     # ──────────────────────────────────────────────────────────────────────────
-    elif active_view == "📝  Thesis Builder":
-        st.markdown("#### Interactive Thesis Builder")
+    elif active_view == "◭  Qualitative":
+        selected = st.session_state.active_ticker
+        if not selected:
+            st.info("Select a ticker from the sidebar.")
+        else:
+            qual_data        = fetch_qualitative(selected)
+            categories_data  = fetch_qualitative_categories(selected)
+
+            def _on_recompute():
+                result = trigger_qualitative_recompute(selected)
+                if result:
+                    written = result.get("written_count", 0)
+                    unchanged = result.get("unchanged_count", 0)
+                    no_data = result.get("no_data_count", 0)
+                    st.success(
+                        f"Recompute done — written: {written}, "
+                        f"unchanged: {unchanged}, no-data: {no_data}"
+                    )
+                    st.rerun()
+
+            def _on_submit_success():
+                fetch_qualitative.clear()
+                fetch_qualitative_categories.clear()
+                st.rerun()
+
+            from aletheia.ui.qualitative_view import render_qualitative_view
+            render_qualitative_view(
+                ticker=selected,
+                qual_data=qual_data,
+                categories_data=categories_data,
+                on_recompute=_on_recompute,
+                api_base=API_BASE,
+                on_submit_success=_on_submit_success,
+            )
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # TAB 7 — THESIS (read-only structured view)
+    # ──────────────────────────────────────────────────────────────────────────
+    # The free-text Thesis Builder form was retired in the dashboard-wiring
+    # change. Structured analyst judgment now lives in the Qualitative tab
+    # (per-dimension assessments); the integrated thesis is produced by the
+    # thesis_synthesizer agent and rendered here in read-only form, plus
+    # historical memos archived for reference.
+    elif active_view == "📝  Thesis":
+        st.markdown("#### Investment Thesis")
         st.markdown(
             '<span style="font-family:DM Mono,monospace;font-size:11px;color:#71717a">'
-            "Liberti Framework Section 16.2 · Seven Required Components</span>",
+            "Structured thesis from thesis_synthesizer · "
+            "free-text builder retired (use the Qualitative tab for analyst input)"
+            "</span>",
             unsafe_allow_html=True,
         )
 
@@ -1251,126 +1432,189 @@ def main():
         if not thesis_ticker:
             st.info("Select a ticker from the sidebar to begin analysis.")
         else:
-            # Fetch context and existing thesis
+            # Staleness banner (Phase 7)
+            render_thesis_staleness_banner(thesis_ticker, key_suffix="thesis_tab")
+
+            # Fetch report (read-only — no form submissions on this tab)
             report = fetch_ticker(thesis_ticker)
             if report:
-                # `dict.get("k", 0)` returns the default only when the key is
-                # absent — for `null` values stored in JSON, get() returns
-                # None and the downstream f-strings/arith crash. Coerce.
-                snap_mos = (report.get("4_valuation_synthesis", {}).get("phase2_valuation", {})
-                                  .get("three_scenario_dcf", {}).get("base", {})
-                                  .get("margin_of_safety") or 0)
-                snap_iv = (report.get("4_valuation_synthesis", {}).get("phase2_valuation", {})
-                                 .get("three_scenario_dcf", {}).get("base", {})
-                                 .get("intrinsic_per_share") or 0)
-                snap_price = snap_iv / (1 + snap_mos) if (1 + snap_mos) != 0 else 0
-                ps = report.get("4_valuation_synthesis", {}).get("investment_thesis", {}).get("pillar_scores", {})
-                
-                # Fetch existing thesis draft
+                ts_synth = (report.get("4_valuation_synthesis", {})
+                                  .get("thesis_synthesis") or {})
+
+                # Read-only access to historical memo content (archived;
+                # no longer written from this UI). Surfaced for reference.
                 try:
                     existing = httpx.get(f"{API_BASE}/ticker/{thesis_ticker}/thesis", timeout=5).json()
                 except Exception:
                     existing = {}
 
-                # Extract AI-assisted drafts
-                narrative = report.get("4_valuation_synthesis", {}).get("investment_thesis", {}).get("narrative", "")
-                moat_draft = extract_moat_from_narrative(narrative)
-                econ_draft = extract_econ_from_narrative(narrative)
-
                 if existing and existing.get("version"):
-                    st.link_button(f"⬇ Download Current PDF (v{existing.get('version')})", f"{API_BASE}/ticker/{thesis_ticker}/thesis/pdf")
+                    st.link_button(
+                        f"⬇ Archived memo PDF (v{existing.get('version')})",
+                        f"{API_BASE}/ticker/{thesis_ticker}/thesis/pdf",
+                    )
 
-                # Auto-Populated Metrics
-                st.markdown("##### 1. Pipeline Math (Auto-Populated)")
-                c1, c2, c3 = st.columns(3)
-                c1.metric("Base IV", f"${snap_iv:.2f}", f"{snap_mos:+.1%} MoS")
-                spread = (report.get("4_valuation_synthesis", {}).get("phase2_valuation", {})
-                                .get("multiple_decomposition", {})
-                                .get("roic_wacc_spread") or 0)
-                c2.metric("ROIC-WACC Spread", f"{spread*100:+.1f}pp")
-                c3.metric("Entry Price", f"${snap_price:.2f}")
-
-                st.markdown("<br>", unsafe_allow_html=True)
-
-                with st.form("thesis_form", clear_on_submit=False):
-                    st.markdown("##### 2. AI-Assisted Assessment")
-                    st.markdown("<span style='font-size:12px; color:#a1a1aa; font-style:italic'>Pre-filled from LLM synthesis. Edit as needed to confirm.</span>", unsafe_allow_html=True)
-                    
-                    moat_score = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("multiple_decomposition", {}).get("moat_score", "")
-                    st.markdown(f"<div style='font-size:12px; color:#f59e0b; margin-bottom:4px'>Context: Pipeline Moat Score = {moat_score}</div>", unsafe_allow_html=True)
-                    moat_powers = st.text_area("Moat Assessment — 7 Powers *", value=existing.get("moat_powers", moat_draft), height=100)
-                    
-                    cagr_impl = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("reverse_dcf", {}).get("implied_cagr_10y", 0)
-                    cagr_hist = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("reverse_dcf", {}).get("historical_cagr", 0)
-                    ratio = (cagr_impl / cagr_hist) if cagr_hist else 0
-                    st.markdown(f"<div style='font-size:12px; color:#f59e0b; margin-bottom:4px'>Context: Implied vs Hist CAGR Ratio = {ratio:.1f}x</div>", unsafe_allow_html=True)
-                    unit_econ = st.text_area("Unit Economics / TAM *", value=existing.get("unit_economics", econ_draft), height=100)
-
-                    st.markdown("<br>", unsafe_allow_html=True)
-                    st.markdown("##### 3. Analyst Judgment")
-                    st.markdown("<span style='font-size:12px; color:#a1a1aa; font-style:italic'>Core conviction parameters. Manual input required.</span>", unsafe_allow_html=True)
-                    
-                    st.markdown(f"<div style='font-size:12px; color:#f59e0b; margin-bottom:4px'>Context: Stage: {ps.get('lifecycle_stage','')}</div>", unsafe_allow_html=True)
-                    one_sentence = st.text_area("One-Sentence Thesis *", placeholder="Why this company, why now, why at this price...", value=existing.get("one_sentence", ""))
-
-                    p2_r = ps.get("p2_health_reasons", [])
-                    p3_r = ps.get("p3_tailwind_reasons", [])
-                    st.markdown(f"<div style='font-size:12px; color:#f59e0b; margin-bottom:4px'>Context: P2 Health {p2_r[0] if p2_r else ''} | P3 Tailwind {p3_r[0] if p3_r else ''}</div>", unsafe_allow_html=True)
-                    assump1 = st.text_area("Assumption 1 *", placeholder="Specific metric that must remain true...", value=existing.get("assumption_1", ""))
-                    assump2 = st.text_area("Assumption 2 *", value=existing.get("assumption_2", ""))
-                    assump3 = st.text_area("Assumption 3 *", value=existing.get("assumption_3", ""))
-
-                    conf_12m = st.text_area("12-Month Confirmation Signal *", value=existing.get("confirmation_12m", ""))
-
-                    fails = report.get("3_constitution_checks", {}).get("fails", [])
-                    fail_str = " | ".join(fails) if fails else "None"
-                    st.markdown(f"<div style='font-size:12px; color:#ef4444; font-weight:700; margin-bottom:4px'>Current Constitution Fails: {fail_str}</div>", unsafe_allow_html=True)
-                    falsification = st.text_area("Pre-Committed Exit Trigger *", placeholder="Exit immediately if: (a)...", value=existing.get("falsification", ""))
-
-                    submitted = st.form_submit_button("Save & Export PDF", type="primary")
-
-                if submitted:
-                    payload = {
-                        "one_sentence": one_sentence,
-                        "assumption_1": assump1,
-                        "assumption_2": assump2,
-                        "assumption_3": assump3,
-                        "confirmation_12m": conf_12m,
-                        "falsification": falsification,
-                        "moat_powers": moat_powers,
-                        "unit_economics": unit_econ
+                # ── Structured thesis (always visible) ───────────────────
+                # Surfaces the full thesis_synthesizer output so the analyst
+                # can lift specific decision conditions or cited signals
+                # into their own thesis. Read-only — analyst edits the form
+                # below; this panel is reference material. Rendered inline
+                # (no expander) so analysts don't have to click to see what
+                # the framework already produced.
+                if ts_synth.get("thesis_statement"):
+                    _GREEN_C, _AMBER_C, _RED_C = "#10b981", "#f59e0b", "#ef4444"
+                    _MUTED_C = "rgba(120,120,128,0.85)"
+                    _TRACK_C = "rgba(120,120,128,0.20)"
+                    _PRIORITY_C = {"red": _RED_C, "amber": _AMBER_C, "green": _GREEN_C}
+                    _ACTION_C = {
+                        "BUY": _GREEN_C, "ACCUMULATE": _GREEN_C, "ADD": _GREEN_C,
+                        "HOLD": _AMBER_C, "WATCH": _AMBER_C, "REVIEW": _AMBER_C,
+                        "TRIM": _RED_C, "SELL": _RED_C, "EXIT": _RED_C, "PASS": _RED_C,
                     }
-                    with st.spinner("Saving thesis and generating PDF..."):
-                        try:
-                            resp = httpx.post(f"{API_BASE}/ticker/{thesis_ticker}/thesis", json=payload, timeout=15)
-                            if resp.status_code == 200:
-                                st.success(f"Thesis v{resp.json()['version']} saved successfully!")
-                                
-                                # Inline PDF Download
-                                try:
-                                    pdf_resp = httpx.get(f"{API_BASE}/ticker/{thesis_ticker}/thesis/pdf", timeout=10)
-                                    if pdf_resp.status_code == 200:
-                                        st.download_button("⬇ Download PDF Brief", pdf_resp.content, file_name=f"{thesis_ticker}_Thesis.pdf", mime="application/pdf")
-                                except Exception as e:
-                                    st.error("Failed to fetch PDF")
-                            else:
-                                st.error(f"Error saving thesis: {resp.json().get('detail', 'Unknown error')}")
-                        except Exception as e:
-                            st.error(f"API Error: {e}")
 
-            # Version History
-            st.markdown("<br>", unsafe_allow_html=True)
-            with st.expander("Version History"):
+                    st.markdown("##### System suggestions")
+                    st.caption("From thesis_synthesizer · reference for the form below")
+
+                    confidence = (ts_synth.get("thesis_confidence") or "—").upper()
+                    horizon = (ts_synth.get("time_horizon") or "—").replace("_", " ").upper()
+                    conf_color = {"HIGH": _GREEN_C, "MEDIUM": _AMBER_C, "LOW": _RED_C}.get(confidence, _MUTED_C)
+                    st.markdown(
+                        f"<div style='font-family:DM Mono,monospace;font-size:11px;"
+                        f"color:{_MUTED_C};margin-bottom:12px;letter-spacing:0.3px;'>"
+                        f"Confidence: <span style='color:{conf_color};font-weight:700'>{confidence}</span>"
+                        f"&nbsp;·&nbsp; Horizon: <span style='color:inherit;font-weight:700'>{horizon}</span>"
+                        f"</div>",
+                        unsafe_allow_html=True,
+                    )
+
+                    # Thesis statement (prominent block)
+                    st.markdown(
+                        f"<div style='border-left:4px solid {conf_color};padding:14px 20px;"
+                        f"background:{_TRACK_C};border-radius:0 6px 6px 0;"
+                        f"font-size:15px;line-height:1.7;color:inherit;"
+                        f"margin-bottom:18px;font-weight:500;'>"
+                        f"{ts_synth.get('thesis_statement', '')}</div>",
+                        unsafe_allow_html=True,
+                    )
+
+                    # Bull / Base / Bear cards
+                    for label, key, color in [
+                        ("BULL CASE", "bull_case", _GREEN_C),
+                        ("BASE CASE", "base_case", _AMBER_C),
+                        ("BEAR CASE", "bear_case", _RED_C),
+                    ]:
+                        cc = ts_synth.get(key) or {}
+                        claim = cc.get("claim", "")
+                        if not claim:
+                            continue
+                        cites = cc.get("cited_signals") or []
+                        cite_chips = ""
+                        if cites:
+                            chips = "".join(
+                                f'<span style="font-family:DM Mono,monospace;font-size:10px;'
+                                f'color:{_MUTED_C};background:{_TRACK_C};padding:2px 6px;'
+                                f'border-radius:3px;margin-right:4px;">{s}</span>'
+                                for s in cites[:6]
+                            )
+                            cite_chips = (
+                                f'<div style="margin-top:8px;line-height:2;">'
+                                f'<span style="font-family:DM Mono,monospace;font-size:10px;'
+                                f'color:{_MUTED_C};text-transform:uppercase;letter-spacing:0.5px;'
+                                f'margin-right:8px;">Cites:</span>{chips}</div>'
+                            )
+                        st.markdown(
+                            f"<div style='border:1px solid {_TRACK_C};border-left:4px solid {color};"
+                            f"padding:16px 20px;border-radius:0 6px 6px 0;color:inherit;"
+                            f"margin-bottom:12px;'>"
+                            f"<div style='font-family:DM Mono,monospace;font-size:11px;"
+                            f"color:{color};letter-spacing:0.7px;text-transform:uppercase;"
+                            f"margin-bottom:8px;font-weight:700;'>{label}</div>"
+                            f"<div style='font-size:14px;line-height:1.7;'>{claim}</div>"
+                            f"{cite_chips}</div>",
+                            unsafe_allow_html=True,
+                        )
+
+                    # Decision conditions — card rows (matches Deep Dive style)
+                    dcs = ts_synth.get("decision_conditions") or []
+                    if dcs:
+                        st.markdown("<div style='margin-top:18px;'></div>", unsafe_allow_html=True)
+                        st.markdown("**Decision conditions** — what triggers a position change")
+                        rows_html = []
+                        for dc in dcs:
+                            pri = (dc.get("priority") or "").lower()
+                            act = (dc.get("action") or "").upper()
+                            trigger = dc.get("trigger", "") or "—"
+                            obs = dc.get("observable", "") or ""
+                            p_color = _PRIORITY_C.get(pri, _MUTED_C)
+                            a_color = _ACTION_C.get(act, _MUTED_C)
+                            obs_html = (
+                                f'<div style="font-family:DM Mono,monospace;font-size:11px;'
+                                f'color:{_MUTED_C};margin-top:6px;line-height:1.5;">'
+                                f'observable · {obs}</div>'
+                            ) if obs else ""
+                            rows_html.append(
+                                f'<div style="border:1px solid {_TRACK_C};border-left:4px solid {p_color};'
+                                f'border-radius:0 6px 6px 0;padding:12px 16px;margin-bottom:8px;'
+                                f'color:inherit;display:flex;align-items:flex-start;gap:14px;">'
+                                f'<div style="flex:1;min-width:0;">'
+                                f'<div style="font-family:DM Mono,monospace;font-size:10px;font-weight:600;'
+                                f'letter-spacing:0.5px;text-transform:uppercase;color:{p_color};'
+                                f'margin-bottom:4px;">● {pri or "—"}</div>'
+                                f'<div style="font-size:13px;line-height:1.6;">{trigger}</div>'
+                                f'{obs_html}</div>'
+                                f'<span style="display:inline-block;font-family:DM Mono,monospace;'
+                                f'font-size:10px;font-weight:700;letter-spacing:0.6px;'
+                                f'color:{a_color};border:1px solid {a_color};'
+                                f'padding:3px 9px;border-radius:3px;white-space:nowrap;flex-shrink:0;">'
+                                f'{act or "—"}</span>'
+                                f'</div>'
+                            )
+                        st.markdown("".join(rows_html), unsafe_allow_html=True)
+
+                    upd = ts_synth.get("update_conditions") or []
+                    if upd:
+                        st.markdown("<div style='margin-top:18px;'></div>", unsafe_allow_html=True)
+                        st.markdown("**Update conditions** — would invalidate the thesis")
+                        for u in upd:
+                            st.markdown(f"- {u}")
+
+                else:
+                    st.info(
+                        "No structured thesis available yet for this ticker. "
+                        "Run the pipeline (sidebar → ▶ Run agents) to generate "
+                        "a thesis_synthesizer output."
+                    )
+
+                # ── Archived memos (read-only) ──────────────────────────
+                # The free-text Thesis Builder retired in the dashboard-
+                # wiring change. Historical memos remain accessible for
+                # reference but are no longer editable from this UI.
+                # New analyst input lives in the Qualitative tab as
+                # structured per-dimension assessments.
+                st.markdown("<br>", unsafe_allow_html=True)
+                st.markdown("##### Archived memos")
+                st.caption(
+                    "Free-text Thesis Builder retired — these memos are "
+                    "preserved for historical reference. New analyst "
+                    "judgment lives in the Qualitative tab."
+                )
                 try:
-                    history = httpx.get(f"{API_BASE}/ticker/{thesis_ticker}/thesis/history", timeout=5).json()
+                    history = httpx.get(
+                        f"{API_BASE}/ticker/{thesis_ticker}/thesis/history",
+                        timeout=5,
+                    ).json()
                     if history:
                         for h in history:
-                            st.markdown(f"**v{h['version']}** ({h['created_at'][:10]}): {h['one_sentence']}")
-                            st.markdown("---")
+                            created = (h.get("created_at") or "")[:10]
+                            one_sent = h.get("one_sentence") or "(no summary)"
+                            st.markdown(
+                                f"**v{h.get('version', '?')}** "
+                                f"({created}): {one_sent}"
+                            )
                     else:
-                        st.info("No previous versions found.")
+                        st.info("No archived memos for this ticker.")
                 except Exception:
-                    st.info("Could not fetch version history.")
+                    st.info("Could not fetch memo history.")
 
     # ──────────────────────────────────────────────────────────────────────────
     # TAB 8 — REPORTS

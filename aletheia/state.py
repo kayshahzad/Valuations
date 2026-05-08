@@ -56,6 +56,27 @@ class AgentState(TypedDict):
     # applied, full DCF result dict, IPS / upside summary).
     scenario_results: List[Dict[str, Any]]
 
+    # ── Thesis synthesizer (week-1.5) ──────────────────────────────────────
+    # Structured ThesisSynthesis output from thesis_synthesizer_agent.
+    # Contains: thesis_statement, bull/bear/base CitedClaim with
+    # cited_signals enforcement, decision_conditions, thesis_confidence,
+    # time_horizon, position_sizing_implications, required_analyst_judgment,
+    # update_conditions. Lead surfaces it into final_report.
+    thesis_synthesis: Dict[str, Any]
+
+    # ── Qualitative dashboard projection (week-6 wiring) ────────────────────
+    # Populated by dashboard_fetch_node. Shape:
+    #   {ticker, dimensions[dim_id]={status, score, narrative, ...},
+    #    categories[cat_id]={composite_score, status, contributing[], ...},
+    #    coverage={n_assessed, n_assessable, coverage_state, stale_paths, ...},
+    #    citable_dim_paths: List[str],
+    #    citable_composite_paths: List[str],
+    #    available: bool}
+    # thesis_synthesizer reads this to ground its cited_signals against the
+    # analyst's structured judgment. Per-call schema validator rejects
+    # citations to non-citable paths.
+    qualitative_dashboard: Dict[str, Any]
+
     # Intelligence Repository
     sector_context: str # Loaded from knowledge_base
     rules_content: str # Loaded from RULES.md
