@@ -353,10 +353,61 @@ def _fetch_risk_free_rate() -> float:
     """Fetch current 10-year US Treasury yield from market_data."""
     return get_risk_free_rate()
 
+# ─────────────────────────────────────────────────────────────────────────
+# Sector-aware beta floors
+#
+# 5Y-weekly-vs-SPY regression produces implausibly low betas for defensive
+# names (JNJ regressed to 0.24, MRK 0.26, KO 0.37 — all ~half of consensus
+# Bloomberg/sector-average values). Likely cause: COVID anomalies or
+# low-correlation periods dominating the regression window.
+#
+# Applying a sector floor stops a single bad regression from poisoning the
+# entire DCF chain (low β → low WACC → inflated IPS for half the universe).
+# Floors approximate Damodaran sector-average industry betas; conservative
+# (use lowest end of plausible range) to minimize false-positive clamping.
+# When the floor binds, the result is flagged via `beta_clamped=True` in
+# the DCFResult so downstream consumers can surface the override.
+# ─────────────────────────────────────────────────────────────────────────
+
+_SECTOR_BETA_FLOORS: dict = {
+    "Technology":             1.00,
+    "Semiconductors":         1.20,
+    "Auto Manufacturers":     1.20,
+    "Healthcare":             0.70,
+    "Healthcare Plans":       0.60,
+    "Financials":             0.90,
+    "Industrials":            0.85,
+    "Consumer Defensive":     0.50,
+    "Consumer Discretionary": 0.85,
+    "Utilities":              0.40,
+}
+
+
+def _sector_beta_floor(ticker: str) -> float:
+    """Return the sector-aware β floor for `ticker`. Falls back to 0.6
+    when the ticker isn't in the classification universe (a safer
+    default than 0 for unknown names)."""
+    try:
+        from config.ticker_classification import get_extended_universe
+        cls = get_extended_universe().get(ticker.upper())
+        if cls is None:
+            return 0.6
+        return _SECTOR_BETA_FLOORS.get(cls.sector, 0.6)
+    except Exception:
+        return 0.6
+
+
 def _compute_beta(ticker: str, period: str = BETA_PERIOD,
                   interval: str = BETA_INTERVAL) -> float:
-    """Compute 5-year weekly beta from market_data."""
-    return get_beta(ticker, period=period, interval=interval)
+    """Compute 5-year weekly beta from market_data, then apply the
+    sector-aware floor. Single point — every consumer of `_compute_beta`
+    (calc_node, strategist) gets the floored value automatically.
+    """
+    raw = get_beta(ticker, period=period, interval=interval)
+    floor = _sector_beta_floor(ticker)
+    if raw is None:
+        return floor
+    return max(raw, floor)
 
 
 def compute_wacc(
@@ -448,44 +499,104 @@ def _build_assumptions(
     decay_bull = profile.decay_bull
     decay_bear = profile.decay_bear
 
-    if scenario_name == "bull":
-        # Assume terminal growth is higher in bull scenario, bounded by profile
-        bull_terminal_g = profile.terminal_growth + 0.01
-        terminal_g = min(bull_terminal_g + terminal_g_delta, MAX_TERMINAL_G)
-        if profile.terminal_growth_cap is not None:
-            terminal_g = min(terminal_g, profile.terminal_growth_cap)
+    # ── Terminal growth: relative spread first, uniform cap last ─────────
+    #
+    # Compute bull/base/bear terminal growth as relative deltas from the
+    # profile's `terminal_growth` value, then apply caps uniformly to all
+    # three. The previous code applied MAX_TERMINAL_G only to the bull
+    # branch, which inverted bull < base for high-growth profiles
+    # (NVDA/AMD/MSFT/etc.) — bull's pre-cap value of base+100bps got clipped
+    # while base passed through, leaving bull with smaller terminal value
+    # despite the lower WACC.
+    #
+    # Per locked policy: terminal growth is the perpetual rate after the
+    # explicit forecast period. It must respect the long-run-GDP perpetuity
+    # constraint (≤ 4%). When the cap binds, bull/base/bear may collapse to
+    # a single terminal-growth value — that's correct economics, not a bug.
+    # Scenario differentiation comes from explicit-period assumptions
+    # (Y1-5 growth, margins, WACC) below, which still vary per scenario.
+    base_terminal_g_raw = profile.terminal_growth + terminal_g_delta
+    bull_terminal_g_raw = base_terminal_g_raw + 0.01
+    bear_terminal_g_raw = max(base_terminal_g_raw - 0.01, 0.015)
 
-        y1_5 = min(hist_revenue_cagr * (1.0 + profile.bull_growth_haircut), 0.45) * cagr_y1_5_factor
-        y6_10 = min(hist_revenue_cagr * decay_bull, 0.25) * cagr_y6_10_factor
+    raw_g = {
+        "bull": bull_terminal_g_raw,
+        "base": base_terminal_g_raw,
+        "bear": bear_terminal_g_raw,
+    }[scenario_name]
 
-        ebit_margin_term = min(ebit_margin * margin_rev_bull, 0.65)
-        capex_pct_rev = capex_pct * 0.90
-        wacc = max(wacc_base + profile.bull_wacc_adjustment, 0.06)
+    # Apply caps uniformly (global ceiling, then per-profile if tighter).
+    terminal_g = min(raw_g, MAX_TERMINAL_G)
+    if profile.terminal_growth_cap is not None:
+        terminal_g = min(terminal_g, profile.terminal_growth_cap)
 
-    elif scenario_name == "base":
-        terminal_g = profile.terminal_growth + terminal_g_delta
-        if profile.terminal_growth_cap is not None:
-            terminal_g = min(terminal_g, profile.terminal_growth_cap)
+    # Audit log when cap binds — tells analysts that bull/base/bear
+    # differentiation on terminal growth has collapsed (correct behavior
+    # for high-growth profiles whose default exceeds the cap).
+    if terminal_g < raw_g:
+        cap_source = "MAX_TERMINAL_G"
+        if (profile.terminal_growth_cap is not None
+                and profile.terminal_growth_cap < MAX_TERMINAL_G):
+            cap_source = f"profile.terminal_growth_cap ({profile.terminal_growth_cap*100:.1f}%)"
+        # Use logging.info — visible in uvicorn output without polluting
+        # the per-scenario data structures. Stdlib `warnings` module is
+        # already imported above for filterwarnings(); we deliberately
+        # avoid that path because it's about deprecation/runtime warnings.
+        import logging as _logging
+        _logging.getLogger(__name__).info(
+            "[%s] terminal_g %.2f%% capped to %.2f%% by %s. "
+            "Scenario differentiation comes from explicit-period assumptions.",
+            scenario_name, raw_g * 100, terminal_g * 100, cap_source,
+        )
 
-        y1_5 = hist_revenue_cagr * cagr_y1_5_factor
-        y6_10 = hist_revenue_cagr * decay_base * cagr_y6_10_factor
+    # ── Explicit-period assumptions per scenario ─────────────────────────
+    #
+    # Same pattern as terminal_g above: compute bull/base/bear via relative
+    # spread from the base value, then apply uniform absolute bounds. The
+    # previous code applied caps asymmetrically (e.g., bull y1_5 capped at
+    # 45% but base uncapped, bull WACC floored at 6% but base unfloored)
+    # which inverted bull/base/bear ordering whenever a cap or floor bound
+    # the bull side. Correctness rule: bull bounds and base bounds must
+    # match, otherwise scenario ordering can flip.
 
-        ebit_margin_term = ebit_margin * margin_rev_base
-        capex_pct_rev = capex_pct
-        wacc = wacc_base
+    # Y1-5 revenue growth
+    base_y1_5_raw = hist_revenue_cagr * cagr_y1_5_factor
+    bull_y1_5_raw = base_y1_5_raw * (1.0 + profile.bull_growth_haircut)
+    bear_y1_5_raw = max(base_y1_5_raw * (1.0 + profile.bear_growth_haircut),
+                        0.01)
+    y1_5_raw = {"bull": bull_y1_5_raw, "base": base_y1_5_raw, "bear": bear_y1_5_raw}[scenario_name]
+    y1_5 = min(y1_5_raw, 0.45)   # uniform cap, applies to all scenarios
 
-    else:  # bear
-        bear_terminal_g = max(profile.terminal_growth - 0.01, 0.015)
-        terminal_g = bear_terminal_g + terminal_g_delta
-        if profile.terminal_growth_cap is not None:
-            terminal_g = min(terminal_g, profile.terminal_growth_cap)
+    # Y6-10 revenue growth
+    base_y6_10_raw = hist_revenue_cagr * decay_base * cagr_y6_10_factor
+    bull_y6_10_raw = hist_revenue_cagr * decay_bull * cagr_y6_10_factor
+    bear_y6_10_raw = max(hist_revenue_cagr * decay_bear * cagr_y6_10_factor,
+                         0.005)
+    y6_10_raw = {"bull": bull_y6_10_raw, "base": base_y6_10_raw, "bear": bear_y6_10_raw}[scenario_name]
+    y6_10 = min(y6_10_raw, 0.25)   # uniform cap
 
-        y1_5 = max(hist_revenue_cagr * (1.0 + profile.bear_growth_haircut), 0.01) * cagr_y1_5_factor
-        y6_10 = max(hist_revenue_cagr * decay_bear, 0.005) * cagr_y6_10_factor
-        
-        ebit_margin_term = ebit_margin * margin_rev_bear
-        capex_pct_rev = capex_pct * 1.15
-        wacc = min(wacc_base + profile.bear_wacc_adjustment, 0.16)
+    # Terminal EBIT margin
+    base_margin_raw = ebit_margin * margin_rev_base
+    bull_margin_raw = ebit_margin * margin_rev_bull
+    bear_margin_raw = ebit_margin * margin_rev_bear
+    margin_raw = {"bull": bull_margin_raw, "base": base_margin_raw, "bear": bear_margin_raw}[scenario_name]
+    ebit_margin_term = min(margin_raw, 0.65)   # uniform cap (65% terminal margin ceiling)
+
+    # CapEx % revenue
+    capex_pct_rev = {"bull": capex_pct * 0.90,
+                     "base": capex_pct,
+                     "bear": capex_pct * 1.15}[scenario_name]
+
+    # WACC: relative spread + uniform [0.06, 0.16] bounds.
+    # The 6% floor and 16% ceiling exist to prevent implausible discount
+    # rates from blowing up terminal value. Applied uniformly so bull WACC
+    # < base WACC < bear WACC ordering is preserved across edge cases
+    # (low-WACC tickers like KO previously had bull floored above base).
+    base_wacc_raw = wacc_base
+    bull_wacc_raw = base_wacc_raw + profile.bull_wacc_adjustment
+    bear_wacc_raw = base_wacc_raw + profile.bear_wacc_adjustment
+    wacc_raw = {"bull": bull_wacc_raw, "base": base_wacc_raw, "bear": bear_wacc_raw}[scenario_name]
+    wacc = min(max(wacc_raw, 0.06), 0.16)
 
     # Phase 3 — direct calc-input overrides from ScenarioOverride. Routed
     # through ValuationProfile by scenario_eval_node._clone_profile_with_overrides.

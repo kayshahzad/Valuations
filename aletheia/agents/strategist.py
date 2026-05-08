@@ -67,8 +67,15 @@ def strategist_agent(state):
         beta=beta
     )
     
-    # WACC Floor
-    if wacc < config.wacc_floor:
+    # WACC Floor — only as catastrophic-fallback, not as routine override.
+    # Previously this clipped any WACC < 9% UP to 9%, which (a) created a
+    # visible discrepancy with the analytically-correct phase2.wacc that
+    # the dashboard displays, and (b) was masking the real bug — a too-low
+    # beta. With the sector-aware β floor in dcf_engine._compute_beta now
+    # raising defensive-name betas to plausible levels, this hard floor
+    # mostly never binds. Keeping it only for the catastrophic case where
+    # WACC came back ≤ 0 (data error).
+    if wacc is None or wacc <= 0:
         wacc = config.wacc_floor
 
     # Target D/E

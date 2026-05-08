@@ -347,6 +347,136 @@ def make_thesis_synthesis_class(
     return _ThesisSynthesisCitationAware
 
 
+# ─────────────────────────────────────────────────────────────────────────
+# Numeric-fidelity check — confirms numbers in prose match cited values.
+#
+# Catches the failure modes observed in the post-regen audit:
+#   - JNJ/ABT/MRK bear cases claiming "$0/share" (actual: $182/$60/$142)
+#   - JNJ/KO/TXN decision conditions where prose says "historical growth"
+#     but threshold doesn't match phase2.historical_cagr
+#   - General drift where LLM swaps implied/historical CAGR values
+#
+# Heuristic by design — focused on the systematic patterns. Returns a
+# list of violation strings; empty = pass.
+# ─────────────────────────────────────────────────────────────────────────
+
+_DOLLAR_NEAR_IPS = re.compile(
+    r"\$([0-9]+(?:\.[0-9]+)?)\b(?:/share| per share| intrinsic| iv\b|"
+    r" case dcf| ips\b)?",
+    re.IGNORECASE,
+)
+_DOLLAR_ZERO_RE = re.compile(r"\$0(?:[.,]0+)?(?:/share| per share)?",
+                              re.IGNORECASE)
+_IMPLIED_CAGR_RE = re.compile(
+    r"implied\s+(?:10[\-\s]?year\s+)?(?:revenue\s+)?cagr\s+(?:of\s+)?"
+    r"([\-\+]?[0-9]+(?:\.[0-9]+)?)\s*%",
+    re.IGNORECASE,
+)
+_HISTORICAL_CAGR_RE = re.compile(
+    r"historical\s+(?:[\w\-\s]{0,25}?)?(?:cagr|growth|rate)s?"
+    r"\s+(?:of\s+|baseline\s+of\s+|at\s+)?([\-\+]?[0-9]+(?:\.[0-9]+)?)\s*%",
+    re.IGNORECASE,
+)
+
+
+def _check_numeric_fidelity(
+    thesis: ThesisSynthesis,
+    state: Dict[str, Any],
+) -> List[str]:
+    """Scan thesis prose for numeric claims and verify against state.
+
+    Returns a list of violation strings (empty = pass). Each violation
+    names the offending claim and the expected value, formatted so the
+    retry prompt can paste it back to the LLM as substitution guidance.
+    """
+    violations: List[str] = []
+    p2 = state.get("phase2_valuation") or {}
+    dcf3 = p2.get("three_scenario_dcf") or {}
+    bear_ips = (dcf3.get("bear") or {}).get("intrinsic_per_share")
+    base_ips = (dcf3.get("base") or {}).get("intrinsic_per_share")
+    bull_ips = (dcf3.get("bull") or {}).get("intrinsic_per_share")
+    impl_cagr = p2.get("implied_cagr")
+    if impl_cagr is None:
+        impl_cagr = (p2.get("reverse_dcf") or {}).get("implied_cagr_10y")
+    hist_cagr = p2.get("historical_cagr")
+    if hist_cagr is None:
+        hist_cagr = (p2.get("reverse_dcf") or {}).get("historical_cagr")
+
+    cases = (
+        ("bull", thesis.bull_case.claim, bull_ips),
+        ("base", thesis.base_case.claim, base_ips),
+        ("bear", thesis.bear_case.claim, bear_ips),
+    )
+
+    # ── 1. $0 fabrications in case prose ────────────────────────────
+    for name, claim, expected_ips in cases:
+        if _DOLLAR_ZERO_RE.search(claim):
+            if expected_ips is not None and expected_ips > 1.0:
+                violations.append(
+                    f"{name}_case prose contains '$0' but engine "
+                    f"{name} IPS is ${expected_ips:.2f}. Remove the $0 "
+                    f"reference; use words ('catastrophic', 'tail risk') "
+                    f"for severity instead of an invented number."
+                )
+
+    # ── 2. Implied / historical CAGR drift in case prose ───────────
+    for name, claim, _ips in cases:
+        for m in _IMPLIED_CAGR_RE.finditer(claim):
+            try:
+                pct = float(m.group(1)) / 100
+            except ValueError:
+                continue
+            if impl_cagr is not None and abs(pct - impl_cagr) > 0.01:
+                violations.append(
+                    f"{name}_case says 'implied CAGR {pct*100:.1f}%' "
+                    f"but phase2.implied_cagr = {impl_cagr*100:.1f}%. "
+                    f"Use the actual cited value or the field name as "
+                    f"placeholder."
+                )
+        for m in _HISTORICAL_CAGR_RE.finditer(claim):
+            try:
+                pct = float(m.group(1)) / 100
+            except ValueError:
+                continue
+            if hist_cagr is not None and abs(pct - hist_cagr) > 0.01:
+                violations.append(
+                    f"{name}_case says 'historical {pct*100:.1f}%' "
+                    f"but phase2.historical_cagr = {hist_cagr*100:.1f}%. "
+                    f"Use the actual cited value or the field name as "
+                    f"placeholder."
+                )
+
+    # ── 3. Decision-condition prose↔threshold consistency ─────────
+    for i, dc in enumerate(thesis.decision_conditions):
+        trigger = dc.trigger or ""
+        observable = dc.observable or ""
+        tlow = trigger.lower()
+
+        # If trigger talks about "historical growth/CAGR/rates" and
+        # observable has a numeric threshold on implied_cagr, the
+        # threshold must match historical_cagr (within 0.5pp).
+        mentions_historical = (
+            "historical" in tlow and
+            ("growth" in tlow or "cagr" in tlow or "rate" in tlow)
+        )
+        if mentions_historical and "phase2.implied_cagr" in observable:
+            tm = re.search(r"([><]=?)\s*([0-9]+(?:\.[0-9]+)?)", observable)
+            if tm and hist_cagr is not None:
+                threshold = float(tm.group(2))
+                if abs(threshold - hist_cagr) > 0.005:
+                    violations.append(
+                        f"decision_conditions[{i}] trigger says "
+                        f"'historical' (={hist_cagr*100:.1f}%) but "
+                        f"observable threshold is {threshold*100:.1f}%. "
+                        f"Either change the threshold to "
+                        f"{hist_cagr:.4f} (={hist_cagr*100:.1f}%) or "
+                        f"rewrite the trigger prose to match the "
+                        f"actual threshold."
+                    )
+
+    return violations
+
+
 def _vocabulary_score(thesis: ThesisSynthesis) -> int:
     """Count distinct canonical markers across all narrative fields."""
     text = " ".join([
@@ -515,6 +645,39 @@ DASHBOARD CITATION RULES:
     (namespace A above), or raise as `required_analyst_judgment`.
   - STALE dim citations are accepted but trigger a staleness flag.
     Acknowledge staleness in the case prose if you cite one.
+
+═════════════════════════════════════════════════════════════════════
+NUMERIC FIDELITY (HARD RULE)
+═════════════════════════════════════════════════════════════════════
+Every NUMERIC value in your prose MUST match the value at the cited
+upstream path EXACTLY (within rounding to 1 decimal place).
+
+  - "bear case is $X" / "$X per share" / "$X intrinsic value"
+      → X MUST equal phase2.three_scenario_dcf.bear.intrinsic_per_share
+      → "$0/share" is FORBIDDEN unless the engine bear IPS literally is 0.
+        DO NOT use $0 as a stand-in for "catastrophic" or "tail risk" —
+        use words for severity, not invented numbers.
+  - "implied CAGR of X%" / "X% implied"
+      → X MUST equal phase2.implied_cagr (rounded to 1 decimal)
+  - "historical CAGR of X%" / "historical growth of X%"
+      → X MUST equal phase2.historical_cagr
+  - "multiple premium of X%"
+      → X MUST equal phase2.multiple_decomposition.premium_pct
+  - "WACC of X%" / "discount rate X%"
+      → X MUST equal phase2.wacc
+
+DECISION-CONDITION FIDELITY:
+  - If the trigger prose mentions "historical growth/CAGR/rates",
+    the observable threshold MUST be either `phase2.historical_cagr`
+    (literal field name) OR a number equal to that field's value.
+  - Threshold of `> 0.0` for an implied-CAGR observable means
+    "market stops pricing in revenue contraction" (current implied
+    is negative); it does NOT mean "back at historical." Don't
+    write "historical" prose for a 0.0 threshold unless historical
+    is genuinely 0.0%.
+
+If you don't know the exact value, use the field name as a placeholder
+(e.g. "implied CAGR exceeds historical") rather than guessing a number.
 
 Return ThesisSynthesis JSON.
 """
@@ -921,33 +1084,66 @@ def thesis_synthesizer_agent(state: Dict[str, Any]) -> Dict[str, Any]:
             invoke_args["error_msg"] = err_str[:1000]
             continue
 
-        # Vocabulary-discipline check
+        # Quality checks: vocabulary discipline + numeric fidelity.
+        # Both must pass for the candidate to be accepted on this attempt.
+        # When either fails on attempt 1, retry with combined guidance.
+        # When either fails on attempt 2, accept-and-flag (don't drop to mock).
         score = _vocabulary_score(candidate)
-        if score >= _VOCABULARY_MIN:
+        fidelity_violations = _check_numeric_fidelity(candidate, state)
+        vocab_pass = score >= _VOCABULARY_MIN
+        fidelity_pass = not fidelity_violations
+
+        if vocab_pass and fidelity_pass:
             thesis = candidate
             break
 
-        print(f"  ⚠ Attempt {attempt}: only {score} canonical-signal markers "
-              f"(need {_VOCABULARY_MIN}); retrying")
+        if not vocab_pass:
+            print(f"  ⚠ Attempt {attempt}: only {score} canonical-signal markers "
+                  f"(need {_VOCABULARY_MIN})")
+        if not fidelity_pass:
+            print(f"  ⚠ Attempt {attempt}: {len(fidelity_violations)} numeric-fidelity "
+                  f"violation(s):")
+            for v in fidelity_violations[:3]:
+                print(f"      · {v[:160]}")
+
         if attempt == 2:
-            # Accept the candidate but flag it
+            # Accept the candidate but flag both
             thesis = candidate
-            quality_flags.append(
-                f"vocabulary_below_floor: only {score} canonical markers "
-                f"(threshold {_VOCABULARY_MIN}); thesis may be producing "
-                f"parallel analysis instead of citing upstream signals"
-            )
+            if not vocab_pass:
+                quality_flags.append(
+                    f"vocabulary_below_floor: only {score} canonical markers "
+                    f"(threshold {_VOCABULARY_MIN})"
+                )
+            if not fidelity_pass:
+                quality_flags.append(
+                    f"numeric_fidelity_violations:{len(fidelity_violations)} "
+                    f"(prose values don't match cited paths; first: "
+                    f"{fidelity_violations[0][:200]})"
+                )
             break
-        # Retry with vocabulary directive
+
+        # Retry — combined guidance for whichever check failed
+        retry_blocks = []
+        if not vocab_pass:
+            retry_blocks.append(
+                f"VOCABULARY: only {score} of the required "
+                f"{_VOCABULARY_MIN} canonical markers (contrarian, "
+                f"cyclicality, z-score, implied CAGR, multiple."
+                f"decomposition, reverse.dcf, conviction, etc.). "
+                f"Re-do explicitly referencing upstream signal field "
+                f"paths in the narrative prose, not just in cited_signals."
+            )
+        if not fidelity_pass:
+            retry_blocks.append(
+                "NUMERIC FIDELITY VIOLATIONS:\n  - " +
+                "\n  - ".join(fidelity_violations[:6])
+            )
+
         chain = (
             ChatPromptTemplate.from_template(
-                "PRIOR ATTEMPT WAS INSUFFICIENTLY GROUNDED IN UPSTREAM SIGNALS.\n"
-                f"It contained only {score} of the required {_VOCABULARY_MIN} "
-                "canonical markers (contrarian, cyclicality, z-score, implied "
-                "CAGR, multiple.decomposition, reverse.dcf, conviction, etc.). "
-                "Re-do, explicitly REFERENCING upstream signal field paths "
-                "in the narrative prose, not just in cited_signals.\n\n"
-                "═══════════════════════════════════════════════════\n"
+                "PRIOR ATTEMPT FAILED QUALITY CHECKS:\n\n" +
+                "\n\n".join(retry_blocks) +
+                "\n\n═══════════════════════════════════════════════════\n"
                 + _PROMPT_BODY
             ) | structured_llm
         )
