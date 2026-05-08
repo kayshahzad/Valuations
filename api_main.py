@@ -1955,15 +1955,6 @@ def get_report_html(ticker: str):
     return FileResponse(path, media_type="text/html")
 
 
-@app.get("/ticker/{ticker}/report/executive", tags=["Reports"])
-def get_report_executive_md(ticker: str):
-    """Serve the Executive Markdown report."""
-    path = REPORT_DIR / f"{ticker.upper()}_Executive_Report.md"
-    if not path.exists():
-        raise HTTPException(404, f"No executive report for {ticker}")
-    return FileResponse(path, media_type="text/markdown")
-
-
 @app.get("/ticker/{ticker}/report/detailed", tags=["Reports"])
 def get_report_detailed_md(ticker: str):
     """Serve the Detailed Markdown report."""

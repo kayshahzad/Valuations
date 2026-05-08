@@ -43,6 +43,7 @@ class ReportGenerator:
         risk  = data.get("3_capital_structure_risk") or {}
         val   = data.get("4_valuation_synthesis") or {}
         thesis = val.get("investment_thesis") or {}
+        thesis_synth = val.get("thesis_synthesis") or {}
         p2     = val.get("phase2_valuation") or {}
 
         html = f"""<!DOCTYPE html>
@@ -59,6 +60,7 @@ class ReportGenerator:
       {self._render_executive_summary(thesis)}
       {self._render_valuation_card(p2, risk)}
     </div>
+    {self._render_structured_thesis(thesis_synth)}
     {self._render_phase2_section(p2)}
     {self._render_constitution(thesis)}
     {self._render_economic_engine(econ)}
@@ -75,124 +77,10 @@ class ReportGenerator:
         path.write_text(html, encoding="utf-8")
         return str(path)
 
-    def generate_markdown(self, ticker: str, data: Dict[str, Any]) -> str:
-        meta   = data.get("generated_at") or datetime.now().isoformat()
-        econ   = data.get("1_economic_reality") or {}
-        fin    = data.get("2_financial_translation") or {}
-        risk   = data.get("3_capital_structure_risk") or {}
-        val    = data.get("4_valuation_synthesis") or {}
-        thesis = val.get("investment_thesis") or {}
-        p2     = val.get("phase2_valuation") or {}
-
-        conviction = thesis.get("conviction_score")
-        narrative  = (thesis.get("narrative") or "No narrative available.").strip()
-
-        cf     = (fin.get("clean_financials") or {})
-        ratios = fin.get("ratios") or {}
-        moat   = econ.get("moat") or {}
-        vc     = econ.get("value_chain") or {}
-
-        # Phase 2
-        dcf3   = p2.get("three_scenario_dcf") or {}
-        rdcf   = p2.get("reverse_dcf") or {}
-        md_dec = p2.get("multiple_decomposition") or {}
-        wacc   = self._to_float(p2.get("wacc")) or \
-                 self._to_float(self._get(risk, ["capital_stack", "wacc"]))
-
-        base   = dcf3.get("base") or {}
-        bear   = dcf3.get("bear") or {}
-        bull   = dcf3.get("bull") or {}
-
-        checks = thesis.get("constitution_checks") or []
-
-        md = f"""# 📑 Investment Memo: {ticker}
-**Date**: {self._safe_date(meta)}
-**Conviction Score**: {conviction} (on -10 to +10 scale)
-**Status**: CONFIDENTIAL
-
----
-
-## 📝 Executive Summary
-{narrative}
-
----
-
-## 🎯 Phase 2 Valuation — Three-Scenario DCF
-
-| Scenario | Intrinsic Value / Share | Margin of Safety |
-| :--- | :--- | :--- |
-| **Bear** | {self._fmt_cur(self._to_float(bear.get('intrinsic_per_share')))} | {self._fmt_pct(self._to_float(bear.get('margin_of_safety')))} |
-| **Base** | {self._fmt_cur(self._to_float(base.get('intrinsic_per_share')))} | {self._fmt_pct(self._to_float(base.get('margin_of_safety')))} |
-| **Bull** | {self._fmt_cur(self._to_float(bull.get('intrinsic_per_share')))} | {self._fmt_pct(self._to_float(bull.get('margin_of_safety')))} |
-
-**WACC**: {self._fmt_pct(wacc)}  |  **Beta**: {self._fmt_num(self._to_float(p2.get('beta')), 2)}  |  **Rf**: {self._fmt_pct(self._to_float(p2.get('risk_free_rate')))}
-
-### Reverse DCF — What Is the Market Pricing In?
-| Metric | Value |
-| :--- | :--- |
-| **Implied 10-Year CAGR** | {self._fmt_pct(self._to_float(rdcf.get('implied_cagr_10y')))} |
-| **Historical CAGR** | {self._fmt_pct(self._to_float(rdcf.get('historical_cagr')))} |
-| **Implied / Historical** | {self._fmt_ratio(rdcf)} |
-| **Signal** | {(rdcf.get('signal') or 'N/A').upper()} |
-
-### Multiple Decomposition (Liberti Formula)
-| Metric | Value |
-| :--- | :--- |
-| **Market EV/EBITDA** | {self._fmt_num(self._to_float(md_dec.get('market_ev_ebitda')), 1)}x |
-| **Justified EV/EBITDA** | {self._fmt_num(self._to_float(md_dec.get('justified_ev_ebitda')), 1)}x |
-| **Premium to Justified** | {self._fmt_pct(self._to_float(md_dec.get('premium_pct')))} |
-| **ROIC-WACC Spread** | {self._fmt_pct(self._to_float(md_dec.get('roic_wacc_spread')))} |
-| **Signal** | {(md_dec.get('signal') or 'N/A').upper()} |
-
----
-
-## ⚖️ Constitution Checks
-{self._fmt_checks_md(checks)}
-
----
-
-## 1. 🌎 Economic Reality Engine
-### 🏰 Moat Diagnostics
-- **Moat Score**: {moat.get('score', 'N/A')}/10
-- **Switching Costs**: {moat.get('switching_costs', 'N/A')}
-- **Network Effects**: {moat.get('network_effects', 'N/A')}
-
-### 🔗 Value Chain & Business Model
-- **Power Ratio**: {vc.get('power_ratio', 'N/A')}
-- **Upstream Value Leak**: {vc.get('upstream_leak', 'N/A')}
-- **Strategic Leverage**: {vc.get('strategic_leverage', 'N/A')}
-
----
-
-## 2. 💹 Financial Translation Engine (Phase 1 Cleaned)
-### Core P&L (TTM)
-| Item | Value |
-| :--- | :--- |
-| **Revenue** | {self._fmt_bn(cf.get('revenue_bn'))} |
-| **EBITDA** | {self._fmt_bn(cf.get('ebitda_bn'))} |
-| **FCF** | {self._fmt_bn(cf.get('fcf_bn'))} |
-| **NOPAT** | {self._fmt_bn(cf.get('nopat_bn'))} |
-
-### Balance Sheet & Efficiency
-| Item | Value |
-| :--- | :--- |
-| **Net Debt** | {self._fmt_bn(cf.get('net_debt_bn'))} |
-| **Invested Capital** | {self._fmt_bn(cf.get('invested_capital_bn'))} |
-| **Gross Margin** | {self._fmt_ratio_pct(ratios.get('gross_margin_pct'))} |
-| **FCF Margin** | {self._fmt_ratio_pct(ratios.get('fcf_margin_pct'))} |
-| **ROIC** | {self._fmt_pct(self._to_float(ratios.get('roic')))} |
-
----
-
-## 3. 🛡️ Risk & Capital Structure
-- **WACC**: {self._fmt_pct(wacc)}
-- **Beta**: {self._fmt_num(self._to_float(self._get(risk, ['capital_stack', 'beta'])), 2)}
-- **Cost of Equity**: {self._fmt_pct(self._to_float(self._get(risk, ['capital_stack', 'cost_of_equity'])))}
-"""
-
-        path = self.output_dir / f"{ticker}_Executive_Report.md"
-        path.write_text(md, encoding="utf-8")
-        return str(path)
+    # `generate_markdown` (Executive MD) was a strict subset of
+    # `generate_detailed_markdown` with no unique consumer. Removed in
+    # the report-consolidation pass. The Detailed MD is now the single
+    # markdown surface.
 
     def generate_detailed_markdown(self, ticker: str, data: Dict[str, Any]) -> str:
         meta   = data.get("generated_at") or datetime.now().isoformat()
@@ -201,6 +89,7 @@ class ReportGenerator:
         risk   = data.get("3_capital_structure_risk") or {}
         val    = data.get("4_valuation_synthesis") or {}
         thesis = val.get("investment_thesis") or {}
+        thesis_synth = val.get("thesis_synthesis") or {}
         p2     = val.get("phase2_valuation") or {}
 
         conviction = thesis.get("conviction_score")
@@ -237,6 +126,13 @@ class ReportGenerator:
             narrative,
             "\n---\n",
         ]
+
+        # Structured thesis from thesis_synthesizer (Phase 1.5+). Only
+        # rendered when present — legacy reports fall back to the
+        # narrative summary above.
+        structured_md = self._render_structured_thesis_md(thesis_synth)
+        if structured_md:
+            lines += [structured_md, "\n---\n"]
 
         # Phase 2 DCF
         lines += [
@@ -420,6 +316,150 @@ class ReportGenerator:
 <div class="card">
   <h3>📝 Executive Summary</h3>
   <p style="line-height:1.6">{narrative}</p>
+</div>""".strip()
+
+    def _render_structured_thesis(self, ts: Dict[str, Any]) -> str:
+        """Full thesis_synthesizer output: bull/base/bear cases with
+        cited_signals, decision_conditions, update_conditions, confidence,
+        time_horizon. Empty string if no thesis_synthesis (legacy reports
+        pre-Phase 1.5)."""
+        if not ts or not ts.get("thesis_statement"):
+            return ""
+
+        statement = ts.get("thesis_statement", "")
+        confidence = (ts.get("thesis_confidence") or "—").upper()
+        horizon = (ts.get("time_horizon") or "—").replace("_", " ").upper()
+        conf_color = {
+            "HIGH": "#10b981", "MEDIUM": "#f59e0b", "LOW": "#ef4444",
+            "INSUFFICIENT_SIGNAL": "#a1a1aa",
+        }.get(confidence, "#a1a1aa")
+
+        case_blocks = []
+        for label, key, color in [
+            ("BULL CASE", "bull_case", "#10b981"),
+            ("BASE CASE", "base_case", "#f59e0b"),
+            ("BEAR CASE", "bear_case", "#ef4444"),
+        ]:
+            cc = ts.get(key) or {}
+            claim = cc.get("claim", "") or ""
+            if not claim:
+                continue
+            cites = cc.get("cited_signals") or []
+            cite_chips = ""
+            if cites:
+                chips = "".join(
+                    f'<span style="font-family:monospace;font-size:10px;'
+                    f'color:#71717a;background:#f4f4f5;padding:2px 6px;'
+                    f'border-radius:3px;margin-right:4px;">{c}</span>'
+                    for c in cites
+                )
+                cite_chips = (
+                    f'<div style="margin-top:8px;line-height:2;">'
+                    f'<span style="font-family:monospace;font-size:10px;'
+                    f'color:#71717a;text-transform:uppercase;letter-spacing:0.5px;'
+                    f'margin-right:8px;">Cites:</span>{chips}</div>'
+                )
+            case_blocks.append(
+                f'<div style="border:1px solid #e4e4e7;border-left:4px solid {color};'
+                f'padding:14px 18px;border-radius:0 6px 6px 0;margin-bottom:10px;">'
+                f'<div style="font-family:monospace;font-size:11px;'
+                f'color:{color};letter-spacing:0.7px;text-transform:uppercase;'
+                f'margin-bottom:6px;font-weight:700;">{label}</div>'
+                f'<div style="font-size:14px;line-height:1.7;">{claim}</div>'
+                f'{cite_chips}</div>'
+            )
+
+        # Decision conditions table
+        dcs = ts.get("decision_conditions") or []
+        dc_rows = []
+        action_color = {
+            "EXIT": "#ef4444", "TRIM": "#ef4444", "SELL": "#ef4444", "PASS": "#ef4444",
+            "HOLD": "#f59e0b", "WATCH": "#f59e0b", "REVIEW": "#f59e0b",
+            "ADD": "#10b981", "BUY": "#10b981", "ACCUMULATE": "#10b981",
+        }
+        priority_color = {"red": "#ef4444", "amber": "#f59e0b", "green": "#10b981"}
+        for dc in dcs:
+            pri = (dc.get("priority") or "").lower()
+            act = (dc.get("action") or "").upper()
+            trigger = dc.get("trigger", "") or "—"
+            obs = dc.get("observable", "") or ""
+            p_color = priority_color.get(pri, "#a1a1aa")
+            a_color = action_color.get(act, "#a1a1aa")
+            dc_rows.append(
+                f'<tr style="border-bottom:1px solid #e4e4e7">'
+                f'<td style="padding:8px 12px;color:{p_color};font-family:monospace;'
+                f'font-size:11px;font-weight:700;text-transform:uppercase;">● {pri or "—"}</td>'
+                f'<td style="padding:8px 12px;font-size:13px;">{trigger}'
+                f'<div style="font-family:monospace;font-size:11px;color:#71717a;'
+                f'margin-top:4px;">{obs}</div></td>'
+                f'<td style="padding:8px 12px;text-align:right;">'
+                f'<span style="font-family:monospace;font-size:10px;font-weight:700;'
+                f'letter-spacing:0.6px;color:{a_color};border:1px solid {a_color};'
+                f'padding:3px 9px;border-radius:3px;">{act or "—"}</span></td>'
+                f'</tr>'
+            )
+        dc_table = ""
+        if dc_rows:
+            dc_table = (
+                f'<h4 style="margin-top:18px;">Decision Conditions</h4>'
+                f'<table style="width:100%;border-collapse:collapse;'
+                f'border:1px solid #e4e4e7;border-radius:6px;overflow:hidden;">'
+                f'<thead><tr style="background:#f4f4f5;">'
+                f'<th style="padding:10px 12px;text-align:left;font-size:11px;'
+                f'text-transform:uppercase;letter-spacing:0.5px;color:#71717a;">Priority</th>'
+                f'<th style="padding:10px 12px;text-align:left;font-size:11px;'
+                f'text-transform:uppercase;letter-spacing:0.5px;color:#71717a;">Trigger / Observable</th>'
+                f'<th style="padding:10px 12px;text-align:right;font-size:11px;'
+                f'text-transform:uppercase;letter-spacing:0.5px;color:#71717a;">Action</th>'
+                f'</tr></thead>'
+                f'<tbody>{"".join(dc_rows)}</tbody></table>'
+            )
+
+        # Required analyst judgment + Update conditions
+        raj = ts.get("required_analyst_judgment") or []
+        upd = ts.get("update_conditions") or []
+        side_blocks = ""
+        if raj or upd:
+            raj_html = ""
+            if raj:
+                raj_html = (
+                    f'<div style="flex:1;"><h4>Required Analyst Judgment</h4>'
+                    f'<p style="font-size:12px;color:#71717a;margin-top:-6px;">'
+                    f'Gaps the framework defers to the analyst</p>'
+                    f'<ul style="font-size:13px;line-height:1.6;">'
+                    + "".join(f"<li>{r}</li>" for r in raj) + "</ul></div>"
+                )
+            upd_html = ""
+            if upd:
+                upd_html = (
+                    f'<div style="flex:1;"><h4>Update Conditions</h4>'
+                    f'<p style="font-size:12px;color:#71717a;margin-top:-6px;">'
+                    f'What would invalidate this thesis</p>'
+                    f'<ul style="font-size:13px;line-height:1.6;">'
+                    + "".join(f"<li>{u}</li>" for u in upd) + "</ul></div>"
+                )
+            side_blocks = (
+                f'<div style="display:flex;gap:24px;margin-top:18px;">'
+                f'{raj_html}{upd_html}</div>'
+            )
+
+        return f"""
+<div class="card" style="page-break-inside:avoid">
+  <h3>🧭 Structured Investment Thesis</h3>
+  <div style="font-family:monospace;font-size:11px;color:#71717a;
+              margin-bottom:12px;letter-spacing:0.3px;">
+    Confidence: <span style="color:{conf_color};font-weight:700">{confidence}</span>
+    &nbsp;·&nbsp;
+    Horizon: <span style="font-weight:700">{horizon}</span>
+  </div>
+  <div style="border-left:4px solid {conf_color};padding:14px 20px;
+              background:#fafafa;border-radius:0 6px 6px 0;
+              font-size:15px;line-height:1.7;margin-bottom:18px;font-weight:500;">
+    {statement}
+  </div>
+  {"".join(case_blocks)}
+  {dc_table}
+  {side_blocks}
 </div>""".strip()
 
     def _render_valuation_card(self, p2: Dict[str, Any], risk: Dict[str, Any]) -> str:
@@ -658,6 +698,86 @@ class ReportGenerator:
     </table>
   </div>
 </div>""".strip()
+
+    def _render_structured_thesis_md(self, ts: Dict[str, Any]) -> str:
+        """Markdown twin of `_render_structured_thesis`. Returns "" when
+        thesis_synthesis is absent (legacy reports pre-Phase 1.5)."""
+        if not ts or not ts.get("thesis_statement"):
+            return ""
+
+        statement = ts.get("thesis_statement", "")
+        confidence = (ts.get("thesis_confidence") or "—").upper()
+        horizon = (ts.get("time_horizon") or "—").replace("_", " ").upper()
+
+        out: List[str] = [
+            "## 1b. 🧭 Structured Investment Thesis",
+            f"**Confidence**: {confidence}  ·  **Horizon**: {horizon}",
+            "",
+            f"> {statement}",
+            "",
+        ]
+
+        for label, key in [
+            ("Bull case", "bull_case"),
+            ("Base case", "base_case"),
+            ("Bear case", "bear_case"),
+        ]:
+            cc = ts.get(key) or {}
+            claim = cc.get("claim", "") or ""
+            if not claim:
+                continue
+            cites = cc.get("cited_signals") or []
+            out.append(f"### {label}")
+            out.append(claim)
+            if cites:
+                cite_str = " · ".join(f"`{c}`" for c in cites)
+                out.append(f"**Cites**: {cite_str}")
+            out.append("")
+
+        dcs = ts.get("decision_conditions") or []
+        if dcs:
+            out += [
+                "### Decision conditions",
+                "",
+                "| Priority | Trigger | Observable | Action |",
+                "| :--- | :--- | :--- | :--- |",
+            ]
+            for dc in dcs:
+                pri = (dc.get("priority") or "—").upper()
+                act = (dc.get("action") or "—").upper()
+                trigger = (dc.get("trigger", "") or "—").replace("|", "\\|")
+                obs = (dc.get("observable", "") or "—").replace("|", "\\|")
+                out.append(f"| **{pri}** | {trigger} | `{obs}` | **{act}** |")
+            out.append("")
+
+        raj = ts.get("required_analyst_judgment") or []
+        if raj:
+            out += ["### Required analyst judgment",
+                    "_Gaps the framework defers to the analyst_", ""]
+            out += [f"- {r}" for r in raj]
+            out.append("")
+
+        upd = ts.get("update_conditions") or []
+        if upd:
+            out += ["### Update conditions",
+                    "_What would invalidate this thesis_", ""]
+            out += [f"- {u}" for u in upd]
+            out.append("")
+
+        # Metadata receipt at the bottom — fingerprint, coverage, citation set
+        md = ts.get("_metadata") or {}
+        if md:
+            cov = md.get("coverage_state", "—")
+            n_a = md.get("n_assessed", "?")
+            n_t = md.get("n_assessable", "?")
+            fp = md.get("dashboard_state_fingerprint", "")[:16]
+            out += [
+                f"_Generated against dashboard coverage `{cov}` ({n_a}/{n_t} dims), "
+                f"fingerprint `{fp}`._",
+                "",
+            ]
+
+        return "\n".join(out)
 
     # ─────────────────────────────────────────────────────────────────────────
     # Helpers

@@ -96,10 +96,13 @@ class ServingReportWriter:
             print(f"⚠ Lead: agent_runs DB write failed: {e}")
 
         try:
+            # Executive MD was a strict subset of Detailed MD with no
+            # unique consumer; dropped in the report-consolidation pass.
+            # HTML stays (inline-rendered in the Reports tab); Detailed
+            # MD stays (download surface). Both will gain embedded
+            # thesis_synthesis content via report_generator updates.
             html_path = self.html_gen.generate_html(ticker, report)
             print(f"✅ Lead: HTML saved to {html_path}")
-            md_path = self.html_gen.generate_markdown(ticker, report)
-            print(f"✅ Lead: Markdown saved to {md_path}")
             detailed_path = self.html_gen.generate_detailed_markdown(ticker, report)
             print(f"✅ Lead: Detailed markdown saved to {detailed_path}")
         except Exception as e:

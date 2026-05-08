@@ -1625,30 +1625,26 @@ def main():
         if not report_ticker:
             st.info("Select a ticker from the sidebar to begin analysis.")
         else:
-            col_dl1, col_dl2, col_dl3, col_dl4, col_dl5 = st.columns(5)
-            
-            # Download buttons — fetch from API
+            # Executive MD dropped — was a strict subset of Detailed MD.
+            # 4 download surfaces: HTML, Detailed MD, Raw JSON, DCF Excel.
+            col_dl1, col_dl2, col_dl3, col_dl4 = st.columns(4)
+
             with col_dl1:
                 html_bytes = httpx.get(f"{API_BASE}/ticker/{report_ticker}/report/html", timeout=10).content
                 st.download_button("⬇ HTML Report", html_bytes,
                                    file_name=f"{report_ticker}_Executive_Report.html",
                                    mime="text/html", use_container_width=True)
             with col_dl2:
-                exec_bytes = httpx.get(f"{API_BASE}/ticker/{report_ticker}/report/executive", timeout=10).content
-                st.download_button("⬇ Executive MD", exec_bytes,
-                                   file_name=f"{report_ticker}_Executive_Report.md",
-                                   mime="text/markdown", use_container_width=True)
-            with col_dl3:
                 det_bytes = httpx.get(f"{API_BASE}/ticker/{report_ticker}/report/detailed", timeout=10).content
                 st.download_button("⬇ Detailed MD", det_bytes,
                                    file_name=f"{report_ticker}_Detailed_Report.md",
                                    mime="text/markdown", use_container_width=True)
-            with col_dl4:
+            with col_dl3:
                 json_bytes = httpx.get(f"{API_BASE}/ticker/{report_ticker}", timeout=10).content
                 st.download_button("⬇ Raw JSON", json_bytes,
                                    file_name=f"{report_ticker}_report.json",
                                    mime="application/json", use_container_width=True)
-            with col_dl5:
+            with col_dl4:
                 try:
                     dcf_resp = httpx.get(f"{API_BASE}/ticker/{report_ticker}/report/dcf_excel", timeout=10)
                     if dcf_resp.status_code == 200:
