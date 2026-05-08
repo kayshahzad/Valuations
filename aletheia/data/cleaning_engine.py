@@ -1674,9 +1674,18 @@ class CleaningEngine:
         if fcf_val and revenue and revenue > 0:
             r.derived["FCF_Margin_Pct"] = fcf_val / revenue * 100
 
-        # ROE
-        if net_income and total_equity and total_equity != 0:
+        # ROE — suppress when book equity is negative or zero. Aggressive-
+        # buyback companies (LOW, HD, AZO, DRI etc.) drive book equity
+        # below zero via treasury-stock subtraction; NI/equity then
+        # produces a misleading negative percentage that suggests an
+        # operational problem the company doesn't have. ROIC (computed
+        # against invested capital) remains the meaningful return metric
+        # for these names.
+        if net_income and total_equity and total_equity > 0:
             r.derived["ROE"] = net_income / total_equity
+        elif total_equity is not None and total_equity <= 0:
+            r.derived["ROE"] = None
+            r.derived["ROE_suppressed_reason"] = "negative_or_zero_book_equity"
 
         # Net Debt — enterprise-value definition.
         # Gross debt:

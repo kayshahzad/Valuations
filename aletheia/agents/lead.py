@@ -34,6 +34,42 @@ def _capture_git_sha() -> str | None:
 _GIT_SHA = _capture_git_sha()
 
 
+def _ratios_block(_g) -> dict:
+    """Build the financial-translation ratios dict, with ROE suppression
+    for negative-equity tickers.
+
+    ROE is meaningless when book equity is negative (aggressive-buyback
+    names: LOW, HD, AZO, DRI etc. — treasury-stock subtraction drives
+    book equity below zero, making NI/equity ratios produce misleading
+    negative percentages). Suppress to None and surface the reason via
+    `roe_note`. ROIC stays — it uses invested capital, which remains a
+    meaningful denominator for these companies.
+
+    `_g` is the column-getter closure passed in from the caller; it
+    handles NaN-to-None coercion uniformly with the rest of the block.
+    """
+    equity = _g("raw_TotalEquity")
+    if equity is not None and equity <= 0:
+        roe_value = None
+        roe_note = "negative book equity from buybacks; use ROIC instead"
+    else:
+        roe_value = _g("derived_ROE")
+        roe_note = None
+
+    return {
+        "gross_margin_pct":    _g("derived_GrossMargin_Pct"),
+        "ebit_margin_pct":     _g("derived_EBIT_Margin_Pct"),
+        "ebitda_margin_pct":   _g("derived_EBITDA_Margin_Pct"),
+        "fcf_margin_pct":      _g("derived_FCF_Margin_Pct"),
+        "roic":                _g("derived_ROIC"),
+        "roe":                 roe_value,
+        "roe_note":            roe_note,
+        "sbc_pct_fcf":         _g("clean_SBC_PctFCF"),
+        "share_dilution_pct":  _g("clean_ShareDilution_Pct"),
+        "cash_tax_rate":       _g("clean_CashTaxRate"),
+    }
+
+
 class ServingReportWriter:
     def __init__(self):
         self.base_path = Path("valuation_data/serving/latest")
@@ -236,17 +272,7 @@ def lead_agent(state):
                     "fiscal_year":         int(_df["fiscal_year"].max()),
                     "data_quality":        _g("overall_quality_score"),
                 },
-                "ratios": {
-                    "gross_margin_pct":    _g("derived_GrossMargin_Pct"),
-                    "ebit_margin_pct":     _g("derived_EBIT_Margin_Pct"),
-                    "ebitda_margin_pct":   _g("derived_EBITDA_Margin_Pct"),
-                    "fcf_margin_pct":      _g("derived_FCF_Margin_Pct"),
-                    "roic":                _g("derived_ROIC"),
-                    "roe":                 _g("derived_ROE"),
-                    "sbc_pct_fcf":         _g("clean_SBC_PctFCF"),
-                    "share_dilution_pct":  _g("clean_ShareDilution_Pct"),
-                    "cash_tax_rate":       _g("clean_CashTaxRate"),
-                },
+                "ratios": _ratios_block(_g),
                 "quality_screens": {
                     "beneish_m_score": _g("beneish_m_score"),
                     "sloan_accrual":   _g("sloan_accrual_ratio"),
@@ -293,13 +319,24 @@ def lead_agent(state):
     # vacuously PASSed for every ticker. Bug fixed in agent consolidation cleanup.
     compliance_log = []
 
+    # Terminal-growth-vs-moat compliance:
+    # Long-run nominal GDP grows ~4-4.5%, real ~2-2.5%. A perpetual
+    # terminal growth above 3% means the company's share of GDP grows
+    # without bound — only economically defensible for world-class
+    # moats (Apple/MSFT/V/GOOGL territory, i.e. moat ≥ 9 on the 0-10
+    # scale). Strict inequality: a moat of exactly 8 doesn't clear the
+    # bar. Phrasing matches the rule rather than the negation.
     term_g     = (p2.get("dcf", {}) or {}).get("base_terminal_g") or 0
     moat_score = forensic.get("moat_score", 0)
-    if term_g > 0.03 and moat_score <= 8:
+    if term_g > 0.03 and moat_score < 9:
         compliance_log.append(
-            f"❌ FAIL: Terminal Cap. g ({term_g:.1%}) > 3% but Moat ({moat_score}) <= 8.")
+            f"❌ FAIL: Terminal growth {term_g:.1%} requires moat ≥ 9 "
+            f"(long-run-GDP perpetuity); ticker has moat {moat_score:.1f}."
+        )
     else:
-        compliance_log.append(f"✅ PASS: Terminal Cap. (g={term_g:.1%}, moat={moat_score})")
+        compliance_log.append(
+            f"✅ PASS: Terminal Cap. (g={term_g:.1%}, moat={moat_score})"
+        )
 
     implied_cagr    = p2.get("implied_cagr")
     historical_cagr = p2.get("historical_cagr")

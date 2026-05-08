@@ -347,17 +347,25 @@ class ReportGenerator:
             cites = cc.get("cited_signals") or []
             cite_chips = ""
             if cites:
+                # `display:inline-block` + `white-space:nowrap` keeps each
+                # chip as one cohesive token (so spaces inside citation
+                # paths like "Housing Turnover Rebound" don't split the
+                # chip mid-word). Parent `display:flex; flex-wrap:wrap`
+                # handles row breaks BETWEEN chips instead of letting them
+                # overflow the card's right edge — the bug fix here.
                 chips = "".join(
-                    f'<span style="font-family:monospace;font-size:10px;'
+                    f'<span style="display:inline-block;white-space:nowrap;'
+                    f'font-family:monospace;font-size:10px;'
                     f'color:#71717a;background:#f4f4f5;padding:2px 6px;'
-                    f'border-radius:3px;margin-right:4px;">{c}</span>'
+                    f'border-radius:3px;">{c}</span>'
                     for c in cites
                 )
                 cite_chips = (
-                    f'<div style="margin-top:8px;line-height:2;">'
+                    f'<div style="margin-top:8px;display:flex;flex-wrap:wrap;'
+                    f'align-items:baseline;gap:4px;">'
                     f'<span style="font-family:monospace;font-size:10px;'
                     f'color:#71717a;text-transform:uppercase;letter-spacing:0.5px;'
-                    f'margin-right:8px;">Cites:</span>{chips}</div>'
+                    f'margin-right:4px;">Cites:</span>{chips}</div>'
                 )
             case_blocks.append(
                 f'<div style="border:1px solid #e4e4e7;border-left:4px solid {color};'
