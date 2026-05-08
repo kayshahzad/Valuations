@@ -142,8 +142,24 @@ def lead_agent(state):
     # the agent-consolidation cleanup. Terminal growth and DCF assumptions
     # now read directly from p2 (phase2_valuation, written by calc_node).
 
-    p2_intrinsic = p2.get("intrinsic_per_share", {}) or {}
-    p2_mos       = p2.get("margin_of_safety", {}) or {}
+    # IPS / MoS source: calc_node stores the DCFEngine output in
+    # `phase2_valuation.dcf` (a flat dict from DCFResult.to_dict). That
+    # dict has `{scenario}_intrinsic_per_share` and `{scenario}_upside`
+    # keys (where upside = (iv/current_price)-1, i.e. MoS). The legacy
+    # `intrinsic_per_share` / `margin_of_safety` dicts at the top of
+    # phase2_valuation were never populated — reading from them yielded
+    # None across the entire universe (regression caught 2026-05-08).
+    _p2_dcf = p2.get("dcf", {}) or {}
+    p2_intrinsic = {
+        "bear": _p2_dcf.get("bear_intrinsic_per_share"),
+        "base": _p2_dcf.get("base_intrinsic_per_share"),
+        "bull": _p2_dcf.get("bull_intrinsic_per_share"),
+    }
+    p2_mos = {
+        "bear": _p2_dcf.get("bear_upside"),
+        "base": _p2_dcf.get("base_upside"),
+        "bull": _p2_dcf.get("bull_upside"),
+    }
 
     # ── Part 1: Economic Reality ──────────────────────────────────────────────
     economic_reality = {
