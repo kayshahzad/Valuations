@@ -156,6 +156,64 @@ _OUR_KEY_TO_DB_COL: Dict[str, Tuple[str, float]] = {
 }
 
 
+def _add_ev_derived_checks(
+    record: Any,
+    fmp_data: Dict[str, Any],
+    fields: Dict[str, Dict[str, Any]],
+) -> None:
+    """Mutate `fields` to append two derived second-source checks pulled
+    from FMP's /enterprise-values endpoint:
+
+      `net_debt_via_ev_identity` — fmp.enterpriseValue − fmp.marketCap
+        gives an implied NetDebt independent of /key-metrics.netDebt;
+        compared against our derived_NetDebt.
+
+      `shares_outstanding_eop` — fmp.numberOfShares (end-of-period)
+        compared against raw_SharesDiluted (weighted-average). Drift
+        is expected and tier=definitional reflects that.
+
+    Both fields are non-blocking (False). When EV data is missing they
+    record status=n_a so callers can see why."""
+    ev = (fmp_data or {}).get("enterprise_values") or {}
+
+    # NetDebt via EV identity
+    fmp_ev = ev.get("enterpriseValue")
+    fmp_mc = ev.get("marketCapitalization") or ev.get("marketCap")
+    fmp_implied_nd: Optional[float] = None
+    if fmp_ev is not None and fmp_mc is not None:
+        try:
+            fmp_implied_nd = float(fmp_ev) - float(fmp_mc)
+        except (TypeError, ValueError):
+            fmp_implied_nd = None
+    ours_nd = _our_value_for_gate(record, "net_debt")
+    _, d_nd = _drift_label(ours_nd, fmp_implied_nd)
+    fields["net_debt_via_ev_identity"] = {
+        "ours":            ours_nd,
+        "fmp":             fmp_implied_nd,
+        "drift_pct":       d_nd,
+        "tier":            "standard",
+        "blocking":        False,
+        "status":          _classify_drift(d_nd, "standard"),
+        "source_endpoint": "enterprise_values",
+        "fmp_key_resolved": "enterpriseValue-marketCapitalization",
+    }
+
+    # End-of-period shares vs our weighted-average diluted
+    fmp_shares_eop = ev.get("numberOfShares")
+    ours_shares = _our_value_for_gate(record, "shares_diluted")
+    _, d_sh = _drift_label(ours_shares, fmp_shares_eop)
+    fields["shares_outstanding_eop"] = {
+        "ours":            ours_shares,
+        "fmp":             fmp_shares_eop,
+        "drift_pct":       d_sh,
+        "tier":            "definitional",
+        "blocking":        False,
+        "status":          _classify_drift(d_sh, "definitional"),
+        "source_endpoint": "enterprise_values",
+        "fmp_key_resolved": "numberOfShares",
+    }
+
+
 class IngestionValidationFailure(Exception):
     """Raised by Gate A when blocking drift is detected. Caller catches
     in cleaning_engine and skips the DB write for this record."""
@@ -188,9 +246,12 @@ def _fetch_fmp_for_gate_a(
         cf  = fmp_client.fetch_cash_flows(ticker)
         km  = fmp_client.fetch_key_metrics(ticker)
         ratios = fmp_client.fetch_ratios(ticker)
+        ev  = fmp_client.fetch_enterprise_values(ticker)
     except Exception as exc:
         return None, f"fmp_network_error:{type(exc).__name__}"
 
+    # `ev` is allowed to be None on legacy plans; missing EV degrades the
+    # EV-identity / shares-EOP checks to n_a but doesn't skip Gate A.
     if any(x is None for x in (inc, bs, cf, km, ratios)):
         status = fmp_client.probe_subscription(ticker)
         skip_map = {
@@ -207,6 +268,7 @@ def _fetch_fmp_for_gate_a(
     cf_fy  = fmp_client.get_for_fiscal_year(cf,  fy)
     km_fy  = fmp_client.get_for_fiscal_year(km,  fy)
     rt_fy  = fmp_client.get_for_fiscal_year(ratios, fy)
+    ev_fy  = fmp_client.get_for_fiscal_year(ev, fy) if ev else None
     if not (inc_fy and bs_fy and cf_fy):
         return None, f"fmp_missing_fy{fy}"
 
@@ -217,11 +279,12 @@ def _fetch_fmp_for_gate_a(
         return None, f"fmp_currency_mismatch:{fmp_ccy}"
 
     return ({
-        "income":      inc_fy,
-        "balance":     bs_fy,
-        "cashflow":    cf_fy,
-        "key_metrics": km_fy or {},
-        "ratios":      rt_fy or {},
+        "income":            inc_fy,
+        "balance":           bs_fy,
+        "cashflow":          cf_fy,
+        "key_metrics":       km_fy or {},
+        "ratios":            rt_fy or {},
+        "enterprise_values": ev_fy or {},
     }, None)
 
 
@@ -323,6 +386,12 @@ def validate_ingestion_record(
         if is_blocking_violation:
             n_blocking += 1
             blocking_fields.append(field_name)
+
+    # ── EV-derived second-source checks ─────────────────────────────────
+    # These cross-check our values against an independent FMP endpoint
+    # (/enterprise-values), so a regression that fooled the primary gate
+    # because both sides drew from the same FMP source still gets caught.
+    _add_ev_derived_checks(record, fmp_data, fields)
 
     # Historical FYs: drift is recorded but never blocks ingestion.
     if n_blocking > 0 and is_latest_fy:

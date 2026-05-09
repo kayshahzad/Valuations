@@ -218,37 +218,37 @@ def _fetch(ticker: str, endpoint_name: str, endpoint_label: str,
 def fetch_income_statements(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
     """Annual income statements; FMP returns most-recent-first."""
     return _fetch(ticker, "income-statement", "income_annual",
-                  params={"period": "annual", "limit": "5"},
+                  params={"period": "annual", "limit": "30"},
                   force_refresh=force_refresh)
 
 
 def fetch_balance_sheets(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
     return _fetch(ticker, "balance-sheet-statement", "balance_annual",
-                  params={"period": "annual", "limit": "5"},
+                  params={"period": "annual", "limit": "30"},
                   force_refresh=force_refresh)
 
 
 def fetch_cash_flows(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
     return _fetch(ticker, "cash-flow-statement", "cashflow_annual",
-                  params={"period": "annual", "limit": "5"},
+                  params={"period": "annual", "limit": "30"},
                   force_refresh=force_refresh)
 
 
 def fetch_ratios(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
     return _fetch(ticker, "ratios", "ratios_annual",
-                  params={"period": "annual", "limit": "5"},
+                  params={"period": "annual", "limit": "30"},
                   force_refresh=force_refresh)
 
 
 def fetch_key_metrics(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
     return _fetch(ticker, "key-metrics", "key_metrics_annual",
-                  params={"period": "annual", "limit": "5"},
+                  params={"period": "annual", "limit": "30"},
                   force_refresh=force_refresh)
 
 
 def fetch_enterprise_values(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
     return _fetch(ticker, "enterprise-values", "ev_annual",
-                  params={"period": "annual", "limit": "5"},
+                  params={"period": "annual", "limit": "30"},
                   force_refresh=force_refresh)
 
 

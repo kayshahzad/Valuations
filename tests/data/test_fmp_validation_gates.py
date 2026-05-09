@@ -126,6 +126,12 @@ def _stub_fmp_data(rev=395_000_000_000, ni=99_000_000_000,
             "grossProfitMargin":     0.45,
             "operatingProfitMargin": 0.30,
         },
+        "enterprise_values": {
+            "enterpriseValue":        3_000_000_000_000,
+            "marketCapitalization":   3_050_000_000_000,
+            # implied NetDebt = -50B → matches stub_record default
+            "numberOfShares":         15_000_000_000,
+        },
     }, None)
 
 
@@ -199,6 +205,56 @@ def test_gate_a_historical_fy_validates_but_never_blocks():
     assert r["blocking_fields"] == []
     assert r["is_latest_fy"] is False
     assert r["fields"]["revenue"]["status"] == "structural_drift"
+
+
+def test_gate_a_ev_identity_check_byte_perfect():
+    """fmp.EV - fmp.MktCap = -50B implied NetDebt; ours = -50B → match."""
+    rec = _stub_record(net_debt=-50_000_000_000)
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data()):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    f = r["fields"]["net_debt_via_ev_identity"]
+    assert f["fmp"] == -50_000_000_000
+    assert f["status"] == "byte_perfect"
+    assert f["blocking"] is False
+
+
+def test_gate_a_ev_identity_catches_netdebt_drift():
+    """If our NetDebt is off and key-metrics drift slips through, the
+    EV identity (independent FMP source) still flags it."""
+    rec = _stub_record(net_debt=-30_000_000_000)  # 40% off the implied -50B
+    fmp = _stub_fmp_data(net_debt=-30_000_000_000)  # primary check passes (matched)
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=fmp):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    primary = r["fields"]["net_debt"]
+    derived = r["fields"]["net_debt_via_ev_identity"]
+    assert primary["status"] == "byte_perfect"
+    assert derived["status"] == "structural_drift"
+
+
+def test_gate_a_shares_eop_check_present():
+    rec = _stub_record()
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data()):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    f = r["fields"]["shares_outstanding_eop"]
+    assert f["fmp"] == 15_000_000_000
+    assert f["tier"] == "definitional"
+    assert f["blocking"] is False
+
+
+def test_gate_a_ev_checks_n_a_when_endpoint_missing():
+    """Legacy plans without /enterprise-values: derived checks are n_a,
+    not exceptions — Gate A still completes."""
+    fmp_no_ev = _stub_fmp_data()
+    fmp_no_ev[0]["enterprise_values"] = {}
+    rec = _stub_record()
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=fmp_no_ev):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    assert r["fields"]["net_debt_via_ev_identity"]["status"] == "n_a"
+    assert r["fields"]["shares_outstanding_eop"]["status"] == "n_a"
 
 
 def test_gate_a_historical_fy_validated_when_no_drift():
