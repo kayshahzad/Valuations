@@ -490,6 +490,19 @@ def _ttm_rows(
         if avg_equity > 0:
             our_roe_avg = ni_ttm / avg_equity
 
+    # FMP-style ROIC: NOPAT / (TotalDebt + Equity), no cash adjustment.
+    # Our canonical Liberti ROIC subtracts Cash from invested capital,
+    # which gives a ~10-15% higher number for cash-rich filers (NVDA's
+    # 71% Liberti vs 63% FMP-style). Both are valid; we show both rows.
+    our_roic_fmp_style = None
+    op_inc_ttm = L.get("raw_OperatingIncome") or L.get("derived_OperatingIncome")
+    ltd = L.get("raw_LongTermDebt")
+    if (op_inc_ttm is not None and not _is_missing(op_inc_ttm)
+            and eop_equity and ltd is not None and not _is_missing(ltd)):
+        ic_fmp = eop_equity + ltd
+        if ic_fmp > 0:
+            our_roic_fmp_style = (op_inc_ttm * (1.0 - 0.21)) / ic_fmp
+
     return [
         ("Revenue (TTM)",       L.get("clean_Revenue"),         fmp_revenue_ttm,
                                                                                           _money_b, "standard", 1.0),
@@ -502,7 +515,12 @@ def _ttm_rows(
         ("ROE (TTM)",           our_roe_avg or L.get("derived_ROE"),
                                                                 K.get("returnOnEquityTTM"),
                                                                                           _pct,     "definitional", 1.0),
-        ("ROIC (TTM)",          L.get("derived_ROIC"),          K.get("returnOnInvestedCapitalTTM"),
+        # Two ROIC rows by formula:
+        # - Liberti: our canonical, NOPAT / (Equity + LongTermDebt − Cash)
+        # - FMP defn: NOPAT / (TotalDebt + Equity), no cash adjustment
+        ("ROIC (Liberti — our formula)", L.get("derived_ROIC"),  None,
+                                                                                          _pct,     "sanity_only", 1.0),
+        ("ROIC (FMP defn)",             our_roic_fmp_style,     K.get("returnOnInvestedCapitalTTM"),
                                                                                           _pct,     "definitional", 1.0),
         ("EBIT Margin (TTM)",   L.get("derived_EBIT_Margin_Pct"), R.get("operatingProfitMarginTTM"),
                                                                                           _pct,     "standard", 0.01),
