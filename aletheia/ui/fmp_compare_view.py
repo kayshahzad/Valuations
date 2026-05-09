@@ -359,17 +359,35 @@ def _ttm_rows(local: Dict, fmp_km_ttm: Dict, fmp_ratios_ttm: Dict) -> List[_RowS
     ]
 
 
-def _market_rows(profile: Dict, fmp_ev: Dict) -> List[_RowSpec]:
+def _market_rows(profile: Dict, fmp_ev: Dict, dcf: Dict, local_fy: Dict) -> List[_RowSpec]:
+    """Live market snapshot. Our side comes from the DCF engine output
+    (current_price, market_cap, beta, shares_diluted from /profile via
+    DCFResult), with EV computed as market_cap + derived_NetDebt. FMP
+    side is the live /profile blob."""
     P = profile or {}
     E = fmp_ev or {}
+    D = dcf or {}
+    L = local_fy or {}
+
+    is_specialized = isinstance(D, dict) and D.get("error") == "specialized_model_required"
+
+    our_price        = (D.get("current_price") if not is_specialized else None)
+    our_market_cap   = (D.get("market_cap")    if not is_specialized else None)
+    our_shares       = (D.get("shares_diluted") if not is_specialized else None)
+    our_beta         = (D.get("beta")          if not is_specialized else None)
+    our_net_debt     = L.get("derived_NetDebt")
+    our_ev = (
+        (our_market_cap + (our_net_debt or 0.0))
+        if our_market_cap is not None else None
+    )
     return [
-        ("Current Price",  None, P.get("price"),                  _money_per_share, "strict",   1.0),
-        ("Market Cap",     None, P.get("mktCap") or P.get("marketCap"),
-                                                                  _money_b,         "standard", 1.0),
-        ("Enterprise Value", None, E.get("enterpriseValue"),      _money_b,         "standard", 1.0),
-        ("Beta",           None, P.get("beta"),                   _scalar,          "definitional", 1.0),
-        ("Shares Outstanding", None, P.get("sharesOutstanding"),  _shares,          "strict",   1.0),
-        ("FMP DCF",        None, P.get("dcf"),                    _money_per_share, "definitional", 1.0),
+        ("Current Price",      our_price,      P.get("price"),                  _money_per_share, "strict",       1.0),
+        ("Market Cap",         our_market_cap, P.get("mktCap") or P.get("marketCap"),
+                                                                                _money_b,         "standard",     1.0),
+        ("Enterprise Value",   our_ev,         E.get("enterpriseValue"),        _money_b,         "standard",     1.0),
+        ("Beta",               our_beta,       P.get("beta"),                   _scalar,          "definitional", 1.0),
+        ("Shares Outstanding", our_shares,     P.get("sharesOutstanding"),      _shares,          "strict",       1.0),
+        ("FMP DCF",            None,           P.get("dcf"),                    _money_per_share, "definitional", 1.0),
     ]
 
 
@@ -461,9 +479,27 @@ def render_fmp_compare_view(ticker: str) -> None:
         st.markdown(
             f"### TTM — ended {ttm_period_end}  ·  source: `{ttm_source}`"
         )
-        _render_table(_ttm_rows(
+        ttm_rows = _ttm_rows(
             ttm_local, fmp_blobs["ttm"]["key_metrics"], fmp_blobs["ttm"]["ratios"],
-        ))
+        )
+        _render_table(ttm_rows)
+        # Surface filer-specific XBRL gaps. Some filers (LLY, others
+        # with non-standard pharma/insurance income statements) don't
+        # publish OperatingIncomeLoss or PaymentsToAcquireProperty
+        # under the standard us-gaap tags, so the SEC TTM derivation
+        # leaves the dependent fields empty. The latest 10-K's value
+        # is shown in the FY section above for reference.
+        gap_labels = [
+            label for label, ours, fmp, *_ in ttm_rows
+            if (ours is None or _is_missing(ours)) and not _is_missing(fmp)
+        ]
+        if gap_labels and ttm_source == "sec_derived_quarters":
+            st.caption(
+                f"_TTM gaps for {ticker.upper()} ({', '.join(gap_labels)}): "
+                f"this filer doesn't publish the standard XBRL tags our "
+                f"SEC-quarterly derivation needs. Check the FY section "
+                f"above for the latest annual values._"
+            )
     else:
         st.info(
             "No TTM record on file. Run `python scripts/ingest_ttm.py "
@@ -473,7 +509,9 @@ def render_fmp_compare_view(ticker: str) -> None:
 
     # ── Market snapshot ──────────────────────────────────────────────
     st.markdown("### Market snapshot (live FMP /profile)")
-    _render_table(_market_rows(fmp_blobs.get("profile"), fmp_blobs["fy"]["ev"]))
+    _render_table(_market_rows(
+        fmp_blobs.get("profile"), fmp_blobs["fy"]["ev"], dcf_summary, fy_local,
+    ))
 
     # ── Legend ───────────────────────────────────────────────────────
     st.caption(
