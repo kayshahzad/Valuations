@@ -325,6 +325,11 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "market_cap":             float(result.market_cap)    if result.market_cap    else None,
         "shares_diluted":         float(result.shares_diluted) if result.shares_diluted else None,
         "run_date":               result.run_date if hasattr(result, "run_date") else None,
+        # Phase Q-5: which period drove the base year. UI shows the
+        # FY-base IPS alongside for reconciliation when this is 'TTM'.
+        "base_period":            getattr(result, "base_period", "FY"),
+        "base_period_end_date":   getattr(result, "base_period_end_date", None),
+        "fy_fiscal_year":         getattr(result, "fy_fiscal_year", None),
         "bear":                   scenario_dict(result.bear),
         "base":                   scenario_dict(result.base),
         "bull":                   scenario_dict(result.bull),
@@ -409,6 +414,10 @@ class DCFResponse(BaseModel):
     market_cap: Optional[float] = None
     shares_diluted: Optional[float] = None
     run_date: Optional[str] = None
+    # Period provenance (Phase Q-5) — 'TTM' or 'FY'.
+    base_period: Optional[str] = None
+    base_period_end_date: Optional[str] = None
+    fy_fiscal_year: Optional[int] = None
     bear: Optional[DCFScenario]
     base: Optional[DCFScenario]
     bull: Optional[DCFScenario]
@@ -1018,6 +1027,9 @@ def get_ticker_dcf(ticker: str, response: Response):
         market_cap=payload.get("market_cap"),
         shares_diluted=payload.get("shares_diluted"),
         run_date=payload.get("run_date"),
+        base_period=payload.get("base_period"),
+        base_period_end_date=payload.get("base_period_end_date"),
+        fy_fiscal_year=payload.get("fy_fiscal_year"),
         bear=DCFScenario(**payload["bear"]) if payload["bear"] else None,
         base=DCFScenario(**payload["base"]) if payload["base"] else None,
         bull=DCFScenario(**payload["bull"]) if payload["bull"] else None,

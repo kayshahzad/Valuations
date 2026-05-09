@@ -1341,13 +1341,21 @@ def _validation_pill(label: str, status: str) -> str:
 def _price_provenance_banner(
     ticker: str, dcf: Dict[str, Any], p2v: Dict[str, Any]
 ) -> None:
-    """Surface the price snapshot every IPS/MoS/multiple was computed against."""
+    """Surface the price + period snapshot every IPS/MoS/multiple was
+    computed against. When the DCF anchored to TTM, also call out the
+    latest filing date and the FY year being shown alongside for
+    reconciliation (Phase Q-5)."""
 
     # Prefer live /dcf payload; fall back to serving-JSON phase2.
     price = (dcf or {}).get("current_price") or (p2v or {}).get("current_price")
     market_cap = (dcf or {}).get("market_cap") or (p2v or {}).get("market_cap")
     shares = (dcf or {}).get("shares_diluted") or (p2v or {}).get("shares_diluted")
     run_date = (dcf or {}).get("run_date") or (p2v or {}).get("run_date")
+
+    # Period provenance (Phase Q-5)
+    base_period   = (dcf or {}).get("base_period") or (p2v or {}).get("base_period") or "FY"
+    base_pe_date  = (dcf or {}).get("base_period_end_date") or (p2v or {}).get("base_period_end_date")
+    fy_recon_year = (dcf or {}).get("fy_fiscal_year") or (p2v or {}).get("fy_fiscal_year")
 
     if not price:
         return
@@ -1356,6 +1364,18 @@ def _price_provenance_banner(
     mkt_str    = f"${market_cap/1e9:,.1f}B" if market_cap else "—"
     shares_str = f"{shares/1e9:,.2f}B" if shares else "—"
     run_str = (run_date or "")[:19].replace("T", " ") if run_date else "—"
+
+    # Period badge — TTM gets emphasis since it's the freshness signal.
+    if base_period == "TTM":
+        period_label = "TTM (latest 10-Q)"
+        period_value = base_pe_date or "—"
+        period_recon = (
+            f" · FY{fy_recon_year} shown alongside" if fy_recon_year else ""
+        )
+    else:
+        period_label = "FY (last 10-K)"
+        period_value = base_pe_date or "—"
+        period_recon = ""
 
     st.markdown(
         f"""
@@ -1387,11 +1407,19 @@ def _price_provenance_banner(
                  text-transform:uppercase;'>Captured at</span>
     <div style='font-size:13px;font-weight:500;font-family:DM Mono,monospace;'>{run_str} UTC</div>
   </div>
+  <div>
+    <span style='font-family:DM Mono,monospace;font-size:10px;
+                 color:{_MUTED_TEXT};letter-spacing:0.5px;
+                 text-transform:uppercase;'>Base period</span>
+    <div style='font-size:13px;font-weight:600;'>{period_label}</div>
+    <div style='font-size:11px;color:{_MUTED_TEXT};font-family:DM Mono,monospace;'>ended {period_value}{period_recon}</div>
+  </div>
   <div style='flex:1;min-width:280px;font-size:11px;color:{_MUTED_TEXT};
               line-height:1.5;border-left:1px solid {_BAR_BG};
               padding-left:14px;'>
     All scenario IPS, margin of safety, reverse-DCF, and live screening
-    multiples are computed against this price.
+    multiples are computed against this price using {period_label}
+    financials.
     <br/>
     FMP cross-checks may show drift because FMP screening data uses
     fiscal-year-end price.
