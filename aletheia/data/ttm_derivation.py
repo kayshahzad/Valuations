@@ -50,13 +50,18 @@ def _sum_or_none(records: List[Dict[str, Any]], key: str) -> Optional[float]:
 
 @dataclass
 class TTMDerivationResult:
-    """Wrapper around the produced CleanedRecord plus the FMP TTM blob
-    used as a sanity-check second source. Caller can inspect `fmp_ttm_*`
-    to surface in the Gate D receipt for forensic auditability."""
+    """Wrapper around the produced CleanedRecord plus the FMP TTM blobs
+    used by Gate A.TTM. `latest_quarter_income` is the raw FMP
+    quarterly income record for the most recent contributing quarter —
+    Gate A.TTM (Phase Q-6 full) cross-checks this against FMP's
+    as-reported XBRL endpoint to verify our quarterly source data
+    aligns with the actual filed numbers."""
     record: Optional[CleanedRecord]
     fmp_key_metrics_ttm: Optional[Dict[str, Any]]
     fmp_ratios_ttm: Optional[Dict[str, Any]]
     skip_reason: Optional[str]
+    latest_quarter_income: Optional[Dict[str, Any]] = None
+    latest_quarter_period_end: Optional[str] = None
 
 
 def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
@@ -247,9 +252,19 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
         "fields":      {},
     }
 
+    # Latest contributing quarter — passed through so Gate A.TTM can
+    # cross-check our quarterly source against FMP's as-reported XBRL
+    # endpoint (Phase Q-6 full).
+    latest_quarter_income = income_last4[0] if income_last4 else None
+    latest_quarter_period_end = (
+        (latest_quarter_income or {}).get("date") or ""
+    )[:10] or None
+
     return TTMDerivationResult(
         record=record,
         fmp_key_metrics_ttm=km_ttm,
         fmp_ratios_ttm=ratios_ttm,
         skip_reason=None,
+        latest_quarter_income=latest_quarter_income,
+        latest_quarter_period_end=latest_quarter_period_end,
     )

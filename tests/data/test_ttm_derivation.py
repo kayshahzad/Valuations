@@ -359,3 +359,204 @@ def test_gate_a_ttm_carries_ticker_for_caller_identification():
         fmp_ratios_ttm=result.fmp_ratios_ttm,
     )
     assert gate["ticker"] == "AAPL"
+
+
+# ── Phase Q-6 full second-source lanes ────────────────────────────────
+
+def test_ttm_result_exposes_latest_quarter_income_for_phase_q6():
+    """The latest contributing quarter's raw FMP record must be passed
+    through TTMDerivationResult so Gate A.TTM Phase Q-6 can compare
+    it against /income-statement-as-reported?period=quarter."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    assert result.latest_quarter_income is not None
+    assert result.latest_quarter_income["revenue"] == 100e9
+    assert result.latest_quarter_period_end == "2025-09-30"
+
+
+def test_gate_a_ttm_ev_identity_byte_perfect():
+    """FMP /enterprise-values?period=quarter latest record:
+       implied_NetDebt = EV - mktCap.  Stub: EV=3T, mktCap=2.94T →
+       implied=60B.  Our derived NetDebt = LTD+STD-Cash = 80+10-30 = 60B.
+       Match within standard tier."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    fmp_ev_quarter = {
+        "enterpriseValue":      3_000_000_000_000,
+        "marketCapitalization": 2_940_000_000_000,
+    }
+    gate = validate_ttm_record(
+        "AAPL", result.record,
+        fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
+        fmp_ratios_ttm=result.fmp_ratios_ttm,
+        fmp_ev_latest_quarter=fmp_ev_quarter,
+    )
+    f = gate["fields"]["net_debt_ttm_via_ev_identity"]
+    assert f["fmp"] == 60_000_000_000
+    assert f["status"] == "byte_perfect"
+    assert f["p0"] is False
+    assert "net_debt_ttm_via_ev_identity" not in gate["blocking_fields"]
+
+
+def test_gate_a_ttm_ev_identity_catches_netdebt_drift():
+    """If our NetDebt diverges materially from FMP's EV-implied NetDebt,
+    surface as drift on the second-source lane (still non-blocking — the
+    primary /key-metrics.netDebt check at Gate A on the FY record owns
+    blocking; this lane is a regression detector)."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    # Force our derived NetDebt to diverge from the FMP EV identity
+    result.record.derived["NetDebt"] = 200_000_000_000  # 233% off
+    fmp_ev_quarter = {
+        "enterpriseValue":      3_000_000_000_000,
+        "marketCapitalization": 2_940_000_000_000,
+    }
+    gate = validate_ttm_record(
+        "AAPL", result.record,
+        fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
+        fmp_ratios_ttm=result.fmp_ratios_ttm,
+        fmp_ev_latest_quarter=fmp_ev_quarter,
+    )
+    f = gate["fields"]["net_debt_ttm_via_ev_identity"]
+    assert f["status"] == "structural_drift"
+    assert "net_debt_ttm_via_ev_identity" not in gate["blocking_fields"]
+
+
+def test_gate_a_ttm_ev_identity_n_a_when_endpoint_missing():
+    """Caller doesn't pass /enterprise-values blob → field stamps n_a;
+    no false drift signal."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    gate = validate_ttm_record(
+        "AAPL", result.record,
+        fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
+        fmp_ratios_ttm=result.fmp_ratios_ttm,
+        fmp_ev_latest_quarter=None,
+    )
+    assert gate["fields"]["net_debt_ttm_via_ev_identity"]["status"] == "n_a"
+
+
+def test_gate_a_ttm_as_reported_byte_perfect_on_latest_quarter():
+    """FMP /income-statement-as-reported?period=quarter latest record
+    matches our latest quarter's revenue/NI byte-perfect — both arms
+    trace to the same XBRL fact."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    fmp_as_reported = {
+        "Revenues":      100e9,   # matches our latest quarter income
+        "NetIncomeLoss": 25e9,
+    }
+    gate = validate_ttm_record(
+        "AAPL", result.record,
+        fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
+        fmp_ratios_ttm=result.fmp_ratios_ttm,
+        fmp_income_as_reported_quarter=fmp_as_reported,
+        latest_quarter_income=result.latest_quarter_income,
+    )
+    assert gate["fields"]["revenue_latest_quarter_as_reported"]["status"] == "byte_perfect"
+    assert gate["fields"]["net_income_latest_quarter_as_reported"]["status"] == "byte_perfect"
+
+
+def test_gate_a_ttm_as_reported_falls_back_to_alt_xbrl_tag():
+    """When `Revenues` is missing, fall back to the post-ASC-606 tag."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    fmp_as_reported = {
+        "RevenueFromContractWithCustomerExcludingAssessedTax": 100e9,
+        "NetIncomeLoss": 25e9,
+    }
+    gate = validate_ttm_record(
+        "AAPL", result.record,
+        fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
+        fmp_ratios_ttm=result.fmp_ratios_ttm,
+        fmp_income_as_reported_quarter=fmp_as_reported,
+        latest_quarter_income=result.latest_quarter_income,
+    )
+    f = gate["fields"]["revenue_latest_quarter_as_reported"]
+    assert f["status"] == "byte_perfect"
+    assert f["fmp_key_resolved"] == "RevenueFromContractWithCustomerExcludingAssessedTax"
+
+
+def test_gate_a_ttm_as_reported_catches_quarterly_tag_mapping_bug():
+    """Inject a 4% drift between our latest-quarter revenue and the
+    XBRL-tagged value.  Strict tier surfaces as structural_drift but
+    NOT P0 (10-Q is unaudited; flag is informational)."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    fmp_as_reported = {
+        "Revenues":      96e9,   # 4% below our $100B
+        "NetIncomeLoss": 25e9,
+    }
+    gate = validate_ttm_record(
+        "AAPL", result.record,
+        fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
+        fmp_ratios_ttm=result.fmp_ratios_ttm,
+        fmp_income_as_reported_quarter=fmp_as_reported,
+        latest_quarter_income=result.latest_quarter_income,
+    )
+    f = gate["fields"]["revenue_latest_quarter_as_reported"]
+    assert f["status"] == "structural_drift"
+    assert "revenue_latest_quarter_as_reported" not in gate["blocking_fields"]
+
+
+def test_gate_a_ttm_as_reported_n_a_when_endpoint_missing():
+    """Quarterly as-reported endpoint not on plan → field stamps n_a."""
+    patches = _patch_fmp(_quarterly_income(), _balance_latest(),
+                         _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        result = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+
+    gate = validate_ttm_record(
+        "AAPL", result.record,
+        fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
+        fmp_ratios_ttm=result.fmp_ratios_ttm,
+        fmp_income_as_reported_quarter=None,
+        latest_quarter_income=result.latest_quarter_income,
+    )
+    assert gate["fields"]["revenue_latest_quarter_as_reported"]["status"] == "n_a"
+    assert gate["fields"]["net_income_latest_quarter_as_reported"]["status"] == "n_a"

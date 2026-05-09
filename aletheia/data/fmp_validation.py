@@ -573,12 +573,25 @@ def validate_ttm_record(
     *,
     fmp_key_metrics_ttm: Optional[Dict[str, Any]] = None,
     fmp_ratios_ttm: Optional[Dict[str, Any]] = None,
+    fmp_ev_latest_quarter: Optional[Dict[str, Any]] = None,
+    fmp_income_as_reported_quarter: Optional[Dict[str, Any]] = None,
+    latest_quarter_income: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Gate A.TTM — cross-check our derived TTM against FMP's TTM blob.
+    """Gate A.TTM — cross-check our derived TTM against FMP's TTM blob
+    plus two second-source lanes added in Phase Q-6 full:
+
+      EV-identity NetDebt: pulls FMP's latest quarterly /enterprise-values
+        (independent of /key-metrics.netDebt) and compares the implied
+        NetDebt = EV − marketCap against our TTM record's derived NetDebt.
+
+      As-reported XBRL: pulls /income-statement-as-reported?period=quarter
+        for the latest contributing quarter and verifies our quarterly
+        source data (latest_quarter_income) matches the raw filed XBRL
+        tags. Catches tag-mapping regressions on the freshest filing.
 
     `record` is the CleanedRecord returned by `derive_ttm_from_fmp`.
-    `fmp_key_metrics_ttm` + `fmp_ratios_ttm` are the FMP TTM dicts;
-    callers usually pass them through from the same TTMDerivationResult.
+    `fmp_*` blobs come from the same TTMDerivationResult / a parallel
+    fetch in the ingestion entrypoint.
 
     Result status:
       - validated:      all fields within tier band
@@ -658,6 +671,18 @@ def validate_ttm_record(
             n_p0_breach += 1
             blocking_fields.append(label)
 
+    # ── Phase Q-6 full: second-source TTM lanes ────────────────────────
+    # Both lanes are non-P0 by design (the primary check at /key-
+    # metrics.netDebt + Gate A.TTM revenue/NI fields owns the gate);
+    # these append fields for forensics and add to drift count only.
+    nd_drift = _add_ttm_ev_identity_check(
+        record, fmp_ev_latest_quarter, fields,
+    )
+    ar_drift = _add_ttm_as_reported_check(
+        latest_quarter_income, fmp_income_as_reported_quarter, fields,
+    )
+    n_drift += nd_drift + ar_drift
+
     if n_p0_breach > 0:
         result_status = "blocking_drift"
     elif n_drift > 0:
@@ -671,6 +696,130 @@ def validate_ttm_record(
         "fields":          fields,
         "blocking_fields": blocking_fields,
     }
+
+
+# ── Phase Q-6 full helpers ─────────────────────────────────────────────
+
+def _add_ttm_ev_identity_check(
+    record: Any,
+    fmp_ev: Optional[Dict[str, Any]],
+    fields: Dict[str, Dict[str, Any]],
+) -> int:
+    """Append `net_debt_ttm_via_ev_identity` field. Returns the drift
+    count contribution. Non-blocking by design — primary check at
+    /key-metrics.netDebt owns the gate; this lane is a second-source
+    regression detector."""
+    ours_nd = _resolve_record_path(record, "derived.NetDebt")
+    if not fmp_ev:
+        fields["net_debt_ttm_via_ev_identity"] = {
+            "ours":             ours_nd,
+            "fmp":              None,
+            "drift_pct":        None,
+            "tier":             "standard",
+            "p0":               False,
+            "status":           "n_a",
+            "source_endpoint":  "enterprise_values_quarter",
+            "fmp_key_resolved": "enterpriseValue-marketCapitalization",
+        }
+        return 0
+
+    ev = fmp_ev.get("enterpriseValue")
+    mc = fmp_ev.get("marketCapitalization") or fmp_ev.get("marketCap")
+    fmp_implied_nd: Optional[float] = None
+    if ev is not None and mc is not None:
+        try:
+            fmp_implied_nd = float(ev) - float(mc)
+        except (TypeError, ValueError):
+            fmp_implied_nd = None
+
+    _, drift = _drift_label(ours_nd, fmp_implied_nd)
+    status = _classify_drift(drift, "standard")
+    fields["net_debt_ttm_via_ev_identity"] = {
+        "ours":             ours_nd,
+        "fmp":              fmp_implied_nd,
+        "drift_pct":        drift,
+        "tier":             "standard",
+        "p0":               False,
+        "status":           status,
+        "source_endpoint":  "enterprise_values_quarter",
+        "fmp_key_resolved": "enterpriseValue-marketCapitalization",
+    }
+    return 1 if status == "structural_drift" else 0
+
+
+# (label, our_key_in_latest_quarter_income, xbrl_tags fallback list, tier)
+_TTM_AS_REPORTED_FIELDS: List[Tuple[str, str, List[str], str]] = [
+    ("revenue_latest_quarter_as_reported", "revenue",
+     ["Revenues",
+      "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "SalesRevenueNet"],
+     "strict"),
+    ("net_income_latest_quarter_as_reported", "netIncome",
+     ["NetIncomeLoss"],
+     "strict"),
+]
+
+
+def _add_ttm_as_reported_check(
+    latest_quarter_income: Optional[Dict[str, Any]],
+    fmp_as_reported: Optional[Dict[str, Any]],
+    fields: Dict[str, Dict[str, Any]],
+) -> int:
+    """Append as-reported XBRL fields for the latest contributing
+    quarter. Returns the drift count contribution. Strict tier; non-
+    blocking — 10-Q is unaudited and FMP normalization may legit
+    drift, so a flag here is informational."""
+    n_drift = 0
+    if not latest_quarter_income or not fmp_as_reported:
+        for label, _, _, tier in _TTM_AS_REPORTED_FIELDS:
+            fields[label] = {
+                "ours":             None,
+                "fmp":              None,
+                "drift_pct":        None,
+                "tier":             tier,
+                "p0":               False,
+                "status":           "n_a",
+                "source_endpoint":  "income_as_reported_quarter",
+                "fmp_key_resolved": None,
+            }
+        return 0
+
+    for label, our_key, xbrl_tags, tier in _TTM_AS_REPORTED_FIELDS:
+        ours_v = latest_quarter_income.get(our_key)
+        try:
+            ours_v = float(ours_v) if ours_v is not None else None
+        except (TypeError, ValueError):
+            ours_v = None
+
+        fmp_v: Optional[float] = None
+        tag_used: Optional[str] = None
+        for tag in xbrl_tags:
+            v = fmp_as_reported.get(tag)
+            if v is None:
+                continue
+            try:
+                fmp_v = float(v)
+                tag_used = tag
+                break
+            except (TypeError, ValueError):
+                continue
+
+        _, drift = _drift_label(ours_v, fmp_v)
+        status = _classify_drift(drift, tier)
+        fields[label] = {
+            "ours":             ours_v,
+            "fmp":              fmp_v,
+            "drift_pct":        drift,
+            "tier":             tier,
+            "p0":               False,
+            "status":           status,
+            "source_endpoint":  "income_as_reported_quarter",
+            "fmp_key_resolved": tag_used or xbrl_tags[0],
+        }
+        if status == "structural_drift":
+            n_drift += 1
+
+    return n_drift
 
 
 # ────────────────────────────────────────────────────────────────────────

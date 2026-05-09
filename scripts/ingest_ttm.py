@@ -26,6 +26,7 @@ import json
 import sys
 from typing import Dict, List, Optional
 
+from aletheia.data import fmp_client
 from aletheia.data.database import InvestmentDatabase
 from aletheia.data.fmp_validation import validate_ttm_record
 from aletheia.data.ttm_derivation import derive_ttm_from_fmp
@@ -68,10 +69,28 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
             "blocking":    "",
         }
 
+    # Phase Q-6 full second-source endpoints. Fetch failures degrade
+    # the corresponding lane to status='n_a' instead of breaking the
+    # whole TTM ingest — Gate A.TTM still runs on the primary lane.
+    try:
+        ev_quarters = fmp_client.fetch_enterprise_values(ticker, period="quarter")
+        ev_latest_quarter = ev_quarters[0] if ev_quarters else None
+    except Exception:
+        ev_latest_quarter = None
+
+    try:
+        as_reported_quarters = fmp_client.fetch_income_statement_as_reported_quarter(ticker)
+        as_reported_latest = as_reported_quarters[0] if as_reported_quarters else None
+    except Exception:
+        as_reported_latest = None
+
     gate = validate_ttm_record(
         ticker, derivation.record,
         fmp_key_metrics_ttm=derivation.fmp_key_metrics_ttm,
         fmp_ratios_ttm=derivation.fmp_ratios_ttm,
+        fmp_ev_latest_quarter=ev_latest_quarter,
+        fmp_income_as_reported_quarter=as_reported_latest,
+        latest_quarter_income=derivation.latest_quarter_income,
     )
     derivation.record.fmp_validation = gate
 

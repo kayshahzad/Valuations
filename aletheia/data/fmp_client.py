@@ -354,17 +354,30 @@ def fetch_profile(ticker: str, force_refresh: bool = False) -> Optional[Dict[str
 
 
 def fetch_income_statement_as_reported(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """As-reported (XBRL tag → value) income statements at the given
+    cadence. The keys are the raw XBRL concepts the filer used (e.g.
+    `Revenues`, `NetIncomeLoss`), bypassing FMP's normalization. Used
+    by Gate A's third lane (FY) and Gate A.TTM (latest quarter) to
+    confirm FMP and our SEC ingest saw the same filed numbers — the
+    highest-leverage check for tag-mapping regressions."""
+    p = _validate_period(period)
+    return _fetch(
+        ticker, "income-statement-as-reported", f"income_as_reported_{p}",
+        params={"period": p, "limit": "30"},
+        force_refresh=force_refresh,
+    )
+
+
+def fetch_income_statement_as_reported_quarter(
     ticker: str, force_refresh: bool = False,
 ) -> Optional[List[Dict[str, Any]]]:
-    """As-reported (XBRL tag → value) annual income statements. The
-    keys are the raw XBRL concepts the filer used (e.g. `Revenues`,
-    `NetIncomeLoss`), bypassing FMP's normalization. Used by Gate A's
-    third lane to confirm FMP and our SEC ingest saw the same filed
-    numbers — the highest-leverage check for tag-mapping regressions."""
-    return _fetch(
-        ticker, "income-statement-as-reported", "income_as_reported",
-        params={"period": "annual", "limit": "30"},
-        force_refresh=force_refresh,
+    """Convenience wrapper for the quarterly as-reported endpoint. Used
+    by Gate A.TTM to verify the latest contributing quarter against the
+    raw filed XBRL tags."""
+    return fetch_income_statement_as_reported(
+        ticker, period="quarter", force_refresh=force_refresh,
     )
 
 
