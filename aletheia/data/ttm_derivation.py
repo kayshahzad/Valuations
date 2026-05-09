@@ -102,29 +102,38 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
     cashflow_last4 = cashflow_q[:4]
     balance_latest = balance_q[0]
 
-    # Currency check — match Gate A's policy: foreign-reporting filers
-    # are skipped pending Phase 6 FX support.
+    # Currency conversion — foreign-reporting filers (ASML EUR, TSM TWD,
+    # etc.) get every monetary value multiplied by the FY-average FX
+    # rate from `aletheia.data.fx_converter`. Shares + ratios are
+    # currency-invariant and pass through untouched.
     fmp_ccy = (income_last4[0].get("reportedCurrency") or "").upper()
-    if fmp_ccy and fmp_ccy != "USD":
-        return TTMDerivationResult(
-            None, km_ttm, ratios_ttm, f"fmp_currency_mismatch:{fmp_ccy}"
-        )
+    fy_str  = str(income_last4[0].get("fiscalYear") or income_last4[0].get("calendarYear") or "")
+    fy_for_fx = int(fy_str) if fy_str.isdigit() else 0
 
-    # ── Flow items (TTM = sum of last four quarters) ────────────────────
-    revenue          = _sum_or_none(income_last4,   "revenue")
-    net_income       = _sum_or_none(income_last4,   "netIncome")
-    operating_income = _sum_or_none(income_last4,   "operatingIncome")
-    ebitda           = _sum_or_none(income_last4,   "ebitda")
-    cogs             = _sum_or_none(income_last4,   "costOfRevenue")
-    rnd              = _sum_or_none(income_last4,   "researchAndDevelopmentExpenses")
-    interest_expense = _sum_or_none(income_last4,   "interestExpense")
-    operating_cf     = _sum_or_none(cashflow_last4, "operatingCashFlow")
-    fcf              = _sum_or_none(cashflow_last4, "freeCashFlow")
-    capex            = _sum_or_none(cashflow_last4, "capitalExpenditure")
-    sbc              = _sum_or_none(cashflow_last4, "stockBasedCompensation")
+    def _fx(value: Optional[float]) -> Optional[float]:
+        """Convert value to USD using FY-average FX. None pass-through."""
+        if value is None:
+            return None
+        if not fmp_ccy or fmp_ccy == "USD":
+            return value
+        from aletheia.data.fx_converter import convert_to_usd
+        return convert_to_usd(value, fmp_ccy, fy_for_fx)
+
+    # ── Flow items (TTM = sum of last four quarters, then FX) ───────────
+    revenue          = _fx(_sum_or_none(income_last4,   "revenue"))
+    net_income       = _fx(_sum_or_none(income_last4,   "netIncome"))
+    operating_income = _fx(_sum_or_none(income_last4,   "operatingIncome"))
+    ebitda           = _fx(_sum_or_none(income_last4,   "ebitda"))
+    cogs             = _fx(_sum_or_none(income_last4,   "costOfRevenue"))
+    rnd              = _fx(_sum_or_none(income_last4,   "researchAndDevelopmentExpenses"))
+    interest_expense = _fx(_sum_or_none(income_last4,   "interestExpense"))
+    operating_cf     = _fx(_sum_or_none(cashflow_last4, "operatingCashFlow"))
+    fcf              = _fx(_sum_or_none(cashflow_last4, "freeCashFlow"))
+    capex            = _fx(_sum_or_none(cashflow_last4, "capitalExpenditure"))
+    sbc              = _fx(_sum_or_none(cashflow_last4, "stockBasedCompensation"))
     # D&A is required by the DCF engine. Sum across quarters; some FMP
     # responses only expose it on the income statement.
-    da_total         = (
+    da_total         = _fx(
         _sum_or_none(cashflow_last4, "depreciationAndAmortization")
         or _sum_or_none(income_last4, "depreciationAndAmortization")
     )
@@ -134,13 +143,14 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
             None, km_ttm, ratios_ttm, "missing_required_flows:revenue_or_net_income",
         )
 
-    # ── Stock items (latest balance sheet) ──────────────────────────────
-    total_assets       = _f(balance_latest.get("totalAssets"))
-    total_liabilities  = _f(balance_latest.get("totalLiabilities"))
-    total_equity       = _f(balance_latest.get("totalStockholdersEquity"))
-    cash               = _f(balance_latest.get("cashAndCashEquivalents"))
-    long_term_debt     = _f(balance_latest.get("longTermDebt"))
-    short_term_debt    = _f(balance_latest.get("shortTermDebt"))
+    # ── Stock items (latest balance sheet, then FX) ─────────────────────
+    total_assets       = _fx(_f(balance_latest.get("totalAssets")))
+    total_liabilities  = _fx(_f(balance_latest.get("totalLiabilities")))
+    total_equity       = _fx(_f(balance_latest.get("totalStockholdersEquity")))
+    cash               = _fx(_f(balance_latest.get("cashAndCashEquivalents")))
+    long_term_debt     = _fx(_f(balance_latest.get("longTermDebt")))
+    short_term_debt    = _fx(_f(balance_latest.get("shortTermDebt")))
+    # Shares + ratios are unit-invariant; no FX needed.
     shares_diluted     = _f(income_last4[0].get("weightedAverageShsOutDil"))
     shares_outstanding = _f(balance_latest.get("commonStockSharesOutstanding"))
 
@@ -259,6 +269,8 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
     record.fmp_validation = {
         "status":      "validated",  # provisional; tightened by Gate A.TTM
         "ttm_source":  "fmp_derived_quarters",
+        "reported_currency": fmp_ccy or "USD",
+        "fx_converted":      bool(fmp_ccy and fmp_ccy != "USD"),
         "fields":      {},
     }
 

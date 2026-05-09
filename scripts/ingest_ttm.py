@@ -173,8 +173,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("--ddm-skip", action="store_true", default=True,
                    help="Skip ddm_required / routing_required filers (default)")
     p.add_argument("--no-ddm-skip", dest="ddm_skip", action="store_false")
-    p.add_argument("--include-foreign", action="store_true",
-                   help="Include IFRS filers (ASML/TSM) — currently currency-blocked")
+    p.add_argument("--include-foreign", dest="include_foreign",
+                   action="store_true", default=True,
+                   help="Include IFRS filers (ASML/TSM) — FX-converted to USD via FY-avg rate (default).")
+    p.add_argument("--no-foreign", dest="include_foreign",
+                   action="store_false",
+                   help="Skip IFRS filers entirely (legacy behavior).")
     args = p.parse_args(argv)
 
     tickers = _select_tickers(args.ticker, args.all, args.ddm_skip, args.include_foreign)

@@ -618,14 +618,22 @@ def validate_ttm_record(
                         their own TTM, or our summation is wrong
       - skipped:        FMP TTM blob unavailable
     """
+    # Carry forensic fields from the derivation's receipt: ttm_source
+    # (FMP vs SEC), reported_currency (USD/EUR/TWD/etc.), and
+    # fx_converted (True for foreign filers post-FX). Without this the
+    # receipt would silently lose currency provenance when validate
+    # rebuilds it.
+    src_receipt = getattr(record, "fmp_validation", {}) if record else {}
     base = {
-        "ticker":          ticker.upper(),
-        "status":          "validated",
-        "skip_reason":     None,
-        "ttm_source":      getattr(record, "fmp_validation", {}).get("ttm_source") if record else None,
-        "fetched_at":      _now_iso(),
-        "fields":          {},
-        "blocking_fields": [],
+        "ticker":            ticker.upper(),
+        "status":            "validated",
+        "skip_reason":       None,
+        "ttm_source":        src_receipt.get("ttm_source"),
+        "reported_currency": src_receipt.get("reported_currency"),
+        "fx_converted":      src_receipt.get("fx_converted"),
+        "fetched_at":        _now_iso(),
+        "fields":            {},
+        "blocking_fields":   [],
     }
 
     if record is None:

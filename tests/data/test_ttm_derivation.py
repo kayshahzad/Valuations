@@ -210,17 +210,43 @@ def test_skip_when_fewer_than_four_quarters():
     assert "insufficient_quarters" in r.skip_reason
 
 
-def test_skip_when_foreign_currency():
-    """Foreign filers (ASML EUR, TSM TWD) skipped pending FX support."""
-    patches = _patch_fmp(_quarterly_income(currency="EUR"),
-                         _balance_latest(), _quarterly_cashflow())
+def test_foreign_currency_converts_to_usd():
+    """Foreign filers (ASML EUR, TSM TWD) get every monetary value
+    multiplied by the FY-average FX rate from fx_converter. Stamps
+    reported_currency + fx_converted on the record receipt so the
+    conversion is auditable."""
+    patches = _patch_fmp(
+        _quarterly_income(currency="EUR", fy=2025),
+        _balance_latest(), _quarterly_cashflow(),
+    )
     _start_patches(patches)
     try:
         r = derive_ttm_from_fmp("ASML")
     finally:
         _stop_patches(patches)
-    assert r.record is None
-    assert r.skip_reason == "fmp_currency_mismatch:EUR"
+
+    assert r.record is not None, r.skip_reason
+    assert r.skip_reason is None
+    # FY2025 EUR/USD = 1.0950 → 4 × 100B EUR = 400B EUR → ~438B USD
+    assert abs(r.record.raw["Revenue"] - 400e9 * 1.0950) < 1e6
+    # Receipt forensics
+    assert r.record.fmp_validation["reported_currency"] == "EUR"
+    assert r.record.fmp_validation["fx_converted"] is True
+
+
+def test_usd_filer_fx_metadata_marks_conversion_disabled():
+    """USD filers skip the multiplication entirely. Receipt stamps
+    fx_converted=False so analysts can confirm at a glance whether
+    FX touched a record."""
+    patches = _patch_fmp(_quarterly_income(currency="USD"),
+                         _balance_latest(), _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        r = derive_ttm_from_fmp("AAPL")
+    finally:
+        _stop_patches(patches)
+    assert r.record.fmp_validation["reported_currency"] == "USD"
+    assert r.record.fmp_validation["fx_converted"] is False
 
 
 def test_skip_when_required_flow_missing():
