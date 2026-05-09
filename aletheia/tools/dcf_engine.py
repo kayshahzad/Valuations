@@ -376,7 +376,11 @@ _SECTOR_BETA_FLOORS: dict = {
     "Healthcare":             0.70,
     "Healthcare Plans":       0.60,
     "Financials":             0.90,
-    "Industrials":            0.85,
+    # Industrials raised 0.85 → 1.00 — heavy-machinery (CAT) and
+    # Class I freight rail (NSC, UNP) are genuinely cyclical with
+    # consensus betas ≥1.0; the prior 0.85 floor was below FMP's
+    # 1.30-1.63 actuals for these names.
+    "Industrials":            1.00,
     "Consumer Defensive":     0.50,
     "Consumer Discretionary": 0.85,
     "Utilities":              0.40,

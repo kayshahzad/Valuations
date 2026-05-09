@@ -270,15 +270,24 @@ def test_gate_b_beta_drift_under_definitional_band_passes():
     assert r["status"] == "validated"
 
 
-def test_gate_b_beta_drift_over_definitional_blocks():
-    """Beta >25% drift = structural; beta is blocking → blocking_drift."""
+def test_gate_b_beta_uses_sanity_only_tier_never_blocks():
+    """Beta tier was demoted from `definitional + blocking` to `sanity_only`.
+
+    Rationale: FMP's /profile.beta is unreliable on defensive names
+    (audit found JNJ at 0.26, MRK at 0.20 vs Bloomberg ~0.5). Beta
+    drift between sources is expected and the WACC chain is already
+    validated via current_price + market_cap which are truth values.
+    Beta gets stamped for forensic visibility but never blocks Gate F.
+    """
     p2 = _stub_phase2(beta=1.50)
     fmp = _stub_gate_b_fmp(beta=1.05)  # ~43% drift
     with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_b",
                return_value=fmp):
         r = validate_calc_output("AAPL", p2)
-    assert r["status"] == "blocking_drift"
-    assert "beta" in r["blocking_fields"]
+    # Sanity-only tier always classifies drift as byte_perfect; never blocks
+    assert r["fields"]["beta"]["status"] == "byte_perfect"
+    assert r["fields"]["beta"]["blocking"] is False
+    assert "beta" not in r["blocking_fields"]
 
 
 def test_gate_b_skipped_on_no_api_key():

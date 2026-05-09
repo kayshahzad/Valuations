@@ -72,9 +72,13 @@ def _classify_drift(drift_pct: Optional[float], tier: str) -> str:
     """Returns 'byte_perfect' | 'acceptable' | 'structural_drift' | 'n_a'.
 
     `drift_pct` is the signed fraction. Compare against `tier`'s bands.
+    `sanity_only` tier always returns byte_perfect (drift bands are ∞);
+    only useful for surfacing values, never blocking.
     """
     if drift_pct is None:
         return "n_a"
+    if tier == "sanity_only":
+        return "byte_perfect"
     bp_band, accept_band = _TIER_BANDS.get(tier, _TIER_BANDS["standard"])
     abs_d = abs(drift_pct)
     if abs_d < bp_band:
@@ -357,8 +361,16 @@ def validate_ingestion_record(
 #                serving: phase2.multiple_decomposition.market_ev_ebitda
 #   p_e       — calc_node doesn't compute it directly; FMP-only reference
 _GATE_B_FIELDS: List[Tuple[str, List[str], str, List[str], str, bool]] = [
+    # Beta tier `sanity_only`: drift checks always pass; the value is
+    # stamped for forensic visibility but never blocks. Rationale: FMP's
+    # /profile.beta is itself unreliable on defensive names (audit found
+    # JNJ at 0.26, MRK at 0.20 vs Bloomberg ~0.5 — likely the same
+    # COVID-anomaly regression artifact our raw beta hit pre-sector-floor).
+    # Gate B's job for beta is to surface our value alongside FMP's; the
+    # downstream WACC chain is already validated via current_price +
+    # market_cap which ARE truth values.
     ("beta",                       ["dcf.beta", "beta"],
-                                                   "profile",     ["beta"],                                       "definitional", True),
+                                                   "profile",     ["beta"],                                       "sanity_only",  False),
     ("current_price",              ["dcf.current_price"],
                                                    "profile",     ["price"],                                      "strict",       True),
     ("market_cap",                 ["dcf.market_cap"],
