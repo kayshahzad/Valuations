@@ -316,6 +316,7 @@ def _ratios_rows_fy(
 def _multiples_rows_fy(
     local: Dict, dcf: Dict,
     fmp_ratios_ttm: Dict, fmp_km_ttm: Dict,
+    ttm_local: Optional[Dict] = None,
 ) -> List[_RowSpec]:
     """Multiples are price-dependent and aren't stored on
     `company_records`. Compute our side from the live DCFEngine
@@ -323,26 +324,40 @@ def _multiples_rows_fy(
     run for a ticker (specialized-model classification — UNH, V,
     banks), our side stays None and the row renders FMP-only.
 
-    Critical: FMP's annual `/ratios` and `/enterprise-values` are
-    snapshotted at FISCAL-YEAR END price. Comparing those against our
-    current-price multiples produces ~30% drift on every ratio when
-    the stock has moved between the FY-end and today. We compare
-    against `/ratios-ttm` and `/key-metrics-ttm` instead — those use
-    current price + TTM earnings, which is like-for-like with our
-    DCFEngine output."""
+    Two snapshot-alignment rules:
+      1. FMP's annual `/ratios` and `/enterprise-values` are FY-end-
+         priced — we compare against `/ratios-ttm` and `/key-metrics-ttm`
+         which use current price + TTM earnings.
+      2. Our numerators (revenue, NI, EBITDA) prefer TTM-record values
+         when available, falling back to FY only when TTM is absent.
+         Mixing current-priced market cap with stale FY earnings
+         produces phantom drift (NVDA's FY EBITDA $133B vs TTM $144B
+         was making EV/EBITDA show +8% drift even though EV and EBITDA
+         themselves matched FMP byte-perfect)."""
     L = local or {}
+    T = ttm_local or {}
     Rt = fmp_ratios_ttm or {}
     Kt = fmp_km_ttm or {}
     D = dcf or {}
 
     is_specialized = isinstance(D, dict) and D.get("error") == "specialized_model_required"
 
+    def _prefer_ttm(ttm_key: str, fy_key: str) -> Optional[float]:
+        """TTM value when present + finite; otherwise FY."""
+        v = T.get(ttm_key) if T else None
+        if v is not None and not _is_missing(v):
+            return v
+        return L.get(fy_key)
+
     market_cap = (D.get("market_cap") or 0) if not is_specialized else None
-    revenue = L.get("clean_Revenue")
-    net_income = L.get("raw_NetIncome")
-    book_equity = L.get("raw_TotalEquity")
-    ebitda = L.get("derived_EBITDA")
-    net_debt = L.get("derived_NetDebt")
+    revenue     = _prefer_ttm("clean_Revenue",   "clean_Revenue")
+    net_income  = _prefer_ttm("raw_NetIncome",   "raw_NetIncome")
+    ebitda      = _prefer_ttm("derived_EBITDA",  "derived_EBITDA")
+    net_debt    = _prefer_ttm("derived_NetDebt", "derived_NetDebt")
+    # Book equity is a balance-sheet snapshot — TTM record carries the
+    # latest 10-Q balance, FY carries the 10-K balance. TTM is fresher
+    # when present.
+    book_equity = _prefer_ttm("raw_TotalEquity", "raw_TotalEquity")
 
     our_pe       = (market_cap / net_income)   if (market_cap and net_income and net_income > 0) else None
     our_pb       = (market_cap / book_equity)  if (market_cap and book_equity and book_equity > 0) else None
@@ -518,6 +533,7 @@ def render_fmp_compare_view(ticker: str) -> None:
         _render_table(_multiples_rows_fy(
             fy_local, dcf_summary,
             fmp_blobs["ttm"]["ratios"], fmp_blobs["ttm"]["key_metrics"],
+            ttm_local=ttm_local,
         ))
         st.caption(
             "_FMP multiples sourced from `/ratios-ttm` and `/key-metrics-ttm` "
