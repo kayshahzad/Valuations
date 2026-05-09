@@ -1338,6 +1338,51 @@ def _validation_pill(label: str, status: str) -> str:
 
 # ── Price-provenance banner — what price drove the analysis ────────────
 
+def _freshness_methodology_explainer(
+    dcf: Dict[str, Any], p2v: Dict[str, Any],
+) -> None:
+    """One-paragraph note explaining what TTM means for this report's
+    numbers. Renders only when TTM is the base period — for FY-base
+    legacy reports the existing UX is unchanged. Collapsed by default
+    so it doesn't add visual weight on every page view."""
+    base_period = (
+        (dcf or {}).get("base_period")
+        or (p2v or {}).get("base_period")
+        or "FY"
+    )
+    if base_period != "TTM":
+        return
+
+    fy_year = (
+        (dcf or {}).get("fy_fiscal_year")
+        or (p2v or {}).get("fy_fiscal_year")
+    )
+    fy_label = f"FY{fy_year}" if fy_year else "the most recent 10-K"
+
+    with st.expander("ℹ How TTM-base affects these numbers", expanded=False):
+        st.markdown(
+            f"""
+This report anchors every scenario IPS, margin of safety, reverse-DCF
+implied growth, and live screening multiple to **trailing-twelve-month
+financials** — the latest 10-Q rolled forward against the prior three
+quarters. Refreshed within ~90 days of each filing.
+
+The last full fiscal year ({fy_label}) is shown alongside on the
+Multi-year history table so analysts can reconcile a moving target
+against the audited annual base.
+
+Why our number may differ from a screener you're looking at:
+- Most screeners default to the last reported FY — they're 12 months
+  behind the latest 10-Q until the next 10-K lands.
+- Some screeners use FY-end price for multiples; we use current price.
+  The "Multiple decomposition" caption above explains that drift.
+- Ratios (ROIC, ROE, margins) are TTM-numerator / latest-balance-sheet-
+  denominator. A pre-update screener using prior-FY components will
+  diverge until it refreshes.
+"""
+        )
+
+
 def _price_provenance_banner(
     ticker: str, dcf: Dict[str, Any], p2v: Dict[str, Any]
 ) -> None:
@@ -1377,6 +1422,28 @@ def _price_provenance_banner(
         period_value = base_pe_date or "—"
         period_recon = ""
 
+    # Days-since-filing + next-expected estimate.  Same SEC-accelerated-
+    # filer floor used on the Financials tab: period_end + 90 + 45 days
+    # is the conservative "next 10-Q likely on disk" date.  Conservative
+    # by design — actual filers usually beat the floor by 1-3 weeks.
+    age_phrase = ""
+    next_phrase = ""
+    if base_pe_date:
+        try:
+            import datetime as _dt
+            pe = _dt.date.fromisoformat(base_pe_date)
+            today = _dt.date.today()
+            days_since = (today - pe).days
+            age_phrase = f" · {days_since}d ago"
+            next_dt = pe + _dt.timedelta(days=135)
+            days_until = (next_dt - today).days
+            if days_until <= 0:
+                next_phrase = " · next any day"
+            else:
+                next_phrase = f" · next ~{next_dt.isoformat()} ({days_until}d)"
+        except (TypeError, ValueError):
+            pass
+
     st.markdown(
         f"""
 <div style='border:1px solid {_BAR_BG};border-left:4px solid #3b82f6;
@@ -1412,7 +1479,8 @@ def _price_provenance_banner(
                  color:{_MUTED_TEXT};letter-spacing:0.5px;
                  text-transform:uppercase;'>Base period</span>
     <div style='font-size:13px;font-weight:600;'>{period_label}</div>
-    <div style='font-size:11px;color:{_MUTED_TEXT};font-family:DM Mono,monospace;'>ended {period_value}{period_recon}</div>
+    <div style='font-size:11px;color:{_MUTED_TEXT};font-family:DM Mono,monospace;'>ended {period_value}{age_phrase}{period_recon}</div>
+    <div style='font-size:11px;color:{_MUTED_TEXT};font-family:DM Mono,monospace;'>{next_phrase.lstrip(" ·") if next_phrase else ""}</div>
   </div>
   <div style='flex:1;min-width:280px;font-size:11px;color:{_MUTED_TEXT};
               line-height:1.5;border-left:1px solid {_BAR_BG};
@@ -1600,6 +1668,9 @@ def render_deep_dive_view(
 
     # ── Price provenance — which price drove every calc on this page ─────
     _price_provenance_banner(ticker, dcf, p2v)
+
+    # ── Freshness methodology explainer (one-time read for new users) ───
+    _freshness_methodology_explainer(dcf, p2v)
 
     # ── Hero strip ────────────────────────────────────────────────────────
     _hero_strip(ticker, investment_thesis, dcf, fund, universe_row)
