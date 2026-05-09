@@ -133,6 +133,36 @@ def _fmt_period_end(period_end: Optional[str]) -> str:
         return period_end[:10] if period_end else ""
 
 
+def _freshness_banner(freshness: Dict[str, Any]) -> None:
+    """Phase Q-7: surface filing freshness so the analyst knows how
+    stale the data is and when the next refresh lands. Shows nothing
+    when no period-end is recorded (legacy DBs)."""
+    if not freshness:
+        return
+    period_end  = freshness.get("latest_period_end_date")
+    period      = freshness.get("latest_period") or "FY"
+    days_since  = freshness.get("days_since_filing")
+    next_date   = freshness.get("next_expected_date")
+    days_until  = freshness.get("days_until_next_filing")
+    if not period_end:
+        return
+
+    period_label = "TTM (latest 10-Q)" if period == "TTM" else "FY (last 10-K)"
+    age_phrase = (
+        f"{days_since} days ago" if days_since is not None else "—"
+    )
+    if days_until is None:
+        next_phrase = ""
+    elif days_until <= 0:
+        next_phrase = " · next filing expected any day"
+    else:
+        next_phrase = f" · next ~{next_date} ({days_until} days)"
+
+    st.caption(
+        f"📅 **Latest data:** {period_label} · ended {period_end} · {age_phrase}{next_phrase}"
+    )
+
+
 def _validation_banner(ticker: str, fy: int, ident: Dict[str, Any]) -> None:
     """One-line snapshot — quality score + validation pass count.
 
@@ -240,10 +270,43 @@ def _statement_table(
 
 # ── Fiscal history table ──────────────────────────────────────────────────
 
-def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
+def _fiscal_history_table(history: List[Dict[str, Any]],
+                          ttm: Optional[Dict[str, Any]] = None) -> None:
     if not history:
         return
     rows = []
+    # Phase Q-7: prepend a TTM row when ingested. Period column flags
+    # the row as TTM so the table reader can spot it without reading
+    # column-by-column. Rev-growth is YoY-TTM (TTM vs same-period FY)
+    # only when the FY history has the matching prior year, otherwise
+    # left blank to avoid misleading "growth vs last FY-end" framing
+    # the user flagged as a seasonality trap.
+    if ttm and ttm.get("Revenue"):
+        ttm_rev = ttm["Revenue"]
+        # Compare to the FY two rows back (i.e., same period a year
+        # earlier) so we get YoY without seasonality. If history is
+        # short (≤1 row), suppress the rev-growth display.
+        prior_rev_same_period = (
+            history[-2].get("Revenue") if len(history) >= 2 else None
+        )
+        ttm_growth = (
+            (ttm_rev / prior_rev_same_period - 1.0) * 100
+            if ttm_rev and prior_rev_same_period else None
+        )
+        rows.append({
+            "FY":            ttm["fiscal_year"],
+            "Period":        "TTM",
+            "Period end":    ttm.get("period_end_date") or "",
+            "Revenue":       (ttm_rev / 1e9) if ttm_rev else None,
+            "Rev Growth":    ttm_growth,
+            "EBITDA":        (ttm["EBITDA"] / 1e9) if ttm.get("EBITDA") else None,
+            "Net Income":    (ttm["NetIncome"] / 1e9) if ttm.get("NetIncome") else None,
+            "CapEx":         (ttm["CapEx"] / 1e9) if ttm.get("CapEx") else None,
+            "FCF":           (ttm["FCF"] / 1e9) if ttm.get("FCF") else None,
+            "ROIC":          (ttm["ROIC"] * 100) if ttm.get("ROIC") else None,
+            "Quality":       None,
+            "FMP":           _fmp_status_glyph(ttm.get("FMPStatus")),
+        })
     for i, r in enumerate(history):
         rev = r.get("Revenue")
         prev_rev = history[i - 1].get("Revenue") if i > 0 else None
@@ -253,6 +316,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
         )
         rows.append({
             "FY":            r["fiscal_year"],
+            "Period":        "FY",
             "Period end":    r.get("period_end_date") or "",
             "Revenue":       (rev/1e9) if rev else None,
             "Rev Growth":    rev_growth,
@@ -272,6 +336,10 @@ def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
         use_container_width=True,
         column_config={
             "FY":         st.column_config.NumberColumn("FY", format="%d"),
+            "Period":     st.column_config.TextColumn(
+                "Period", width="small",
+                help="TTM = trailing twelve months (latest filing); FY = fiscal year (audited).",
+            ),
             "Period end": st.column_config.TextColumn(
                 "Period end",
                 width="small",
@@ -280,7 +348,10 @@ def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
             "Revenue":    st.column_config.NumberColumn("Revenue", format="$%.1fB"),
             "Rev Growth": st.column_config.NumberColumn(
                 "Rev Growth", format="%+.1f%%",
-                help="YoY revenue growth vs prior fiscal year.",
+                help=(
+                    "FY rows: YoY vs prior FY. TTM row: YoY vs same-period TTM "
+                    "a year earlier (suppressed when history is too short)."
+                ),
             ),
             "EBITDA":     st.column_config.NumberColumn("EBITDA", format="$%.1fB"),
             "Net Income": st.column_config.NumberColumn("Net Income", format="$%.1fB"),
@@ -326,16 +397,21 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
         st.error(bundle.get("error") if bundle else "No financials available.")
         return
 
-    ident   = bundle["identity"]
-    inc     = bundle["income_statement"]
-    bs      = bundle["balance_sheet"]
-    ret     = bundle["returns_capital"]
-    leases  = bundle["lease_items"]
-    history = bundle.get("fiscal_history") or []
+    ident     = bundle["identity"]
+    inc       = bundle["income_statement"]
+    bs        = bundle["balance_sheet"]
+    ret       = bundle["returns_capital"]
+    leases    = bundle["lease_items"]
+    history   = bundle.get("fiscal_history") or []
+    ttm       = bundle.get("ttm_snapshot")
+    freshness = bundle.get("freshness") or {}
 
     # ── Header: ticker name + validation banner ──────────────────────────
     st.markdown(f"## {ticker}")
     _validation_banner(ticker, ident["fiscal_year"], ident)
+
+    # ── Filing freshness banner (Phase Q-7 minimal) ─────────────────────
+    _freshness_banner(freshness)
 
     # ── Hero strip ────────────────────────────────────────────────────────
     _hero_strip(ticker, inc, history)
@@ -454,7 +530,7 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
     if history:
         st.markdown("---")
         st.markdown("#### Multi-year history")
-        _fiscal_history_table(history)
+        _fiscal_history_table(history, ttm=ttm)
 
     # ── Validation legend ─────────────────────────────────────────────────
     st.markdown("---")

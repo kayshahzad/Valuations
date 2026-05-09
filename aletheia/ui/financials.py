@@ -161,6 +161,97 @@ def _build_lease_items(clean_json: dict, raw_json: dict) -> Dict[str, Optional[f
     }
 
 
+def _build_freshness(latest_fy: pd.Series,
+                     ttm: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Phase Q-7: surface filing freshness on the Financials hero strip.
+    Picks the freshest period_end_date (TTM if ingested, else FY) and
+    estimates the next expected 10-Q filing date using the SEC's
+    accelerated-filer floor (~45 days post quarter-end). The estimate
+    is intentionally conservative — actual filers usually beat it by
+    1-3 weeks; the goal is "data isn't broken, next refresh is N days
+    out", not a precise forecast."""
+    import datetime
+
+    today = datetime.date.today()
+
+    if ttm and ttm.get("period_end_date"):
+        latest_period_end = ttm["period_end_date"]
+        latest_period = "TTM"
+    else:
+        latest_period_end = str(latest_fy.get("period_end_date") or "")[:10] or None
+        latest_period = "FY"
+
+    days_since_filing: Optional[int] = None
+    next_expected_date: Optional[str] = None
+    days_until_next: Optional[int] = None
+    if latest_period_end:
+        try:
+            pe = datetime.date.fromisoformat(latest_period_end)
+            days_since_filing = (today - pe).days
+            # Next 10-Q quarter-end is 90 days after current period_end;
+            # filing usually lands within ~45 days of THAT quarter-end.
+            next_qtr_end = pe + datetime.timedelta(days=90)
+            next_filing  = next_qtr_end + datetime.timedelta(days=45)
+            next_expected_date = next_filing.isoformat()
+            days_until_next = (next_filing - today).days
+        except (TypeError, ValueError):
+            pass
+
+    return {
+        "latest_period":           latest_period,           # 'TTM' or 'FY'
+        "latest_period_end_date":  latest_period_end,
+        "days_since_filing":       days_since_filing,
+        "next_expected_date":      next_expected_date,
+        "days_until_next_filing":  days_until_next,
+    }
+
+
+def _build_ttm_snapshot(ttm_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
+    """Phase Q-7: extract the latest TTM record (if any) for the
+    Financials hero / Multi-year-history TTM row. Returns None when no
+    TTM has been ingested yet (legacy DBs / not-yet-run tickers)."""
+    if ttm_df is None or ttm_df.empty:
+        return None
+    # Prefer the row with the most recent period_end_date; fall back to
+    # max fiscal_year if dates missing.
+    sortable = ttm_df.copy()
+    if "period_end_date" in sortable.columns:
+        sortable = sortable.sort_values(
+            ["period_end_date", "fiscal_year"], na_position="first"
+        )
+    else:
+        sortable = sortable.sort_values("fiscal_year")
+    r = sortable.iloc[-1]
+
+    return {
+        "fiscal_year":         int(r["fiscal_year"]),
+        "period_end_date":     str(r.get("period_end_date") or "")[:10] or None,
+        "ttm_source":          _ttm_source_from_validation(r.get("fmp_validation_json")),
+        "Revenue":             _f(r.get("clean_Revenue")),
+        "EBITDA":              _f(r.get("derived_EBITDA")),
+        "NetIncome":           _f(r.get("raw_NetIncome")),
+        "CapEx":               _f(r.get("derived_CapEx")) or _f(r.get("raw_CapEx")),
+        "FCF":                 _f(r.get("derived_FCF")) or _f(r.get("clean_FCF")),
+        "ROIC":                _f(r.get("derived_ROIC")),
+        "ROE":                 _f(r.get("derived_ROE")),
+        "EBIT_Margin_Pct":     _f(r.get("derived_EBIT_Margin_Pct")),
+        "FCF_Margin_Pct":      _f(r.get("derived_FCF_Margin_Pct")),
+        "FMPStatus":           (r.get("fmp_validation_status") or "not_run"),
+    }
+
+
+def _ttm_source_from_validation(validation_json: Any) -> Optional[str]:
+    """Pull `ttm_source` out of the persisted Gate A.TTM receipt so the
+    UI can label which TTM derivation produced this row."""
+    if not validation_json:
+        return None
+    try:
+        v = json.loads(validation_json) if isinstance(validation_json, str) else validation_json
+        return v.get("ttm_source") if isinstance(v, dict) else None
+    except Exception:
+        return None
+
+
 def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for _, r in history_df.sort_values("fiscal_year").iterrows():
@@ -312,17 +403,37 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
     if history is None or history.empty:
         return {"error": f"No data for {ticker} in DB."}
 
-    latest = history[history["fiscal_year"] == history["fiscal_year"].max()].iloc[0]
+    # Phase Q-7 minimal: split FY rows from TTM. The income/balance/
+    # returns blocks continue to be FY-based (Phase Q-5 wires TTM into
+    # the calc engine; this MVP slice surfaces TTM as a separate row in
+    # the Multi-year history without changing other tabs).
+    if "period" in history.columns:
+        fy_history  = history[history["period"] == "FY"].copy()
+        ttm_history = history[history["period"] == "TTM"].copy()
+    else:
+        # Pre-Q-1 schema (test fixtures) — every row is FY by definition.
+        fy_history  = history
+        ttm_history = history.iloc[0:0]
+
+    if fy_history.empty:
+        return {"error": f"No FY data for {ticker} in DB."}
+
+    latest = fy_history[
+        fy_history["fiscal_year"] == fy_history["fiscal_year"].max()
+    ].iloc[0]
     clean_json = _parse_json_field(latest.get("clean_json"))
     raw_json   = _parse_json_field(latest.get("raw_json"))
 
+    ttm_snapshot = _build_ttm_snapshot(ttm_history)
     bundle: Dict[str, Any] = {
         "identity":         _build_identity(ticker, latest),
+        "freshness":        _build_freshness(latest, ttm_snapshot),
+        "ttm_snapshot":     ttm_snapshot,
         "income_statement": _build_income_statement(latest, clean_json, raw_json),
         "balance_sheet":    _build_balance_sheet(latest, clean_json, raw_json),
         "returns_capital":  _build_returns_capital(latest, clean_json, raw_json),
         "lease_items":      _build_lease_items(clean_json, raw_json),
-        "fiscal_history":   _build_fiscal_history(history),
+        "fiscal_history":   _build_fiscal_history(fy_history),
         "dcf_inputs":       {},
         "dcf_scenarios":    {},
         "projections":      [],
