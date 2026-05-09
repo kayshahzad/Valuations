@@ -261,8 +261,16 @@ def _income_rows_fy(local: Dict, fmp: Dict) -> List[_RowSpec]:
                                                                                           _money_b, "standard",     1.0),
         ("Operating Income",   L.get("raw_OperatingIncome") or L.get("derived_OperatingIncome"),
                                 F.get("operatingIncome"),      _money_b, "standard",     1.0),
-        ("EBITDA (strict)",    L.get("derived_EBITDA"),        fmp_ebitda_strict,        _money_b, "definitional", 1.0),
-        ("EBITDA (FMP-style)", our_ebitda_fmp_style,           F.get("ebitda"),          _money_b, "definitional", 1.0),
+        # Two rows by formula:
+        # - "OpInc + D&A" = textbook EBITDA (our canonical, what DCF
+        #   + scoring use). Both sides compute identically → match.
+        # - "broader (+SBC)" = FMP's published `ebitda` field, which
+        #   includes SBC plus other non-cash addbacks. Our side adds
+        #   SBC to approximate FMP's value; residual drift is FMP's
+        #   non-SBC addbacks (impairments, restructuring) we don't
+        #   reconstruct.
+        ("EBITDA (OpInc + D&A)",   L.get("derived_EBITDA"),        fmp_ebitda_strict,        _money_b, "definitional", 1.0),
+        ("EBITDA (broader, +SBC)", our_ebitda_fmp_style,           F.get("ebitda"),          _money_b, "definitional", 1.0),
         ("Net Income",         L.get("raw_NetIncome"),         F.get("netIncome"),       _money_b, "strict",       1.0),
         ("Shares Diluted",     L.get("raw_SharesDiluted"),     F.get("weightedAverageShsOutDil"),
                                                                                           _shares,  "strict",       1.0),
@@ -361,9 +369,9 @@ def _ratios_rows_fy(
                                                                                           _pct,    "standard",     0.01),
         ("EBIT Margin",        L.get("derived_EBIT_Margin_Pct"),  R.get("operatingProfitMargin"),
                                                                                           _pct,    "standard",     0.01),
-        ("EBITDA Margin (strict)",    L.get("derived_EBITDA_Margin_Pct"), fmp_ebitda_margin_strict,
+        ("EBITDA Margin (OpInc + D&A)",   L.get("derived_EBITDA_Margin_Pct"), fmp_ebitda_margin_strict,
                                                                                           _pct,    "standard", 0.01),
-        ("EBITDA Margin (FMP-style)", our_ebitda_margin_fmp_style_pct,    fmp_ebitda_margin_fmp_style,
+        ("EBITDA Margin (broader, +SBC)", our_ebitda_margin_fmp_style_pct,    fmp_ebitda_margin_fmp_style,
                                                                                           _pct,    "definitional", 0.01),
         ("FCF Margin",         L.get("derived_FCF_Margin_Pct"),   fmp_fcf_margin,         _pct,    "standard",     0.01),
         ("ROE",                L.get("derived_ROE"),              R.get("returnOnEquity") or K.get("returnOnEquity"),
@@ -607,12 +615,14 @@ def render_fmp_compare_view(ticker: str) -> None:
             fmp_blobs["fy"]["income"], fmp_blobs["fy"]["cashflow"],
         ))
         st.caption(
-            "_Two EBITDA Margin rows by design._  "
-            "**Strict** = OperatingIncome + D&A on both sides (textbook EBITDA, "
-            "what our DCF + scoring uses). **FMP-style** adds SBC (and other "
-            "non-cash addbacks FMP includes) for like-for-like comparison "
-            "with FMP's `/ratios.ebitdaMargin` — confirms we can replicate "
-            "FMP's broader methodology without changing our canonical metric. "
+            "_Two EBITDA rows are intentional, named by the formula each uses._  "
+            "**OpInc + D&A** = textbook EBITDA (our canonical metric — what "
+            "the DCF engine, multiple decomposition, and scoring all consume). "
+            "Both sides compute identically and match. "
+            "**broader (+SBC)** approximates FMP's `/income-statement.ebitda` "
+            "field by adding stock-based comp; residual drift is FMP's other "
+            "non-cash addbacks (impairments, restructuring, acquired "
+            "intangibles) which we don't reconstruct. "
             "ROIC drift is a real formula difference: FMP's "
             "`(NetIncome + InterestExpense×(1-tax)) / (TotalDebt + Equity)` "
             "vs our Liberti-style `NOPAT / (Equity + LongTermDebt − Cash)` — "
