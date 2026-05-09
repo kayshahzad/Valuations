@@ -283,15 +283,17 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
     # the user flagged as a seasonality trap.
     if ttm and ttm.get("Revenue"):
         ttm_rev = ttm["Revenue"]
-        # Compare to the FY two rows back (i.e., same period a year
-        # earlier) so we get YoY without seasonality. If history is
-        # short (≤1 row), suppress the rev-growth display.
-        prior_rev_same_period = (
-            history[-2].get("Revenue") if len(history) >= 2 else None
-        )
+        # YoY TTM-vs-prior-TTM: compare against the same-period TTM a
+        # year earlier (computed from FMP quarterly statements at
+        # bundle-build time). This eliminates the seasonality trap of
+        # comparing a TTM-through-Q1 against a calendar-FY-end snapshot.
+        # Falls through to None silently when FMP doesn't have ≥8
+        # quarters of data — the Rev Growth cell renders blank rather
+        # than misleading.
+        prior_ttm_rev = ttm.get("PriorYearRevenue")
         ttm_growth = (
-            (ttm_rev / prior_rev_same_period - 1.0) * 100
-            if ttm_rev and prior_rev_same_period else None
+            (ttm_rev / prior_ttm_rev - 1.0) * 100
+            if ttm_rev and prior_ttm_rev else None
         )
         rows.append({
             "FY":            ttm["fiscal_year"],
@@ -349,8 +351,13 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Rev Growth": st.column_config.NumberColumn(
                 "Rev Growth", format="%+.1f%%",
                 help=(
-                    "FY rows: YoY vs prior FY. TTM row: YoY vs same-period TTM "
-                    "a year earlier (suppressed when history is too short)."
+                    "FY rows: YoY vs prior FY (closing balance to closing "
+                    "balance, 12 months apart). "
+                    "TTM row: YoY vs the TTM ending one year earlier (sum "
+                    "of quarters [4..7] from FMP), so the comparison spans "
+                    "matching 12-month windows — no seasonality bias. "
+                    "Suppressed when FMP has fewer than 8 quarters of "
+                    "data on file."
                 ),
             ),
             "EBITDA":     st.column_config.NumberColumn("EBITDA", format="$%.1fB"),

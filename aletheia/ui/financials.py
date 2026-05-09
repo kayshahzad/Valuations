@@ -206,6 +206,40 @@ def _build_freshness(latest_fy: pd.Series,
     }
 
 
+def _attach_prior_year_ttm(ticker: str, ttm_snapshot: Dict[str, Any]) -> None:
+    """Compute prior-year TTM revenue + net income from FMP quarterly
+    statements and stamp on the snapshot. Used by the Multi-year
+    history table to render YoY-TTM-vs-prior-TTM rev growth instead
+    of the seasonality-trap TTM-vs-FY comparison.
+
+    Math: latest 4 FMP quarters = current TTM (already in `ttm_snapshot`).
+    Quarters [4:8] = TTM as of one year ago. Returns silently if FMP
+    data is unavailable or insufficient (<8 quarters)."""
+    try:
+        from aletheia.data import fmp_client
+        quarters = fmp_client.fetch_income_statements(ticker, period="quarter")
+    except Exception:
+        return
+    if not quarters or len(quarters) < 8:
+        return
+    # FMP returns most-recent first. Take quarters 4..7 for prior-year
+    # TTM (skip the latest 4 which are the current TTM window).
+    prior_window = quarters[4:8]
+    try:
+        prior_revenue = sum(float(q.get("revenue") or 0) for q in prior_window)
+        prior_ni      = sum(float(q.get("netIncome") or 0) for q in prior_window)
+    except (TypeError, ValueError):
+        return
+    if prior_revenue <= 0:
+        return
+    ttm_snapshot["PriorYearRevenue"]   = prior_revenue
+    ttm_snapshot["PriorYearNetIncome"] = prior_ni
+    # Period_end of prior-year TTM (the 8th-most-recent quarter's date)
+    prior_period_end = (prior_window[0].get("date") or "")[:10]
+    if prior_period_end:
+        ttm_snapshot["PriorYearPeriodEnd"] = prior_period_end
+
+
 def _build_ttm_snapshot(ttm_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
     """Phase Q-7: extract the latest TTM record (if any) for the
     Financials hero / Multi-year-history TTM row. Returns None when no
@@ -471,6 +505,15 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
     raw_json   = _parse_json_field(latest.get("raw_json"))
 
     ttm_snapshot = _build_ttm_snapshot(ttm_history)
+    # Phase Q-7: enrich TTM snapshot with a prior-year TTM revenue +
+    # net income for proper YoY-TTM-vs-prior-TTM display. Without this,
+    # the Multi-year history TTM row's "Rev Growth" cell compares
+    # against the latest full FY, which crosses different period
+    # endpoints — the seasonality trap the user flagged in plan
+    # review. Using FMP quarterly statements (already cached) so
+    # there's no extra API call.
+    if ttm_snapshot is not None:
+        _attach_prior_year_ttm(ticker, ttm_snapshot)
     bundle: Dict[str, Any] = {
         "identity":         _build_identity(ticker, latest),
         "freshness":        _build_freshness(latest, ttm_snapshot),
