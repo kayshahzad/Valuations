@@ -65,6 +65,11 @@ _TIER_BANDS = {
     # — e.g. FMP's `dcf` intrinsic-value estimate vs ours (different
     # methodologies; band-based comparison would over-flag).
     "sanity_only":  (float("inf"), float("inf")),
+    # byte_perfect_required: 0.5%/0.5% — collapsed bands for cases where
+    # both sides MUST agree (Gate A.TTM cross-checks our quarterly-sum
+    # against FMP's pre-computed TTM; both arms draw from the same
+    # quarterly facts so any drift > 0.5% is a P0 bug, not a flag).
+    "byte_perfect_required": (0.005, 0.005),
 }
 
 
@@ -503,6 +508,168 @@ def validate_ingestion_record(
         "status":          result_status,
         "fields":          fields,
         "blocking_fields": blocking_fields if is_latest_fy else [],
+    }
+
+
+# ────────────────────────────────────────────────────────────────────────
+# Gate A.TTM — byte-perfect TTM cross-check (Phase Q-4)
+# ────────────────────────────────────────────────────────────────────────
+#
+# Compares our quarterly-summed TTM (`derive_ttm_from_fmp` output) against
+# FMP's pre-computed TTM blob (`/key-metrics-ttm` + `/ratios-ttm`). Both
+# arms draw from the same underlying quarterly facts, so any drift > 0.5%
+# on revenue or NI is a P0 bug — either FMP's quarterlies don't sum to
+# their own TTM, or our summation is wrong. There's no third
+# possibility, so the tier is `byte_perfect_required` (collapsed bands).
+#
+# Per-share TTM fields (revenuePerShareTTM etc.) are converted to
+# absolute values using FMP's reported diluted shares so units align.
+#
+# Returns the same result shape as Gate A so downstream consumers
+# (Gate D receipt, UI glyph) treat it uniformly.
+
+# (label, our_path, fmp_source, fmp_key, tier, p0)
+# fmp_source = "km" → fetched key-metrics-ttm dict
+# fmp_source = "ratios" → fetched ratios-ttm dict
+# Tier byte_perfect_required + p0=True means a structural_drift result
+# escalates to status=blocking_drift; caller treats as a regression
+# alert, not a routine flag.
+_GATE_A_TTM_FIELDS: List[Tuple[str, str, str, str, str, bool]] = [
+    # Absolute flow items via per-share × shares.  TTM revenue and NI
+    # MUST sum identically — both sides are FMP quarterly facts.
+    ("revenue_ttm",     "raw.Revenue",     "km",     "revenuePerShareTTM",       "byte_perfect_required", True),
+    ("net_income_ttm",  "raw.NetIncome",   "km",     "netIncomePerShareTTM",     "byte_perfect_required", True),
+    ("fcf_ttm",         "clean.FCF",       "km",     "freeCashFlowPerShareTTM",  "byte_perfect_required", False),
+    # Ratios: definitional tier — formulas legitimately differ (effective
+    # tax rate, invested-capital definition). Stamped for visibility.
+    ("roic_ttm",        "derived.ROIC",    "ratios", "returnOnInvestedCapitalTTM", "definitional", False),
+    ("roe_ttm",         "derived.ROE",     "ratios", "returnOnEquityTTM",          "definitional", False),
+    ("ebit_margin_ttm", "derived.EBIT_Margin_Pct", "ratios", "operatingProfitMarginTTM", "definitional", False),
+]
+
+
+def _resolve_record_path(record: Any, path: str) -> Optional[float]:
+    """Walk `record.raw.X`, `record.clean.X`, or `record.derived.X`."""
+    if record is None:
+        return None
+    bucket, _, key = path.partition(".")
+    if not key:
+        return None
+    container = getattr(record, bucket, None)
+    if container is None:
+        return None
+    val = container.get(key) if hasattr(container, "get") else None
+    if val is None:
+        return None
+    try:
+        return float(val)
+    except (TypeError, ValueError):
+        return None
+
+
+def validate_ttm_record(
+    ticker: str,
+    record: Any,
+    *,
+    fmp_key_metrics_ttm: Optional[Dict[str, Any]] = None,
+    fmp_ratios_ttm: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Gate A.TTM — cross-check our derived TTM against FMP's TTM blob.
+
+    `record` is the CleanedRecord returned by `derive_ttm_from_fmp`.
+    `fmp_key_metrics_ttm` + `fmp_ratios_ttm` are the FMP TTM dicts;
+    callers usually pass them through from the same TTMDerivationResult.
+
+    Result status:
+      - validated:      all fields within tier band
+      - drift:          one or more non-P0 fields outside band
+      - blocking_drift: a P0 field outside the byte_perfect_required
+                        band — indicates FMP quarterlies don't sum to
+                        their own TTM, or our summation is wrong
+      - skipped:        FMP TTM blob unavailable
+    """
+    base = {
+        "ticker":          ticker.upper(),
+        "status":          "validated",
+        "skip_reason":     None,
+        "ttm_source":      getattr(record, "fmp_validation", {}).get("ttm_source") if record else None,
+        "fetched_at":      _now_iso(),
+        "fields":          {},
+        "blocking_fields": [],
+    }
+
+    if record is None:
+        return {**base, "status": "skipped", "skip_reason": "no_ttm_record"}
+
+    if not (fmp_key_metrics_ttm or fmp_ratios_ttm):
+        return {**base, "status": "skipped", "skip_reason": "fmp_ttm_blob_unavailable"}
+
+    # FMP's per-share-TTM × diluted shares → absolute. We use OUR
+    # raw_SharesDiluted because Gate A already validates that against
+    # FMP at ingestion; reusing the same number keeps both arms of the
+    # comparison aligned.
+    shares = _resolve_record_path(record, "raw.SharesDiluted")
+
+    fields: Dict[str, Dict[str, Any]] = {}
+    blocking_fields: List[str] = []
+    n_drift = 0
+    n_p0_breach = 0
+
+    for label, our_path, fmp_source, fmp_key, tier, p0 in _GATE_A_TTM_FIELDS:
+        ours = _resolve_record_path(record, our_path)
+
+        # Pull FMP side
+        if fmp_source == "km":
+            blob = fmp_key_metrics_ttm or {}
+        elif fmp_source == "ratios":
+            blob = fmp_ratios_ttm or {}
+        else:
+            blob = {}
+        fmp_raw = blob.get(fmp_key)
+        try:
+            fmp_raw = float(fmp_raw) if fmp_raw is not None else None
+        except (TypeError, ValueError):
+            fmp_raw = None
+
+        # Per-share fields: convert to absolute via shares
+        if fmp_source == "km" and fmp_raw is not None and shares is not None:
+            fmp_value: Optional[float] = fmp_raw * shares
+        else:
+            fmp_value = fmp_raw
+
+        _, drift_pct = _drift_label(ours, fmp_value)
+        status = _classify_drift(drift_pct, tier)
+        is_violation = (status == "structural_drift")
+        is_p0_breach = (p0 and is_violation)
+
+        fields[label] = {
+            "ours":             ours,
+            "fmp":              fmp_value,
+            "drift_pct":        drift_pct,
+            "tier":             tier,
+            "p0":               p0,
+            "status":           status,
+            "source_endpoint":  "key_metrics_ttm" if fmp_source == "km" else "ratios_ttm",
+            "fmp_key_resolved": fmp_key,
+        }
+        if is_violation:
+            n_drift += 1
+        if is_p0_breach:
+            n_p0_breach += 1
+            blocking_fields.append(label)
+
+    if n_p0_breach > 0:
+        result_status = "blocking_drift"
+    elif n_drift > 0:
+        result_status = "drift"
+    else:
+        result_status = "validated"
+
+    return {
+        **base,
+        "status":          result_status,
+        "fields":          fields,
+        "blocking_fields": blocking_fields,
     }
 
 
