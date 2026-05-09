@@ -320,6 +320,11 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "wacc":                   float(result.wacc_base) if result.wacc_base else None,
         "beta":                   float(result.beta) if result.beta else None,
         "risk_free_rate":         float(result.risk_free_rate) if result.risk_free_rate else None,
+        # Price provenance — every scenario IPS/MoS on this response is computed against current_price.
+        "current_price":          float(result.current_price) if result.current_price else None,
+        "market_cap":             float(result.market_cap)    if result.market_cap    else None,
+        "shares_diluted":         float(result.shares_diluted) if result.shares_diluted else None,
+        "run_date":               result.run_date if hasattr(result, "run_date") else None,
         "bear":                   scenario_dict(result.bear),
         "base":                   scenario_dict(result.base),
         "bull":                   scenario_dict(result.bull),
@@ -399,6 +404,11 @@ class DCFResponse(BaseModel):
     wacc: Optional[float]
     beta: Optional[float]
     risk_free_rate: Optional[float]
+    # Price provenance — every scenario's IPS/MoS is computed against current_price.
+    current_price: Optional[float] = None
+    market_cap: Optional[float] = None
+    shares_diluted: Optional[float] = None
+    run_date: Optional[str] = None
     bear: Optional[DCFScenario]
     base: Optional[DCFScenario]
     bull: Optional[DCFScenario]
@@ -1004,6 +1014,10 @@ def get_ticker_dcf(ticker: str, response: Response):
         wacc=payload["wacc"],
         beta=payload["beta"],
         risk_free_rate=payload["risk_free_rate"],
+        current_price=payload.get("current_price"),
+        market_cap=payload.get("market_cap"),
+        shares_diluted=payload.get("shares_diluted"),
+        run_date=payload.get("run_date"),
         bear=DCFScenario(**payload["bear"]) if payload["bear"] else None,
         base=DCFScenario(**payload["base"]) if payload["base"] else None,
         bull=DCFScenario(**payload["bull"]) if payload["bull"] else None,

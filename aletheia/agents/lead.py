@@ -540,6 +540,11 @@ def lead_agent(state):
                 "wacc":             p2.get("dcf", {}).get("wacc_base"),
                 "beta":             p2.get("dcf", {}).get("beta"),
                 "risk_free_rate":   p2.get("dcf", {}).get("risk_free_rate"),
+                # Price provenance — snapshot every IPS/MoS on this report was computed against.
+                "current_price":    p2.get("dcf", {}).get("current_price"),
+                "market_cap":       p2.get("dcf", {}).get("market_cap"),
+                "shares_diluted":   p2.get("dcf", {}).get("shares_diluted"),
+                "run_date":         p2.get("dcf", {}).get("run_date"),
             },
             # FIX 6: contrarian_analysis was completely absent
             "contrarian_analysis": {

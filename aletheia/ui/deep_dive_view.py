@@ -1059,6 +1059,11 @@ def _multiple_decomposition(md: Dict[str, Any]) -> None:
     if not md:
         return
     st.markdown("##### Multiple decomposition")
+    st.caption(
+        "Market EV/EBITDA computed against current price (see Analysis "
+        "price banner above). FMP's screening ratios use FY-end price; "
+        "drift between sources is price-timing, not methodology."
+    )
     market = md.get("market_ev_ebitda")
     just = md.get("justified_ev_ebitda")
     premium = md.get("premium_pct")
@@ -1066,8 +1071,10 @@ def _multiple_decomposition(md: Dict[str, Any]) -> None:
     creation = (md.get("value_creation") or "").upper()
 
     cols = st.columns(4)
-    cols[0].metric("Market EV/EBITDA", f"{market:.1f}x" if market else "—")
-    cols[1].metric("Justified (Liberti)", f"{just:.1f}x" if just else "—")
+    cols[0].metric("Market EV/EBITDA", f"{market:.1f}x" if market else "—",
+                   help="Computed against current price.")
+    cols[1].metric("Justified (Liberti)", f"{just:.1f}x" if just else "—",
+                   help="Mathematically justified multiple at the same WACC + ROIC.")
     if premium is not None:
         cols[2].metric("Premium",
                        f"{premium*100:+.1f}%" if abs(premium) < 1 else f"{premium:+.1f}×",
@@ -1329,6 +1336,72 @@ def _validation_pill(label: str, status: str) -> str:
     )
 
 
+# ── Price-provenance banner — what price drove the analysis ────────────
+
+def _price_provenance_banner(
+    ticker: str, dcf: Dict[str, Any], p2v: Dict[str, Any]
+) -> None:
+    """Surface the price snapshot every IPS/MoS/multiple was computed against."""
+
+    # Prefer live /dcf payload; fall back to serving-JSON phase2.
+    price = (dcf or {}).get("current_price") or (p2v or {}).get("current_price")
+    market_cap = (dcf or {}).get("market_cap") or (p2v or {}).get("market_cap")
+    shares = (dcf or {}).get("shares_diluted") or (p2v or {}).get("shares_diluted")
+    run_date = (dcf or {}).get("run_date") or (p2v or {}).get("run_date")
+
+    if not price:
+        return
+
+    price_str  = f"${price:,.2f}"
+    mkt_str    = f"${market_cap/1e9:,.1f}B" if market_cap else "—"
+    shares_str = f"{shares/1e9:,.2f}B" if shares else "—"
+    run_str = (run_date or "")[:19].replace("T", " ") if run_date else "—"
+
+    st.markdown(
+        f"""
+<div style='border:1px solid {_BAR_BG};border-left:4px solid #3b82f6;
+            padding:10px 14px;border-radius:0 6px 6px 0;
+            margin:8px 0 16px 0;color:inherit;
+            display:flex;flex-wrap:wrap;gap:18px;align-items:baseline;'>
+  <div>
+    <span style='font-family:DM Mono,monospace;font-size:10px;
+                 color:{_MUTED_TEXT};letter-spacing:0.5px;
+                 text-transform:uppercase;'>Analysis price</span>
+    <div style='font-size:18px;font-weight:700;'>{price_str}</div>
+  </div>
+  <div>
+    <span style='font-family:DM Mono,monospace;font-size:10px;
+                 color:{_MUTED_TEXT};letter-spacing:0.5px;
+                 text-transform:uppercase;'>Market cap</span>
+    <div style='font-size:14px;font-weight:600;'>{mkt_str}</div>
+  </div>
+  <div>
+    <span style='font-family:DM Mono,monospace;font-size:10px;
+                 color:{_MUTED_TEXT};letter-spacing:0.5px;
+                 text-transform:uppercase;'>Diluted shares</span>
+    <div style='font-size:14px;font-weight:600;'>{shares_str}</div>
+  </div>
+  <div>
+    <span style='font-family:DM Mono,monospace;font-size:10px;
+                 color:{_MUTED_TEXT};letter-spacing:0.5px;
+                 text-transform:uppercase;'>Captured at</span>
+    <div style='font-size:13px;font-weight:500;font-family:DM Mono,monospace;'>{run_str} UTC</div>
+  </div>
+  <div style='flex:1;min-width:280px;font-size:11px;color:{_MUTED_TEXT};
+              line-height:1.5;border-left:1px solid {_BAR_BG};
+              padding-left:14px;'>
+    All scenario IPS, margin of safety, reverse-DCF, and live screening
+    multiples are computed against this price.
+    <br/>
+    FMP cross-checks may show drift because FMP screening data uses
+    fiscal-year-end price.
+  </div>
+</div>
+        """.strip(),
+        unsafe_allow_html=True,
+    )
+
+
 def _fmp_validation_banner(validation: Dict[str, Any]) -> None:
     """One-line banner stamping the 3 validation sub-blocks at top of
     Deep Dive. Click expander for per-field drift detail.
@@ -1496,6 +1569,9 @@ def render_deep_dive_view(
 
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})
+
+    # ── Price provenance — which price drove every calc on this page ─────
+    _price_provenance_banner(ticker, dcf, p2v)
 
     # ── Hero strip ────────────────────────────────────────────────────────
     _hero_strip(ticker, investment_thesis, dcf, fund, universe_row)
