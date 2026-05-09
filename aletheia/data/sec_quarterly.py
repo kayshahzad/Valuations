@@ -432,6 +432,20 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
     if capex is not None and capex > 0:
         capex = -abs(capex)
 
+    # D&A is a flow item under the SEC `DepreciationDepletionAndAmortization`
+    # canonical (FIELD_MAPPINGS doesn't have a single fallback list for
+    # this; fall back through the common XBRL tag names directly).
+    da_total = None
+    for tag in ("DepreciationDepletionAndAmortization",
+                "DepreciationAndAmortization",
+                "Depreciation"):
+        f_list = _facts_for_tag(facts, tag)
+        if f_list:
+            da_ttm, _ = _ttm_from_cumulative(f_list)
+            if da_ttm is not None:
+                da_total = da_ttm
+                break
+
     # Stocks — latest 10-Q instant facts
     total_assets       = _instant_value(facts, "TotalAssets")
     total_liabilities  = _instant_value(facts, "TotalLiabilities")
@@ -451,10 +465,42 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
     if long_term_debt is not None or cash is not None:
         net_debt = (long_term_debt or 0.0) - (cash or 0.0)
 
+    # EBITDA = OperatingIncome + D&A. Required by the DCF engine and
+    # the FMP Compare TTM section; without it the DCF base-row merge
+    # falls back to FY EBITDA (which can lag a fresh 10-Q by ~3 quarters).
+    ebitda = None
+    if operating_income is not None and da_total is not None:
+        ebitda = operating_income + da_total
+
+    # Invested Capital = Equity + LongTermDebt - Cash (Liberti-style;
+    # excludes short-term debt which we don't always pull cleanly from
+    # SEC instant facts).
+    invested_capital = None
+    if total_equity is not None and (long_term_debt is not None or cash is not None):
+        invested_capital = (
+            (total_equity or 0.0)
+            + (long_term_debt or 0.0)
+            - (cash or 0.0)
+        )
+
+    # ROIC = NOPAT / InvestedCapital. NOPAT ≈ EBIT × (1 - 0.21) using
+    # the standard US corporate rate; matches the FMP-derived TTM
+    # fallback. A per-ticker effective tax rate would be more precise
+    # but requires another XBRL pull.
+    roic = None
+    if (operating_income is not None and invested_capital
+            and invested_capital > 0):
+        nopat = operating_income * (1.0 - 0.21)
+        roic = nopat / invested_capital
+
     # Margins (decimals) — keep parity with FMP-derived shape (ours are percent)
     ebit_margin_pct = (
         (operating_income / revenue) * 100.0
         if operating_income is not None and revenue else None
+    )
+    ebitda_margin_pct = (
+        (ebitda / revenue) * 100.0
+        if ebitda is not None and revenue else None
     )
     fcf_margin_pct = (
         (fcf / revenue) * 100.0
@@ -490,13 +536,18 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
         "FCF":     fcf,
     }
     record.derived = {
-        "OperatingIncome":   operating_income,
-        "CapEx":             capex,
-        "FCF":               fcf,
-        "NetDebt":           net_debt,
-        "ROE":               roe,
-        "EBIT_Margin_Pct":   ebit_margin_pct,
-        "FCF_Margin_Pct":    fcf_margin_pct,
+        "OperatingIncome":    operating_income,
+        "CapEx":              capex,
+        "FCF":                fcf,
+        "NetDebt":            net_debt,
+        "EBITDA":             ebitda,
+        "Depreciation_Total": da_total,
+        "InvestedCapital":    invested_capital,
+        "ROIC":               roic,
+        "ROE":                roe,
+        "EBIT_Margin_Pct":    ebit_margin_pct,
+        "EBITDA_Margin_Pct":  ebitda_margin_pct,
+        "FCF_Margin_Pct":     fcf_margin_pct,
     }
     record.fmp_validation = {
         "status":      "validated",   # provisional; tightened by Gate A.TTM

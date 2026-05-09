@@ -282,18 +282,46 @@ def _ratios_rows_fy(local: Dict, fmp_ratios: Dict, fmp_km: Dict) -> List[_RowSpe
     ]
 
 
-def _multiples_rows_fy(local: Dict, fmp_ratios: Dict, fmp_km: Dict, fmp_ev: Dict) -> List[_RowSpec]:
+def _multiples_rows_fy(
+    local: Dict, fmp_ratios: Dict, fmp_km: Dict, fmp_ev: Dict,
+    dcf: Dict,
+) -> List[_RowSpec]:
+    """Multiples are price-dependent and aren't stored on
+    `company_records`. Compute our side from the live DCFEngine
+    output (`dcf` is the cached_dcf_summary dict). When the DCF can't
+    run for a ticker (specialized-model classification — UNH, V,
+    banks), our side stays None and the row renders FMP-only."""
     L = local or {}
     R = fmp_ratios or {}
     K = fmp_km or {}
     E = fmp_ev or {}
+    D = dcf or {}
+
+    # When the DCF errored (specialized_model_required), all our
+    # multiples are unavailable. Stamp once so the user sees the
+    # rationale rather than an unexplained — column.
+    is_specialized = isinstance(D, dict) and D.get("error") == "specialized_model_required"
+
+    market_cap = (D.get("market_cap") or 0) if not is_specialized else None
+    revenue = L.get("clean_Revenue")
+    net_income = L.get("raw_NetIncome")
+    book_equity = L.get("raw_TotalEquity")
+    ebitda = L.get("derived_EBITDA")
+    net_debt = L.get("derived_NetDebt")
+
+    our_pe       = (market_cap / net_income)   if (market_cap and net_income and net_income > 0) else None
+    our_pb       = (market_cap / book_equity)  if (market_cap and book_equity and book_equity > 0) else None
+    our_ps       = (market_cap / revenue)      if (market_cap and revenue) else None
+    our_ev       = (market_cap + (net_debt or 0)) if market_cap else None
+    our_ev_ebitda = (our_ev / ebitda) if (our_ev and ebitda) else None
+
     return [
-        ("P/E",            None, R.get("priceToEarningsRatio") or R.get("priceEarningsRatio"),     _ratio, "standard", 1.0),
-        ("EV/EBITDA",      None, K.get("evToEBITDA") or K.get("enterpriseValueOverEBITDA"),         _ratio, "standard", 1.0),
-        ("P/B",            None, R.get("priceToBookRatio"),                                         _ratio, "standard", 1.0),
-        ("P/S",            None, R.get("priceToSalesRatio"),                                        _ratio, "standard", 1.0),
-        ("Enterprise Value", None, E.get("enterpriseValue"),                                        _money_b, "standard", 1.0),
-        ("Net Debt",       L.get("derived_NetDebt"),  K.get("netDebt"),                             _money_b, "standard", 1.0),
+        ("P/E",            our_pe,  R.get("priceToEarningsRatio") or R.get("priceEarningsRatio"),     _ratio, "standard", 1.0),
+        ("EV/EBITDA",      our_ev_ebitda, K.get("evToEBITDA") or K.get("enterpriseValueOverEBITDA"), _ratio, "standard", 1.0),
+        ("P/B",            our_pb,  R.get("priceToBookRatio"),                                        _ratio, "standard", 1.0),
+        ("P/S",            our_ps,  R.get("priceToSalesRatio"),                                       _ratio, "standard", 1.0),
+        ("Enterprise Value", our_ev, E.get("enterpriseValue"),                                        _money_b, "standard", 1.0),
+        ("Net Debt",       L.get("derived_NetDebt"),  K.get("netDebt"),                              _money_b, "standard", 1.0),
     ]
 
 
@@ -361,6 +389,17 @@ def render_fmp_compare_view(ticker: str) -> None:
     target_fy = int(fy_local["fiscal_year"]) if fy_local else None
     fmp_blobs = _load_fmp(ticker, target_fy)
 
+    # DCF summary for our-side multiples (P/E, EV/EBITDA, etc.). The
+    # cached version is shared with the rest of the dashboard; for
+    # specialized-model tickers (UNH, CNC, banks, V) the call returns
+    # an `error` sentinel and our multiples render as None per the
+    # locked DCF-NA policy.
+    try:
+        from aletheia.ui.cache import cached_dcf_summary
+        dcf_summary = cached_dcf_summary(ticker)
+    except Exception:
+        dcf_summary = {}
+
     st.markdown(f"## FMP Compare — {ticker.upper()}")
     if target_fy:
         period_end = (
@@ -396,8 +435,19 @@ def render_fmp_compare_view(ticker: str) -> None:
         st.markdown("##### Multiples + capital structure")
         _render_table(_multiples_rows_fy(
             fy_local, fmp_blobs["fy"]["ratios"], fmp_blobs["fy"]["key_metrics"],
-            fmp_blobs["fy"]["ev"],
+            fmp_blobs["fy"]["ev"], dcf_summary,
         ))
+        if isinstance(dcf_summary, dict) and dcf_summary.get("error") == "specialized_model_required":
+            # The cache stamps `message` with the NotImplementedError
+            # text, which already explains the cause (specialized
+            # business model OR a known-issues bypass like V's missing
+            # diluted-share XBRL). Surface that verbatim — more
+            # accurate than relabeling.
+            msg = dcf_summary.get("message") or "DCF unavailable"
+            st.caption(
+                f"_Multiples not computed locally for {ticker.upper()}: "
+                f"{msg}. FMP values shown for reference only._"
+            )
 
     # ── TTM ──────────────────────────────────────────────────────────
     if ttm_local:
