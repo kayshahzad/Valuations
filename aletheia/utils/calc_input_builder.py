@@ -2,7 +2,7 @@
 aletheia/utils/calc_input_builder.py
 
 Single helper for assembling a `CalculationInput` from a ticker. Used by both
-the test fixtures and the production agent layer (valuation_node, context,
+the test fixtures and the production agent layer (calc_node, context,
 etc.) so all calc-tool callers go through the same construction path.
 """
 
@@ -64,6 +64,15 @@ def make_calc_input(ticker: str, df: Optional[pd.DataFrame] = None) -> Calculati
             df = db.get_latest(ticker)
         finally:
             db.close()
+
+    # Phase Q-1+ schemas carry a `period` column (FY/TTM/Q1-Q4). The
+    # DCF engine + downstream calc tools assume FY-keyed rows; Phase
+    # Q-5 will add an explicit TTM-base mode, but until then filter to
+    # FY here so a freshly-ingested TTM row (which lands under the
+    # latest contributing quarter's fiscal_year) doesn't get picked as
+    # the "latest" via df["fiscal_year"].max() in dcf_engine.
+    if df is not None and "period" in df.columns:
+        df = df[df["period"] == "FY"].copy()
 
     return CalculationInput(
         df=df,
