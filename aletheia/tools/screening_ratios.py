@@ -303,16 +303,34 @@ class ScreeningEngine:
         )
 
         # ── Inject DCF Engine outputs ─────────────────────────────────────────
+        # Pulls WACC + terminal-growth (used by P/E peg-band, EV/EBITDA-justified
+        # math, etc.) PLUS base-scenario margin-of-safety + implied-TV-multiple,
+        # which were previously hardcoded N/A in the Margin-of-Safety [Graham]
+        # and Implied-DCF-Multiple [Liberti] screening rows. Fail-soft on any
+        # DCF computation issue — defaults preserve the previous behavior.
         from aletheia.tools.dcf_engine import DCFEngine
+        wacc = 0.09
+        terminal_growth = 0.025
+        base_mos = None
+        implied_tv_ebitda = None
         try:
             dcf_result = DCFEngine(verbose=False).run(calc_input)
             wacc = dcf_result.wacc
-            terminal_growth = dcf_result.base.assumptions.terminal_growth
+            if dcf_result.base:
+                terminal_growth = dcf_result.base.assumptions.terminal_growth
+                # Margin of safety = (IV - current_price) / current_price.
+                # `dcf_result.upside(iv)` returns this fraction directly.
+                base_iv = dcf_result.intrinsic_per_share(
+                    dcf_result.base.enterprise_value, dcf_result.net_debt,
+                )
+                if base_iv is not None:
+                    base_mos = dcf_result.upside(base_iv)
+                tv = dcf_result.base.terminal
+                if tv is not None:
+                    implied_tv_ebitda = tv.implied_tv_ebitda_multiple
         except Exception as e:
             if self.verbose:
                 print(f"[WARN] DCF dynamic inputs failed for {ticker}: {e}")
-            wacc = 0.09
-            terminal_growth = 0.025
 
         return self._compute_metrics(
             card=card,
@@ -323,7 +341,9 @@ class ScreeningEngine:
             mktcap=mktcap,
             shares=shares,
             wacc=wacc,
-            terminal_growth=terminal_growth
+            terminal_growth=terminal_growth,
+            base_mos=base_mos,
+            implied_tv_ebitda=implied_tv_ebitda,
         )
 
     def _compute_metrics(
@@ -336,7 +356,9 @@ class ScreeningEngine:
         mktcap: float,
         shares: float,
         wacc: float,
-        terminal_growth: float
+        terminal_growth: float,
+        base_mos: Optional[float] = None,
+        implied_tv_ebitda: Optional[float] = None,
     ) -> ScreeningCard:
 
         # ── Extract base values ───────────────────────────────────────────────
@@ -482,14 +504,48 @@ class ScreeningEngine:
             "<25x entry for capital-light compounders",
             _signal_threshold(ev_fcf, good_below=25, flag_above=50) if ev_fcf else NA)
 
-        # Margin of safety — use base case from DCF if available
-        add("Margin of Safety", cat, "Graham", None,
-            "Buy at <65-85% of DCF intrinsic value",
-            NA, note="→ See equity_bridge.py base scenario margin_of_safety")
+        # Margin of safety — base scenario IV vs current price.
+        # Graham band: PASS when MoS ≥ 35% (price ≤ 65% of IV);
+        #              FLAG when 15% ≤ MoS < 35%;
+        #              FAIL when MoS < 15% (within 15% of IV — no margin).
+        # Display as percent; signals use the underlying decimal.
+        mos_value = base_mos * 100 if base_mos is not None else None
+        if base_mos is None:
+            mos_signal = NA
+        elif base_mos >= 0.35:
+            mos_signal = PASS
+        elif base_mos >= 0.15:
+            mos_signal = FLAG
+        else:
+            mos_signal = FAIL
+        add("Margin of Safety", cat, "Graham", mos_value,
+            "Buy at <65-85% of DCF intrinsic value (MoS ≥ 35%)",
+            mos_signal,
+            note=("Base IV vs current price. Negative = overvalued. "
+                  "Source: dcf_engine.py base scenario.")
+                  if base_mos is not None
+                  else "→ See equity_bridge.py base scenario margin_of_safety")
 
-        add("Implied DCF Multiple", cat, "Liberti", None,
-            "TV multiple should decline as business matures",
-            NA, note="→ See dcf_engine.py terminal.implied_tv_ebitda_multiple")
+        # Implied terminal-year EBITDA multiple — sanity check on DCF
+        # assumptions. Per Liberti: terminal multiple should compress as
+        # the business matures; a TV that requires ≥20× EBITDA in
+        # perpetuity is signaling growth assumptions that don't decay.
+        # Bands: PASS <12×, FLAG 12-20×, FAIL >20×.
+        if implied_tv_ebitda is None:
+            tv_signal = NA
+        elif implied_tv_ebitda < 12:
+            tv_signal = PASS
+        elif implied_tv_ebitda < 20:
+            tv_signal = FLAG
+        else:
+            tv_signal = FAIL
+        add("Implied DCF Multiple", cat, "Liberti", implied_tv_ebitda,
+            "TV multiple should decline as business matures (<12× ideal)",
+            tv_signal,
+            note=("Implied EBITDA multiple at terminal year (TV / terminal EBITDA). "
+                  "Source: dcf_engine.py base.terminal.")
+                  if implied_tv_ebitda is not None
+                  else "→ See dcf_engine.py terminal.implied_tv_ebitda_multiple")
 
         # ── GROWTH ────────────────────────────────────────────────────────────
         cat = "Growth"
