@@ -600,7 +600,7 @@ def main():
     # Dive (lead thesis, contrarian, value chain, moat, strategic context all
     # render there), and agent runs can be triggered from the Universe tab's
     # ▶ Run agents footer or the sidebar's per-ticker pipeline button.
-    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report"]
+    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
     if "active_view" not in st.session_state:
@@ -1050,6 +1050,13 @@ def main():
 
         from aletheia.ui.financials_view import render_financials_view
         render_financials_view(selected, bundle)
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # TAB — FMP COMPARE (every line item: ours vs FMP, side-by-side)
+    # ──────────────────────────────────────────────────────────────────────────
+    elif active_view == "◐  FMP Compare":
+        from aletheia.ui.fmp_compare_view import render_fmp_compare_view
+        render_fmp_compare_view(st.session_state.active_ticker)
 
     # ──────────────────────────────────────────────────────────────────────────
     # TAB 4 — SCENARIOS (typed agent-proposed scenarios with full provenance)
