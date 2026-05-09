@@ -100,7 +100,14 @@ def _clone_profile_with_overrides(
     """
     updates: Dict[str, Any] = {}
     if ov.revenue_growth_y1_5 is not None:
+        # Set BOTH the legacy `growth_rate` (used as fallback when SEC
+        # data is missing) AND the explicit override field that DCFEngine
+        # checks first. Previously only `growth_rate` was set, but the
+        # engine treats it as a fallback only — overrides were silently
+        # discarded for every ticker with normal SEC history. Inverted
+        # bear/bull semantics on the Scenarios tab as a result.
         updates["growth_rate"] = ov.revenue_growth_y1_5
+        updates["revenue_growth_y1_5_override"] = ov.revenue_growth_y1_5
     if ov.terminal_growth is not None:
         updates["terminal_growth"] = ov.terminal_growth
     if ov.terminal_margin_decay is not None:

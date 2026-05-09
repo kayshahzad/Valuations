@@ -1057,6 +1057,18 @@ class DCFEngine:
             print(f"  [WARN] Missing or sparse SEC history for {ticker}. Using lifecycle default ({lifecycle}).")
             hist_cagr = profile.growth_rate
 
+        # Scenario-override path: when an agent-proposed scenario provides
+        # an explicit Y1-5 CAGR, it must replace the historical reference
+        # entirely. Without this, the override only ever takes effect on
+        # tickers with sparse SEC data (~never), producing identical-to-
+        # base IPS for every scenario and inverting bull/bear semantics
+        # in the Scenarios tab UI. Phase 3.6 fix.
+        if getattr(profile, "revenue_growth_y1_5_override", None) is not None:
+            hist_cagr = float(profile.revenue_growth_y1_5_override)
+            if self.verbose:
+                print(f"  [SCENARIO OVERRIDE] Y1-5 CAGR set to {hist_cagr:.1%} "
+                      f"(replaces SEC-derived hist_cagr).")
+
         hist_cagr = float(np.clip(hist_cagr, 0.01, max_historical_cagr))
 
         if self.verbose:

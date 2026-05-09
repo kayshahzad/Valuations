@@ -38,6 +38,15 @@ class ValuationProfile:
     # ScenarioOverride.revenue_growth_y6_10 but never reached the engine
     # (Y6-10 was always derived as Y1-5 × decay_base). Now flows in.
     revenue_growth_y6_10_override:  Optional[float] = None
+    # Phase 3.6 — Y1-5 revenue CAGR override. Previously the agent's
+    # `revenue_growth_y1_5` was mapped to `profile.growth_rate`, which
+    # is only used as a FALLBACK when SEC historical CAGR is missing.
+    # For every ticker with normal SEC data (i.e. all of them), the
+    # override was silently discarded — agent-proposed scenarios
+    # produced identical IPS to base, inverting the bull/bear semantics
+    # in the UI. This override field now bypasses the historical CAGR
+    # path entirely when set.
+    revenue_growth_y1_5_override:   Optional[float] = None
 
 @dataclass
 class UniverseSnapshot:
