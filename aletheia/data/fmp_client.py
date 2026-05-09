@@ -12,13 +12,15 @@ quarterly validation + ad-hoc lookups.
 API docs: https://site.financialmodelingprep.com/developer/docs/
 
 Endpoints exposed:
-  - fetch_income_statements(ticker)    annual income statements
-  - fetch_balance_sheets(ticker)       annual balance sheets
-  - fetch_cash_flows(ticker)           annual cash flow statements
-  - fetch_ratios(ticker)               annual ratios
-  - fetch_key_metrics(ticker)          annual key metrics (EV, FCF/share, etc.)
-  - fetch_enterprise_values(ticker)    annual enterprise value series
-  - fetch_analyst_estimates(ticker)    forward consensus revenue/EPS estimates
+  - fetch_income_statements(ticker, period)   income statements (annual|quarter)
+  - fetch_balance_sheets(ticker, period)      balance sheets (annual|quarter)
+  - fetch_cash_flows(ticker, period)          cash flow statements (annual|quarter)
+  - fetch_ratios(ticker, period)              financial ratios (annual|quarter)
+  - fetch_key_metrics(ticker, period)         key metrics (annual|quarter)
+  - fetch_enterprise_values(ticker, period)   enterprise value series (annual|quarter)
+  - fetch_key_metrics_ttm(ticker)             pre-computed TTM key-metrics snapshot
+  - fetch_ratios_ttm(ticker)                  pre-computed TTM financial ratios
+  - fetch_analyst_estimates(ticker)           forward consensus revenue/EPS estimates
 """
 
 from __future__ import annotations
@@ -228,41 +230,102 @@ def _fetch(ticker: str, endpoint_name: str, endpoint_label: str,
 # Public endpoint functions
 # ────────────────────────────────────────────────────────────────────────
 
-def fetch_income_statements(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
-    """Annual income statements; FMP returns most-recent-first."""
-    return _fetch(ticker, "income-statement", "income_annual",
-                  params={"period": "annual", "limit": "30"},
+def _validate_period(period: str) -> str:
+    """Phase Q-3: only `annual` and `quarter` are exposed by FMP. Reject
+    anything else so callers fail fast instead of silently fetching the
+    wrong cadence."""
+    if period not in ("annual", "quarter"):
+        raise ValueError(f"FMP period must be 'annual' or 'quarter', got {period!r}")
+    return period
+
+
+def fetch_income_statements(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Income statements at the given cadence (`annual` or `quarter`).
+    FMP returns most-recent-first. Cache label is segregated by period
+    so annual + quarterly responses don't overwrite each other."""
+    p = _validate_period(period)
+    return _fetch(ticker, "income-statement", f"income_{p}",
+                  params={"period": p, "limit": "30"},
                   force_refresh=force_refresh)
 
 
-def fetch_balance_sheets(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
-    return _fetch(ticker, "balance-sheet-statement", "balance_annual",
-                  params={"period": "annual", "limit": "30"},
+def fetch_balance_sheets(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    p = _validate_period(period)
+    return _fetch(ticker, "balance-sheet-statement", f"balance_{p}",
+                  params={"period": p, "limit": "30"},
                   force_refresh=force_refresh)
 
 
-def fetch_cash_flows(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
-    return _fetch(ticker, "cash-flow-statement", "cashflow_annual",
-                  params={"period": "annual", "limit": "30"},
+def fetch_cash_flows(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    p = _validate_period(period)
+    return _fetch(ticker, "cash-flow-statement", f"cashflow_{p}",
+                  params={"period": p, "limit": "30"},
                   force_refresh=force_refresh)
 
 
-def fetch_ratios(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
-    return _fetch(ticker, "ratios", "ratios_annual",
-                  params={"period": "annual", "limit": "30"},
+def fetch_ratios(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    p = _validate_period(period)
+    return _fetch(ticker, "ratios", f"ratios_{p}",
+                  params={"period": p, "limit": "30"},
                   force_refresh=force_refresh)
 
 
-def fetch_key_metrics(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
-    return _fetch(ticker, "key-metrics", "key_metrics_annual",
-                  params={"period": "annual", "limit": "30"},
+def fetch_key_metrics(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    p = _validate_period(period)
+    return _fetch(ticker, "key-metrics", f"key_metrics_{p}",
+                  params={"period": p, "limit": "30"},
                   force_refresh=force_refresh)
 
 
-def fetch_enterprise_values(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
-    return _fetch(ticker, "enterprise-values", "ev_annual",
-                  params={"period": "annual", "limit": "30"},
+def fetch_enterprise_values(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    p = _validate_period(period)
+    return _fetch(ticker, "enterprise-values", f"ev_{p}",
+                  params={"period": p, "limit": "30"},
                   force_refresh=force_refresh)
+
+
+def fetch_key_metrics_ttm(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """FMP's pre-computed trailing-twelve-month key-metrics snapshot.
+    Single record (not a list) — no `period` param. Used in Phase Q-4
+    as the second-source for our derived TTM (Gate A.TTM byte-perfect
+    cross-check on revenue / NI / FCF / EBITDA)."""
+    raw = _fetch(ticker, "key-metrics-ttm", "key_metrics_ttm",
+                 params={},
+                 force_refresh=force_refresh)
+    if isinstance(raw, list) and raw:
+        return raw[0]
+    if isinstance(raw, dict):
+        return raw
+    return None
+
+
+def fetch_ratios_ttm(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """FMP's pre-computed TTM financial ratios (PE, ROIC, ROE, EV/EBITDA,
+    margins). Used in Phase Q-6 to extend Phase 3 ROIC/ROE checks to TTM."""
+    raw = _fetch(ticker, "ratios-ttm", "ratios_ttm",
+                 params={},
+                 force_refresh=force_refresh)
+    if isinstance(raw, list) and raw:
+        return raw[0]
+    if isinstance(raw, dict):
+        return raw
+    return None
 
 
 def fetch_analyst_estimates(ticker: str, force_refresh: bool = False) -> Optional[List[Dict[str, Any]]]:
