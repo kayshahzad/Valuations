@@ -158,6 +158,35 @@ def test_extract_standalone_quarters_returns_most_recent_first():
     assert out[0]["fp"] == "Q1"
 
 
+def test_extract_standalone_quarters_filters_to_cumulative_ytd_shape():
+    """AMZN-class regression: filers file MULTIPLE facts at the same
+    (fy, fp) tuple — a 3-month standalone, the 6/9-month cumulative,
+    AND a rolling 12-month TTM. Must pick the cumulative-YTD shape
+    only or the subtraction chain produces nonsense numbers
+    (Q1 standalone returning $65B instead of $17B for AMZN)."""
+    facts = [
+        # Standalone 3-month (also tagged fp=Q2 — confusing but real)
+        {"form": "10-Q", "fy": 2025, "fp": "Q2",
+         "start": "2025-04-01", "end": "2025-06-30", "val": 18e9},
+        # Cumulative 6-month YTD (the one we want)
+        {"form": "10-Q", "fy": 2025, "fp": "Q2",
+         "start": "2025-01-01", "end": "2025-06-30", "val": 35e9},
+        # Rolling 12-month TTM (also tagged fp=Q2)
+        {"form": "10-Q", "fy": 2025, "fp": "Q2",
+         "start": "2024-07-01", "end": "2025-06-30", "val": 70e9},
+        # Q1 cumulative (3-month, also = standalone)
+        {"form": "10-Q", "fy": 2025, "fp": "Q1",
+         "start": "2025-01-01", "end": "2025-03-31", "val": 17e9},
+    ]
+    out = sq.extract_standalone_quarters(facts)
+    by_fp = {q["fp"]: q for q in out if q["fy"] == 2025}
+    # Q2 standalone = 6-mo cumulative ($35B) - Q1 cumulative ($17B) = $18B
+    assert abs(by_fp["Q2"]["val_standalone"] - 18e9) < 1
+    # Confirm we picked the 6-month cumulative as the YTD anchor, not
+    # the rolling-12-month or the standalone-3-month
+    assert by_fp["Q2"]["val_cumulative"] == 35e9
+
+
 def test_extract_standalone_quarters_handles_missing_prior_for_q2():
     """If Q1 cumulative is missing, Q2 standalone returns None rather
     than silently producing the cumulative value as if it were standalone."""

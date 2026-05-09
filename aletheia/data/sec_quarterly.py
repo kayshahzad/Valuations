@@ -133,11 +133,39 @@ def _period_months(fact: Dict[str, Any]) -> Optional[int]:
     return round((e - s).days / 30.4)
 
 
+# Expected cumulative-YTD period length per fiscal-period code.
+# Filers like AMZN file MULTIPLE facts at the same (fy, fp) tuple — a
+# 3-month standalone, a 6-month/9-month YTD cumulative, AND a rolling
+# 12-month TTM — all tagged with the same fp. The TTM-rollup math
+# wants the cumulative-YTD shape, so we filter by expected months
+# before disambiguating ties by `end` date.
+_FP_EXPECTED_MONTHS = {"Q1": 3, "Q2": 6, "Q3": 9}
+
+
+def _is_cumulative_ytd(fact: Dict[str, Any]) -> bool:
+    """True iff `fact` is the cumulative-YTD shape for its fp (e.g. a
+    fp=Q3 fact spanning 9 months from FY-start to Q3-end). Filters out
+    rolling-12-month and standalone-3-month duplicate filings."""
+    fp = fact.get("fp")
+    expected = _FP_EXPECTED_MONTHS.get(fp)
+    if expected is None:
+        return False
+    months = _period_months(fact)
+    return months is not None and abs(months - expected) <= 1
+
+
 def _latest_quarterly(
     facts_list: List[Dict[str, Any]],
 ) -> Optional[Dict[str, Any]]:
-    """Pick the most recent 10-Q fact, breaking ties by `end`."""
-    tenq = [f for f in facts_list if f.get("form") in ("10-Q", "10-Q/A")]
+    """Pick the most recent cumulative-YTD 10-Q fact. Filters out
+    rolling-12-month TTM duplicates and standalone-3-month-only
+    filings tagged at the same (fy, fp) — filers like AMZN file all
+    three shapes simultaneously, and the TTM-rollup math wants the
+    cumulative-YTD shape."""
+    tenq = [
+        f for f in facts_list
+        if f.get("form") in ("10-Q", "10-Q/A") and _is_cumulative_ytd(f)
+    ]
     if not tenq:
         return None
     tenq.sort(key=lambda f: f.get("end", ""), reverse=True)
@@ -149,17 +177,24 @@ def _matching_prior_year(
     target_fy: int,
     target_fp: str,
 ) -> Optional[Dict[str, Any]]:
-    """Find the same (fp) cumulative fact one fiscal year earlier.
+    """Find the same (fp) cumulative-YTD fact one fiscal year earlier.
 
-    SEC re-tags prior-period comparatives with the current filing's
-    fy attribute — so a single (fy, fp) tuple can match multiple
-    records. Pick the one whose `end` date is most recent: that's the
-    actual period being reported, not a comparative."""
+    Two disambiguators are needed:
+      1. SEC re-tags prior-period comparatives with the current
+         filing's fy attribute — a (fy, fp) tuple can match multiple
+         records.
+      2. Some filers (AMZN, WMT) file multiple facts at the same
+         (fy, fp) with different period lengths (3-month standalone,
+         6/9-month YTD, 12-month rolling). Filter to the expected
+         cumulative-YTD shape so subtraction math stays consistent.
+
+    Picks the latest `end` among matches that satisfy both."""
     matches = [
         f for f in facts_list
         if (f.get("form") in ("10-Q", "10-Q/A")
             and f.get("fy") == target_fy - 1
-            and f.get("fp") == target_fp)
+            and f.get("fp") == target_fp
+            and _is_cumulative_ytd(f))
     ]
     if not matches:
         return None
@@ -212,11 +247,17 @@ def extract_standalone_quarters(
     quarter gets cross-checked against FMP's `period=quarter`
     statement to catch per-quarter drifts that would offset and
     disappear in the TTM rollup."""
-    # Index quarterly facts by (fy, fp), picking the most-recent-end
-    # match (handles SEC's prior-year-comparative re-tagging).
+    # Index quarterly facts by (fy, fp). Two filters:
+    #   - Filter to `_is_cumulative_ytd` shapes so AMZN-style multi-
+    #     period filings (rolling 12-month, standalone 3-month) don't
+    #     pollute the cumulative chain.
+    #   - Among ties, pick the most-recent-end (handles SEC's
+    #     prior-year-comparative re-tagging).
     quarter_index: Dict[Tuple[int, str], Dict[str, Any]] = {}
     for f in facts_list:
         if f.get("form") not in ("10-Q", "10-Q/A"):
+            continue
+        if not _is_cumulative_ytd(f):
             continue
         key = (f.get("fy"), f.get("fp"))
         if not key[0] or not key[1]:
