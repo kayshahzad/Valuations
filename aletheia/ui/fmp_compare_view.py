@@ -225,15 +225,32 @@ def _load_fmp(ticker: str, target_fy: Optional[int]) -> Dict[str, Any]:
 def _income_rows_fy(local: Dict, fmp: Dict) -> List[_RowSpec]:
     L = local or {}
     F = fmp or {}
-    # FMP's `ebitda` field is a "kitchen-sink" definition — it includes
-    # stock-based comp + other non-cash addbacks beyond pure D&A. Our
-    # standard EBITDA is OperatingIncome + D&A. For like-for-like
-    # comparison, derive FMP's EBITDA the same way:
-    #   FMP EBITDA = FMP.operatingIncome + FMP.depreciationAndAmortization
+    # FMP exposes two EBITDA values that DO NOT agree with each other:
+    #   - /income-statement.ebitda = "kitchen-sink" (includes SBC and
+    #     other non-cash addbacks beyond pure D&A)
+    #   - operatingIncome + depreciationAndAmortization = strict
+    #     (textbook "OpInc + D&A")
+    # We render two rows so the analyst sees both methodologies:
+    #   1. "EBITDA (strict)" — proves the underlying inputs (OpInc + D&A)
+    #      match between our cleaning engine and FMP
+    #   2. "EBITDA (FMP-style)" — proves we can replicate FMP's broader
+    #      formula by adding SBC to our strict EBITDA
+    # Our `derived_EBITDA` is the strict definition (used by the DCF
+    # engine, multiple decomposition, scoring) — that stays canonical
+    # and unchanged downstream.
     fmp_ebitda_strict = (
         (F.get("operatingIncome") or 0) + (F.get("depreciationAndAmortization") or 0)
         if F.get("operatingIncome") is not None else None
     )
+    our_ebitda_fmp_style = None
+    our_ebitda = L.get("derived_EBITDA")
+    our_sbc = L.get("clean_SBC")
+    if our_ebitda is not None and not _is_missing(our_ebitda):
+        # Add SBC if present; falls back to strict EBITDA if SBC missing.
+        if our_sbc is not None and not _is_missing(our_sbc):
+            our_ebitda_fmp_style = our_ebitda + our_sbc
+        else:
+            our_ebitda_fmp_style = our_ebitda
     return [
         ("Revenue",            L.get("clean_Revenue"),         F.get("revenue"),         _money_b, "strict",       1.0),
         ("COGS",               L.get("raw_COGS"),              F.get("costOfRevenue"),   _money_b, "standard",     1.0),
@@ -244,7 +261,8 @@ def _income_rows_fy(local: Dict, fmp: Dict) -> List[_RowSpec]:
                                                                                           _money_b, "standard",     1.0),
         ("Operating Income",   L.get("raw_OperatingIncome") or L.get("derived_OperatingIncome"),
                                 F.get("operatingIncome"),      _money_b, "standard",     1.0),
-        ("EBITDA",             L.get("derived_EBITDA"),        fmp_ebitda_strict,        _money_b, "definitional", 1.0),
+        ("EBITDA (strict)",    L.get("derived_EBITDA"),        fmp_ebitda_strict,        _money_b, "definitional", 1.0),
+        ("EBITDA (FMP-style)", our_ebitda_fmp_style,           F.get("ebitda"),          _money_b, "definitional", 1.0),
         ("Net Income",         L.get("raw_NetIncome"),         F.get("netIncome"),       _money_b, "strict",       1.0),
         ("Shares Diluted",     L.get("raw_SharesDiluted"),     F.get("weightedAverageShsOutDil"),
                                                                                           _shares,  "strict",       1.0),
@@ -321,18 +339,32 @@ def _ratios_rows_fy(
     )
     # FMP's /ratios.ebitdaMargin uses their kitchen-sink EBITDA. For
     # apples-to-apples we recompute on FMP's side using the strict
-    # OpInc + D&A definition (matches our `derived_EBITDA_Margin_Pct`).
+    # OpInc + D&A definition. We also expose an "FMP-style" EBITDA
+    # margin row using the broader (D&A + SBC) formula on our side
+    # so the analyst can see both methodologies.
+    revenue = I.get("revenue") or L.get("clean_Revenue")
     fmp_ebitda_margin_strict = None
-    if I.get("operatingIncome") is not None and I.get("revenue"):
+    if I.get("operatingIncome") is not None and revenue:
         strict_ebitda = (I.get("operatingIncome") or 0) + (I.get("depreciationAndAmortization") or 0)
-        fmp_ebitda_margin_strict = strict_ebitda / I.get("revenue")
+        fmp_ebitda_margin_strict = strict_ebitda / revenue
+    our_ebitda_margin_fmp_style_pct = None
+    our_ebitda = L.get("derived_EBITDA")
+    our_sbc = L.get("clean_SBC")
+    if our_ebitda is not None and not _is_missing(our_ebitda) and revenue:
+        broader = our_ebitda + (our_sbc if our_sbc and not _is_missing(our_sbc) else 0)
+        # _pct multiplies by 100; pass decimal to stay consistent with
+        # the strict-row scale (also decimal × 100 = percent).
+        our_ebitda_margin_fmp_style_pct = (broader / revenue) * 100.0
+    fmp_ebitda_margin_fmp_style = R.get("ebitdaMargin") or R.get("ebitMargin")
     return [
         ("Gross Margin",       L.get("derived_GrossMargin_Pct"),  R.get("grossProfitMargin"),
                                                                                           _pct,    "standard",     0.01),
         ("EBIT Margin",        L.get("derived_EBIT_Margin_Pct"),  R.get("operatingProfitMargin"),
                                                                                           _pct,    "standard",     0.01),
-        ("EBITDA Margin",      L.get("derived_EBITDA_Margin_Pct"), fmp_ebitda_margin_strict,
+        ("EBITDA Margin (strict)",    L.get("derived_EBITDA_Margin_Pct"), fmp_ebitda_margin_strict,
                                                                                           _pct,    "standard", 0.01),
+        ("EBITDA Margin (FMP-style)", our_ebitda_margin_fmp_style_pct,    fmp_ebitda_margin_fmp_style,
+                                                                                          _pct,    "definitional", 0.01),
         ("FCF Margin",         L.get("derived_FCF_Margin_Pct"),   fmp_fcf_margin,         _pct,    "standard",     0.01),
         ("ROE",                L.get("derived_ROE"),              R.get("returnOnEquity") or K.get("returnOnEquity"),
                                                                                           _pct,    "definitional", 1.0),
@@ -575,12 +607,14 @@ def render_fmp_compare_view(ticker: str) -> None:
             fmp_blobs["fy"]["income"], fmp_blobs["fy"]["cashflow"],
         ))
         st.caption(
-            "_Methodology drift expected on EBITDA Margin and ROIC._  "
-            "FMP's EBITDA includes ASC-842 right-of-use lease amortization "
-            "and acquisition-related intangible amortization that aren't "
-            "always captured under the standard XBRL `DepreciationAndAmortization` "
-            "tag (asset-heavy services firms show this most). FMP's ROIC "
-            "uses `(NetIncome + InterestExpense×(1-tax)) / (TotalDebt + Equity)` "
+            "_Two EBITDA Margin rows by design._  "
+            "**Strict** = OperatingIncome + D&A on both sides (textbook EBITDA, "
+            "what our DCF + scoring uses). **FMP-style** adds SBC (and other "
+            "non-cash addbacks FMP includes) for like-for-like comparison "
+            "with FMP's `/ratios.ebitdaMargin` — confirms we can replicate "
+            "FMP's broader methodology without changing our canonical metric. "
+            "ROIC drift is a real formula difference: FMP's "
+            "`(NetIncome + InterestExpense×(1-tax)) / (TotalDebt + Equity)` "
             "vs our Liberti-style `NOPAT / (Equity + LongTermDebt − Cash)` — "
             "both correct, different denominators."
         )
