@@ -372,14 +372,19 @@ def _ttm_rows(local: Dict, fmp_km_ttm: Dict, fmp_ratios_ttm: Dict) -> List[_RowS
     ev_to_sales = K.get("evToSalesTTM")
     ev_to_ebitda = K.get("evToEBITDATTM")
     ev_to_fcf = K.get("evToFreeCashFlowTTM")
+    market_cap = K.get("marketCap")
+    pe_ttm = R.get("priceToEarningsRatioTTM")
     fmp_revenue_ttm = (ev_ttm / ev_to_sales) if (ev_ttm and ev_to_sales) else None
     fmp_ebitda_ttm  = (ev_ttm / ev_to_ebitda) if (ev_ttm and ev_to_ebitda) else None
     fmp_fcf_ttm     = (ev_ttm / ev_to_fcf) if (ev_ttm and ev_to_fcf) else None
+    # Net income via market_cap / P/E TTM (FMP /key-metrics-ttm doesn't
+    # expose absolute NI directly).
+    fmp_ni_ttm = (market_cap / pe_ttm) if (market_cap and pe_ttm) else None
 
     return [
         ("Revenue (TTM)",       L.get("clean_Revenue"),         fmp_revenue_ttm,
                                                                                           _money_b, "standard", 1.0),
-        ("Net Income (TTM)",    L.get("raw_NetIncome"),         None,
+        ("Net Income (TTM)",    L.get("raw_NetIncome"),         fmp_ni_ttm,
                                                                                           _money_b, "standard", 1.0),
         ("EBITDA (TTM)",        L.get("derived_EBITDA"),        fmp_ebitda_ttm,
                                                                                           _money_b, "standard", 1.0),
@@ -394,13 +399,21 @@ def _ttm_rows(local: Dict, fmp_km_ttm: Dict, fmp_ratios_ttm: Dict) -> List[_RowS
     ]
 
 
-def _market_rows(profile: Dict, fmp_ev: Dict, dcf: Dict, local_fy: Dict) -> List[_RowSpec]:
+def _market_rows(
+    profile: Dict, fmp_ev: Dict, fmp_km_ttm: Dict,
+    dcf: Dict, local_fy: Dict,
+) -> List[_RowSpec]:
     """Live market snapshot. Our side comes from the DCF engine output
-    (current_price, market_cap, beta, shares_diluted from /profile via
-    DCFResult), with EV computed as market_cap + derived_NetDebt. FMP
-    side is the live /profile blob."""
+    (current_price, market_cap, beta, shares_diluted), with EV computed
+    as market_cap + derived_NetDebt.
+
+    FMP side: prefers TTM-anchored values (current price + current
+    market cap + current EV) over the FY-end-priced annual snapshot.
+    Shares outstanding falls back to `/enterprise-values.numberOfShares`
+    when /profile doesn't expose it."""
     P = profile or {}
     E = fmp_ev or {}
+    K = fmp_km_ttm or {}
     D = dcf or {}
     L = local_fy or {}
 
@@ -415,13 +428,18 @@ def _market_rows(profile: Dict, fmp_ev: Dict, dcf: Dict, local_fy: Dict) -> List
         (our_market_cap + (our_net_debt or 0.0))
         if our_market_cap is not None else None
     )
+
+    # FMP shares fallback chain — /profile sometimes returns None,
+    # /enterprise-values exposes numberOfShares as the period-end count.
+    fmp_shares = P.get("sharesOutstanding") or E.get("numberOfShares")
+
     return [
         ("Current Price",      our_price,      P.get("price"),                  _money_per_share, "strict",       1.0),
-        ("Market Cap",         our_market_cap, P.get("mktCap") or P.get("marketCap"),
+        ("Market Cap",         our_market_cap, P.get("mktCap") or P.get("marketCap") or K.get("marketCap"),
                                                                                 _money_b,         "standard",     1.0),
-        ("Enterprise Value",   our_ev,         E.get("enterpriseValue"),        _money_b,         "standard",     1.0),
+        ("Enterprise Value",   our_ev,         K.get("enterpriseValueTTM"),     _money_b,         "standard",     1.0),
         ("Beta",               our_beta,       P.get("beta"),                   _scalar,          "definitional", 1.0),
-        ("Shares Outstanding", our_shares,     P.get("sharesOutstanding"),      _shares,          "strict",       1.0),
+        ("Shares Outstanding", our_shares,     fmp_shares,                      _shares,          "strict",       1.0),
         ("FMP DCF",            None,           P.get("dcf"),                    _money_per_share, "definitional", 1.0),
     ]
 
@@ -562,7 +580,8 @@ def render_fmp_compare_view(ticker: str) -> None:
     # ── Market snapshot ──────────────────────────────────────────────
     st.markdown("### Market snapshot (live FMP /profile)")
     _render_table(_market_rows(
-        fmp_blobs.get("profile"), fmp_blobs["fy"]["ev"], dcf_summary, fy_local,
+        fmp_blobs.get("profile"), fmp_blobs["fy"]["ev"],
+        fmp_blobs["ttm"]["key_metrics"], dcf_summary, fy_local,
     ))
 
     # ── Legend ───────────────────────────────────────────────────────
