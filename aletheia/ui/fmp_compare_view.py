@@ -225,6 +225,15 @@ def _load_fmp(ticker: str, target_fy: Optional[int]) -> Dict[str, Any]:
 def _income_rows_fy(local: Dict, fmp: Dict) -> List[_RowSpec]:
     L = local or {}
     F = fmp or {}
+    # FMP's `ebitda` field is a "kitchen-sink" definition — it includes
+    # stock-based comp + other non-cash addbacks beyond pure D&A. Our
+    # standard EBITDA is OperatingIncome + D&A. For like-for-like
+    # comparison, derive FMP's EBITDA the same way:
+    #   FMP EBITDA = FMP.operatingIncome + FMP.depreciationAndAmortization
+    fmp_ebitda_strict = (
+        (F.get("operatingIncome") or 0) + (F.get("depreciationAndAmortization") or 0)
+        if F.get("operatingIncome") is not None else None
+    )
     return [
         ("Revenue",            L.get("clean_Revenue"),         F.get("revenue"),         _money_b, "strict",       1.0),
         ("COGS",               L.get("raw_COGS"),              F.get("costOfRevenue"),   _money_b, "standard",     1.0),
@@ -235,7 +244,7 @@ def _income_rows_fy(local: Dict, fmp: Dict) -> List[_RowSpec]:
                                                                                           _money_b, "standard",     1.0),
         ("Operating Income",   L.get("raw_OperatingIncome") or L.get("derived_OperatingIncome"),
                                 F.get("operatingIncome"),      _money_b, "standard",     1.0),
-        ("EBITDA",             L.get("derived_EBITDA"),        F.get("ebitda"),          _money_b, "definitional", 1.0),
+        ("EBITDA",             L.get("derived_EBITDA"),        fmp_ebitda_strict,        _money_b, "definitional", 1.0),
         ("Net Income",         L.get("raw_NetIncome"),         F.get("netIncome"),       _money_b, "strict",       1.0),
         ("Shares Diluted",     L.get("raw_SharesDiluted"),     F.get("weightedAverageShsOutDil"),
                                                                                           _shares,  "strict",       1.0),
@@ -310,13 +319,20 @@ def _ratios_rows_fy(
         C.get("freeCashFlow") / I.get("revenue")
         if (C.get("freeCashFlow") and I.get("revenue")) else None
     )
+    # FMP's /ratios.ebitdaMargin uses their kitchen-sink EBITDA. For
+    # apples-to-apples we recompute on FMP's side using the strict
+    # OpInc + D&A definition (matches our `derived_EBITDA_Margin_Pct`).
+    fmp_ebitda_margin_strict = None
+    if I.get("operatingIncome") is not None and I.get("revenue"):
+        strict_ebitda = (I.get("operatingIncome") or 0) + (I.get("depreciationAndAmortization") or 0)
+        fmp_ebitda_margin_strict = strict_ebitda / I.get("revenue")
     return [
         ("Gross Margin",       L.get("derived_GrossMargin_Pct"),  R.get("grossProfitMargin"),
                                                                                           _pct,    "standard",     0.01),
         ("EBIT Margin",        L.get("derived_EBIT_Margin_Pct"),  R.get("operatingProfitMargin"),
                                                                                           _pct,    "standard",     0.01),
-        ("EBITDA Margin",      L.get("derived_EBITDA_Margin_Pct"), R.get("ebitdaMargin") or R.get("ebitMargin"),
-                                                                                          _pct,    "definitional", 0.01),
+        ("EBITDA Margin",      L.get("derived_EBITDA_Margin_Pct"), fmp_ebitda_margin_strict,
+                                                                                          _pct,    "standard", 0.01),
         ("FCF Margin",         L.get("derived_FCF_Margin_Pct"),   fmp_fcf_margin,         _pct,    "standard",     0.01),
         ("ROE",                L.get("derived_ROE"),              R.get("returnOnEquity") or K.get("returnOnEquity"),
                                                                                           _pct,    "definitional", 1.0),
