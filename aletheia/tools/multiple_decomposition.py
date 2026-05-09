@@ -251,8 +251,27 @@ class MultipleDecomposition:
             result.warnings.append(f"No data for {ticker}")
             return result
 
-        fy = fiscal_year or int(df["fiscal_year"].max())
-        row = df[df["fiscal_year"] == fy].iloc[0]
+        # Phase Q-5: split FY rows from TTM the same way DCFEngine does.
+        # Multiple Decomposition shares the base row with DCF so analyst-
+        # facing ROIC + EV/EBITDA stay consistent across tools.
+        if "period" in df.columns:
+            df_fy  = df[df["period"] == "FY"]
+            df_ttm = df[df["period"] == "TTM"]
+        else:
+            df_fy  = df
+            df_ttm = df.iloc[0:0]
+
+        if df_fy.empty:
+            result.warnings.append(f"No FY data for {ticker}")
+            return result
+
+        fy = fiscal_year or int(df_fy["fiscal_year"].max())
+        latest_fy_row = df_fy[df_fy["fiscal_year"] == fy].iloc[0]
+        if not df_ttm.empty:
+            from aletheia.tools.dcf_engine import _merge_ttm_with_fy_fallback
+            row = _merge_ttm_with_fy_fallback(df_ttm.iloc[-1], latest_fy_row)
+        else:
+            row = latest_fy_row
         result.fiscal_year = fy
 
         def get(col, fallback=0.0):

@@ -65,14 +65,11 @@ def make_calc_input(ticker: str, df: Optional[pd.DataFrame] = None) -> Calculati
         finally:
             db.close()
 
-    # Phase Q-1+ schemas carry a `period` column (FY/TTM/Q1-Q4). The
-    # DCF engine + downstream calc tools assume FY-keyed rows; Phase
-    # Q-5 will add an explicit TTM-base mode, but until then filter to
-    # FY here so a freshly-ingested TTM row (which lands under the
-    # latest contributing quarter's fiscal_year) doesn't get picked as
-    # the "latest" via df["fiscal_year"].max() in dcf_engine.
-    if df is not None and "period" in df.columns:
-        df = df[df["period"] == "FY"].copy()
+    # Phase Q-1+ schemas carry a `period` column. The DCF engine
+    # (Phase Q-5) selects TTM as the base row when present and falls
+    # back to the latest FY row otherwise. We pass both shapes through;
+    # filtering happens inside the engine where the base-row selection
+    # is split from the FY-only historical CAGR computation.
 
     return CalculationInput(
         df=df,

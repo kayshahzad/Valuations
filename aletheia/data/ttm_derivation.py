@@ -122,6 +122,12 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
     fcf              = _sum_or_none(cashflow_last4, "freeCashFlow")
     capex            = _sum_or_none(cashflow_last4, "capitalExpenditure")
     sbc              = _sum_or_none(cashflow_last4, "stockBasedCompensation")
+    # D&A is required by the DCF engine. Sum across quarters; some FMP
+    # responses only expose it on the income statement.
+    da_total         = (
+        _sum_or_none(cashflow_last4, "depreciationAndAmortization")
+        or _sum_or_none(income_last4, "depreciationAndAmortization")
+    )
 
     if revenue is None or net_income is None:
         return TTMDerivationResult(
@@ -227,18 +233,22 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
         "SharesDiluted": shares_diluted,
     }
     record.derived = {
-        "EBITDA":            ebitda,
-        "OperatingIncome":   operating_income,
-        "CapEx":             capex,
-        "FCF":               fcf,
-        "ROIC":              roic,
-        "ROE":               roe,
-        "NetDebt":           net_debt,
-        "InvestedCapital":   invested_capital,
-        "GrossMargin_Pct":   gross_margin_pct,
-        "EBIT_Margin_Pct":   ebit_margin_pct,
-        "EBITDA_Margin_Pct": ebitda_margin_pct,
-        "FCF_Margin_Pct":    fcf_margin_pct,
+        "EBITDA":             ebitda,
+        "OperatingIncome":    operating_income,
+        "CapEx":              capex,
+        "FCF":                fcf,
+        "ROIC":               roic,
+        "ROE":                roe,
+        "NetDebt":            net_debt,
+        "InvestedCapital":    invested_capital,
+        "GrossMargin_Pct":    gross_margin_pct,
+        "EBIT_Margin_Pct":    ebit_margin_pct,
+        "EBITDA_Margin_Pct":  ebitda_margin_pct,
+        "FCF_Margin_Pct":     fcf_margin_pct,
+        # Required by DCFEngine — sum of quarterly D&A. Falls back to
+        # latest-FY value via the merged-row resolver in dcf_engine.run()
+        # if FMP doesn't expose D&A on quarterly statements.
+        "Depreciation_Total": da_total,
     }
     record.overall_quality_score = 1.0  # provisional; Gate A.TTM updates it
 

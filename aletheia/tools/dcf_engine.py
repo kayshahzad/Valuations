@@ -160,6 +160,16 @@ class DCFResult:
     fiscal_year: int
     run_date: str = field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).isoformat())
 
+    # Phase Q-5: which period drove the base-year inputs. 'TTM' when a
+    # TTM row is available (default for current 10-Q-fresh valuation),
+    # 'FY' when only annual data exists. The Deep Dive surfaces an
+    # FY-base reconciliation row alongside so analysts can see how
+    # much of the IPS movement comes from rolling forward the trailing
+    # twelve months vs the underlying scenario assumptions.
+    base_period: str = "FY"
+    base_period_end_date: Optional[str] = None
+    fy_fiscal_year: Optional[int] = None  # for FY-reconciliation context
+
     # Market inputs
     current_price: float = 0.0
     shares_diluted: float = 0.0
@@ -300,6 +310,37 @@ class DCFResult:
 # ─────────────────────────────────────────────────────────────────────────────
 
 from aletheia.data.market_data import get_risk_free_rate, get_beta
+
+def _merge_ttm_with_fy_fallback(
+    ttm_row: pd.Series, fy_row: pd.Series,
+) -> pd.Series:
+    """Phase Q-5: build the base row the DCF engine consumes when a TTM
+    record is available.
+
+    TTM values win for the fields TTM derivation actually computes (the
+    raw_X / clean_X / derived_X flow + balance + ratio fields populated
+    by `derive_ttm_from_fmp`). For everything else — cleaning-engine-
+    only outputs like clean_NormalizedEBIT, domain_score_*, warnings_json
+    — the latest FY row's value carries through. Fields that are NaN /
+    None on TTM also fall back to FY so the engine sees a complete
+    record, mirroring what an analyst means by "TTM rolled forward
+    against the last 10-K's structural data".
+
+    The returned Series carries TTM-flavored period_end_date,
+    fiscal_year, and `period='TTM'` so callers downstream can still
+    detect the base period.
+    """
+    # Treat NaN as missing on the TTM side so FY values fill in.
+    ttm_filled = ttm_row.dropna()
+    merged = fy_row.copy()
+    for k, v in ttm_filled.items():
+        merged[k] = v
+    # Preserve TTM identity fields explicitly.
+    merged["period"]          = "TTM"
+    merged["period_end_date"] = ttm_row.get("period_end_date")
+    merged["fiscal_year"]     = ttm_row.get("fiscal_year")
+    return merged
+
 
 def _compute_smoothed_capex_pct(
     df: pd.DataFrame,
@@ -913,20 +954,62 @@ class DCFEngine:
             result.errors.append(f"No data in dataframe for {ticker}")
             return result
 
-        # Use requested year or latest year with reported Revenue
-        # (avoids FY+1 stub rows where Revenue is NaN)
-        df_with_rev = df.dropna(subset=["clean_Revenue"]) if "clean_Revenue" in df.columns else df
-        if fiscal_year:
-            year_df = df[df["fiscal_year"] == fiscal_year]
-            if year_df.empty:
-                fiscal_year = int(df_with_rev["fiscal_year"].max() if not df_with_rev.empty else df["fiscal_year"].max())
-                year_df = df[df["fiscal_year"] == fiscal_year]
+        # ── Phase Q-5: split FY rows from TTM ───────────────────────
+        # Base row is the TTM if present (most current snapshot, anchors
+        # IPS to the latest 10-Q); otherwise the latest FY. Historical
+        # CAGR + trend math always operate on the FY-only frame so
+        # quarterly seasonality doesn't leak into long-run growth rates.
+        if "period" in df.columns:
+            df_fy  = df[df["period"] == "FY"].copy()
+            df_ttm = df[df["period"] == "TTM"].copy()
         else:
-            fiscal_year = int(df_with_rev["fiscal_year"].max() if not df_with_rev.empty else df["fiscal_year"].max())
-            year_df = df[df["fiscal_year"] == fiscal_year]
+            df_fy  = df
+            df_ttm = df.iloc[0:0]
 
-        latest = year_df.iloc[0]
-        result.fiscal_year = fiscal_year
+        # Use requested year or latest year with reported Revenue
+        # (avoids FY+1 stub rows where Revenue is NaN). FY-frame only.
+        df_with_rev = df_fy.dropna(subset=["clean_Revenue"]) if "clean_Revenue" in df_fy.columns else df_fy
+        if df_fy.empty and df_with_rev.empty:
+            result.errors.append(f"No FY data in dataframe for {ticker}")
+            return result
+
+        if fiscal_year:
+            year_df = df_fy[df_fy["fiscal_year"] == fiscal_year]
+            if year_df.empty:
+                fiscal_year = int(df_with_rev["fiscal_year"].max() if not df_with_rev.empty else df_fy["fiscal_year"].max())
+                year_df = df_fy[df_fy["fiscal_year"] == fiscal_year]
+        else:
+            fiscal_year = int(df_with_rev["fiscal_year"].max() if not df_with_rev.empty else df_fy["fiscal_year"].max())
+            year_df = df_fy[df_fy["fiscal_year"] == fiscal_year]
+
+        latest_fy_row = year_df.iloc[0]
+
+        # Pick TTM as base when available; FY otherwise. When TTM is
+        # base, build a merged row: TTM values take precedence on flow +
+        # ratio fields, but cleaning-engine-only fields (clean_NormalizedEBIT,
+        # domain_score_*, etc.) that the TTM derivation doesn't compute
+        # fall back to the latest FY row. This keeps the DCF engine's
+        # field requirements satisfied without polluting `latest` with
+        # stale values for fields TTM legitimately replaces.
+        if not df_ttm.empty:
+            ttm_row = df_ttm.iloc[-1]
+            latest = _merge_ttm_with_fy_fallback(ttm_row, latest_fy_row)
+            result.base_period = "TTM"
+            result.base_period_end_date = (
+                str(ttm_row.get("period_end_date") or "")[:10] or None
+            )
+            result.fy_fiscal_year = fiscal_year
+            # `fiscal_year` on the result reflects the base row's stamped
+            # year (TTM rows carry the latest contributing quarter's FY).
+            result.fiscal_year = int(ttm_row.get("fiscal_year") or fiscal_year)
+        else:
+            latest = latest_fy_row
+            result.base_period = "FY"
+            result.base_period_end_date = (
+                str(latest.get("period_end_date") or "")[:10] or None
+            )
+            result.fy_fiscal_year = fiscal_year
+            result.fiscal_year = fiscal_year
 
         # ── Step 2: Extract base financials ──────────────────────────────────
         def get(col, fallback=None):
@@ -985,7 +1068,9 @@ class DCFEngine:
         # latest single year. Reduces sensitivity to peak-cycle CapEx (e.g.
         # MSFT FY2025 22.9% Azure data-center buildout) being misinterpreted
         # as steady-state. Falls back to single-year if <3y of history.
-        capex_pct = _compute_smoothed_capex_pct(df, revenue, capex)
+        # df_fy (not df) — capex smoothing must trace annual cycles,
+        # not pick up a TTM row that would weight the latest period 2x.
+        capex_pct = _compute_smoothed_capex_pct(df_fy, revenue, capex)
         da_pct = da / revenue if revenue > 0 else 0.03
         nwc_pct = 0.03
 
@@ -993,15 +1078,18 @@ class DCFEngine:
         # Uses exact period_end_date differences instead of integer fiscal_years.
         # Tracks data integrity (n_years_used vs n_years_attempted) to drop suspect records.
         
-        # Exclude records with missing period_end_date
-        if "period_end_date_missing" in df.columns:
-            valid_df = df[~df["period_end_date_missing"].astype(bool)]
+        # Phase Q-5: historical CAGR + trend math operates on FY-only
+        # rows so quarterly seasonality doesn't leak into long-run growth.
+        # The base-year inputs may come from a TTM row, but the trend
+        # ladder must trace year-over-year for the forecast to be sane.
+        if "period_end_date_missing" in df_fy.columns:
+            valid_df = df_fy[~df_fy["period_end_date_missing"].astype(bool)]
         else:
-            valid_df = df
-        excluded = len(df) - len(valid_df)
+            valid_df = df_fy
+        excluded = len(df_fy) - len(valid_df)
         if excluded > 0 and self.verbose:
             print(f"  [WARN] Excluded {excluded} records with missing period_end_date from CAGR history.")
-            
+
         hist_revenues_df = valid_df[valid_df["fiscal_year"] <= fiscal_year].sort_values("fiscal_year").dropna(subset=["clean_Revenue"])
         
         cagr_candidates = []
