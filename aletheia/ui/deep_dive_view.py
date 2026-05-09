@@ -1077,13 +1077,13 @@ def _multiple_decomposition(md: Dict[str, Any]) -> None:
                    help="Mathematically justified multiple at the same WACC + ROIC.")
     if premium is not None:
         cols[2].metric("Premium",
-                       f"{premium*100:+.1f}%" if abs(premium) < 1 else f"{premium:+.1f}×",
-                       delta=creation if creation else None,
-                       delta_color="off")
+                       f"{premium*100:+.1f}%" if abs(premium) < 1 else f"{premium:+.1f}×")
     else:
         cols[2].metric("Premium", "—")
     if spread is not None:
-        cols[3].metric("ROIC − WACC", f"{spread*100:+.1f}%")
+        cols[3].metric("ROIC − WACC", f"{spread*100:+.1f}%",
+                       delta=creation if creation else None,
+                       delta_color="off")
     else:
         cols[3].metric("ROIC − WACC", "—")
 
