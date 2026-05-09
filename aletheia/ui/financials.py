@@ -174,6 +174,7 @@ def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
             "FCF":             _f(r.get("derived_FCF")) or _f(r.get("clean_FCF")),
             "ROIC":            _f(r.get("derived_ROIC")),
             "QualityScore":    _f(r.get("overall_quality_score")),
+            "FMPStatus":       (r.get("fmp_validation_status") or "not_run"),
         })
     return rows
 

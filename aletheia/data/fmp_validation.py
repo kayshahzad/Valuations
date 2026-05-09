@@ -270,8 +270,11 @@ def validate_ingestion_record(
       ticker: upper-case
       fiscal_year: int
       record: dict-like keyed by cleaning_engine column names
-      is_latest_fy: True only for the most recent FY ingest (per locked
-        multi-FY policy: skip older FYs to cap API cost)
+      is_latest_fy: when True, blocking-tier drift escalates to
+        `blocking_drift` (caller raises IngestionValidationFailure).
+        When False, the same drift is downgraded to `drift` —
+        recorded for visibility but never blocks ingestion of a
+        historical row that may have been re-normalized by FMP.
 
     Returns: result dict per the §7 schema.
 
@@ -282,13 +285,11 @@ def validate_ingestion_record(
         "status":                "validated",
         "skip_reason":           None,
         "fiscal_year_validated": fiscal_year,
+        "is_latest_fy":          is_latest_fy,
         "fetched_at":            _now_iso(),
         "fields":                {},
         "blocking_fields":       [],
     }
-
-    if not is_latest_fy:
-        return {**base, "status": "skipped", "skip_reason": "not_latest_fy"}
 
     fmp_data, skip_reason = _fetch_fmp_for_gate_a(ticker, fiscal_year)
     if fmp_data is None:
@@ -315,7 +316,7 @@ def validate_ingestion_record(
             "blocking":        blocking,
             "status":          status,
             "source_endpoint": endpoint,
-            "fmp_key_resolved": fmp_keys[0],   # which key actually matched (caller can refine)
+            "fmp_key_resolved": fmp_keys[0],
         }
         if is_violation:
             n_drift += 1
@@ -323,9 +324,10 @@ def validate_ingestion_record(
             n_blocking += 1
             blocking_fields.append(field_name)
 
-    if n_blocking > 0:
+    # Historical FYs: drift is recorded but never blocks ingestion.
+    if n_blocking > 0 and is_latest_fy:
         result_status = "blocking_drift"
-    elif n_drift > 0:
+    elif n_blocking > 0 or n_drift > 0:
         result_status = "drift"
     else:
         result_status = "validated"
@@ -334,7 +336,7 @@ def validate_ingestion_record(
         **base,
         "status":          result_status,
         "fields":          fields,
-        "blocking_fields": blocking_fields,
+        "blocking_fields": blocking_fields if is_latest_fy else [],
     }
 
 

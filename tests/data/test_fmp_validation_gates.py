@@ -186,14 +186,29 @@ def test_gate_a_drift_only_on_warn_field():
     assert r["blocking_fields"] == []
 
 
-def test_gate_a_skipped_when_not_latest_fy():
-    """is_latest_fy=False → skipped, no FMP call."""
-    rec = _stub_record()
-    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a") as m:
+def test_gate_a_historical_fy_validates_but_never_blocks():
+    """is_latest_fy=False: drift is recorded, but never escalates to
+    blocking_drift — re-cleaning a historical row should not break
+    ingestion just because FMP renormalized something."""
+    rec = _stub_record(rev=395_000_000_000)
+    fmp_off = _stub_fmp_data(rev=395_000_000_000 * 1.06)  # 6% drift
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=fmp_off):
         r = validate_ingestion_record("AAPL", 2020, rec, is_latest_fy=False)
-    assert r["status"] == "skipped"
-    assert r["skip_reason"] == "not_latest_fy"
-    m.assert_not_called()
+    assert r["status"] == "drift"
+    assert r["blocking_fields"] == []
+    assert r["is_latest_fy"] is False
+    assert r["fields"]["revenue"]["status"] == "structural_drift"
+
+
+def test_gate_a_historical_fy_validated_when_no_drift():
+    """is_latest_fy=False with byte-perfect match → validated."""
+    rec = _stub_record()
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data()):
+        r = validate_ingestion_record("AAPL", 2020, rec, is_latest_fy=False)
+    assert r["status"] == "validated"
+    assert r["is_latest_fy"] is False
 
 
 def test_gate_a_skipped_on_fmp_quota_exhausted():

@@ -262,6 +262,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
             "FCF":           (r["FCF"]/1e9) if r["FCF"] else None,
             "ROIC":          (r["ROIC"]*100) if r["ROIC"] else None,
             "Quality":       r["QualityScore"],
+            "FMP":           _fmp_status_glyph(r.get("FMPStatus")),
         })
     df = pd.DataFrame(rows)
 
@@ -291,8 +292,29 @@ def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
             "Quality":    st.column_config.ProgressColumn(
                 "Quality", format="%.2f", min_value=0.0, max_value=1.0,
             ),
+            "FMP":        st.column_config.TextColumn(
+                "FMP", width="small",
+                help=(
+                    "Per-FY FMP cross-check: ✓ validated, ⚠ drift recorded "
+                    "(non-blocking on historical FYs), ⛔ blocking drift on "
+                    "latest FY, — skipped (no FMP data or non-USD filer)."
+                ),
+            ),
         },
     )
+
+
+def _fmp_status_glyph(status: Optional[str]) -> str:
+    """Compact glyph for the FMP per-FY validation column."""
+    if status == "validated":
+        return "✓"
+    if status == "drift":
+        return "⚠"
+    if status == "blocking_drift":
+        return "⛔"
+    if status == "skipped":
+        return "—"
+    return "·"
 
 
 # ── Main entry point ───────────────────────────────────────────────────────
