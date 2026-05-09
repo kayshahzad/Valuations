@@ -250,12 +250,22 @@ def _cashflow_rows_fy(local: Dict, fmp: Dict, raw_json: Dict) -> List[_RowSpec]:
     L = local or {}
     F = fmp or {}
     R = raw_json or {}
+    # CapEx sign convention: FMP follows the cash-flow-statement
+    # convention (outflow as negative); our raw_CapEx is the positive
+    # `payments to acquire PPE` magnitude. Normalize both to the
+    # outflow-as-negative shape so the analyst sees the same row a
+    # CFO would see in a 10-K and the drift compares like-to-like.
+    our_capex = L.get("derived_CapEx") or L.get("raw_CapEx")
+    if our_capex is not None and our_capex > 0:
+        our_capex = -our_capex
+    fmp_capex = F.get("capitalExpenditure")
+    if fmp_capex is not None and fmp_capex > 0:
+        fmp_capex = -fmp_capex
     return [
         ("Operating Cash Flow", R.get("OperatingCF"),         F.get("operatingCashFlow"), _money_b, "strict",   1.0),
         ("Free Cash Flow",      L.get("derived_FCF") or L.get("clean_FCF"),
                                                               F.get("freeCashFlow"),      _money_b, "standard", 1.0),
-        ("CapEx",               L.get("derived_CapEx") or L.get("raw_CapEx"),
-                                                              F.get("capitalExpenditure"), _money_b, "standard", 1.0),
+        ("CapEx",               our_capex,                    fmp_capex,                  _money_b, "standard", 1.0),
         ("SBC",                 L.get("clean_SBC"),           F.get("stockBasedCompensation"),
                                                                                           _money_b, "standard", 1.0),
     ]
