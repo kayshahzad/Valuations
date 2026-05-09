@@ -314,23 +314,27 @@ def _ratios_rows_fy(
 
 
 def _multiples_rows_fy(
-    local: Dict, fmp_ratios: Dict, fmp_km: Dict, fmp_ev: Dict,
-    dcf: Dict,
+    local: Dict, dcf: Dict,
+    fmp_ratios_ttm: Dict, fmp_km_ttm: Dict,
 ) -> List[_RowSpec]:
     """Multiples are price-dependent and aren't stored on
     `company_records`. Compute our side from the live DCFEngine
     output (`dcf` is the cached_dcf_summary dict). When the DCF can't
     run for a ticker (specialized-model classification — UNH, V,
-    banks), our side stays None and the row renders FMP-only."""
+    banks), our side stays None and the row renders FMP-only.
+
+    Critical: FMP's annual `/ratios` and `/enterprise-values` are
+    snapshotted at FISCAL-YEAR END price. Comparing those against our
+    current-price multiples produces ~30% drift on every ratio when
+    the stock has moved between the FY-end and today. We compare
+    against `/ratios-ttm` and `/key-metrics-ttm` instead — those use
+    current price + TTM earnings, which is like-for-like with our
+    DCFEngine output."""
     L = local or {}
-    R = fmp_ratios or {}
-    K = fmp_km or {}
-    E = fmp_ev or {}
+    Rt = fmp_ratios_ttm or {}
+    Kt = fmp_km_ttm or {}
     D = dcf or {}
 
-    # When the DCF errored (specialized_model_required), all our
-    # multiples are unavailable. Stamp once so the user sees the
-    # rationale rather than an unexplained — column.
     is_specialized = isinstance(D, dict) and D.get("error") == "specialized_model_required"
 
     market_cap = (D.get("market_cap") or 0) if not is_specialized else None
@@ -347,12 +351,12 @@ def _multiples_rows_fy(
     our_ev_ebitda = (our_ev / ebitda) if (our_ev and ebitda) else None
 
     return [
-        ("P/E",            our_pe,  R.get("priceToEarningsRatio") or R.get("priceEarningsRatio"),     _ratio, "standard", 1.0),
-        ("EV/EBITDA",      our_ev_ebitda, K.get("evToEBITDA") or K.get("enterpriseValueOverEBITDA"), _ratio, "standard", 1.0),
-        ("P/B",            our_pb,  R.get("priceToBookRatio"),                                        _ratio, "standard", 1.0),
-        ("P/S",            our_ps,  R.get("priceToSalesRatio"),                                       _ratio, "standard", 1.0),
-        ("Enterprise Value", our_ev, E.get("enterpriseValue"),                                        _money_b, "standard", 1.0),
-        ("Net Debt",       L.get("derived_NetDebt"),  K.get("netDebt"),                              _money_b, "standard", 1.0),
+        ("P/E",              our_pe,        Rt.get("priceToEarningsRatioTTM"),  _ratio,  "standard", 1.0),
+        ("EV/EBITDA",        our_ev_ebitda, Kt.get("evToEBITDATTM"),            _ratio,  "standard", 1.0),
+        ("P/B",              our_pb,        Rt.get("priceToBookRatioTTM"),      _ratio,  "standard", 1.0),
+        ("P/S",              our_ps,        Rt.get("priceToSalesRatioTTM"),     _ratio,  "standard", 1.0),
+        ("Enterprise Value", our_ev,        Kt.get("enterpriseValueTTM"),       _money_b, "standard", 1.0),
+        ("Net Debt",         L.get("derived_NetDebt"), None,                    _money_b, "standard", 1.0),
     ]
 
 
@@ -494,9 +498,15 @@ def render_fmp_compare_view(ticker: str) -> None:
         )
         st.markdown("##### Multiples + capital structure")
         _render_table(_multiples_rows_fy(
-            fy_local, fmp_blobs["fy"]["ratios"], fmp_blobs["fy"]["key_metrics"],
-            fmp_blobs["fy"]["ev"], dcf_summary,
+            fy_local, dcf_summary,
+            fmp_blobs["ttm"]["ratios"], fmp_blobs["ttm"]["key_metrics"],
         ))
+        st.caption(
+            "_FMP multiples sourced from `/ratios-ttm` and `/key-metrics-ttm` "
+            "(current-price + TTM-earnings basis), like-for-like with our "
+            "current-price values. FMP's annual `/ratios` would be FY-end-priced, "
+            "which produces ~30% drift on every multiple when the stock has moved._"
+        )
         if isinstance(dcf_summary, dict) and dcf_summary.get("error") == "specialized_model_required":
             # The cache stamps `message` with the NotImplementedError
             # text, which already explains the cause (specialized
