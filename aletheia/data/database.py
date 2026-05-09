@@ -271,6 +271,19 @@ class InvestmentDatabase:
                 f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} {sqltype}"
             )
 
+        # Phase Q-1: period dimension. 'FY' for annual records (today's
+        # only path); 'Q1'..'Q4' for quarterly; 'TTM' for trailing-twelve-
+        # month derivations. Backfilled to 'FY' on existing rows by the
+        # column default. Joined into the (ticker, fiscal_year, period)
+        # uniqueness key used by company_records_latest.
+        self._conn.execute(
+            "ALTER TABLE company_records "
+            "ADD COLUMN IF NOT EXISTS period VARCHAR DEFAULT 'FY'"
+        )
+        self._conn.execute(
+            "UPDATE company_records SET period='FY' WHERE period IS NULL"
+        )
+
         self._conn.execute("""
             CREATE TABLE IF NOT EXISTS cleaning_flags (
                 id              VARCHAR PRIMARY KEY,
@@ -288,6 +301,16 @@ class InvestmentDatabase:
                 confidence      DOUBLE
             )
         """)
+
+        # Phase Q-1: period dimension on cleaning_flags. Same default-'FY'
+        # backfill so legacy rows behave identically.
+        self._conn.execute(
+            "ALTER TABLE cleaning_flags "
+            "ADD COLUMN IF NOT EXISTS period VARCHAR DEFAULT 'FY'"
+        )
+        self._conn.execute(
+            "UPDATE cleaning_flags SET period='FY' WHERE period IS NULL"
+        )
 
         self._conn.execute("""
             CREATE TABLE IF NOT EXISTS screen_results (
@@ -434,7 +457,11 @@ class InvestmentDatabase:
 
         # ── Views ─────────────────────────────────────────────────────────────
 
-        # Latest version of each company/year
+        # Latest version of each (company, fiscal year, period). The period
+        # join key keeps FY rows separate from quarterly + TTM derivations
+        # so a single ticker can expose multiple period rows simultaneously.
+        # screen_results has no period column yet (per Phase Q-1 scope),
+        # so the screen join only attaches to FY rows.
         self._conn.execute("""
             CREATE OR REPLACE VIEW company_records_latest AS
             WITH latest_screens AS (
@@ -449,7 +476,7 @@ class InvestmentDatabase:
                     ) AS rn
                 FROM screen_results
             )
-            SELECT cr.*, 
+            SELECT cr.*,
                    ls.beneish_m_score,
                    ls.beneish_flagged,
                    ls.sloan_accrual_ratio,
@@ -461,16 +488,18 @@ class InvestmentDatabase:
                    ls.any_flagged
             FROM company_records cr
             INNER JOIN (
-                SELECT ticker, fiscal_year, MAX(version) AS max_version
+                SELECT ticker, fiscal_year, period, MAX(version) AS max_version
                 FROM company_records
-                GROUP BY ticker, fiscal_year
+                GROUP BY ticker, fiscal_year, period
             ) latest
             ON cr.ticker = latest.ticker
             AND cr.fiscal_year = latest.fiscal_year
+            AND cr.period = latest.period
             AND cr.version = latest.max_version
             LEFT JOIN latest_screens ls
-            ON cr.ticker = ls.ticker 
+            ON cr.ticker = ls.ticker
             AND cr.fiscal_year = ls.fiscal_year
+            AND cr.period = 'FY'
             AND ls.rn = 1
         """)
 
@@ -505,9 +534,10 @@ class InvestmentDatabase:
                 ON cr.ticker = ls.ticker
                 AND cr.fiscal_year = ls.fiscal_year
                 AND ls.rn = 1
-            WHERE ls.any_flagged = TRUE
-               OR cr.warning_count > 3
-               OR cr.overall_quality_score < 0.70
+            WHERE cr.period = 'FY'
+              AND (ls.any_flagged = TRUE
+                   OR cr.warning_count > 3
+                   OR cr.overall_quality_score < 0.70)
             ORDER BY ls.beneish_m_score DESC NULLS LAST
         """)
 
@@ -526,6 +556,7 @@ class InvestmentDatabase:
             FROM company_records_latest cr
             LEFT JOIN screen_results sr
                 ON cr.ticker = sr.ticker AND cr.fiscal_year = sr.fiscal_year
+            WHERE cr.period = 'FY'
             GROUP BY cr.ticker
             ORDER BY avg_quality DESC
         """)
@@ -577,24 +608,35 @@ class InvestmentDatabase:
         Auto-increments version if a record for (ticker, fiscal_year) already exists.
         Returns the version number written.
         """
-        # Get next version number
+        # Get next version number per (ticker, fiscal_year, period). Period
+        # defaults to 'FY' on legacy CleanedRecord instances; quarterly +
+        # TTM records carry their own period and version independently of
+        # the FY row.
         t = str(record.ticker)
         fy = int(record.fiscal_year)
+        period = getattr(record, "period", "FY") or "FY"
         existing = self._conn.execute(
-            "SELECT MAX(version) FROM company_records WHERE ticker=? AND fiscal_year=?",
-            [t, fy]
+            "SELECT MAX(version) FROM company_records "
+            "WHERE ticker=? AND fiscal_year=? AND period=?",
+            [t, fy, period]
         ).fetchone()[0]
         version = (existing or 0) + 1
         record.version = version
 
-        # Build the primary key
-        record_id = f"{record.ticker}_{record.fiscal_year}_v{version}"
+        # Primary key includes period so quarterly / TTM rows don't
+        # collide with the FY row for the same (ticker, fy).
+        record_id = (
+            f"{record.ticker}_{record.fiscal_year}_v{version}"
+            if period == "FY"
+            else f"{record.ticker}_{record.fiscal_year}_{period}_v{version}"
+        )
 
         # Build the row — explicit columns for structured fields
         row = {
             "id": record_id,
             "ticker": record.ticker,
             "fiscal_year": record.fiscal_year,
+            "period": period,
             "version": version,
             "period_end_date": record.period_end_date,
             "cleaned_at": record.cleaned_at,
@@ -720,12 +762,15 @@ class InvestmentDatabase:
         if not record.flags:
             return
 
+        period = getattr(record, "period", "FY") or "FY"
+        period_suffix = "" if period == "FY" else f"_{period}"
         flag_rows = []
         for i, flag in enumerate(record.flags):
             flag_rows.append({
-                "id": f"{record.ticker}_{record.fiscal_year}_v{version}_f{i}",
+                "id": f"{record.ticker}_{record.fiscal_year}{period_suffix}_v{version}_f{i}",
                 "ticker": record.ticker,
                 "fiscal_year": record.fiscal_year,
+                "period": period,
                 "version": version,
                 "cleaned_at": record.cleaned_at,
                 "domain": flag.domain,
@@ -740,7 +785,7 @@ class InvestmentDatabase:
 
         if flag_rows:
             df = pd.DataFrame(flag_rows)
-            self._conn.execute("INSERT INTO cleaning_flags SELECT * FROM df")
+            self._conn.execute("INSERT INTO cleaning_flags BY NAME SELECT * FROM df")
 
     def upsert_screens(self, result: ScreenResult):
         """Write screen results to the database."""

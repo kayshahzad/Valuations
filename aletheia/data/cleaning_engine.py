@@ -75,6 +75,12 @@ class CleanedRecord:
     cleaned_at: str = field(default_factory=lambda: datetime.datetime.now(datetime.timezone.utc).isoformat())
     version: int = 1
 
+    # Period dimension. 'FY' for annual records (today's only path);
+    # 'Q1'..'Q4' for quarterly; 'TTM' for trailing-twelve-month derivations
+    # (Phase Q-4). Existing code paths default to 'FY' so quarterly
+    # ingestion can land without breaking annual flows.
+    period: str = "FY"
+
     # ── Raw resolved values (from canonical_transformer output) ──────────────
     raw: Dict[str, Optional[float]] = field(default_factory=dict)
 
