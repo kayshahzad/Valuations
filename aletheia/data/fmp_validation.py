@@ -465,6 +465,16 @@ _GATE_B_FIELDS: List[Tuple[str, List[str], str, List[str], str, bool]] = [
     ("intrinsic_per_share_base",   ["three_scenario_dcf.base.intrinsic_per_share",
                                      "dcf.base_intrinsic_per_share"],
                                                    "profile",     ["dcf"],                                        "sanity_only",  False),
+    # Second-source price + market-cap checks. /profile is FMP's "live"
+    # quote; /historical-price-eod and /historical-market-capitalization
+    # give us a daily series — comparing against the most recent close
+    # catches stale /profile quotes and lets us bound the actual snapshot
+    # drift. Standard tier; non-blocking (price-timing always has some
+    # drift even between two FMP sources).
+    ("price_eod_recent",           ["dcf.current_price"],
+                                                   "price_eod",   ["close"],                                      "standard",     False),
+    ("market_cap_eod_recent",      ["dcf.market_cap"],
+                                                   "mcap_eod",    ["marketCap"],                                  "standard",     False),
 ]
 
 
@@ -497,7 +507,9 @@ def _resolve_phase2_paths(
 def _fetch_fmp_for_gate_b(
     ticker: str,
 ) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
-    """Fetch live `/profile` plus cached `/key-metrics` and `/ratios`."""
+    """Fetch live `/profile` plus cached `/key-metrics`, `/ratios`, and
+    the most-recent EOD price + market-cap records (second-source check
+    on the live /profile quote)."""
     from aletheia.data import fmp_client
     if not fmp_client.has_api_key():
         return None, "fmp_api_key_not_configured"
@@ -506,6 +518,8 @@ def _fetch_fmp_for_gate_b(
         profile = fmp_client.fetch_profile(ticker)
         km      = fmp_client.fetch_key_metrics(ticker)
         ratios  = fmp_client.fetch_ratios(ticker)
+        prices  = fmp_client.fetch_historical_prices(ticker)
+        mcaps   = fmp_client.fetch_historical_market_cap(ticker)
     except Exception as exc:
         return None, f"fmp_network_error:{type(exc).__name__}"
 
@@ -530,10 +544,17 @@ def _fetch_fmp_for_gate_b(
     km_rec = (km[0] if km else {}) or {}
     rt_rec = (ratios[0] if ratios else {}) or {}
 
+    # Most recent EOD record from each daily series. Series come back
+    # most-recent-first; first element is the closest close to today.
+    price_rec = (prices[0] if prices else {}) or {}
+    mcap_rec  = (mcaps[0] if mcaps else {}) or {}
+
     return ({
         "profile":     profile,
         "key_metrics": km_rec,
         "ratios":      rt_rec,
+        "price_eod":   price_rec,
+        "mcap_eod":    mcap_rec,
     }, None)
 
 

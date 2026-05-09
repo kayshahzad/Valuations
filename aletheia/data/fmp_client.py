@@ -64,11 +64,17 @@ def _cache_path(ticker: str, endpoint: str) -> Path:
     return _CACHE_DIR / f"{ticker.upper()}__{endpoint}.json"
 
 
-def _load_cache(ticker: str, endpoint: str, allow_stale: bool = False) -> Optional[Any]:
+def _load_cache(
+    ticker: str, endpoint: str,
+    allow_stale: bool = False,
+    max_age_hours: Optional[float] = None,
+) -> Optional[Any]:
     """
     Read cache. Default: respect TTL (return None if older than `_STALE_DAYS`).
     With `allow_stale=True`, return whatever is on disk regardless of age —
     used as the fallback path when live fetch fails.
+    `max_age_hours` overrides the default TTL for endpoints (like daily
+    EOD prices) where the 7-day default is too loose.
     """
     path = _cache_path(ticker, endpoint)
     if not path.exists():
@@ -78,7 +84,10 @@ def _load_cache(ticker: str, endpoint: str, allow_stale: bool = False) -> Option
             data = json.load(f)
         if not allow_stale:
             cached_at = datetime.fromisoformat(data.get("_cached_at", "1970-01-01"))
-            if datetime.now() - cached_at > timedelta(days=_STALE_DAYS):
+            age = datetime.now() - cached_at
+            ttl = (timedelta(hours=max_age_hours) if max_age_hours is not None
+                   else timedelta(days=_STALE_DAYS))
+            if age > ttl:
                 return None
         return data.get("data")
     except Exception:
@@ -172,14 +181,18 @@ def _http_get(url: str) -> Optional[Any]:
 
 def _fetch(ticker: str, endpoint_name: str, endpoint_label: str,
            params: Optional[Dict[str, str]] = None,
-           force_refresh: bool = False) -> Optional[Any]:
+           force_refresh: bool = False,
+           max_age_hours: Optional[float] = None) -> Optional[Any]:
     """
     Common fetch path: cache-first, then HTTP, then write cache.
     `endpoint_name` is the path segment after /stable/, e.g. "income-statement".
     The stable API takes the ticker as `?symbol=...` query param.
+    `max_age_hours` tightens the cache TTL for this call only — used by
+    daily-frequency endpoints (price, market cap) where the 7-day default
+    is too loose.
     """
     if not force_refresh:
-        cached = _load_cache(ticker, endpoint_label)
+        cached = _load_cache(ticker, endpoint_label, max_age_hours=max_age_hours)
         if cached is not None:
             return cached
     key = _api_key()
@@ -275,6 +288,37 @@ def fetch_profile(ticker: str, force_refresh: bool = False) -> Optional[Dict[str
     if isinstance(raw, dict):
         return raw
     return None
+
+
+def fetch_historical_prices(
+    ticker: str, days: int = 14, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Daily EOD prices for the past `days` calendar days. Second-source
+    check on Gate B's `current_price` (catches stale /profile quotes).
+    Returns most-recent first."""
+    today = datetime.utcnow().date()
+    frm = today - timedelta(days=days)
+    return _fetch(
+        ticker, "historical-price-eod/light", "historical_price_eod",
+        params={"from": frm.isoformat(), "to": today.isoformat()},
+        force_refresh=force_refresh,
+        max_age_hours=4,
+    )
+
+
+def fetch_historical_market_cap(
+    ticker: str, days: int = 14, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Daily market-cap series for the past `days` calendar days.
+    Second-source check on Gate B's `market_cap`."""
+    today = datetime.utcnow().date()
+    frm = today - timedelta(days=days)
+    return _fetch(
+        ticker, "historical-market-capitalization", "historical_market_cap",
+        params={"from": frm.isoformat(), "to": today.isoformat()},
+        force_refresh=force_refresh,
+        max_age_hours=4,
+    )
 
 
 # ────────────────────────────────────────────────────────────────────────

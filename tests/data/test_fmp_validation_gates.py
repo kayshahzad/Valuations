@@ -357,11 +357,15 @@ def _stub_phase2(beta=1.10, current_price=150.0, market_cap=2_500e9):
     }
 
 
-def _stub_gate_b_fmp(beta=1.10, price=150.0, market_cap=2_500e9, dcf=180.0):
+def _stub_gate_b_fmp(beta=1.10, price=150.0, market_cap=2_500e9, dcf=180.0,
+                     eod_close=None, eod_mcap=None):
+    """Default EOD records mirror the live profile values (byte_perfect)."""
     return ({
         "profile":     {"beta": beta, "price": price, "mktCap": market_cap, "dcf": dcf},
         "key_metrics": {"evToEBITDA": 18.0},
         "ratios":      {"priceToEarningsRatio": 28.0},
+        "price_eod":   {"close": eod_close if eod_close is not None else price},
+        "mcap_eod":    {"marketCap": eod_mcap if eod_mcap is not None else market_cap},
     }, None)
 
 
@@ -402,6 +406,55 @@ def test_gate_b_beta_uses_sanity_only_tier_never_blocks():
     assert r["fields"]["beta"]["status"] == "byte_perfect"
     assert r["fields"]["beta"]["blocking"] is False
     assert "beta" not in r["blocking_fields"]
+
+
+def test_gate_b_price_eod_byte_perfect():
+    """EOD close matches our current_price → byte_perfect."""
+    p2 = _stub_phase2(current_price=150.0)
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_b",
+               return_value=_stub_gate_b_fmp(eod_close=150.0)):
+        r = validate_calc_output("AAPL", p2)
+    f = r["fields"]["price_eod_recent"]
+    assert f["fmp"] == 150.0
+    assert f["status"] == "byte_perfect"
+    assert f["blocking"] is False
+
+
+def test_gate_b_price_eod_catches_stale_profile_quote():
+    """If /profile is stale and shows $200 but EOD closed at $150,
+    surfaces as drift on the second-source field."""
+    p2 = _stub_phase2(current_price=200.0)  # stale /profile feed
+    fmp = _stub_gate_b_fmp(price=200.0, eod_close=150.0)
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_b",
+               return_value=fmp):
+        r = validate_calc_output("AAPL", p2)
+    primary = r["fields"]["current_price"]
+    derived = r["fields"]["price_eod_recent"]
+    assert primary["status"] == "byte_perfect"  # /profile matches our price
+    assert derived["status"] == "structural_drift"  # but EOD doesn't agree
+
+
+def test_gate_b_market_cap_eod_byte_perfect():
+    p2 = _stub_phase2(market_cap=2_500e9)
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_b",
+               return_value=_stub_gate_b_fmp(eod_mcap=2_500e9)):
+        r = validate_calc_output("AAPL", p2)
+    f = r["fields"]["market_cap_eod_recent"]
+    assert f["fmp"] == 2_500e9
+    assert f["status"] == "byte_perfect"
+
+
+def test_gate_b_eod_checks_n_a_when_endpoint_missing():
+    """No EOD data → status n_a, Gate B still completes."""
+    fmp = _stub_gate_b_fmp()
+    fmp[0]["price_eod"] = {}
+    fmp[0]["mcap_eod"] = {}
+    p2 = _stub_phase2()
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_b",
+               return_value=fmp):
+        r = validate_calc_output("AAPL", p2)
+    assert r["fields"]["price_eod_recent"]["status"] == "n_a"
+    assert r["fields"]["market_cap_eod_recent"]["status"] == "n_a"
 
 
 def test_gate_b_skipped_on_no_api_key():
