@@ -219,5 +219,58 @@ def run_add_ticker_pipeline(ticker: str) -> Generator[Any, None, None]:
         yield StepUpdate("fmp_validate", "ok", msg)
         result.steps.append(StepUpdate("fmp_validate", "ok", msg))
 
+    # ── Step 4: TTM derivation + Gate A.TTM ────────────────────────────────
+    # Run the same TTM-ingest logic `scripts/ingest_ttm.py --ticker` uses,
+    # so a freshly-added ticker is indistinguishable from a `--all`-run
+    # universe member: it gets a TTM row, Gate A.TTM byte-perfect-required
+    # cross-checks, and Phase Q-6 per-quarter consistency receipts.
+    yield StepUpdate(
+        "ttm_ingest", "running",
+        "Deriving TTM and running Gate A.TTM cross-check…",
+    )
+    try:
+        from scripts.ingest_ttm import _process_one
+        from aletheia.data.database import InvestmentDatabase
+        ttm_db = InvestmentDatabase(verbose=False)
+        try:
+            ttm_row = _process_one(clean_ticker, ttm_db)
+        finally:
+            ttm_db.close()
+    except Exception as e:
+        yield StepUpdate(
+            "ttm_ingest", "warning",
+            f"TTM ingestion crashed: {type(e).__name__}: {e}. "
+            "FY data is still validated; rerun via "
+            f"`python scripts/ingest_ttm.py --ticker {clean_ticker}`.",
+        )
+        result.steps.append(StepUpdate("ttm_ingest", "warning", str(e)))
+    else:
+        outcome = ttm_row.get("outcome", "unknown")
+        if outcome in ("validated", "drift"):
+            ttm_msg = (
+                f"TTM persisted ({outcome}). Gate A.TTM lanes: "
+                "byte-perfect EV-implied flows + EV-identity NetDebt + "
+                "as-reported XBRL latest quarter."
+            )
+            yield StepUpdate("ttm_ingest", "ok", ttm_msg)
+            result.steps.append(StepUpdate("ttm_ingest", "ok", ttm_msg))
+        elif outcome == "blocking_drift":
+            ttm_msg = (
+                f"Gate A.TTM blocked TTM write — drift on "
+                f"{ttm_row.get('blocking', 'n/a')}. FY data still ingested. "
+                "Investigate the FMP-internal inconsistency before retrying."
+            )
+            yield StepUpdate("ttm_ingest", "warning", ttm_msg)
+            result.steps.append(StepUpdate("ttm_ingest", "warning", ttm_msg))
+        else:
+            # 'skipped' (non-USD filer / FMP unavailable / SEC quarterly
+            # missing for foreign filer) — not a failure
+            ttm_msg = (
+                f"TTM skipped: {ttm_row.get('skip_reason', outcome)}. "
+                "FY data is still validated and persisted."
+            )
+            yield StepUpdate("ttm_ingest", "warning", ttm_msg)
+            result.steps.append(StepUpdate("ttm_ingest", "warning", ttm_msg))
+
     result.success = True
     yield result
