@@ -134,6 +134,12 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
         fmp_client.fetch_income_statement_as_reported_quarter, ticker,
     )
     as_reported_latest = as_reported_quarters[0] if as_reported_quarters else None
+    # Phase Q-6 multi-year quarterly: pull FMP `period=quarter`
+    # statements so the validator can cross-check each contributing
+    # quarter against SEC standalones (when SEC is primary).
+    fmp_quarterly_income = _safe_fetch(
+        fmp_client.fetch_income_statements, ticker, period="quarter",
+    )
 
     gate = validate_ttm_record(
         ticker, record,
@@ -142,6 +148,9 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
         fmp_ev_latest_quarter=ev_latest_quarter,
         fmp_income_as_reported_quarter=as_reported_latest,
         latest_quarter_income=fmp_latest_qtr_income,
+        sec_quarterly_revenue=sec_result.quarterly_standalone_revenue,
+        sec_quarterly_net_income=sec_result.quarterly_standalone_net_income,
+        fmp_quarterly_income=fmp_quarterly_income,
     )
     # validate_ttm_record copies ttm_source into the result already, so
     # overwriting fmp_validation with `gate` keeps the source-primacy

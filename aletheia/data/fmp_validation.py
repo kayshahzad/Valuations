@@ -593,6 +593,9 @@ def validate_ttm_record(
     fmp_ev_latest_quarter: Optional[Dict[str, Any]] = None,
     fmp_income_as_reported_quarter: Optional[Dict[str, Any]] = None,
     latest_quarter_income: Optional[Dict[str, Any]] = None,
+    sec_quarterly_revenue: Optional[List[Dict[str, Any]]] = None,
+    sec_quarterly_net_income: Optional[List[Dict[str, Any]]] = None,
+    fmp_quarterly_income: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """Gate A.TTM — cross-check our derived TTM against FMP's TTM blob
     plus two second-source lanes added in Phase Q-6 full:
@@ -722,7 +725,16 @@ def validate_ttm_record(
     ar_drift = _add_ttm_as_reported_check(
         latest_quarter_income, fmp_income_as_reported_quarter, fields,
     )
-    n_drift += nd_drift + ar_drift
+    # Phase Q-6 multi-year quarterly: when SEC is the primary source,
+    # cross-check each contributing quarter's standalone value against
+    # FMP's `period=quarter` records. Catches per-quarter drifts that
+    # would offset and disappear in the TTM rollup. Non-blocking; the
+    # primary lane on revenue/NI owns the gate.
+    qc_drift = _add_ttm_quarterly_consistency_check(
+        sec_quarterly_revenue, sec_quarterly_net_income,
+        fmp_quarterly_income, fields,
+    )
+    n_drift += nd_drift + ar_drift + qc_drift
 
     if n_p0_breach > 0:
         result_status = "blocking_drift"
@@ -825,6 +837,90 @@ def _lookup_as_reported_tag(
             except (TypeError, ValueError):
                 continue
     return None
+
+
+def _add_ttm_quarterly_consistency_check(
+    sec_quarterly_revenue:    Optional[List[Dict[str, Any]]],
+    sec_quarterly_net_income: Optional[List[Dict[str, Any]]],
+    fmp_quarterly_income:     Optional[List[Dict[str, Any]]],
+    fields: Dict[str, Dict[str, Any]],
+) -> int:
+    """Phase Q-6: per-quarter cross-check between SEC standalone
+    quarters (derived from cumulative XBRL via subtraction) and FMP's
+    `period=quarter` income statements. Match by period_end_date.
+
+    Stamps up to 8 fields:
+      revenue_q_<period_end>     (per quarter, max 4)
+      net_income_q_<period_end>  (per quarter, max 4)
+
+    Standard tier; non-blocking.  When SEC is FMP-primary (no SEC
+    standalones available), all fields stamp n_a — caller can skip
+    rendering this lane in UIs that want to hide noise."""
+    n_drift = 0
+    have_sec = bool(sec_quarterly_revenue or sec_quarterly_net_income)
+    have_fmp = bool(fmp_quarterly_income)
+
+    if not (have_sec and have_fmp):
+        # Stamp a sentinel summary so the lane is visible as n_a in
+        # the receipt rather than silently absent.
+        fields["per_quarter_consistency"] = {
+            "ours":             None,
+            "fmp":              None,
+            "drift_pct":        None,
+            "tier":             "standard",
+            "p0":               False,
+            "status":           "n_a",
+            "source_endpoint":  "income_statement_quarter:vs_sec_standalones",
+            "fmp_key_resolved": None,
+        }
+        return 0
+
+    fmp_by_end: Dict[str, Dict[str, Any]] = {}
+    for rec in fmp_quarterly_income or []:
+        end = (rec.get("date") or "")[:10]
+        if end:
+            fmp_by_end[end] = rec
+
+    def _emit(label: str, ours_v: Any, fmp_v: Any, end: str) -> int:
+        try:
+            ours_f = float(ours_v) if ours_v is not None else None
+        except (TypeError, ValueError):
+            ours_f = None
+        try:
+            fmp_f = float(fmp_v) if fmp_v is not None else None
+        except (TypeError, ValueError):
+            fmp_f = None
+        _, drift = _drift_label(ours_f, fmp_f)
+        status = _classify_drift(drift, "standard")
+        fields[label] = {
+            "ours":             ours_f,
+            "fmp":              fmp_f,
+            "drift_pct":        drift,
+            "tier":             "standard",
+            "p0":               False,
+            "status":           status,
+            "source_endpoint":  "income_statement_quarter",
+            "fmp_key_resolved": f"end={end}",
+        }
+        return 1 if status == "structural_drift" else 0
+
+    # Cap to the 4 most recent SEC standalones per metric — anything
+    # older isn't part of the active TTM window.
+    for metric_key, fmp_key, sec_list in (
+        ("revenue",     "revenue",   sec_quarterly_revenue or []),
+        ("net_income",  "netIncome", sec_quarterly_net_income or []),
+    ):
+        for q in sec_list[:4]:
+            end = (q.get("end") or "")[:10]
+            sec_v = q.get("val_standalone")
+            fmp_rec = fmp_by_end.get(end)
+            if sec_v is None or fmp_rec is None:
+                # Skip silently — gap is informational, not an error
+                continue
+            n_drift += _emit(
+                f"{metric_key}_q_{end}", sec_v, fmp_rec.get(fmp_key), end,
+            )
+    return n_drift
 
 
 def _add_ttm_as_reported_check(

@@ -131,6 +131,43 @@ def test_derive_ttm_from_sec_skipped_when_revenue_tag_unresolved():
     assert r.skip_reason == "sec_revenue_tag_unresolved"
 
 
+def test_extract_standalone_quarters_subtracts_cumulative_chain():
+    """Q1 standalone = Q1 cum; Q2 = Q2 cum - Q1 cum; Q3 = Q3 cum - Q2 cum.
+    Apple-shaped numbers across one fiscal year."""
+    facts = [
+        _quarter(2025, "Q1", "2024-09-29", "2024-12-28", val=124e9),
+        _quarter(2025, "Q2", "2024-09-29", "2025-03-29", val=219e9),
+        _quarter(2025, "Q3", "2024-09-29", "2025-06-28", val=313e9),
+    ]
+    out = sq.extract_standalone_quarters(facts)
+    by_fp = {q["fp"]: q for q in out if q["fy"] == 2025}
+    assert abs(by_fp["Q1"]["val_standalone"] - 124e9) < 1
+    assert abs(by_fp["Q2"]["val_standalone"] - (219e9 - 124e9)) < 1
+    assert abs(by_fp["Q3"]["val_standalone"] - (313e9 - 219e9)) < 1
+
+
+def test_extract_standalone_quarters_returns_most_recent_first():
+    facts = [
+        _quarter(2025, "Q1", "2024-09-29", "2024-12-28", val=124e9),
+        _quarter(2026, "Q1", "2025-09-28", "2025-12-27", val=143e9),
+        _quarter(2025, "Q2", "2024-09-29", "2025-03-29", val=219e9),
+    ]
+    out = sq.extract_standalone_quarters(facts)
+    # Sorted by (fy, fp) descending → 2026 Q1 first, then 2025 Q2, then 2025 Q1
+    assert out[0]["fy"] == 2026
+    assert out[0]["fp"] == "Q1"
+
+
+def test_extract_standalone_quarters_handles_missing_prior_for_q2():
+    """If Q1 cumulative is missing, Q2 standalone returns None rather
+    than silently producing the cumulative value as if it were standalone."""
+    facts = [
+        _quarter(2025, "Q2", "2024-09-29", "2025-03-29", val=219e9),
+    ]
+    out = sq.extract_standalone_quarters(facts)
+    assert out[0]["val_standalone"] is None
+
+
 def test_derive_ttm_from_sec_stamps_source_primacy():
     """Synthetic Apple-shaped facts → record carries
     ttm_source='sec_derived_quarters' so the FMP→SEC swap is

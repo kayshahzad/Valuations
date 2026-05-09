@@ -194,6 +194,81 @@ def _annual_fact(
     return fallbacks[0]
 
 
+def extract_standalone_quarters(
+    facts_list: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """Convert SEC 10-Q cumulative-YTD facts to standalone quarter
+    values.
+
+      Q1 standalone = Q1 cumulative
+      Q2 standalone = Q2 cumulative − Q1 cumulative   (same FY)
+      Q3 standalone = Q3 cumulative − Q2 cumulative   (same FY)
+      Q4 standalone = FY annual − Q3 cumulative       (same FY)
+
+    Returns a list of dicts ordered most-recent-first:
+      [{fy, fp, end, val_standalone, val_cumulative, period_months}]
+
+    Used by Phase Q-6 multi-year quarterly Gate A: each standalone
+    quarter gets cross-checked against FMP's `period=quarter`
+    statement to catch per-quarter drifts that would offset and
+    disappear in the TTM rollup."""
+    # Index quarterly facts by (fy, fp), picking the most-recent-end
+    # match (handles SEC's prior-year-comparative re-tagging).
+    quarter_index: Dict[Tuple[int, str], Dict[str, Any]] = {}
+    for f in facts_list:
+        if f.get("form") not in ("10-Q", "10-Q/A"):
+            continue
+        key = (f.get("fy"), f.get("fp"))
+        if not key[0] or not key[1]:
+            continue
+        prev = quarter_index.get(key)
+        if prev is None or (f.get("end", "") > prev.get("end", "")):
+            quarter_index[key] = f
+
+    # Index annual facts by fy (for Q4 derivation).
+    annual_index: Dict[int, Dict[str, Any]] = {}
+    for f in facts_list:
+        if f.get("form") not in ("10-K", "10-K/A"):
+            continue
+        if f.get("fp") != "FY":
+            continue
+        fy = f.get("fy")
+        if fy is None:
+            continue
+        prev = annual_index.get(fy)
+        if prev is None or (f.get("end", "") > prev.get("end", "")):
+            annual_index[fy] = f
+
+    out: List[Dict[str, Any]] = []
+    for (fy, fp), fact in sorted(
+        quarter_index.items(),
+        key=lambda kv: (kv[0][0], kv[0][1]),
+        reverse=True,
+    ):
+        val_cum = fact.get("val")
+        period_months = _period_months(fact)
+        val_standalone: Optional[float] = None
+        if fp == "Q1":
+            val_standalone = float(val_cum) if val_cum is not None else None
+        elif fp in ("Q2", "Q3"):
+            prior_fp = {"Q2": "Q1", "Q3": "Q2"}[fp]
+            prior = quarter_index.get((fy, prior_fp))
+            if prior and val_cum is not None and prior.get("val") is not None:
+                try:
+                    val_standalone = float(val_cum) - float(prior["val"])
+                except (TypeError, ValueError):
+                    val_standalone = None
+        out.append({
+            "fy":              fy,
+            "fp":              fp,
+            "end":             fact.get("end"),
+            "val_cumulative":  val_cum,
+            "val_standalone":  val_standalone,
+            "period_months":   period_months,
+        })
+    return out
+
+
 def _ttm_from_cumulative(
     facts_list: List[Dict[str, Any]],
 ) -> Tuple[Optional[float], Optional[Dict[str, Any]]]:
@@ -256,6 +331,13 @@ class SECTTMResult:
     record: Optional[CleanedRecord]
     skip_reason: Optional[str]
     latest_quarter_fact: Optional[Dict[str, Any]] = None
+    # Phase Q-6: standalone-quarter breakdowns for the major flow
+    # fields, used by the per-quarter Gate A.TTM consistency check.
+    # Each entry is a list of dicts ordered most-recent-first, with
+    # `val_standalone` (single-quarter value, derived from the
+    # cumulative-YTD facts).
+    quarterly_standalone_revenue:    Optional[List[Dict[str, Any]]] = None
+    quarterly_standalone_net_income: Optional[List[Dict[str, Any]]] = None
 
 
 def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
@@ -380,5 +462,19 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
         "ttm_source":  "sec_derived_quarters",
         "fields":      {},
     }
-    return SECTTMResult(record=record, skip_reason=None,
-                        latest_quarter_fact=latest_q)
+
+    # Phase Q-6 multi-year quarterly: extract standalone-quarter
+    # breakdowns for revenue + NI so the validator can cross-check
+    # each quarter against FMP's `period=quarter` records.
+    revenue_standalones = extract_standalone_quarters(revenue_facts)
+    ni_facts = _resolve_field(facts, "NetIncome", "10-Q")
+    ni_standalones = (
+        extract_standalone_quarters(ni_facts) if ni_facts else None
+    )
+
+    return SECTTMResult(
+        record=record, skip_reason=None,
+        latest_quarter_fact=latest_q,
+        quarterly_standalone_revenue=revenue_standalones,
+        quarterly_standalone_net_income=ni_standalones,
+    )
