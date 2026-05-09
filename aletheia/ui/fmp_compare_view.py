@@ -152,8 +152,14 @@ def _render_table(rows: List[_RowSpec]) -> None:
 
 # ── Data loaders ──────────────────────────────────────────────────────
 
-def _load_local(ticker: str) -> Tuple[Optional[Dict], Optional[Dict]]:
-    """Pull the latest FY row + the TTM row (if any) from DuckDB."""
+def _load_local(
+    ticker: str,
+) -> Tuple[Optional[Dict], Optional[Dict], Optional[List[Dict]]]:
+    """Pull the latest FY row, the TTM row (if any), and the multi-year
+    FY history from DuckDB. The history is needed to compute average
+    equity / invested capital for ROE/ROIC comparison vs FMP (FMP uses
+    BoP+EoP averages while our `derived_ROE` uses ending balance —
+    both correct, different denominators)."""
     db = InvestmentDatabase(verbose=False)
     try:
         df = db.query(
@@ -164,14 +170,20 @@ def _load_local(ticker: str) -> Tuple[Optional[Dict], Optional[Dict]]:
     finally:
         db.close()
     if df is None or df.empty:
-        return None, None
+        return None, None, None
 
     fy_df  = df[df["period"] == "FY"] if "period" in df.columns else df
     ttm_df = df[df["period"] == "TTM"] if "period" in df.columns else df.iloc[0:0]
 
     fy_row  = fy_df.iloc[0].to_dict()  if not fy_df.empty  else None
     ttm_row = ttm_df.iloc[0].to_dict() if not ttm_df.empty else None
-    return fy_row, ttm_row
+    # Multi-year FY history sorted oldest-first so callers can index by
+    # year. Each row is a dict with at least fiscal_year + raw_TotalEquity.
+    fy_history = (
+        fy_df.sort_values("fiscal_year").to_dict("records")
+        if not fy_df.empty else []
+    )
+    return fy_row, ttm_row, fy_history
 
 
 def _load_fmp(ticker: str, target_fy: Optional[int]) -> Dict[str, Any]:
@@ -377,10 +389,14 @@ def _multiples_rows_fy(
 
 # ── Section builders (TTM) ────────────────────────────────────────────
 
-def _ttm_rows(local: Dict, fmp_km_ttm: Dict, fmp_ratios_ttm: Dict) -> List[_RowSpec]:
+def _ttm_rows(
+    local: Dict, fmp_km_ttm: Dict, fmp_ratios_ttm: Dict,
+    fy_history: Optional[List[Dict]] = None,
+) -> List[_RowSpec]:
     L = local or {}
     K = fmp_km_ttm or {}
     R = fmp_ratios_ttm or {}
+    H = fy_history or []
     # FMP TTM exposes per-share + EV-multiples; absolute revenue/NI
     # come via EV-implied math (see Gate A.TTM design).
     ev_ttm = K.get("enterpriseValueTTM")
@@ -396,6 +412,28 @@ def _ttm_rows(local: Dict, fmp_km_ttm: Dict, fmp_ratios_ttm: Dict) -> List[_RowS
     # expose absolute NI directly).
     fmp_ni_ttm = (market_cap / pe_ttm) if (market_cap and pe_ttm) else None
 
+    # FMP-style ROE for like-for-like comparison: NI_TTM / avg(BoP, EoP)
+    # equity. FMP uses the Beginning-of-Period + End-of-Period average
+    # (standard textbook ROE on a flow/stock ratio); our `derived_ROE`
+    # uses ending equity only. Both are valid, but the gap can be 25%+
+    # for high-growth tickers (NVDA equity went \$79B → \$157B in one
+    # year, our ending-equity ROE 76% vs FMP's avg-equity 104%).
+    eop_equity = (L.get("raw_TotalEquity")
+                  if not _is_missing(L.get("raw_TotalEquity")) else None)
+    bop_equity = None
+    if H and len(H) >= 2:
+        # H is sorted oldest-first; second-to-last is the prior FY-end
+        prior = H[-2]
+        v = prior.get("raw_TotalEquity")
+        bop_equity = v if (v is not None and not _is_missing(v)) else None
+    our_roe_avg = None
+    ni_ttm = L.get("raw_NetIncome")
+    if (ni_ttm is not None and not _is_missing(ni_ttm)
+            and bop_equity and eop_equity):
+        avg_equity = (bop_equity + eop_equity) / 2.0
+        if avg_equity > 0:
+            our_roe_avg = ni_ttm / avg_equity
+
     return [
         ("Revenue (TTM)",       L.get("clean_Revenue"),         fmp_revenue_ttm,
                                                                                           _money_b, "standard", 1.0),
@@ -405,7 +443,8 @@ def _ttm_rows(local: Dict, fmp_km_ttm: Dict, fmp_ratios_ttm: Dict) -> List[_RowS
                                                                                           _money_b, "standard", 1.0),
         ("FCF (TTM)",           L.get("derived_FCF"),           fmp_fcf_ttm,
                                                                                           _money_b, "standard", 1.0),
-        ("ROE (TTM)",           L.get("derived_ROE"),           K.get("returnOnEquityTTM"),
+        ("ROE (TTM)",           our_roe_avg or L.get("derived_ROE"),
+                                                                K.get("returnOnEquityTTM"),
                                                                                           _pct,     "definitional", 1.0),
         ("ROIC (TTM)",          L.get("derived_ROIC"),          K.get("returnOnInvestedCapitalTTM"),
                                                                                           _pct,     "definitional", 1.0),
@@ -467,7 +506,7 @@ def render_fmp_compare_view(ticker: str) -> None:
         st.info("Select a ticker from the sidebar to compare.")
         return
 
-    fy_local, ttm_local = _load_local(ticker)
+    fy_local, ttm_local, fy_history = _load_local(ticker)
     if fy_local is None and ttm_local is None:
         st.error(f"No cleaned data for {ticker} in the database.")
         return
@@ -567,6 +606,7 @@ def render_fmp_compare_view(ticker: str) -> None:
         )
         ttm_rows = _ttm_rows(
             ttm_local, fmp_blobs["ttm"]["key_metrics"], fmp_blobs["ttm"]["ratios"],
+            fy_history=fy_history,
         )
         _render_table(ttm_rows)
         # Surface filer-specific XBRL gaps. Some filers (LLY, others
