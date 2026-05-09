@@ -375,6 +375,85 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
     )
 
 
+def _render_validation_drift_panel(
+    history: List[Dict[str, Any]],
+    ttm: Optional[Dict[str, Any]],
+) -> None:
+    """Surface non-blocking validation drifts that are stamped on
+    the receipt but invisible in the table cells.
+
+    The Multi-year history table already shows a status glyph
+    (✓/⚠/⛔/—) per row, but ⚠ alone doesn't tell the analyst WHICH
+    metric drifted. This expander surfaces the receipt detail (worst-
+    drifting fields per row) so signal that the pipeline already has
+    reaches the user. Renders nothing when there are no drifts."""
+    drifted_rows: List[Tuple[str, List[Dict[str, Any]]]] = []
+    if ttm and ttm.get("FMPDrifts"):
+        period_end = ttm.get("period_end_date") or "—"
+        drifted_rows.append((f"TTM · ended {period_end}", ttm["FMPDrifts"]))
+    for r in history:
+        drifts = r.get("FMPDrifts") or []
+        if not drifts:
+            continue
+        label = f"FY{r['fiscal_year']} · ended {r.get('period_end_date') or '—'}"
+        drifted_rows.append((label, drifts))
+
+    if not drifted_rows:
+        return
+
+    n_rows = len(drifted_rows)
+    n_fields = sum(len(d) for _, d in drifted_rows)
+    with st.expander(
+        f"⚠ {n_fields} field-level drift{'s' if n_fields > 1 else ''} on "
+        f"{n_rows} period{'s' if n_rows > 1 else ''} — non-blocking, click for detail",
+        expanded=False,
+    ):
+        st.caption(
+            "These drifts were caught by the validation gates and recorded "
+            "on the per-row receipt. They're non-blocking by design (the "
+            "primary tier owns the gate; these are second-source regression "
+            "detectors), but worth a manual cross-check against the latest "
+            "filing or an 8-K. P0 fields would have blocked the row write."
+        )
+        for label, drifts in drifted_rows:
+            st.markdown(f"**{label}**")
+            rows = []
+            for d in drifts[:6]:   # cap at top 6 per period
+                ours = d.get("ours")
+                fmp  = d.get("fmp")
+                drift_pct = d.get("drift_pct")
+                rows.append({
+                    "Field":  d.get("field"),
+                    "Ours":   _fmt_drift_value(ours),
+                    "FMP":    _fmt_drift_value(fmp),
+                    "Drift":  (f"{drift_pct * 100:+.1f}%"
+                               if isinstance(drift_pct, (int, float)) else "—"),
+                    "Tier":   d.get("tier") or "—",
+                })
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+
+
+def _fmt_drift_value(v: Any) -> str:
+    """Compact formatter for the drift detail panel — handles billions
+    (>1B), millions, ratios, and scalar fractions in the same column."""
+    if v is None:
+        return "—"
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return str(v)
+    if f != f:   # nan
+        return "—"
+    abs_f = abs(f)
+    if abs_f > 1e9:
+        return f"${f / 1e9:+,.2f}B"
+    if abs_f > 1e6:
+        return f"${f / 1e6:+,.1f}M"
+    if abs_f > 10:
+        return f"{f:+,.2f}"
+    return f"{f:.4f}"
+
+
 def _fmp_status_glyph(status: Optional[str]) -> str:
     """Compact glyph for the FMP per-FY validation column."""
     if status == "validated":
@@ -531,6 +610,7 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
         st.markdown("---")
         st.markdown("#### Multi-year history")
         _fiscal_history_table(history, ttm=ttm)
+        _render_validation_drift_panel(history, ttm)
 
     # ── Validation legend ─────────────────────────────────────────────────
     st.markdown("---")

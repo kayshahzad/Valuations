@@ -237,6 +237,7 @@ def _build_ttm_snapshot(ttm_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
         "EBIT_Margin_Pct":     _f(r.get("derived_EBIT_Margin_Pct")),
         "FCF_Margin_Pct":      _f(r.get("derived_FCF_Margin_Pct")),
         "FMPStatus":           (r.get("fmp_validation_status") or "not_run"),
+        "FMPDrifts":           _drift_summary_from_validation(r.get("fmp_validation_json")),
     }
 
 
@@ -250,6 +251,50 @@ def _ttm_source_from_validation(validation_json: Any) -> Optional[str]:
         return v.get("ttm_source") if isinstance(v, dict) else None
     except Exception:
         return None
+
+
+def _drift_summary_from_validation(validation_json: Any) -> List[Dict[str, Any]]:
+    """Extract the list of fields with structural_drift status from a
+    persisted Gate A receipt. Used by the UI to surface non-blocking
+    warnings on Multi-year history rows so analysts see WHICH metric
+    drifted rather than just a generic ⚠ glyph.
+
+    Each entry: {field, drift_pct, ours, fmp, p0, tier}. Sorted by
+    abs(drift_pct) descending so the worst offender shows first."""
+    if not validation_json:
+        return []
+    try:
+        blob = (
+            json.loads(validation_json)
+            if isinstance(validation_json, str) else validation_json
+        )
+    except Exception:
+        return []
+    if not isinstance(blob, dict):
+        return []
+    fields = blob.get("fields") or {}
+    drifts: List[Dict[str, Any]] = []
+    for name, f in fields.items():
+        if not isinstance(f, dict):
+            continue
+        if f.get("status") != "structural_drift":
+            continue
+        drift = f.get("drift_pct")
+        try:
+            drift_abs = abs(float(drift)) if drift is not None else 0.0
+        except (TypeError, ValueError):
+            drift_abs = 0.0
+        drifts.append({
+            "field":      name,
+            "drift_pct":  drift,
+            "drift_abs":  drift_abs,
+            "ours":       f.get("ours"),
+            "fmp":        f.get("fmp"),
+            "p0":         bool(f.get("p0")),
+            "tier":       f.get("tier"),
+        })
+    drifts.sort(key=lambda d: d["drift_abs"], reverse=True)
+    return drifts
 
 
 def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
@@ -266,6 +311,7 @@ def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
             "ROIC":            _f(r.get("derived_ROIC")),
             "QualityScore":    _f(r.get("overall_quality_score")),
             "FMPStatus":       (r.get("fmp_validation_status") or "not_run"),
+            "FMPDrifts":       _drift_summary_from_validation(r.get("fmp_validation_json")),
         })
     return rows
 
