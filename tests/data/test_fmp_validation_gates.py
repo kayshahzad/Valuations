@@ -123,8 +123,10 @@ def _stub_fmp_data(rev=395_000_000_000, ni=99_000_000_000,
             "netDebt": net_debt,
         },
         "ratios": {
-            "grossProfitMargin":     0.45,
-            "operatingProfitMargin": 0.30,
+            "grossProfitMargin":          0.45,
+            "operatingProfitMargin":      0.30,
+            "returnOnInvestedCapital":    0.30,
+            "returnOnEquity":             0.55,
         },
         "enterprise_values": {
             "enterpriseValue":        3_000_000_000_000,
@@ -137,7 +139,8 @@ def _stub_fmp_data(rev=395_000_000_000, ni=99_000_000_000,
 
 def _stub_record(rev=395_000_000_000, ni=99_000_000_000,
                  ta=355_000_000_000, ebitda=137_000_000_000,
-                 fcf=110_000_000_000, net_debt=-50_000_000_000):
+                 fcf=110_000_000_000, net_debt=-50_000_000_000,
+                 roic=0.30, roe=0.55):
     """Build a column-keyed dict mimicking CleanedRecord's DB view."""
     return {
         "clean_Revenue":           rev,
@@ -154,6 +157,8 @@ def _stub_record(rev=395_000_000_000, ni=99_000_000_000,
         "derived_NetDebt":         net_debt,
         "derived_GrossMargin_Pct":  45.0,
         "derived_EBIT_Margin_Pct":  30.0,
+        "derived_ROIC":            roic,
+        "derived_ROE":             roe,
     }
 
 
@@ -255,6 +260,44 @@ def test_gate_a_ev_checks_n_a_when_endpoint_missing():
         r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
     assert r["fields"]["net_debt_via_ev_identity"]["status"] == "n_a"
     assert r["fields"]["shares_outstanding_eop"]["status"] == "n_a"
+
+
+def test_gate_a_roic_byte_perfect():
+    """Both sides decimal, identical → byte_perfect, definitional tier."""
+    rec = _stub_record(roic=0.30)
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data()):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    f = r["fields"]["roic"]
+    assert f["status"] == "byte_perfect"
+    assert f["tier"] == "definitional"
+    assert f["blocking"] is False
+
+
+def test_gate_a_roe_drift_definitional_band():
+    """8% drift on ROE → acceptable (under definitional band of 25%);
+    surfaced but not flagged as structural."""
+    rec = _stub_record(roe=0.55)
+    fmp = _stub_fmp_data()
+    fmp[0]["ratios"]["returnOnEquity"] = 0.55 * 1.08
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=fmp):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    f = r["fields"]["roe"]
+    assert f["status"] == "acceptable"
+
+
+def test_gate_a_roic_falls_back_to_alt_key():
+    """Some FMP /ratios records expose `roic` instead of
+    returnOnInvestedCapital; fallback list should match."""
+    rec = _stub_record(roic=0.30)
+    fmp = _stub_fmp_data()
+    del fmp[0]["ratios"]["returnOnInvestedCapital"]
+    fmp[0]["ratios"]["roic"] = 0.30
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=fmp):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    assert r["fields"]["roic"]["status"] == "byte_perfect"
 
 
 def test_gate_a_historical_fy_validated_when_no_drift():

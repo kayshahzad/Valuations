@@ -133,6 +133,12 @@ _GATE_A_FIELDS: List[Tuple[str, str, List[str], str, bool, bool]] = [
     # ratios from /ratios + /key-metrics — derived-side comparisons
     ("gross_margin_pct",      "ratios",         ["grossProfitMargin"],                   "standard",     False, False),  # FMP returns decimal; our scaling handled in resolver
     ("ebit_margin_pct",       "ratios",         ["operatingProfitMargin"],               "standard",     False, False),
+    # ROIC + ROE: definitional tier because invested-capital + tax-rate
+    # definitions legitimately drift between sources. Non-blocking; the
+    # leverage is isolating whether a numerator or denominator bug is
+    # the source of any flagged composite drift.
+    ("roic",                  "ratios",         ["returnOnInvestedCapital", "roic"],     "definitional", False, False),
+    ("roe",                   "ratios",         ["returnOnEquity"],                      "definitional", False, False),
 ]
 
 # Map our_key → cleaning_engine column name (or formula for derived).
@@ -153,6 +159,8 @@ _OUR_KEY_TO_DB_COL: Dict[str, Tuple[str, float]] = {
     "net_debt":            ("derived_NetDebt", 1.0),
     "gross_margin_pct":    ("derived_GrossMargin_Pct", 0.01),  # FMP decimal, ours percent → divide our_pct by 100 to compare
     "ebit_margin_pct":     ("derived_EBIT_Margin_Pct", 0.01),
+    "roic":                ("derived_ROIC", 1.0),               # both sides decimal, no scale
+    "roe":                 ("derived_ROE",  1.0),
 }
 
 
