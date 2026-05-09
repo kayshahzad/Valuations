@@ -61,6 +61,17 @@ def _is_missing(v: Any) -> bool:
         return False
 
 
+def _coalesce(*vals: Any) -> Any:
+    """NaN-aware first-non-missing fallback. `or` treats NaN as truthy,
+    so `raw_X or derived_X` returns NaN for filers (LLY, MRK) where the
+    raw XBRL tag isn't filed and the cleaning engine had to derive the
+    value. Use this in row builders where a fallback chain is needed."""
+    for v in vals:
+        if v is not None and not _is_missing(v):
+            return v
+    return None
+
+
 def _money_b(v: Optional[float]) -> str:
     if _is_missing(v):
         return "—"
@@ -259,7 +270,7 @@ def _income_rows_fy(local: Dict, fmp: Dict) -> List[_RowSpec]:
                                 F.get("grossProfit"),          _money_b, "standard",     1.0),
         ("R&D",                L.get("raw_RnD"),               F.get("researchAndDevelopmentExpenses"),
                                                                                           _money_b, "standard",     1.0),
-        ("Operating Income",   L.get("raw_OperatingIncome") or L.get("derived_OperatingIncome"),
+        ("Operating Income",   _coalesce(L.get("raw_OperatingIncome"), L.get("derived_OperatingIncome")),
                                 F.get("operatingIncome"),      _money_b, "standard",     1.0),
         # Two rows by formula:
         # - "OpInc + D&A" = textbook EBITDA (our canonical, what DCF
@@ -302,7 +313,7 @@ def _cashflow_rows_fy(local: Dict, fmp: Dict, raw_json: Dict) -> List[_RowSpec]:
     # `payments to acquire PPE` magnitude. Normalize both to the
     # outflow-as-negative shape so the analyst sees the same row a
     # CFO would see in a 10-K and the drift compares like-to-like.
-    our_capex = L.get("derived_CapEx") or L.get("raw_CapEx")
+    our_capex = _coalesce(L.get("derived_CapEx"), L.get("raw_CapEx"))
     if our_capex is not None and our_capex > 0:
         our_capex = -our_capex
     fmp_capex = F.get("capitalExpenditure")
@@ -310,7 +321,7 @@ def _cashflow_rows_fy(local: Dict, fmp: Dict, raw_json: Dict) -> List[_RowSpec]:
         fmp_capex = -fmp_capex
     return [
         ("Operating Cash Flow", R.get("OperatingCF"),         F.get("operatingCashFlow"), _money_b, "strict",   1.0),
-        ("Free Cash Flow",      L.get("derived_FCF") or L.get("clean_FCF"),
+        ("Free Cash Flow",      _coalesce(L.get("derived_FCF"), L.get("clean_FCF")),
                                                               F.get("freeCashFlow"),      _money_b, "standard", 1.0),
         ("CapEx",               our_capex,                    fmp_capex,                  _money_b, "standard", 1.0),
         ("SBC",                 L.get("clean_SBC"),           F.get("stockBasedCompensation"),
@@ -495,7 +506,7 @@ def _ttm_rows(
     # which gives a ~10-15% higher number for cash-rich filers (NVDA's
     # 71% Liberti vs 63% FMP-style). Both are valid; we show both rows.
     our_roic_fmp_style = None
-    op_inc_ttm = L.get("raw_OperatingIncome") or L.get("derived_OperatingIncome")
+    op_inc_ttm = _coalesce(L.get("raw_OperatingIncome"), L.get("derived_OperatingIncome"))
     ltd = L.get("raw_LongTermDebt")
     if (op_inc_ttm is not None and not _is_missing(op_inc_ttm)
             and eop_equity and ltd is not None and not _is_missing(ltd)):
