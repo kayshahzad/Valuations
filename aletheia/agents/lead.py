@@ -2,6 +2,7 @@ import json
 import subprocess
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 from langchain_core.messages import HumanMessage
 from aletheia.utils.tracing import tracer
 from aletheia.utils.report_generator import ReportGenerator
@@ -76,8 +77,59 @@ class ServingReportWriter:
         self.base_path.mkdir(parents=True, exist_ok=True)
         self.html_gen = ReportGenerator(str(self.base_path))
 
-    def save_report(self, ticker: str, report: dict):
+    def save_report(self, ticker: str, report: dict,
+                    state: Optional[dict] = None):
         path_json = self.base_path / f"{ticker.upper()}_report.json"
+
+        # Gate D — stamp the `_validation` block before writing. Pulls
+        # the Gate A receipt from DuckDB (latest record's
+        # `fmp_validation_json`) and Gate B receipt from state.
+        # Final-assembly checks (numeric fidelity, scenario monotonicity)
+        # run inside build_receipt_block. Fail-soft: any error stamps a
+        # `_validation: {status: skipped, skip_reason: ...}` and the
+        # report still writes.
+        try:
+            from aletheia.data.fmp_validation import build_receipt_block
+            from aletheia.data.database import InvestmentDatabase as _IDB
+
+            ingestion_receipt = None
+            try:
+                _db = _IDB(verbose=False)
+                _df = _db.get_latest(ticker)
+                _db.close()
+                if not _df.empty:
+                    _r = _df[_df["fiscal_year"] == _df["fiscal_year"].max()].iloc[0]
+                    raw = _r.get("fmp_validation_json")
+                    if raw:
+                        try:
+                            ingestion_receipt = json.loads(raw)
+                        except (json.JSONDecodeError, TypeError):
+                            ingestion_receipt = None
+            except Exception:
+                ingestion_receipt = None
+
+            ft_fy = ((report.get("2_financial_translation") or {})
+                     .get("clean_financials") or {}).get("fiscal_year")
+
+            report["_validation"] = build_receipt_block(
+                ticker=ticker,
+                fiscal_year=ft_fy,
+                state=state or {},
+                serving_report=report,
+                ingestion_receipt=ingestion_receipt,
+            )
+        except Exception as exc:
+            report["_validation"] = {
+                "schema_version": 2,
+                "ticker":         ticker,
+                "stamped_at":     datetime.now().isoformat(),
+                "status":         "skipped",
+                "skip_reason":    f"validator_error:{type(exc).__name__}",
+                "ingestion":      {"status": "skipped", "skip_reason": "stamp_error"},
+                "calc":           {"status": "skipped", "skip_reason": "stamp_error"},
+                "final_assembly": {"status": "skipped", "skip_reason": "stamp_error"},
+            }
+
         try:
             with open(path_json, "w") as f:
                 json.dump(report, f, indent=2)
@@ -523,7 +575,7 @@ def lead_agent(state):
     }
 
     writer = ServingReportWriter()
-    writer.save_report(ticker, final_report)
+    writer.save_report(ticker, final_report, state=state)
 
     output = {
         "final_report": final_report,

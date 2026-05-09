@@ -49,6 +49,12 @@ class AgentState(TypedDict):
     conviction: Dict[str, Any]
     calc_bypassed: Optional[str]
 
+    # Gate B — FMP validation receipt stamped by calc_node before any
+    # agent runs. Per locked spec: stamp-not-abort. Agents proceed
+    # regardless of blocking-tier drift; Gate F catches at universe level.
+    # Shape: {status, skip_reason, fields[], blocking_fields[], fetched_at}.
+    _calc_validation: Dict[str, Any]
+
     # ── Scenario eval (Phase C) ────────────────────────────────────────────
     # List of evaluated agent-proposed scenarios. Empty when no agent
     # proposed any. Each entry is the per-scenario summary written by

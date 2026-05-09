@@ -30,7 +30,7 @@ import datetime
 import warnings
 from pathlib import Path
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 import numpy as np
@@ -95,6 +95,12 @@ class CleanedRecord:
     overall_quality_score: float = 0.0   # 0.0–1.0
     cleaning_warnings: List[str] = field(default_factory=list)
     blocking_errors: List[str] = field(default_factory=list)
+
+    # ── FMP validation receipt (Gate A — ingestion-time) ─────────────────────
+    # Populated by Gate A in clean(); shape per fmp_validation.validate_ingestion_record.
+    # `status` ∈ {"validated", "skipped", "drift", "blocking_drift"}.
+    # `blocking_drift` records are not persisted — caller skips the DB write.
+    fmp_validation: Dict[str, Any] = field(default_factory=dict)
 
     def get_with_provenance(self, field_name: str) -> Tuple[Optional[float], str]:
         """
@@ -200,6 +206,26 @@ def _pct_change(current: Optional[float], prior: Optional[float]) -> Optional[fl
     return (current - prior) / abs(prior)
 
 
+def _record_to_db_view(record: "CleanedRecord") -> Dict[str, Any]:
+    """Flatten a CleanedRecord into a column-name-keyed view that matches
+    the `company_records` DuckDB schema (`raw_X`, `clean_X`, `derived_X`
+    prefixed keys). Used by Gate A's FMP validator, which expects
+    DB-style column names. Mirrors what `database.write_company_records`
+    persists, just enough fields for the validator's lookup map."""
+    view: Dict[str, Any] = {}
+
+    # Raw values (the validator's `_OUR_KEY_TO_DB_COL` references these)
+    for key, val in (record.raw or {}).items():
+        view[f"raw_{key}"] = val
+    # Cleaned values
+    for key, val in (record.clean or {}).items():
+        view[f"clean_{key}"] = val
+    # Derived values
+    for key, val in (record.derived or {}).items():
+        view[f"derived_{key}"] = val
+    return view
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Issuer Overrides Registry
 # ─────────────────────────────────────────────────────────────────────────────
@@ -270,7 +296,8 @@ class CleaningEngine:
     # ─────────────────────────────────────────────────────────────────────────
 
     def clean(self, ticker: str, fiscal_year: int,
-              prior_year_record: Optional["CleanedRecord"] = None) -> CleanedRecord:
+              prior_year_record: Optional["CleanedRecord"] = None,
+              is_latest_fy: bool = True) -> CleanedRecord:
         """
         Main entry point. Cleans one company for one fiscal year.
 
@@ -279,6 +306,10 @@ class CleaningEngine:
             fiscal_year: e.g. 2023
             prior_year_record: previous year's CleanedRecord for YoY comparisons
                                (used by Domains 8, 9, 10). Pass None if first year.
+            is_latest_fy: when True, runs Gate A FMP validation (default).
+                          `clean_all_years` passes False for older FYs to cap
+                          API cost — older records were validated by their
+                          original ingestion run.
 
         Returns:
             CleanedRecord with all domains applied.
@@ -396,6 +427,51 @@ class CleaningEngine:
         # 5. Score overall quality
         self._score_quality(record)
 
+        # 6. Gate A — FMP cross-check (latest FY only, fail-soft on FMP
+        # unavailability, BLOCKS DB write on >5% drift on critical line
+        # items: revenue, NI, totalAssets, EBITDA, FCF, NetDebt). The
+        # caller (clean_all_years) decides if this record is the latest
+        # FY; pass `is_latest_fy=True` by default. Result is stamped
+        # onto record.fmp_validation; if blocking, IngestionValidationFailure
+        # is raised and the caller skips the DB write.
+        try:
+            from aletheia.data.fmp_validation import (
+                validate_ingestion_record,
+                IngestionValidationFailure,
+            )
+            # Adapter: flatten CleanedRecord into column-name-keyed dict
+            # matching DuckDB's company_records schema (where validator
+            # expects to look things up). Mirrors the keys lead.py and
+            # database.write_company_records use.
+            record_proxy = _record_to_db_view(record)
+            fmp_result = validate_ingestion_record(
+                ticker=ticker,
+                fiscal_year=fiscal_year,
+                record=record_proxy,
+                is_latest_fy=is_latest_fy,
+            )
+            record.fmp_validation = fmp_result
+            if fmp_result.get("status") == "blocking_drift":
+                raise IngestionValidationFailure(
+                    ticker=ticker,
+                    fiscal_year=fiscal_year,
+                    result=fmp_result,
+                )
+        except IngestionValidationFailure:
+            # Re-raise — caller handles by skipping the DB write
+            raise
+        except Exception as exc:
+            # Validator-internal error → don't block the ingestion;
+            # stamp skipped status so the receipt at Gate D shows it.
+            if self.verbose:
+                print(f"  ⚠ Gate A validator-internal error: {exc}")
+            record.fmp_validation = {
+                "status":      "skipped",
+                "skip_reason": f"validator_error:{type(exc).__name__}",
+                "fields":      {},
+                "blocking_fields": [],
+            }
+
         if self.verbose:
             print(record.summary())
 
@@ -440,8 +516,28 @@ class CleaningEngine:
         years = sorted(list(years))
         records = []
         prior = None
+        latest_fy = max(years) if years else None
         for fy in years:
-            rec = self.clean(ticker, int(fy), prior_year_record=prior)
+            try:
+                rec = self.clean(
+                    ticker,
+                    int(fy),
+                    prior_year_record=prior,
+                    is_latest_fy=(fy == latest_fy),
+                )
+            except Exception as exc:
+                # Gate A blocking failure — skip this FY, continue with the
+                # next. The blocked record is NOT appended (so DB write is
+                # skipped by the caller), but other FYs proceed.
+                # IngestionValidationFailure is the expected exception class;
+                # catch broadly so any validator-internal bug doesn't take
+                # down the whole multi-year ingest.
+                if type(exc).__name__ == "IngestionValidationFailure":
+                    print(f"⛔ Gate A blocked {ticker} FY{fy}: "
+                          f"{', '.join(getattr(exc, 'result', {}).get('blocking_fields', []))}")
+                else:
+                    print(f"⚠ Cleaning failed for {ticker} FY{fy}: {exc}")
+                continue
             records.append(rec)
             prior = rec
 

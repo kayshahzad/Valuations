@@ -1300,6 +1300,149 @@ def _constitution_checks(checks: list) -> None:
         st.markdown(f"- {c}")
 
 
+# ── FMP validation banner — Gate A / B / D status ──────────────────────
+
+def _validation_pill(label: str, status: str) -> str:
+    """Render a colored pill for one validation sub-block."""
+    color = {
+        "validated":       _GREEN,
+        "drift":           _AMBER,
+        "blocking_drift":  _RED,
+        "skipped":         _MUTED_TEXT,
+        "not_run":         _MUTED_TEXT,
+        "missing":         _MUTED_TEXT,
+    }.get(status, _MUTED_TEXT)
+    icon = {
+        "validated":      "✓",
+        "drift":          "⚠",
+        "blocking_drift": "✗",
+        "skipped":        "·",
+        "not_run":        "·",
+        "missing":        "·",
+    }.get(status, "·")
+    return (
+        f'<span style="display:inline-block;font-family:DM Mono,monospace;'
+        f'font-size:10px;font-weight:600;letter-spacing:0.5px;'
+        f'text-transform:uppercase;color:{color};border:1px solid {color};'
+        f'padding:3px 9px;border-radius:3px;margin-right:6px;">'
+        f'{icon} {label}: {status.replace("_", " ")}</span>'
+    )
+
+
+def _fmp_validation_banner(validation: Dict[str, Any]) -> None:
+    """One-line banner stamping the 3 validation sub-blocks at top of
+    Deep Dive. Click expander for per-field drift detail.
+
+    Empty / pre-Gate reports show 'not run' pill; new regen reports
+    show validated/drift/blocking_drift per Gate A (ingestion), Gate B
+    (calc), Gate D's final-assembly check.
+    """
+    if not validation:
+        # Legacy report — pre-FMP-gate. Render a single muted pill so
+        # analyst knows validation wasn't run vs ran-and-passed.
+        st.markdown(
+            f'<div style="margin:8px 0 16px 0;">'
+            f'{_validation_pill("FMP", "not_run")}'
+            f'<span style="font-family:DM Mono,monospace;font-size:11px;'
+            f'color:{_MUTED_TEXT};margin-left:8px;">'
+            f'pre-validation report — re-run pipeline to add stamps</span>'
+            f'</div>',
+            unsafe_allow_html=True,
+        )
+        return
+
+    ing = (validation.get("ingestion") or {}).get("status", "missing")
+    calc = (validation.get("calc") or {}).get("status", "missing")
+    fa   = (validation.get("final_assembly") or {}).get("status", "missing")
+
+    # Single-line banner with three pills
+    st.markdown(
+        f'<div style="margin:8px 0 12px 0;">'
+        f'{_validation_pill("Ingest (Gate A)", ing)}'
+        f'{_validation_pill("Calc (Gate B)", calc)}'
+        f'{_validation_pill("Assembly (Gate D)", fa)}'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    # Click-to-expand detail. Only show when at least one block has any
+    # signal (otherwise the expander is empty noise).
+    has_detail = any(
+        s not in ("not_run", "missing")
+        for s in (ing, calc, fa)
+    )
+    if not has_detail:
+        return
+
+    with st.expander("FMP validation detail", expanded=False):
+        # ── Gate A — ingestion ─────────────────────────────────────
+        ing_block = validation.get("ingestion") or {}
+        ing_fields = ing_block.get("fields") or {}
+        if ing_fields:
+            _inline_label("Ingestion (Gate A) — line items vs FMP")
+            rows = []
+            for fname, info in ing_fields.items():
+                ours = info.get("ours")
+                fmp  = info.get("fmp")
+                drift = info.get("drift_pct")
+                rows.append({
+                    "Field":  fname,
+                    "Ours":   "—" if ours is None else f"{ours:,.2f}" if abs(ours or 1) > 1 else f"{ours:.4f}",
+                    "FMP":    "—" if fmp  is None else f"{fmp:,.2f}" if abs(fmp or 1) > 1 else f"{fmp:.4f}",
+                    "Drift":  "—" if drift is None else f"{drift*100:+.2f}%",
+                    "Status": info.get("status", "—"),
+                    "Block":  "🔒" if info.get("blocking") and info.get("status") == "structural_drift" else "",
+                })
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+
+        # ── Gate B — calc ──────────────────────────────────────────
+        calc_block = validation.get("calc") or {}
+        calc_fields = calc_block.get("fields") or {}
+        if calc_fields:
+            _inline_label("Calc (Gate B) — phase2_valuation vs FMP")
+            rows = []
+            for fname, info in calc_fields.items():
+                ours = info.get("ours")
+                fmp  = info.get("fmp")
+                drift = info.get("drift_pct")
+                rows.append({
+                    "Field":  fname,
+                    "Ours":   "—" if ours is None else f"{ours:,.4f}" if abs(ours or 1) < 1 else f"{ours:,.2f}",
+                    "FMP":    "—" if fmp  is None else f"{fmp:,.4f}" if abs(fmp or 1) < 1 else f"{fmp:,.2f}",
+                    "Drift":  "—" if drift is None else f"{drift*100:+.2f}%",
+                    "Status": info.get("status", "—"),
+                    "Block":  "🔒" if info.get("blocking") and info.get("status") == "structural_drift" else "",
+                })
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+
+        # ── Gate D — final assembly ────────────────────────────────
+        fa_block = validation.get("final_assembly") or {}
+        fa_checks = fa_block.get("checks") or {}
+        if fa_checks:
+            _inline_label("Final assembly (Gate D)")
+            nf = fa_checks.get("numeric_fidelity") or {}
+            mono = fa_checks.get("scenario_monotonicity") or {}
+            st.markdown(
+                f"- **Numeric fidelity**: "
+                f"{nf.get('violations', 0)} violation(s)"
+            )
+            for d in nf.get("details") or []:
+                st.markdown(f"  - {d}")
+            mono_ok = mono.get("ok")
+            mono_label = "✓ monotonic" if mono_ok else "✗ inverted" if mono_ok is False else "— incomplete"
+            mono_vals = mono.get("values") or {}
+            st.markdown(
+                f"- **Scenario monotonicity (bear ≤ base ≤ bull)**: {mono_label} "
+                f"(bear={mono_vals.get('bear')}, base={mono_vals.get('base')}, bull={mono_vals.get('bull')})"
+            )
+
+        # Stamp metadata
+        stamped = validation.get("stamped_at", "")
+        if stamped:
+            st.caption(f"Stamped at {stamped[:19]} · "
+                       f"schema v{validation.get('schema_version', '?')}")
+
+
 # ── Reverse-DCF reasons ──────────────────────────────────────────────────
 
 def _rdcf_reasons(rdcf: Dict[str, Any]) -> None:
@@ -1350,6 +1493,9 @@ def render_deep_dive_view(
     st.markdown(f"## {ticker}")
     _dcf_method_badge(ticker)
     _cyclicality_banner(industry)
+
+    # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
+    _fmp_validation_banner((full_report or {}).get("_validation") or {})
 
     # ── Hero strip ────────────────────────────────────────────────────────
     _hero_strip(ticker, investment_thesis, dcf, fund, universe_row)

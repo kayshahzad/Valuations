@@ -39,6 +39,7 @@ Usage:
 
 import datetime
 import json
+import threading
 import traceback
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Literal
@@ -88,6 +89,22 @@ class InvestmentDatabase:
 
     DEFAULT_DB_PATH = "valuation_data/database/investment.duckdb"
 
+    # Per-process record of which DB files have already had their schema
+    # initialized. Schema init runs `CREATE OR REPLACE VIEW`, which holds
+    # a catalog write lock. When multiple threads open the same DB
+    # concurrently (e.g. parallelized /universe loop) they all try to
+    # recreate the view and collide with TransactionException. Skipping
+    # init after the first connection per file prevents the collision
+    # without compromising correctness — the schema only changes when
+    # this code does, which means only at process restart.
+    #
+    # The lock guards the set-check + set-add sequence; without it two
+    # threads can pass the membership test before either records the
+    # init, then both run init in parallel and trip the same write-write
+    # conflict the set was supposed to prevent.
+    _schema_initialized_paths: set = set()
+    _schema_init_lock = threading.Lock()
+
     def __init__(self, db_path: str = None, verbose: bool = True):
         if not DUCKDB_AVAILABLE:
             raise RuntimeError(
@@ -99,7 +116,12 @@ class InvestmentDatabase:
         self.verbose = verbose
 
         self._conn = duckdb.connect(str(self.db_path))
-        self._initialize_schema()
+
+        path_key = str(self.db_path.resolve())
+        with InvestmentDatabase._schema_init_lock:
+            if path_key not in InvestmentDatabase._schema_initialized_paths:
+                self._initialize_schema()
+                InvestmentDatabase._schema_initialized_paths.add(path_key)
 
         if verbose:
             print(f"✓ Database connected: {self.db_path}")
@@ -235,6 +257,20 @@ class InvestmentDatabase:
                 f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} DOUBLE"
             )
 
+        # FMP Gate A validation receipt — stamps every cleaned record with
+        # the result of the FMP cross-check at ingestion time. Read by
+        # Gate D (lead.save_report) when assembling the serving JSON's
+        # _validation block.
+        for col, sqltype in (
+            ("fmp_validation_status",      "VARCHAR"),   # validated|skipped|drift
+            ("fmp_validation_skip_reason", "VARCHAR"),   # NULL when status != skipped
+            ("fmp_validation_json",        "VARCHAR"),   # full payload as JSON
+            ("fmp_validated_at",           "VARCHAR"),   # ISO8601
+        ):
+            self._conn.execute(
+                f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} {sqltype}"
+            )
+
         self._conn.execute("""
             CREATE TABLE IF NOT EXISTS cleaning_flags (
                 id              VARCHAR PRIMARY KEY,
@@ -328,6 +364,71 @@ class InvestmentDatabase:
                 roic                DOUBLE,
                 raw_json            VARCHAR,
                 clean_json          VARCHAR
+            )
+        """)
+
+        # ── Agent runs ─────────────────────────────────────────────────────────
+        # Versioned store for LLM-authored agent outputs. Lives alongside
+        # `company_records` (which versions cleaned data) so a complete
+        # historical reconstruction is possible: pin a (ticker, code git_sha,
+        # cleaned-data version) and you can replay exactly what the agents
+        # saw and produced at that point in time.
+        #
+        # Deliberate non-features:
+        #   - No deterministic columns (revenue, ebitda, wacc, scenarios, etc).
+        #     Those are recomputed from `company_records_latest`. Storing them
+        #     here would re-introduce the JSON-as-truth duplication that
+        #     caused the ACN-class bug. The `upsert_agent_run` writer enforces
+        #     this with a whitelist.
+        #   - No "current" flag. The latest version per ticker is derived via
+        #     the `agent_runs_latest` view, not by mutating older rows.
+        self._conn.execute("""
+            CREATE TABLE IF NOT EXISTS agent_runs (
+                id                  VARCHAR PRIMARY KEY,
+                ticker              VARCHAR NOT NULL,
+                version             INTEGER NOT NULL,
+                generated_at        VARCHAR NOT NULL,
+                fiscal_year         INTEGER NOT NULL,
+                git_sha             VARCHAR,
+                economic_reality    VARCHAR,    -- JSON
+                contrarian_analysis VARCHAR,    -- JSON
+                investment_thesis   VARCHAR,    -- JSON
+                agent_scenarios     VARCHAR,    -- JSON
+                UNIQUE (ticker, version)
+            )
+        """)
+
+        # ── Qualitative assessments ────────────────────────────────────────────
+        # Versioned 1-7 scores across 18-19 analytical dimensions. Same
+        # design pattern as agent_runs: each submission appends a new row,
+        # `qualitative_assessments_latest` view exposes the most recent
+        # per (ticker, dimension_id).
+        #
+        # Three guardrails enforced by the writer (`upsert_qualitative_assessment`):
+        #   1. dimension_id must match a known catalog entry
+        #   2. source_category must match the catalog entry's declared category
+        #   3. score must be in [1.0, 7.0] when present (PENDING_DATA may be NULL)
+        #
+        # No score-bucketing logic stored here — bucket cutoffs live in the
+        # catalog (code) so they're reviewable + versioned via code_version.
+        # When a deterministic dimension's formula or buckets change, the
+        # next recompute writes a new row with the new code_git_sha; prior
+        # rows remain interpretable as historical snapshots.
+        self._conn.execute("""
+            CREATE TABLE IF NOT EXISTS qualitative_assessments (
+                assessment_id     VARCHAR PRIMARY KEY,
+                ticker            VARCHAR NOT NULL,
+                dimension_id      VARCHAR NOT NULL,
+                score             DOUBLE,           -- NULL for PENDING_DATA
+                sub_scores        VARCHAR,          -- JSON, HITL only
+                narrative         VARCHAR,          -- optional <500 chars
+                source_category   VARCHAR NOT NULL,
+                source_payload    VARCHAR,          -- JSON
+                assessed_at       VARCHAR NOT NULL,
+                analyst_id        VARCHAR NOT NULL,
+                code_git_sha      VARCHAR,
+                input_fingerprint VARCHAR,          -- DETERMINISTIC only
+                UNIQUE (ticker, dimension_id, assessed_at)
             )
         """)
 
@@ -429,8 +530,42 @@ class InvestmentDatabase:
             ORDER BY avg_quality DESC
         """)
 
+        # Latest agent run per ticker — single row per ticker, the most
+        # recently written version. Older versions are preserved in
+        # `agent_runs` for audit but read paths only need the latest.
+        self._conn.execute("""
+            CREATE OR REPLACE VIEW agent_runs_latest AS
+            SELECT ar.*
+            FROM agent_runs ar
+            INNER JOIN (
+                SELECT ticker, MAX(version) AS max_version
+                FROM agent_runs
+                GROUP BY ticker
+            ) latest
+            ON ar.ticker = latest.ticker
+            AND ar.version = latest.max_version
+        """)
+
+        # Latest qualitative assessment per (ticker, dimension_id). One
+        # row per dimension per ticker exposes the most recent score for
+        # the read API; history is preserved in `qualitative_assessments`
+        # for audit and future "did the analyst change their mind?" UIs.
+        self._conn.execute("""
+            CREATE OR REPLACE VIEW qualitative_assessments_latest AS
+            SELECT qa.*
+            FROM qualitative_assessments qa
+            INNER JOIN (
+                SELECT ticker, dimension_id, MAX(assessed_at) AS latest_at
+                FROM qualitative_assessments
+                GROUP BY ticker, dimension_id
+            ) latest
+            ON qa.ticker = latest.ticker
+            AND qa.dimension_id = latest.dimension_id
+            AND qa.assessed_at = latest.latest_at
+        """)
+
         if self.verbose:
-            print("  ✓ Schema initialized (company_records, cleaning_flags, screen_results, universe_status)")
+            print("  ✓ Schema initialized (company_records, cleaning_flags, screen_results, universe_status, agent_runs, qualitative_assessments)")
 
     # ─────────────────────────────────────────────────────────────────────────
     # Write operations
@@ -552,6 +687,17 @@ class InvestmentDatabase:
             "clean_json": json.dumps({k: v for k, v in record.clean.items() if v is not None}),
             "warnings_json": json.dumps(record.cleaning_warnings),
             "errors_json": json.dumps(record.blocking_errors),
+
+            # Gate A FMP-validation receipt. Defaults to "skipped /
+            # not_run" on legacy records (validation_engine wasn't there
+            # at their original ingestion). New records ingested under
+            # the validation gate land here as either `validated`,
+            # `drift`, or `skipped` (with reason). `blocking_drift` rows
+            # are not persisted — caller skips this whole write.
+            "fmp_validation_status":      (record.fmp_validation or {}).get("status", "not_run"),
+            "fmp_validation_skip_reason": (record.fmp_validation or {}).get("skip_reason"),
+            "fmp_validation_json":        json.dumps(record.fmp_validation or {}, default=str),
+            "fmp_validated_at":           (record.fmp_validation or {}).get("fetched_at"),
         }
 
         df = pd.DataFrame([row])
@@ -680,6 +826,262 @@ class InvestmentDatabase:
                 len(record.cleaning_warnings), len(record.blocking_errors),
                 status, record.ticker
             ])
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Agent runs — versioned LLM-authored payloads
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # Whitelist of payload keys allowed in `agent_runs`. Any other key is
+    # rejected — this is the structural guardrail that prevents future
+    # callers from accidentally re-introducing JSON-as-truth duplication
+    # (e.g. caching `clean_financials` or `phase2_valuation` alongside
+    # the LLM payload). If a deterministic field belongs in the response,
+    # it should be recomputed from `company_records_latest` at read time.
+    _AGENT_RUN_PAYLOAD_KEYS = (
+        "economic_reality",
+        "contrarian_analysis",
+        "investment_thesis",
+        "agent_scenarios",
+    )
+
+    def upsert_agent_run(
+        self,
+        ticker: str,
+        fiscal_year: int,
+        llm_payload: Dict[str, Any],
+        git_sha: Optional[str] = None,
+    ) -> int:
+        """Persist an agent-run output as a new versioned row.
+
+        Args:
+            ticker: Upper-cased ticker symbol.
+            fiscal_year: The latest fiscal year the calc layer used as
+                input for this run. Lets a future read pin the run to a
+                specific cleaned-data state.
+            llm_payload: Dict with exactly the four keys in
+                `_AGENT_RUN_PAYLOAD_KEYS`. Extra keys raise ValueError.
+                Missing keys are stored as JSON nulls — they're permitted
+                because not every run produces every block (e.g. a run
+                that bails before contrarian).
+            git_sha: Optional code version at run time, for forensic
+                "did this thesis pre-date the DCF cap fix?" queries.
+
+        Returns:
+            The version number written (1 for the first run per ticker,
+            then monotonically increasing).
+        """
+        ticker = str(ticker).upper()
+
+        unknown = set(llm_payload.keys()) - set(self._AGENT_RUN_PAYLOAD_KEYS)
+        if unknown:
+            raise ValueError(
+                f"upsert_agent_run rejected deterministic-field keys "
+                f"{sorted(unknown)}. agent_runs only stores LLM-authored "
+                f"payloads ({list(self._AGENT_RUN_PAYLOAD_KEYS)}); "
+                f"deterministic data must be recomputed from "
+                f"company_records_latest."
+            )
+
+        existing = self._conn.execute(
+            "SELECT MAX(version) FROM agent_runs WHERE ticker = ?",
+            [ticker],
+        ).fetchone()[0]
+        version = (existing or 0) + 1
+        run_id = f"{ticker}_v{version}"
+        generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+        def _encode(key: str) -> Optional[str]:
+            v = llm_payload.get(key)
+            if v is None:
+                return None
+            return json.dumps(v, default=str)
+
+        self._conn.execute(
+            """
+            INSERT INTO agent_runs
+            (id, ticker, version, generated_at, fiscal_year, git_sha,
+             economic_reality, contrarian_analysis, investment_thesis, agent_scenarios)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                run_id, ticker, version, generated_at, int(fiscal_year), git_sha,
+                _encode("economic_reality"),
+                _encode("contrarian_analysis"),
+                _encode("investment_thesis"),
+                _encode("agent_scenarios"),
+            ],
+        )
+
+        if self.verbose:
+            print(f"  ✓ agent_runs: {ticker} v{version} written "
+                  f"(fy={fiscal_year}, git={git_sha or '—'})")
+        return version
+
+    def get_latest_agent_run(self, ticker: str) -> Optional[Dict[str, Any]]:
+        """Return the most recent agent run for a ticker, JSON columns
+        decoded to dicts. Returns None if no row exists.
+
+        Use this from API read paths to fetch LLM-authored content.
+        Deterministic content (financials, DCF, capital stack) must NOT
+        be sourced here — recompute from `company_records_latest` instead.
+        """
+        ticker = str(ticker).upper()
+        row = self._conn.execute(
+            "SELECT * FROM agent_runs_latest WHERE ticker = ?",
+            [ticker],
+        ).fetchone()
+        if row is None:
+            return None
+        cols = [d[0] for d in self._conn.description]
+        record = dict(zip(cols, row))
+        for k in self._AGENT_RUN_PAYLOAD_KEYS:
+            v = record.get(k)
+            if v is not None and isinstance(v, str):
+                try:
+                    record[k] = json.loads(v)
+                except json.JSONDecodeError:
+                    record[k] = None
+        return record
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Qualitative assessments — versioned 1-7 scores across analytical dimensions
+    # ─────────────────────────────────────────────────────────────────────────
+
+    def upsert_qualitative_assessment(self, record) -> None:
+        """Persist a qualitative assessment as a new versioned row.
+
+        Args:
+            record: An `aletheia.qualitative.types.AssessmentRecord` instance.
+
+        Validates the record against the catalog before writing:
+          - `dimension_id` must be a known catalog entry
+          - `source_category` must match the catalog entry's declared category
+          - `score`, when present, must be in [1.0, 7.0]
+          - `narrative`, when present, must be ≤ 500 characters
+
+        Validation failures raise ValueError. The catalog is loaded lazily
+        to avoid a circular import at module-load time (database.py is a
+        dependency of the qualitative package, not the other way around).
+        """
+        from aletheia.qualitative.types import AssessmentRecord, SourceCategory
+        from config.qualitative_dimensions import DIMENSIONS
+
+        if not isinstance(record, AssessmentRecord):
+            raise TypeError(
+                f"upsert_qualitative_assessment expected AssessmentRecord, "
+                f"got {type(record).__name__}"
+            )
+
+        # Catalog membership check — prevents typos and stale-dimension writes
+        if record.dimension_id not in DIMENSIONS:
+            raise ValueError(
+                f"upsert_qualitative_assessment: unknown dimension_id "
+                f"{record.dimension_id!r}. Catalog known IDs: "
+                f"{sorted(DIMENSIONS.keys())}"
+            )
+
+        # Source-category match — prevents writing a HITL submission against
+        # a deterministic dimension or vice versa
+        catalog_entry = DIMENSIONS[record.dimension_id]
+        if record.source_category != catalog_entry.source_category:
+            raise ValueError(
+                f"upsert_qualitative_assessment: source_category mismatch "
+                f"for {record.dimension_id!r}. Catalog declares "
+                f"{catalog_entry.source_category.value}, record has "
+                f"{record.source_category.value}."
+            )
+
+        # Score range check (PENDING_DATA may legitimately have score=None)
+        if record.score is not None:
+            if not (1.0 <= float(record.score) <= 7.0):
+                raise ValueError(
+                    f"upsert_qualitative_assessment: score {record.score} "
+                    f"out of [1.0, 7.0] range for {record.dimension_id!r}"
+                )
+
+        # Narrative length check — protects DB column from runaway input
+        if record.narrative is not None and len(record.narrative) > 500:
+            raise ValueError(
+                f"upsert_qualitative_assessment: narrative is "
+                f"{len(record.narrative)} chars; max is 500."
+            )
+
+        self._conn.execute(
+            """
+            INSERT INTO qualitative_assessments
+            (assessment_id, ticker, dimension_id, score, sub_scores, narrative,
+             source_category, source_payload, assessed_at, analyst_id,
+             code_git_sha, input_fingerprint)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                record.assessment_id,
+                record.ticker.upper(),
+                record.dimension_id,
+                record.score,
+                json.dumps(record.sub_scores) if record.sub_scores is not None else None,
+                record.narrative,
+                record.source_category.value,
+                json.dumps(record.source_payload, default=str),
+                record.assessed_at,
+                record.analyst_id,
+                record.code_git_sha,
+                record.input_fingerprint,
+            ],
+        )
+
+        if self.verbose:
+            print(f"  ✓ qualitative_assessments: {record.ticker} / "
+                  f"{record.dimension_id} = {record.score} "
+                  f"({record.source_category.value})")
+
+    def get_latest_assessment(self, ticker: str, dimension_id: str) -> Optional[Dict[str, Any]]:
+        """Return the latest assessment for a (ticker, dimension_id) pair.
+
+        Returns None if no assessment exists. JSON columns (`sub_scores`,
+        `source_payload`) are decoded back to dicts.
+        """
+        row = self._conn.execute(
+            "SELECT * FROM qualitative_assessments_latest "
+            "WHERE ticker = ? AND dimension_id = ?",
+            [ticker.upper(), dimension_id],
+        ).fetchone()
+        if row is None:
+            return None
+        cols = [d[0] for d in self._conn.description]
+        record = dict(zip(cols, row))
+        for k in ("sub_scores", "source_payload"):
+            v = record.get(k)
+            if v is not None and isinstance(v, str):
+                try:
+                    record[k] = json.loads(v)
+                except json.JSONDecodeError:
+                    record[k] = None
+        return record
+
+    def get_all_assessments_for_ticker(self, ticker: str) -> Dict[str, Dict[str, Any]]:
+        """Return the latest assessment per dimension for a ticker, as a
+        dict keyed by `dimension_id`. Dimensions without any assessment
+        are NOT included — the caller cross-references against the
+        catalog to determine empty states (`not_assessed` vs `pending_data`).
+        """
+        rows = self._conn.execute(
+            "SELECT * FROM qualitative_assessments_latest WHERE ticker = ?",
+            [ticker.upper()],
+        ).fetchall()
+        cols = [d[0] for d in self._conn.description]
+        out: Dict[str, Dict[str, Any]] = {}
+        for row in rows:
+            record = dict(zip(cols, row))
+            for k in ("sub_scores", "source_payload"):
+                v = record.get(k)
+                if v is not None and isinstance(v, str):
+                    try:
+                        record[k] = json.loads(v)
+                    except json.JSONDecodeError:
+                        record[k] = None
+            out[record["dimension_id"]] = record
+        return out
 
     # ─────────────────────────────────────────────────────────────────────────
     # Read operations

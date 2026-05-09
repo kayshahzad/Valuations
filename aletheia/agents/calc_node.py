@@ -31,12 +31,13 @@ State written:
       "avg_3yr": float,
       "db_context": dict,
   }
-  state["operating_leverage"] = {
-      "score":              float,        # 0-10
-      "gross_margin_pct":   float,
-      "ebit_margin_pct":    float,
-  }
+  state["conviction"] = ConvictionResult.to_dict()
   state["calc_bypassed"] = Optional[str]   # set if DCF is sector-bypassed
+
+Note: `operating_leverage` and `moat_fingerprint` are computed inside this
+node and consumed by ConvictionScorer locally, but are NOT written to
+state — the JSON-as-truth investigation confirmed no downstream consumer
+reads them. Removing them prevents accidental future coupling.
 """
 
 from __future__ import annotations
@@ -190,7 +191,8 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     # import config. The peer-set lookup for cyclical names happens here in
     # the agent layer (which CAN import config) and is INJECTED into the
     # fingerprint tool as cyclical_peer_gm_cv_median.
-    moat_fingerprint: Dict[str, Any] = {}
+    # `mf` is consumed inline by ConvictionScorer below; not returned in
+    # state (no downstream consumer reads `moat_fingerprint` from state).
     mf = None
     try:
         from aletheia.tools.moat_fingerprint import (
@@ -241,7 +243,6 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
                     peer_median = float(np.median(cvs))
 
         mf = compute_moat_fingerprint(calc_input, cyclical_peer_gm_cv_median=peer_median)
-        moat_fingerprint = mf.to_dict()
         if mf.score is not None:
             print(f"  ✓ MoatFP: score={mf.score}/5 "
                   f"(roic={mf.roic_persistence_score}, gm={mf.gm_stability_score}, "
@@ -353,13 +354,36 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     if bypass_reason:
         phase2["dcf_bypass"] = bypass_reason
 
+    # Note: `operating_leverage` and `moat_fingerprint` are computed above
+    # and consumed inline by ConvictionScorer (which writes its result into
+    # `conviction`). They are deliberately NOT returned in state — the
+    # JSON-as-truth investigation confirmed no downstream consumer reads
+    # them from state. Removing them from the output reduces orphan churn
+    # and prevents future code from accidentally treating them as durable.
+    # ── Gate B — pre-agent FMP cross-check on calc outputs ──────────────
+    # Stamp-not-abort: blocking-tier drift gets recorded onto state but
+    # the calc_node returns normally so downstream agents proceed and
+    # the existing partial-rerun design (`/thesis_synthesis/refresh`)
+    # stays intact. Gate F (universe-level) is what fails the regen
+    # when systematic drift accumulates across tickers. Fail-soft on
+    # any FMP unavailability — no calc-layer disruption.
+    try:
+        from aletheia.data.fmp_validation import validate_calc_output
+        calc_validation = validate_calc_output(ticker, phase2)
+    except Exception as exc:
+        calc_validation = {
+            "status":      "skipped",
+            "skip_reason": f"validator_error:{type(exc).__name__}",
+            "fields":      {},
+            "blocking_fields": [],
+        }
+
     output: Dict[str, Any] = {
         "phase2_valuation": phase2,
         "cyclicality": cyclicality,
-        "operating_leverage": op_leverage,
-        "moat_fingerprint": moat_fingerprint,
         "conviction": conviction,
         "calc_bypassed": bypass_reason,
+        "_calc_validation": calc_validation,
         "messages": [HumanMessage(content=f"CalcNode: {ticker} — {len(errors)} errors")],
     }
     tracer.log_step("CalcNode", state, output)
