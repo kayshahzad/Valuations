@@ -85,16 +85,32 @@ def run_add_ticker_pipeline(ticker: str) -> Generator[Any, None, None]:
     # (fcff_compatible, generic sector); analyst can refine in
     # config/ticker_classification.py later.
     try:
-        from config.ticker_classification import add_runtime_classification
+        from config.ticker_classification import (
+            add_runtime_classification, get_extended_universe,
+        )
         added = add_runtime_classification(clean_ticker)
         if added:
-            yield StepUpdate(
-                "classify", "ok",
-                f"Wrote default classification for {clean_ticker} "
-                "(sector=Unknown, business_model=fcff_compatible — review when convenient).",
-            )
-            result.steps.append(StepUpdate("classify", "ok",
-                                           f"Default classification written for {clean_ticker}"))
+            # Read back the actual stored classification — add_runtime_classification
+            # auto-derives sector/industry/business_model from FMP /profile when
+            # the caller doesn't override, so the real values are richer than
+            # "Unknown" defaults.
+            entry = get_extended_universe().get(clean_ticker)
+            if entry is not None:
+                msg = (
+                    f"Auto-classified {clean_ticker} from FMP /profile: "
+                    f"sector={entry.sector}, industry={entry.industry}, "
+                    f"business_model={entry.business_model}"
+                    f"{', IFRS filer' if entry.is_ifrs_filer else ''}. "
+                    "Lifecycle defaulted to growth_compounder — refine in "
+                    "config/ticker_classification.py if needed."
+                )
+            else:
+                msg = (
+                    f"Wrote default classification for {clean_ticker} "
+                    "(FMP profile unavailable — review and refine when convenient)."
+                )
+            yield StepUpdate("classify", "ok", msg)
+            result.steps.append(StepUpdate("classify", "ok", msg))
     except Exception as e:
         # Fail-soft: classification is convenient for routing but not required
         # for ingest/validation to succeed.
