@@ -271,20 +271,41 @@ def _cashflow_rows_fy(local: Dict, fmp: Dict, raw_json: Dict) -> List[_RowSpec]:
     ]
 
 
-def _ratios_rows_fy(local: Dict, fmp_ratios: Dict, fmp_km: Dict) -> List[_RowSpec]:
+def _ratios_rows_fy(
+    local: Dict, fmp_ratios: Dict, fmp_km: Dict, fmp_income: Dict, fmp_cashflow: Dict,
+) -> List[_RowSpec]:
     L = local or {}
     R = fmp_ratios or {}
     K = fmp_km or {}
+    I = fmp_income or {}
+    C = fmp_cashflow or {}
     # Our margin fields are stored as percent; FMP as decimal.
     # Use scale=0.01 to bring our percent → decimal for comparison.
+    #
+    # Tier choices:
+    #   - Gross / EBIT margin: standard (1%/5%) — these trace to single
+    #     well-defined line items; drift > 5% genuinely is a bug.
+    #   - EBITDA margin: definitional (5%/25%) — D&A composition varies
+    #     between sources (FMP includes ASC-842 right-of-use lease
+    #     amortization + acquisition intangible amortization that
+    #     aren't always in the standard XBRL Depreciation tags).
+    #   - FCF margin: now compared like-for-like; FMP's FCF / FMP's
+    #     revenue. Drift mostly comes from CapEx classification.
+    #   - ROE / ROIC: definitional — formulas legitimately differ
+    #     (ROIC especially: Liberti's Equity+LTD-Cash denominator vs
+    #     FMP's TotalDebt+Equity).
+    fmp_fcf_margin = (
+        C.get("freeCashFlow") / I.get("revenue")
+        if (C.get("freeCashFlow") and I.get("revenue")) else None
+    )
     return [
         ("Gross Margin",       L.get("derived_GrossMargin_Pct"),  R.get("grossProfitMargin"),
-                                                                                          _pct,    "standard", 0.01),
+                                                                                          _pct,    "standard",     0.01),
         ("EBIT Margin",        L.get("derived_EBIT_Margin_Pct"),  R.get("operatingProfitMargin"),
-                                                                                          _pct,    "standard", 0.01),
+                                                                                          _pct,    "standard",     0.01),
         ("EBITDA Margin",      L.get("derived_EBITDA_Margin_Pct"), R.get("ebitdaMargin") or R.get("ebitMargin"),
-                                                                                          _pct,    "standard", 0.01),
-        ("FCF Margin",         L.get("derived_FCF_Margin_Pct"),   None,                   _pct,    "standard", 0.01),
+                                                                                          _pct,    "definitional", 0.01),
+        ("FCF Margin",         L.get("derived_FCF_Margin_Pct"),   fmp_fcf_margin,         _pct,    "standard",     0.01),
         ("ROE",                L.get("derived_ROE"),              R.get("returnOnEquity") or K.get("returnOnEquity"),
                                                                                           _pct,    "definitional", 1.0),
         ("ROIC",               L.get("derived_ROIC"),             R.get("returnOnInvestedCapital") or K.get("returnOnInvestedCapital"),
@@ -459,7 +480,18 @@ def render_fmp_compare_view(ticker: str) -> None:
         st.markdown("##### Margins + returns")
         _render_table(_ratios_rows_fy(
             fy_local, fmp_blobs["fy"]["ratios"], fmp_blobs["fy"]["key_metrics"],
+            fmp_blobs["fy"]["income"], fmp_blobs["fy"]["cashflow"],
         ))
+        st.caption(
+            "_Methodology drift expected on EBITDA Margin and ROIC._  "
+            "FMP's EBITDA includes ASC-842 right-of-use lease amortization "
+            "and acquisition-related intangible amortization that aren't "
+            "always captured under the standard XBRL `DepreciationAndAmortization` "
+            "tag (asset-heavy services firms show this most). FMP's ROIC "
+            "uses `(NetIncome + InterestExpense×(1-tax)) / (TotalDebt + Equity)` "
+            "vs our Liberti-style `NOPAT / (Equity + LongTermDebt − Cash)` — "
+            "both correct, different denominators."
+        )
         st.markdown("##### Multiples + capital structure")
         _render_table(_multiples_rows_fy(
             fy_local, fmp_blobs["fy"]["ratios"], fmp_blobs["fy"]["key_metrics"],
