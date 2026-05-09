@@ -528,23 +528,40 @@ def validate_ingestion_record(
 # Returns the same result shape as Gate A so downstream consumers
 # (Gate D receipt, UI glyph) treat it uniformly.
 
-# (label, our_path, fmp_source, fmp_key, tier, p0)
+# (label, our_path, fmp_source, fmp_key, tier, p0, scale)
 # fmp_source = "km" → fetched key-metrics-ttm dict
 # fmp_source = "ratios" → fetched ratios-ttm dict
-# Tier byte_perfect_required + p0=True means a structural_drift result
-# escalates to status=blocking_drift; caller treats as a regression
-# alert, not a routine flag.
-_GATE_A_TTM_FIELDS: List[Tuple[str, str, str, str, str, bool]] = [
-    # Absolute flow items via per-share × shares.  TTM revenue and NI
-    # MUST sum identically — both sides are FMP quarterly facts.
-    ("revenue_ttm",     "raw.Revenue",     "km",     "revenuePerShareTTM",       "byte_perfect_required", True),
-    ("net_income_ttm",  "raw.NetIncome",   "km",     "netIncomePerShareTTM",     "byte_perfect_required", True),
-    ("fcf_ttm",         "clean.FCF",       "km",     "freeCashFlowPerShareTTM",  "byte_perfect_required", False),
+# fmp_source = "ev_implied" → derived from km dict via EV-multiple identity
+# `scale` is multiplied into our value before comparing — used when our
+# field is stored in different units than FMP's (e.g. ours percent,
+# FMP decimal).
+#
+# Live-data finding (Phase Q-6 hardening): FMP's /key-metrics-ttm does
+# NOT expose absolute revenue/NI/FCF (no `revenuePerShareTTM`-style
+# fields). Only `enterpriseValueTTM` + the `evToXTTM` ratios are
+# absolute; everything else is per-ratio. So the absolute-flow lanes
+# now use EV-implied math: revenue_ttm = enterpriseValueTTM / evToSalesTTM.
+# Tier drops from byte_perfect_required to standard because EV-implied
+# arithmetic legitimately drifts from a quarterly-sum (the EV used for
+# the ratio is a different snapshot). The byte-perfect gate on absolute
+# flows will return when SEC quarterly parsing ships (Phase Q-2) and
+# we have a true second source.
+#
+# ROIC + ROE: live keys revealed FMP exposes these on /key-metrics-ttm,
+# NOT /ratios-ttm. EBIT margin stays on /ratios-ttm but needs a 0.01
+# scale (ours stored as percent, FMP as decimal).
+_GATE_A_TTM_FIELDS: List[Tuple[str, str, str, str, str, bool, float]] = [
+    # Absolute flow items via EV-implied math — second-source check
+    # against FMP-internal consistency (EV × ratio reconstructions).
+    ("revenue_ttm",     "raw.Revenue",     "ev_implied", "evToSalesTTM",          "standard", False, 1.0),
+    ("ebitda_ttm",      "derived.EBITDA",  "ev_implied", "evToEBITDATTM",         "standard", False, 1.0),
+    ("fcf_ttm",         "clean.FCF",       "ev_implied", "evToFreeCashFlowTTM",   "standard", False, 1.0),
     # Ratios: definitional tier — formulas legitimately differ (effective
     # tax rate, invested-capital definition). Stamped for visibility.
-    ("roic_ttm",        "derived.ROIC",    "ratios", "returnOnInvestedCapitalTTM", "definitional", False),
-    ("roe_ttm",         "derived.ROE",     "ratios", "returnOnEquityTTM",          "definitional", False),
-    ("ebit_margin_ttm", "derived.EBIT_Margin_Pct", "ratios", "operatingProfitMarginTTM", "definitional", False),
+    ("roic_ttm",        "derived.ROIC",    "km",     "returnOnInvestedCapitalTTM", "definitional", False, 1.0),
+    ("roe_ttm",         "derived.ROE",     "km",     "returnOnEquityTTM",          "definitional", False, 1.0),
+    # EBIT margin: ours stored as percent, FMP as decimal → scale=0.01.
+    ("ebit_margin_ttm", "derived.EBIT_Margin_Pct", "ratios", "operatingProfitMarginTTM", "definitional", False, 0.01),
 ]
 
 
@@ -617,38 +634,54 @@ def validate_ttm_record(
     if not (fmp_key_metrics_ttm or fmp_ratios_ttm):
         return {**base, "status": "skipped", "skip_reason": "fmp_ttm_blob_unavailable"}
 
-    # FMP's per-share-TTM × diluted shares → absolute. We use OUR
-    # raw_SharesDiluted because Gate A already validates that against
-    # FMP at ingestion; reusing the same number keeps both arms of the
-    # comparison aligned.
-    shares = _resolve_record_path(record, "raw.SharesDiluted")
+    # `enterpriseValueTTM` is needed for the ev_implied lane; pull once
+    # at the top so we don't re-extract per field.
+    ev_ttm = None
+    if fmp_key_metrics_ttm:
+        try:
+            ev_ttm = float(fmp_key_metrics_ttm.get("enterpriseValueTTM"))
+        except (TypeError, ValueError):
+            ev_ttm = None
 
     fields: Dict[str, Dict[str, Any]] = {}
     blocking_fields: List[str] = []
     n_drift = 0
     n_p0_breach = 0
 
-    for label, our_path, fmp_source, fmp_key, tier, p0 in _GATE_A_TTM_FIELDS:
-        ours = _resolve_record_path(record, our_path)
+    for label, our_path, fmp_source, fmp_key, tier, p0, scale in _GATE_A_TTM_FIELDS:
+        ours_raw = _resolve_record_path(record, our_path)
+        ours = ours_raw * scale if (ours_raw is not None) else None
 
         # Pull FMP side
         if fmp_source == "km":
             blob = fmp_key_metrics_ttm or {}
+            endpoint = "key_metrics_ttm"
         elif fmp_source == "ratios":
             blob = fmp_ratios_ttm or {}
+            endpoint = "ratios_ttm"
+        elif fmp_source == "ev_implied":
+            blob = fmp_key_metrics_ttm or {}
+            endpoint = "key_metrics_ttm:ev_implied"
         else:
             blob = {}
-        fmp_raw = blob.get(fmp_key)
-        try:
-            fmp_raw = float(fmp_raw) if fmp_raw is not None else None
-        except (TypeError, ValueError):
-            fmp_raw = None
+            endpoint = "unknown"
 
-        # Per-share fields: convert to absolute via shares
-        if fmp_source == "km" and fmp_raw is not None and shares is not None:
-            fmp_value: Optional[float] = fmp_raw * shares
+        fmp_raw_val = blob.get(fmp_key)
+        try:
+            fmp_raw_val = float(fmp_raw_val) if fmp_raw_val is not None else None
+        except (TypeError, ValueError):
+            fmp_raw_val = None
+
+        # Convert FMP side to absolute units when source requires it.
+        # `ev_implied`: divide enterpriseValueTTM by the ratio (e.g.
+        # evToSalesTTM = EV / Revenue, so Revenue = EV / evToSalesTTM).
+        if fmp_source == "ev_implied":
+            if fmp_raw_val and ev_ttm and fmp_raw_val != 0:
+                fmp_value: Optional[float] = ev_ttm / fmp_raw_val
+            else:
+                fmp_value = None
         else:
-            fmp_value = fmp_raw
+            fmp_value = fmp_raw_val
 
         _, drift_pct = _drift_label(ours, fmp_value)
         status = _classify_drift(drift_pct, tier)
@@ -662,7 +695,7 @@ def validate_ttm_record(
             "tier":             tier,
             "p0":               p0,
             "status":           status,
-            "source_endpoint":  "key_metrics_ttm" if fmp_source == "km" else "ratios_ttm",
+            "source_endpoint":  endpoint,
             "fmp_key_resolved": fmp_key,
         }
         if is_violation:
@@ -748,16 +781,42 @@ def _add_ttm_ev_identity_check(
 
 
 # (label, our_key_in_latest_quarter_income, xbrl_tags fallback list, tier)
+# Live-data finding (Phase Q-6 hardening): FMP returns the as-reported
+# tags under `record["data"]` (nested), keyed in **lowercase** (e.g.
+# `revenuefromcontractwithcustomerexcludingassessedtax`, NOT the
+# CamelCase XBRL concept). The lookup helper handles both shapes.
 _TTM_AS_REPORTED_FIELDS: List[Tuple[str, str, List[str], str]] = [
     ("revenue_latest_quarter_as_reported", "revenue",
-     ["Revenues",
-      "RevenueFromContractWithCustomerExcludingAssessedTax",
+     ["RevenueFromContractWithCustomerExcludingAssessedTax",
+      "Revenues",
       "SalesRevenueNet"],
      "strict"),
     ("net_income_latest_quarter_as_reported", "netIncome",
      ["NetIncomeLoss"],
      "strict"),
 ]
+
+
+def _lookup_as_reported_tag(
+    fmp_record: Dict[str, Any], xbrl_tag: str,
+) -> Optional[float]:
+    """FMP /income-statement-as-reported returns tags under record['data']
+    in lowercase. Try both nested-lower and flat-Camel for backward
+    compatibility with future endpoint shape changes."""
+    data_block = fmp_record.get("data") if isinstance(fmp_record, dict) else None
+    candidates = [xbrl_tag, xbrl_tag.lower()]
+    for blob in (data_block, fmp_record):
+        if not isinstance(blob, dict):
+            continue
+        for key in candidates:
+            v = blob.get(key)
+            if v is None:
+                continue
+            try:
+                return float(v)
+            except (TypeError, ValueError):
+                continue
+    return None
 
 
 def _add_ttm_as_reported_check(
@@ -794,15 +853,11 @@ def _add_ttm_as_reported_check(
         fmp_v: Optional[float] = None
         tag_used: Optional[str] = None
         for tag in xbrl_tags:
-            v = fmp_as_reported.get(tag)
-            if v is None:
-                continue
-            try:
-                fmp_v = float(v)
+            v = _lookup_as_reported_tag(fmp_as_reported, tag)
+            if v is not None:
+                fmp_v = v
                 tag_used = tag
                 break
-            except (TypeError, ValueError):
-                continue
 
         _, drift = _drift_label(ours_v, fmp_v)
         status = _classify_drift(drift, tier)

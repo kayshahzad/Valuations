@@ -64,18 +64,25 @@ def _balance_latest():
     }]
 
 
-def _km_ttm(rev_per_share=400/15, ni_per_share=100/15, fcf_per_share=88/15):
+def _km_ttm(ev=4_000e9, ev_to_sales=10.0, ev_to_ebitda=28.5,
+            ev_to_fcf=45.5, roic=0.30, roe=0.65):
+    """FMP /key-metrics-ttm: only EV + ratio-multiples are exposed
+    (no absolute revenue/NI/FCF). ROIC + ROE land here, not on
+    /ratios-ttm. Defaults imply revenue=$400B, ebitda=$140B, fcf=$88B
+    via EV-multiple division — matches the quarterly-sum stub."""
     return {
-        "revenuePerShareTTM":     rev_per_share,
-        "netIncomePerShareTTM":   ni_per_share,
-        "freeCashFlowPerShareTTM": fcf_per_share,
+        "enterpriseValueTTM":         ev,
+        "evToSalesTTM":               ev_to_sales,
+        "evToEBITDATTM":              ev_to_ebitda,
+        "evToFreeCashFlowTTM":        ev_to_fcf,
+        "returnOnInvestedCapitalTTM": roic,
+        "returnOnEquityTTM":          roe,
     }
 
 
-def _ratios_ttm(roic=0.30, roe=0.65, op_margin=0.30):
+def _ratios_ttm(op_margin=0.30):
+    """FMP /ratios-ttm: profit margins + ratio multiples (no ROIC/ROE)."""
     return {
-        "returnOnInvestedCapitalTTM": roic,
-        "returnOnEquityTTM":          roe,
         "operatingProfitMarginTTM":   op_margin,
         "effectiveTaxRateTTM":        0.21,
     }
@@ -233,10 +240,10 @@ def test_skip_when_required_flow_missing():
 
 # ── Gate A.TTM cross-check ────────────────────────────────────────────
 
-def test_gate_a_ttm_byte_perfect_when_quarters_sum_to_fmp_ttm():
-    """Our $400B TTM revenue == 4 × $100B quarters == FMP per-share × shares
-    ($26.67/sh × 15B sh = $400B). All P0 fields byte_perfect; never
-    blocking even if a definitional-tier field (ROIC) drifts."""
+def test_gate_a_ttm_revenue_via_ev_implied_byte_perfect_when_consistent():
+    """EV-implied lane: revenue = enterpriseValueTTM / evToSalesTTM.
+    Stub default: 4000B / 10.0 = 400B, matches the quarterly-sum
+    stub's $400B revenue. Standard tier; non-blocking by design."""
     patches = _patch_fmp(_quarterly_income(), _balance_latest(),
                          _quarterly_cashflow())
     _start_patches(patches)
@@ -250,19 +257,24 @@ def test_gate_a_ttm_byte_perfect_when_quarters_sum_to_fmp_ttm():
         fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
         fmp_ratios_ttm=result.fmp_ratios_ttm,
     )
-    # P0 fields agree byte-perfect; nothing should be in blocking_fields
+    # No P0 fields can breach (ev_implied is non-P0; ratios are
+    # definitional and informational).
     assert gate["blocking_fields"] == []
-    assert gate["fields"]["revenue_ttm"]["status"] == "byte_perfect"
-    assert gate["fields"]["net_income_ttm"]["status"] == "byte_perfect"
-    assert gate["fields"]["fcf_ttm"]["status"] == "byte_perfect"
+    f = gate["fields"]["revenue_ttm"]
+    assert f["status"] == "byte_perfect"
+    assert f["fmp"] == 400e9       # 4000B / 10.0
+    assert f["source_endpoint"] == "key_metrics_ttm:ev_implied"
 
 
-def test_gate_a_ttm_blocks_on_revenue_drift_above_half_pct():
-    """Inject 1% drift in FMP's TTM revenue.  Both arms are FMP — drift
-    means FMP-internal inconsistency.  P0 escalates to blocking_drift."""
+def test_gate_a_ttm_revenue_drift_via_ev_implied_is_informational():
+    """Inject ~7% drift in EV-implied revenue (evToSalesTTM tweaked).
+    Standard tier surfaces structural_drift but never blocks — this is
+    a regression detector, not a gate. The byte-perfect-required gate
+    on absolute flows returns when SEC quarterly parsing ships and we
+    have a true second source."""
     patches = _patch_fmp(
         _quarterly_income(), _balance_latest(), _quarterly_cashflow(),
-        km_ttm=_km_ttm(rev_per_share=(400e9 * 1.01) / 15e9),  # 1% drift
+        km_ttm=_km_ttm(ev_to_sales=10.7),  # implies 374B vs ours 400B
     )
     _start_patches(patches)
     try:
@@ -275,18 +287,19 @@ def test_gate_a_ttm_blocks_on_revenue_drift_above_half_pct():
         fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
         fmp_ratios_ttm=result.fmp_ratios_ttm,
     )
-    assert gate["status"] == "blocking_drift"
-    assert "revenue_ttm" in gate["blocking_fields"]
-    assert gate["fields"]["revenue_ttm"]["p0"] is True
+    f = gate["fields"]["revenue_ttm"]
+    assert f["status"] == "structural_drift"
+    assert f["p0"] is False
+    assert "revenue_ttm" not in gate["blocking_fields"]
+    assert gate["status"] != "blocking_drift"
 
 
-def test_gate_a_ttm_within_half_pct_passes():
-    """0.3% drift is inside the 0.5% byte_perfect_required band — the
-    revenue field stays byte_perfect and is NOT in blocking_fields,
-    even if a definitional-tier field independently drifts."""
+def test_gate_a_ttm_revenue_within_acceptable_band():
+    """3% drift via EV-implied → standard tier marks acceptable, not
+    structural_drift; lane stays informational."""
     patches = _patch_fmp(
         _quarterly_income(), _balance_latest(), _quarterly_cashflow(),
-        km_ttm=_km_ttm(rev_per_share=(400e9 * 1.003) / 15e9),  # 0.3%
+        km_ttm=_km_ttm(ev_to_sales=10.3),  # implies 388.3B vs ours 400B (~3%)
     )
     _start_patches(patches)
     try:
@@ -299,7 +312,9 @@ def test_gate_a_ttm_within_half_pct_passes():
         fmp_key_metrics_ttm=result.fmp_key_metrics_ttm,
         fmp_ratios_ttm=result.fmp_ratios_ttm,
     )
-    assert gate["fields"]["revenue_ttm"]["status"] == "byte_perfect"
+    f = gate["fields"]["revenue_ttm"]
+    # Standard tier: <1% byte_perfect, 1–5% acceptable, >5% structural
+    assert f["status"] == "acceptable"
     assert "revenue_ttm" not in gate["blocking_fields"]
 
 
@@ -308,7 +323,9 @@ def test_gate_a_ttm_roic_drift_is_informational_not_p0():
     tier, never blocks."""
     patches = _patch_fmp(
         _quarterly_income(), _balance_latest(), _quarterly_cashflow(),
-        ratios_ttm=_ratios_ttm(roic=0.50),  # we computed ~0.30; large diff
+        # ROIC now lives on key_metrics_ttm, not ratios_ttm. Inject 0.50
+        # vs our computed ~0.30 (~67% drift on definitional tier).
+        km_ttm=_km_ttm(roic=0.50),
     )
     _start_patches(patches)
     try:
@@ -473,8 +490,11 @@ def test_gate_a_ttm_as_reported_byte_perfect_on_latest_quarter():
         _stop_patches(patches)
 
     fmp_as_reported = {
-        "Revenues":      100e9,   # matches our latest quarter income
-        "NetIncomeLoss": 25e9,
+        "data": {
+            # FMP returns XBRL tags lowercase under `data`
+            "revenues":      100e9,
+            "netincomeloss": 25e9,
+        },
     }
     gate = validate_ttm_record(
         "AAPL", result.record,
@@ -498,8 +518,10 @@ def test_gate_a_ttm_as_reported_falls_back_to_alt_xbrl_tag():
         _stop_patches(patches)
 
     fmp_as_reported = {
-        "RevenueFromContractWithCustomerExcludingAssessedTax": 100e9,
-        "NetIncomeLoss": 25e9,
+        "data": {
+            "revenuefromcontractwithcustomerexcludingassessedtax": 100e9,
+            "netincomeloss": 25e9,
+        },
     }
     gate = validate_ttm_record(
         "AAPL", result.record,
@@ -526,8 +548,10 @@ def test_gate_a_ttm_as_reported_catches_quarterly_tag_mapping_bug():
         _stop_patches(patches)
 
     fmp_as_reported = {
-        "Revenues":      96e9,   # 4% below our $100B
-        "NetIncomeLoss": 25e9,
+        "data": {
+            "revenues":      96e9,   # 4% below our $100B
+            "netincomeloss": 25e9,
+        },
     }
     gate = validate_ttm_record(
         "AAPL", result.record,
