@@ -243,17 +243,27 @@ def _statement_table(
 def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
     if not history:
         return
-    df = pd.DataFrame([{
-        "FY":            r["fiscal_year"],
-        "Period end":    r.get("period_end_date") or "",
-        "Revenue":       (r["Revenue"]/1e9) if r["Revenue"] else None,
-        "EBITDA":        (r["EBITDA"]/1e9) if r["EBITDA"] else None,
-        "Net Income":    (r["NetIncome"]/1e9) if r["NetIncome"] else None,
-        "CapEx":         (r["CapEx"]/1e9) if r["CapEx"] else None,
-        "FCF":           (r["FCF"]/1e9) if r["FCF"] else None,
-        "ROIC":          (r["ROIC"]*100) if r["ROIC"] else None,
-        "Quality":       r["QualityScore"],
-    } for r in history])
+    rows = []
+    for i, r in enumerate(history):
+        rev = r.get("Revenue")
+        prev_rev = history[i - 1].get("Revenue") if i > 0 else None
+        rev_growth = (
+            (rev / prev_rev - 1.0) * 100
+            if rev and prev_rev else None
+        )
+        rows.append({
+            "FY":            r["fiscal_year"],
+            "Period end":    r.get("period_end_date") or "",
+            "Revenue":       (rev/1e9) if rev else None,
+            "Rev Growth":    rev_growth,
+            "EBITDA":        (r["EBITDA"]/1e9) if r["EBITDA"] else None,
+            "Net Income":    (r["NetIncome"]/1e9) if r["NetIncome"] else None,
+            "CapEx":         (r["CapEx"]/1e9) if r["CapEx"] else None,
+            "FCF":           (r["FCF"]/1e9) if r["FCF"] else None,
+            "ROIC":          (r["ROIC"]*100) if r["ROIC"] else None,
+            "Quality":       r["QualityScore"],
+        })
+    df = pd.DataFrame(rows)
 
     st.dataframe(
         df,
@@ -267,6 +277,10 @@ def _fiscal_history_table(history: List[Dict[str, Any]]) -> None:
                 help="Fiscal-year end date — useful for non-calendar filers like NVDA (Jan), HD/LOW (Feb), COST (Aug/Sep)",
             ),
             "Revenue":    st.column_config.NumberColumn("Revenue", format="$%.1fB"),
+            "Rev Growth": st.column_config.NumberColumn(
+                "Rev Growth", format="%+.1f%%",
+                help="YoY revenue growth vs prior fiscal year.",
+            ),
             "EBITDA":     st.column_config.NumberColumn("EBITDA", format="$%.1fB"),
             "Net Income": st.column_config.NumberColumn("Net Income", format="$%.1fB"),
             "CapEx":      st.column_config.NumberColumn("CapEx", format="$%.1fB"),
