@@ -290,6 +290,21 @@ def fetch_profile(ticker: str, force_refresh: bool = False) -> Optional[Dict[str
     return None
 
 
+def fetch_income_statement_as_reported(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """As-reported (XBRL tag → value) annual income statements. The
+    keys are the raw XBRL concepts the filer used (e.g. `Revenues`,
+    `NetIncomeLoss`), bypassing FMP's normalization. Used by Gate A's
+    third lane to confirm FMP and our SEC ingest saw the same filed
+    numbers — the highest-leverage check for tag-mapping regressions."""
+    return _fetch(
+        ticker, "income-statement-as-reported", "income_as_reported",
+        params={"period": "annual", "limit": "30"},
+        force_refresh=force_refresh,
+    )
+
+
 def fetch_historical_prices(
     ticker: str, days: int = 14, force_refresh: bool = False,
 ) -> Optional[List[Dict[str, Any]]]:

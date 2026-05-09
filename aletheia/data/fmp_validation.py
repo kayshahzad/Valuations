@@ -164,6 +164,89 @@ _OUR_KEY_TO_DB_COL: Dict[str, Tuple[str, float]] = {
 }
 
 
+# ── Gate A — as-reported lane (XBRL tag-level cross-check) ─────────────
+#
+# Compares our raw_X values (pulled directly from SEC EDGAR via our own
+# ingest) against the same XBRL tag values FMP saw on /income-statement-
+# as-reported. If both sides agree, we know our SEC ingest and FMP's
+# saw the same filing — a tag-mapping bug on either side would surface
+# here before it can fool the higher-level checks.
+#
+# (our_db_col, [xbrl_tag fallback list], tier)
+# Tier `strict` for these — they're literally the filed numbers, no
+# normalization gap. Drift here is a high-confidence signal of a bug.
+_GATE_A_AS_REPORTED_FIELDS: List[Tuple[str, str, List[str], str]] = [
+    ("revenue_as_reported",      "clean_Revenue",
+     ["Revenues",
+      "RevenueFromContractWithCustomerExcludingAssessedTax",
+      "SalesRevenueNet"],
+     "strict"),
+    ("net_income_as_reported",   "raw_NetIncome",
+     ["NetIncomeLoss"],
+     "strict"),
+    ("total_assets_as_reported", "raw_TotalAssets",
+     ["Assets"],
+     "strict"),
+]
+
+
+def _add_as_reported_checks(
+    record: Any,
+    ticker: str,
+    fy: int,
+    fields: Dict[str, Dict[str, Any]],
+) -> None:
+    """Mutate `fields` to append the XBRL-tag-level cross-checks.
+    Best-effort: if the as-reported endpoint is unavailable or the FY
+    record can't be located, fields are stamped n_a — never blocks.
+    Skipped silently when no FMP key is configured (already gated
+    upstream)."""
+    try:
+        from aletheia.data import fmp_client
+        ar_records = fmp_client.fetch_income_statement_as_reported(ticker)
+    except Exception:
+        ar_records = None
+
+    ar_fy: Dict[str, Any] = {}
+    if ar_records:
+        match = fmp_client.get_for_fiscal_year(ar_records, fy)
+        if isinstance(match, dict):
+            ar_fy = match
+
+    for label, our_col, xbrl_tags, tier in _GATE_A_AS_REPORTED_FIELDS:
+        ours = record.get(our_col) if hasattr(record, "get") else None
+        try:
+            ours = float(ours) if ours is not None else None
+        except (TypeError, ValueError):
+            ours = None
+
+        # Try each XBRL tag in fallback order — first non-None wins.
+        fmp_val: Optional[float] = None
+        tag_used: Optional[str] = None
+        for tag in xbrl_tags:
+            v = ar_fy.get(tag)
+            if v is None:
+                continue
+            try:
+                fmp_val = float(v)
+                tag_used = tag
+                break
+            except (TypeError, ValueError):
+                continue
+
+        _, drift = _drift_label(ours, fmp_val)
+        fields[label] = {
+            "ours":             ours,
+            "fmp":              fmp_val,
+            "drift_pct":        drift,
+            "tier":             tier,
+            "blocking":         False,  # informational; primary check owns the gate
+            "status":           _classify_drift(drift, tier),
+            "source_endpoint":  "income_as_reported",
+            "fmp_key_resolved": tag_used or xbrl_tags[0],
+        }
+
+
 def _add_ev_derived_checks(
     record: Any,
     fmp_data: Dict[str, Any],
@@ -400,6 +483,12 @@ def validate_ingestion_record(
     # (/enterprise-values), so a regression that fooled the primary gate
     # because both sides drew from the same FMP source still gets caught.
     _add_ev_derived_checks(record, fmp_data, fields)
+
+    # ── As-reported XBRL-tag-level cross-check ──────────────────────────
+    # Strict-tier comparison of our raw_X values against the same XBRL
+    # tags FMP saw on /income-statement-as-reported. Catches tag-mapping
+    # bugs that would slip past FMP's normalized fields.
+    _add_as_reported_checks(record, ticker, fiscal_year, fields)
 
     # Historical FYs: drift is recorded but never blocks ingestion.
     if n_blocking > 0 and is_latest_fy:

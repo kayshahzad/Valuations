@@ -300,6 +300,88 @@ def test_gate_a_roic_falls_back_to_alt_key():
     assert r["fields"]["roic"]["status"] == "byte_perfect"
 
 
+def test_gate_a_as_reported_byte_perfect():
+    """XBRL `Revenues` matches our clean_Revenue → byte_perfect on
+    revenue_as_reported (strict tier)."""
+    rec = _stub_record(rev=395_000_000_000)
+    ar_records = [{
+        "fiscalYear":  "2024",
+        "Revenues":    395_000_000_000,
+        "NetIncomeLoss": 99_000_000_000,
+        "Assets":      355_000_000_000,
+    }]
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data()), \
+         patch("aletheia.data.fmp_client.fetch_income_statement_as_reported",
+               return_value=ar_records):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    f = r["fields"]["revenue_as_reported"]
+    assert f["fmp"] == 395_000_000_000
+    assert f["status"] == "byte_perfect"
+    assert f["tier"] == "strict"
+    assert f["blocking"] is False
+    assert f["fmp_key_resolved"] == "Revenues"
+
+
+def test_gate_a_as_reported_falls_back_to_alt_xbrl_tag():
+    """When `Revenues` is missing, falls back to
+    RevenueFromContractWithCustomerExcludingAssessedTax (newer ASC 606
+    tag adopted by some filers post-2018)."""
+    rec = _stub_record(rev=395_000_000_000)
+    ar_records = [{
+        "fiscalYear": "2024",
+        "RevenueFromContractWithCustomerExcludingAssessedTax": 395_000_000_000,
+        "NetIncomeLoss": 99_000_000_000,
+        "Assets":      355_000_000_000,
+    }]
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data()), \
+         patch("aletheia.data.fmp_client.fetch_income_statement_as_reported",
+               return_value=ar_records):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    f = r["fields"]["revenue_as_reported"]
+    assert f["status"] == "byte_perfect"
+    assert f["fmp_key_resolved"] == "RevenueFromContractWithCustomerExcludingAssessedTax"
+
+
+def test_gate_a_as_reported_catches_tag_mapping_bug():
+    """If our SEC ingest picked the wrong tag and recorded $410B revenue
+    when FMP's as-reported XBRL shows $395B (3.8% drift), strict-tier
+    surfaces it as structural_drift."""
+    rec = _stub_record(rev=410_000_000_000)
+    ar_records = [{
+        "fiscalYear": "2024",
+        "Revenues":   395_000_000_000,
+        "NetIncomeLoss": 99_000_000_000,
+        "Assets":      355_000_000_000,
+    }]
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data(rev=410_000_000_000)), \
+         patch("aletheia.data.fmp_client.fetch_income_statement_as_reported",
+               return_value=ar_records):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    primary = r["fields"]["revenue"]
+    derived = r["fields"]["revenue_as_reported"]
+    # Primary check passes (our $410B == FMP normalized $410B)
+    assert primary["status"] == "byte_perfect"
+    # As-reported catches it (XBRL tag is $395B → 3.8% drift)
+    assert derived["status"] == "structural_drift"
+
+
+def test_gate_a_as_reported_n_a_when_endpoint_missing():
+    """If the as-reported endpoint isn't on this subscription, fields
+    stamp n_a; Gate A still completes."""
+    rec = _stub_record()
+    with patch("aletheia.data.fmp_validation._fetch_fmp_for_gate_a",
+               return_value=_stub_fmp_data()), \
+         patch("aletheia.data.fmp_client.fetch_income_statement_as_reported",
+               return_value=None):
+        r = validate_ingestion_record("AAPL", 2024, rec, is_latest_fy=True)
+    assert r["fields"]["revenue_as_reported"]["status"] == "n_a"
+    assert r["fields"]["net_income_as_reported"]["status"] == "n_a"
+    assert r["fields"]["total_assets_as_reported"]["status"] == "n_a"
+
+
 def test_gate_a_historical_fy_validated_when_no_drift():
     """is_latest_fy=False with byte-perfect match → validated."""
     rec = _stub_record()
