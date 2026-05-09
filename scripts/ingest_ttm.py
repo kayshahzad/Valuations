@@ -29,6 +29,7 @@ from typing import Dict, List, Optional
 from aletheia.data import fmp_client
 from aletheia.data.database import InvestmentDatabase
 from aletheia.data.fmp_validation import validate_ttm_record
+from aletheia.data.sec_quarterly import derive_ttm_from_sec
 from aletheia.data.ttm_derivation import derive_ttm_from_fmp
 from config.ticker_classification import get_extended_universe
 
@@ -58,46 +59,96 @@ def _select_tickers(
 
 
 def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
-    """Returns a per-ticker result dict for the summary tally."""
-    derivation = derive_ttm_from_fmp(ticker)
+    """Returns a per-ticker result dict for the summary tally.
 
-    if derivation.record is None:
+    Phase Q-2: SEC-derived TTM is preferred when the cached XBRL has
+    enough data to anchor the cumulative-period math. FMP-derived is
+    the fallback for tickers where SEC parsing fails (foreign filers,
+    stale local cache, missing prior-FY 10-K, etc.). The chosen source
+    is stamped on `record.fmp_validation['ttm_source']` so the swap is
+    forensically observable per the locked plan.
+
+    FMP TTM blobs (key-metrics-ttm, ratios-ttm, EV per-quarter, as-
+    reported XBRL) are always fetched as Gate A.TTM cross-checks —
+    independent of which path produced `record`. When SEC is primary,
+    these are second sources; when FMP is primary, they're internal-
+    consistency checks against FMP's own quarterly summation."""
+    # ── Source selection: prefer SEC, but only when SEC's local cache
+    # is at least as fresh as FMP's quarterly snapshot. Stale SEC raw
+    # cache (XBRL companyfacts not refetched since the last 10-Q) would
+    # otherwise pin TTM 90+ days behind FMP-quarterly. Compare both
+    # candidates' period_end dates and route to the fresher one.
+    sec_result = derive_ttm_from_sec(ticker)
+    fmp_result = derive_ttm_from_fmp(ticker)
+    record = None
+    fmp_latest_qtr_income = None
+
+    sec_pe = (
+        sec_result.record.period_end_date if sec_result.record else None
+    )
+    fmp_pe = (
+        fmp_result.record.period_end_date if fmp_result.record else None
+    )
+
+    if sec_result.record and fmp_result.record:
+        # Both succeeded — pick the fresher period_end. Ties go to SEC
+        # (preferred source on equal freshness).
+        if (sec_pe or "") >= (fmp_pe or ""):
+            record = sec_result.record
+        else:
+            record = fmp_result.record
+            fmp_latest_qtr_income = fmp_result.latest_quarter_income
+    elif sec_result.record:
+        record = sec_result.record
+    elif fmp_result.record:
+        record = fmp_result.record
+        fmp_latest_qtr_income = fmp_result.latest_quarter_income
+
+    if record is None:
         return {
             "ticker":      ticker,
             "outcome":     "skipped",
-            "skip_reason": derivation.skip_reason or "unknown",
+            "skip_reason": (
+                f"sec={sec_result.skip_reason or 'no_sec'};"
+                f"fmp={fmp_result.skip_reason or 'no_fmp'}"
+            ),
             "blocking":    "",
         }
 
-    # Phase Q-6 full second-source endpoints. Fetch failures degrade
-    # the corresponding lane to status='n_a' instead of breaking the
-    # whole TTM ingest — Gate A.TTM still runs on the primary lane.
-    try:
-        ev_quarters = fmp_client.fetch_enterprise_values(ticker, period="quarter")
-        ev_latest_quarter = ev_quarters[0] if ev_quarters else None
-    except Exception:
-        ev_latest_quarter = None
+    # ── Cross-check FMP TTM blobs (always fetched, regardless of source) ─
+    # Fetch failures on any single lane degrade that lane to 'n_a' in
+    # the gate result; Gate A.TTM still runs on the primary lane.
+    def _safe_fetch(fn, *args, **kwargs):
+        try:
+            return fn(*args, **kwargs)
+        except Exception:
+            return None
 
-    try:
-        as_reported_quarters = fmp_client.fetch_income_statement_as_reported_quarter(ticker)
-        as_reported_latest = as_reported_quarters[0] if as_reported_quarters else None
-    except Exception:
-        as_reported_latest = None
+    km_ttm     = _safe_fetch(fmp_client.fetch_key_metrics_ttm, ticker)
+    ratios_ttm = _safe_fetch(fmp_client.fetch_ratios_ttm, ticker)
+    ev_quarters = _safe_fetch(
+        fmp_client.fetch_enterprise_values, ticker, period="quarter",
+    )
+    ev_latest_quarter = ev_quarters[0] if ev_quarters else None
+    as_reported_quarters = _safe_fetch(
+        fmp_client.fetch_income_statement_as_reported_quarter, ticker,
+    )
+    as_reported_latest = as_reported_quarters[0] if as_reported_quarters else None
 
     gate = validate_ttm_record(
-        ticker, derivation.record,
-        fmp_key_metrics_ttm=derivation.fmp_key_metrics_ttm,
-        fmp_ratios_ttm=derivation.fmp_ratios_ttm,
+        ticker, record,
+        fmp_key_metrics_ttm=km_ttm,
+        fmp_ratios_ttm=ratios_ttm,
         fmp_ev_latest_quarter=ev_latest_quarter,
         fmp_income_as_reported_quarter=as_reported_latest,
-        latest_quarter_income=derivation.latest_quarter_income,
+        latest_quarter_income=fmp_latest_qtr_income,
     )
-    derivation.record.fmp_validation = gate
+    # validate_ttm_record copies ttm_source into the result already, so
+    # overwriting fmp_validation with `gate` keeps the source-primacy
+    # swap observable.
+    record.fmp_validation = gate
 
     if gate["status"] == "blocking_drift":
-        # Mirror Gate A's policy: don't persist a record that failed
-        # byte-perfect-required cross-check. Caller investigates the
-        # FMP-internal inconsistency before retrying.
         return {
             "ticker":      ticker,
             "outcome":     "blocking_drift",
@@ -105,7 +156,7 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
             "blocking":    ",".join(gate["blocking_fields"]),
         }
 
-    db.upsert_record(derivation.record)
+    db.upsert_record(record)
     return {
         "ticker":      ticker,
         "outcome":     gate["status"],   # validated | drift
