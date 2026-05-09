@@ -349,20 +349,30 @@ def validate_ingestion_record(
 
 # (human_label, phase2_path_fallback_list, fmp_endpoint, fmp_keys, tier, blocking)
 # Paths are tried in order — first non-None wins. Lets Gate B work
-# whether it sees the live calc_node state shape (`phase2.dcf.beta`) or
-# the serving-JSON shape (`phase2.beta` at top level).
+# whether it sees the live calc_node state shape OR the lead-processed
+# serving-JSON shape:
+#   beta     — live: phase2.dcf.beta;          serving: phase2.beta
+#   market_cap — live: phase2.dcf.market_cap (DCFResult.to_dict);  serving: not promoted
+#   ev_ebitda  — live: phase2.multiples.market_ev_ebitda OR phase2.ev_ebitda_market;
+#                serving: phase2.multiple_decomposition.market_ev_ebitda
+#   p_e       — calc_node doesn't compute it directly; FMP-only reference
 _GATE_B_FIELDS: List[Tuple[str, List[str], str, List[str], str, bool]] = [
-    ("beta",                       ["dcf.beta", "beta", "dcf.wacc_base"][:2],
+    ("beta",                       ["dcf.beta", "beta"],
                                                    "profile",     ["beta"],                                       "definitional", True),
     ("current_price",              ["dcf.current_price"],
                                                    "profile",     ["price"],                                      "strict",       True),
     ("market_cap",                 ["dcf.market_cap"],
                                                    "profile",     ["mktCap", "marketCap"],                        "standard",     True),
-    ("market_ev_ebitda",           ["multiple_decomposition.market_ev_ebitda"],
+    ("market_ev_ebitda",           ["multiples.market_ev_ebitda",
+                                     "multiple_decomposition.market_ev_ebitda",
+                                     "ev_ebitda_market"],
                                                    "key_metrics", ["evToEBITDA", "enterpriseValueOverEBITDA"],    "standard",     False),
-    ("market_p_e",                 ["multiple_decomposition.market_p_e", "dcf.market_p_e"],
+    ("market_p_e",                 ["multiples.market_p_e",
+                                     "multiple_decomposition.market_p_e",
+                                     "dcf.market_p_e"],
                                                    "ratios",      ["priceToEarningsRatio", "priceEarningsRatio"], "standard",     False),
-    ("intrinsic_per_share_base",   ["three_scenario_dcf.base.intrinsic_per_share"],
+    ("intrinsic_per_share_base",   ["three_scenario_dcf.base.intrinsic_per_share",
+                                     "dcf.base_intrinsic_per_share"],
                                                    "profile",     ["dcf"],                                        "sanity_only",  False),
 ]
 
