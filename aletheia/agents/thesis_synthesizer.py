@@ -558,6 +558,23 @@ YOUR TASKS
    the contrarian's `bias_detected` field which you cite as part of
    your bear case framing.
 
+   STRUCTURAL RISK ANCHORS: when the qualitative signals indicate a
+   structural risk, cite the specific field rather than restating the
+   risk in vague language. In particular:
+     - `qualitative.value_chain.substitution_pressure` ∈ {high, medium}
+       → cite it; the bear case must name what could substitute and on
+       what horizon.
+     - `qualitative.forensic.concentration_risk == True`
+       → cite it; the bear case must name the loss-of-customer / loss-
+       of-supplier scenario as a tail risk.
+     - `qualitative.strategic_context.growth_quality` ∈ {low, medium}
+       → cite it; the bear case must connect deferred-revenue or
+       working-capital decay to the downside path.
+   These citations are a HARD requirement when the underlying value
+   warrants them — the validator will not reject prose without them
+   today, but a bear case that ignores cited structural risks is
+   incomplete by design.
+
 4. BASE CASE: 2-4 sentences. Where the math lands. Cite
    `phase2.three_scenario_dcf.base.intrinsic_per_share` and
    `phase2.three_scenario_dcf.base.margin_of_safety` for the central
@@ -626,6 +643,8 @@ There are TWO `qualitative.*` citation namespaces. Pick the right one:
                 qualitative.forensic.concentration_risk,
                 qualitative.value_chain.upstream_value_leak,
                 qualitative.value_chain.strategic_position,
+                qualitative.value_chain.substitution_pressure,
+                qualitative.strategic_context.growth_quality,
                 qualitative.strategic_context.terminal_haircut,
                 qualitative.strategic_context.intangible_decay_severity.
 
