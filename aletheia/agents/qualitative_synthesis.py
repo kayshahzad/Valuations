@@ -258,6 +258,18 @@ YOUR TASKS — narrative + boolean judgments + 0-3 scenarios
       substitution_risk_score 1-10. top_substitutes: top 3 functional
       substitutes + realistic switching scenario.
 
+      substitution_pressure: synthesize substitution_risk_score (above)
+      with the gross-margin trend from PRIMARY DATA into a categorical
+      judgment. Use these anchors — do not infer from filer language
+      alone:
+        - high      = score ≥ 7  OR  gross margin contracting AND substitutes
+                      functionally near-equivalent
+        - medium    = score 4-6  OR  ambiguous threat horizon  OR  margin
+                      stable but credible substitute on multi-year horizon
+        - low       = score ≤ 3  AND  gross margin stable/expanding  AND
+                      no near-functional substitute
+        - uncertain = data insufficient (use sparingly)
+
   2c. DOWNSTREAM PRICING
       pricing_power_assessment (MINIMUM 220 CHARS — usually 3 sentences):
       Combine the EVIDENCE of pricing power (specific margins, ASPs,
@@ -276,9 +288,23 @@ YOUR TASKS — narrative + boolean judgments + 0-3 scenarios
       pass_through_capability: True if 10% price increase wouldn't
       lose customers.
 
-  2d. STRATEGIC LEVERAGE + SUMMARY
+  2d. STRATEGIC LEVERAGE + POSITION + SUMMARY
       strategic_leverage_score 1-10 (Porter five forces synthesis,
       narrative only — does NOT feed conviction or calc).
+
+      strategic_position: synthesize ROIC level (PRIMARY DATA), gross-
+      margin level + trend, upstream_value_leak (above), and
+      substitution_pressure (above) into a categorical market-position
+      judgment. Anchor on the PRIMARY DATA numbers — do NOT emit
+      "dominant" or "strong" because the 10-K language is positive:
+        - dominant  = ROIC > 25%  AND  gross margin > 50%  AND
+                      upstream_value_leak=False  AND  substitution_pressure=low
+        - strong    = ROIC > 15%  AND  gross margin > 35%  AND
+                      substitution_pressure ≤ medium
+        - moderate  = ROIC > WACC but lacks structural margin/leverage edge
+        - weak      = ROIC ≤ WACC  OR  substitution_pressure=high  OR
+                      upstream_value_leak=True
+        - uncertain = data insufficient (use sparingly)
 
       analysis_summary (MINIMUM 400 CHARS — usually 5-6 sentences):
       One paragraph synthesizing supplier power, buyer power,
@@ -293,6 +319,18 @@ YOUR TASKS — narrative + boolean judgments + 0-3 scenarios
       already flagged. quality_of_growth_risk = True if D8 < 0.7 OR
       deferred-revenue growth significantly negative vs revenue growth.
       deferred_revenue_trend: interpret the data quantitatively.
+
+      growth_quality: synthesize D8 score (PRIMARY DATA) and the FCF /
+      gross margin convergence visible in PRIMARY DATA into a categorical
+      judgment. Anchor on the numbers:
+        - high      = D8 ≥ 0.85  AND  FCF margin within ~200bps of EBIT
+                      margin (clean cash conversion, no working-capital leak)
+        - medium    = D8 in [0.7, 0.85)  OR  small persistent FCF/EBIT
+                      divergence  OR  deferred-revenue trend mildly negative
+        - low       = D8 < 0.7  OR  FCF margin chronically below EBIT
+                      (working-capital leak)  OR  deferred-revenue declining
+                      sharply vs revenue
+        - uncertain = revenue history too short or D8 unavailable
 
   3b. INTANGIBLE DECAY (patent / contract expirations)
       intangible_risk_assessment (MINIMUM 180 CHARS):

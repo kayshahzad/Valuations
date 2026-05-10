@@ -25,7 +25,7 @@ import json
 from typing import Dict, List, Literal, Optional
 
 import numpy as np
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from aletheia.contracts.interfaces import ScenarioOverride
 
@@ -59,10 +59,28 @@ class ForensicReport(BaseModel):
         description="Explain cost structure: fixed vs variable drivers, "
                     "how revenue growth flows to EBIT. Concrete examples.")
 
-    moat_score: float = Field(description="Overall moat score 1-10.")
+    moat_score: float = Field(
+        ge=0.0, le=10.0,
+        description="Overall moat score 1-10.")
     moat_attributes: Dict[str, float] = Field(
         description="Scores 1-10 for: switching_costs, network_effects, "
                     "cost_advantage, intangibles.")
+
+    @field_validator("moat_attributes")
+    @classmethod
+    def _validate_moat_attributes_bounds(cls, v: Dict[str, float]) -> Dict[str, float]:
+        for key, score in v.items():
+            try:
+                f = float(score)
+            except (TypeError, ValueError) as exc:
+                raise ValueError(
+                    f"moat_attributes[{key!r}]={score!r} is not numeric"
+                ) from exc
+            if not (0.0 <= f <= 10.0):
+                raise ValueError(
+                    f"moat_attributes[{key!r}]={f} out of [0, 10]"
+                )
+        return v
     moat_evidence: str = Field(
         description="Specific evidence from 10-K: retention rates, price hike "
                     "history, switching cost examples, patent counts.")
@@ -215,6 +233,7 @@ class ValueChainReport(BaseModel):
     substitution_pressure: Literal["high", "medium", "low", "uncertain"] = "uncertain"
 
     strategic_leverage_score: float = Field(
+        ge=0.0, le=10.0,
         description="Score 1-10 Porter Five Forces. "
                     "10=Dominant platform. 1=Commodity price taker. "
                     "Narrative color only — does NOT feed conviction or calc.")
@@ -230,6 +249,7 @@ class ValueChainReport(BaseModel):
                     "what happens if they raise prices?")
 
     substitution_risk_score: float = Field(
+        ge=0.0, le=10.0,
         description="1-10. 10=easily substituted. 1=deeply locked-in.")
     top_substitutes: str = Field(
         description="Top 3 functional substitutes and realistic switching scenario.")
