@@ -561,13 +561,13 @@ YOUR TASKS
    STRUCTURAL RISK ANCHORS: when the qualitative signals indicate a
    structural risk, cite the specific field rather than restating the
    risk in vague language. In particular:
-     - `qualitative.value_chain.substitution_pressure` ∈ {high, medium}
+     - `qualitative.value_chain.substitution_pressure` ∈ {{high, medium}}
        → cite it; the bear case must name what could substitute and on
        what horizon.
      - `qualitative.forensic.concentration_risk == True`
        → cite it; the bear case must name the loss-of-customer / loss-
        of-supplier scenario as a tail risk.
-     - `qualitative.strategic_context.growth_quality` ∈ {low, medium}
+     - `qualitative.strategic_context.growth_quality` ∈ {{low, medium}}
        → cite it; the bear case must connect deferred-revenue or
        working-capital decay to the downside path.
    These citations are a HARD requirement when the underlying value
