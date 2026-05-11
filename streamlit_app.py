@@ -458,12 +458,19 @@ def _run_add_ticker_pipeline_ui(ticker_input: str) -> None:
             "sec_validation": final.sec_validation,
             "fmp_validation": final.fmp_validation,
         }
-        st.session_state.active_ticker = final.ticker
-        st.session_state.active_view = "◊  Quality Report"
+        # The sidebar selectbox owns `active_ticker` via key=, so we can't
+        # mutate it from here (post-widget-instantiation). Stash the
+        # target in a pending slot; the next rerun applies it BEFORE the
+        # widget renders. Same trick for the view, kept symmetric even
+        # though active_view doesn't bind to a key today — protects us
+        # if it ever does.
+        st.session_state._pending_active_ticker = final.ticker
+        st.session_state._pending_active_view = "◊  Quality Report"
         st.info(
             f"**{final.ticker}** added. Switched view to **Quality Report** — "
             "scroll down to see the full validation breakdown."
         )
+        st.rerun()
 
 
 def _render_validation_table(payload: Optional[Dict[str, Any]], source: str) -> None:
@@ -606,18 +613,37 @@ def main():
     if "active_view" not in st.session_state:
         st.session_state.active_view = views[0]
 
+    # Apply any pending cross-rerun updates BEFORE the sidebar widget
+    # renders. Code that runs AFTER the selectbox can't mutate
+    # active_ticker directly (Streamlit owns the key), so the
+    # add-ticker handler etc. stash the target here and st.rerun() —
+    # this block then applies it.
+    if "_pending_active_ticker" in st.session_state:
+        st.session_state.active_ticker = st.session_state.pop("_pending_active_ticker")
+    if "_pending_active_view" in st.session_state:
+        st.session_state.active_view = st.session_state.pop("_pending_active_view")
+
+    # If the universe shrank (e.g. ticker removed mid-session) and the
+    # stored value is no longer a valid option, reset before the widget
+    # renders. Without this, Streamlit raises when key= references a
+    # session_state value not in `options`.
+    if available and st.session_state.active_ticker not in available:
+        st.session_state.active_ticker = available[0]
+
     # ── Sidebar Global Selector ───────────────────────────────────────────────
     st.sidebar.markdown("### 🎯 Target Company")
-    current_index = available.index(st.session_state.active_ticker) if st.session_state.active_ticker in available else 0
     _STATUS_ICON = {"ready": "🟢", "pending": "🟡", "not_ingested": "⚪"}
 
     def _format_ticker(t: str) -> str:
         return f"{_STATUS_ICON.get(status_by_ticker.get(t, 'ready'), '·')}  {t}"
 
-    st.session_state.active_ticker = st.sidebar.selectbox(
+    # Bind directly to session_state via key= so Streamlit syncs widget ↔
+    # state atomically. Avoids the stale-on-first-change behavior of the
+    # legacy "st.session_state.X = st.selectbox(..., index=...)" pattern.
+    st.sidebar.selectbox(
         "Select Ticker",
         options=available,
-        index=current_index,
+        key="active_ticker",
         format_func=_format_ticker,
         label_visibility="collapsed",
         help="🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
