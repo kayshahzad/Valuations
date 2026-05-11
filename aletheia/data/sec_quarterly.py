@@ -427,10 +427,14 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
 
     operating_income = _flow_ttm("OperatingIncome")
     operating_cf     = _flow_ttm("OperatingCF")
-    capex            = _flow_ttm("CapEx")  # FMP returns negative; SEC reports positive payments
-    # Make CapEx sign-convention consistent with FMP's sign (negative).
-    if capex is not None and capex > 0:
-        capex = -abs(capex)
+    capex            = _flow_ttm("CapEx")
+    # Schema convention: CapEx is stored POSITIVE (magnitude of outflow).
+    # FY cleaning engine applies abs() at cleaning_engine.py:1381 / :1672;
+    # mirror that here so TTM rows match FY rows. Was previously negated
+    # — that broke every downstream consumer (reverse_dcf, DCF projections,
+    # ratio engine) that subtracts CapEx assuming positive convention.
+    if capex is not None:
+        capex = abs(capex)
 
     # D&A is a flow item under the SEC `DepreciationDepletionAndAmortization`
     # canonical (FIELD_MAPPINGS doesn't have a single fallback list for
@@ -453,9 +457,9 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
     cash               = _instant_value(facts, "Cash")
     long_term_debt     = _instant_value(facts, "LongTermDebt")
 
-    # FCF = OpCF - CapEx (CapEx already negative on flow side)
+    # FCF = OpCF - CapEx (CapEx stored positive per schema convention)
     fcf = (
-        (operating_cf + capex)
+        (operating_cf - capex)
         if (operating_cf is not None and capex is not None)
         else None
     )
@@ -549,6 +553,7 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
         "EBITDA_Margin_Pct":  ebitda_margin_pct,
         "FCF_Margin_Pct":     fcf_margin_pct,
     }
+    record.overall_quality_score = 1.0  # provisional; Gate A.TTM tightens
     record.fmp_validation = {
         "status":      "validated",   # provisional; tightened by Gate A.TTM
         "ttm_source":  "sec_derived_quarters",

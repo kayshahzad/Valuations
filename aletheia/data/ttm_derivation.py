@@ -129,7 +129,12 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
     interest_expense = _fx(_sum_or_none(income_last4,   "interestExpense"))
     operating_cf     = _fx(_sum_or_none(cashflow_last4, "operatingCashFlow"))
     fcf              = _fx(_sum_or_none(cashflow_last4, "freeCashFlow"))
+    # FMP reports capitalExpenditure as a negative cash outflow. Schema
+    # convention stores it POSITIVE (magnitude); FY cleaning engine
+    # applies abs() at cleaning_engine.py:1381 / :1672. Mirror here.
     capex            = _fx(_sum_or_none(cashflow_last4, "capitalExpenditure"))
+    if capex is not None:
+        capex = abs(capex)
     sbc              = _fx(_sum_or_none(cashflow_last4, "stockBasedCompensation"))
     # D&A is required by the DCF engine. Sum across quarters; some FMP
     # responses only expose it on the income statement.
