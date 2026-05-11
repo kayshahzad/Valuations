@@ -576,6 +576,20 @@ def _reverse_dcf_chart(rdcf: Dict[str, Any]) -> None:
     if not rdcf:
         return
     st.markdown("##### Reverse DCF — growth priced in")
+    # Surface the data vintage. Reverse-DCF currently anchors to the
+    # latest FY-end snapshot (not TTM) because TTM rows don't yet
+    # populate clean_NormalizedEBIT / NOPAT / tax_rate — without that
+    # the implied-CAGR solver silently produces garbage (MDT case
+    # study). Label removes when TTM-aware normalization ships.
+    based_on = rdcf.get("based_on_period", "FY")
+    rdcf_fy  = rdcf.get("fiscal_year")
+    if based_on == "FY" and rdcf_fy:
+        st.caption(
+            f"Based on FY{rdcf_fy} data — last audited 10-K. "
+            "TTM-based reverse-DCF is gated on normalized-EBIT support "
+            "(scheduled, see _process_one). Growth signal will lag fresh "
+            "TTM filings until then."
+        )
     impl = rdcf.get("implied_cagr_10y") or 0
     # The live `/dcf` endpoint emits `historical_cagr_5y` (from
     # ReverseDCFResult.to_dict), while the agent-written JSON report stores

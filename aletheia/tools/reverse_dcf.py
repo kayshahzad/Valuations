@@ -103,6 +103,11 @@ class ReverseDCFResult:
     # Sensitivity grid
     sensitivity: List[SensitivityResult] = field(default_factory=list)
 
+    # Which period was the projection base? "FY" or "TTM". Surfaces to
+    # UI so the analyst knows the reverse-DCF anchored to last 10-K
+    # rather than the latest TTM snapshot.
+    based_on_period: str = "FY"
+
     warnings: List[str] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
 
@@ -165,6 +170,7 @@ class ReverseDCFResult:
             "implied_tv_ebitda": self.implied_tv_ebitda,
             "forward_ev_ebitda_justified": self.forward_ev_ebitda_justified,
             "signal": self.signal,
+            "based_on_period": self.based_on_period,
         }
 
 
@@ -227,8 +233,35 @@ class ReverseDCF:
             result.errors.append(f"No data for {ticker}")
             return result
 
-        fy = fiscal_year or int(df["fiscal_year"].max())
-        row = df[df["fiscal_year"] == fy].iloc[0]
+        # Reverse DCF must run against FY rows, not TTM. TTM records don't
+        # populate clean_NormalizedEBIT / clean_NOPAT / clean_CashTaxRate
+        # (FY-only fields produced by the cleaning engine); those become
+        # NaN → 0 in the projection, which silently zeroes NOPAT + TV and
+        # pushes the implied-CAGR solver to absurd values (MDT case study).
+        # Until TTM-aware normalization ships (the proper fix), constrain
+        # to FY. Caller's `fiscal_year=` argument is respected as-is so
+        # explicit overrides still work.
+        if "period" in df.columns:
+            fy_df = df[df["period"] == "FY"]
+            if fy_df.empty:
+                result.errors.append(f"No FY data for {ticker} (only TTM)")
+                return result
+        else:
+            fy_df = df
+
+        fy = fiscal_year or int(fy_df["fiscal_year"].max())
+        fy_match = fy_df[fy_df["fiscal_year"] == fy]
+        if fy_match.empty:
+            result.errors.append(
+                f"degraded_input: requested fiscal_year={fy} has no FY row "
+                f"for {ticker}. Latest FY in DB is "
+                f"{int(fy_df['fiscal_year'].max())}; the requested year "
+                "is likely TTM-only (10-K not yet filed). Pass an earlier "
+                "fiscal_year or wait for the 10-K."
+            )
+            return result
+        row = fy_match.iloc[0]
+        result.based_on_period = "FY"
         result.fiscal_year = fy
 
         def get(col, fallback=0.0):
@@ -240,17 +273,65 @@ class ReverseDCF:
         revenue = get("clean_Revenue")
         if "base_revenue_override" in kwargs:
             revenue = kwargs["base_revenue_override"]
-            
-        ebit = get("clean_NormalizedEBIT")
+
+        # ── Input-degradation guard (refuse to compute on broken data) ────
+        # The MDT incident: TTM rows had NaN NormalizedEBIT/NOPAT/tax_rate
+        # plus a sign-flipped CapEx; the fallback chain quietly coerced
+        # them to (0, 0, 0.21, negative) and the solver returned an
+        # absurd 36.5% implied CAGR that downstream thesis prose then
+        # cited as "extraordinary growth." The fix that prevents the
+        # whole class of bug is to refuse to run when inputs aren't
+        # well-formed, rather than silently producing reproducible-but-
+        # wrong output. Check fields BEFORE applying fallbacks.
+        def _raw(col):
+            v = row.get(col)
+            if v is None: return None
+            if isinstance(v, float) and np.isnan(v): return None
+            return float(v)
+
+        required = {
+            "clean_NormalizedEBIT": _raw("clean_NormalizedEBIT"),
+            "clean_NOPAT":          _raw("clean_NOPAT"),
+            "derived_ROIC":         _raw("derived_ROIC"),
+        }
+        missing = [k for k, v in required.items() if v is None]
+
+        capex_raw = _raw("clean_CapEx_Total")
+        if capex_raw is None:
+            capex_raw = _raw("raw_CapEx")
+        # Schema convention: CapEx is positive (magnitude of outflow). A
+        # negative value here is a sign-convention bug in the ingest
+        # pipeline that must be fixed at the source, not papered over
+        # with abs() at the consumer.
+        if capex_raw is not None and capex_raw < 0:
+            result.errors.append(
+                f"degraded_input: CapEx is negative ({capex_raw:,.0f}) — schema "
+                "expects positive outflow magnitude. Re-ingest TTM/FY or "
+                "audit ingest sign convention before re-running."
+            )
+            return result
+
+        if missing:
+            result.errors.append(
+                "degraded_input: required fields are NaN — "
+                + ", ".join(missing)
+                + ". Reverse-DCF refuses to compute on partial data; the "
+                  "implied-CAGR solver compensates silently and produces "
+                  "garbage. Re-ingest or use an earlier fiscal_year with "
+                  "complete data."
+            )
+            return result
+
+        ebit = required["clean_NormalizedEBIT"]
+        nopat = required["clean_NOPAT"]
+        roic = required["derived_ROIC"]
         ebitda = get("derived_EBITDA", ebit)
-        nopat = get("clean_NOPAT", ebit * 0.79)
-        roic = get("derived_ROIC", 0.12)
         net_debt = get("derived_NetDebt")
         tax_rate = get("clean_CashTaxRate") or get("clean_GAAP_TaxRate") or 0.21
 
         # Reinvestment ratios
         da = get("clean_Depreciation", revenue * 0.03)
-        capex = get("clean_CapEx_Total") or get("raw_CapEx", revenue * 0.04)
+        capex = capex_raw if capex_raw is not None else revenue * 0.04
         da_pct = da / revenue if revenue > 0 else 0.03
         capex_pct = capex / revenue if revenue > 0 else 0.04
         nwc_pct = 0.03
