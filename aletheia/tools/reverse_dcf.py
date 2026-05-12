@@ -37,6 +37,13 @@ from typing import Optional, List, Tuple
 import numpy as np
 from scipy.optimize import brentq
 
+from aletheia.calculations import (
+    _require_range,
+    RANGE_BOUNDS,
+    CalculationError,
+    CalculationOutputError,
+)
+
 warnings.filterwarnings("ignore")
 
 # Sector 75th percentile revenue CAGRs (Damodaran approximations, large-cap)
@@ -329,6 +336,23 @@ class ReverseDCF:
         net_debt = get("derived_NetDebt")
         tax_rate = get("clean_CashTaxRate") or get("clean_GAAP_TaxRate") or 0.21
 
+        # Tier-3 input range check on tax_rate. Catches A11-class
+        # corruption (DB returned a wild value, fallback chain produced
+        # a malformed rate). Anomaly A11 specifically — the silent 0.21
+        # statutory fallback for international filers (MDT Irish ~14-16%)
+        # is documented; the framework's per-ticker override registry
+        # accommodates it. This check catches anything outside [-1, 1].
+        tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
+        try:
+            _require_range(
+                tax_rate, min=tax_min, max=tax_max,
+                field_name="tax_rate", ticker=ticker, fn="reverse_dcf",
+                note="rates outside [-1, 1] are upstream errors",
+            )
+        except CalculationError as exc:
+            result.errors.append(str(exc))
+            return result
+
         # Reinvestment ratios
         da = get("clean_Depreciation", revenue * 0.03)
         capex = capex_raw if capex_raw is not None else revenue * 0.04
@@ -413,6 +437,20 @@ class ReverseDCF:
 
         result.wacc = wacc
 
+        # Tier-3 input range check on WACC. Catches malformed WACC
+        # (negative, super-high, NaN) before it enters the solver where
+        # it would either produce nonsense or fail to converge.
+        wacc_min, wacc_max = RANGE_BOUNDS["wacc"]
+        try:
+            _require_range(
+                wacc, min=wacc_min, max=wacc_max,
+                field_name="wacc", ticker=ticker, fn="reverse_dcf",
+                note="WACC outside [2%, 30%] suggests compute_wacc bug",
+            )
+        except CalculationError as exc:
+            result.errors.append(str(exc))
+            return result
+
         if current_ev <= 0 or revenue <= 0:
             result.errors.append("Cannot solve: EV or revenue is zero")
             return result
@@ -483,6 +521,46 @@ class ReverseDCF:
         except Exception as e:
             result.errors.append(f"Solver failed: {e}")
             implied_cagr = 0.0
+
+        # Output validation on implied_cagr. The MDT-class bug is exactly
+        # what this catches: even if individual inputs technically passed
+        # validation, they can combine to produce an implausible output
+        # (NaN EBIT coerced to 0 + negative CapEx produced 36.5% implied
+        # CAGR vs MDT's 1.85% historical). The output-sanity range catches
+        # this without depending on tracing the input degradation chain.
+        # Uses CalculationOutputError to distinguish "model produced
+        # garbage" from "input was degraded" — the former blames the
+        # model + input combination, not just upstream data.
+        cagr_min, cagr_max = RANGE_BOUNDS["implied_cagr"]
+        if not (cagr_min <= float(implied_cagr) <= cagr_max):
+            err = CalculationOutputError(
+                f"implied_cagr={implied_cagr:.4f} outside plausibility "
+                f"bounds [{cagr_min}, {cagr_max}]. This indicates input "
+                f"degradation that the input guards did not catch — "
+                f"likely a combination of individually-valid inputs "
+                f"producing nonsense output. Inspect tax_rate "
+                f"({tax_rate:.4f}), wacc ({wacc:.4f}), capex_pct "
+                f"({capex_pct:.4f}) before trusting any number here.",
+                ticker=ticker, fn="reverse_dcf",
+                field="implied_cagr_output",
+                value=float(implied_cagr),
+                expected=f"[{cagr_min}, {cagr_max}]",
+            )
+            # Honor guard mode: off swallows (legacy behavior), hard raises.
+            from aletheia.calculations import _guard_mode
+            mode = _guard_mode()
+            if mode == "hard":
+                raise err
+            if mode in ("shadow", "soft"):
+                import logging
+                logging.getLogger(__name__).warning(
+                    "reverse_dcf output sanity flag: %s", err.to_receipt()
+                )
+            # In off/shadow/soft modes the value is still returned but
+            # marked with an explicit error so downstream consumers can
+            # see it; this preserves the existing fail-soft pipeline
+            # behavior while making the implausibility visible.
+            result.errors.append(str(err))
 
         result.implied_revenue_cagr_10y = float(implied_cagr)
         # 5Y equivalent: assume 60% of 10Y rate in years 6-10
