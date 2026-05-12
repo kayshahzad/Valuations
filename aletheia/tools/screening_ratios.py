@@ -32,6 +32,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from aletheia.calculations import (
+    _require_range,
+    RANGE_BOUNDS,
+    CalculationError,
+    _guard_mode,
+)
+
 warnings.filterwarnings("ignore")
 
 
@@ -382,6 +389,29 @@ class ScreeningEngine:
         sbc          = _safe(row.get("clean_SBC"))
         sbc_pct_fcf  = _safe(row.get("clean_SBC_PctFCF"))
         tax_rate     = _safe(row.get("clean_CashTaxRate")) or 0.21
+
+        # Tier-3 input range check on tax_rate (anomaly A11 surface).
+        # 0.21 statutory fallback is in range; malformed rates (NaN
+        # surviving _safe, wild values) get caught here before they
+        # propagate into the 34-metric scorecard.
+        tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
+        try:
+            _require_range(
+                tax_rate, min=tax_min, max=tax_max,
+                field_name="tax_rate", ticker=card.ticker,
+                fn="screening_ratios._compute_metrics",
+                note="rates outside [-1, 1] are upstream errors",
+            )
+        except CalculationError as exc:
+            # ScreeningCard is fail-soft (returns N/A metrics on bad
+            # inputs); record the error and continue with the legacy
+            # fallback so the analyst still sees a populated scorecard.
+            if _guard_mode() == "hard":
+                raise
+            import logging
+            logging.getLogger(__name__).warning(
+                "screening_ratios tax_rate flagged: %s", exc
+            )
 
         # From raw_json / clean_json blobs
         current_assets = _get_json(row, "CurrentAssets") or _get_json(row, "AssetsCurrent")

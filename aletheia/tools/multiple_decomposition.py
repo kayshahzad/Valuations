@@ -34,6 +34,13 @@ from typing import Optional, List, Dict
 
 import numpy as np
 
+from aletheia.calculations import (
+    _require_range,
+    RANGE_BOUNDS,
+    CalculationError,
+    _guard_mode,
+)
+
 warnings.filterwarnings("ignore")
 
 from typing import Tuple
@@ -289,6 +296,25 @@ class MultipleDecomposition:
         net_debt = get("derived_NetDebt")
         tax_rate = get("clean_CashTaxRate") or 0.21
 
+        # Tier-3 input range check on tax_rate. Catches malformed rates
+        # before they enter the Liberti EV/EBITDA formula where they'd
+        # warp the NOPAT-via-(1-tax) term silently. The U.S. statutory
+        # 0.21 fallback is in range; A11 deeper fix (FY effective rate)
+        # deferred.
+        tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
+        try:
+            _require_range(
+                tax_rate, min=tax_min, max=tax_max,
+                field_name="tax_rate", ticker=ticker,
+                fn="multiple_decomposition.run",
+                note="rates outside [-1, 1] are upstream errors",
+            )
+        except CalculationError as exc:
+            result.warnings.append(str(exc))
+            if _guard_mode() == "hard":
+                raise
+            return result
+
         # Reinvestment rate = g / ROIC (proxy)
         # We derive g from historical CAGR
         hist = df[df["fiscal_year"] <= fy].sort_values("fiscal_year")
@@ -424,6 +450,37 @@ class MultipleDecomposition:
             result.ev_ebitda_premium = result.market_ev_ebitda - result.justified_ev_ebitda
             result.ev_ebitda_premium_pct = result.ev_ebitda_premium / result.justified_ev_ebitda
         result.vs_sector_premium = result.market_ev_ebitda - result.sector_median_ev_ebitda
+
+        # Output sanity on ev_ebitda_premium_pct. This is the field thesis
+        # prose cites ("474.1% multiple premium" — NVDA). Within [-90%,
+        # +1000%] is the plausibility band: a 90% discount means market
+        # is pricing distress (legitimate); +1000% means model degradation
+        # (justified multiple near zero or wrong unit). Outside this band
+        # is almost always a NOPAT/WACC/growth combination producing
+        # justified_ev_ebitda < 1x, which is itself the bug to surface.
+        pp = result.ev_ebitda_premium_pct
+        if pp != 0.0 and not (-0.90 <= pp <= 10.0):
+            err = (
+                f"ev_ebitda_premium_pct={pp*100:.1f}% outside plausibility "
+                f"band [-90%, +1000%]. Likely justified_ev_ebitda is near-"
+                f"zero ({result.justified_ev_ebitda:.2f}x) — check NOPAT, "
+                "WACC, growth inputs."
+            )
+            result.warnings.append(err)
+            if _guard_mode() == "hard":
+                from aletheia.calculations import CalculationOutputError
+                raise CalculationOutputError(
+                    err, ticker=ticker, fn="multiple_decomposition.run",
+                    field="ev_ebitda_premium_pct",
+                    value=float(pp), expected="[-0.90, 10.0]",
+                )
+            if _guard_mode() in ("shadow", "soft"):
+                import logging
+                logging.getLogger(__name__).warning(
+                    "multiple_decomposition output sanity: ticker=%s premium_pct=%.3f "
+                    "justified=%.2f market=%.2f",
+                    ticker, pp, result.justified_ev_ebitda, result.market_ev_ebitda,
+                )
 
         # ── Key drivers ───────────────────────────────────────────────────────
         result.drivers = [
