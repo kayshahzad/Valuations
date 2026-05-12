@@ -1,0 +1,219 @@
+"""Per-ticker exception registry for legitimate validation overrides.
+
+The registry is a plain Python dict (not YAML) — appropriate for a
+single-user / single-workstation system. Each entry MUST carry:
+
+  - reason: a documented rationale (rejected at load time if absent)
+  - created_date: ISO date the entry was added
+  - review_by_date: ISO date by which the entry must be re-justified
+
+Entries past their ``review_by_date`` trigger a structured warning at
+process startup (``log_past_due_overrides``). The registry should
+stay small: if it grows past ~20 entries, that's a signal the
+validation rules are too strict, not that the universe has many edge
+cases. Recalibrate the rules.
+
+Lookup contract:
+  ``is_override_active(ticker, override_key)`` → bool
+  returns True only if the entry exists AND has not expired (review
+  date is informational; the entry remains active until removed).
+"""
+
+from __future__ import annotations
+
+import logging
+from datetime import date
+from typing import Any, Dict, Optional
+
+logger = logging.getLogger(__name__)
+
+
+# Threshold beyond which the registry size itself is a signal that
+# validation rules need recalibration.
+_REGISTRY_SIZE_WARNING_THRESHOLD = 20
+
+
+# ─────────────────────────────────────────────────────────────────────
+# The registry.
+#
+# Format:
+#   OVERRIDES[ticker][override_key] = {
+#       "reason":          "human-readable rationale",
+#       "created_date":    "YYYY-MM-DD",
+#       "review_by_date":  "YYYY-MM-DD",
+#       # Optional fields:
+#       "fields":          ["field_name", ...],   # specific fields scoped
+#   }
+#
+# Phase 0 seed entries (from docs/calculation_anomaly_catalog.md):
+# ─────────────────────────────────────────────────────────────────────
+OVERRIDES: Dict[str, Dict[str, Dict[str, Any]]] = {
+    "MDT": {
+        "tax_rate_normal_range": {
+            "reason": "Irish-domiciled; effective rate runs 14-16%, "
+                      "below the 21-35% U.S. normal band. Use the loose "
+                      "[-1.0, 1.0] check only; do not warn on the normal-band.",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2026-11-11",
+            "fields":          ["tax_rate", "effective_tax_rate"],
+        },
+    },
+    "ASML": {
+        "tax_rate_normal_range": {
+            "reason": "Dutch-domiciled; non-U.S. statutory rate.",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2026-11-11",
+            "fields":          ["tax_rate", "effective_tax_rate"],
+        },
+    },
+    "TSM": {
+        "tax_rate_normal_range": {
+            "reason": "Taiwan-domiciled; non-U.S. statutory rate.",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2026-11-11",
+            "fields":          ["tax_rate", "effective_tax_rate"],
+        },
+    },
+    # A3: known negative-equity tickers (buyback-heavy mature companies).
+    # These are legitimate; ROE returns "n_a" instead of trying to compute.
+    "LOW": {
+        "negative_total_equity": {
+            "reason": "Buyback-heavy mature retailer; accumulated treasury "
+                      "stock exceeds paid-in capital. Multi-year negative "
+                      "equity (verified). ROE refuses to compute; report "
+                      "as n_a with reason=negative_equity.",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2027-05-11",
+            "fields":          ["total_equity", "roe"],
+        },
+    },
+    "HD": {
+        "negative_total_equity": {
+            "reason": "Historical negative equity in FY2018-2021. Same "
+                      "pattern as LOW (aggressive buybacks).",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2027-05-11",
+            "fields":          ["total_equity", "roe"],
+        },
+    },
+    # A14 (from known_issues.md): UNH / CNC float-based business models
+    # require DDM, not FCFF DCF. Already bypassed in ingestion_validator;
+    # registered here so the calc-layer guards know to skip.
+    "UNH": {
+        "skip_fcff_dcf": {
+            "reason": "Managed-care float-based business; FCFF DCF "
+                      "materially mis-prices. DDM required (Phase 3 utility "
+                      "taxonomy work).",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2027-05-11",
+            "fields":          ["dcf_engine", "reverse_dcf"],
+        },
+    },
+    "CNC": {
+        "skip_fcff_dcf": {
+            "reason": "Managed-care float-based; same pattern as UNH.",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2027-05-11",
+            "fields":          ["dcf_engine", "reverse_dcf"],
+        },
+    },
+    # A15: NEE uses non-standard XBRL tags for utility CapEx. Bypassed
+    # in ingestion_validator; flag here so the calc layer doesn't
+    # double-fail on the same condition.
+    "NEE": {
+        "utility_capex_xbrl": {
+            "reason": "Utility filer uses ConstructionInProgressGross / "
+                      "PublicUtilitiesAllowanceForFundsUsedDuringConstruction"
+                      "Additions instead of standard PP&E additions. Phase 3 "
+                      "utility taxonomy mapping pending.",
+            "created_date":    "2026-05-11",
+            "review_by_date":  "2026-11-11",
+            "fields":          ["capex"],
+        },
+    },
+}
+
+
+def is_override_active(ticker: str, override_key: str) -> bool:
+    """True if ticker has the named override registered (any status)."""
+    return override_key in OVERRIDES.get(ticker, {})
+
+
+def get_override(ticker: str, override_key: str) -> Optional[Dict[str, Any]]:
+    """Return the override record dict if active, else None."""
+    return OVERRIDES.get(ticker, {}).get(override_key)
+
+
+def log_past_due_overrides() -> int:
+    """Walk the registry; log a warning for any entry whose
+    review_by_date is past. Returns the count of past-due entries.
+
+    Call at process startup. If the count grows, validation rules are
+    probably too strict — analyst should recalibrate rather than
+    extend review dates.
+    """
+    today = date.today()
+    n_past_due = 0
+    for ticker, entries in OVERRIDES.items():
+        for override_key, record in entries.items():
+            review_str = record.get("review_by_date")
+            if not review_str:
+                logger.warning(
+                    "override_missing_review_date ticker=%s key=%s",
+                    ticker, override_key,
+                )
+                continue
+            try:
+                review_date = date.fromisoformat(review_str)
+            except ValueError:
+                logger.warning(
+                    "override_bad_review_date ticker=%s key=%s review_by=%r",
+                    ticker, override_key, review_str,
+                )
+                continue
+            if review_date < today:
+                n_past_due += 1
+                logger.warning(
+                    "override_past_due ticker=%s key=%s review_by=%s days_past=%d",
+                    ticker, override_key, review_str,
+                    (today - review_date).days,
+                )
+
+    # Size check — orthogonal signal that rules might be too strict
+    total = sum(len(v) for v in OVERRIDES.values())
+    if total >= _REGISTRY_SIZE_WARNING_THRESHOLD:
+        logger.warning(
+            "override_registry_size=%d >= threshold=%d — validation rules "
+            "may be too strict; consider recalibration rather than adding "
+            "more exceptions.",
+            total, _REGISTRY_SIZE_WARNING_THRESHOLD,
+        )
+
+    return n_past_due
+
+
+def _validate_registry_at_import() -> None:
+    """Enforce schema on the in-memory registry. Every entry must have
+    reason + created_date + review_by_date. Raises at import if any
+    entry is malformed — fail loud, not silent."""
+    required = {"reason", "created_date", "review_by_date"}
+    for ticker, entries in OVERRIDES.items():
+        for key, record in entries.items():
+            missing = required - record.keys()
+            if missing:
+                raise RuntimeError(
+                    f"OVERRIDES[{ticker!r}][{key!r}] is missing required "
+                    f"fields: {sorted(missing)}. Every entry must carry "
+                    f"reason + created_date + review_by_date."
+                )
+            for fld in ("created_date", "review_by_date"):
+                try:
+                    date.fromisoformat(record[fld])
+                except (TypeError, ValueError) as exc:
+                    raise RuntimeError(
+                        f"OVERRIDES[{ticker!r}][{key!r}].{fld} = "
+                        f"{record[fld]!r} is not a valid ISO date"
+                    ) from exc
+
+
+_validate_registry_at_import()
