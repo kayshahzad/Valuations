@@ -814,6 +814,19 @@ def _project_scenario(
     final_nopat = final.nopat
     final_ebitda = final.ebit + final.da
 
+    # Framework-explicit precondition for perpetuity: wacc - g must be
+    # a meaningful positive spread. Below 1% spread the perpetuity
+    # becomes near-singular and TV blows up. The legacy `if wacc > g`
+    # guard at the strict singularity is below; this log surfaces the
+    # near-singular range so receipts capture which scenarios fell back
+    # to the FCF×20 form.
+    if (wacc - g) <= 0.01:
+        import logging
+        logging.getLogger(__name__).info(
+            "terminal_value_wacc_g_spread_below_safe scenario=%s wacc=%.4f g=%.4f spread=%.4f",
+            assumptions.scenario_name, wacc, g, wacc - g,
+        )
+
     # Method 1: Gordon Growth TV = FCF_final × (1+g) / (WACC - g)
     if wacc > g:
         gordon_tv = final.fcff * (1 + g) / (wacc - g)
@@ -1388,6 +1401,31 @@ class DCFEngine:
                     f"exceeds current EV/EBITDA ({implied_ev_ebitda:.1f}x). "
                     f"Terminal assumptions may be too optimistic."
                 )
+
+            # Framework output sanity on TV multiple. Plausible band [3, 50]
+            # — outside that, TV math has degraded (NOPAT too high, WACC too
+            # low, growth too high). Distinct from the soft-warning above
+            # (compares to current EV/EBITDA); this checks absolute plaus-
+            # ibility regardless of current trading multiple. Honors guard
+            # mode: off swallows + warns, hard raises CalculationOutputError.
+            tv_mult = terminal.implied_tv_ebitda_multiple
+            if tv_mult != 0.0 and not (3.0 <= tv_mult <= 50.0):
+                err = CalculationOutputError(
+                    f"implied_tv_ebitda_multiple={tv_mult:.1f}x outside "
+                    "plausibility band [3, 50]. TV math has likely degraded "
+                    "— check WACC-vs-g spread, NOPAT magnitude, growth.",
+                    ticker=ticker, fn=f"dcf_engine.run({scenario_name})",
+                    field="implied_tv_ebitda_multiple",
+                    value=float(tv_mult), expected="[3, 50]",
+                )
+                if _guard_mode() == "hard":
+                    raise err
+                if _guard_mode() in ("shadow", "soft"):
+                    import logging
+                    logging.getLogger(__name__).warning(
+                        "terminal_value output sanity flag: %s", err.to_receipt()
+                    )
+                scenario_result.warnings.append(str(err))
 
             setattr(result, scenario_name, scenario_result)
 
