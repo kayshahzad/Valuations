@@ -214,10 +214,11 @@ This catalog is the framework's success criteria. Phase 1 inventory proceeds aga
 | **Pattern** | V's cleaning-engine output has neither `raw_SharesDiluted` nor `clean_SharesDiluted` populated. Investigation confirms no share-related keys appear in `raw_json` or `clean_json`. The XBRL filings DO contain dilutive-share disclosures; the cleaning engine's tag-resolution is failing to extract them. |
 | **Affected** | V (Visa), every FY row 2009–2025 |
 | **Verified** | Yes — direct DB query on V's `raw_json` returns empty share-key list |
-| **Status** | open — ingest bug, surfaces during Phase 2 hard-mode dry-run |
+| **Status** | open — ingest bug, surfaces during Phase 2 hard-mode dry-run. **Override registered** (`OVERRIDES["V"]["shares_diluted_ingest_bug"]`) with short review_by 2026-08-12; downgrades schema-contract error to soft-flag until resolver fix lands. |
 | **Severity** | P0 — breaks every per-share metric (EPS, BVPS, market_cap reconciliation) on V |
-| **Detection rule** | Schema-contract assertion already catches it (missing required Tier-1 field). Root cause needs an ingest-layer fix in `tag_resolver` or `cleaning_engine`. |
-| **Test fixture** | After fix, V should populate `raw_SharesDiluted` for every FY row; schema contract passes. |
+| **Diagnosis (2026-05-12)** | V genuinely does not tag `us-gaap:WeightedAverageNumberOfDilutedSharesOutstanding` in XBRL. The only share concept in V's companyfacts is `dei:EntityCommonStockSharesOutstanding` (point-in-time outstanding, not weighted-avg). Most other filers use the us-gaap concept; V is unusual. Real fix paths: (a) fall back to FMP `/key-metrics.dilutedShares` (simplest), (b) derive from `EarningsPerShareDiluted × NetIncome`, (c) use `dei:EntityCommonStockSharesOutstanding` as basic-shares proxy. |
+| **Detection rule** | Schema-contract assertion already catches it (missing required Tier-1 field). Root cause needs an ingest-layer fix in `tag_resolver` or `cleaning_engine` to add the FMP-fallback path. |
+| **Test fixture** | After fix, V should populate `raw_SharesDiluted` for every FY row; schema contract passes; override registry entry can be removed. |
 
 ## A15 — AXP historical Revenue gap (FY2011–FY2015)
 
@@ -264,6 +265,19 @@ This catalog is the framework's success criteria. Phase 1 inventory proceeds aga
 | **Status** | open — needs analyst confirmation. Range was widened from 0.50 to 0.75 (semis/fab norm); ORCL at 75.3% is still above the band, suggesting unit error, double-counted, or genuinely unprecedented. |
 | **Severity** | P1 — visible to analyst as soft violation; doesn't silently propagate |
 | **Detection rule** | `capex_to_revenue` range `[-0.30, 0.75]` — soft tier (range check), so flag and let analyst review. Override registry candidate IF confirmed legitimate. |
+
+## A19 — TTM derivation pulls wrong TotalEquity tag (multi-ticker)
+
+| | |
+|---|---|
+| **Pattern** | TTM stock-item extraction pulls the most recent 10-Q's `TotalEquity` value. For some filers, 10-Q tags `us-gaap:StockholdersEquity` (parent-only) while 10-K tags `us-gaap:StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest` (consolidated). The FY cleaning engine prioritizes the "Including" variant (commit 8508f92 fix for NEE); the TTM derivation does not apply the same priority. |
+| **Affected** | TXN FY2026 TTM (-42% equity drop vs FY2025), UNP (-25%), WMT (-6%), NSC (-1.4%). COST not affected (-0%). Severity correlates with NCI/minority-interest magnitude for the filer. |
+| **Verified** | Yes — verified by comparing `raw_TotalEquity` between FY and TTM rows for the five flagged tickers; TXN/UNP show drops too large to be operational (no $7B buyback in one quarter). |
+| **Status** | open — Phase 6 triage finding 2026-05-12. **Ingest-layer fix required**. The schema-contract assertion correctly flags these (Phase 6 A3-A6 violations); no override added because the bug needs real fixing, not papering over. |
+| **Severity** | P0 — affects every TTM-anchored calculation for TXN/UNP and similar NCI-heavy filers. ROE, ROIC, equity-to-assets all wrong on TTM rows for these tickers. |
+| **Detection rule** | A=L+E identity catches it via the drift (>0.5% on TXN/UNP/WMT). Phase 6 schema contract surfaces these as `accounting_equation_a_eq_l_plus_e` violations. |
+| **Fix path** | Mirror the FY cleaning engine's TotalEquity tag-priority logic in `sec_quarterly.py` / `ttm_derivation.py`. Look for the `_resolve_field` equivalent and add the same priority order: `StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest` → `StockholdersEquity`. |
+| **Test fixture** | After fix, TXN FY2026 TTM should show TotalEquity ≈ $16-17B (close to FY2025), not $9.44B. A=L+E gap should drop to <1%. |
 
 ## Phase 2 dry-run results (final, after all 4 refinements + stale-row cleanup)
 
