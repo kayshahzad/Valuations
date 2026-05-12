@@ -9,6 +9,9 @@ import numpy as np
 import json
 from typing import Tuple, Dict
 
+from aletheia.calculations._guards import _flag_unusual
+
+
 def calculate_z_score(calc_input: 'CalculationInput') -> Tuple[float, bool, bool, float, Dict]:
     """
     Calculate revenue Z-score from DuckDB clean_Revenue multi-year series.
@@ -17,24 +20,41 @@ def calculate_z_score(calc_input: 'CalculationInput') -> Tuple[float, bool, bool
         (z_score, is_peak, applies_cyclical_haircut, avg_3yr, db_context_dict)
     """
     df = calc_input.df
+    ticker = (getattr(calc_input, "classification", None)
+              and calc_input.classification.ticker) or "?"
 
     if df.empty or "clean_Revenue" not in df.columns:
+        _flag_unusual(
+            value=0, field_name="z_score", ticker=ticker,
+            fn="calculate_z_score",
+            note="empty df or no clean_Revenue column — zero-signal fallback",
+        )
         return 0.0, False, False, 0.0, {}
 
     rev_series = df.sort_values("fiscal_year")["clean_Revenue"].dropna()
     revenues = [float(r) for r in rev_series if r and not np.isnan(r)]
 
     if len(revenues) < 3:
+        _flag_unusual(
+            value=len(revenues), field_name="revenue_series_length",
+            ticker=ticker, fn="calculate_z_score",
+            note=f"only {len(revenues)} valid years; need >= 3 — zero-signal fallback",
+        )
         return 0.0, False, False, 0.0, {}
 
     mean = np.mean(revenues)
     std  = np.std(revenues)
     z_score = float((revenues[-1] - mean) / std if std > 0 else 0.0)
-    
+
     meta = calc_input.classification
     classification = "cyclical" # default
 
     if not meta:
+        _flag_unusual(
+            value=None, field_name="classification", ticker=ticker,
+            fn="calculate_z_score",
+            note="no ticker classification — zero-signal fallback",
+        )
         return 0.0, False, False, 0.0, {}
 
     try:

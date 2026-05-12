@@ -22,6 +22,7 @@ import pandas as pd
 import numpy as np
 
 from aletheia.contracts.interfaces import CalculationInput
+from aletheia.calculations._guards import _flag_unusual
 
 logger = logging.getLogger(__name__)
 
@@ -188,6 +189,11 @@ def compute_moat_fingerprint(
     ticker = classification.ticker if classification else "UNKNOWN"
 
     if df is None or df.empty:
+        _flag_unusual(
+            value=0, field_name="window_years", ticker=ticker,
+            fn="compute_moat_fingerprint",
+            note="empty df — null score returned (no moat-strength signal)",
+        )
         return MoatFingerprint(
             score=None,
             roic_persistence_score=None,
@@ -203,6 +209,12 @@ def compute_moat_fingerprint(
     window_years = len(window)
 
     if window_years < WINDOW_MIN_YEARS:
+        _flag_unusual(
+            value=window_years, field_name="window_years", ticker=ticker,
+            fn="compute_moat_fingerprint",
+            note=(f"only {window_years} years of clean data; need {WINDOW_MIN_YEARS} "
+                  "— null score (insufficient history for moat persistence)"),
+        )
         return MoatFingerprint(
             score=None,
             roic_persistence_score=None,
