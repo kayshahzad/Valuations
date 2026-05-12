@@ -221,7 +221,15 @@ def _evaluate_scenario(
     except NotImplementedError as e:
         summary["error"] = f"bypass: {e}"
     except Exception as e:
-        summary["error"] = f"{type(e).__name__}: {e}"
+        # Distinguish CalculationOutputError so downstream consumers
+        # (thesis_synthesizer) can flag the scenario differently — an
+        # implausible output isn't the same as a bypassed model or a
+        # missing input.
+        from aletheia.calculations import CalculationOutputError
+        if isinstance(e, CalculationOutputError):
+            summary["error"] = f"output_implausible: {e}"
+        else:
+            summary["error"] = f"{type(e).__name__}: {e}"
 
     return summary
 
