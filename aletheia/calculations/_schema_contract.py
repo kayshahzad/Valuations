@@ -53,7 +53,7 @@ from ._guards import (
     _require_range,
     _require_strict_nonneg,
 )
-from ._sign_conventions import IDENTITY_TOLERANCES
+from ._sign_conventions import IDENTITY_TOLERANCES, RANGE_BOUNDS
 
 
 # Business models that bypass the FCFF DCF entirely (banks, asset
@@ -94,14 +94,15 @@ def _resolve_business_model(ticker: str) -> str:
 _FY_REQUIRED_TIER1 = {
     "revenue":      [("raw", "Revenue"), ("clean", "Revenue")],
     "total_assets": [("raw", "TotalAssets")],
-    # depreciation is required for ratio math but often null at raw
-    # layer (XBRL filers split it across multiple tags); cleaning
-    # engine derives a total in derived.Depreciation_Total
-    "depreciation": [("derived", "Depreciation_Total"),
-                     ("clean", "Depreciation_Total"),
-                     ("raw", "Depreciation")],
     "shares_diluted": [("clean", "SharesDiluted"),
                        ("raw", "SharesDiluted")],
+    # depreciation intentionally NOT required at the schema layer:
+    # XBRL filers split D&A across multiple tags (GOOGL FY2015-2020
+    # parsed by cleaning engine inconsistently), and downstream calc
+    # functions (DCFEngine, reverse_dcf) already validate their own
+    # D&A requirement. Making this a persistence-time requirement
+    # would mass-reject historical rows that the calc layer can still
+    # consume via fallback paths.
 }
 
 _TTM_REQUIRED_TIER1 = {
@@ -335,12 +336,24 @@ def validate_cleaned_record_schema_contract(
                 if mode == "hard":
                     raise
 
-    # Accounting equation: A = L + E (NEE-class catch)
+    # Accounting equation: A = L + E + RedeemableNCI.
+    # The cleaning engine's TotalEquity already includes MinorityInterest
+    # (verified on MCO: gap=0 with non-zero MinorityInterest in raw) but
+    # excludes RedeemableNoncontrollingInterest — which is reported as a
+    # mezzanine equity item on most filers and is therefore omitted from
+    # both raw.TotalLiabilities and raw.TotalEquity. Adding the redeemable
+    # term to the expected side closes the gap on UNH / TSLA / CAT / TSM
+    # multi-year cluster (verified: gap matches RedeemableNCI exactly).
+    # Remaining drift after this term indicates a real ingest bug (NEE
+    # historical 2009-2018 had $25B+ gaps from utility-XBRL tag mappings).
     if (total_assets is not None and total_liab is not None
             and total_equity is not None):
+        redeemable_nci = _safe_record_field(
+            record, "raw", "RedeemableNoncontrollingInterest") or 0.0
         try:
             _require_consistent(
-                actual=total_assets, expected=(total_liab + total_equity),
+                actual=total_assets,
+                expected=(total_liab + total_equity + redeemable_nci),
                 tolerance_pct=IDENTITY_TOLERANCES["accounting_equation_a_eq_l_plus_e"],
                 identity_name="accounting_equation_a_eq_l_plus_e",
                 ticker=ticker, fn=fn, mode_override=mode_override,
@@ -367,12 +380,14 @@ def validate_cleaned_record_schema_contract(
     # ── (3) Range checks on critical ratios ─────────────────────────
     if revenue and revenue > 0:
         if capex is not None:
+            cmin, cmax = RANGE_BOUNDS["capex_to_revenue"]
             try:
                 _require_range(
-                    capex / revenue, min=-0.30, max=0.50,
+                    capex / revenue, min=cmin, max=cmax,
                     field_name="capex_to_revenue", ticker=ticker, fn=fn,
-                    note="negative→divestitures (legitimate); "
-                         ">0.50→sign or unit error",
+                    note=("negative beyond bound → sign error; "
+                          "above upper bound → unit error or wrong-tag "
+                          "(semis can run 0.50-0.75 during expansion)"),
                     mode_override=mode_override,
                 )
             except CalculationInputError as exc:

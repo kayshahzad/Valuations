@@ -231,22 +231,67 @@ This catalog is the framework's success criteria. Phase 1 inventory proceeds aga
 | **Detection rule** | Schema-contract path-walk now accepts multiple income tag locations for non-FCFF business models. |
 | **Test fixture** | A non-FCFF ticker with only `NetInterestIncome` populated (no `Revenue`) should pass the schema contract. |
 
-## Phase 2 dry-run results (after refinement)
+## A16 — RedeemableNoncontrollingInterest missing from A=L+E identity
 
-After two refinements (FCF identity auto-detects pre/post ASC 842 transition; non-FCFF business models use relaxed required-field set), hard-mode dry-run on 681 DB records:
+| | |
+|---|---|
+| **Pattern** | Cleaning engine's `TotalEquity` already includes regular `MinorityInterest` (verified on MCO: gap=0 with non-zero MI), but excludes `RedeemableNoncontrollingInterest` because most filers report it as a mezzanine equity item between liabilities and stockholders' equity. Identity-side adjustment required. |
+| **Affected** | UNH (14 FYs, every year 2012-2025), TSLA FY2017-21 (5), CAT (some), TSM FY2024, others |
+| **Verified** | Yes — gap matches `raw.RedeemableNoncontrollingInterest` exactly on UNH/TSLA/TSM |
+| **Status** | fixed-going-forward — schema contract now subtracts RedeemableNCI from the expected side. UNH/TSLA/CAT/TSM small-drift cluster resolved. |
+| **Severity** | n/a (legitimate accounting reality, not a bug) |
+| **Detection rule** | `TotalAssets ≈ TotalLiabilities + TotalEquity + RedeemableNoncontrollingInterest` within 0.5% tolerance |
+| **Test fixture** | UNH FY2023 with RedeemableNCI=$4.5B should pass identity. |
 
-- **599 pass** (up from 564, +35)
-- **82 violate** (down from 117, −35)
+## A17 — META TTM CapEx sign (manifestation of A1 + A6 in stale row)
 
-Remaining violations by category:
-- 49 A=L+E accounting-equation drifts (NEE utility tags, TSLA, GOOGL, CAT — real Phase 6 triage)
-- 21 shares_diluted missing (V universe-wide per A14; UNH some years)
-- 9 depreciation missing (financial-services may legitimately not have this)
-- 3 capex_to_revenue out of range (TSLA growth-investment, range-calibration question)
+| | |
+|---|---|
+| **Pattern** | META FY2025 TTM persisted with raw_CapEx = −$62.7B — pre-CapEx-fix data sitting in a stale row that A1 didn't clean up because A1's auto-cleanup only deletes when a fresh FY2026 TTM exists. META's fresh row IS FY2026 TTM v12 with positive CapEx (correct), so this row is now eligible for the stale-row sweep. |
+| **Affected** | META FY2025 TTM (period_end 2025-09-30), plus 7 other tickers in the same A1 cluster |
+| **Verified** | Yes — stale row deleted as part of Phase 2 refinement |
+| **Status** | fixed |
+| **Severity** | P0 if it had been read by calc layer (would have produced sign-flipped FCFF) |
+| **Detection rule** | Stale-row supersession: when fresh FY=N TTM exists for ticker, delete FY=N-1 TTM rows. Implemented as one-shot cleanup; ongoing supersession needs a tombstone column at ingest time. |
 
-These are the Phase 6 triage categories the user's migration plan anticipated:
-- True data bugs → A14 (V shares), some A=L+E cases
-- Legitimate edge cases → financial-services depreciation
-- Validation-rule-too-strict → capex/revenue range may need recalibration for hyper-growth
-- Fallback-was-load-bearing → likely no cases here (the FCF auto-detect handled the only such case)
+## A18 — ORCL FY2026 TTM CapEx/revenue at 75.3% (analyst-attention case)
+
+| | |
+|---|---|
+| **Pattern** | ORCL TTM through Mar 2026 reports CapEx=$48.25B on revenue=$64.1B — 75% capex/revenue. ORCL FY2025 FY was 37%, so the ratio doubled in one period. Consistent with publicly-disclosed Oracle AI data-center buildout for OCI capacity, but the magnitude is at the edge of plausibility and worth verifying against ORCL's investor presentations. |
+| **Affected** | ORCL FY2026 TTM only |
+| **Verified** | Yes |
+| **Status** | open — needs analyst confirmation. Range was widened from 0.50 to 0.75 (semis/fab norm); ORCL at 75.3% is still above the band, suggesting unit error, double-counted, or genuinely unprecedented. |
+| **Severity** | P1 — visible to analyst as soft violation; doesn't silently propagate |
+| **Detection rule** | `capex_to_revenue` range `[-0.30, 0.75]` — soft tier (range check), so flag and let analyst review. Override registry candidate IF confirmed legitimate. |
+
+## Phase 2 dry-run results (final, after all 4 refinements + stale-row cleanup)
+
+Trajectory across the four iterative refinements:
+
+| Stage | Violators | Notes |
+|---|---|---|
+| Initial hard-mode dry-run | 117 | Universe baseline |
+| + FCF identity auto-detect (pre/post ASC-842) | 82 | All AMZN multi-year FCF false-positives resolved |
+| + Non-FCFF business-model relaxed required set | 82 | UNH/CNC/AXP/JPM/BRK-B legitimately excused |
+| + RedeemableNCI in A=L+E identity | 53 | UNH/TSLA/CAT/TSM/MCO small-drift cluster resolved |
+| + Depreciation dropped from required (calc-layer enforces own) | 53 | (was redundant with calc-layer guards) |
+| + capex/revenue widened to [-0.30, 0.75] (semi-fab norm) | 53 | TSM FY2021 53% accepted |
+| + Stale FY2025 TTM rows deleted (A1 cleanup) | 52 | 8 of 10 candidates resolved; HD/LOW remain |
+
+Final breakdown (Phase 6 triage queue):
+
+- **30 A=L+E drifts** (real ingest signal):
+  - NEE FY2009-2018: 10 — historical utility-XBRL tag mapping (commit 8508f92 only fixed recent years; backfill needed)
+  - WMT FY2013/2016/2017 + FY2026 TTM: 4
+  - TSLA FY2015-21: 6 — operating lease accounting transitions
+  - CAT FY2009-2011: 3 — pre-ASC-842
+  - LOW/MCO/COST/TSM/UNP/TXN/NSC/NVDA: 7 scattered
+- **21 shares_diluted missing** (ingest coverage):
+  - V universe-wide: 17 — anomaly A14 ingest bug
+  - TSLA pre-2015: 4 — historical coverage gap
+- **1 capex/revenue exceedance**:
+  - ORCL FY2026 TTM 75.3% — anomaly A18, analyst-review case
+
+**Pass rate: 92.3%** (621 / 673 records). The framework correctly accommodates legitimate accounting variation (NCI, lease transitions, business-model differences) while surfacing 52 real data issues for triage. Phase 6 work then categorizes each into true bugs / legitimate edge cases / fallback-was-load-bearing / rule-too-strict.
 

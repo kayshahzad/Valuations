@@ -116,7 +116,11 @@ TIER_3_NO_SIGN_RULE = frozenset({
 # ─────────────────────────────────────────────────────────────────────
 RANGE_BOUNDS = {
     # Reinvestment / capital intensity
-    "capex_to_revenue":               (-0.30, 0.50),   # negative = net divestitures
+    # capex/revenue upper bound: 0.75 covers semiconductor fabs at peak
+    # expansion (TSMC routinely 40-55%; samsung memory 50%+). Sub-0.30
+    # negative covers normal net-divestiture years (GE breakup ~-15%);
+    # < -0.30 indicates sign error.
+    "capex_to_revenue":               (-0.30, 0.75),
     "da_to_revenue":                  (0.0, 0.40),     # D&A as % of revenue
     "fcf_to_revenue":                 (-1.0, 0.60),    # growth-investment can go very negative
     "operating_cash_flow_to_revenue": (-1.0, 0.60),
