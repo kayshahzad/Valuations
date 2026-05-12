@@ -44,6 +44,25 @@ from aletheia.calculations import (
     CalculationOutputError,
 )
 
+
+def _reverse_dcf_mode() -> str:
+    """Phase 6 Migration Step 3 — reverse_dcf is in hard-mode enforcement.
+
+    Returns 'hard' by default so input range checks (tax_rate, WACC) and
+    output sanity (implied_cagr ∈ [-50%, +100%]) raise on violation, even
+    when the global ALETHEIA_GUARD_MODE is shadow/soft. This was where
+    the MDT incident manifested; flipping to hard prevents the same
+    silent corruption pattern from recurring.
+
+    Kill switch: ``ALETHEIA_GUARD_MODE=off`` explicitly disables
+    enforcement everywhere (for emergency rollback). Other modes
+    (shadow/soft/hard) keep this function in hard mode.
+    """
+    import os
+    env = os.environ.get("ALETHEIA_GUARD_MODE", "").strip().lower()
+    return "off" if env == "off" else "hard"
+
+
 warnings.filterwarnings("ignore")
 
 # Sector 75th percentile revenue CAGRs (Damodaran approximations, large-cap)
@@ -343,11 +362,13 @@ class ReverseDCF:
         # is documented; the framework's per-ticker override registry
         # accommodates it. This check catches anything outside [-1, 1].
         tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
+        _local_mode = _reverse_dcf_mode()
         try:
             _require_range(
                 tax_rate, min=tax_min, max=tax_max,
                 field_name="tax_rate", ticker=ticker, fn="reverse_dcf",
                 note="rates outside [-1, 1] are upstream errors",
+                mode_override=_local_mode,
             )
         except CalculationError as exc:
             result.errors.append(str(exc))
@@ -446,6 +467,7 @@ class ReverseDCF:
                 wacc, min=wacc_min, max=wacc_max,
                 field_name="wacc", ticker=ticker, fn="reverse_dcf",
                 note="WACC outside [2%, 30%] suggests compute_wacc bug",
+                mode_override=_reverse_dcf_mode(),
             )
         except CalculationError as exc:
             result.errors.append(str(exc))
@@ -546,9 +568,12 @@ class ReverseDCF:
                 value=float(implied_cagr),
                 expected=f"[{cagr_min}, {cagr_max}]",
             )
-            # Honor guard mode: off swallows (legacy behavior), hard raises.
-            from aletheia.calculations import _guard_mode
-            mode = _guard_mode()
+            # Phase 6 Step 3: reverse_dcf defaults to hard-mode enforcement
+            # for output sanity. The function-level resolver respects the
+            # ALETHEIA_GUARD_MODE=off kill switch (legacy behavior) but
+            # otherwise raises CalculationOutputError so the MDT-class
+            # silent-corruption pattern can never recur on this code path.
+            mode = _reverse_dcf_mode()
             if mode == "hard":
                 raise err
             if mode in ("shadow", "soft"):
