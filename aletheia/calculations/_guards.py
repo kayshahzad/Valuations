@@ -73,8 +73,14 @@ def _guard_mode(override: Optional[str] = None) -> str:
     """Resolve the active guard mode.
 
     Precedence: explicit ``override`` arg > ``ALETHEIA_GUARD_MODE``
-    env var > default ``"off"``. Reads env on every call so a kill-
-    switch flip takes effect immediately without process restart.
+    env var > default ``"shadow"``. Reads env on every call so a
+    kill-switch flip takes effect immediately without process restart.
+
+    Default changed from ``"off"`` to ``"shadow"`` as part of the
+    Phase 6 migration. Shadow mode is observational — it logs
+    violations to ``audits/guard_violations_*.jsonl`` but never
+    raises. Existing pipelines run identically; only the audit log
+    is new. To opt out, set ``ALETHEIA_GUARD_MODE=off`` explicitly.
     """
     if override is not None:
         if override not in _VALID_MODES:
@@ -83,8 +89,8 @@ def _guard_mode(override: Optional[str] = None) -> str:
                 f"{sorted(_VALID_MODES)}"
             )
         return override
-    env = os.environ.get(_ENV_VAR, "off").strip().lower()
-    return env if env in _VALID_MODES else "off"
+    env = os.environ.get(_ENV_VAR, "shadow").strip().lower()
+    return env if env in _VALID_MODES else "shadow"
 
 
 def _should_raise(mode: str) -> bool:

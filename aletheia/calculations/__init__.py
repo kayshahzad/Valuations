@@ -62,6 +62,19 @@ from ._guards import (
     _guard_mode,
 )
 from ._schema_contract import validate_cleaned_record_schema_contract
+from ._logging import setup_guard_audit_logging, get_today_audit_path
+
+
+# Auto-activate audit logging on first import. The setup is idempotent
+# (won't double-attach), startup banner goes to stderr so any caller
+# can see which mode is active and where violations land.
+#
+# Suppressed when ALETHEIA_GUARD_MODE is unset OR explicitly 'off' — no
+# need to maintain an audit log for a no-op framework. Activated for
+# shadow / soft / hard modes where violations actually flow.
+import os as _os
+if _os.environ.get("ALETHEIA_GUARD_MODE", "off").lower() != "off":
+    setup_guard_audit_logging()
 
 __all__ = [
     # primitives
@@ -90,4 +103,7 @@ __all__ = [
     "_guard_mode",
     # schema contract
     "validate_cleaned_record_schema_contract",
+    # audit-log setup
+    "setup_guard_audit_logging",
+    "get_today_audit_path",
 ]
