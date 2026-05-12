@@ -37,6 +37,14 @@ from typing import Optional, Dict, List, Tuple
 import numpy as np
 import pandas as pd
 
+from aletheia.calculations import (
+    _require_range,
+    RANGE_BOUNDS,
+    CalculationError,
+    CalculationOutputError,
+    _guard_mode,
+)
+
 
 
 warnings.filterwarnings("ignore")
@@ -1049,6 +1057,23 @@ class DCFEngine:
         # Phase 3 — analyst tax_rate override from ScenarioOverride
         if profile.tax_rate_override is not None:
             tax_rate = profile.tax_rate_override
+
+        # Tier-3 input range check on tax_rate (anomaly A11 surface).
+        # In-range value (incl. 21% U.S. statutory fallback) passes;
+        # malformed rates (NaN, >100%, sub-(-100%)) caught here before
+        # they enter compute_wacc and the scenario projection.
+        tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
+        try:
+            _require_range(
+                tax_rate, min=tax_min, max=tax_max,
+                field_name="tax_rate", ticker=ticker, fn="dcf_engine.run",
+                note="rates outside [-1, 1] are upstream errors",
+            )
+        except CalculationError as exc:
+            result.errors.append(str(exc))
+            if _guard_mode() == "hard":
+                raise
+            return result
         long_term_debt = get("raw_LongTermDebt", 0.0)
         total_equity_book = get("raw_TotalEquity", 0.0)
 
@@ -1252,6 +1277,23 @@ class DCFEngine:
         result.beta = beta
         result.wacc_base = wacc_base
 
+        # Tier-3 input range check on resolved WACC. compute_wacc clips
+        # to [4%, 18%] internally but the framework primitive provides a
+        # second-layer guard in case the clip is bypassed or future
+        # refactors widen the band.
+        wacc_min, wacc_max = RANGE_BOUNDS["wacc"]
+        try:
+            _require_range(
+                wacc_base, min=wacc_min, max=wacc_max,
+                field_name="wacc_base", ticker=ticker, fn="dcf_engine.run",
+                note="WACC outside [2%, 30%] suggests compute_wacc bug",
+            )
+        except CalculationError as exc:
+            result.errors.append(str(exc))
+            if _guard_mode() == "hard":
+                raise
+            return result
+
         if self.verbose:
             print(f"  Rf:      {rf:.2%}")
             print(f"  Beta:    {beta:.2f}")
@@ -1378,6 +1420,56 @@ class DCFEngine:
         if quality_issues:
             result.confidence = "low"
             result.warnings.extend(i.description for i in quality_issues)
+
+        # ── Step 8: Output sanity validation on per-scenario IPS ────────────
+        # The MDT-class structural defense applied to IPS: even if every
+        # individual input passed validation, a combination producing
+        # nonsense (intrinsic_per_share = 0 / NaN / negative / orders-of-
+        # magnitude off vs current_price) is itself a signal worth raising.
+        # Honors guard mode — off swallows, hard raises.
+        price = float(result.current_price or 0.0)
+        for scn_name in ("bull", "base", "bear"):
+            scn = getattr(result, scn_name, None)
+            if scn is None:
+                continue
+            ips = result.intrinsic_per_share(scn.enterprise_value, result.net_debt)
+            if ips is None:
+                continue
+            ips_f = float(ips)
+            # Two checks: (1) finite + non-negative for bull/base (bear can be
+            # negative on distressed scenarios but only down to 0), (2) not
+            # > 100× current price (silent inflation pattern).
+            implausible = False
+            reason = ""
+            if not (ips_f == ips_f):  # NaN
+                implausible, reason = True, "NaN per-share value"
+            elif ips_f < 0 and scn_name in ("bull", "base"):
+                implausible, reason = True, f"negative IPS in {scn_name} ({ips_f:.2f})"
+            elif price > 0 and ips_f > price * 100:
+                implausible, reason = True, (
+                    f"IPS {ips_f:.2f} is >100x current price {price:.2f} — "
+                    "model degraded or unit error"
+                )
+            elif price > 0 and 0 < ips_f < price * 0.01:
+                implausible, reason = True, (
+                    f"IPS {ips_f:.2f} is <1% of current price {price:.2f} — "
+                    "model degraded or scenario over-pessimistic"
+                )
+            if implausible:
+                err = CalculationOutputError(
+                    f"{scn_name} scenario IPS implausible: {reason}",
+                    ticker=ticker, fn="dcf_engine.run",
+                    field=f"{scn_name}.intrinsic_per_share",
+                    value=ips_f, expected=f"plausible vs current_price={price:.2f}",
+                )
+                if _guard_mode() == "hard":
+                    raise err
+                if _guard_mode() in ("shadow", "soft"):
+                    import logging
+                    logging.getLogger(__name__).warning(
+                        "dcf_engine output sanity flag: %s", err.to_receipt()
+                    )
+                result.errors.append(str(err))
 
         return result
 
