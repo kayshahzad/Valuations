@@ -346,9 +346,25 @@ def _instant_value(
     facts: Dict[str, Any], canonical_name: str,
 ) -> Optional[float]:
     """For balance-sheet stocks (TotalAssets, Cash, etc.), pick the
-    most recent 10-Q instant fact."""
+    most recent instant fact across ALL priority tags, breaking ties in
+    favor of higher-priority tags.
+
+    Anomaly A19 motivated this design: TXN tagged
+    StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest
+    in 2009-only (4 ancient facts) and switched to plain StockholdersEquity
+    for every filing after. The previous implementation returned the most-
+    recent fact from THE FIRST tag with any data — which returned the
+    2009 value for TXN's 2026 TTM record. The fix considers freshness
+    across tags and prefers the higher-priority tag only when freshness
+    is comparable.
+    """
     rules = FIELD_MAPPINGS.get(canonical_name, {})
-    for tag in rules.get("default", []):
+    tag_list = rules.get("default", [])
+
+    # Walk every priority tag, collect the most-recent instant fact
+    # from each (with its end-date and priority rank).
+    candidates: List[Tuple[str, int, float]] = []  # (end_date, priority, value)
+    for priority, tag in enumerate(tag_list):
         all_facts = _facts_for_tag(facts, tag)
         if not all_facts:
             continue
@@ -361,10 +377,18 @@ def _instant_value(
             continue
         instants.sort(key=lambda f: f.get("end", ""), reverse=True)
         try:
-            return float(instants[0]["val"])
+            candidates.append((instants[0]["end"], priority,
+                               float(instants[0]["val"])))
         except (TypeError, ValueError, KeyError):
             continue
-    return None
+
+    if not candidates:
+        return None
+
+    # Sort by (end_date DESC, priority ASC). First wins:
+    # freshest fact, ties broken in favor of higher-priority tag.
+    candidates.sort(key=lambda x: (x[0], -x[1]), reverse=True)
+    return candidates[0][2]
 
 
 @dataclass

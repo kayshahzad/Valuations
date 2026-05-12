@@ -130,6 +130,21 @@ OVERRIDES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "review_by_date":  "2026-11-11",
             "fields":          ["capex"],
         },
+        "utility_total_liabilities_aggregation": {
+            "reason": "Utility-filer XBRL: NEE's TotalLiabilities tag "
+                      "excludes regulatory liabilities, deferred income tax "
+                      "credits, and subsidiary debt aggregations that are "
+                      "filed under utility-specific tags (RegulatoryLiability"
+                      "Noncurrent, DeferredTaxLiabilitiesNoncurrent, etc.). "
+                      "Same root cause family as A15 (utility CapEx XBRL). "
+                      "Affects A=L+E identity by 30-50% gap on historical "
+                      "FY2009-FY2018; recent years (FY2019+) less affected as "
+                      "newer filings use more standardized aggregation. Full "
+                      "fix requires utility-sector tag-priority extension.",
+            "created_date":    "2026-05-12",
+            "review_by_date":  "2027-05-12",
+            "fields":          ["accounting_equation_a_eq_l_plus_e"],
+        },
     },
     # B1 — TSLA pre-2015 shares_diluted historical coverage gap.
     # Tesla's early-public-company XBRL filings (FY2011-2014) don't

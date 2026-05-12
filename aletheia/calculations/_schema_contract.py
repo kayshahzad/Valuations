@@ -385,6 +385,19 @@ def validate_cleaned_record_schema_contract(
 
         if _within(total_assets, expected_with_nci) or _within(total_assets, expected_no_nci):
             pass  # at least one form holds
+        elif _override_covers_field(ticker, "accounting_equation_a_eq_l_plus_e"):
+            # Override registry covers this ticker's accounting-equation
+            # identity (typically utility-filer XBRL aggregation gaps).
+            # Soft-flag with full context so the violation is visible in
+            # receipts but doesn't block persist / raise in hard mode.
+            err_no = abs(total_assets - expected_no_nci)
+            _flag_unusual(
+                value=total_assets, field_name="accounting_equation_a_eq_l_plus_e",
+                ticker=ticker, fn=fn,
+                note=(f"A=L+E gap=${err_no/1e9:.2f}B covered by override "
+                      f"registry for {ticker}; soft-flagged not raised"),
+                mode_override=mode_override,
+            )
         else:
             # Neither form satisfies — real violation. Emit via the
             # closer of the two forms for the most informative error.
