@@ -280,6 +280,18 @@ class InvestmentDatabase:
             "ALTER TABLE company_records "
             "ADD COLUMN IF NOT EXISTS period VARCHAR DEFAULT 'FY'"
         )
+
+        # Phase 6 Migration Step 2: schema-contract violations receipt.
+        # Captures the per-record output of
+        # validate_cleaned_record_schema_contract() so the UI can surface
+        # data-quality warnings to analysts. JSON-encoded list of
+        # violation dicts (category, field, value, expected, message).
+        # NULL or '[]' = clean record. Soft-mode + hard-mode UI reads
+        # this to render "data quality" panels.
+        self._conn.execute(
+            "ALTER TABLE company_records "
+            "ADD COLUMN IF NOT EXISTS schema_violations_json VARCHAR"
+        )
         self._conn.execute(
             "UPDATE company_records SET period='FY' WHERE period IS NULL"
         )
@@ -614,9 +626,16 @@ class InvestmentDatabase:
         # function honors ALETHEIA_GUARD_MODE: 'off' is a no-op, 'shadow'
         # logs violations, 'soft' logs + surfaces, 'hard' raises and the
         # caller's try/except decides whether to skip persist.
+        #
+        # Step 2 (soft mode): capture the violations list so the UI can
+        # surface a "Data Quality" panel. validate_cleaned_record_schema_
+        # contract returns (persist_ok, violations) in all non-hard modes;
+        # in hard mode it raises before returning. The violations list is
+        # JSON-serialized below into schema_violations_json.
         from aletheia.calculations import validate_cleaned_record_schema_contract
+        schema_violations: list = []
         try:
-            validate_cleaned_record_schema_contract(record)
+            _ok, schema_violations = validate_cleaned_record_schema_contract(record)
         except Exception:
             # In hard mode this propagates and the caller decides; the
             # framework's responsibility is just to raise loudly. We
@@ -755,6 +774,13 @@ class InvestmentDatabase:
             "fmp_validation_skip_reason": (record.fmp_validation or {}).get("skip_reason"),
             "fmp_validation_json":        json.dumps(record.fmp_validation or {}, default=str),
             "fmp_validated_at":           (record.fmp_validation or {}).get("fetched_at"),
+
+            # Phase 6 Migration Step 2: schema-contract violations
+            # captured from validate_cleaned_record_schema_contract()
+            # earlier in this method. Empty list when record is clean;
+            # populated list when shadow/soft mode found violations.
+            # UI reads this column to render the Data Quality panel.
+            "schema_violations_json":     json.dumps(schema_violations, default=str),
         }
 
         df = pd.DataFrame([row])

@@ -337,7 +337,15 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
         hide_index=True,
         use_container_width=True,
         column_config={
-            "FY":         st.column_config.NumberColumn("FY", format="%d"),
+            "FY":         st.column_config.NumberColumn(
+                "Year", format="%d",
+                help=(
+                    "Calendar year of the period end. For TTM rows this is "
+                    "the year of the latest 10-Q's period_end (e.g. 2026 "
+                    "for a TTM ending Mar 2026), NOT a closed fiscal year. "
+                    "Read this column together with the Period column."
+                ),
+            ),
             "Period":     st.column_config.TextColumn(
                 "Period", width="small",
                 help="TTM = trailing twelve months (latest filing); FY = fiscal year (audited).",
@@ -380,6 +388,51 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             ),
         },
     )
+
+
+def _render_schema_quality_panel(schema_violations: Dict[str, Any]) -> None:
+    """Phase 6 Migration Step 2b — surface schema-contract violations.
+
+    Reads the ``schema_violations`` block on the bundle (populated from
+    ``schema_violations_json`` column in DuckDB, captured at
+    persistence time by validate_cleaned_record_schema_contract). When
+    the framework's shadow/soft mode found violations on this ticker's
+    records, this panel renders them as a Data Quality expander so the
+    analyst sees exactly what was flagged and on which period."""
+    fy_v = schema_violations.get("fy") or []
+    ttm_v = schema_violations.get("ttm") or []
+    if not fy_v and not ttm_v:
+        return  # clean record — nothing to surface
+
+    total = len(fy_v) + len(ttm_v)
+    label = (
+        f"⚠ Data Quality — {total} schema-contract "
+        f"flag{'s' if total != 1 else ''} (non-blocking, click for detail)"
+    )
+    with st.expander(label, expanded=False):
+        st.caption(
+            "These flags came from the calculation-layer validation framework "
+            "(shadow mode). They indicate data anomalies the framework "
+            "detected at persistence time — missing required fields, identity "
+            "violations (e.g. A=L+E off), or out-of-range ratios. "
+            "Non-blocking: the record is persisted and the dashboard renders "
+            "normally; this panel surfaces what was flagged so an analyst "
+            "can drill in."
+        )
+        for label_str, vios in (("Latest FY", fy_v), ("TTM", ttm_v)):
+            if not vios:
+                continue
+            st.markdown(f"**{label_str}**")
+            rows = []
+            for v in vios:
+                rows.append({
+                    "Category": v.get("category", "—"),
+                    "Field":    v.get("field", "—"),
+                    "Value":    str(v.get("value", ""))[:50],
+                    "Expected": str(v.get("expected", ""))[:50],
+                })
+            df_v = pd.DataFrame(rows)
+            st.dataframe(df_v, hide_index=True, use_container_width=True)
 
 
 def _render_validation_drift_panel(
@@ -618,6 +671,9 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
         st.markdown("#### Multi-year history")
         _fiscal_history_table(history, ttm=ttm)
         _render_validation_drift_panel(history, ttm)
+        # Phase 6 Step 2b: Data Quality panel sourced from
+        # validate_cleaned_record_schema_contract persistence-time output.
+        _render_schema_quality_panel(bundle.get("schema_violations") or {})
 
     # ── Validation legend ─────────────────────────────────────────────────
     st.markdown("---")

@@ -514,6 +514,29 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
     # there's no extra API call.
     if ttm_snapshot is not None:
         _attach_prior_year_ttm(ticker, ttm_snapshot)
+
+    # Phase 6 Step 2b: schema-contract violations from the persistence
+    # boundary. Reads schema_violations_json from the latest FY row +
+    # the TTM row (if present). The UI surfaces these in a Data Quality
+    # panel so analysts can see what the framework flagged on this
+    # ticker's records.
+    def _parse_violations(s):
+        # NaN-safe: legacy records (pre-Phase-6) may have null in this
+        # column, which pandas surfaces as float NaN, not None/empty.
+        if s is None or s == "" or s == "[]":
+            return []
+        if isinstance(s, float):  # NaN
+            return []
+        try:
+            return json.loads(s)
+        except Exception:
+            return []
+    schema_violations = {
+        "fy":  _parse_violations(latest.get("schema_violations_json")),
+        "ttm": _parse_violations(ttm_history.iloc[-1].get("schema_violations_json"))
+                if not ttm_history.empty else [],
+    }
+
     bundle: Dict[str, Any] = {
         "identity":         _build_identity(ticker, latest),
         "freshness":        _build_freshness(latest, ttm_snapshot),
@@ -523,6 +546,7 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
         "returns_capital":  _build_returns_capital(latest, clean_json, raw_json),
         "lease_items":      _build_lease_items(clean_json, raw_json),
         "fiscal_history":   _build_fiscal_history(fy_history),
+        "schema_violations": schema_violations,
         "dcf_inputs":       {},
         "dcf_scenarios":    {},
         "projections":      [],

@@ -40,11 +40,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from ._errors import (
-    CalculationConsistencyError,
-    CalculationError,
-    CalculationInputError,
-)
+from ._errors import CalculationError
 from ._guards import (
     _flag_unusual,
     _guard_mode,
@@ -55,6 +51,52 @@ from ._guards import (
 )
 from ._sign_conventions import IDENTITY_TOLERANCES, RANGE_BOUNDS
 from ._overrides import OVERRIDES
+
+
+def _collect_violation(check_callable, *args, **kwargs):
+    """Run a guard check at force-hard semantics to collect any
+    violation regardless of the system's actual mode. Returns the
+    CalculationError instance if the check failed, None otherwise.
+
+    Why: in shadow/soft mode, the framework primitives log but don't
+    raise, so a naive try/except in the schema-contract function never
+    sees the violation and can't collect it for persistence. Forcing
+    hard-mode semantics locally captures every violation; the caller
+    decides what to do with it (log + persist + optionally re-raise).
+
+    The hard-mode ERROR log emitted by the primitive is suppressed
+    during the collection call so callers see exactly one structured
+    log entry per violation, with the real mode in the receipt.
+    """
+    import logging
+    guard_logger = logging.getLogger("aletheia.calculations._guards")
+    old_level = guard_logger.level
+    guard_logger.setLevel(logging.CRITICAL + 1)
+    try:
+        kwargs["mode_override"] = "hard"
+        check_callable(*args, **kwargs)
+        return None
+    except CalculationError as exc:
+        return exc
+    finally:
+        guard_logger.setLevel(old_level)
+
+
+def _emit_collected(
+    exc: CalculationError, mode: str, violations: list,
+) -> None:
+    """Append a collected violation to the list AND emit a structured
+    log at the system's real mode (not the forced-hard mode used for
+    collection)."""
+    import logging
+    record = exc.to_receipt()
+    record["mode"] = mode
+    violations.append(record)
+    guard_logger = logging.getLogger("aletheia.calculations._guards")
+    if mode == "hard":
+        guard_logger.error("calc_guard_violation %s", record)
+    else:
+        guard_logger.warning("calc_guard_violation %s", record)
 
 
 def _override_covers_field(ticker: str, field: str) -> bool:
@@ -212,7 +254,6 @@ def validate_cleaned_record_schema_contract(
 
     ticker = _record_ticker(record)
     period = _record_period(record)
-    fy = _record_fy(record)
     fn = f"schema_contract({period})"
 
     # Business-model-aware required-field selection. Non-FCFF business
@@ -244,25 +285,19 @@ def validate_cleaned_record_schema_contract(
                     mode_override=mode_override,
                 )
                 continue
-            violations.append({
-                "category": "missing_required_field",
-                "field": canonical, "period": period,
-                "fy": fy,
-            })
-            try:
-                _require_finite(None, canonical, ticker=ticker, fn=fn,
-                                mode_override=mode_override)
-            except CalculationError:
+            exc = _collect_violation(_require_finite, None, canonical,
+                                     ticker=ticker, fn=fn)
+            if exc:
+                _emit_collected(exc, mode, violations)
                 if mode == "hard":
-                    raise
+                    raise exc
         else:
-            try:
-                _require_strict_nonneg(v, canonical, ticker=ticker, fn=fn,
-                                       mode_override=mode_override)
-            except CalculationError as exc:
-                violations.append(exc.to_receipt())
+            exc = _collect_violation(_require_strict_nonneg, v, canonical,
+                                     ticker=ticker, fn=fn)
+            if exc:
+                _emit_collected(exc, mode, violations)
                 if mode == "hard":
-                    raise
+                    raise exc
 
     # ── (2) Arithmetic identities (when components are present) ─────
     revenue   = _read_field(record, [("raw", "Revenue"), ("clean", "Revenue")])
@@ -286,17 +321,17 @@ def validate_cleaned_record_schema_contract(
 
     # EBITDA = EBIT + D&A (definitional)
     if ebitda is not None and ebit is not None and da_total is not None:
-        try:
-            _require_consistent(
-                actual=ebitda, expected=(ebit + da_total),
-                tolerance_pct=IDENTITY_TOLERANCES["ebitda_equals_ebit_plus_da"],
-                identity_name="ebitda_equals_ebit_plus_da",
-                ticker=ticker, fn=fn, mode_override=mode_override,
-            )
-        except CalculationConsistencyError as exc:
-            violations.append(exc.to_receipt())
+        exc = _collect_violation(
+            _require_consistent,
+            actual=ebitda, expected=(ebit + da_total),
+            tolerance_pct=IDENTITY_TOLERANCES["ebitda_equals_ebit_plus_da"],
+            identity_name="ebitda_equals_ebit_plus_da",
+            ticker=ticker, fn=fn,
+        )
+        if exc:
+            _emit_collected(exc, mode, violations)
             if mode == "hard":
-                raise
+                raise exc
 
     # FCF identity. Try TWO forms because of the ASC 842 transition
     # (2019): pre-2019, filers reported clean_FCF = OpCF - CapEx with
@@ -347,17 +382,17 @@ def validate_cleaned_record_schema_contract(
         else:
             # Both forms fail AND lease data is populated — this is a
             # real consistency violation. Emit via the stricter form.
-            try:
-                _require_consistent(
-                    actual=fcf, expected=expected_with_lease,
-                    tolerance_pct=tol,
-                    identity_name="fcf_equals_opcf_minus_capex_minus_lease",
-                    ticker=ticker, fn=fn, mode_override=mode_override,
-                )
-            except CalculationConsistencyError as exc:
-                violations.append(exc.to_receipt())
+            exc = _collect_violation(
+                _require_consistent,
+                actual=fcf, expected=expected_with_lease,
+                tolerance_pct=tol,
+                identity_name="fcf_equals_opcf_minus_capex_minus_lease",
+                ticker=ticker, fn=fn,
+            )
+            if exc:
+                _emit_collected(exc, mode, violations)
                 if mode == "hard":
-                    raise
+                    raise exc
 
     # Accounting equation: A = L + E (+ RedeemableNCI depending on filer).
     # The cleaning engine's TotalEquity already includes regular
@@ -405,48 +440,47 @@ def validate_cleaned_record_schema_contract(
             err_no = abs(total_assets - expected_no_nci)
             chosen_expected = (expected_with_nci if err_with < err_no
                                else expected_no_nci)
-            try:
-                _require_consistent(
-                    actual=total_assets, expected=chosen_expected,
-                    tolerance_pct=tol,
-                    identity_name="accounting_equation_a_eq_l_plus_e",
-                    ticker=ticker, fn=fn, mode_override=mode_override,
-                )
-            except CalculationConsistencyError as exc:
-                violations.append(exc.to_receipt())
+            exc = _collect_violation(
+                _require_consistent,
+                actual=total_assets, expected=chosen_expected,
+                tolerance_pct=tol,
+                identity_name="accounting_equation_a_eq_l_plus_e",
+                ticker=ticker, fn=fn,
+            )
+            if exc:
+                _emit_collected(exc, mode, violations)
                 if mode == "hard":
-                    raise
+                    raise exc
 
     # NetDebt = TotalDebt - Cash (derived; looser tolerance)
     if (net_debt is not None and long_debt is not None and cash is not None):
-        try:
-            _require_consistent(
-                actual=net_debt, expected=(long_debt - cash),
-                tolerance_pct=IDENTITY_TOLERANCES["net_debt_equals_debt_minus_cash"],
-                identity_name="net_debt_equals_debt_minus_cash",
-                ticker=ticker, fn=fn, mode_override=mode_override,
-            )
-        except CalculationConsistencyError as exc:
-            violations.append(exc.to_receipt())
+        exc = _collect_violation(
+            _require_consistent,
+            actual=net_debt, expected=(long_debt - cash),
+            tolerance_pct=IDENTITY_TOLERANCES["net_debt_equals_debt_minus_cash"],
+            identity_name="net_debt_equals_debt_minus_cash",
+            ticker=ticker, fn=fn,
+        )
+        if exc:
+            _emit_collected(exc, mode, violations)
             if mode == "hard":
-                raise
+                raise exc
 
     # ── (3) Range checks on critical ratios ─────────────────────────
     if revenue and revenue > 0:
         if capex is not None:
             cmin, cmax = RANGE_BOUNDS["capex_to_revenue"]
-            try:
-                _require_range(
-                    capex / revenue, min=cmin, max=cmax,
-                    field_name="capex_to_revenue", ticker=ticker, fn=fn,
-                    note=("negative beyond bound → sign error; "
-                          "above upper bound → unit error or wrong-tag "
-                          "(semis can run 0.50-0.75 during expansion)"),
-                    mode_override=mode_override,
-                )
-            except CalculationInputError as exc:
-                violations.append(exc.to_receipt())
+            exc = _collect_violation(
+                _require_range,
+                capex / revenue, min=cmin, max=cmax,
+                field_name="capex_to_revenue", ticker=ticker, fn=fn,
+                note=("negative beyond bound → sign error; "
+                      "above upper bound → unit error or wrong-tag "
+                      "(semis can run 0.50-0.75 during expansion)"),
+            )
+            if exc:
+                _emit_collected(exc, mode, violations)
                 if mode == "hard":
-                    raise
+                    raise exc
 
     return True, violations
