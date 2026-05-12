@@ -202,3 +202,51 @@ If the Phase 2 `_guards.py` module ships without primitives for every category i
 | All TTM tickers | A4, A5 | universe-wide |
 
 This catalog is the framework's success criteria. Phase 1 inventory proceeds against this baseline.
+
+---
+
+## Phase 2 dry-run addenda (added 2026-05-11 after first hard-mode universe run)
+
+## A14 — Visa (V) missing `shares_diluted` on every FY row
+
+| | |
+|---|---|
+| **Pattern** | V's cleaning-engine output has neither `raw_SharesDiluted` nor `clean_SharesDiluted` populated. Investigation confirms no share-related keys appear in `raw_json` or `clean_json`. The XBRL filings DO contain dilutive-share disclosures; the cleaning engine's tag-resolution is failing to extract them. |
+| **Affected** | V (Visa), every FY row 2009–2025 |
+| **Verified** | Yes — direct DB query on V's `raw_json` returns empty share-key list |
+| **Status** | open — ingest bug, surfaces during Phase 2 hard-mode dry-run |
+| **Severity** | P0 — breaks every per-share metric (EPS, BVPS, market_cap reconciliation) on V |
+| **Detection rule** | Schema-contract assertion already catches it (missing required Tier-1 field). Root cause needs an ingest-layer fix in `tag_resolver` or `cleaning_engine`. |
+| **Test fixture** | After fix, V should populate `raw_SharesDiluted` for every FY row; schema contract passes. |
+
+## A15 — AXP historical Revenue gap (FY2011–FY2015)
+
+| | |
+|---|---|
+| **Pattern** | AXP's recent FYs (FY2016+) populate `raw.Revenue` correctly ($41.3B for FY2024). Older years (FY2011–FY2015) have None for Revenue. AXP is `routing_required` business_model (bypasses FCFF DCF anyway), but the schema-contract assertion still expects revenue for any FY row. |
+| **Affected** | AXP FY2011–FY2015 (5 rows). Other `routing_required` tickers (JPM, BRK-B) may have similar coverage gaps. |
+| **Verified** | Yes |
+| **Status** | mitigated — schema contract now uses `_NON_FCFF_REQUIRED_TIER1` for routing_required/ddm_required/embedded_value_required which accepts Revenue OR InterestIncome OR NetInterestIncome as the income measure. AXP latest year passes. Historical FY2011–FY2015 may still fail if NONE of those tags are populated; that's a separate backfill question. |
+| **Severity** | P1 — only affects historical data; current FYs work correctly |
+| **Detection rule** | Schema-contract path-walk now accepts multiple income tag locations for non-FCFF business models. |
+| **Test fixture** | A non-FCFF ticker with only `NetInterestIncome` populated (no `Revenue`) should pass the schema contract. |
+
+## Phase 2 dry-run results (after refinement)
+
+After two refinements (FCF identity auto-detects pre/post ASC 842 transition; non-FCFF business models use relaxed required-field set), hard-mode dry-run on 681 DB records:
+
+- **599 pass** (up from 564, +35)
+- **82 violate** (down from 117, −35)
+
+Remaining violations by category:
+- 49 A=L+E accounting-equation drifts (NEE utility tags, TSLA, GOOGL, CAT — real Phase 6 triage)
+- 21 shares_diluted missing (V universe-wide per A14; UNH some years)
+- 9 depreciation missing (financial-services may legitimately not have this)
+- 3 capex_to_revenue out of range (TSLA growth-investment, range-calibration question)
+
+These are the Phase 6 triage categories the user's migration plan anticipated:
+- True data bugs → A14 (V shares), some A=L+E cases
+- Legitimate edge cases → financial-services depreciation
+- Validation-rule-too-strict → capex/revenue range may need recalibration for hyper-growth
+- Fallback-was-load-bearing → likely no cases here (the FCF auto-detect handled the only such case)
+

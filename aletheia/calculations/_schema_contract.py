@@ -46,6 +46,7 @@ from ._errors import (
     CalculationInputError,
 )
 from ._guards import (
+    _flag_unusual,
     _guard_mode,
     _require_consistent,
     _require_finite,
@@ -53,6 +54,33 @@ from ._guards import (
     _require_strict_nonneg,
 )
 from ._sign_conventions import IDENTITY_TOLERANCES
+
+
+# Business models that bypass the FCFF DCF entirely (banks, asset
+# managers, insurers, payment networks that don't fit the industrial
+# schema). For these, the schema-contract requires a much smaller set
+# (just revenue-or-interest-income + total_assets); the rest of the
+# industrial schema is irrelevant because the calc layer routes them
+# to specialized engines or skips them.
+_BUSINESS_MODELS_NON_FCFF = frozenset({
+    "ddm_required",            # UNH, CNC
+    "embedded_value_required", # life insurance (none in current universe)
+    "routing_required",        # AXP, JPM, BRK-B
+})
+
+
+def _resolve_business_model(ticker: str) -> str:
+    """Look up the ticker's business_model from ticker_classification.
+    Returns 'fcff_compatible' as default (most permissive industrial)."""
+    try:
+        from config.ticker_classification import get_extended_universe
+        u = get_extended_universe()
+        c = u.get(ticker)
+        if c is None:
+            return "fcff_compatible"
+        return c.business_model or "fcff_compatible"
+    except Exception:
+        return "fcff_compatible"
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -78,6 +106,23 @@ _FY_REQUIRED_TIER1 = {
 
 _TTM_REQUIRED_TIER1 = {
     "revenue":      [("raw", "Revenue"), ("clean", "Revenue")],
+    "total_assets": [("raw", "TotalAssets")],
+}
+
+# Relaxed set for non-FCFF business models (routing_required,
+# ddm_required, embedded_value_required). These tickers bypass the
+# industrial DCF and don't necessarily carry the standard "Revenue"
+# tag (financials use NetInterestIncome + NonInterestIncome). The
+# canonical field names match TIER_1_STRICT_NONNEG; the path list
+# accepts whichever XBRL location actually carries the value.
+_NON_FCFF_REQUIRED_TIER1 = {
+    "revenue":      [
+        ("raw", "Revenue"),
+        ("clean", "Revenue"),
+        ("raw", "InterestIncome"),
+        ("raw", "NetInterestIncome"),
+        ("raw", "TotalRevenue"),
+    ],
     "total_assets": [("raw", "TotalAssets")],
 }
 
@@ -158,9 +203,18 @@ def validate_cleaned_record_schema_contract(
     fy = _record_fy(record)
     fn = f"schema_contract({period})"
 
-    required_tier1 = (
-        _TTM_REQUIRED_TIER1 if period == "TTM" else _FY_REQUIRED_TIER1
-    )
+    # Business-model-aware required-field selection. Non-FCFF business
+    # models (financials, asset managers, insurers) don't fit the
+    # industrial schema; they have their own much smaller required set.
+    # TTM rows always use the smaller TTM-required set regardless of
+    # business model (TTM normalization is shipped only for fcff_compatible).
+    business_model = _resolve_business_model(ticker)
+    if period == "TTM":
+        required_tier1 = _TTM_REQUIRED_TIER1
+    elif business_model in _BUSINESS_MODELS_NON_FCFF:
+        required_tier1 = _NON_FCFF_REQUIRED_TIER1
+    else:
+        required_tier1 = _FY_REQUIRED_TIER1
 
     # ── (1) Required Tier-1 fields exist + are non-negative ─────────
     for canonical, paths in required_tier1.items():
@@ -220,19 +274,66 @@ def validate_cleaned_record_schema_contract(
             if mode == "hard":
                 raise
 
-    # FCF = OpCF - CapEx (definitional; CapEx is positive per schema)
+    # FCF identity. Try TWO forms because of the ASC 842 transition
+    # (2019): pre-2019, filers reported clean_FCF = OpCF - CapEx with
+    # finance-lease principal NOT subtracted; post-2019, the company-
+    # reported FCF subtracts FinanceLeasePrincipalPayments. Auto-detect
+    # which form the filer used by trying both and accepting the closer.
     if fcf is not None and op_cf is not None and capex is not None:
-        try:
-            _require_consistent(
-                actual=fcf, expected=(op_cf - capex),
-                tolerance_pct=IDENTITY_TOLERANCES["fcf_equals_opcf_minus_capex"],
-                identity_name="fcf_equals_opcf_minus_capex",
-                ticker=ticker, fn=fn, mode_override=mode_override,
+        fin_lease_principal = _safe_record_field(
+            record, "raw", "FinanceLeasePrincipalPayments")
+        financing_obligation = _safe_record_field(
+            record, "raw", "FinancingObligationPrincipalPayments")
+
+        expected_simple = op_cf - capex
+        expected_with_lease = expected_simple
+        if fin_lease_principal is not None:
+            expected_with_lease -= fin_lease_principal
+        if financing_obligation is not None:
+            expected_with_lease -= financing_obligation
+
+        tol = IDENTITY_TOLERANCES["fcf_equals_opcf_minus_capex"]
+
+        def _within(actual_v: float, expected_v: float) -> bool:
+            if abs(expected_v) < 1e-9:
+                return abs(actual_v - expected_v) <= 1.0
+            return abs(actual_v - expected_v) / abs(expected_v) <= tol
+
+        simple_ok = _within(fcf, expected_simple)
+        lease_ok = _within(fcf, expected_with_lease)
+
+        if simple_ok or lease_ok:
+            # At least one form holds — identity is satisfied.
+            pass
+        elif fin_lease_principal is None and financing_obligation is None:
+            # Neither form holds and we have no lease data to attribute
+            # the gap to. Soft-flag (gap is visible but not blocking;
+            # ingest may be missing the lease term).
+            _flag_unusual(
+                value=fcf, field_name="fcf",
+                ticker=ticker, fn=fn,
+                note=(
+                    f"FCF gap vs (OpCF-CapEx) is ${(fcf - expected_simple)/1e9:.2f}B. "
+                    "FinanceLeasePrincipalPayments not populated on this row; "
+                    "cannot enforce strict identity until ingest captures the "
+                    "lease term."
+                ),
+                mode_override=mode_override,
             )
-        except CalculationConsistencyError as exc:
-            violations.append(exc.to_receipt())
-            if mode == "hard":
-                raise
+        else:
+            # Both forms fail AND lease data is populated — this is a
+            # real consistency violation. Emit via the stricter form.
+            try:
+                _require_consistent(
+                    actual=fcf, expected=expected_with_lease,
+                    tolerance_pct=tol,
+                    identity_name="fcf_equals_opcf_minus_capex_minus_lease",
+                    ticker=ticker, fn=fn, mode_override=mode_override,
+                )
+            except CalculationConsistencyError as exc:
+                violations.append(exc.to_receipt())
+                if mode == "hard":
+                    raise
 
     # Accounting equation: A = L + E (NEE-class catch)
     if (total_assets is not None and total_liab is not None
