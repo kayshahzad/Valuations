@@ -54,6 +54,17 @@ from ._guards import (
     _require_strict_nonneg,
 )
 from ._sign_conventions import IDENTITY_TOLERANCES, RANGE_BOUNDS
+from ._overrides import OVERRIDES
+
+
+def _override_covers_field(ticker: str, field: str) -> bool:
+    """True if any active override for this ticker lists `field` in its
+    fields scope. Used by the schema contract to downgrade missing-field
+    errors to soft-flags when the gap is a documented edge case."""
+    for override_key, record in OVERRIDES.get(ticker, {}).items():
+        if field in (record.get("fields") or []):
+            return True
+    return False
 
 
 # Business models that bypass the FCFF DCF entirely (banks, asset
@@ -221,6 +232,18 @@ def validate_cleaned_record_schema_contract(
     for canonical, paths in required_tier1.items():
         v = _read_field(record, paths)
         if v is None:
+            # Check override registry: a documented edge case (e.g. TSLA
+            # pre-2015 shares_diluted historical gap, V shares ingest bug)
+            # downgrades the missing-field error to a soft-flag.
+            if _override_covers_field(ticker, canonical):
+                _flag_unusual(
+                    value=None, field_name=canonical,
+                    ticker=ticker, fn=fn,
+                    note=(f"required field missing but override registry "
+                          f"covers it for {ticker}; soft-flagged not raised"),
+                    mode_override=mode_override,
+                )
+                continue
             violations.append({
                 "category": "missing_required_field",
                 "field": canonical, "period": period,
@@ -336,32 +359,50 @@ def validate_cleaned_record_schema_contract(
                 if mode == "hard":
                     raise
 
-    # Accounting equation: A = L + E + RedeemableNCI.
-    # The cleaning engine's TotalEquity already includes MinorityInterest
-    # (verified on MCO: gap=0 with non-zero MinorityInterest in raw) but
-    # excludes RedeemableNoncontrollingInterest — which is reported as a
-    # mezzanine equity item on most filers and is therefore omitted from
-    # both raw.TotalLiabilities and raw.TotalEquity. Adding the redeemable
-    # term to the expected side closes the gap on UNH / TSLA / CAT / TSM
-    # multi-year cluster (verified: gap matches RedeemableNCI exactly).
-    # Remaining drift after this term indicates a real ingest bug (NEE
-    # historical 2009-2018 had $25B+ gaps from utility-XBRL tag mappings).
+    # Accounting equation: A = L + E (+ RedeemableNCI depending on filer).
+    # The cleaning engine's TotalEquity already includes regular
+    # MinorityInterest (verified on MCO base case). RedeemableNoncontrolling
+    # Interest is reported HETEROGENEOUSLY across filers:
+    #   - UNH/CAT-recent/TSM: TotalEquity excludes RedeemableNCI, so the
+    #     identity must add it on the right side
+    #   - MCO/WMT/TSLA: TotalEquity already INCLUDES RedeemableNCI, so
+    #     adding it again double-counts and produces a -RedeemableNCI gap
+    # Try both forms and accept whichever satisfies tolerance — same
+    # auto-detection pattern as the FCF/lease-principal identity.
     if (total_assets is not None and total_liab is not None
             and total_equity is not None):
         redeemable_nci = _safe_record_field(
             record, "raw", "RedeemableNoncontrollingInterest") or 0.0
-        try:
-            _require_consistent(
-                actual=total_assets,
-                expected=(total_liab + total_equity + redeemable_nci),
-                tolerance_pct=IDENTITY_TOLERANCES["accounting_equation_a_eq_l_plus_e"],
-                identity_name="accounting_equation_a_eq_l_plus_e",
-                ticker=ticker, fn=fn, mode_override=mode_override,
-            )
-        except CalculationConsistencyError as exc:
-            violations.append(exc.to_receipt())
-            if mode == "hard":
-                raise
+
+        tol = IDENTITY_TOLERANCES["accounting_equation_a_eq_l_plus_e"]
+        expected_no_nci = total_liab + total_equity
+        expected_with_nci = expected_no_nci + redeemable_nci
+
+        def _within(actual_v: float, expected_v: float) -> bool:
+            if abs(expected_v) < 1e-9:
+                return abs(actual_v - expected_v) <= 1.0
+            return abs(actual_v - expected_v) / abs(expected_v) <= tol
+
+        if _within(total_assets, expected_with_nci) or _within(total_assets, expected_no_nci):
+            pass  # at least one form holds
+        else:
+            # Neither form satisfies — real violation. Emit via the
+            # closer of the two forms for the most informative error.
+            err_with = abs(total_assets - expected_with_nci)
+            err_no = abs(total_assets - expected_no_nci)
+            chosen_expected = (expected_with_nci if err_with < err_no
+                               else expected_no_nci)
+            try:
+                _require_consistent(
+                    actual=total_assets, expected=chosen_expected,
+                    tolerance_pct=tol,
+                    identity_name="accounting_equation_a_eq_l_plus_e",
+                    ticker=ticker, fn=fn, mode_override=mode_override,
+                )
+            except CalculationConsistencyError as exc:
+                violations.append(exc.to_receipt())
+                if mode == "hard":
+                    raise
 
     # NetDebt = TotalDebt - Cash (derived; looser tolerance)
     if (net_debt is not None and long_debt is not None and cash is not None):

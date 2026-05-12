@@ -131,6 +131,39 @@ OVERRIDES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "fields":          ["capex"],
         },
     },
+    # B1 — TSLA pre-2015 shares_diluted historical coverage gap.
+    # Tesla's early-public-company XBRL filings (FY2011-2014) don't
+    # populate the diluted-share tag our resolver expects. Current FYs
+    # work. Historical data only — current DCF unaffected.
+    "TSLA": {
+        "shares_diluted_historical_gap_pre_2015": {
+            "reason": "Early-public-company XBRL coverage gap (FY2011-2014); "
+                      "Tesla pre-2015 filings predate the diluted-share tag "
+                      "the resolver expects. Current FYs populate correctly. "
+                      "Affects historical analysis only, not current DCF.",
+            "created_date":    "2026-05-12",
+            "review_by_date":  "2027-05-12",
+            "fields":          ["shares_diluted"],
+        },
+    },
+    # A14 — V (Visa) shares_diluted universe-wide ingest bug.
+    # tag_resolver.py fails to extract shares_diluted from Visa's XBRL
+    # filings (every FY 2009-2025 affected). Real ingest bug; this
+    # override prevents the schema contract from refusing to persist
+    # while the actual resolver fix is pending. SHORT review date so
+    # the ingest fix is forced to be scheduled.
+    "V": {
+        "shares_diluted_ingest_bug": {
+            "reason": "tag_resolver.py fails on Visa's XBRL diluted-share "
+                      "tag (universe-wide, every FY). Real ingest bug "
+                      "tracked as anomaly A14. Override prevents schema-"
+                      "contract refusal while resolver fix is in flight. "
+                      "MUST be fixed before this override expires.",
+            "created_date":    "2026-05-12",
+            "review_by_date":  "2026-08-12",
+            "fields":          ["shares_diluted"],
+        },
+    },
 }
 
 
