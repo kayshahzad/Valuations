@@ -608,6 +608,21 @@ class InvestmentDatabase:
         Auto-increments version if a record for (ticker, fiscal_year) already exists.
         Returns the version number written.
         """
+        # Schema-contract assertion (Phase 2 framework). Single persistence
+        # boundary for every record written to DuckDB regardless of source
+        # path (FY cleaning, SEC TTM, FMP TTM, add-ticker pipeline). The
+        # function honors ALETHEIA_GUARD_MODE: 'off' is a no-op, 'shadow'
+        # logs violations, 'soft' logs + surfaces, 'hard' raises and the
+        # caller's try/except decides whether to skip persist.
+        from aletheia.calculations import validate_cleaned_record_schema_contract
+        try:
+            validate_cleaned_record_schema_contract(record)
+        except Exception:
+            # In hard mode this propagates and the caller decides; the
+            # framework's responsibility is just to raise loudly. We
+            # intentionally do NOT swallow here.
+            raise
+
         # Get next version number per (ticker, fiscal_year, period). Period
         # defaults to 'FY' on legacy CleanedRecord instances; quarterly +
         # TTM records carry their own period and version independently of
