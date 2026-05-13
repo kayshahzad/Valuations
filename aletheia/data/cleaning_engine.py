@@ -1451,9 +1451,22 @@ class CleaningEngine:
         """
         domain_name = "TaxSustainability"
 
-        # Income tax expense (GAAP)
-        tax_expense = record.raw.get("IncomeTaxExpenseBenefit") or 0.0
-        pretax_income = record.raw.get("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest") or 0.0
+        # Income tax expense (GAAP). The tag_resolver renames XBRL
+        # ``IncomeTaxExpenseBenefit`` → ``TaxExpense`` before
+        # record.raw is materialised; same for the pretax-income tag.
+        # We read the resolved (PascalCase) name first and fall back
+        # to the raw XBRL name for safety (older ingests, ADR filers
+        # whose resolver path bypasses the rename).
+        tax_expense = (
+            record.raw.get("TaxExpense")
+            or record.raw.get("IncomeTaxExpenseBenefit")
+            or 0.0
+        )
+        pretax_income = (
+            record.raw.get("PretaxIncome")
+            or record.raw.get("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest")
+            or 0.0
+        )
 
         # Cash taxes paid (from cash flow statement)
         cash_taxes = record.raw.get("CashTaxesPaid") or record.raw.get("IncomeTaxesPaid") or record.raw.get("IncomeTaxesPaidNet") or 0.0
