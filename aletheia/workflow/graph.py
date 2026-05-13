@@ -1,6 +1,25 @@
 """
 aletheia/workflow/graph.py
 
+.. deprecated:: 2026-05-13
+   The LangGraph workflow is superseded by the typed-contract pipeline
+   in ``aletheia.pipeline`` (Stages 1-4 + ``Orchestrator``). New callers
+   should use ``aletheia pipeline run <TICKER>`` (CLI) or
+   ``Orchestrator().run(ticker, ...)`` (programmatic). This module
+   stays in place as a compat wrapper until the in-flight agent-layer
+   rewrite migrates every caller off it. See
+   ``docs/pipeline_contracts.md`` decision #3 for the 6-month
+   deprecation timeline and ``docs/pipeline_operations.md`` for the
+   migration cookbook.
+
+Each call to ``create_workflow()`` emits a ``DeprecationWarning``;
+callers that consume ``aletheia.workflow.graph`` directly will see
+the warning at construction time and can plan migration accordingly.
+The legacy DAG below is preserved verbatim — replacing the
+narrative-side agent execution is not in this refactor's scope.
+
+----- Original module docs (preserved for migration reference) -----
+
 Workflow DAG. Strict separation of calc and narrative:
 
     librarian                     ← fetches 10-K text from SEC EDGAR
@@ -53,6 +72,8 @@ Architecture invariants enforced by tests:
   - tests/architecture/test_no_resurrected_agents.py
 """
 
+import warnings
+
 from langgraph.graph import StateGraph, END
 
 from aletheia.state import AgentState
@@ -67,7 +88,19 @@ from aletheia.agents.thesis_synthesizer import thesis_synthesizer_agent
 from aletheia.agents.lead import lead_agent
 
 
+_DEPRECATION_MESSAGE = (
+    "aletheia.workflow.graph.create_workflow() is deprecated; use the "
+    "typed-contract pipeline at aletheia.pipeline.Orchestrator (or the "
+    "`aletheia pipeline run` CLI) instead. See docs/pipeline_contracts.md "
+    "decision #3 and docs/pipeline_operations.md for the migration "
+    "cookbook. The 6-month deprecation window starts on the first "
+    "release that ships this warning; the function is removed at the "
+    "end of the window."
+)
+
+
 def create_workflow():
+    warnings.warn(_DEPRECATION_MESSAGE, DeprecationWarning, stacklevel=2)
     workflow = StateGraph(AgentState)
 
     # ── Nodes ────────────────────────────────────────────────────────────────

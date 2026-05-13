@@ -237,6 +237,39 @@ entries exceed 20. If you find yourself adding many overrides, your
 validation rules are too strict — recalibrate the rule, don't accumulate
 exceptions.
 
+### Pipeline cascade behaviour
+
+Changing an override entry doesn't just affect the next calc-layer
+guard call — it propagates through the entire pipeline as a
+cascade-invalidation event. The mechanism:
+
+1. **Stage 2** folds the override-registry state for the ticker into
+   the record's ``record_fingerprint`` (via the override-state hash
+   computed in [aletheia/pipeline/stage2_validate.py:_overrides_state_hash](../aletheia/pipeline/stage2_validate.py)).
+   The next ``run_stage2()`` for the affected ticker produces a
+   different fingerprint → Stage 2 cache misses, re-runs.
+2. **Stage 3** sees ``input_record_fingerprint`` no longer matches
+   its cached ``bundle_fingerprint`` input → Stage 3 cache misses,
+   re-runs.
+3. **Stage 4** sees ``input_calculation_fingerprint`` mismatch the
+   same way → Stage 4 cache misses, but only re-runs when explicitly
+   requested (``--auto-agents`` is opt-in for LLM-cost reasons).
+4. Operators see the cascade via [aletheia/pipeline/status_store.py](../aletheia/pipeline/status_store.py)
+   — affected tickers transition ``OK`` → ``STALE_DUE_TO_OVERRIDE``
+   until a re-run completes.
+
+**Override-registry scope rule**: an override entry's cascade is
+limited to its ``tickers`` key. A new override for a single ticker
+does not invalidate the rest of the universe. A "global" override
+(entry applies to all tickers) cascades universe-wide — these should
+be rare and require explicit operator awareness.
+
+See [docs/pipeline_contracts.md](pipeline_contracts.md) §
+"Override registry cascade" for the architecture-level rationale and
+the lineage diagram. The two documents are kept consistent: this
+section documents authoring + per-function consumption; the
+contracts doc documents the across-stage invalidation chain.
+
 ## Error hierarchy
 
 ```
