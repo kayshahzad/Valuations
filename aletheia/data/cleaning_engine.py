@@ -1219,8 +1219,27 @@ class CleaningEngine:
             if net_income and diluted_eps and diluted_eps != 0:
                 shares_diluted = net_income / diluted_eps
 
+        # Anomaly A14 — V (Visa) FMP fallback. Some filers' XBRL doesn't
+        # expose a usable diluted-share tag and the EPS-derived path
+        # also fails. Fall back to FMP's weightedAverageShsOutDil from
+        # the income statement for the matching fiscal_year. FMP is a
+        # second source, not the primary, so this fallback only fires
+        # when SEC + derivation both miss.
+        fmp_shares_source: Optional[str] = None
+        if not shares_diluted:
+            from aletheia.data.shares_diluted_resolver import (
+                resolve_shares_diluted_from_fmp,
+            )
+            fmp_shares, fmp_shares_source = resolve_shares_diluted_from_fmp(
+                ticker=record.ticker, fiscal_year=record.fiscal_year,
+            )
+            if fmp_shares:
+                shares_diluted = fmp_shares
+
         if shares_diluted:
             record.clean["SharesDiluted"] = shares_diluted
+            if fmp_shares_source and fmp_shares_source != "unavailable":
+                record.clean["SharesDiluted_source"] = fmp_shares_source
 
         if shares_basic and shares_diluted and shares_basic > 0:
             dilution_pct = (shares_diluted - shares_basic) / shares_basic * 100
