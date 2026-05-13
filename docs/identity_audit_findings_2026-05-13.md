@@ -5,11 +5,11 @@ Phase-1 baseline run of the seven foundational accounting identities across the 
 ## Executive summary
 
 - Total checks: **5505**
-- Passed: **2184** (39.7%)
-- Failed: **2109** (38.3%)
+- Passed: **2189** (39.8%)
+- Failed: **2104** (38.2%)
 - Skipped (no data): **1212** (22.0%)
 - Universe size: **40** tickers
-- Git SHA: `ed7009f0128b`
+- Git SHA: `8a71db67598e`
 
 Pass-rate excludes skipped checks (skipped is a tooling/coverage gap, not a data-quality finding).
 
@@ -18,7 +18,7 @@ Pass-rate excludes skipped checks (skipped is a tooling/coverage gap, not a data
 | `balance_sheet_equation` | 673 | 615 | 48 | 10 | 92.8% |
 | `cash_rollforward` | 599 | 336 | 207 | 56 | 61.9% |
 | `debt_rollforward` | 599 | 175 | 372 | 52 | 32.0% |
-| `fcf_pathway_reconciliation` | 639 | 171 | 413 | 55 | 29.3% |
+| `fcf_pathway_reconciliation` | 639 | 176 | 408 | 55 | 30.1% |
 | `ppe_rollforward` | 599 | 206 | 316 | 77 | 39.5% |
 | `retained_earnings_rollforward` | 599 | 332 | 242 | 25 | 57.8% |
 | `working_capital_AP` | 599 | 74 | 119 | 406 | 38.3% |
@@ -78,22 +78,22 @@ Top 10 by absolute discrepancy:
 | AXP | 2010 | FY | +26900.0 | +49.19% | ? |
 | JPM | 2011 | FY | +25374.0 | +8.97% | ? |
 
-### `fcf_pathway_reconciliation` — 413 failure(s), 55 skipped
+### `fcf_pathway_reconciliation` — 408 failure(s), 55 skipped
 
 Top 10 by absolute discrepancy:
 
 | Ticker | FY | Period | Discrepancy ($M) | % | Suggested category |
 |---|---|---|---|---|---|
-| GOOGL | 2025 | FY | +47416.2 | +64.72% | B/C (SBC + deferred-tax non-cash items) |
-| META | 2025 | FY | +34171.0 | +74.11% | B/C (SBC + deferred-tax non-cash items) |
-| LOW | 2013 | FY | -28129.1 | -996.78% | B/C (SBC + deferred-tax non-cash items) |
-| GOOGL | 2021 | FY | +27562.9 | +41.13% | B/C (SBC + deferred-tax non-cash items) |
-| LOW | 2012 | FY | -26622.5 | -1043.61% | B/C (SBC + deferred-tax non-cash items) |
-| BRK-B | 2024 | FY | -26445.4 | -227.66% | B/C (SBC + deferred-tax non-cash items) |
-| LOW | 2011 | FY | -25450.6 | -1009.94% | B/C (SBC + deferred-tax non-cash items) |
-| LOW | 2010 | FY | -25395.9 | -1006.58% | B/C (SBC + deferred-tax non-cash items) |
-| GOOGL | 2024 | FY | +24668.9 | +33.90% | B/C (SBC + deferred-tax non-cash items) |
-| META | 2023 | FY | +23783.4 | +54.24% | B/C (SBC + deferred-tax non-cash items) |
+| GOOGL | 2025 | FY | +37806.9 | +51.60% | B/C (SBC + deferred-tax non-cash items) |
+| BRK-B | 2018 | FY | +33028.3 | +144.46% | B/C (SBC + deferred-tax non-cash items) |
+| GOOGL | 2024 | FY | +26769.0 | +36.79% | B/C (SBC + deferred-tax non-cash items) |
+| GOOGL | 2022 | FY | +25889.7 | +43.14% | B/C (SBC + deferred-tax non-cash items) |
+| META | 2025 | FY | +24026.8 | +52.11% | B/C (SBC + deferred-tax non-cash items) |
+| BRK-B | 2024 | FY | -23736.3 | -204.34% | B/C (SBC + deferred-tax non-cash items) |
+| GOOGL | 2023 | FY | +23500.9 | +33.82% | B/C (SBC + deferred-tax non-cash items) |
+| GOOGL | 2021 | FY | +22668.2 | +33.83% | B/C (SBC + deferred-tax non-cash items) |
+| LOW | 2011 | FY | -21712.4 | -861.61% | B/C (SBC + deferred-tax non-cash items) |
+| META | 2023 | FY | +20306.5 | +46.31% | B/C (SBC + deferred-tax non-cash items) |
 
 ### `ppe_rollforward` — 316 failure(s), 77 skipped
 
@@ -186,46 +186,46 @@ Tickers with at least one failure, ordered by failure count.
 
 | Ticker | Failures | Total checks | Failing identities |
 |---|---|---|---|
-| MSFT | 85 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
-| UNH | 82 | 146 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR |
-| JNJ | 81 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR, working_capital_inventory |
+| JNJ | 84 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR, working_capital_inventory |
+| MSFT | 84 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| UNH | 81 | 146 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR |
 | ABT | 79 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR, working_capital_inventory |
-| CAT | 74 | 147 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_inventory |
-| ACN | 72 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR |
-| AMZN | 72 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| ACN | 74 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR |
+| CAT | 73 | 147 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_inventory |
+| KO | 71 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR, working_capital_inventory |
 | ORCL | 71 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR, working_capital_inventory |
-| LLY | 69 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
-| KO | 68 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR, working_capital_inventory |
-| WMT | 68 | 147 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP |
-| EMR | 67 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_inventory |
-| TSLA | 65 | 129 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
-| MRK | 64 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_AR, working_capital_inventory |
-| AAPL | 60 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
-| V | 60 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR |
-| COST | 59 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_inventory |
-| QCOM | 59 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
-| ITW | 55 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
-| META | 52 | 120 | cash_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR |
-| LOW | 51 | 138 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
-| PG | 51 | 138 | debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| EMR | 70 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_inventory |
+| LLY | 70 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
+| AMZN | 69 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| TSLA | 68 | 129 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| WMT | 67 | 147 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP |
+| MRK | 66 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_AR, working_capital_inventory |
+| AAPL | 58 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| COST | 58 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_inventory |
+| QCOM | 58 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
+| V | 57 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR |
+| PG | 52 | 138 | debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| META | 51 | 120 | cash_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR |
 | AMD | 50 | 138 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
-| NSC | 50 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, retained_earnings_rollforward, working_capital_AR |
-| MCO | 48 | 147 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR |
-| ASML | 47 | 129 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward |
+| LOW | 50 | 138 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
+| ITW | 49 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
+| MCO | 49 | 147 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AR |
+| NSC | 49 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, retained_earnings_rollforward, working_capital_AR |
+| ASML | 48 | 129 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward |
 | PEP | 44 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_inventory |
-| NVDA | 42 | 138 | balance_sheet_equation, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
+| CNC | 42 | 137 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward |
 | GOOGL | 41 | 93 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, retained_earnings_rollforward, working_capital_AP, working_capital_AR |
-| CNC | 40 | 137 | balance_sheet_equation, cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward |
+| MDT | 40 | 93 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
 | NEE | 40 | 146 | balance_sheet_equation, cash_rollforward, debt_rollforward, working_capital_AR, working_capital_inventory |
-| MDT | 38 | 93 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_inventory |
+| NVDA | 40 | 138 | balance_sheet_equation, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
 | AXP | 36 | 146 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward |
-| TXN | 34 | 147 | debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_AR, working_capital_inventory |
 | SMCI | 31 | 111 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, retained_earnings_rollforward, working_capital_AP, working_capital_AR, working_capital_inventory |
-| HD | 30 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward |
-| UNP | 29 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, retained_earnings_rollforward |
-| BRK-B | 17 | 146 | cash_rollforward, fcf_pathway_reconciliation, retained_earnings_rollforward, working_capital_inventory |
+| TXN | 31 | 147 | debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward, working_capital_AR, working_capital_inventory |
+| UNP | 31 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, retained_earnings_rollforward |
+| HD | 25 | 147 | cash_rollforward, debt_rollforward, fcf_pathway_reconciliation, ppe_rollforward |
 | JPM | 17 | 146 | cash_rollforward, debt_rollforward, retained_earnings_rollforward |
-| TSM | 11 | 66 | balance_sheet_equation, cash_rollforward, fcf_pathway_reconciliation |
+| BRK-B | 16 | 146 | cash_rollforward, fcf_pathway_reconciliation, retained_earnings_rollforward, working_capital_inventory |
+| TSM | 14 | 66 | balance_sheet_equation, cash_rollforward, fcf_pathway_reconciliation |
 
 ## Recommended actions
 
