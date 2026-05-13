@@ -72,6 +72,12 @@ def _records_to_dataframe(
     Mirrors the schema produced by ``InvestmentDatabase.get_latest``
     so DCFEngine / ReverseDCF / etc. can run against this DataFrame
     without any further adaptation.
+
+    Reconstructs the ``raw_json`` and ``clean_json`` blob columns from
+    the record's dicts. ScreeningEngine and MultipleDecomposition read
+    balance-sheet sub-fields (CurrentAssets, ShortTermDebt, etc.) via
+    ``_get_json`` against those columns; without the reconstruction
+    those engines silently fall back to ``None`` and drop metrics.
     """
     rows: List[Dict[str, Any]] = []
     for r in records:
@@ -88,6 +94,17 @@ def _records_to_dataframe(
             row[f"clean_{k}"] = v
         for k, v in r.derived.items():
             row[f"derived_{k}"] = v
+        # Blob columns pass through opaquely from the dedicated record
+        # fields. ScreeningEngine / MultipleDecomposition read sub-
+        # fields back out via ``_get_json``. We deliberately do *not*
+        # reconstruct the blobs from r.raw / r.clean — those dicts hold
+        # only the materialised columns; the blob carries additional
+        # fields (CurrentAssets, ShortTermDebt, etc.) that aren't
+        # represented as typed columns in the contract.
+        if r.raw_blob_json is not None:
+            row["raw_json"] = r.raw_blob_json
+        if r.clean_blob_json is not None:
+            row["clean_json"] = r.clean_blob_json
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -265,20 +282,33 @@ def run_stage3(
         )
 
     # ── Anchor year + DataFrame ─────────────────────────────────────
+    #
+    # ``fiscal_year`` semantics: when None (default), each underlying
+    # engine picks its own anchor from the df — matching the direct-
+    # call behaviour the parity tests assert. When the caller passes
+    # an explicit fiscal_year, that override propagates to every
+    # engine so a backtest run pins all calcs to the same year.
+    #
+    # The bundle's ``fiscal_year`` field is the resolved anchor,
+    # populated from the DCF result when not explicitly supplied.
     df = _records_to_dataframe(records)
-    if fiscal_year is None:
-        fiscal_year = int(df["fiscal_year"].max())
+    explicit_fiscal_year = fiscal_year
 
     # The lineage pointer is the record_fingerprint of the row that
-    # anchored the calc — by convention the latest FY (or TTM if
-    # available). Falls back to the latest record outright when no
-    # row matches the resolved fiscal_year, which can happen on
-    # mid-quarter rolls.
-    anchor_records = [
-        r for r in records if r.fiscal_year == fiscal_year
-    ] or records
-    # Prefer TTM over FY at the same fiscal_year (TTM is the calc base).
-    anchor_records.sort(key=lambda r: 0 if r.period == "TTM" else 1)
+    # anchors the calc. Without an explicit fiscal_year, pick the
+    # latest FY-only row (or the latest record outright when no FY
+    # rows exist). With an explicit fiscal_year, pin to records
+    # matching that year, preferring TTM over FY at the same year.
+    if explicit_fiscal_year is not None:
+        anchor_records = [
+            r for r in records if r.fiscal_year == explicit_fiscal_year
+        ] or records
+    else:
+        fy_records = [r for r in records if r.period == "FY"] or records
+        anchor_records = sorted(fy_records, key=lambda r: r.fiscal_year)[-1:]
+    anchor_records = sorted(
+        anchor_records, key=lambda r: 0 if r.period == "TTM" else 1
+    )
     input_record_fingerprint = anchor_records[0].record_fingerprint
 
     # ── Build CalculationInput for the existing engines ─────────────
@@ -292,17 +322,26 @@ def run_stage3(
 
     schema_violations: List[Dict[str, Any]] = []
 
+    # Each engine's call signature accepts an optional fiscal_year.
+    # Pass it through only when explicitly supplied so the engines'
+    # own default anchor logic (which differs by engine) is preserved
+    # — this is the contract the parity tests assert.
+    fy_kwargs: Dict[str, Any] = (
+        {"fiscal_year": explicit_fiscal_year}
+        if explicit_fiscal_year is not None else {}
+    )
+
     # ── DCF ─────────────────────────────────────────────────────────
     dcf_dict, dcf_violations = _safe_run(
         "dcf_engine",
-        lambda: DCFEngine(verbose=False).run(calc_input, fiscal_year=fiscal_year),
+        lambda: DCFEngine(verbose=False).run(calc_input, **fy_kwargs),
     )
     schema_violations.extend(dcf_violations)
 
     # ── Reverse DCF ─────────────────────────────────────────────────
     rdcf_dict, rdcf_violations = _safe_run(
         "reverse_dcf",
-        lambda: ReverseDCF(verbose=False).run(calc_input, fiscal_year=fiscal_year),
+        lambda: ReverseDCF(verbose=False).run(calc_input, **fy_kwargs),
     )
     schema_violations.extend(rdcf_violations)
 
@@ -310,7 +349,7 @@ def run_stage3(
     md_dict, md_violations = _safe_run(
         "multiple_decomposition",
         lambda: MultipleDecomposition(verbose=False).run(
-            calc_input, fiscal_year=fiscal_year
+            calc_input, **fy_kwargs
         ),
     )
     schema_violations.extend(md_violations)
@@ -319,7 +358,7 @@ def run_stage3(
     screening_dict, screening_violations = _safe_run(
         "screening",
         lambda: ScreeningEngine(verbose=False).score(
-            calc_input, fiscal_year=fiscal_year
+            calc_input, **fy_kwargs
         ),
     )
     schema_violations.extend(screening_violations)
@@ -345,7 +384,19 @@ def run_stage3(
     )
     schema_violations.extend(reality_violations)
 
-    # ── Determine base_period from DCF result ───────────────────────
+    # ── Determine bundle fiscal_year and base_period from DCF ───────
+    # When fiscal_year wasn't pinned by the caller, prefer the DCF
+    # engine's resolved fiscal_year (it's the canonical anchor across
+    # the pipeline). Fall back to the anchor-record FY otherwise.
+    if explicit_fiscal_year is not None:
+        bundle_fiscal_year = explicit_fiscal_year
+    else:
+        dcf_fy = dcf_dict.get("fiscal_year") if dcf_dict else None
+        bundle_fiscal_year = (
+            int(dcf_fy) if isinstance(dcf_fy, (int, float)) and dcf_fy
+            else anchor_records[0].fiscal_year
+        )
+
     base_period = dcf_dict.get("base_period", "FY") if dcf_dict else "FY"
     if base_period not in ("FY", "TTM"):
         base_period = "FY"
@@ -353,7 +404,7 @@ def run_stage3(
     # ── Fingerprint + bundle ────────────────────────────────────────
     bundle_fingerprint = _compute_bundle_fingerprint(
         ticker=ticker,
-        fiscal_year=fiscal_year,
+        fiscal_year=bundle_fiscal_year,
         base_period=base_period,
         input_record_fingerprint=input_record_fingerprint,
         pipeline_version=pipeline_version,
@@ -361,7 +412,7 @@ def run_stage3(
 
     return CalculationBundle(
         ticker=ticker,
-        fiscal_year=fiscal_year,
+        fiscal_year=bundle_fiscal_year,
         base_period=base_period,
         dcf=dcf_dict,
         reverse_dcf=rdcf_dict,

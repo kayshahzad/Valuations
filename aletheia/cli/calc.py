@@ -15,7 +15,6 @@ DB-fetch line.
 from __future__ import annotations
 
 import argparse
-import json
 import math
 import subprocess
 import sys
@@ -52,12 +51,30 @@ def _row_to_validated_record(
     sparse — the Gate-A and schema-contract receipts live in other
     tables today and will be folded into ``ValidationReceipt`` when
     Stage 2 ships.
+
+    The ``raw_json`` / ``clean_json`` blob columns are preserved
+    *opaquely* on dedicated record fields, not merged into the typed
+    dicts. Engines that need balance-sheet sub-fields read them back
+    via ``_get_json`` against the blob columns. Merging blob entries
+    into the typed dicts would expand them into additional DataFrame
+    columns and change engine behaviour by populating fields the
+    direct path leaves unpopulated.
     """
     raw: Dict[str, Optional[float]] = {}
     clean: Dict[str, Optional[float]] = {}
     derived: Dict[str, Optional[float]] = {}
+
+    raw_blob_json: Optional[str] = None
+    clean_blob_json: Optional[str] = None
+
     for col, val in row.items():
         if not isinstance(col, str):
+            continue
+        if col == "raw_json":
+            raw_blob_json = val if isinstance(val, str) else None
+            continue
+        if col == "clean_json":
+            clean_blob_json = val if isinstance(val, str) else None
             continue
         if col.startswith(RAW_PREFIX):
             raw[col[len(RAW_PREFIX):]] = _coerce_optional_float(val)
@@ -96,6 +113,8 @@ def _row_to_validated_record(
         raw=raw,
         clean=clean,
         derived=derived,
+        raw_blob_json=raw_blob_json,
+        clean_blob_json=clean_blob_json,
         overall_quality_score=quality_score,
         cleaning_warnings=[],
         blocking_errors=[],

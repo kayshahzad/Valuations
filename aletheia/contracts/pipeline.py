@@ -231,6 +231,24 @@ class ValidatedCleanedRecord(BaseModel):
         ),
     )
 
+    raw_blob_json: Optional[str] = Field(
+        default=None,
+        description=(
+            "Opaque JSON-string passthrough of the cleaner's full "
+            "``record.raw`` dict (including fields not materialised as "
+            "DB columns). ScreeningEngine and MultipleDecomposition "
+            "read sub-fields out of this blob via ``_get_json``. Kept "
+            "separate from the typed ``raw`` dict so Stage 3 can "
+            "round-trip without expanding blob entries into additional "
+            "DataFrame columns (which would change engine behaviour by "
+            "populating fields the direct path leaves unpopulated)."
+        ),
+    )
+    clean_blob_json: Optional[str] = Field(
+        default=None,
+        description="Opaque JSON-string passthrough of ``record.clean``. See ``raw_blob_json``.",
+    )
+
     overall_quality_score: float = Field(
         ge=0.0, le=1.0,
         description=(
