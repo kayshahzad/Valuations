@@ -39,6 +39,7 @@ from aletheia.calculations import (
     RANGE_BOUNDS,
     CalculationError,
     _guard_mode,
+    resolve_tax_rate,
 )
 
 warnings.filterwarnings("ignore")
@@ -146,6 +147,8 @@ class MultipleResult:
     signal: str = "neutral"
     signal_reasons: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
+
+    tax_rate_source: str = "statutory"  # cash | gaap | company_fy | statutory
 
     def summary(self) -> str:
         lines = [
@@ -294,13 +297,23 @@ class MultipleDecomposition:
         roic = get("derived_ROIC", 0.12)
         net_income = get("raw_NetIncome")
         net_debt = get("derived_NetDebt")
-        tax_rate = get("clean_CashTaxRate") or 0.21
+        # Pass None (not the local get-default of 0.0) for missing
+        # rates so the resolver doesn't treat a missing tax field as a
+        # legitimate 0% rate. Without this, MD silently used 0.0 while
+        # DCFEngine (whose get defaults to None) fell to statutory,
+        # breaking WACC consistency.
+        tax_rate, tax_rate_source = resolve_tax_rate(
+            ticker=ticker, fn="multiple_decomposition.run",
+            df=df_fy, fy=fy,
+            cash_tax_rate=get("clean_CashTaxRate", None),
+            gaap_tax_rate=get("clean_GAAP_TaxRate", None),
+        )
+        result.tax_rate_source = tax_rate_source
 
-        # Tier-3 input range check on tax_rate. Catches malformed rates
-        # before they enter the Liberti EV/EBITDA formula where they'd
-        # warp the NOPAT-via-(1-tax) term silently. The U.S. statutory
-        # 0.21 fallback is in range; A11 deeper fix (FY effective rate)
-        # deferred.
+        # Tier-3 input range check on tax_rate. Defense-in-depth: the
+        # resolver enforces ``_is_usable_rate`` on every input but this
+        # catches anything malformed that slips through (e.g. an
+        # in-range company_fy mean computed from edge-case rows).
         tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
         try:
             _require_range(

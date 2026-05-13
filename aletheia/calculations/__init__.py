@@ -63,6 +63,13 @@ from ._guards import (
 )
 from ._schema_contract import validate_cleaned_record_schema_contract
 from ._logging import setup_guard_audit_logging, get_today_audit_path
+from ._tax_rate import (
+    US_STATUTORY,
+    DEFAULT_LOOKBACK_YEARS,
+    MIN_LOOKBACK_YEARS_FOR_AVG,
+    company_fy_effective_tax_rate,
+    resolve_tax_rate,
+)
 
 
 # Auto-activate audit logging on first import. The setup is idempotent
@@ -106,4 +113,10 @@ __all__ = [
     # audit-log setup
     "setup_guard_audit_logging",
     "get_today_audit_path",
+    # tax-rate fallback resolver (A11)
+    "US_STATUTORY",
+    "DEFAULT_LOOKBACK_YEARS",
+    "MIN_LOOKBACK_YEARS_FOR_AVG",
+    "company_fy_effective_tax_rate",
+    "resolve_tax_rate",
 ]

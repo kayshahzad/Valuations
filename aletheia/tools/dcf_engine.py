@@ -43,6 +43,7 @@ from aletheia.calculations import (
     CalculationError,
     CalculationOutputError,
     _guard_mode,
+    resolve_tax_rate,
 )
 
 
@@ -203,6 +204,8 @@ class DCFResult:
     confidence: str = "high"
     warnings: List[str] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
+
+    tax_rate_source: str = "statutory"  # cash | gaap | company_fy | statutory | analyst_override
 
     @property
     def wacc(self) -> float:
@@ -1066,15 +1069,23 @@ class DCFEngine:
         fcf = get("derived_FCF", 0.0)
         net_debt = get("derived_NetDebt", 0.0)
         invested_capital = get("derived_InvestedCapital", 0.0)
-        tax_rate = get("clean_CashTaxRate") or get("clean_GAAP_TaxRate") or 0.21
+        tax_rate, tax_rate_source = resolve_tax_rate(
+            ticker=ticker, fn="dcf_engine.run",
+            df=df_fy, fy=fiscal_year,
+            cash_tax_rate=get("clean_CashTaxRate"),
+            gaap_tax_rate=get("clean_GAAP_TaxRate"),
+        )
         # Phase 3 — analyst tax_rate override from ScenarioOverride
         if profile.tax_rate_override is not None:
             tax_rate = profile.tax_rate_override
+            tax_rate_source = "analyst_override"
+        result.tax_rate_source = tax_rate_source
 
-        # Tier-3 input range check on tax_rate (anomaly A11 surface).
-        # In-range value (incl. 21% U.S. statutory fallback) passes;
-        # malformed rates (NaN, >100%, sub-(-100%)) caught here before
-        # they enter compute_wacc and the scenario projection.
+        # Tier-3 input range check on tax_rate. Defense-in-depth: the
+        # resolver enforces ``_is_usable_rate`` on every input, but
+        # malformed rates that survive (e.g. an analyst override out of
+        # band) get caught here before they enter compute_wacc and the
+        # scenario projection.
         tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
         try:
             _require_range(

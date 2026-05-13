@@ -42,6 +42,7 @@ from aletheia.calculations import (
     RANGE_BOUNDS,
     CalculationError,
     CalculationOutputError,
+    resolve_tax_rate,
 )
 
 
@@ -105,6 +106,7 @@ class ReverseDCFResult:
     wacc: float = 0.0
     ebit_margin: float = 0.0
     tax_rate: float = 0.21
+    tax_rate_source: str = "statutory"  # cash | gaap | company_fy | statutory
 
     # Implied assumptions
     implied_revenue_cagr_10y: float = 0.0    # 10-year CAGR implied by price
@@ -353,14 +355,23 @@ class ReverseDCF:
         roic = required["derived_ROIC"]
         ebitda = get("derived_EBITDA", ebit)
         net_debt = get("derived_NetDebt")
-        tax_rate = get("clean_CashTaxRate") or get("clean_GAAP_TaxRate") or 0.21
+        # Pass None (not the local get-default of 0.0) for missing
+        # rates — the resolver's _is_usable_rate accepts 0.0 in band,
+        # which would otherwise be returned as a "valid" 0% tax rate
+        # when the field is missing.
+        tax_rate, tax_rate_source = resolve_tax_rate(
+            ticker=ticker, fn="reverse_dcf",
+            df=fy_df, fy=fy,
+            cash_tax_rate=get("clean_CashTaxRate", None),
+            gaap_tax_rate=get("clean_GAAP_TaxRate", None),
+        )
+        result.tax_rate_source = tax_rate_source
 
         # Tier-3 input range check on tax_rate. Catches A11-class
-        # corruption (DB returned a wild value, fallback chain produced
-        # a malformed rate). Anomaly A11 specifically — the silent 0.21
-        # statutory fallback for international filers (MDT Irish ~14-16%)
-        # is documented; the framework's per-ticker override registry
-        # accommodates it. This check catches anything outside [-1, 1].
+        # corruption that the resolver couldn't reject (e.g. company_fy
+        # average sitting at the edge but a downstream consumer hits a
+        # malformed row). The resolver itself enforces ``_is_usable_rate``
+        # on every input but this is the defense-in-depth check.
         tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
         _local_mode = _reverse_dcf_mode()
         try:

@@ -37,6 +37,7 @@ from aletheia.calculations import (
     RANGE_BOUNDS,
     CalculationError,
     _guard_mode,
+    resolve_tax_rate,
 )
 
 warnings.filterwarnings("ignore")
@@ -89,6 +90,7 @@ class ScreeningCard:
     current_price: float = 0.0
     market_cap: float = 0.0
     metrics: List[MetricResult] = field(default_factory=list)
+    tax_rate_source: str = "statutory"  # cash | gaap | company_fy | statutory
 
     @property
     def passes(self) -> int:
@@ -388,12 +390,27 @@ class ScreeningEngine:
         cash         = _safe(row.get("raw_Cash"))
         sbc          = _safe(row.get("clean_SBC"))
         sbc_pct_fcf  = _safe(row.get("clean_SBC_PctFCF"))
-        tax_rate     = _safe(row.get("clean_CashTaxRate")) or 0.21
+        # FY-only slice for the company_fy lookup. TTM rows would
+        # duplicate fiscal_year entries and shift the dedup-keep-last
+        # behaviour, producing a different rate than the FY-only
+        # DCFEngine path — that broke WACC consistency on first pass.
+        if "period" in all_years_df.columns:
+            tax_lookup_df = all_years_df[all_years_df["period"] == "FY"]
+        else:
+            tax_lookup_df = all_years_df
+        tax_rate, tax_rate_source = resolve_tax_rate(
+            ticker=card.ticker, fn="screening_ratios._compute_metrics",
+            df=tax_lookup_df, fy=fy,
+            cash_tax_rate=_safe(row.get("clean_CashTaxRate")),
+            gaap_tax_rate=_safe(row.get("clean_GAAP_TaxRate")),
+        )
+        card.tax_rate_source = tax_rate_source
 
-        # Tier-3 input range check on tax_rate (anomaly A11 surface).
-        # 0.21 statutory fallback is in range; malformed rates (NaN
-        # surviving _safe, wild values) get caught here before they
-        # propagate into the 34-metric scorecard.
+        # Tier-3 input range check on tax_rate. Defense-in-depth: the
+        # resolver enforces ``_is_usable_rate`` on every input but a
+        # malformed rate surviving (e.g. in-range company_fy mean from
+        # edge-case rows) gets caught here before propagating into the
+        # 34-metric scorecard.
         tax_min, tax_max = RANGE_BOUNDS["tax_rate"]
         try:
             _require_range(
