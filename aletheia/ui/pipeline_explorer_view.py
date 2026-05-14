@@ -249,6 +249,87 @@ _XBRL_CORE_FIELDS = [
 ]
 
 
+_DRIFT_TIER_ICON = {
+    "ok":         "🟢",
+    "minor":      "🟡",
+    "notable":    "🟠",
+    "material":   "🔴",
+    "incomplete": "⚫",
+}
+
+
+def _render_stage2_fmp_comparison(ticker: str) -> None:
+    """XBRL-vs-FMP side-by-side comparison per FY. Fetches the
+    pre-computed comparison from /pipeline/fmp-compare/{ticker} and
+    renders one table per FY (rows = field, columns = XBRL value /
+    FMP value / drift % / tier icon).
+
+    This is the Gate A.TTM-style drift view inside the Stage Explorer:
+    'XBRL gave us $200.97B revenue; FMP says $200.97B; drift 0.0%'.
+    """
+    res = _api_get(f"/pipeline/fmp-compare/{ticker}")
+    if not res["ok"]:
+        st.caption(
+            "FMP comparison endpoint unreachable: " + res["error"]
+        )
+        return
+    payload = res["data"]
+    fiscal_years: List[int] = payload.get("fiscal_years") or []
+    cells = payload.get("cells") or []
+    if not cells:
+        st.caption(
+            "No FMP comparison data — likely the FMP cache files "
+            "for this ticker aren't on disk yet. Run Stage 1 with "
+            "`--force-refresh` to repopulate FMP endpoints."
+        )
+        return
+
+    # Distribution headline: how many cells in each drift tier.
+    tier_counts: Dict[str, int] = {}
+    for cell in cells:
+        t = cell.get("tier", "incomplete")
+        tier_counts[t] = tier_counts.get(t, 0) + 1
+    summary_chips = "  ·  ".join(
+        f"{_DRIFT_TIER_ICON.get(t, '·')} {t} {n}"
+        for t, n in sorted(tier_counts.items(), key=lambda kv: -kv[1])
+    )
+    st.markdown(
+        f"**XBRL ↔ FMP comparison** — {len(cells)} cells across "
+        f"{len(fiscal_years)} FYs · drift distribution: {summary_chips}"
+    )
+    st.caption(
+        "🟢 ≤ 0.5% drift   🟡 ≤ 2%   🟠 ≤ 5%   🔴 > 5%   ⚫ one side missing"
+    )
+
+    # One row per (field, FY) with the values side by side. The
+    # alternative is one table per FY; this layout keeps the eye on
+    # YoY drift evolution per field which is what catches systemic
+    # issues (e.g., a sign-convention bug shows up as drift in every
+    # FY).
+    cells_by_fy: Dict[int, List[Dict[str, Any]]] = {}
+    for cell in cells:
+        cells_by_fy.setdefault(cell["fiscal_year"], []).append(cell)
+
+    # Render the most-recent FY first — analyst's usual focus.
+    for fy in sorted(cells_by_fy.keys(), reverse=True):
+        with st.expander(f"FY{fy} — XBRL ↔ FMP", expanded=(fy == max(fiscal_years))):
+            rows: List[Dict[str, Any]] = []
+            for cell in cells_by_fy[fy]:
+                xbrl = cell.get("xbrl_value")
+                fmp = cell.get("fmp_value")
+                drift_pct = cell.get("drift_pct")
+                tier = cell.get("tier", "incomplete")
+                rows.append({
+                    "": _DRIFT_TIER_ICON.get(tier, "·"),
+                    "Field": cell.get("field_label", ""),
+                    "XBRL": _fmt_usd(xbrl),
+                    "FMP": _fmt_usd(fmp),
+                    "drift": _fmt_pct(drift_pct, decimals=2) if drift_pct is not None else "—",
+                    "tier": tier,
+                })
+            st.dataframe(rows, hide_index=True, use_container_width=True)
+
+
 def _render_stage2_xbrl_extracted(records: List[Dict[str, Any]]) -> None:
     """Render the XBRL-extracted core financials per-FY. This is the
     direct answer to 'where's the data from the SEC XBRL file?' —
@@ -340,6 +421,15 @@ def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
     # the data from the SEC XBRL file?". Placed early so the analyst
     # sees the resolved values before the override/receipt minutiae.
     _render_stage2_xbrl_extracted(records)
+
+    # XBRL-vs-FMP side-by-side comparison. Reads from the
+    # /pipeline/fmp-compare/{ticker} endpoint which cross-references
+    # the cleaned record's resolved fields with the FMP cache files.
+    # Stage 2's typed ValidationReceipt will carry this per-record
+    # in a future iteration; this panel bridges the current gap.
+    ticker = records[0].get("ticker") if records else None
+    if ticker:
+        _render_stage2_fmp_comparison(ticker)
 
     if overrides_active:
         st.markdown("**Overrides applied** (these relax a schema check for documented reason):")

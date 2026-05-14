@@ -2321,6 +2321,27 @@ def pipeline_status_for_ticker(ticker: str):
     ]
 
 
+@app.get("/pipeline/fmp-compare/{ticker}", tags=["Pipeline"])
+def pipeline_fmp_compare(ticker: str, n_years: int = 5):
+    """Per-FY × per-field XBRL-vs-FMP side-by-side comparison.
+
+    The XBRL side is the cleaned record's resolved fields (extracted
+    by tag_resolver in Stage 2). The FMP side comes from the
+    on-disk FMP cache files (income / balance / cashflow annual).
+    Returns drift in dollars + percent + tier classification.
+
+    Stage 2's typed contract will carry this comparison per-record
+    natively in a future iteration (Week 5 follow-up); until then
+    the Stage Explorer panel recomputes it from raw sources via this
+    endpoint."""
+    from aletheia.pipeline._fmp_compare import (
+        compare_xbrl_to_fmp, comparison_to_jsonable,
+    )
+    ticker = ticker.upper()
+    result = compare_xbrl_to_fmp(ticker, n_years=n_years)
+    return comparison_to_jsonable(result)
+
+
 @app.post("/pipeline/bust-cache/{ticker}", tags=["Pipeline"])
 def pipeline_bust_cache(ticker: str, body: _PipelineBustCacheRequest):
     """Force cache invalidation for one or more stages of a ticker.
