@@ -2077,6 +2077,316 @@ def get_thesis_pdf(ticker: str):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Pipeline stage endpoints — per-stage execution + status surface.
+#
+# These are the typed-contract entry points the Stage Explorer +
+# Status Matrix UIs consume. They do NOT supersede the legacy
+# /pipeline/run/{ticker} (subprocess to main.py) — that stays until
+# the workflow/graph deprecation window closes (decision #3 in
+# docs/pipeline_contracts.md). The new endpoints are the canonical
+# path for any new caller.
+#
+# Spec: docs/pipeline_ui_design.md
+# ─────────────────────────────────────────────────────────────────────────────
+
+class _PipelineIngestRequest(BaseModel):
+    force_refresh: bool = False
+    sources: Optional[List[str]] = None
+    include_market_snapshot: bool = True
+
+
+class _PipelineValidateRequest(BaseModel):
+    input_bundle_fingerprint: Optional[str] = None
+    fiscal_years: Optional[List[int]] = None
+
+
+class _PipelineCalculateRequest(BaseModel):
+    fiscal_year: Optional[int] = None
+
+
+class _PipelineAgentsRequest(BaseModel):
+    """Stage 4 incurs LLM cost. ``confirm_llm_cost`` must be True
+    explicitly — the endpoint refuses without it. Deliberate friction
+    so the UI never accidentally triggers a paid run."""
+    confirm_llm_cost: bool = False
+
+
+class _PipelineRunRequest(BaseModel):
+    auto_agents: bool = False
+    bust_cache: Optional[List[str]] = None
+    force_refresh: bool = False
+    include_market_snapshot: bool = True
+
+
+class _PipelineBustCacheRequest(BaseModel):
+    stages: List[str]
+
+
+def _pipeline_version() -> str:
+    """Resolve current git SHA for stamping pipeline outputs.
+    Mirrors the CLI helpers in aletheia/cli/*.py."""
+    try:
+        sha = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"],
+            stderr=subprocess.DEVNULL, text=True,
+        ).strip()
+        return sha or "unversioned"
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        return "unversioned"
+
+
+@app.post("/pipeline/stages/{ticker}/ingest", tags=["Pipeline"])
+def pipeline_stage_ingest(ticker: str, body: _PipelineIngestRequest):
+    """Run Stage 1 (ingest) for a ticker. Returns the typed
+    IngestedRawBundle as JSON. Status row written to pipeline_status."""
+    from aletheia.pipeline.stage1_ingest import (
+        Stage1IngestError, run_stage1,
+    )
+    ticker = ticker.upper()
+    try:
+        bundle = run_stage1(
+            ticker,
+            pipeline_version=_pipeline_version(),
+            force_refresh=body.force_refresh,
+            sources=body.sources,
+            include_market_snapshot=body.include_market_snapshot,
+        )
+    except Stage1IngestError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return json.loads(bundle.model_dump_json())
+
+
+@app.post("/pipeline/stages/{ticker}/validate", tags=["Pipeline"])
+def pipeline_stage_validate(ticker: str, body: _PipelineValidateRequest):
+    """Run Stage 2 (validate + clean) for a ticker. Returns the list
+    of typed ValidatedCleanedRecord payloads."""
+    from aletheia.pipeline.stage2_validate import (
+        Stage2ValidateError, run_stage2,
+    )
+    ticker = ticker.upper()
+    try:
+        records = run_stage2(
+            ticker=ticker,
+            pipeline_version=_pipeline_version(),
+            input_bundle_fingerprint=body.input_bundle_fingerprint,
+            fiscal_years=body.fiscal_years,
+        )
+    except Stage2ValidateError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return [json.loads(r.model_dump_json()) for r in records]
+
+
+@app.post("/pipeline/stages/{ticker}/calculate", tags=["Pipeline"])
+def pipeline_stage_calculate(ticker: str, body: _PipelineCalculateRequest):
+    """Run Stage 3 (calculate) for a ticker. Adapter reads cleaned
+    records from DuckDB (until Stage 2 emits typed contracts natively
+    via the Week 5 path). Returns the typed CalculationBundle."""
+    from aletheia.cli.calc import load_records
+    from aletheia.pipeline.stage3_calculate import (
+        Stage3InputError, run_stage3,
+    )
+    ticker = ticker.upper()
+    pv = _pipeline_version()
+    try:
+        records = load_records(ticker, pv)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    try:
+        bundle = run_stage3(
+            records,
+            pipeline_version=pv,
+            fiscal_year=body.fiscal_year,
+        )
+    except Stage3InputError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return json.loads(bundle.model_dump_json())
+
+
+@app.post("/pipeline/stages/{ticker}/agents", tags=["Pipeline"])
+def pipeline_stage_agents(ticker: str, body: _PipelineAgentsRequest):
+    """Run Stage 4 (agents). Requires ``confirm_llm_cost: true`` in
+    the body. Without that flag the endpoint refuses — deliberate
+    friction so the UI never accidentally triggers a paid run."""
+    if not body.confirm_llm_cost:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Stage 4 incurs LLM cost. Set `confirm_llm_cost: true` "
+                "in the request body to proceed. The UI surfaces the "
+                "estimated cost before issuing this call."
+            ),
+        )
+    from aletheia.cli.calc import load_records
+    from aletheia.pipeline.stage3_calculate import (
+        Stage3InputError, run_stage3,
+    )
+    from aletheia.pipeline.stage4_agents import (
+        Stage4AgentError, run_stage4,
+    )
+    ticker = ticker.upper()
+    pv = _pipeline_version()
+    try:
+        records = load_records(ticker, pv)
+        calc_bundle = run_stage3(records, pipeline_version=pv)
+    except (RuntimeError, Stage3InputError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    try:
+        bundle = run_stage4(calc_bundle, pipeline_version=pv)
+    except Stage4AgentError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return json.loads(bundle.model_dump_json())
+
+
+@app.post("/pipeline/stages/{ticker}/run", tags=["Pipeline"])
+def pipeline_stage_run(ticker: str, body: _PipelineRunRequest):
+    """Run the full orchestrator chain for a ticker. Optional
+    bust_cache + force_refresh flags propagate cascade-invalidation
+    per docs/pipeline_contracts.md decision #4."""
+    from aletheia.pipeline.orchestrator import Orchestrator
+    ticker = ticker.upper()
+    pv = _pipeline_version()
+    with Orchestrator() as orch:
+        result = orch.run(
+            ticker,
+            pipeline_version=pv,
+            auto_agents=body.auto_agents,
+            bust_cache=body.bust_cache,
+            force_refresh=body.force_refresh,
+            include_market_snapshot=body.include_market_snapshot,
+        )
+    return {
+        "ticker": result.ticker,
+        "pipeline_version": result.pipeline_version,
+        "started_at": result.started_at.isoformat(),
+        "finished_at": result.finished_at.isoformat(),
+        "auto_agents": result.auto_agents,
+        "all_ok": result.all_ok,
+        "stages": {
+            stage: {
+                "status": outcome.status.value,
+                "fingerprint": outcome.fingerprint,
+                "duration_seconds": round(outcome.duration_seconds, 3),
+                "error_message": outcome.error_message,
+            }
+            for stage, outcome in result.stages.items()
+        },
+    }
+
+
+@app.get("/pipeline/status", tags=["Pipeline"])
+def pipeline_status_matrix():
+    """Universe-wide (ticker, stage) status matrix. One row per
+    (ticker, stage) currently tracked in pipeline_status."""
+    from aletheia.pipeline.status_store import PipelineStatusStore
+    with PipelineStatusStore() as store:
+        rows = store.matrix()
+    return [
+        {
+            "ticker": r.ticker,
+            "stage": r.stage,
+            "status": r.status.value,
+            "fingerprint": r.fingerprint,
+            "last_run_at": r.last_run_at.isoformat() if r.last_run_at else None,
+            "last_success_at": r.last_success_at.isoformat() if r.last_success_at else None,
+            "error_message": r.error_message,
+            "duration_seconds": r.duration_seconds,
+            "rows_processed": r.rows_processed,
+        }
+        for r in rows
+    ]
+
+
+@app.get("/pipeline/status/{ticker}", tags=["Pipeline"])
+def pipeline_status_for_ticker(ticker: str):
+    """Per-ticker stage rows. Empty list when the ticker has never
+    been run through the orchestrator (returns 200 with [] — not
+    404, to match how the matrix endpoint handles absent state)."""
+    from aletheia.pipeline.status_store import PipelineStatusStore
+    ticker = ticker.upper()
+    with PipelineStatusStore() as store:
+        rows = store.get_for_ticker(ticker)
+    return [
+        {
+            "ticker": r.ticker,
+            "stage": r.stage,
+            "status": r.status.value,
+            "fingerprint": r.fingerprint,
+            "last_run_at": r.last_run_at.isoformat() if r.last_run_at else None,
+            "last_success_at": r.last_success_at.isoformat() if r.last_success_at else None,
+            "error_message": r.error_message,
+            "duration_seconds": r.duration_seconds,
+            "rows_processed": r.rows_processed,
+        }
+        for r in rows
+    ]
+
+
+@app.post("/pipeline/bust-cache/{ticker}", tags=["Pipeline"])
+def pipeline_bust_cache(ticker: str, body: _PipelineBustCacheRequest):
+    """Force cache invalidation for one or more stages of a ticker.
+    Returns the updated status rows. The next pipeline run for those
+    stages will be a real run, not a cache hit."""
+    from aletheia.contracts.pipeline import StageStatus, cascade_invalidation_targets
+    from aletheia.pipeline.status_store import PipelineStatusStore
+    ticker = ticker.upper()
+    if not body.stages:
+        raise HTTPException(
+            status_code=400,
+            detail="Provide at least one stage id in `stages`.",
+        )
+    valid_stages = {
+        "stage1_ingest", "stage2_validate",
+        "stage3_calculate", "stage4_agents",
+    }
+    # Accept short forms as a convenience (matches CLI behaviour).
+    short_to_full = {
+        "stage1": "stage1_ingest", "stage2": "stage2_validate",
+        "stage3": "stage3_calculate", "stage4": "stage4_agents",
+    }
+    resolved = [short_to_full.get(s, s) for s in body.stages]
+    unknown = [s for s in resolved if s not in valid_stages]
+    if unknown:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unknown stage ids: {unknown}. Valid: {sorted(valid_stages)}",
+        )
+    # Cascade-invalidate downstream of each busted stage.
+    to_mark = set(resolved)
+    for s in list(to_mark):
+        to_mark.update(cascade_invalidation_targets(s))
+
+    updated: List[Dict[str, Any]] = []
+    with PipelineStatusStore() as store:
+        for stage in sorted(to_mark):
+            existing = store.get(ticker, stage)
+            if existing is None:
+                continue  # nothing to bust
+            # Re-upsert with stale_due_to_override status so the
+            # orchestrator's cache-hit check will miss next run.
+            from aletheia.contracts.pipeline import PipelineStatusRow
+            store.upsert(PipelineStatusRow(
+                ticker=ticker, stage=stage,
+                status=StageStatus.STALE_DUE_TO_OVERRIDE,
+                fingerprint=existing.fingerprint,
+                last_run_at=existing.last_run_at,
+                last_success_at=existing.last_success_at,
+                error_message=None,
+                duration_seconds=existing.duration_seconds,
+                rows_processed=existing.rows_processed,
+            ))
+            row = store.get(ticker, stage)
+            updated.append({
+                "ticker": row.ticker,
+                "stage": row.stage,
+                "status": row.status.value,
+                "fingerprint": row.fingerprint,
+                "last_run_at": row.last_run_at.isoformat() if row.last_run_at else None,
+                "last_success_at": row.last_success_at.isoformat() if row.last_success_at else None,
+            })
+    return {"updated": updated}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Root
 # ─────────────────────────────────────────────────────────────────────────────
 
