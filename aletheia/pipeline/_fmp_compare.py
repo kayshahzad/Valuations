@@ -1,20 +1,21 @@
 """XBRL-vs-FMP per-FY comparison for the Stage Explorer's Stage 2 panel.
 
-Reads:
+Reads three sides and reconciles them:
   - cleaned records from DuckDB (XBRL-extracted side, after
     tag_resolver + cleaning_engine)
+  - raw SEC XBRL companyfacts JSON (fallback for fields the cleaner
+    doesn't currently materialise — RetainedEarnings, CF working-
+    capital changes, debt issuance/repayment, FX effect, etc.)
   - FMP raw cache files (FMP side, the second-source baseline)
 
 Produces a per-FY × per-field comparison row carrying both values
 + the drift in dollars and percent. The UI renders these as a
-side-by-side table; the analyst can spot drift at a glance.
+side-by-side table grouped by Income Statement / Balance Sheet /
+Cash Flow.
 
-This is the Stage-Explorer surface of the Gate A.TTM cross-check
-that already exists inside cleaning_engine (see
-``aletheia/data/fmp_validation.py``). Eventually Stage 2's typed
-ValidationReceipt should carry the comparison directly per record
-(Week 5 follow-up); this module bridges the gap by re-computing the
-comparison from raw sources on demand.
+Backed by the unified field catalog at ``_field_catalog.py`` —
+extend that file to add new comparison fields; this module needs
+no changes.
 """
 
 from __future__ import annotations
@@ -25,6 +26,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
+from aletheia.pipeline._field_catalog import CATALOG, FieldSpec
+
 
 # Drift tier thresholds (decimal). Calibrated to match the existing
 # fmp_validation gate A — strict tier hard-fails at 0.5%, soft tier
@@ -34,30 +37,8 @@ _DRIFT_TIER_MINOR = 0.02   # ≤ 2%
 _DRIFT_TIER_NOTABLE = 0.05  # ≤ 5%
 
 
-# Comparison field map: XBRL-cleaned field name → (FMP source, FMP key,
-# sign_convention).  ``sign_convention`` is +1 when both sides use
-# the same magnitude convention; -1 means FMP reports the OPPOSITE
-# sign (CapEx is the canonical case — FMP reports as cash outflow,
-# our cleaning convention is positive magnitude). When the
-# sign_convention is -1, we compare abs values.
-_COMPARISON_FIELDS = [
-    # (display_label, xbrl_key, fmp_source, fmp_key, abs_compare)
-    ("Revenue",          "Revenue",          "income",   "revenue",                                False),
-    ("Net Income",       "NetIncome",        "income",   "netIncome",                              False),
-    ("Operating CF",     "OperatingCF",      "cashflow", "operatingCashFlow",                      False),
-    ("Investing CF",     "InvestingCF",      "cashflow", "netCashProvidedByInvestingActivities",   False),
-    ("Financing CF",     "FinancingCF",      "cashflow", "netCashProvidedByFinancingActivities",   False),
-    ("CapEx",            "CapEx_Total",      "cashflow", "capitalExpenditure",                     True),
-    ("Total Assets",     "TotalAssets",      "balance",  "totalAssets",                            False),
-    ("Total Liabilities","TotalLiabilities", "balance",  "totalLiabilities",                       False),
-    ("Total Equity",     "TotalEquity",      "balance",  "totalStockholdersEquity",                False),
-    ("Cash",             "Cash",             "balance",  "cashAndCashEquivalents",                 False),
-    ("Long-Term Debt",   "LongTermDebt",     "balance",  "longTermDebt",                           False),
-    ("Shares Diluted",   "SharesDiluted",    "income",   "weightedAverageShsOutDil",               False),
-]
-
-
 _FMP_CACHE_DIR = Path("valuation_data/macro/fmp")
+_SEC_COMPANYFACTS_DIR = Path("valuation_data/raw/sec/companyfacts")
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -69,11 +50,15 @@ class FieldComparison:
     """One (FY, field) cell in the side-by-side table."""
     fiscal_year: int
     field_label: str
+    category: str                # "Income Statement" | "Balance Sheet" | "Cash Flow"
+    priority: str                # "critical" | "important" | "nice_to_have"
     xbrl_value: Optional[float]
+    xbrl_source: str             # "cleaned" | "raw_xbrl" | "unavailable"
     fmp_value: Optional[float]
     drift_abs: Optional[float]
     drift_pct: Optional[float]   # decimal — UI formats
     tier: str                    # "ok" | "minor" | "notable" | "material" | "incomplete"
+    note: str = ""               # carried from the catalog FieldSpec.note
 
 
 @dataclass
@@ -82,6 +67,7 @@ class FmpComparisonResult:
     ticker: str
     fiscal_years: List[int]
     fields: List[str]
+    categories: List[str]
     cells: List[FieldComparison]
 
 
@@ -159,6 +145,82 @@ def _coerce(v: Any) -> Optional[float]:
     return f if math.isfinite(f) else None
 
 
+def _load_sec_companyfacts(ticker: str) -> Dict[str, Any]:
+    """Resolve CIK + load raw SEC companyfacts JSON. Returns the
+    inner us-gaap facts dict, or {} when the file is absent.
+    Cached lookup via the existing edgar_client CIK resolver."""
+    try:
+        from aletheia.data import edgar_client
+        sec = edgar_client.SecEdgar()
+        cik = sec.resolve_cik(ticker)
+    except Exception:  # noqa: BLE001 — defensive boundary
+        return {}
+    if not cik:
+        return {}
+    path = _SEC_COMPANYFACTS_DIR / f"CIK{cik}.json"
+    if not path.exists():
+        return {}
+    try:
+        facts = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {}
+    return facts.get("facts", {}).get("us-gaap", {}) or {}
+
+
+def _xbrl_fact_for_fy(
+    us_gaap: Dict[str, Any], tag: str, fy: int,
+    *, form: str = "10-K",
+) -> Optional[float]:
+    """Latest USD value of one XBRL tag for the given fiscal_year.
+    Returns None when the tag is absent, when no entry matches the
+    FY, or when the value isn't a finite number. Mirrors the helper
+    in tools/verification/identity_checks.py to keep behaviour
+    consistent across the two analyst surfaces."""
+    entry = us_gaap.get(tag)
+    if not entry:
+        return None
+    units = entry.get("units", {}).get("USD", [])
+    candidates = [
+        u for u in units
+        if u.get("form") == form and u.get("fy") == fy
+    ]
+    if not candidates:
+        return None
+    latest = max(
+        candidates,
+        key=lambda u: u.get("end") or u.get("filed") or "",
+    )
+    return _coerce(latest.get("val"))
+
+
+def _resolve_xbrl_value(
+    spec: FieldSpec,
+    clean: Dict[str, Any],
+    raw: Dict[str, Any],
+    us_gaap: Dict[str, Any],
+    fy: int,
+) -> tuple[Optional[float], str]:
+    """Walk the catalog's lookup chain for one FieldSpec. Returns
+    (value, source) where source is one of:
+       "cleaned"     value came from record.clean
+       "raw_xbrl"    value came from raw SEC companyfacts directly
+       "unavailable" no path produced a usable value
+    """
+    for k in spec.xbrl_clean_keys:
+        v = _coerce(clean.get(k))
+        if v is not None:
+            return v, "cleaned"
+    for k in spec.xbrl_raw_keys:
+        v = _coerce(raw.get(k))
+        if v is not None:
+            return v, "cleaned"  # raw dict was populated by cleaning, treat as cleaned
+    for tag in spec.xbrl_fallback_tags:
+        v = _xbrl_fact_for_fy(us_gaap, tag, fy)
+        if v is not None:
+            return v, "raw_xbrl"
+    return None, "unavailable"
+
+
 # ─────────────────────────────────────────────────────────────────────
 # Main entry point
 # ─────────────────────────────────────────────────────────────────────
@@ -187,21 +249,34 @@ def compare_xbrl_to_fmp(
         df = db.get_latest(ticker)
     finally:
         db.close()
+
+    field_labels = [s.label for s in CATALOG]
+    categories_present = sorted({s.category for s in CATALOG})
+
     if df is None or df.empty:
         return FmpComparisonResult(
             ticker=ticker, fiscal_years=[],
-            fields=[label for label, *_ in _COMPARISON_FIELDS],
+            fields=field_labels, categories=categories_present,
             cells=[],
         )
     fy_rows = df[df["period"] == "FY"].sort_values("fiscal_year")
-    xbrl_by_fy: Dict[int, Dict[str, Optional[float]]] = {}
+    # Per-FY clean + raw dicts the catalog lookup walks.
+    clean_by_fy: Dict[int, Dict[str, Any]] = {}
+    raw_by_fy: Dict[int, Dict[str, Any]] = {}
     for _, row in fy_rows.iterrows():
         fy = int(row["fiscal_year"])
         try:
-            clean = json.loads(row["clean_json"])
+            clean_by_fy[fy] = json.loads(row["clean_json"])
         except (TypeError, json.JSONDecodeError):
-            clean = {}
-        xbrl_by_fy[fy] = {k: _coerce(clean.get(k)) for _, k, *_ in _COMPARISON_FIELDS}
+            clean_by_fy[fy] = {}
+        try:
+            raw_by_fy[fy] = json.loads(row.get("raw_json") or "{}")
+        except (TypeError, json.JSONDecodeError):
+            raw_by_fy[fy] = {}
+
+    # Raw SEC companyfacts (loaded once per call) for the fallback
+    # path where cleaning didn't materialise the field.
+    us_gaap = _load_sec_companyfacts(ticker)
 
     # ── FMP side ────────────────────────────────────────────────────
     fmp_income = _fmp_by_fy(_load_fmp_cache(ticker, "income"))
@@ -215,7 +290,7 @@ def compare_xbrl_to_fmp(
 
     # ── Restrict to most-recent N FYs that exist on at least one side
     all_fys = sorted(
-        set(xbrl_by_fy.keys())
+        set(clean_by_fy.keys())
         | set(fmp_income.keys())
         | set(fmp_balance.keys())
         | set(fmp_cashflow.keys())
@@ -224,17 +299,27 @@ def compare_xbrl_to_fmp(
     # ── Build cells ─────────────────────────────────────────────────
     cells: List[FieldComparison] = []
     for fy in all_fys:
-        for label, xbrl_key, fmp_source, fmp_key, abs_compare in _COMPARISON_FIELDS:
-            xbrl_value = xbrl_by_fy.get(fy, {}).get(xbrl_key)
-            fmp_stmt = fmp_lookup[fmp_source].get(fy, {})
-            fmp_value = _coerce(fmp_stmt.get(fmp_key))
+        clean = clean_by_fy.get(fy, {})
+        raw = raw_by_fy.get(fy, {})
+        for spec in CATALOG:
+            xbrl_value, xbrl_source = _resolve_xbrl_value(
+                spec, clean, raw, us_gaap, fy,
+            )
 
-            # CapEx sign reconciliation: FMP reports cash-flow-statement
-            # capex as a negative value (cash outflow). Our cleaning
-            # convention is positive magnitude. Compare abs values for
-            # fields with abs_compare=True.
-            cmp_x = abs(xbrl_value) if abs_compare and xbrl_value is not None else xbrl_value
-            cmp_f = abs(fmp_value)  if abs_compare and fmp_value  is not None else fmp_value
+            fmp_value: Optional[float] = None
+            if spec.fmp_source is not None:
+                fmp_stmt = fmp_lookup.get(spec.fmp_source, {}).get(fy, {})
+                for fk in spec.fmp_keys:
+                    fmp_value = _coerce(fmp_stmt.get(fk))
+                    if fmp_value is not None:
+                        break
+
+            # Sign reconciliation: CapEx and a handful of other
+            # cash-outflow fields use opposite-sign conventions
+            # between XBRL (positive magnitude after cleaning) and
+            # FMP (raw cash-flow sign). abs_compare=True normalises.
+            cmp_x = abs(xbrl_value) if spec.abs_compare and xbrl_value is not None else xbrl_value
+            cmp_f = abs(fmp_value)  if spec.abs_compare and fmp_value  is not None else fmp_value
 
             if cmp_x is None or cmp_f is None:
                 drift_abs = None
@@ -250,18 +335,23 @@ def compare_xbrl_to_fmp(
 
             cells.append(FieldComparison(
                 fiscal_year=fy,
-                field_label=label,
+                field_label=spec.label,
+                category=spec.category,
+                priority=spec.tier,
                 xbrl_value=xbrl_value,
+                xbrl_source=xbrl_source,
                 fmp_value=fmp_value,
                 drift_abs=drift_abs,
                 drift_pct=drift_pct,
                 tier=_classify_drift(drift_pct),
+                note=spec.note,
             ))
 
     return FmpComparisonResult(
         ticker=ticker,
         fiscal_years=all_fys,
-        fields=[label for label, *_ in _COMPARISON_FIELDS],
+        fields=field_labels,
+        categories=categories_present,
         cells=cells,
     )
 
@@ -273,6 +363,7 @@ def comparison_to_jsonable(result: FmpComparisonResult) -> Dict[str, Any]:
         "ticker": result.ticker,
         "fiscal_years": result.fiscal_years,
         "fields": result.fields,
+        "categories": result.categories,
         "cells": [asdict(c) for c in result.cells],
     }
 

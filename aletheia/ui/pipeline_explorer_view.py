@@ -228,27 +228,6 @@ def _render_stage1_validation(bundle: Dict[str, Any]) -> None:
         )
 
 
-_XBRL_CORE_FIELDS = [
-    # Order matters: this is the display order in the table.
-    ("Revenue",            "Revenue"),
-    ("NetIncome",          "Net Income"),
-    ("OperatingCF",        "Operating CF"),
-    ("InvestingCF",        "Investing CF"),
-    ("FinancingCF",        "Financing CF"),
-    ("CapEx_Total",        "CapEx"),
-    ("TotalAssets",        "Total Assets"),
-    ("TotalLiabilities",   "Total Liabilities"),
-    ("TotalEquity",        "Total Equity"),
-    ("Cash",               "Cash"),
-    ("LongTermDebt",       "Long-Term Debt"),
-    ("Goodwill",           "Goodwill"),
-    ("AccountsReceivable", "AR"),
-    ("Inventory",          "Inventory"),
-    ("AccountsPayable",    "AP"),
-    ("SharesDiluted",      "Shares Diluted"),
-]
-
-
 _DRIFT_TIER_ICON = {
     "ok":         "🟢",
     "minor":      "🟡",
@@ -310,36 +289,63 @@ def _render_stage2_fmp_comparison(ticker: str) -> None:
     for cell in cells:
         cells_by_fy.setdefault(cell["fiscal_year"], []).append(cell)
 
+    from aletheia.pipeline._field_catalog import CATEGORIES
+
     # Render the most-recent FY first — analyst's usual focus.
     for fy in sorted(cells_by_fy.keys(), reverse=True):
         with st.expander(f"FY{fy} — XBRL ↔ FMP", expanded=(fy == max(fiscal_years))):
-            rows: List[Dict[str, Any]] = []
-            for cell in cells_by_fy[fy]:
-                xbrl = cell.get("xbrl_value")
-                fmp = cell.get("fmp_value")
-                drift_pct = cell.get("drift_pct")
-                tier = cell.get("tier", "incomplete")
-                rows.append({
-                    "": _DRIFT_TIER_ICON.get(tier, "·"),
-                    "Field": cell.get("field_label", ""),
-                    "XBRL": _fmt_usd(xbrl),
-                    "FMP": _fmt_usd(fmp),
-                    "drift": _fmt_pct(drift_pct, decimals=2) if drift_pct is not None else "—",
-                    "tier": tier,
-                })
-            st.dataframe(rows, hide_index=True, use_container_width=True)
+            # Group cells by category, preserving catalog order.
+            cells_in_fy = cells_by_fy[fy]
+            for category in CATEGORIES:
+                cat_cells = [c for c in cells_in_fy if c.get("category") == category]
+                if not cat_cells:
+                    continue
+                st.markdown(f"**{category}**")
+                rows: List[Dict[str, Any]] = []
+                for cell in cat_cells:
+                    xbrl = cell.get("xbrl_value")
+                    fmp = cell.get("fmp_value")
+                    drift_pct = cell.get("drift_pct")
+                    tier = cell.get("tier", "incomplete")
+                    src = cell.get("xbrl_source", "unavailable")
+                    src_label = (
+                        "" if src == "cleaned"
+                        else " ⤴︎"  if src == "raw_xbrl"
+                        else " ✗"
+                    )
+                    rows.append({
+                        "": _DRIFT_TIER_ICON.get(tier, "·"),
+                        "Field": cell.get("field_label", ""),
+                        "XBRL": _fmt_usd(xbrl) + src_label,
+                        "FMP": _fmt_usd(fmp),
+                        "drift": _fmt_pct(drift_pct, decimals=2) if drift_pct is not None else "—",
+                        "tier": tier,
+                    })
+                st.dataframe(rows, hide_index=True, use_container_width=True)
+            st.caption(
+                "XBRL column annotations:   ⤴︎ value from raw XBRL "
+                "fallback (cleaning didn't materialise this field) · "
+                "✗ unavailable in any source"
+            )
 
 
 def _render_stage2_xbrl_extracted(records: List[Dict[str, Any]]) -> None:
-    """Render the XBRL-extracted core financials per-FY. This is the
-    direct answer to 'where's the data from the SEC XBRL file?' —
-    these values were resolved by tag_resolver from raw XBRL tags
-    and persisted in the cleaned record's ``clean`` dict.
+    """Render the XBRL-extracted financials per-FY, grouped by
+    Income Statement / Balance Sheet / Cash Flow.
 
-    Layout: rows = canonical fields, columns = most-recent FYs.
-    Matches how a 10-K presents historicals so the analyst can scan
-    YoY directly.
+    The display catalog lives in
+    ``aletheia/pipeline/_field_catalog.py`` — extend the catalog to
+    add fields; this renderer needs no changes.
+
+    Layout: one mini-table per category. Rows = canonical fields in
+    catalog order, columns = most-recent 5 FYs. Fields that resolve
+    via the raw-XBRL fallback (e.g., RetainedEarnings — not in
+    ``record.clean``) are still surfaced; the side-by-side
+    comparison panel below tags those cells as ``raw_xbrl`` for
+    traceability.
     """
+    from aletheia.pipeline._field_catalog import CATALOG, CATEGORIES
+
     fy_records = sorted(
         (r for r in records if r.get("period") == "FY"),
         key=lambda r: r.get("fiscal_year") or 0,
@@ -348,40 +354,62 @@ def _render_stage2_xbrl_extracted(records: List[Dict[str, Any]]) -> None:
         st.caption("No FY records available — nothing to show.")
         return
 
-    # Last 5 FYs (or fewer when history is shorter).
     show = fy_records[-5:]
 
-    rows: List[Dict[str, Any]] = []
-    for clean_key, label in _XBRL_CORE_FIELDS:
-        row: Dict[str, Any] = {"Field": label}
-        any_present = False
-        for r in show:
-            v = (r.get("clean") or {}).get(clean_key)
-            row[f"FY{r['fiscal_year']}"] = _fmt_usd(v) if v is not None else "—"
-            if v is not None:
-                any_present = True
-        if any_present:
-            rows.append(row)
+    st.markdown(
+        "**Extracted from XBRL** — tag_resolver pulled these values "
+        "out of the raw SEC payload during Stage 2 cleaning. Cells "
+        "render `—` when neither `record.clean` nor the raw-XBRL "
+        "fallback produces a value for that field on this filer."
+    )
 
-    if not rows:
+    any_rendered = False
+    for category in CATEGORIES:
+        cat_specs = [s for s in CATALOG if s.category == category]
+        rows: List[Dict[str, Any]] = []
+        for spec in cat_specs:
+            row: Dict[str, Any] = {"Field": spec.label}
+            any_present = False
+            for r in show:
+                clean = r.get("clean") or {}
+                raw = r.get("raw") or {}
+                v: Optional[float] = None
+                for k in spec.xbrl_clean_keys:
+                    if clean.get(k) is not None:
+                        v = clean[k]
+                        break
+                if v is None:
+                    for k in spec.xbrl_raw_keys:
+                        if raw.get(k) is not None:
+                            v = raw[k]
+                            break
+                row[f"FY{r['fiscal_year']}"] = _fmt_usd(v) if v is not None else "—"
+                if v is not None:
+                    any_present = True
+            if any_present:
+                rows.append(row)
+        if not rows:
+            continue
+        any_rendered = True
+        st.markdown(f"#### {category}")
+        st.dataframe(rows, hide_index=True, use_container_width=True)
+
+    if not any_rendered:
         st.caption(
-            "Cleaned records present but no core financial fields "
-            "resolved — likely a tag_resolver gap for this filer's "
-            "XBRL taxonomy. Investigate the raw XBRL payload at "
+            "No catalog fields resolved across any category — "
+            "likely a tag_resolver gap for this filer's XBRL "
+            "taxonomy. Inspect the raw XBRL at "
             "`valuation_data/raw/sec/companyfacts/CIK*.json`."
         )
         return
 
-    st.markdown(
-        "**Extracted from XBRL** — tag_resolver pulled these values "
-        "out of the raw SEC payload during Stage 2 cleaning:"
-    )
-    st.dataframe(rows, hide_index=True, use_container_width=True)
     st.caption(
-        "These are the **resolved** values that feed Stage 3's calc "
-        "engines. The raw XBRL bytes themselves stay on disk at the "
-        "Stage 1 payload path; what you see here is what came out of "
-        "the tag-resolution + cleaning passes."
+        "Values shown are what `record.clean` (or `record.raw`) "
+        "exposes — they feed Stage 3's calc engines directly. The "
+        "side-by-side XBRL ↔ FMP comparison below pulls additional "
+        "fields via the raw SEC companyfacts fallback (e.g., "
+        "Retained Earnings, CF working-capital deltas) — those "
+        "cells are tagged `raw_xbrl` rather than `cleaned`."
     )
 
 

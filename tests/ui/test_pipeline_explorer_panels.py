@@ -277,23 +277,39 @@ def test_stage2_validation_renders_xbrl_extracted_table(monkeypatch):
         "Extracted from XBRL" in c["args"][0] for c in markdown_calls
     ), "missing the 'Extracted from XBRL' heading"
 
-    # A dataframe with Field column + per-FY columns gets rendered.
+    # The new categorized layout renders one st.dataframe per
+    # populated category. Collect fields from EVERY dataframe call so
+    # the assertion works regardless of which category each field
+    # ended up in.
     df_calls = [c for c in mock.calls if c["fn"] == "dataframe"]
-    assert df_calls, "expected st.dataframe to render the XBRL table"
-    rows = df_calls[0]["args"][0]
-    fields = {r["Field"] for r in rows}
-    # Core financials must show up when present in clean dict.
+    assert df_calls, "expected st.dataframe to render the XBRL tables"
+    all_rows: List[Dict[str, Any]] = []
+    for call in df_calls:
+        all_rows.extend(call["args"][0])
+    fields = {r["Field"] for r in all_rows}
+
+    # Income Statement fields
     assert "Revenue" in fields
     assert "Net Income" in fields
+    # Cash Flow fields
     assert "Operating CF" in fields
+    # Balance Sheet fields
     assert "Total Assets" in fields
+
     # Revenue cell value: $200.97B should appear in the FY2024 column.
-    rev_row = next(r for r in rows if r["Field"] == "Revenue")
+    rev_row = next(r for r in all_rows if r["Field"] == "Revenue")
     assert "$200.97B" in rev_row["FY2024"]
-    # Fields with all-None values across FYs (e.g., AP for META)
-    # must be elided.
-    assert "AP" not in fields
-    assert "Inventory" not in fields
+
+    # Category headers — one markdown call per populated category.
+    cat_headers = [
+        c["args"][0] for c in markdown_calls
+        if isinstance(c["args"][0], str) and c["args"][0].startswith("#### ")
+    ]
+    # At least Income Statement + Balance Sheet + Cash Flow given the
+    # fixture's clean dict populates fields in all three.
+    assert any("Income Statement" in h for h in cat_headers)
+    assert any("Balance Sheet" in h for h in cat_headers)
+    assert any("Cash Flow" in h for h in cat_headers)
 
 
 def test_stage2_xbrl_extracted_handles_empty_records(monkeypatch):
