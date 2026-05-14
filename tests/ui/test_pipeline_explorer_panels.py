@@ -249,6 +249,78 @@ def test_stage2_validation_surfaces_overrides_and_violations(monkeypatch):
     assert override_keys, "override key didn't render"
 
 
+def test_stage2_validation_renders_xbrl_extracted_table(monkeypatch):
+    """Stage 2 panel must surface the XBRL-extracted core financials
+    as a per-FY table. Direct answer to "where's the data from the
+    SEC XBRL file shown in the view?" — answers it before the
+    overrides + raw-JSON sections."""
+    from aletheia.ui.pipeline_explorer_view import _render_stage2_xbrl_extracted
+    mock = _install_st_mock(monkeypatch)
+    records = _stage2_records()
+    # Populate clean dict with META-shaped FY2024 values.
+    records[-1]["clean"] = {
+        "Revenue":          200_966_000_000.0,
+        "NetIncome":         60_458_000_000.0,
+        "OperatingCF":      115_800_000_000.0,
+        "InvestingCF":     -102_003_000_000.0,
+        "CapEx_Total":       69_691_000_000.0,
+        "TotalAssets":      366_021_000_000.0,
+        "TotalEquity":      217_243_000_000.0,
+        "Cash":              35_873_000_000.0,
+        "SharesDiluted":      2_574_000_000.0,
+    }
+    _render_stage2_xbrl_extracted(records)
+
+    # Headline markdown must mention XBRL extraction.
+    markdown_calls = [c for c in mock.calls if c["fn"] == "markdown"]
+    assert any(
+        "Extracted from XBRL" in c["args"][0] for c in markdown_calls
+    ), "missing the 'Extracted from XBRL' heading"
+
+    # A dataframe with Field column + per-FY columns gets rendered.
+    df_calls = [c for c in mock.calls if c["fn"] == "dataframe"]
+    assert df_calls, "expected st.dataframe to render the XBRL table"
+    rows = df_calls[0]["args"][0]
+    fields = {r["Field"] for r in rows}
+    # Core financials must show up when present in clean dict.
+    assert "Revenue" in fields
+    assert "Net Income" in fields
+    assert "Operating CF" in fields
+    assert "Total Assets" in fields
+    # Revenue cell value: $200.97B should appear in the FY2024 column.
+    rev_row = next(r for r in rows if r["Field"] == "Revenue")
+    assert "$200.97B" in rev_row["FY2024"]
+    # Fields with all-None values across FYs (e.g., AP for META)
+    # must be elided.
+    assert "AP" not in fields
+    assert "Inventory" not in fields
+
+
+def test_stage2_xbrl_extracted_handles_empty_records(monkeypatch):
+    """An empty record list is a different shape from records with
+    zero resolved fields. Both must render without crashing."""
+    from aletheia.ui.pipeline_explorer_view import _render_stage2_xbrl_extracted
+    mock = _install_st_mock(monkeypatch)
+    _render_stage2_xbrl_extracted([])
+    captions = [c for c in mock.calls if c["fn"] == "caption"]
+    assert any("No FY records" in c["args"][0] for c in captions)
+
+
+def test_stage2_xbrl_extracted_handles_records_with_no_resolved_fields(monkeypatch):
+    """When the cleaning engine produced FY records but the resolver
+    failed to populate any of the core fields, the panel must
+    surface that explicitly — pointing the analyst at the raw XBRL
+    path for triage."""
+    from aletheia.ui.pipeline_explorer_view import _render_stage2_xbrl_extracted
+    mock = _install_st_mock(monkeypatch)
+    records = _stage2_records()
+    for r in records:
+        r["clean"] = {}  # nothing resolved
+    _render_stage2_xbrl_extracted(records)
+    captions = [c for c in mock.calls if c["fn"] == "caption"]
+    assert any("tag_resolver gap" in c["args"][0] for c in captions)
+
+
 def test_stage2_validation_handles_no_overrides(monkeypatch):
     from aletheia.ui.pipeline_explorer_view import _render_stage2_validation
     mock = _install_st_mock(monkeypatch)

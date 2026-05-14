@@ -21,7 +21,6 @@ checks. Stage 4 surfaces thesis structural completeness + LLM cost.
 
 from __future__ import annotations
 
-import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -229,6 +228,82 @@ def _render_stage1_validation(bundle: Dict[str, Any]) -> None:
         )
 
 
+_XBRL_CORE_FIELDS = [
+    # Order matters: this is the display order in the table.
+    ("Revenue",            "Revenue"),
+    ("NetIncome",          "Net Income"),
+    ("OperatingCF",        "Operating CF"),
+    ("InvestingCF",        "Investing CF"),
+    ("FinancingCF",        "Financing CF"),
+    ("CapEx_Total",        "CapEx"),
+    ("TotalAssets",        "Total Assets"),
+    ("TotalLiabilities",   "Total Liabilities"),
+    ("TotalEquity",        "Total Equity"),
+    ("Cash",               "Cash"),
+    ("LongTermDebt",       "Long-Term Debt"),
+    ("Goodwill",           "Goodwill"),
+    ("AccountsReceivable", "AR"),
+    ("Inventory",          "Inventory"),
+    ("AccountsPayable",    "AP"),
+    ("SharesDiluted",      "Shares Diluted"),
+]
+
+
+def _render_stage2_xbrl_extracted(records: List[Dict[str, Any]]) -> None:
+    """Render the XBRL-extracted core financials per-FY. This is the
+    direct answer to 'where's the data from the SEC XBRL file?' —
+    these values were resolved by tag_resolver from raw XBRL tags
+    and persisted in the cleaned record's ``clean`` dict.
+
+    Layout: rows = canonical fields, columns = most-recent FYs.
+    Matches how a 10-K presents historicals so the analyst can scan
+    YoY directly.
+    """
+    fy_records = sorted(
+        (r for r in records if r.get("period") == "FY"),
+        key=lambda r: r.get("fiscal_year") or 0,
+    )
+    if not fy_records:
+        st.caption("No FY records available — nothing to show.")
+        return
+
+    # Last 5 FYs (or fewer when history is shorter).
+    show = fy_records[-5:]
+
+    rows: List[Dict[str, Any]] = []
+    for clean_key, label in _XBRL_CORE_FIELDS:
+        row: Dict[str, Any] = {"Field": label}
+        any_present = False
+        for r in show:
+            v = (r.get("clean") or {}).get(clean_key)
+            row[f"FY{r['fiscal_year']}"] = _fmt_usd(v) if v is not None else "—"
+            if v is not None:
+                any_present = True
+        if any_present:
+            rows.append(row)
+
+    if not rows:
+        st.caption(
+            "Cleaned records present but no core financial fields "
+            "resolved — likely a tag_resolver gap for this filer's "
+            "XBRL taxonomy. Investigate the raw XBRL payload at "
+            "`valuation_data/raw/sec/companyfacts/CIK*.json`."
+        )
+        return
+
+    st.markdown(
+        "**Extracted from XBRL** — tag_resolver pulled these values "
+        "out of the raw SEC payload during Stage 2 cleaning:"
+    )
+    st.dataframe(rows, hide_index=True, use_container_width=True)
+    st.caption(
+        "These are the **resolved** values that feed Stage 3's calc "
+        "engines. The raw XBRL bytes themselves stay on disk at the "
+        "Stage 1 payload path; what you see here is what came out of "
+        "the tag-resolution + cleaning passes."
+    )
+
+
 def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
     """Stage 2 panel: cleaned record count + quality score + schema
     violations + overrides + the FMP cross-check receipt. The
@@ -260,6 +335,11 @@ def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
     cols[1].metric("TTM records", len(records) - len(fy_records))
     cols[2].metric("avg quality", f"{avg_quality:.2f}" if avg_quality is not None else "—")
     cols[3].metric("schema violations", total_violations)
+
+    # XBRL-extracted financials table — the direct answer to "where's
+    # the data from the SEC XBRL file?". Placed early so the analyst
+    # sees the resolved values before the override/receipt minutiae.
+    _render_stage2_xbrl_extracted(records)
 
     if overrides_active:
         st.markdown("**Overrides applied** (these relax a schema check for documented reason):")
