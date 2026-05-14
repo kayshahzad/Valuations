@@ -10,14 +10,20 @@ Companion view: ``pipeline_status_view`` (universe matrix). The two
 views deliberately do NOT share rendering code — see
 ``docs/pipeline_ui_design.md`` for the architectural division.
 
-Commit-2 scope: scaffolding (run buttons + status + raw bundle JSON).
-Commit-3 layers in the per-stage validation panels.
+Commit-3 scope: per-stage validation panels surface "is this stage's
+output trustworthy?" without requiring the analyst to drill into raw
+JSON. Stage 1 surfaces source-list completeness + per-source size +
+sha — answers "where's the XBRL data?" at a glance. Stage 2 surfaces
+schema_violations + overrides + FMP cross-check receipt. Stage 3
+surfaces WACC / IV / RDCF / screening + tax_rate_source + identity
+checks. Stage 4 surfaces thesis structural completeness + LLM cost.
 """
 
 from __future__ import annotations
 
 import json
 from datetime import datetime
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import httpx
@@ -138,6 +144,283 @@ def _render_status_badge(stage_id: str, status_rows: Dict[str, Dict[str, Any]]) 
 
 
 # ─────────────────────────────────────────────────────────────────────
+# Validation-panel helpers — "is this stage's output trustworthy?"
+# ─────────────────────────────────────────────────────────────────────
+
+def _fmt_size(n_bytes: Optional[int]) -> str:
+    if n_bytes is None:
+        return "—"
+    if n_bytes >= 1_000_000:
+        return f"{n_bytes / 1e6:.1f} MB"
+    if n_bytes >= 1_000:
+        return f"{n_bytes / 1e3:.0f} KB"
+    return f"{n_bytes} B"
+
+
+def _fmt_pct(v: Optional[float], decimals: int = 1) -> str:
+    if v is None:
+        return "—"
+    try:
+        return f"{float(v) * 100:.{decimals}f}%"
+    except (TypeError, ValueError):
+        return "—"
+
+
+def _fmt_usd(v: Optional[float], unit: str = "") -> str:
+    if v is None:
+        return "—"
+    try:
+        fv = float(v)
+    except (TypeError, ValueError):
+        return "—"
+    if abs(fv) >= 1e9:
+        return f"${fv / 1e9:.2f}B{unit}"
+    if abs(fv) >= 1e6:
+        return f"${fv / 1e6:.1f}M{unit}"
+    return f"${fv:,.0f}{unit}"
+
+
+def _render_stage1_validation(bundle: Dict[str, Any]) -> None:
+    """Stage 1 panel: source-list completeness + per-source size +
+    sha + classification snapshot. Answers 'where's the XBRL data?'
+    at a glance."""
+    sources = bundle.get("sources") or {}
+    total = len(sources)
+
+    # Quick aggregates for the headline line.
+    sec_present = "sec_companyfacts" in sources
+    fmp_endpoints = sum(1 for k in sources if k.startswith("fmp_"))
+    market_present = "market_snapshot" in sources
+    st.markdown(
+        f"**Sources fetched: {total}**  "
+        f"·  SEC XBRL: {'✓' if sec_present else '✗'}  "
+        f"·  FMP endpoints: {fmp_endpoints}  "
+        f"·  Market snapshot: {'✓' if market_present else '—'}"
+    )
+
+    rows: List[Dict[str, Any]] = []
+    for src_id, src in sources.items():
+        path_str = src.get("payload_path") or ""
+        size_bytes: Optional[int]
+        try:
+            size_bytes = Path(path_str).stat().st_size if path_str else None
+        except OSError:
+            size_bytes = None
+        sha = (src.get("payload_sha256") or "")[:12]
+        rows.append({
+            "source": src_id,
+            "size": _fmt_size(size_bytes),
+            "sha (first 12)": f"{sha}…" if sha else "—",
+            "fetched_at": (src.get("fetched_at") or "")[:19],
+            "path": path_str,
+        })
+    if rows:
+        st.dataframe(rows, hide_index=True, use_container_width=True)
+
+    cs = bundle.get("classification_snapshot") or {}
+    if cs:
+        st.caption(
+            "Classification at fetch time — "
+            f"sector: **{cs.get('sector', '—')}**   "
+            f"industry: **{cs.get('industry', '—')}**   "
+            f"lifecycle: **{cs.get('lifecycle', '—')}**   "
+            f"business_model: **{cs.get('business_model', '—')}**   "
+            f"is_ifrs_filer: **{cs.get('is_ifrs_filer', '—')}**"
+        )
+
+
+def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
+    """Stage 2 panel: cleaned record count + quality score + schema
+    violations + overrides + the FMP cross-check receipt. The
+    overrides + FMP receipt are the high-signal items — they're
+    where 'XBRL extracted, compared to FMP, here's the drift'
+    surfaces."""
+    if not records:
+        st.caption("No cleaned records returned.")
+        return
+
+    fy_records = [r for r in records if r.get("period") == "FY"]
+    quality_scores = [
+        r.get("overall_quality_score") for r in fy_records
+        if r.get("overall_quality_score") is not None
+    ]
+    avg_quality = sum(quality_scores) / len(quality_scores) if quality_scores else None
+    total_violations = sum(
+        len(r.get("validation", {}).get("schema_violations") or [])
+        for r in records
+    )
+    overrides_active = sorted({
+        o
+        for r in records
+        for o in (r.get("validation", {}).get("overrides_applied") or [])
+    })
+
+    cols = st.columns(4)
+    cols[0].metric("FY records", len(fy_records))
+    cols[1].metric("TTM records", len(records) - len(fy_records))
+    cols[2].metric("avg quality", f"{avg_quality:.2f}" if avg_quality is not None else "—")
+    cols[3].metric("schema violations", total_violations)
+
+    if overrides_active:
+        st.markdown("**Overrides applied** (these relax a schema check for documented reason):")
+        for ovr_key in overrides_active:
+            st.markdown(f"- `{ovr_key}`")
+        st.caption(
+            "Each override is an explicit exception captured in "
+            "`aletheia/calculations/_overrides.py` — the cleaned data "
+            "passes only because the registry permits the deviation."
+        )
+    else:
+        st.caption("No overrides active. Schema contract passed without exceptions.")
+
+    # FMP cross-check receipt from Gate A.TTM. Lives on the latest
+    # record's validation.fmp_validation field.
+    latest = max(records, key=lambda r: r.get("fiscal_year") or 0)
+    fmp_receipt = (latest.get("validation") or {}).get("fmp_validation") or {}
+    if fmp_receipt:
+        with st.expander(
+            f"FMP cross-check receipt (FY{latest.get('fiscal_year')}, "
+            f"period={latest.get('period')})",
+            expanded=False,
+        ):
+            st.json(fmp_receipt)
+    else:
+        st.caption(
+            "Gate A.TTM receipt not present on the latest record — "
+            "this is the cleaning-engine slot where XBRL-vs-FMP drift "
+            "shows up. Empty here is expected when fmp_validation "
+            "hasn't been wired through the typed contract yet (Week-5 "
+            "follow-up)."
+        )
+
+
+def _render_stage3_validation(bundle: Dict[str, Any]) -> None:
+    """Stage 3 panel: WACC, intrinsic value spread, RDCF implied,
+    multiple decomposition signal, screening counts, moat score,
+    tax_rate_source. The tax_rate_source value is the immediate
+    answer to 'did A11 produce a plausible rate?' for this ticker."""
+    dcf = bundle.get("dcf") or {}
+    rdcf = bundle.get("reverse_dcf") or {}
+    md = bundle.get("multiple_decomposition") or {}
+    screening = bundle.get("screening") or {}
+    moat = bundle.get("moat_fingerprint") or {}
+    violations = bundle.get("schema_violations") or []
+
+    # Top row: WACC + intrinsic values.
+    wacc = dcf.get("wacc") or dcf.get("wacc_base")
+    cols = st.columns(4)
+    cols[0].metric("WACC", _fmt_pct(wacc, decimals=2))
+    # DCFResult.to_dict exposes wacc_base at the top level; per-
+    # scenario intrinsic values live in nested base/bull/bear blocks.
+    base = dcf.get("base") or {}
+    bull = dcf.get("bull") or {}
+    bear = dcf.get("bear") or {}
+
+    def _per_share(d: Dict[str, Any]) -> Optional[float]:
+        return d.get("intrinsic_per_share") if isinstance(d, dict) else None
+
+    cols[1].metric("IV base", _fmt_usd(_per_share(base)))
+    cols[2].metric("IV bull", _fmt_usd(_per_share(bull)))
+    cols[3].metric("IV bear", _fmt_usd(_per_share(bear)))
+
+    # ReverseDCF + MD + screening row.
+    cols = st.columns(4)
+    cols[0].metric(
+        "RDCF implied 10Y CAGR",
+        _fmt_pct(rdcf.get("implied_cagr_10y") or rdcf.get("implied_revenue_cagr_10y")),
+    )
+    cols[1].metric(
+        "MD signal", md.get("signal") or "—",
+    )
+    cols[2].metric(
+        "Screening", (
+            f"{screening.get('passes', '?')}✓ "
+            f"{screening.get('flags', '?')}⚠ "
+            f"{screening.get('fails', '?')}✗"
+        ),
+    )
+    moat_score = moat.get("score")
+    cols[3].metric(
+        "Moat score",
+        f"{moat_score:.1f}/10" if isinstance(moat_score, (int, float)) else "—",
+    )
+
+    # Tax-rate-source surfacing — this is the immediate "did A11
+    # land a plausible rate or fall through to statutory?" view.
+    tax_sources_seen = []
+    for sub_name, sub in (("dcf", dcf), ("reverse_dcf", rdcf),
+                          ("multiple_decomposition", md)):
+        src = sub.get("tax_rate_source") if isinstance(sub, dict) else None
+        if src:
+            tax_sources_seen.append((sub_name, src))
+    if tax_sources_seen:
+        chips = "  ·  ".join(
+            f"{name}: `{src}`" for name, src in tax_sources_seen
+        )
+        st.caption(f"tax_rate_source — {chips}")
+
+    # Calc-layer schema violations (output sanity failures).
+    if violations:
+        with st.expander(
+            f"Calc-layer schema violations ({len(violations)})",
+            expanded=False,
+        ):
+            for v in violations:
+                engine = v.get("engine", "?")
+                category = v.get("category", "?")
+                msg = v.get("message", "")
+                st.markdown(f"- **{engine}** · `{category}` · {msg}")
+    else:
+        st.caption("No calc-layer schema violations.")
+
+
+def _render_stage4_validation(bundle: Dict[str, Any]) -> None:
+    """Stage 4 panel: thesis structural completeness, cited_signals,
+    contrarian sentiment, qualitative reports count, LLM cost."""
+    qs = bundle.get("qualitative_synthesis") or {}
+    contrarian = bundle.get("contrarian") or {}
+    thesis = bundle.get("thesis") or {}
+
+    cols = st.columns(4)
+    cols[0].metric(
+        "Thesis present",
+        "✓" if thesis else "—",
+    )
+
+    def _cited_signals_count(d: Dict[str, Any]) -> int:
+        total = 0
+        for k in ("bull", "base", "bear"):
+            sec = d.get(k) or {}
+            signals = sec.get("cited_signals") if isinstance(sec, dict) else None
+            if isinstance(signals, list):
+                total += len(signals)
+        return total
+
+    cols[1].metric("Cited signals", _cited_signals_count(thesis))
+    cols[2].metric(
+        "Qualitative reports",
+        f"{sum(1 for k in ('forensic_report', 'value_chain_report', 'strategic_context_report') if k in qs)}/3",
+    )
+    llm_cost = bundle.get("llm_cost_usd")
+    cols[3].metric(
+        "LLM cost",
+        f"${llm_cost:.2f}" if isinstance(llm_cost, (int, float)) else "—",
+    )
+
+    if contrarian:
+        sentiment = contrarian.get("sentiment") or contrarian.get("bias", "—")
+        bear_case = contrarian.get("bear_case")
+        st.caption(
+            f"Contrarian sentiment: **{sentiment}**   ·   "
+            f"bear case: {'present' if bear_case else '—'}"
+        )
+
+    if bundle.get("raw_10k_excerpt"):
+        excerpt_len = len(bundle["raw_10k_excerpt"])
+        st.caption(f"10-K excerpt captured ({excerpt_len:,} chars).")
+
+
+# ─────────────────────────────────────────────────────────────────────
 # Per-stage card renderers
 # ─────────────────────────────────────────────────────────────────────
 
@@ -171,13 +454,12 @@ def _render_stage1(ticker: str, status_rows: Dict[str, Dict[str, Any]]) -> None:
 
     bundle = _read_bundle(ticker, "stage1_ingest")
     if bundle:
-        sources = bundle.get("sources", {})
         st.caption(
-            f"sources fetched: **{len(sources)}**   "
             f"bundle_fingerprint: `{bundle.get('bundle_fingerprint', '')[:16]}…`   "
             f"last shown: {_read_bundle_fetched_at(ticker, 'stage1_ingest')}"
         )
-        with st.expander("Raw bundle JSON", expanded=False):
+        _render_stage1_validation(bundle)
+        with st.expander("Raw bundle JSON (full payload)", expanded=False):
             st.json(bundle)
 
 
@@ -210,7 +492,8 @@ def _render_stage2(ticker: str, status_rows: Dict[str, Dict[str, Any]]) -> None:
             f"validated records: **{n_records}**   "
             f"last shown: {_read_bundle_fetched_at(ticker, 'stage2_validate')}"
         )
-        with st.expander("Raw records JSON", expanded=False):
+        _render_stage2_validation(bundle if isinstance(bundle, list) else [])
+        with st.expander("Raw records JSON (full payload)", expanded=False):
             st.json(bundle)
 
 
@@ -238,17 +521,14 @@ def _render_stage3(ticker: str, status_rows: Dict[str, Dict[str, Any]]) -> None:
 
     bundle = _read_bundle(ticker, "stage3_calculate")
     if bundle:
-        dcf = bundle.get("dcf") or {}
-        wacc = dcf.get("wacc_base") or dcf.get("wacc")
-        wacc_str = f"{wacc * 100:.2f}%" if isinstance(wacc, (int, float)) else "—"
-        violations = bundle.get("schema_violations") or []
         st.caption(
             f"base_period: **{bundle.get('base_period', '—')}**   "
             f"fiscal_year: **{bundle.get('fiscal_year', '—')}**   "
-            f"WACC: **{wacc_str}**   schema_violations: **{len(violations)}**   "
+            f"bundle_fingerprint: `{bundle.get('bundle_fingerprint', '')[:16]}…`   "
             f"last shown: {_read_bundle_fetched_at(ticker, 'stage3_calculate')}"
         )
-        with st.expander("Raw bundle JSON", expanded=False):
+        _render_stage3_validation(bundle)
+        with st.expander("Raw bundle JSON (full payload)", expanded=False):
             st.json(bundle)
 
 
@@ -275,14 +555,12 @@ def _render_stage4(ticker: str, status_rows: Dict[str, Dict[str, Any]]) -> None:
 
     bundle = _read_bundle(ticker, "stage4_agents")
     if bundle:
-        cost = bundle.get("llm_cost_usd")
-        cost_str = f"${cost:.2f}" if cost is not None else "—"
         st.caption(
-            f"llm_cost: **{cost_str}**   "
             f"bundle_fingerprint: `{bundle.get('bundle_fingerprint', '')[:16]}…`   "
             f"last shown: {_read_bundle_fetched_at(ticker, 'stage4_agents')}"
         )
-        with st.expander("Raw bundle JSON", expanded=False):
+        _render_stage4_validation(bundle)
+        with st.expander("Raw bundle JSON (full payload)", expanded=False):
             st.json(bundle)
 
 
