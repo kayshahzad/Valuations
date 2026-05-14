@@ -71,10 +71,25 @@ _INCOME = [
         fmp_source="income", fmp_keys=["costOfRevenue"],
     ),
     FieldSpec(
-        label="Operating Expenses (SG&A)", category="Income Statement", tier="nice_to_have",
+        label="Total Operating Costs", category="Income Statement", tier="nice_to_have",
         xbrl_clean_keys=["OperatingExpenses"], xbrl_raw_keys=["OperatingExpenses"],
-        xbrl_fallback_tags=["OperatingExpenses", "SellingGeneralAndAdministrativeExpense"],
+        # Mirrors tag_resolver's chain in config/tag_mappings.py — many
+        # filers (META, GOOGL, MSFT) file under ``CostsAndExpenses`` and
+        # don't have an ``OperatingExpenses`` tag at all.
+        xbrl_fallback_tags=[
+            "OperatingExpenses",
+            "CostsAndExpenses",
+            "OperatingCostsAndExpenses",
+        ],
         fmp_source="income", fmp_keys=["operatingExpenses"],
+        note=(
+            "Definitional divergence with FMP: our cleaner resolves to "
+            "the filer's ``CostsAndExpenses`` (total OpEx INCLUDING COGS) "
+            "while FMP's ``operatingExpenses`` field is SG&A only (R&D + "
+            "S&M + G&A, EXCLUDING COGS). Same XBRL filing, different "
+            "aggregation. Treat material drift here as Category C "
+            "(documented methodology choice), not a cleaning bug."
+        ),
     ),
     FieldSpec(
         label="EBIT (Operating Income)", category="Income Statement", tier="critical",
