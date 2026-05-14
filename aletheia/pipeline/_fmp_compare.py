@@ -47,24 +47,81 @@ _SEC_COMPANYFACTS_DIR = Path("valuation_data/raw/sec/companyfacts")
 
 @dataclass
 class FieldComparison:
-    """One (period, field) cell in the side-by-side table."""
+    """One (period, field) cell in the side-by-side table.
+
+    Carries THREE XBRL views to make cleaning-engine effects
+    visible to the analyst:
+
+      - xbrl_raw_value:     direct from raw SEC companyfacts JSON
+                            (uses the catalog's first xbrl_fallback_tag)
+      - xbrl_cleaned_value: from record.clean / record.raw, after
+                            tag_resolver + cleaning_engine ran
+      - xbrl_value:         best of the two (cleaned if available,
+                            else raw) — kept for back-compat
+
+    When ``xbrl_raw_value != xbrl_cleaned_value`` the cleaning
+    engine applied an adjustment (sign convention, NCI handling, FX
+    conversion, etc.). The UI surfaces this as a "cleaning effect"
+    chip so the analyst can attribute drift correctly:
+
+      - raw == cleaned == FMP            → identity / no drift
+      - raw == FMP, cleaned ≠ FMP        → our cleaner introduced drift
+      - raw ≠ FMP, cleaned == FMP        → cleaner corrected toward FMP
+      - raw ≠ FMP, cleaned ≠ FMP         → real source-data divergence
+    """
     fiscal_year: int
-    period: str                  # "FY" | "Q1" | "Q2" | "Q3" | "Q4"
+    period: str                       # "FY" | "Q1" | "Q2" | "Q3" | "Q4"
     field_label: str
-    category: str                # "Income Statement" | "Balance Sheet" | "Cash Flow"
-    priority: str                # "critical" | "important" | "nice_to_have"
-    xbrl_value: Optional[float]
-    xbrl_source: str             # "cleaned" | "raw_xbrl" | "unavailable"
+    category: str                     # "Income Statement" | "Balance Sheet" | "Cash Flow"
+    priority: str                     # "critical" | "important" | "nice_to_have"
+
+    # Three XBRL views
+    xbrl_raw_value: Optional[float]
+    xbrl_cleaned_value: Optional[float]
+    xbrl_value: Optional[float]       # cleaned ?? raw (best available)
+    xbrl_source: str                  # "cleaned" | "raw_xbrl" | "unavailable"
+
+    # FMP side
     fmp_value: Optional[float]
+
+    # Drift (uses xbrl_value as the "ours" side)
     drift_abs: Optional[float]
-    drift_pct: Optional[float]   # decimal — UI formats
-    tier: str                    # "ok" | "minor" | "notable" | "material" | "incomplete"
-    note: str = ""               # carried from the catalog FieldSpec.note
+    drift_pct: Optional[float]        # decimal — UI formats
+    tier: str                         # "ok" | "minor" | "notable" | "material" | "incomplete"
+    note: str = ""                    # carried from the catalog FieldSpec.note
 
     @property
     def period_label(self) -> str:
         """``FY2025`` for annual; ``FY2026 Q1`` for current-year quarters."""
         return f"FY{self.fiscal_year}" if self.period == "FY" else f"FY{self.fiscal_year} {self.period}"
+
+    @property
+    def cleaning_effect(self) -> str:
+        """How the cleaning engine altered the raw XBRL value.
+
+          - "passthrough" — raw and cleaned within 0.5% (no material effect)
+          - "adjusted"    — raw and cleaned differ materially (cleaning
+                            applied a sign / unit / FX / NCI / derived
+                            adjustment)
+          - "raw_only"    — only raw available (cleaning didn't materialise)
+          - "cleaned_only"— only cleaned available (derived field or
+                            multi-tag aggregate without a single
+                            raw tag)
+          - "none"        — both unavailable
+        """
+        r, c = self.xbrl_raw_value, self.xbrl_cleaned_value
+        if r is None and c is None:
+            return "none"
+        if r is None:
+            return "cleaned_only"
+        if c is None:
+            return "raw_only"
+        # Both present — check whether cleaning meaningfully changed it.
+        # Compare abs values so sign flips (CapEx) still show as adjusted.
+        denom = max(abs(r), abs(c), 1.0)
+        if abs(r - c) / denom <= 0.005:
+            return "passthrough"
+        return "adjusted"
 
 
 @dataclass
@@ -247,42 +304,61 @@ def _fmp_by_period(
     return out
 
 
-def _resolve_xbrl_value(
+def _resolve_xbrl_values(
     spec: FieldSpec,
     clean: Dict[str, Any],
     raw: Dict[str, Any],
     us_gaap: Dict[str, Any],
     fiscal_year: int,
     period: str = "FY",
-) -> tuple[Optional[float], str]:
-    """Walk the catalog's lookup chain for one FieldSpec at the
-    given (fiscal_year, period). Returns (value, source) where
-    source is one of:
-       "cleaned"     value came from record.clean / record.raw
-                     (populated by tag_resolver + cleaning_engine)
-       "raw_xbrl"    value came from raw SEC companyfacts directly
-                     (period-aware: 10-K for FY, 10-Q for Q1/Q2/Q3)
-       "unavailable" no path produced a usable value
+) -> tuple[Optional[float], Optional[float], Optional[float], str]:
+    """Resolve raw, cleaned, and best values for one (field, period).
 
-    The ``clean`` / ``raw`` dicts are sourced from the
-    ``ValidatedCleanedRecord`` for the matching (fiscal_year, period)
-    pair. When the cleaner doesn't have a quarterly record, the
-    caller passes empty dicts and the function falls through to the
-    raw-XBRL path automatically.
+    Returns ``(xbrl_raw, xbrl_cleaned, best, source)`` where:
+
+      xbrl_raw      Value from raw SEC companyfacts JSON via the
+                    catalog's ``xbrl_fallback_tags`` (period-aware:
+                    10-K for FY, 10-Q for Q1/Q2/Q3).
+      xbrl_cleaned  Value from ``record.clean`` / ``record.raw`` —
+                    post tag_resolver + cleaning_engine.
+      best          ``xbrl_cleaned`` when present, else ``xbrl_raw``.
+                    What the comparison drift is computed against.
+      source        "cleaned" | "raw_xbrl" | "unavailable" — which
+                    path produced ``best``.
+
+    Both columns are exposed independently so the UI can show
+    where cleaning altered raw values (cleaning_effect = "adjusted"
+    on FieldComparison).
     """
+    # Cleaned: record.clean first, then record.raw (populated by
+    # the canonical_transformer / tag_resolver before domain cleaning
+    # — treated as the cleaning pipeline's output).
+    cleaned: Optional[float] = None
     for k in spec.xbrl_clean_keys:
         v = _coerce(clean.get(k))
         if v is not None:
-            return v, "cleaned"
-    for k in spec.xbrl_raw_keys:
-        v = _coerce(raw.get(k))
-        if v is not None:
-            return v, "cleaned"  # raw dict was populated by cleaning, treat as cleaned
+            cleaned = v
+            break
+    if cleaned is None:
+        for k in spec.xbrl_raw_keys:
+            v = _coerce(raw.get(k))
+            if v is not None:
+                cleaned = v
+                break
+
+    # Raw: direct from companyfacts JSON via the first available tag.
+    raw_val: Optional[float] = None
     for tag in spec.xbrl_fallback_tags:
         v = _xbrl_fact_for_period(us_gaap, tag, fiscal_year, period)
         if v is not None:
-            return v, "raw_xbrl"
-    return None, "unavailable"
+            raw_val = v
+            break
+
+    if cleaned is not None:
+        return raw_val, cleaned, cleaned, "cleaned"
+    if raw_val is not None:
+        return raw_val, cleaned, raw_val, "raw_xbrl"
+    return None, None, None, "unavailable"
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -422,7 +498,7 @@ def compare_xbrl_to_fmp(
             clean, raw = {}, {}
 
         for spec in CATALOG:
-            xbrl_value, xbrl_source = _resolve_xbrl_value(
+            xbrl_raw, xbrl_cleaned, xbrl_value, xbrl_source = _resolve_xbrl_values(
                 spec, clean, raw, us_gaap, fy, period,
             )
 
@@ -462,6 +538,8 @@ def compare_xbrl_to_fmp(
                 field_label=spec.label,
                 category=spec.category,
                 priority=spec.tier,
+                xbrl_raw_value=xbrl_raw,
+                xbrl_cleaned_value=xbrl_cleaned,
                 xbrl_value=xbrl_value,
                 xbrl_source=xbrl_source,
                 fmp_value=fmp_value,

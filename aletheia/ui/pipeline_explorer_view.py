@@ -228,6 +228,50 @@ def _render_stage1_validation(bundle: Dict[str, Any]) -> None:
         )
 
 
+_CLEANING_EFFECT_TOLERANCE = 0.005  # 0.5% — matches FMP-compare ok-tier
+
+
+def _classify_cleaning_effect(
+    raw_v: Optional[float], clean_v: Optional[float],
+) -> str:
+    """How the cleaning engine altered the raw XBRL value.
+
+    Mirrors FieldComparison.cleaning_effect on the backend dataclass
+    so the UI can run the same classification without round-tripping
+    through the API.
+
+      "passthrough"  raw ≈ cleaned within 0.5%
+      "adjusted"     raw and cleaned differ materially (sign / unit /
+                     FX / NCI / derived adjustment)
+      "raw_only"     only raw value present (cleaning didn't materialise)
+      "cleaned_only" only cleaned present (derived / multi-tag aggregate)
+      "none"         both unavailable
+    """
+    if raw_v is None and clean_v is None:
+        return "none"
+    if raw_v is None:
+        return "cleaned_only"
+    if clean_v is None:
+        return "raw_only"
+    denom = max(abs(raw_v), abs(clean_v), 1.0)
+    if abs(raw_v - clean_v) / denom <= _CLEANING_EFFECT_TOLERANCE:
+        return "passthrough"
+    return "adjusted"
+
+
+def _cleaning_effect_chip(effect: str) -> str:
+    """Single-character chip rendered after the Cleaned value in
+    the comparison table. Empty for passthrough so the common case
+    doesn't add visual noise."""
+    return {
+        "passthrough":  "",
+        "adjusted":     " ~",
+        "raw_only":     "",
+        "cleaned_only": " ⤴︎",
+        "none":         "",
+    }.get(effect, "")
+
+
 _DRIFT_TIER_ICON = {
     "ok":         "🟢",
     "minor":      "🟡",
@@ -310,28 +354,26 @@ def _render_stage2_fmp_comparison(payload: Dict[str, Any]) -> None:
                 st.markdown(f"**{category}**")
                 rows: List[Dict[str, Any]] = []
                 for cell in cat_cells:
-                    xbrl = cell.get("xbrl_value")
+                    raw_v = cell.get("xbrl_raw_value")
+                    clean_v = cell.get("xbrl_cleaned_value")
                     fmp = cell.get("fmp_value")
                     drift_pct = cell.get("drift_pct")
                     tier = cell.get("tier", "incomplete")
-                    src = cell.get("xbrl_source", "unavailable")
-                    src_label = (
-                        "" if src == "cleaned"
-                        else " ⤴︎"  if src == "raw_xbrl"
-                        else " ✗"
-                    )
+                    effect = _classify_cleaning_effect(raw_v, clean_v)
                     rows.append({
                         "": _DRIFT_TIER_ICON.get(tier, "·"),
                         "Field": cell.get("field_label", ""),
-                        "XBRL": _fmt_usd(xbrl) + src_label,
+                        "Raw XBRL": _fmt_usd(raw_v),
+                        "Cleaned": _fmt_usd(clean_v) + _cleaning_effect_chip(effect),
                         "FMP": _fmt_usd(fmp),
                         "drift": _fmt_pct(drift_pct, decimals=2) if drift_pct is not None else "—",
                         "tier": tier,
                     })
                 st.dataframe(rows, hide_index=True, use_container_width=True)
             st.caption(
-                "XBRL column annotations:   ⤴︎ value from raw XBRL "
-                "fallback (cleaning didn't materialise this field) · "
+                "Cleaned column annotations:   ~ cleaning altered raw "
+                "(sign / unit / FX / NCI / derived adjustment)  ·  "
+                "⤴︎ cleaned didn't materialise — raw XBRL only  ·  "
                 "✗ unavailable in any source"
             )
 
