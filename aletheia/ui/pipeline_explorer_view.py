@@ -237,23 +237,17 @@ _DRIFT_TIER_ICON = {
 }
 
 
-def _render_stage2_fmp_comparison(ticker: str) -> None:
-    """XBRL-vs-FMP side-by-side comparison per FY. Fetches the
-    pre-computed comparison from /pipeline/fmp-compare/{ticker} and
-    renders one table per FY (rows = field, columns = XBRL value /
-    FMP value / drift % / tier icon).
+def _render_stage2_fmp_comparison(payload: Dict[str, Any]) -> None:
+    """XBRL-vs-FMP side-by-side comparison. Renders one expander per
+    period_label (historical FYs first, then current-year quarters).
+    Each expander groups rows by Income Statement / Balance Sheet /
+    Cash Flow categories.
 
-    This is the Gate A.TTM-style drift view inside the Stage Explorer:
-    'XBRL gave us $200.97B revenue; FMP says $200.97B; drift 0.0%'.
+    Reads the comparison payload from the caller — both this renderer
+    and ``_render_stage2_xbrl_extracted`` are driven by the same
+    payload to keep the period axis consistent across views.
     """
-    res = _api_get(f"/pipeline/fmp-compare/{ticker}")
-    if not res["ok"]:
-        st.caption(
-            "FMP comparison endpoint unreachable: " + res["error"]
-        )
-        return
-    payload = res["data"]
-    fiscal_years: List[int] = payload.get("fiscal_years") or []
+    period_labels: List[str] = payload.get("period_labels") or []
     cells = payload.get("cells") or []
     if not cells:
         st.caption(
@@ -274,30 +268,43 @@ def _render_stage2_fmp_comparison(ticker: str) -> None:
     )
     st.markdown(
         f"**XBRL ↔ FMP comparison** — {len(cells)} cells across "
-        f"{len(fiscal_years)} FYs · drift distribution: {summary_chips}"
+        f"{len(period_labels)} periods · drift distribution: {summary_chips}"
     )
     st.caption(
         "🟢 ≤ 0.5% drift   🟡 ≤ 2%   🟠 ≤ 5%   🔴 > 5%   ⚫ one side missing"
     )
 
-    # One row per (field, FY) with the values side by side. The
-    # alternative is one table per FY; this layout keeps the eye on
-    # YoY drift evolution per field which is what catches systemic
-    # issues (e.g., a sign-convention bug shows up as drift in every
-    # FY).
-    cells_by_fy: Dict[int, List[Dict[str, Any]]] = {}
+    # Group cells by (fiscal_year, period) so historical FYs and
+    # current-year quarters each get their own expander. The period
+    # axis comes from the comparison payload's ``period_labels``,
+    # which the backend ordered chronologically (oldest FY → newest
+    # FY → current-year quarters Q1..Q4).
+    cells_by_period: Dict[tuple, List[Dict[str, Any]]] = {}
     for cell in cells:
-        cells_by_fy.setdefault(cell["fiscal_year"], []).append(cell)
+        key = (cell["fiscal_year"], cell.get("period") or "FY")
+        cells_by_period.setdefault(key, []).append(cell)
 
     from aletheia.pipeline._field_catalog import CATEGORIES
 
-    # Render the most-recent FY first — analyst's usual focus.
-    for fy in sorted(cells_by_fy.keys(), reverse=True):
-        with st.expander(f"FY{fy} — XBRL ↔ FMP", expanded=(fy == max(fiscal_years))):
-            # Group cells by category, preserving catalog order.
-            cells_in_fy = cells_by_fy[fy]
+    # Render most-recent period first — analyst's usual focus is the
+    # in-progress quarter, then the last completed FY, then history.
+    ordered_keys = sorted(
+        cells_by_period.keys(),
+        key=lambda k: (k[0], 0 if k[1] == "FY" else int(k[1][1:])),
+        reverse=True,
+    )
+    latest_key = ordered_keys[0] if ordered_keys else None
+
+    for key in ordered_keys:
+        fy, period = key
+        period_label = f"FY{fy}" if period == "FY" else f"FY{fy} {period}"
+        with st.expander(
+            f"{period_label} — XBRL ↔ FMP",
+            expanded=(key == latest_key),
+        ):
+            cells_in_period = cells_by_period[key]
             for category in CATEGORIES:
-                cat_cells = [c for c in cells_in_fy if c.get("category") == category]
+                cat_cells = [c for c in cells_in_period if c.get("category") == category]
                 if not cat_cells:
                     continue
                 st.markdown(f"**{category}**")
@@ -329,61 +336,81 @@ def _render_stage2_fmp_comparison(ticker: str) -> None:
             )
 
 
-def _render_stage2_xbrl_extracted(records: List[Dict[str, Any]]) -> None:
-    """Render the XBRL-extracted financials per-FY, grouped by
+def _render_stage2_xbrl_extracted(payload: Dict[str, Any]) -> None:
+    """Render the XBRL-extracted financials per period, grouped by
     Income Statement / Balance Sheet / Cash Flow.
 
-    The display catalog lives in
-    ``aletheia/pipeline/_field_catalog.py`` — extend the catalog to
-    add fields; this renderer needs no changes.
+    Period axis (driven by the comparison payload):
+       FY2021 · FY2022 · FY2023 · FY2024 · FY2025  ← historical annuals
+       FY2026 Q1 · FY2026 Q2 · ...                  ← current-year quarters
 
-    Layout: one mini-table per category. Rows = canonical fields in
-    catalog order, columns = most-recent 5 FYs. Fields that resolve
-    via the raw-XBRL fallback (e.g., RetainedEarnings — not in
-    ``record.clean``) are still surfaced; the side-by-side
-    comparison panel below tags those cells as ``raw_xbrl`` for
-    traceability.
+    Reads the same comparison payload as ``_render_stage2_fmp_compare``
+    to keep the period axis consistent across both views. The XBRL
+    column shows whichever value the resolver landed (cleaned dict
+    or raw-XBRL fallback); the ``xbrl_source`` flag is rendered on
+    the side-by-side panel below.
     """
-    from aletheia.pipeline._field_catalog import CATALOG, CATEGORIES
+    from aletheia.pipeline._field_catalog import CATEGORIES
 
-    fy_records = sorted(
-        (r for r in records if r.get("period") == "FY"),
-        key=lambda r: r.get("fiscal_year") or 0,
-    )
-    if not fy_records:
-        st.caption("No FY records available — nothing to show.")
+    period_labels: List[str] = payload.get("period_labels") or []
+    cells = payload.get("cells") or []
+    if not period_labels or not cells:
+        st.caption(
+            "No periods available — neither cleaned records nor "
+            "FMP cache files yield a comparable period axis."
+        )
         return
 
-    show = fy_records[-5:]
+    # Build a lookup: (period_label, field_label) → xbrl_value.
+    by_period_field: Dict[tuple, Optional[float]] = {}
+    for cell in cells:
+        fy = cell.get("fiscal_year")
+        period = cell.get("period") or "FY"
+        plabel = f"FY{fy}" if period == "FY" else f"FY{fy} {period}"
+        by_period_field[(plabel, cell.get("field_label"))] = cell.get("xbrl_value")
 
     st.markdown(
-        "**Extracted from XBRL** — tag_resolver pulled these values "
-        "out of the raw SEC payload during Stage 2 cleaning. Cells "
-        "render `—` when neither `record.clean` nor the raw-XBRL "
-        "fallback produces a value for that field on this filer."
+        "**Extracted from XBRL** — historical annuals (FY) plus the "
+        "current in-progress year's quarters. Quarterly values come "
+        "from raw SEC XBRL directly (cleaning currently materialises "
+        "FY only)."
     )
+
+    # Field labels in catalog order, grouped by category. Filter to
+    # rows where at least one period has a non-None xbrl_value.
+    catalog_fields = list(payload.get("fields") or [])
+    if not catalog_fields:
+        # Fallback when the payload's ``fields`` is empty.
+        seen = []
+        for cell in cells:
+            label = cell.get("field_label")
+            if label and label not in seen:
+                seen.append(label)
+        catalog_fields = seen
+
+    # Need per-field category from catalog payload — derive by walking
+    # the cells.
+    field_meta: Dict[str, str] = {}
+    for cell in cells:
+        label = cell.get("field_label")
+        if label and label not in field_meta:
+            field_meta[label] = cell.get("category", "")
 
     any_rendered = False
     for category in CATEGORIES:
-        cat_specs = [s for s in CATALOG if s.category == category]
+        cat_fields = [
+            label for label in catalog_fields
+            if field_meta.get(label) == category
+        ]
+        if not cat_fields:
+            continue
         rows: List[Dict[str, Any]] = []
-        for spec in cat_specs:
-            row: Dict[str, Any] = {"Field": spec.label}
+        for label in cat_fields:
+            row: Dict[str, Any] = {"Field": label}
             any_present = False
-            for r in show:
-                clean = r.get("clean") or {}
-                raw = r.get("raw") or {}
-                v: Optional[float] = None
-                for k in spec.xbrl_clean_keys:
-                    if clean.get(k) is not None:
-                        v = clean[k]
-                        break
-                if v is None:
-                    for k in spec.xbrl_raw_keys:
-                        if raw.get(k) is not None:
-                            v = raw[k]
-                            break
-                row[f"FY{r['fiscal_year']}"] = _fmt_usd(v) if v is not None else "—"
+            for plabel in period_labels:
+                v = by_period_field.get((plabel, label))
+                row[plabel] = _fmt_usd(v) if v is not None else "—"
                 if v is not None:
                     any_present = True
             if any_present:
@@ -404,12 +431,11 @@ def _render_stage2_xbrl_extracted(records: List[Dict[str, Any]]) -> None:
         return
 
     st.caption(
-        "Values shown are what `record.clean` (or `record.raw`) "
-        "exposes — they feed Stage 3's calc engines directly. The "
-        "side-by-side XBRL ↔ FMP comparison below pulls additional "
-        "fields via the raw SEC companyfacts fallback (e.g., "
-        "Retained Earnings, CF working-capital deltas) — those "
-        "cells are tagged `raw_xbrl` rather than `cleaned`."
+        "Historical FY columns mostly come from `record.clean` "
+        "(cleaning + tag_resolver). Current-year quarter columns "
+        "come from the raw SEC companyfacts JSON via the period-"
+        "aware fallback (10-Q fp=Q1/Q2/Q3 lookup). The side-by-"
+        "side comparison below tags each cell's source explicitly."
     )
 
 
@@ -445,19 +471,23 @@ def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
     cols[2].metric("avg quality", f"{avg_quality:.2f}" if avg_quality is not None else "—")
     cols[3].metric("schema violations", total_violations)
 
-    # XBRL-extracted financials table — the direct answer to "where's
-    # the data from the SEC XBRL file?". Placed early so the analyst
-    # sees the resolved values before the override/receipt minutiae.
-    _render_stage2_xbrl_extracted(records)
-
-    # XBRL-vs-FMP side-by-side comparison. Reads from the
-    # /pipeline/fmp-compare/{ticker} endpoint which cross-references
-    # the cleaned record's resolved fields with the FMP cache files.
-    # Stage 2's typed ValidationReceipt will carry this per-record
-    # in a future iteration; this panel bridges the current gap.
+    # Both the XBRL-extracted table and the XBRL ↔ FMP side-by-side
+    # are driven by the same /pipeline/fmp-compare/{ticker} endpoint
+    # result — single source of truth, ensures the period axis
+    # (historical FYs + current-year quarters) stays consistent
+    # between the two views.
     ticker = records[0].get("ticker") if records else None
     if ticker:
-        _render_stage2_fmp_comparison(ticker)
+        compare_res = _api_get(f"/pipeline/fmp-compare/{ticker}")
+        if compare_res["ok"]:
+            payload = compare_res["data"]
+            _render_stage2_xbrl_extracted(payload)
+            _render_stage2_fmp_comparison(payload)
+        else:
+            st.caption(
+                "FMP comparison endpoint unreachable: "
+                + compare_res["error"]
+            )
 
     if overrides_active:
         st.markdown("**Overrides applied** (these relax a schema check for documented reason):")

@@ -249,27 +249,64 @@ def test_stage2_validation_surfaces_overrides_and_violations(monkeypatch):
     assert override_keys, "override key didn't render"
 
 
+def _synthetic_compare_payload() -> Dict[str, Any]:
+    """Shape-matching FMP-compare API payload. Period axis includes
+    historical FYs + the current in-progress year's Q1 to mirror the
+    real return value of /pipeline/fmp-compare/{ticker}."""
+    return {
+        "ticker": "META",
+        "fiscal_years": [2023, 2024, 2025, 2026],
+        "period_labels": ["FY2023", "FY2024", "FY2025", "FY2026 Q1"],
+        "fields": [
+            "Revenue", "Net Income",
+            "Total Assets", "Total Equity", "Cash",
+            "Operating CF", "CapEx",
+        ],
+        "categories": ["Income Statement", "Balance Sheet", "Cash Flow"],
+        "cells": [
+            # FY2025 — last completed annual
+            {"fiscal_year": 2025, "period": "FY", "field_label": "Revenue",
+             "category": "Income Statement", "priority": "critical",
+             "xbrl_value": 200_966_000_000.0, "xbrl_source": "cleaned",
+             "fmp_value":  200_966_000_000.0, "drift_abs": 0.0, "drift_pct": 0.0,
+             "tier": "ok", "note": ""},
+            {"fiscal_year": 2025, "period": "FY", "field_label": "Net Income",
+             "category": "Income Statement", "priority": "critical",
+             "xbrl_value": 60_458_000_000.0, "xbrl_source": "cleaned",
+             "fmp_value":  60_458_000_000.0, "drift_abs": 0.0, "drift_pct": 0.0,
+             "tier": "ok", "note": ""},
+            {"fiscal_year": 2025, "period": "FY", "field_label": "Total Assets",
+             "category": "Balance Sheet", "priority": "critical",
+             "xbrl_value": 366_021_000_000.0, "xbrl_source": "cleaned",
+             "fmp_value":  366_021_000_000.0, "drift_abs": 0.0, "drift_pct": 0.0,
+             "tier": "ok", "note": ""},
+            {"fiscal_year": 2025, "period": "FY", "field_label": "Operating CF",
+             "category": "Cash Flow", "priority": "critical",
+             "xbrl_value": 115_800_000_000.0, "xbrl_source": "cleaned",
+             "fmp_value":  115_800_000_000.0, "drift_abs": 0.0, "drift_pct": 0.0,
+             "tier": "ok", "note": ""},
+            # FY2026 Q1 — current in-progress quarter (raw XBRL only)
+            {"fiscal_year": 2026, "period": "Q1", "field_label": "Revenue",
+             "category": "Income Statement", "priority": "critical",
+             "xbrl_value": 56_311_000_000.0, "xbrl_source": "raw_xbrl",
+             "fmp_value":  56_311_000_000.0, "drift_abs": 0.0, "drift_pct": 0.0,
+             "tier": "ok", "note": ""},
+            {"fiscal_year": 2026, "period": "Q1", "field_label": "Net Income",
+             "category": "Income Statement", "priority": "critical",
+             "xbrl_value": 26_770_000_000.0, "xbrl_source": "raw_xbrl",
+             "fmp_value":  26_770_000_000.0, "drift_abs": 0.0, "drift_pct": 0.0,
+             "tier": "ok", "note": ""},
+        ],
+    }
+
+
 def test_stage2_validation_renders_xbrl_extracted_table(monkeypatch):
-    """Stage 2 panel must surface the XBRL-extracted core financials
-    as a per-FY table. Direct answer to "where's the data from the
-    SEC XBRL file shown in the view?" — answers it before the
-    overrides + raw-JSON sections."""
+    """Stage 2 panel must surface the XBRL-extracted financials with
+    columns for historical FYs + current-year quarters. Reads the
+    same comparison payload that drives the side-by-side panel."""
     from aletheia.ui.pipeline_explorer_view import _render_stage2_xbrl_extracted
     mock = _install_st_mock(monkeypatch)
-    records = _stage2_records()
-    # Populate clean dict with META-shaped FY2024 values.
-    records[-1]["clean"] = {
-        "Revenue":          200_966_000_000.0,
-        "NetIncome":         60_458_000_000.0,
-        "OperatingCF":      115_800_000_000.0,
-        "InvestingCF":     -102_003_000_000.0,
-        "CapEx_Total":       69_691_000_000.0,
-        "TotalAssets":      366_021_000_000.0,
-        "TotalEquity":      217_243_000_000.0,
-        "Cash":              35_873_000_000.0,
-        "SharesDiluted":      2_574_000_000.0,
-    }
-    _render_stage2_xbrl_extracted(records)
+    _render_stage2_xbrl_extracted(_synthetic_compare_payload())
 
     # Headline markdown must mention XBRL extraction.
     markdown_calls = [c for c in mock.calls if c["fn"] == "markdown"]
@@ -277,10 +314,8 @@ def test_stage2_validation_renders_xbrl_extracted_table(monkeypatch):
         "Extracted from XBRL" in c["args"][0] for c in markdown_calls
     ), "missing the 'Extracted from XBRL' heading"
 
-    # The new categorized layout renders one st.dataframe per
-    # populated category. Collect fields from EVERY dataframe call so
-    # the assertion works regardless of which category each field
-    # ended up in.
+    # Collect fields + cells across every dataframe call (one per
+    # category that has at least one populated row).
     df_calls = [c for c in mock.calls if c["fn"] == "dataframe"]
     assert df_calls, "expected st.dataframe to render the XBRL tables"
     all_rows: List[Dict[str, Any]] = []
@@ -288,51 +323,55 @@ def test_stage2_validation_renders_xbrl_extracted_table(monkeypatch):
         all_rows.extend(call["args"][0])
     fields = {r["Field"] for r in all_rows}
 
-    # Income Statement fields
+    # Income Statement + Balance Sheet + Cash Flow fields all present.
     assert "Revenue" in fields
     assert "Net Income" in fields
-    # Cash Flow fields
-    assert "Operating CF" in fields
-    # Balance Sheet fields
     assert "Total Assets" in fields
+    assert "Operating CF" in fields
 
-    # Revenue cell value: $200.97B should appear in the FY2024 column.
+    # Revenue row must have BOTH the historical FY2025 column AND the
+    # current-year FY2026 Q1 column — the whole point of the
+    # current-year-quarters extension.
     rev_row = next(r for r in all_rows if r["Field"] == "Revenue")
-    assert "$200.97B" in rev_row["FY2024"]
+    assert "FY2025" in rev_row
+    assert "FY2026 Q1" in rev_row
+    assert "$200.97B" in rev_row["FY2025"]
+    assert "$56.31B" in rev_row["FY2026 Q1"]
 
     # Category headers — one markdown call per populated category.
     cat_headers = [
         c["args"][0] for c in markdown_calls
         if isinstance(c["args"][0], str) and c["args"][0].startswith("#### ")
     ]
-    # At least Income Statement + Balance Sheet + Cash Flow given the
-    # fixture's clean dict populates fields in all three.
     assert any("Income Statement" in h for h in cat_headers)
     assert any("Balance Sheet" in h for h in cat_headers)
     assert any("Cash Flow" in h for h in cat_headers)
 
 
-def test_stage2_xbrl_extracted_handles_empty_records(monkeypatch):
-    """An empty record list is a different shape from records with
-    zero resolved fields. Both must render without crashing."""
+def test_stage2_xbrl_extracted_handles_empty_payload(monkeypatch):
+    """An empty comparison payload (no FY records or FMP files yet)
+    must render gracefully with an explicit caption."""
     from aletheia.ui.pipeline_explorer_view import _render_stage2_xbrl_extracted
     mock = _install_st_mock(monkeypatch)
-    _render_stage2_xbrl_extracted([])
+    _render_stage2_xbrl_extracted({
+        "ticker": "X", "fiscal_years": [], "period_labels": [],
+        "fields": [], "categories": [], "cells": [],
+    })
     captions = [c for c in mock.calls if c["fn"] == "caption"]
-    assert any("No FY records" in c["args"][0] for c in captions)
+    assert any("No periods available" in c["args"][0] for c in captions)
 
 
-def test_stage2_xbrl_extracted_handles_records_with_no_resolved_fields(monkeypatch):
-    """When the cleaning engine produced FY records but the resolver
-    failed to populate any of the core fields, the panel must
+def test_stage2_xbrl_extracted_handles_payload_with_no_resolved_fields(monkeypatch):
+    """When every cell's xbrl_value is None (cleaning + raw-XBRL
+    fallback both missed across every field), the panel must
     surface that explicitly — pointing the analyst at the raw XBRL
     path for triage."""
     from aletheia.ui.pipeline_explorer_view import _render_stage2_xbrl_extracted
     mock = _install_st_mock(monkeypatch)
-    records = _stage2_records()
-    for r in records:
-        r["clean"] = {}  # nothing resolved
-    _render_stage2_xbrl_extracted(records)
+    payload = _synthetic_compare_payload()
+    for cell in payload["cells"]:
+        cell["xbrl_value"] = None
+    _render_stage2_xbrl_extracted(payload)
     captions = [c for c in mock.calls if c["fn"] == "caption"]
     assert any("tag_resolver gap" in c["args"][0] for c in captions)
 

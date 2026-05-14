@@ -47,8 +47,9 @@ _SEC_COMPANYFACTS_DIR = Path("valuation_data/raw/sec/companyfacts")
 
 @dataclass
 class FieldComparison:
-    """One (FY, field) cell in the side-by-side table."""
+    """One (period, field) cell in the side-by-side table."""
     fiscal_year: int
+    period: str                  # "FY" | "Q1" | "Q2" | "Q3" | "Q4"
     field_label: str
     category: str                # "Income Statement" | "Balance Sheet" | "Cash Flow"
     priority: str                # "critical" | "important" | "nice_to_have"
@@ -60,12 +61,24 @@ class FieldComparison:
     tier: str                    # "ok" | "minor" | "notable" | "material" | "incomplete"
     note: str = ""               # carried from the catalog FieldSpec.note
 
+    @property
+    def period_label(self) -> str:
+        """``FY2025`` for annual; ``FY2026 Q1`` for current-year quarters."""
+        return f"FY{self.fiscal_year}" if self.period == "FY" else f"FY{self.fiscal_year} {self.period}"
+
 
 @dataclass
 class FmpComparisonResult:
-    """Top-level structure returned to the UI."""
+    """Top-level structure returned to the UI.
+
+    ``period_labels`` is the analyst-facing column order: historical
+    annuals first (FY2021..FY2025), then current-year quarters
+    (FY2026 Q1, Q2, ...). The Stage Explorer renders columns in this
+    exact order.
+    """
     ticker: str
     fiscal_years: List[int]
+    period_labels: List[str]
     fields: List[str]
     categories: List[str]
     cells: List[FieldComparison]
@@ -89,13 +102,20 @@ def _classify_drift(drift_pct: Optional[float]) -> str:
 
 
 def _load_fmp_cache(ticker: str, endpoint_label: str) -> List[Dict[str, Any]]:
-    """Load one FMP cache file (income/balance/cashflow annual).
+    """Load one FMP cache file. Supports annual + quarterly labels:
+
+      income / balance / cashflow                — annual cache
+      income_quarter / balance_quarter / cashflow_quarter — quarterly
+
     Returns the inner ``data`` list or [] when the file is absent /
     malformed."""
     name_map = {
-        "income":   f"{ticker.upper()}__income_annual.json",
-        "balance":  f"{ticker.upper()}__balance_annual.json",
-        "cashflow": f"{ticker.upper()}__cashflow_annual.json",
+        "income":           f"{ticker.upper()}__income_annual.json",
+        "balance":          f"{ticker.upper()}__balance_annual.json",
+        "cashflow":         f"{ticker.upper()}__cashflow_annual.json",
+        "income_quarter":   f"{ticker.upper()}__income_quarter.json",
+        "balance_quarter":  f"{ticker.upper()}__balance_quarter.json",
+        "cashflow_quarter": f"{ticker.upper()}__cashflow_quarter.json",
     }
     fname = name_map.get(endpoint_label)
     if fname is None:
@@ -167,22 +187,36 @@ def _load_sec_companyfacts(ticker: str) -> Dict[str, Any]:
     return facts.get("facts", {}).get("us-gaap", {}) or {}
 
 
-def _xbrl_fact_for_fy(
-    us_gaap: Dict[str, Any], tag: str, fy: int,
-    *, form: str = "10-K",
+def _xbrl_fact_for_period(
+    us_gaap: Dict[str, Any], tag: str, fiscal_year: int, period: str,
 ) -> Optional[float]:
-    """Latest USD value of one XBRL tag for the given fiscal_year.
-    Returns None when the tag is absent, when no entry matches the
-    FY, or when the value isn't a finite number. Mirrors the helper
-    in tools/verification/identity_checks.py to keep behaviour
-    consistent across the two analyst surfaces."""
+    """Latest USD value of one XBRL tag for (fiscal_year, period).
+
+    ``period`` is ``"FY"`` (look in 10-K, fp='FY') or one of
+    ``"Q1"``/``"Q2"``/``"Q3"`` (look in 10-Q, fp matches). Q4 isn't
+    directly disclosed in XBRL — 10-K reports the full year only —
+    so quarterly Q4 cells stay unavailable on the XBRL side. FMP
+    publishes Q4 explicitly so the comparison cell still renders
+    on the FMP side.
+
+    Returns None when no matching entry exists.
+    """
+    if period == "FY":
+        form = "10-K"
+        fp = "FY"
+    else:
+        form = "10-Q"
+        fp = period  # "Q1" | "Q2" | "Q3"
+
     entry = us_gaap.get(tag)
     if not entry:
         return None
     units = entry.get("units", {}).get("USD", [])
     candidates = [
         u for u in units
-        if u.get("form") == form and u.get("fy") == fy
+        if u.get("form") == form
+        and u.get("fy") == fiscal_year
+        and u.get("fp") == fp
     ]
     if not candidates:
         return None
@@ -193,18 +227,48 @@ def _xbrl_fact_for_fy(
     return _coerce(latest.get("val"))
 
 
+def _fmp_by_period(
+    fmp_data: List[Dict[str, Any]],
+) -> Dict[tuple, Dict[str, Any]]:
+    """Index FMP quarterly statements by (fiscal_year, period).
+    FMP's quarterly files use ``period in {"Q1","Q2","Q3","Q4"}``
+    and ``fiscalYear`` (which is the same int the XBRL ``fy`` uses)."""
+    out: Dict[tuple, Dict[str, Any]] = {}
+    for stmt in fmp_data:
+        fy_raw = stmt.get("fiscalYear") or stmt.get("calendarYear")
+        try:
+            fy = int(fy_raw) if fy_raw is not None else None
+        except (TypeError, ValueError):
+            fy = None
+        period = stmt.get("period")
+        if fy is None or period not in ("Q1", "Q2", "Q3", "Q4"):
+            continue
+        out.setdefault((fy, period), stmt)
+    return out
+
+
 def _resolve_xbrl_value(
     spec: FieldSpec,
     clean: Dict[str, Any],
     raw: Dict[str, Any],
     us_gaap: Dict[str, Any],
-    fy: int,
+    fiscal_year: int,
+    period: str = "FY",
 ) -> tuple[Optional[float], str]:
-    """Walk the catalog's lookup chain for one FieldSpec. Returns
-    (value, source) where source is one of:
-       "cleaned"     value came from record.clean
+    """Walk the catalog's lookup chain for one FieldSpec at the
+    given (fiscal_year, period). Returns (value, source) where
+    source is one of:
+       "cleaned"     value came from record.clean / record.raw
+                     (populated by tag_resolver + cleaning_engine)
        "raw_xbrl"    value came from raw SEC companyfacts directly
+                     (period-aware: 10-K for FY, 10-Q for Q1/Q2/Q3)
        "unavailable" no path produced a usable value
+
+    The ``clean`` / ``raw`` dicts are sourced from the
+    ``ValidatedCleanedRecord`` for the matching (fiscal_year, period)
+    pair. When the cleaner doesn't have a quarterly record, the
+    caller passes empty dicts and the function falls through to the
+    raw-XBRL path automatically.
     """
     for k in spec.xbrl_clean_keys:
         v = _coerce(clean.get(k))
@@ -215,7 +279,7 @@ def _resolve_xbrl_value(
         if v is not None:
             return v, "cleaned"  # raw dict was populated by cleaning, treat as cleaned
     for tag in spec.xbrl_fallback_tags:
-        v = _xbrl_fact_for_fy(us_gaap, tag, fy)
+        v = _xbrl_fact_for_period(us_gaap, tag, fiscal_year, period)
         if v is not None:
             return v, "raw_xbrl"
     return None, "unavailable"
@@ -256,11 +320,13 @@ def compare_xbrl_to_fmp(
     if df is None or df.empty:
         return FmpComparisonResult(
             ticker=ticker, fiscal_years=[],
-            fields=field_labels, categories=categories_present,
-            cells=[],
+            period_labels=[], fields=field_labels,
+            categories=categories_present, cells=[],
         )
     fy_rows = df[df["period"] == "FY"].sort_values("fiscal_year")
-    # Per-FY clean + raw dicts the catalog lookup walks.
+    # Per-FY clean + raw dicts the catalog lookup walks. Quarterly
+    # records may exist too; we don't depend on them — the raw-XBRL
+    # path produces quarterly values regardless of cleaning state.
     clean_by_fy: Dict[int, Dict[str, Any]] = {}
     raw_by_fy: Dict[int, Dict[str, Any]] = {}
     for _, row in fy_rows.iterrows():
@@ -275,40 +341,97 @@ def compare_xbrl_to_fmp(
             raw_by_fy[fy] = {}
 
     # Raw SEC companyfacts (loaded once per call) for the fallback
-    # path where cleaning didn't materialise the field.
+    # path where cleaning didn't materialise the field. Also drives
+    # quarterly value lookup via _xbrl_fact_for_period.
     us_gaap = _load_sec_companyfacts(ticker)
 
     # ── FMP side ────────────────────────────────────────────────────
-    fmp_income = _fmp_by_fy(_load_fmp_cache(ticker, "income"))
-    fmp_balance = _fmp_by_fy(_load_fmp_cache(ticker, "balance"))
-    fmp_cashflow = _fmp_by_fy(_load_fmp_cache(ticker, "cashflow"))
-    fmp_lookup = {
-        "income": fmp_income,
-        "balance": fmp_balance,
-        "cashflow": fmp_cashflow,
+    fmp_income_annual = _fmp_by_fy(_load_fmp_cache(ticker, "income"))
+    fmp_balance_annual = _fmp_by_fy(_load_fmp_cache(ticker, "balance"))
+    fmp_cashflow_annual = _fmp_by_fy(_load_fmp_cache(ticker, "cashflow"))
+    fmp_annual = {
+        "income": fmp_income_annual,
+        "balance": fmp_balance_annual,
+        "cashflow": fmp_cashflow_annual,
+    }
+    # Quarterly FMP statements live in *_quarter cache files. The
+    # filename helper accepts the same source labels and remaps
+    # internally when the quarterly flag is set.
+    fmp_income_quarter = _fmp_by_period(_load_fmp_cache(ticker, "income_quarter"))
+    fmp_balance_quarter = _fmp_by_period(_load_fmp_cache(ticker, "balance_quarter"))
+    fmp_cashflow_quarter = _fmp_by_period(_load_fmp_cache(ticker, "cashflow_quarter"))
+    fmp_quarterly = {
+        "income": fmp_income_quarter,
+        "balance": fmp_balance_quarter,
+        "cashflow": fmp_cashflow_quarter,
     }
 
-    # ── Restrict to most-recent N FYs that exist on at least one side
-    all_fys = sorted(
+    # ── Determine the period axis ──────────────────────────────────
+    # Historical years: take the most-recent ``n_years`` annual FYs
+    # that exist on at least one side. The "current year" (in-progress,
+    # quarterly-only) is the highest FY that has quarterly data on
+    # either XBRL or FMP, AND lacks a corresponding annual entry.
+    all_annual_fys = sorted(
         set(clean_by_fy.keys())
-        | set(fmp_income.keys())
-        | set(fmp_balance.keys())
-        | set(fmp_cashflow.keys())
-    )[-n_years:]
+        | set(fmp_income_annual.keys())
+        | set(fmp_balance_annual.keys())
+        | set(fmp_cashflow_annual.keys())
+    )
+    # Pick candidate current-year FYs from quarterly evidence.
+    quarterly_fys = {fy for fy, _ in (
+        list(fmp_income_quarter.keys())
+        + list(fmp_balance_quarter.keys())
+        + list(fmp_cashflow_quarter.keys())
+    )}
+    # XBRL quarterly signal: latest fy with fp in {Q1,Q2,Q3} for any
+    # tag we care about. Cheap proxy: scan Revenues units.
+    rev_units = us_gaap.get("Revenues", {}).get("units", {}).get("USD", [])
+    quarterly_fys |= {
+        u["fy"] for u in rev_units
+        if u.get("fp") in {"Q1", "Q2", "Q3"} and isinstance(u.get("fy"), int)
+    }
+    annual_fys_set = set(all_annual_fys)
+    current_fy_candidates = sorted(quarterly_fys - annual_fys_set, reverse=True)
+    current_fy: Optional[int] = current_fy_candidates[0] if current_fy_candidates else None
+
+    historical_fys = all_annual_fys[-n_years:]
+    # Build the period axis: [(fy, "FY"), ...] then [(current_fy, "Q1"), ...].
+    period_axis: List[tuple] = [(fy, "FY") for fy in historical_fys]
+    if current_fy is not None:
+        for q in ("Q1", "Q2", "Q3", "Q4"):
+            # Only include a quarter if either side has data for it.
+            has_xbrl = _xbrl_fact_for_period(us_gaap, "Revenues", current_fy, q) is not None
+            has_fmp = any(
+                (current_fy, q) in fmp_quarterly[src]
+                for src in ("income", "balance", "cashflow")
+            )
+            if has_xbrl or has_fmp:
+                period_axis.append((current_fy, q))
 
     # ── Build cells ─────────────────────────────────────────────────
     cells: List[FieldComparison] = []
-    for fy in all_fys:
-        clean = clean_by_fy.get(fy, {})
-        raw = raw_by_fy.get(fy, {})
+    for fy, period in period_axis:
+        # XBRL: when looking at FY use the cleaned record; when looking
+        # at a quarter the cleaner's record dict is empty (we don't
+        # currently materialise quarterly records) so the resolver
+        # falls through to the raw-XBRL path.
+        if period == "FY":
+            clean = clean_by_fy.get(fy, {})
+            raw = raw_by_fy.get(fy, {})
+        else:
+            clean, raw = {}, {}
+
         for spec in CATALOG:
             xbrl_value, xbrl_source = _resolve_xbrl_value(
-                spec, clean, raw, us_gaap, fy,
+                spec, clean, raw, us_gaap, fy, period,
             )
 
             fmp_value: Optional[float] = None
             if spec.fmp_source is not None:
-                fmp_stmt = fmp_lookup.get(spec.fmp_source, {}).get(fy, {})
+                if period == "FY":
+                    fmp_stmt = fmp_annual.get(spec.fmp_source, {}).get(fy, {})
+                else:
+                    fmp_stmt = fmp_quarterly.get(spec.fmp_source, {}).get((fy, period), {})
                 for fk in spec.fmp_keys:
                     fmp_value = _coerce(fmp_stmt.get(fk))
                     if fmp_value is not None:
@@ -335,6 +458,7 @@ def compare_xbrl_to_fmp(
 
             cells.append(FieldComparison(
                 fiscal_year=fy,
+                period=period,
                 field_label=spec.label,
                 category=spec.category,
                 priority=spec.tier,
@@ -349,7 +473,11 @@ def compare_xbrl_to_fmp(
 
     return FmpComparisonResult(
         ticker=ticker,
-        fiscal_years=all_fys,
+        fiscal_years=sorted({fy for fy, _ in period_axis}),
+        period_labels=[
+            f"FY{fy}" if p == "FY" else f"FY{fy} {p}"
+            for fy, p in period_axis
+        ],
         fields=field_labels,
         categories=categories_present,
         cells=cells,
@@ -362,6 +490,7 @@ def comparison_to_jsonable(result: FmpComparisonResult) -> Dict[str, Any]:
     return {
         "ticker": result.ticker,
         "fiscal_years": result.fiscal_years,
+        "period_labels": result.period_labels,
         "fields": result.fields,
         "categories": result.categories,
         "cells": [asdict(c) for c in result.cells],
