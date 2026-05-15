@@ -235,3 +235,63 @@ def test_stage3_fingerprint_changes_with_pipeline_version():
     b1 = run_stage3(records_v1, pipeline_version="ver-A")
     b2 = run_stage3(records_v2, pipeline_version="ver-B")
     assert b1.bundle_fingerprint != b2.bundle_fingerprint
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Accounting-identity wiring
+# ─────────────────────────────────────────────────────────────────────
+
+def test_stage3_bundle_carries_identity_audit():
+    """Stage 3 must produce an ``accounting_identities`` payload on the
+    bundle. The seven-identity audit was promoted from the standalone
+    Days 1-7 audit script — every ticker run should surface the audit
+    summary alongside DCF / screening / reality_checks.
+    """
+    records = _load_real_records("NVDA", pipeline_version="test-identities")
+    bundle = run_stage3(records, pipeline_version="test-identities")
+
+    ai = bundle.accounting_identities
+    assert isinstance(ai, dict) and ai, "accounting_identities must be populated"
+    assert ai["ticker"] == "NVDA"
+
+    summary = ai["summary"]
+    assert summary["n_checks"] > 0
+    # Sanity: passed + expected_exception + failed + skipped == n_checks
+    assert (
+        summary["n_passed"]
+        + summary.get("n_expected_exception", 0)
+        + summary["n_failed"]
+        + summary["n_skipped"]
+        == summary["n_checks"]
+    )
+    assert isinstance(summary["failed_identities"], list)
+    assert isinstance(summary.get("exception_categories", []), list)
+
+    # Each result row carries the standard fields.
+    results = ai["results"]
+    assert isinstance(results, list) and results
+    for r in results:
+        assert {
+            "ticker", "fiscal_year", "period", "identity_name",
+            "passed", "tolerance_pct",
+        }.issubset(r.keys())
+
+    # Phase 3: exception_category is present on flagged results.
+    for r in results:
+        if not r.get("passed") and not (r.get("notes") or "").startswith("skipped:"):
+            # Every non-skipped failure should carry an exception_category
+            # (Phase 3 guarantee: zero unflagged failures).
+            assert r.get("exception_category") is not None, (
+                f"Unflagged failure: {r.get('identity_name')} FY{r.get('fiscal_year')}"
+            )
+
+
+def test_identity_adapter_handles_empty_records():
+    """The adapter must return a well-formed empty result for an empty
+    record list — supports the ``_safe_run`` fail-soft contract."""
+    from aletheia.calculations.identity_checks import run_identity_checks
+
+    out = run_identity_checks([])
+    assert out["results"] == []
+    assert out["summary"]["n_checks"] == 0
+    assert out["summary"]["failed_identities"] == []

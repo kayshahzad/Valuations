@@ -247,7 +247,7 @@ def _load_sec_companyfacts(ticker: str) -> Dict[str, Any]:
 def _xbrl_fact_for_period(
     us_gaap: Dict[str, Any], tag: str, fiscal_year: int, period: str,
 ) -> Optional[float]:
-    """Latest USD value of one XBRL tag for (fiscal_year, period).
+    """Latest numeric value of one XBRL tag for (fiscal_year, period).
 
     ``period`` is ``"FY"`` (look in 10-K, fp='FY') or one of
     ``"Q1"``/``"Q2"``/``"Q3"`` (look in 10-Q, fp matches). Q4 isn't
@@ -256,7 +256,17 @@ def _xbrl_fact_for_period(
     publishes Q4 explicitly so the comparison cell still renders
     on the FMP side.
 
-    Returns None when no matching entry exists.
+    Period matching is done on **year(end)**, NOT the ``fy`` field
+    — the SEC companyfacts ``fy`` carries the filing year, so the
+    same period's value can appear under multiple ``fy`` values
+    (one per subsequent 10-K's comparative columns). META filed
+    FY2021 Interest Expense inside the 2023 10-K with ``fy=2023``,
+    ``end=2021-12-31`` — matching on ``fy`` would have missed it.
+
+    Share-count tags (e.g. ``WeightedAverageNumberOfDilutedShares...``)
+    are filed under ``units["shares"]`` rather than ``units["USD"]``,
+    so we scan all unit keys rather than hard-coding USD. Returns
+    None when no matching entry exists.
     """
     if period == "FY":
         form = "10-K"
@@ -268,18 +278,24 @@ def _xbrl_fact_for_period(
     entry = us_gaap.get(tag)
     if not entry:
         return None
-    units = entry.get("units", {}).get("USD", [])
-    candidates = [
-        u for u in units
-        if u.get("form") == form
-        and u.get("fy") == fiscal_year
-        and u.get("fp") == fp
-    ]
+    candidates: list = []
+    for _unit_key, items in (entry.get("units") or {}).items():
+        for u in items:
+            if u.get("form") != form or u.get("fp") != fp:
+                continue
+            end = u.get("end") or ""
+            # end format is "YYYY-MM-DD"; year prefix indicates the
+            # period the value covers (independent of the filing year).
+            if not end.startswith(f"{fiscal_year}-"):
+                continue
+            candidates.append(u)
     if not candidates:
         return None
+    # When the same period appears in multiple 10-Ks (comparative
+    # restatements), prefer the most recently filed value.
     latest = max(
         candidates,
-        key=lambda u: u.get("end") or u.get("filed") or "",
+        key=lambda u: u.get("filed") or u.get("end") or "",
     )
     return _coerce(latest.get("val"))
 
@@ -353,6 +369,18 @@ def _resolve_xbrl_values(
         if v is not None:
             raw_val = v
             break
+
+    # Coverage-gap fallback: when cleaning_engine emits no canonical
+    # value for this field but the raw companyfacts tag resolves,
+    # surface the raw value into the Cleaned slot so the diagnostic
+    # column isn't blank. cleaning_effect will read "passthrough"
+    # — which is semantically correct: cleaning did not alter the
+    # value, whether by no-op or by lacking coverage. Today this
+    # applies to fields like Inventory, AccountsPayable, RetainedEarnings,
+    # Treasury, AOCI, and the cash-flow working-capital deltas, which
+    # have no canonical_transformer rule yet.
+    if cleaned is None and raw_val is not None:
+        cleaned = raw_val
 
     if cleaned is not None:
         return raw_val, cleaned, cleaned, "cleaned"

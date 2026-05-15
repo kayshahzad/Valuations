@@ -331,6 +331,18 @@ class CalculationBundle(BaseModel):
     )
     capital_structure: Dict[str, Any] = Field(default_factory=dict)
     reality_checks: Dict[str, Any] = Field(default_factory=dict)
+    accounting_identities: Dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "Stage 3 output of the seven accounting identity audits "
+            "(balance sheet, RE rollforward, cash rollforward, PP&E "
+            "rollforward, debt rollforward, working-capital reconciliation, "
+            "FCF pathway). Shape: {ticker, results: [...], summary: "
+            "{n_checks, n_passed, n_failed, n_skipped, failed_identities}, "
+            "known_limitations: [...]}. See "
+            "aletheia/calculations/identity_checks.py."
+        ),
+    )
 
     schema_violations: List[Dict[str, Any]] = Field(
         default_factory=list,

@@ -393,7 +393,7 @@ def test_stage3_validation_renders_tax_rate_source(monkeypatch):
     surface for the analyst."""
     from aletheia.ui.pipeline_explorer_view import _render_stage3_validation
     mock = _install_st_mock(monkeypatch)
-    _render_stage3_validation(_stage3_bundle())
+    _render_stage3_validation(_stage3_bundle(), "META")
 
     captions = [c for c in mock.calls if c["fn"] == "caption"]
     tax_caption = next(

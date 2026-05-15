@@ -81,14 +81,16 @@ _INCOME = [
             "CostsAndExpenses",
             "OperatingCostsAndExpenses",
         ],
-        fmp_source="income", fmp_keys=["operatingExpenses"],
+        fmp_source="income", fmp_keys=["costAndExpenses"],
         note=(
-            "Definitional divergence with FMP: our cleaner resolves to "
-            "the filer's ``CostsAndExpenses`` (total OpEx INCLUDING COGS) "
-            "while FMP's ``operatingExpenses`` field is SG&A only (R&D + "
-            "S&M + G&A, EXCLUDING COGS). Same XBRL filing, different "
-            "aggregation. Treat material drift here as Category C "
-            "(documented methodology choice), not a cleaning bug."
+            "We compare to FMP's ``costAndExpenses`` (the TRUE total: "
+            "COGS + R&D + S&M + G&A), not FMP's ``operatingExpenses`` "
+            "(which is SG&A-only, excluding COGS — a $10B+ apparent "
+            "drift on META Q1 2026 that's purely definitional). Our "
+            "cleaner resolves to the filer's ``CostsAndExpenses`` tag "
+            "which has the same total-OpEx semantics. Verified on "
+            "META Q1 2026: COGS $10.22B + opEx $23.22B = "
+            "costAndExpenses $33.44B, matches XBRL exactly."
         ),
     ),
     FieldSpec(
@@ -111,8 +113,28 @@ _INCOME = [
     FieldSpec(
         label="Interest Expense", category="Income Statement", tier="nice_to_have",
         xbrl_clean_keys=["InterestExpense"], xbrl_raw_keys=["InterestExpense"],
-        xbrl_fallback_tags=["InterestExpense"],
+        xbrl_fallback_tags=[
+            "InterestExpense",
+            "InterestExpenseDebt",
+            "InterestExpenseLongTermDebt",
+            "InterestExpenseNonoperating",
+        ],
         fmp_source="income", fmp_keys=["interestExpense"],
+        note=(
+            "Filers switch tags across years — META used "
+            "``InterestExpense`` 2013-2019 and 2023, then moved to "
+            "``InterestExpenseDebt`` 2024-2025. Fallback list is "
+            "ordered most-aggregate first so the headline tag wins "
+            "when filers publish both. "
+            "QUARTERLY-FILING GAP: modern META 10-Qs (2024+) do NOT "
+            "tag accrual interest expense in standard us-gaap — they "
+            "only tag ``InterestPaidNet`` (cash interest paid, a "
+            "different concept). FMP's quarterly ``interestExpense`` "
+            "comes from the 10-Q text/tables, not structured XBRL, "
+            "so quarterly Raw column will be ``incomplete`` for these "
+            "filers. Do not substitute ``InterestPaidNet`` — cash vs "
+            "accrual diverge by accrued-but-unpaid coupon amounts."
+        ),
     ),
     FieldSpec(
         label="Income Tax Expense", category="Income Statement", tier="critical",
@@ -174,12 +196,36 @@ _BALANCE = [
         xbrl_clean_keys=["Inventory"], xbrl_raw_keys=["Inventory"],
         xbrl_fallback_tags=["InventoryNet"],
         fmp_source="balance", fmp_keys=["inventory"],
+        note=(
+            "Structural null for filers with no physical goods "
+            "(META, GOOGL, V, MA, MSFT-services-only filings, etc.). "
+            "FMP reports 0; XBRL filers omit the tag entirely. The "
+            "``incomplete`` tier on these cells reflects the "
+            "None-vs-zero mismatch — both sources agree there is no "
+            "inventory."
+        ),
     ),
     FieldSpec(
         label="PP&E (Net)", category="Balance Sheet", tier="critical",
         xbrl_clean_keys=["PPE"], xbrl_raw_keys=["PPE"],
-        xbrl_fallback_tags=["PropertyPlantAndEquipmentNet"],
+        xbrl_fallback_tags=[
+            "PropertyPlantAndEquipmentNet",
+            "PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAssetAfterAccumulatedDepreciationAndAmortization",
+        ],
         fmp_source="balance", fmp_keys=["propertyPlantEquipmentNet"],
+        note=(
+            "Filers that capitalize finance leases inline (META 2022+, "
+            "many tech filers) use the compound "
+            "``PropertyPlantAndEquipmentAndFinanceLeaseRightOfUseAsset...`` "
+            "tag instead of the simple ``PropertyPlantAndEquipmentNet``. "
+            "Both forms in fallback list. "
+            "DEFINITIONAL DIVERGENCE: FMP includes OPERATING-lease ROU "
+            "assets in PP&E; META reports them on a separate line "
+            "(``OperatingLeaseRightOfUseAsset``). On FY2025: META "
+            "$176.4B (PP&E + Finance ROU) + $20.4B (Operating ROU) = "
+            "FMP $196.8B. Material drift here is a methodology choice "
+            "(Category C), not a cleaning bug."
+        ),
     ),
     FieldSpec(
         label="Goodwill", category="Balance Sheet", tier="important",
@@ -196,8 +242,21 @@ _BALANCE = [
     FieldSpec(
         label="Accounts Payable", category="Balance Sheet", tier="critical",
         xbrl_clean_keys=["AccountsPayable"], xbrl_raw_keys=["AccountsPayable"],
-        xbrl_fallback_tags=["AccountsPayableCurrent"],
+        xbrl_fallback_tags=[
+            "AccountsPayableCurrent",
+            "AccountsPayableTradeCurrent",
+            "AccountsPayableAndAccruedLiabilitiesCurrent",
+            "AccountsPayableAndOtherAccruedLiabilitiesCurrent",
+        ],
         fmp_source="balance", fmp_keys=["accountPayables", "accountsPayable"],
+        note=(
+            "Filers split AP across multiple tags — META stopped "
+            "filing ``AccountsPayableCurrent`` after 2020 and switched "
+            "to ``AccountsPayableTradeCurrent`` (+ ``AccountsPayableOtherCurrent`` "
+            "which we don't aggregate). Fallback list resolves trade-AP "
+            "for META; cross-filer total may understate when filers "
+            "split trade vs other and we only pick the first match."
+        ),
     ),
     FieldSpec(
         label="Short-Term Debt", category="Balance Sheet", tier="critical",
@@ -319,7 +378,12 @@ _CASHFLOW = [
     FieldSpec(
         label="Δ Accounts Payable (CF)", category="Cash Flow", tier="important",
         xbrl_clean_keys=[], xbrl_raw_keys=[],
-        xbrl_fallback_tags=["IncreaseDecreaseInAccountsPayable"],
+        xbrl_fallback_tags=[
+            "IncreaseDecreaseInAccountsPayable",
+            "IncreaseDecreaseInAccountsPayableTrade",
+            "IncreaseDecreaseInAccountsPayableAndAccruedLiabilities",
+            "IncreaseDecreaseInAccountsPayableAndOtherOperatingLiabilities",
+        ],
         fmp_source="cashflow", fmp_keys=["accountsPayables"],
         abs_compare=True,
     ),
@@ -347,9 +411,16 @@ _CASHFLOW = [
         xbrl_clean_keys=[], xbrl_raw_keys=[],
         xbrl_fallback_tags=[
             "EffectOfExchangeRateOnCashAndCashEquivalents",
+            "EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
             "EffectOfExchangeRateOnCash",
         ],
         fmp_source="cashflow", fmp_keys=["effectOfForexChangesOnCash"],
+        note=(
+            "Filers switched tags around 2018-2020 when restricted-cash "
+            "ASU 2016-18 took effect — modern filings use "
+            "``EffectOfExchangeRateOnCashCashEquivalentsRestrictedCash...``. "
+            "Fallback list covers both eras."
+        ),
     ),
     FieldSpec(
         label="Acquisitions of Businesses", category="Cash Flow", tier="nice_to_have",

@@ -57,6 +57,7 @@ from aletheia.tools.screening_ratios import ScreeningEngine
 from aletheia.tools.moat_fingerprint import compute_moat_fingerprint
 from aletheia.tools import cyclicality
 from aletheia.tools.reality_checks import run_all_checks
+from aletheia.calculations.identity_checks import run_identity_checks
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -384,6 +385,16 @@ def run_stage3(
     )
     schema_violations.extend(reality_violations)
 
+    # ── Accounting identities (seven-identity audit) ────────────────
+    # Promoted from the Days 1-7 standalone audit script into Stage 3
+    # so every ticker run produces a fresh identity-audit alongside
+    # its DCF / screening / reality-check outputs.
+    identities_dict, identities_violations = _safe_run(
+        "accounting_identities",
+        lambda: run_identity_checks(records),
+    )
+    schema_violations.extend(identities_violations)
+
     # ── Determine bundle fiscal_year and base_period from DCF ───────
     # When fiscal_year wasn't pinned by the caller, prefer the DCF
     # engine's resolved fiscal_year (it's the canonical anchor across
@@ -423,6 +434,7 @@ def run_stage3(
         scenarios=[],  # populated in Week 6 when scenario_eval_node moves out of agents/
         capital_structure={},  # populated when strategist is detangled
         reality_checks=reality_dict,
+        accounting_identities=identities_dict,
         schema_violations=schema_violations,
         bundle_fingerprint=bundle_fingerprint,
         input_record_fingerprint=input_record_fingerprint,

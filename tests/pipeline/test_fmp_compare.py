@@ -16,9 +16,12 @@ import json
 import pytest
 
 from aletheia.pipeline._fmp_compare import (
+    FieldSpec,
     _classify_drift,
     _fmp_by_fy,
     _load_fmp_cache,
+    _resolve_xbrl_values,
+    _xbrl_fact_for_period,
     compare_xbrl_to_fmp,
 )
 
@@ -38,6 +41,134 @@ def test_classify_drift_tiers():
     assert _classify_drift(0.10) == "material"     # 10%
     assert _classify_drift(-0.20) == "material"    # large negative
     assert _classify_drift(None) == "incomplete"
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Period-aware XBRL fact lookup
+# ─────────────────────────────────────────────────────────────────────
+
+def test_resolve_xbrl_values_falls_back_to_raw_when_cleaning_has_no_coverage():
+    """Coverage-gap fallback: when cleaning_engine emits no canonical
+    value for a field but companyfacts has the raw fact, the resolver
+    surfaces the raw value into the Cleaned slot so the diagnostic
+    column isn't blank. This applies to fields like Inventory,
+    AccountsPayable, RetainedEarnings, Treasury, AOCI, and the CF
+    working-capital deltas where canonical_transformer has no rule yet.
+    """
+    spec = FieldSpec(
+        label="Retained Earnings", category="Balance Sheet", tier="critical",
+        xbrl_clean_keys=["RetainedEarnings"], xbrl_raw_keys=["RetainedEarnings"],
+        xbrl_fallback_tags=["RetainedEarningsAccumulatedDeficit"],
+        fmp_source="balance", fmp_keys=["retainedEarnings"],
+    )
+    # clean + raw record dicts are empty — cleaning_engine didn't emit anything.
+    # us_gaap has the raw fact.
+    us_gaap = {
+        "RetainedEarningsAccumulatedDeficit": {
+            "units": {"USD": [{
+                "val": 100_000_000_000,
+                "fy": 2024, "fp": "FY", "form": "10-K",
+                "end": "2024-12-31", "filed": "2025-01-30",
+            }]},
+        },
+    }
+    raw, cleaned, best, source = _resolve_xbrl_values(
+        spec, {}, {}, us_gaap, fiscal_year=2024, period="FY",
+    )
+    assert raw == 100_000_000_000
+    # Coverage-gap fallback: cleaned mirrors raw so the column isn't blank.
+    assert cleaned == 100_000_000_000
+    assert best == 100_000_000_000
+
+
+def test_xbrl_fact_for_period_reads_shares_unit():
+    """Regression for the silent bug where _xbrl_fact_for_period
+    only scanned units["USD"]. Share-count tags (e.g.
+    ``WeightedAverageNumberOfDilutedSharesOutstanding``) are filed
+    under units["shares"] and were dropped, leaving the Raw XBRL
+    column blank in the UI even though companyfacts had the value.
+    """
+    us_gaap = {
+        "WeightedAverageNumberOfDilutedSharesOutstanding": {
+            "units": {
+                "shares": [
+                    {
+                        "val": 2_614_000_000,
+                        "fy": 2024, "fp": "FY", "form": "10-K",
+                        "end": "2024-12-31", "filed": "2025-01-30",
+                    },
+                ],
+            },
+        },
+    }
+    val = _xbrl_fact_for_period(
+        us_gaap, "WeightedAverageNumberOfDilutedSharesOutstanding",
+        2024, "FY",
+    )
+    assert val == 2_614_000_000
+
+
+def test_xbrl_fact_for_period_returns_none_for_missing_tag():
+    assert _xbrl_fact_for_period({}, "AnyTag", 2024, "FY") is None
+
+
+def test_xbrl_fact_for_period_matches_on_end_year_not_fy():
+    """Regression: SEC companyfacts ``fy`` is the FILING year, not the
+    data-period year. When a 10-K reports comparative columns for
+    prior FYs, those rows carry ``fy = filing year`` and
+    ``end = prior-period year-end``. Matching on ``fy`` mis-attributes
+    the period; we must match on year(end).
+
+    META filed FY2021 Interest Expense ($23M) inside the 2023 10-K
+    (``fy=2023``, ``end=2021-12-31``). The resolver must surface
+    that as FY2021's raw value.
+    """
+    us_gaap = {
+        "InterestExpense": {
+            "units": {"USD": [
+                {  # FY2021 data restated in 2023's 10-K
+                    "val": 23_000_000,
+                    "fy": 2023, "fp": "FY", "form": "10-K",
+                    "start": "2021-01-01", "end": "2021-12-31",
+                    "filed": "2024-02-02",
+                },
+                {  # FY2023 data in 2023's 10-K
+                    "val": 446_000_000,
+                    "fy": 2023, "fp": "FY", "form": "10-K",
+                    "start": "2023-01-01", "end": "2023-12-31",
+                    "filed": "2024-02-02",
+                },
+            ]},
+        },
+    }
+    # Asking for FY2021 must return the $23M comparative value, not None.
+    assert _xbrl_fact_for_period(us_gaap, "InterestExpense", 2021, "FY") == 23_000_000
+    assert _xbrl_fact_for_period(us_gaap, "InterestExpense", 2023, "FY") == 446_000_000
+
+
+def test_xbrl_fact_for_period_prefers_latest_filing_for_restated_period():
+    """When the same fiscal period appears in multiple subsequent 10-Ks
+    (comparative columns), prefer the most-recently-filed value. This
+    surfaces restatements automatically and keeps the diagnostic in
+    sync with the latest disclosure.
+    """
+    us_gaap = {
+        "Revenues": {
+            "units": {"USD": [
+                {  # Original filing
+                    "val": 100_000_000_000,
+                    "fy": 2022, "fp": "FY", "form": "10-K",
+                    "end": "2022-12-31", "filed": "2023-02-01",
+                },
+                {  # Restated in 2023 10-K
+                    "val": 101_500_000_000,
+                    "fy": 2023, "fp": "FY", "form": "10-K",
+                    "end": "2022-12-31", "filed": "2024-02-01",
+                },
+            ]},
+        },
+    }
+    assert _xbrl_fact_for_period(us_gaap, "Revenues", 2022, "FY") == 101_500_000_000
 
 
 # ─────────────────────────────────────────────────────────────────────

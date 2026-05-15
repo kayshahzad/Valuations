@@ -21,6 +21,7 @@ checks. Stage 4 surfaces thesis structural completeness + LLM cost.
 
 from __future__ import annotations
 
+import json
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -564,7 +565,220 @@ def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
         )
 
 
-def _render_stage3_validation(bundle: Dict[str, Any]) -> None:
+_FMP_CACHE_DIR_FOR_CALCS = Path("valuation_data/macro/fmp")
+
+
+def _load_fmp_calc_metrics(ticker: str) -> Dict[str, Any]:
+    """Load FMP TTM ``key_metrics`` + ``ratios`` payloads for the
+    ticker. Returns a flat dict merging both sources so callers can
+    look up FMP's published metric by its native field name. Empty
+    dict when files are missing or malformed.
+    """
+    merged: Dict[str, Any] = {}
+    for endpoint in ("key_metrics_ttm", "ratios_ttm"):
+        path = _FMP_CACHE_DIR_FOR_CALCS / f"{ticker.upper()}__{endpoint}.json"
+        if not path.exists():
+            continue
+        try:
+            data = json.loads(path.read_text()).get("data") or []
+        except (json.JSONDecodeError, OSError):
+            continue
+        if isinstance(data, list) and data:
+            data = data[0]
+        if isinstance(data, dict):
+            merged.update(data)
+    return merged
+
+
+def _fmt_metric(v: Any, kind: str) -> str:
+    """Format a metric value according to its kind: ``pct`` (decimal
+    fraction → %), ``usd`` (large-number with $/B/M suffix),
+    ``ratio`` (raw numeric, 2-decimal), ``text`` (passthrough)."""
+    if v is None:
+        return "—"
+    if kind == "text":
+        return str(v)
+    try:
+        fv = float(v)
+    except (TypeError, ValueError):
+        return "—"
+    if not (fv == fv):  # NaN
+        return "—"
+    if kind == "pct":
+        return f"{fv * 100:.2f}%"
+    if kind == "pct_raw":
+        # value is already in percent units (e.g. ScreeningEngine
+        # returns 19.98 to mean 19.98%, not 1998%).
+        return f"{fv:.2f}%"
+    if kind == "usd":
+        return _fmt_usd(fv)
+    if kind == "ratio":
+        return f"{fv:.2f}"
+    return f"{fv:g}"
+
+
+def _drift_pct(ours: Any, fmp: Any) -> Optional[float]:
+    """Relative drift = (ours − fmp) / |fmp|. None when either side
+    isn't numeric or fmp is too close to zero to be a meaningful
+    denominator."""
+    try:
+        a = float(ours); b = float(fmp)
+    except (TypeError, ValueError):
+        return None
+    if abs(b) < 1e-9:
+        return None
+    return (a - b) / abs(b)
+
+
+# Catalogue of every Stage 3 calculation we surface. Each entry:
+#   (category, label, bundle_path, kind, fmp_field)
+# bundle_path is a "/"-separated path within the bundle dict; values
+# resolve via _bundle_get. fmp_field is None when FMP has no published
+# equivalent — the FMP column then shows "—".
+_STAGE3_CALC_SPEC: List[Dict[str, Any]] = [
+    # ── DCF inputs ──────────────────────────────────────────────────
+    {"cat": "DCF",     "label": "WACC",                     "path": "dcf/wacc_base",                "kind": "pct",   "fmp": None},
+    {"cat": "DCF",     "label": "Beta",                     "path": "dcf/beta",                     "kind": "ratio", "fmp": "betaTTM"},
+    {"cat": "DCF",     "label": "Risk-free rate",           "path": "dcf/risk_free_rate",           "kind": "pct",   "fmp": None},
+    {"cat": "DCF",     "label": "ROIC",                     "path": "dcf/roic",                     "kind": "pct",   "fmp": "returnOnInvestedCapitalTTM"},
+    {"cat": "DCF",     "label": "FCF",                      "path": "dcf/fcf",                      "kind": "usd",   "fmp": "freeCashFlowToFirmTTM"},
+    {"cat": "DCF",     "label": "Revenue (base)",           "path": "dcf/revenue",                  "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "EBITDA (base)",            "path": "dcf/ebitda",                   "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "EBIT (base)",              "path": "dcf/ebit",                     "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "NOPAT",                    "path": "dcf/nopat",                    "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "Net debt",                 "path": "dcf/net_debt",                 "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "Market cap",               "path": "dcf/market_cap",               "kind": "usd",   "fmp": "marketCap"},
+    {"cat": "DCF",     "label": "Shares diluted",           "path": "dcf/shares_diluted",           "kind": "ratio", "fmp": None},
+    {"cat": "DCF",     "label": "IV per share (base)",      "path": "dcf/base_intrinsic_per_share", "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "IV per share (bull)",      "path": "dcf/bull_intrinsic_per_share", "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "IV per share (bear)",      "path": "dcf/bear_intrinsic_per_share", "kind": "usd",   "fmp": None},
+    {"cat": "DCF",     "label": "Upside (base)",            "path": "dcf/base_upside",              "kind": "pct",   "fmp": None},
+    # ── Reverse DCF ─────────────────────────────────────────────────
+    {"cat": "RevDCF",  "label": "Current EV / EBITDA",      "path": "reverse_dcf/current_ev_ebitda", "kind": "ratio", "fmp": "evToEBITDATTM"},
+    {"cat": "RevDCF",  "label": "Implied 10Y CAGR",         "path": "reverse_dcf/implied_cagr_10y", "kind": "pct",   "fmp": None},
+    {"cat": "RevDCF",  "label": "Implied 5Y CAGR",          "path": "reverse_dcf/implied_cagr_5y",  "kind": "pct",   "fmp": None},
+    {"cat": "RevDCF",  "label": "Historical 5Y CAGR",       "path": "reverse_dcf/historical_cagr_5y","kind": "pct",  "fmp": None},
+    {"cat": "RevDCF",  "label": "EBIT margin",              "path": "reverse_dcf/ebit_margin",      "kind": "pct",   "fmp": "ebitMarginTTM"},
+    {"cat": "RevDCF",  "label": "Forward EV/EBITDA (justified)", "path": "reverse_dcf/forward_ev_ebitda_justified", "kind": "ratio", "fmp": None},
+    {"cat": "RevDCF",  "label": "Signal",                   "path": "reverse_dcf/signal",           "kind": "text",  "fmp": None},
+    # ── Multiple Decomposition ──────────────────────────────────────
+    {"cat": "MultDec", "label": "Market P/E",               "path": "multiple_decomposition/market_p_e",     "kind": "ratio", "fmp": "priceToEarningsRatioTTM"},
+    {"cat": "MultDec", "label": "Market PEG",               "path": "multiple_decomposition/market_peg",     "kind": "ratio", "fmp": "priceEarningsToGrowthRatioTTM"},
+    {"cat": "MultDec", "label": "Market P/Sales",           "path": "multiple_decomposition/market_p_sales", "kind": "ratio", "fmp": "priceToSalesRatioTTM"},
+    {"cat": "MultDec", "label": "Market EV/EBITDA",         "path": "multiple_decomposition/market_ev_ebitda","kind": "ratio","fmp": "evToEBITDATTM"},
+    {"cat": "MultDec", "label": "Market EV/EBIT",           "path": "multiple_decomposition/market_ev_ebit", "kind": "ratio", "fmp": None},
+    {"cat": "MultDec", "label": "Justified EV/EBITDA",      "path": "multiple_decomposition/justified_ev_ebitda","kind": "ratio","fmp": None},
+    {"cat": "MultDec", "label": "Sector median EV/EBITDA",  "path": "multiple_decomposition/sector_median_ev_ebitda","kind": "ratio","fmp": None},
+    {"cat": "MultDec", "label": "EV/EBITDA premium %",      "path": "multiple_decomposition/ev_ebitda_premium_pct","kind": "pct","fmp": None},
+    {"cat": "MultDec", "label": "vs-sector premium %",      "path": "multiple_decomposition/vs_sector_premium","kind": "pct","fmp": None},
+    {"cat": "MultDec", "label": "ROIC",                     "path": "multiple_decomposition/roic",  "kind": "pct",   "fmp": "returnOnInvestedCapitalTTM"},
+    {"cat": "MultDec", "label": "WACC",                     "path": "multiple_decomposition/wacc",  "kind": "pct",   "fmp": None},
+    {"cat": "MultDec", "label": "ROIC − WACC spread",       "path": "multiple_decomposition/roic_wacc_spread","kind": "pct","fmp": None},
+    # NB: FMP's cashConversionCycleTTM is the cash-conversion CYCLE in
+    # days, not the cash-conversion RATIO (OCF / NI). Different concepts,
+    # so we leave the FMP column empty rather than print a misleading drift.
+    {"cat": "MultDec", "label": "Cash conversion ratio",    "path": "multiple_decomposition/cash_conversion_ratio","kind": "ratio","fmp": None},
+    {"cat": "MultDec", "label": "Growth rate",              "path": "multiple_decomposition/growth_rate","kind": "pct","fmp": None},
+    {"cat": "MultDec", "label": "Signal",                   "path": "multiple_decomposition/signal","kind": "text",  "fmp": None},
+    # ── Screening ───────────────────────────────────────────────────
+    {"cat": "Screen",  "label": "P/E",                      "path": "screening/p_per_e_ratio",      "kind": "ratio", "fmp": "priceToEarningsRatioTTM"},
+    {"cat": "Screen",  "label": "PEG",                      "path": "screening/peg_ratio",          "kind": "ratio", "fmp": "priceEarningsToGrowthRatioTTM"},
+    {"cat": "Screen",  "label": "P/B",                      "path": "screening/p_per_b_ratio",      "kind": "ratio", "fmp": "priceToBookRatioTTM"},
+    {"cat": "Screen",  "label": "EV/EBITDA (clean)",        "path": "screening/ev_per_ebitda_(clean)","kind": "ratio","fmp": "evToEBITDATTM"},
+    {"cat": "Screen",  "label": "EV/EBIT (normalized)",     "path": "screening/ev_per_ebit_(normalized)","kind": "ratio","fmp": None},
+    {"cat": "Screen",  "label": "EV/FCF",                   "path": "screening/ev_per_fcf",         "kind": "ratio", "fmp": "evToFreeCashFlowTTM"},
+    {"cat": "Screen",  "label": "Margin of safety",         "path": "screening/margin_of_safety",   "kind": "pct_raw","fmp": None},
+    {"cat": "Screen",  "label": "Revenue CAGR (robust)",    "path": "screening/revenue_cagr_(robust)","kind": "pct_raw","fmp": None},
+    {"cat": "Screen",  "label": "EPS growth rate",          "path": "screening/eps_growth_rate",    "kind": "pct_raw","fmp": None},
+    {"cat": "Screen",  "label": "Current price",            "path": "screening/current_price",      "kind": "usd",   "fmp": None},
+    {"cat": "Screen",  "label": "Market cap ($B)",          "path": "screening/market_cap_bn",      "kind": "ratio", "fmp": None},
+    {"cat": "Screen",  "label": "Passes / flags / fails",   "path": None,                           "kind": "text",  "fmp": None, "computed": "screening_counts"},
+    # ── Moat / Cyclicality / Reality ────────────────────────────────
+    {"cat": "Moat",    "label": "Moat score",               "path": "moat_fingerprint/score",       "kind": "ratio", "fmp": None},
+    {"cat": "Cyclic",  "label": "Z-score",                  "path": "cyclicality/z_score",          "kind": "ratio", "fmp": None},
+    {"cat": "Cyclic",  "label": "Is peak",                  "path": "cyclicality/is_peak",          "kind": "text",  "fmp": None},
+    {"cat": "Cyclic",  "label": "3-yr average",             "path": "cyclicality/avg_3yr",          "kind": "usd",   "fmp": None},
+    # ── FMP-published metrics not in our calcs (cross-references) ──
+    {"cat": "FMP×",    "label": "ROE (FMP)",                "path": None, "kind": "pct",   "fmp": "returnOnEquityTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "ROA (FMP)",                "path": None, "kind": "pct",   "fmp": "returnOnAssetsTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "Debt / Equity (FMP)",      "path": None, "kind": "ratio", "fmp": "debtToEquityRatioTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "Current ratio (FMP)",      "path": None, "kind": "ratio", "fmp": "currentRatioTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "Gross margin (FMP)",       "path": None, "kind": "pct",   "fmp": "grossProfitMarginTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "Net margin (FMP)",         "path": None, "kind": "pct",   "fmp": "bottomLineProfitMarginTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "Effective tax rate (FMP)", "path": None, "kind": "pct",   "fmp": "effectiveTaxRateTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "Interest coverage (FMP)",  "path": None, "kind": "ratio", "fmp": "interestCoverageRatioTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "FCF yield (FMP)",          "path": None, "kind": "pct",   "fmp": "freeCashFlowYieldTTM", "computed": "fmp_only"},
+    {"cat": "FMP×",    "label": "Enterprise value (FMP)",   "path": None, "kind": "usd",   "fmp": "enterpriseValueTTM", "computed": "fmp_only"},
+]
+
+
+def _bundle_get(bundle: Dict[str, Any], path: str) -> Any:
+    """Resolve a ``a/b/c`` path within nested dicts. Returns None when
+    any segment is missing or the leaf isn't present."""
+    cur: Any = bundle
+    for seg in path.split("/"):
+        if not isinstance(cur, dict) or seg not in cur:
+            return None
+        cur = cur[seg]
+    return cur
+
+
+def _render_stage3_calculations_panel(
+    bundle: Dict[str, Any], ticker: str,
+) -> None:
+    """Comprehensive table of every Stage 3 calculation alongside the
+    FMP-published equivalent (where one exists). Built from the
+    ``_STAGE3_CALC_SPEC`` catalogue so adding a new calc to the bundle
+    is a one-line catalog entry, not a UI rewrite.
+    """
+    fmp = _load_fmp_calc_metrics(ticker)
+    screening = bundle.get("screening") or {}
+
+    rows: List[Dict[str, str]] = []
+    for spec in _STAGE3_CALC_SPEC:
+        if spec.get("computed") == "screening_counts":
+            ours_val = (
+                f"{screening.get('passes', '?')}✓  "
+                f"{screening.get('flags', '?')}⚠  "
+                f"{screening.get('fails', '?')}✗"
+            )
+            ours_disp = ours_val
+            fmp_disp = "—"
+            drift_disp = "—"
+        elif spec.get("computed") == "fmp_only":
+            # FMP-published metric we don't compute ourselves — useful
+            # cross-reference for the analyst even when there's no
+            # symmetric comparison to run.
+            ours_disp = "—"
+            fmp_val = fmp.get(spec["fmp"]) if spec.get("fmp") else None
+            fmp_disp = _fmt_metric(fmp_val, spec["kind"])
+            drift_disp = "—"
+        else:
+            ours_val = _bundle_get(bundle, spec["path"]) if spec.get("path") else None
+            ours_disp = _fmt_metric(ours_val, spec["kind"])
+            fmp_val = fmp.get(spec["fmp"]) if spec.get("fmp") else None
+            fmp_disp = _fmt_metric(fmp_val, spec["kind"]) if spec.get("fmp") else "—"
+            drift = _drift_pct(ours_val, fmp_val) if spec.get("fmp") else None
+            drift_disp = (
+                f"{drift * 100:+.1f}%" if drift is not None else "—"
+            )
+        rows.append({
+            "Category": spec["cat"],
+            "Calculation": spec["label"],
+            "Ours": ours_disp,
+            "FMP": fmp_disp,
+            "Drift": drift_disp,
+        })
+
+    if not fmp:
+        st.caption(
+            f"FMP cache for **{ticker}** not found — FMP columns will be "
+            "empty. Refresh the FMP ingest to populate."
+        )
+    st.dataframe(rows, use_container_width=True, hide_index=True)
+
+
+def _render_stage3_validation(bundle: Dict[str, Any], ticker: str) -> None:
     """Stage 3 panel: WACC, intrinsic value spread, RDCF implied,
     multiple decomposition signal, screening counts, moat score,
     tax_rate_source. The tax_rate_source value is the immediate
@@ -629,6 +843,18 @@ def _render_stage3_validation(bundle: Dict[str, Any]) -> None:
         )
         st.caption(f"tax_rate_source — {chips}")
 
+    # All Stage 3 calculations alongside FMP equivalents — a single
+    # comprehensive table that walks every engine's output and shows
+    # the FMP-published value side-by-side where one exists.
+    with st.expander(
+        "All Stage 3 calculations vs FMP", expanded=False,
+    ):
+        _render_stage3_calculations_panel(bundle, ticker)
+
+    # Accounting-identity audit (seven identities). Promoted from the
+    # standalone Days 1-7 audit script — runs in Stage 3 for every ticker.
+    _render_identity_audit_panel(bundle.get("accounting_identities") or {})
+
     # Calc-layer schema violations (output sanity failures).
     if violations:
         with st.expander(
@@ -642,6 +868,87 @@ def _render_stage3_validation(bundle: Dict[str, Any]) -> None:
                 st.markdown(f"- **{engine}** · `{category}` · {msg}")
     else:
         st.caption("No calc-layer schema violations.")
+
+
+def _render_identity_audit_panel(identities: Dict[str, Any]) -> None:
+    """Render the seven-identity audit results inside Stage 3.
+
+    Layout: a 4-metric strip (total / passed / failed / skipped),
+    a failed-checks expander grouped by identity, and a small
+    caption flagging the known formula limitations the analyst
+    should keep in mind when reading discrepancies.
+    """
+    summary = identities.get("summary") or {}
+    if not summary:
+        st.caption("Identity audit: no results in this bundle.")
+        return
+
+    cols = st.columns(5)
+    cols[0].metric("Identity checks", summary.get("n_checks", 0))
+    cols[1].metric("✓ Passed", summary.get("n_passed", 0))
+    cols[2].metric("⚠️ Expected exceptions", summary.get("n_expected_exception", 0))
+    cols[3].metric("✗ Failed", summary.get("n_failed", 0))
+    cols[4].metric("Skipped", summary.get("n_skipped", 0))
+
+    results = identities.get("results") or []
+    non_passing = [
+        r for r in results
+        if not r.get("passed")
+        and not (r.get("notes") or "").startswith("skipped:")
+    ]
+    flagged = [r for r in non_passing if r.get("exception_category")]
+    unflagged = [r for r in non_passing if not r.get("exception_category")]
+
+    # Unflagged failures get prominent treatment — these are the
+    # genuinely unexplained gaps the analyst needs to investigate.
+    if unflagged:
+        with st.expander(
+            f"❌ Unflagged failures ({len(unflagged)}) — investigate",
+            expanded=True,
+        ):
+            grouped: Dict[str, List[Dict[str, Any]]] = {}
+            for r in unflagged:
+                grouped.setdefault(r.get("identity_name", "?"), []).append(r)
+            for name in sorted(grouped):
+                rows = grouped[name]
+                tol_pct = (rows[0].get("tolerance_pct") or 0.0) * 100.0
+                st.markdown(
+                    f"**{name}** — tolerance {tol_pct:.1f}%   ·   "
+                    f"{len(rows)} failure(s)"
+                )
+                st.dataframe([{
+                    "FY": r.get("fiscal_year"),
+                    "Period": r.get("period"),
+                    "Discrepancy %": f"{r.get('discrepancy_pct'):.2f}%"
+                        if isinstance(r.get("discrepancy_pct"), (int, float)) else "—",
+                    "Notes": (r.get("notes") or "")[:120],
+                } for r in rows], use_container_width=True, hide_index=True)
+
+    # Expected exceptions get a separate, less alarming expander.
+    if flagged:
+        # Group by exception_category so the analyst sees the pattern.
+        by_cat: Dict[str, List[Dict[str, Any]]] = {}
+        for r in flagged:
+            by_cat.setdefault(r["exception_category"], []).append(r)
+        with st.expander(
+            f"⚠️ Expected exceptions ({len(flagged)}, "
+            f"{len(by_cat)} categor{'y' if len(by_cat)==1 else 'ies'}) — "
+            "documented structural reasons",
+            expanded=False,
+        ):
+            for cat in sorted(by_cat):
+                rows = by_cat[cat]
+                st.markdown(f"**`{cat}`** — {len(rows)} occurrence(s)")
+                st.dataframe([{
+                    "Identity": r.get("identity_name"),
+                    "FY": r.get("fiscal_year"),
+                    "Period": r.get("period"),
+                    "Discrepancy %": f"{r.get('discrepancy_pct'):.2f}%"
+                        if isinstance(r.get("discrepancy_pct"), (int, float)) else "—",
+                } for r in rows], use_container_width=True, hide_index=True)
+
+    if not non_passing:
+        st.caption("All identity checks passed (or were skipped on missing data).")
 
 
 def _render_stage4_validation(bundle: Dict[str, Any]) -> None:
@@ -797,7 +1104,7 @@ def _render_stage3(ticker: str, status_rows: Dict[str, Dict[str, Any]]) -> None:
             f"bundle_fingerprint: `{bundle.get('bundle_fingerprint', '')[:16]}…`   "
             f"last shown: {_read_bundle_fetched_at(ticker, 'stage3_calculate')}"
         )
-        _render_stage3_validation(bundle)
+        _render_stage3_validation(bundle, ticker)
         with st.expander("Raw bundle JSON (full payload)", expanded=False):
             st.json(bundle)
 
