@@ -730,11 +730,23 @@ def _render_stage3_calculations_panel(
     FMP-published equivalent (where one exists). Built from the
     ``_STAGE3_CALC_SPEC`` catalogue so adding a new calc to the bundle
     is a one-line catalog entry, not a UI rewrite.
+
+    Layer 2 methodology: each row's "Calculation" column gets a 📐 chip
+    when the derivation_registry flags it as Category-D (expected
+    methodology divergence from FMP). Below the table, a "📖 How each
+    value is derived" expander shows the registry entry for every row
+    — inputs, formula, methodology citation, alternates, and the
+    documented FMP divergence note.
     """
+    from aletheia.calculations.derivation_registry import (
+        lookup_by_label,
+    )
+
     fmp = _load_fmp_calc_metrics(ticker)
     screening = bundle.get("screening") or {}
 
     rows: List[Dict[str, str]] = []
+    methodology_seen: List[str] = []  # labels with registry entries (for the expander)
     for spec in _STAGE3_CALC_SPEC:
         if spec.get("computed") == "screening_counts":
             ours_val = (
@@ -746,9 +758,6 @@ def _render_stage3_calculations_panel(
             fmp_disp = "—"
             drift_disp = "—"
         elif spec.get("computed") == "fmp_only":
-            # FMP-published metric we don't compute ourselves — useful
-            # cross-reference for the analyst even when there's no
-            # symmetric comparison to run.
             ours_disp = "—"
             fmp_val = fmp.get(spec["fmp"]) if spec.get("fmp") else None
             fmp_disp = _fmt_metric(fmp_val, spec["kind"])
@@ -762,9 +771,16 @@ def _render_stage3_calculations_panel(
             drift_disp = (
                 f"{drift * 100:+.1f}%" if drift is not None else "—"
             )
+        # Layer 2: registry lookup for methodology chip
+        entry = lookup_by_label(spec["label"])
+        calc_label = spec["label"]
+        if entry is not None:
+            methodology_seen.append(spec["label"])
+            if entry.category_d:
+                calc_label = f"📐 {calc_label}"
         rows.append({
             "Category": spec["cat"],
-            "Calculation": spec["label"],
+            "Calculation": calc_label,
             "Ours": ours_disp,
             "FMP": fmp_disp,
             "Drift": drift_disp,
@@ -776,6 +792,53 @@ def _render_stage3_calculations_panel(
             "empty. Refresh the FMP ingest to populate."
         )
     st.dataframe(rows, use_container_width=True, hide_index=True)
+    st.caption(
+        "📐 = Category-D (documented methodology divergence from FMP — "
+        "not a bug). See methodology expander below for details."
+    )
+
+    # Layer 2: per-value derivation methodology expander
+    if methodology_seen:
+        _render_methodology_expander(methodology_seen)
+
+
+def _render_methodology_expander(labels: List[str]) -> None:
+    """Show registry entry details for each calc row in an expander.
+
+    Renders inputs, formula, methodology citation, alternates, and FMP
+    divergence note — letting the analyst answer "why does our FCF
+    differ from FMP's FCF?" from inside the same panel.
+    """
+    from aletheia.calculations.derivation_registry import lookup_by_label
+
+    with st.expander(
+        "📖 How each value is derived (Layer-2 methodology)", expanded=False,
+    ):
+        st.caption(
+            "Each entry documents the formula, methodology citation, "
+            "alternates, and any documented divergence from FMP's "
+            "published value. Rows marked 📐 in the table above are "
+            "expected-divergence (Category D), not bugs."
+        )
+        for label in labels:
+            entry = lookup_by_label(label)
+            if entry is None:
+                continue
+            chip = "📐 " if entry.category_d else ""
+            st.markdown(f"##### {chip}{entry.label}  ·  `{entry.name}`  ·  *{entry.category}*")
+            st.markdown(f"**Formula**: `{entry.formula}`")
+            if entry.inputs:
+                st.markdown(
+                    "**Inputs**: " + ", ".join(f"`{i}`" for i in entry.inputs)
+                )
+            st.markdown(f"**Methodology**: {entry.methodology}")
+            if entry.alternates:
+                st.markdown("**Alternates**:")
+                for alt in entry.alternates:
+                    st.markdown(f"  - {alt}")
+            if entry.fmp_equivalent:
+                st.markdown(f"**FMP divergence**: {entry.fmp_equivalent}")
+            st.markdown("---")
 
 
 def _render_stage3_validation(bundle: Dict[str, Any], ticker: str) -> None:
