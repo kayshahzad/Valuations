@@ -1071,13 +1071,29 @@ def check_working_capital_reconciliation(
             continue
         disc_pct = disc_abs / bs_change * 100.0
         passed = _passes(disc_abs, disc_pct, tol)
-        # Exception flagging
+        # Exception flagging — direction-based diagnostics by line.
+        # disc_abs = cf_reported_change - bs_change
+        #   positive → CF reports more change than BS shows
+        #              (CF aggregates sub-lines BS reports separately,
+        #              or write-offs reduce BS without CF entry)
+        #   negative → BS shows more change than CF reports
+        #              (acquired-WC additions, FX-translation BS effect,
+        #              non-cash reclassifications)
         exception_category = None
         if not passed:
             if acquisition_year:
                 exception_category = "acquisition_distorts_wc"
+            elif disc_abs > 0:
+                # CF excess vs BS: typically CF aggregates a wider set
+                # of accounts than the single BS line we're checking
+                # (e.g., META's CF Δ AP combines Trade + Other +
+                # Accrued but BS shows AP Trade only).
+                exception_category = f"wc_{label.lower()}_cf_aggregates_more_lines"
             else:
-                exception_category = "wc_line_item_aggregation_divergence"
+                # BS excess vs CF: typically acquired-WC, FX, or
+                # non-cash reclassification that lands on BS without
+                # a corresponding CF working-capital entry.
+                exception_category = f"wc_{label.lower()}_bs_grew_beyond_cf"
         out.append(IdentityCheckResult(
             ticker=ticker, fiscal_year=fy, period=period,
             identity_name=name, passed=passed,
