@@ -282,6 +282,41 @@ def run_stage3(
             "classification= explicitly."
         )
 
+    # ── Layer 1 enforcement: tier-C schema-contract gate ────────────
+    # Block when any record carries a critical schema_contract
+    # violation (A ≠ L + E, missing Tier-1 field). These are truly
+    # invalid states — computing on them produces meaningless math.
+    # Identity drifts (EBITDA, net_debt, FCF) are tier-W and flow
+    # through to the Stage 3 accounting_identities audit, not blocked.
+    from aletheia.calculations._schema_contract import (
+        extract_tier_c_violations,
+    )
+    tier_c_blocks: List[Dict[str, Any]] = []
+    for r in records:
+        record_violations = getattr(
+            getattr(r, "validation", None), "schema_violations", None,
+        ) or []
+        critical = extract_tier_c_violations(record_violations)
+        for v in critical:
+            tier_c_blocks.append({
+                "fiscal_year": r.fiscal_year,
+                "period": r.period,
+                "category": v.get("category"),
+                "field": v.get("field"),
+                "message": v.get("message"),
+            })
+    if tier_c_blocks:
+        first = tier_c_blocks[0]
+        n = len(tier_c_blocks)
+        raise Stage3InputError(
+            f"{ticker} blocked at Stage 3 by {n} tier-C "
+            f"schema-contract violation(s). First: FY{first['fiscal_year']} "
+            f"{first['period']} field={first['field']!r} "
+            f"category={first['category']!r}. Add an entry to "
+            f"aletheia/calculations/_overrides.OVERRIDES to waive this "
+            f"if it's a known edge case."
+        )
+
     # ── Anchor year + DataFrame ─────────────────────────────────────
     #
     # ``fiscal_year`` semantics: when None (default), each underlying

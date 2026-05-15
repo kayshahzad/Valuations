@@ -73,6 +73,18 @@ OVERRIDES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "review_by_date":  "2026-11-11",
             "fields":          ["tax_rate", "effective_tax_rate"],
         },
+        "accounting_equation_foreign_filer_20f": {
+            "reason": "Foreign filer (Taiwan); files SEC Form 20-F with "
+                      "IFRS-derived XBRL taxonomy. TotalEquity tag includes "
+                      "minority-interest components our US-GAAP-tuned "
+                      "TotalLiabilities resolver doesn't see, producing a "
+                      "0.5-1% A=L+E gap. Real cleaning gap (utility-taxonomy "
+                      "family); waiver preserves Stage 3 access until the "
+                      "foreign-filer taxonomy work lands.",
+            "created_date":    "2026-05-14",
+            "review_by_date":  "2026-08-14",
+            "fields":          ["accounting_equation_a_eq_l_plus_e"],
+        },
     },
     # A3: known negative-equity tickers (buyback-heavy mature companies).
     # These are legitimate; ROE returns "n_a" instead of trying to compute.
@@ -85,6 +97,17 @@ OVERRIDES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "created_date":    "2026-05-11",
             "review_by_date":  "2027-05-11",
             "fields":          ["total_equity", "roe"],
+        },
+        "accounting_equation_negative_equity_era": {
+            "reason": "Multi-year negative-equity period (FY2014, FY2015, "
+                      "FY2023): heavy buyback program produces RE swings "
+                      "where TotalEquity tag resolution diverges from L+E "
+                      "by ~3-5%. Related to negative_total_equity above; "
+                      "the A=L+E identity is unreliable when equity is "
+                      "near-zero or negative.",
+            "created_date":    "2026-05-14",
+            "review_by_date":  "2027-05-14",
+            "fields":          ["accounting_equation_a_eq_l_plus_e"],
         },
     },
     "HD": {
@@ -159,6 +182,43 @@ OVERRIDES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "created_date":    "2026-05-12",
             "review_by_date":  "2027-05-12",
             "fields":          ["shares_diluted"],
+        },
+        "accounting_equation_pre_ipo_era": {
+            "reason": "Pre-IPO-era reporting (FY2014-2015): TotalEquity tag "
+                      "diverges from underlying XBRL components by ~$1B. "
+                      "Pattern consistent across Tesla's early public years. "
+                      "Identity check waived for these historical years; "
+                      "current FYs (2024/2025) reconcile cleanly.",
+            "created_date":    "2026-05-14",
+            "review_by_date":  "2027-05-14",
+            "fields":          ["accounting_equation_a_eq_l_plus_e"],
+        },
+    },
+    # Layer 1 enforcement (Phase 2026-05-14): per-ticker waivers for
+    # the accounting-equation identity violations identified in the
+    # universe sweep. All historical or foreign-filer edge cases —
+    # see docs/layer1_enforcement_predictions_2026-05-14.md.
+    "CAT": {
+        "accounting_equation_pre_2012_taxonomy": {
+            "reason": "FY2009-FY2011: pre-modernization XBRL TotalEquity "
+                      "tag aggregation; cleaning resolves to a value that "
+                      "diverges from L+E reported sum by 0.5-1.5%. Modern "
+                      "filings (FY2012+) reconcile cleanly. Historical "
+                      "analysis only.",
+            "created_date":    "2026-05-14",
+            "review_by_date":  "2027-05-14",
+            "fields":          ["accounting_equation_a_eq_l_plus_e"],
+        },
+    },
+    "NVDA": {
+        "accounting_equation_fy2016_cumulative_effect": {
+            "reason": "FY2016 only: ASC accounting-standard cumulative-effect "
+                      "adjustment landed in equity-statement layout not "
+                      "captured by current TotalEquity resolver. All other "
+                      "FYs reconcile cleanly. Single-year edge case.",
+            "created_date":    "2026-05-14",
+            "review_by_date":  "2027-05-14",
+            "fields":          ["accounting_equation_a_eq_l_plus_e"],
         },
     },
     # A14 — V (Visa) shares_diluted universe-wide ingest bug.

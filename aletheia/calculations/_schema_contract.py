@@ -484,3 +484,57 @@ def validate_cleaned_record_schema_contract(
                     raise exc
 
     return True, violations
+
+
+# ─────────────────────────────────────────────────────────────────────
+# Tier-C classifier — Layer 1 enforcement at Stage 2 → 3 boundary
+# ─────────────────────────────────────────────────────────────────────
+
+# Identity fields whose violation constitutes a truly invalid state
+# (financial statements cannot internally contradict). These hard-block
+# Stage 3 at the boundary. Everything else is a Tier-W warning that
+# flows through to the accounting_identities audit.
+_TIER_C_FIELDS = frozenset({
+    "accounting_equation_a_eq_l_plus_e",
+    # Missing Tier-1 required fields surface as category=MissingRequiredFieldError
+    # and are tested by category below, not field name.
+})
+
+_TIER_C_CATEGORIES = frozenset({
+    "MissingRequiredFieldError",
+})
+
+
+def is_tier_c_violation(violation: Dict[str, Any]) -> bool:
+    """Classify a schema_contract violation as Tier C (critical, hard-
+    block Stage 3) or Tier W (warning, surface but allow).
+
+    Tier C = truly invalid states (e.g. A ≠ L + E, required-field
+    missing). Stage 3 refuses to compute on a record carrying one
+    because the math downstream becomes meaningless — you can't DCF
+    a balance sheet that doesn't balance.
+
+    Tier W = identity drift signal. The record itself is still
+    consumable downstream; these flow through to the
+    accounting_identities Stage 3 audit with documented exception
+    categories per Phase 3.
+
+    Returns True for Tier C, False for Tier W.
+    """
+    if violation.get("category") in _TIER_C_CATEGORIES:
+        return True
+    if violation.get("field") in _TIER_C_FIELDS:
+        return True
+    return False
+
+
+def extract_tier_c_violations(
+    schema_violations: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    """Filter a violations list to only Tier-C (critical) entries.
+
+    Convenience wrapper for ``run_stage3``'s pre-flight gate. When the
+    returned list is non-empty, Stage 3 raises ``Stage3InputError``
+    rather than computing on broken inputs.
+    """
+    return [v for v in (schema_violations or []) if is_tier_c_violation(v)]

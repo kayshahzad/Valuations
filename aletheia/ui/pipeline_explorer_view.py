@@ -508,11 +508,42 @@ def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
         for o in (r.get("validation", {}).get("overrides_applied") or [])
     })
 
-    cols = st.columns(4)
+    # Layer-1 tier-C critical violations (block Stage 3 if present)
+    from aletheia.calculations._schema_contract import (
+        is_tier_c_violation,
+    )
+    tier_c_violations = [
+        v
+        for r in records
+        for v in (r.get("validation", {}).get("schema_violations") or [])
+        if is_tier_c_violation(v)
+    ]
+
+    cols = st.columns(5)
     cols[0].metric("FY records", len(fy_records))
     cols[1].metric("TTM records", len(records) - len(fy_records))
     cols[2].metric("avg quality", f"{avg_quality:.2f}" if avg_quality is not None else "—")
-    cols[3].metric("schema violations", total_violations)
+    cols[3].metric("Schema violations", total_violations)
+    cols[4].metric("🚫 Tier-C (block S3)", len(tier_c_violations))
+
+    if tier_c_violations:
+        st.error(
+            f"**Stage 3 will refuse to run.** {len(tier_c_violations)} "
+            "Tier-C schema-contract violation(s) detected — truly invalid "
+            "states (A ≠ L + E or missing Tier-1 field). Add an entry to "
+            "`aletheia/calculations/_overrides.OVERRIDES` to waive if "
+            "this is a documented edge case."
+        )
+        with st.expander(
+            f"🚫 Tier-C blocking violations ({len(tier_c_violations)})",
+            expanded=True,
+        ):
+            for v in tier_c_violations:
+                st.markdown(
+                    f"- **{v.get('field', '?')}** "
+                    f"(category=`{v.get('category', '?')}`) — "
+                    f"{(v.get('message') or '')[:200]}"
+                )
 
     # Both the XBRL-extracted table and the XBRL ↔ FMP side-by-side
     # are driven by the same /pipeline/fmp-compare/{ticker} endpoint
