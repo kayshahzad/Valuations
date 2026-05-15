@@ -626,12 +626,6 @@ class InvestmentDatabase:
         # function honors ALETHEIA_GUARD_MODE: 'off' is a no-op, 'shadow'
         # logs violations, 'soft' logs + surfaces, 'hard' raises and the
         # caller's try/except decides whether to skip persist.
-        #
-        # Step 2 (soft mode): capture the violations list so the UI can
-        # surface a "Data Quality" panel. validate_cleaned_record_schema_
-        # contract returns (persist_ok, violations) in all non-hard modes;
-        # in hard mode it raises before returning. The violations list is
-        # JSON-serialized below into schema_violations_json.
         from aletheia.calculations import validate_cleaned_record_schema_contract
         schema_violations: list = []
         try:
@@ -641,6 +635,38 @@ class InvestmentDatabase:
             # framework's responsibility is just to raise loudly. We
             # intentionally do NOT swallow here.
             raise
+
+        # L1 final 5% — Layer-1 hard enforcement at Stage 1 → 2 boundary.
+        # Refuse to persist records carrying Tier-C violations (A ≠ L + E,
+        # missing Tier-1 required field) so downstream consumers reading
+        # from company_records can TRUST that every row respects the
+        # structural identities. OVERRIDES waivers already strip waived
+        # fields from schema_violations before reaching this point, so
+        # this refusal is real-uncovered-violation only.
+        from aletheia.calculations._schema_contract import (
+            extract_tier_c_violations,
+        )
+        from aletheia.calculations._errors import CalculationError
+        tier_c = extract_tier_c_violations(schema_violations)
+        if tier_c:
+            first = tier_c[0]
+            n = len(tier_c)
+            v_category = first.get("category", "?")
+            v_field = first.get("field", "?")
+            msg = (
+                f"Refusing to persist {n} tier-C schema-contract "
+                f"violation(s). First: category={v_category!r}. "
+                f"Add an OVERRIDES entry under "
+                f"OVERRIDES[{record.ticker!r}] with "
+                f"fields=[{v_field!r}] to waive if this is a documented "
+                f"edge case (see aletheia/calculations/_overrides.py)."
+            )
+            raise CalculationError(
+                msg,
+                ticker=record.ticker,
+                fn="database.upsert_record",
+                field=v_field,
+            )
 
         # Get next version number per (ticker, fiscal_year, period). Period
         # defaults to 'FY' on legacy CleanedRecord instances; quarterly +
