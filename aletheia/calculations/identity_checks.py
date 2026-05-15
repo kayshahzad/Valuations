@@ -297,6 +297,21 @@ def _passes(
 def check_balance_sheet_equation(
     record: Dict[str, Any],
 ) -> IdentityCheckResult:
+    """Identity 1 — Balance Sheet Equation with NCI handling.
+
+      A = L + E                  (basic, parent-only equity)
+      A = L + E + RedeemableNCI  (when cleaning's TotalEquity excludes
+                                  redeemable NCI — UNH, modern healthcare/
+                                  insurance filers)
+      A = L + E (already includes RedeemableNCI)
+                                  (MCO, some financials)
+
+    Try both forms and accept whichever satisfies tolerance — same
+    auto-detection pattern as the schema_contract A=L+E check. When
+    NCI inclusion is needed to close the identity, flag the result with
+    a specific ``nci_inclusion_required`` category so the analyst knows
+    the cleaning's TotalEquity excludes redeemable NCI for that filer.
+    """
     name = "balance_sheet_equation"
     ticker = record["ticker"]; fy = record["fiscal_year"]; period = record["period"]
     tol = TOLERANCE_THRESHOLDS[name]
@@ -315,16 +330,38 @@ def check_balance_sheet_equation(
             ticker=ticker, fiscal_year=fy, period=period,
             identity_name=name, reason="TotalAssets is 0",
         )
-    disc_abs = assets - (liab + equity)
+
+    # Redeemable NCI: try multiple XBRL tag variants. Cleaning emits
+    # ``RedeemableNoncontrollingInterest`` for most filers but UNH +
+    # similar modern healthcare/insurance filers use the longer
+    # ``RedeemableNoncontrollingInterestEquityCarryingAmount`` tag.
+    redeemable_nci = (
+        _field(record, "RedeemableNoncontrollingInterest")
+        or _field(record, "RedeemableNoncontrollingInterestEquityCarryingAmount")
+        or 0.0
+    )
+
+    disc_no_nci   = assets - (liab + equity)
+    disc_with_nci = assets - (liab + equity + redeemable_nci)
+    # Choose the smaller-magnitude form
+    if abs(disc_with_nci) < abs(disc_no_nci):
+        disc_abs = disc_with_nci
+        used_nci = True
+    else:
+        disc_abs = disc_no_nci
+        used_nci = False
     disc_pct = disc_abs / assets * 100.0
     passed = _passes(disc_abs, disc_pct, tol)
-    # Category-C exception flag — A = L + E gaps are typically NCI
-    # (non-controlling interest) absent from our TotalEquity, or
-    # cumulative-effect adjustments not yet rolled into the cleaned
-    # balance-sheet line items.
-    exception_category = (
-        "balance_sheet_residual_complexity" if not passed else None
-    )
+
+    # Category-C exception flag.
+    exception_category = None
+    if not passed:
+        exception_category = "balance_sheet_residual_complexity"
+    elif used_nci and redeemable_nci > 0:
+        # Identity closed BUT required NCI inclusion — flag as a
+        # specific (passing) annotation so the analyst sees that
+        # cleaning's TotalEquity for this filer excludes redeemable NCI.
+        exception_category = "nci_inclusion_required"
     return IdentityCheckResult(
         ticker=ticker, fiscal_year=fy, period=period,
         identity_name=name, passed=passed,
@@ -334,6 +371,8 @@ def check_balance_sheet_equation(
             "TotalAssets": assets,
             "TotalLiabilities": liab,
             "TotalEquity": equity,
+            "RedeemableNCI": redeemable_nci,
+            "used_nci": used_nci,
         },
         exception_category=exception_category,
     )

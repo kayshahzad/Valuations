@@ -406,8 +406,23 @@ def validate_cleaned_record_schema_contract(
     # auto-detection pattern as the FCF/lease-principal identity.
     if (total_assets is not None and total_liab is not None
             and total_equity is not None):
-        redeemable_nci = _safe_record_field(
-            record, "raw", "RedeemableNoncontrollingInterest") or 0.0
+        # Redeemable NCI XBRL tag varies by filer:
+        #   - "RedeemableNoncontrollingInterest" (legacy / some filers)
+        #   - "RedeemableNoncontrollingInterestEquityCarryingAmount"
+        #     (UNH, modern healthcare/insurance filers)
+        #   - "TemporaryEquityCarryingAmountIncludingPortionAttributable
+        #     ToNoncontrollingInterests" (some financials)
+        # Try each in order; first non-None wins.
+        redeemable_nci = (
+            _safe_record_field(record, "raw", "RedeemableNoncontrollingInterest")
+            or _safe_record_field(
+                record, "raw",
+                "RedeemableNoncontrollingInterestEquityCarryingAmount")
+            or _safe_record_field(
+                record, "raw",
+                "TemporaryEquityCarryingAmountIncludingPortionAttributableToNoncontrollingInterests")
+            or 0.0
+        )
 
         tol = IDENTITY_TOLERANCES["accounting_equation_a_eq_l_plus_e"]
         expected_no_nci = total_liab + total_equity
