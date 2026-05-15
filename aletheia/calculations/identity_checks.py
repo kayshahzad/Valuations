@@ -741,21 +741,36 @@ def check_ppe_rollforward(
         (gw_end - gw_beg) / abs(gw_beg) if abs(gw_beg) > 1e7 else None
     )
 
+    # Capital-intensity heuristic — pharma, semis, industrials run high
+    # CapEx/Revenue ratios and routinely produce 5-15% PP&E drift from
+    # construction-in-progress + equipment-cycle effects that don't
+    # close through the simple beg + CapEx − D&A formula. We use the
+    # current-year CapEx-to-Revenue ratio as a proxy.
+    revenue = _field(current, "Revenue") or 0.0
+    capex_to_rev = abs(capex) / revenue if revenue > 1e6 else 0.0
+    is_capital_intensive = capex_to_rev > 0.05
+
     exception_category = None
     if not passed:
         if disc_pct < -5.0:
             exception_category = "impairment_implied"
         elif gw_change_pct is not None and gw_change_pct > 0.10 and disc_pct > 5.0:
             exception_category = "acquisition_implied"
+        # Minor-acquisition tier: Goodwill grew 5-10% (tuck-in deals
+        # below the 10% threshold). PP&E drift positive → likely
+        # acquired-PP&E that bypasses CapEx flow.
+        elif gw_change_pct is not None and gw_change_pct > 0.05 and disc_pct > 5.0:
+            exception_category = "minor_acquisition_implied"
         elif is_hyperscaler and disc_pct > 5.0:
             exception_category = "hyperscaler_cip"
+        # Capital-intensity tier for pharma, semis, industrials:
+        # positive drift with high CapEx-to-Revenue ratio → CIP
+        # accumulation + equipment-cycle timing.
+        elif is_capital_intensive and disc_pct > 5.0:
+            exception_category = "capital_intensive_capex_timing"
         else:
-            # Catch-all: PP&E rollforward fails systematically for
-            # capital-intensive filers (pharma M&A, industrials with
-            # equipment cycles, semiconductors with fab CIP). The
-            # implied formula (beg + CapEx − D&A) misses asset transfers,
-            # construction-in-progress capitalizations, and acquired-
-            # PP&E that doesn't appear in CapEx cash flow.
+            # Remaining catch-all: failures that don't fit any specific
+            # pattern. Candidates for finer deepening or honest unknown.
             exception_category = "ppe_rollforward_residual_complexity"
 
     return IdentityCheckResult(
