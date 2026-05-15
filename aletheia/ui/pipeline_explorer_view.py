@@ -879,35 +879,46 @@ def _render_stage3_calculations_panel(
         "not a bug). See methodology expander below for details."
     )
 
-    # Layer 2: per-value derivation methodology expander
+    # Layer 2: per-value derivation methodology expander + live trace
     if methodology_seen:
-        _render_methodology_expander(methodology_seen)
+        _render_methodology_expander(methodology_seen, bundle=bundle)
 
 
-def _render_methodology_expander(labels: List[str]) -> None:
+def _render_methodology_expander(
+    labels: List[str], bundle: Optional[Dict[str, Any]] = None,
+) -> None:
     """Show registry entry details for each calc row in an expander.
 
-    Renders inputs, formula, methodology citation, alternates, and FMP
-    divergence note — letting the analyst answer "why does our FCF
-    differ from FMP's FCF?" from inside the same panel.
+    Renders the documented methodology + the live runtime trace when a
+    bundle is provided (V1 derivation traces). The trace pairs each
+    declared input with its actual value pulled from the Stage 3
+    bundle. Inputs not in the bundle (cleaning-side upstream values)
+    show as ``<from upstream>``; that's V2 territory.
     """
-    from aletheia.calculations.derivation_registry import lookup_by_label
+    from aletheia.calculations.derivation_registry import (
+        lookup_by_label, trace_value,
+    )
 
     with st.expander(
-        "📖 How each value is derived (Layer-2 methodology)", expanded=False,
+        "📖 How each value is derived (Layer-2 methodology + live trace)",
+        expanded=False,
     ):
         st.caption(
             "Each entry documents the formula, methodology citation, "
-            "alternates, and any documented divergence from FMP's "
-            "published value. Rows marked 📐 in the table above are "
-            "expected-divergence (Category D), not bugs."
+            "alternates, and any documented divergence from FMP. Where "
+            "the bundle carries the inputs, a 💎 live trace below shows "
+            "the actual numbers that produced the value. Rows marked "
+            "📐 are expected-divergence (Category D), not bugs."
         )
         for label in labels:
             entry = lookup_by_label(label)
             if entry is None:
                 continue
             chip = "📐 " if entry.category_d else ""
-            st.markdown(f"##### {chip}{entry.label}  ·  `{entry.name}`  ·  *{entry.category}*")
+            st.markdown(
+                f"##### {chip}{entry.label}  ·  `{entry.name}`  ·  "
+                f"*{entry.category}*"
+            )
             st.markdown(f"**Formula**: `{entry.formula}`")
             if entry.inputs:
                 st.markdown(
@@ -920,6 +931,30 @@ def _render_methodology_expander(labels: List[str]) -> None:
                     st.markdown(f"  - {alt}")
             if entry.fmp_equivalent:
                 st.markdown(f"**FMP divergence**: {entry.fmp_equivalent}")
+
+            # V1 live trace: resolve inputs from the Stage 3 bundle
+            if bundle is not None:
+                trace = trace_value(entry.name, bundle)
+                if trace and trace.get("input_values"):
+                    rows = []
+                    for inp, val in trace["input_values"]:
+                        if isinstance(val, (int, float)):
+                            v_disp = _fmt_metric(val, "usd") if abs(val) >= 1e6 else f"{val:.4g}"
+                        else:
+                            v_disp = str(val)
+                        rows.append({"Input": inp, "Live value": v_disp})
+                    result = trace.get("result")
+                    if isinstance(result, (int, float)):
+                        result_disp = (
+                            _fmt_metric(result, "usd")
+                            if abs(result) >= 1e6 else f"{result:.4g}"
+                        )
+                    else:
+                        result_disp = str(result) if result is not None else "—"
+                    st.markdown(f"**💎 Live trace**  ·  result = **{result_disp}**")
+                    st.dataframe(
+                        rows, use_container_width=True, hide_index=True,
+                    )
             st.markdown("---")
 
 

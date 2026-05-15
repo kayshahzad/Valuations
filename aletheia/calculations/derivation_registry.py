@@ -31,7 +31,7 @@ Category D — methodology divergence, not a bug."
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 @dataclass(frozen=True)
@@ -678,6 +678,138 @@ def category_d_entries() -> List[DerivationEntry]:
     return [e for e in DERIVATIONS if e.category_d]
 
 
+# ─────────────────────────────────────────────────────────────────────
+# V1 — Runtime trace reconstruction
+# ─────────────────────────────────────────────────────────────────────
+
+# Bundle sub-dicts searched (in order) when resolving an input name.
+# V1 reads from the already-computed Stage 3 bundle — no engine
+# instrumentation. Inputs that don't resolve here come from upstream
+# cleaning records (Stage 2 / DB), tagged "<from upstream>" in the trace.
+_BUNDLE_SEARCH_PATHS = (
+    "dcf",
+    "reverse_dcf",
+    "multiple_decomposition",
+    "screening",
+    "moat_fingerprint",
+    "cyclicality",
+)
+
+# Per-input name → bundle-key aliases. Catches camelCase ↔ snake_case
+# and known short forms (wacc_base vs wacc, nopat vs NOPAT).
+_INPUT_ALIASES: Dict[str, List[str]] = {
+    "wacc":               ["wacc_base", "wacc"],
+    "tax_rate":           ["tax_rate", "tax_rate_base"],
+    "NormalizedEBIT":     ["ebit", "NormalizedEBIT"],
+    "OperatingIncome":    ["ebit", "OperatingIncome"],
+    "EBITDA":             ["ebitda", "EBITDA"],
+    "OperatingCF":        ["operating_cf", "OperatingCF"],
+    "CapEx_Total":        ["capex_total", "CapEx_Total", "CapEx"],
+    "Depreciation_Total": ["depreciation_total", "Depreciation_Total", "da"],
+    "SBC":                ["sbc", "SBC"],
+    "NetIncome":          ["net_income", "NetIncome"],
+    "Revenue":            ["revenue", "Revenue"],
+    "TotalEquity":        ["total_equity", "TotalEquity"],
+    "LongTermDebt":       ["long_term_debt", "LongTermDebt"],
+    "TotalAssets":        ["total_assets", "TotalAssets"],
+    "TotalLiabilities":   ["total_liabilities", "TotalLiabilities"],
+    "Cash":               ["cash", "Cash"],
+    "ShortTermInvestments": ["short_term_investments", "ShortTermInvestments"],
+    "shares_diluted":     ["shares_diluted", "SharesDiluted"],
+    "market_cap":         ["market_cap", "marketCap"],
+    "enterprise_value":   ["base_ev", "current_ev", "enterprise_value"],
+    "ebit_margin":        ["ebit_margin", "EBIT_Margin"],
+    "fcf":                ["fcf", "FCF"],
+    "ebitda":             ["ebitda", "EBITDA"],
+    "nopat":              ["nopat", "NOPAT"],
+    "net_debt":           ["net_debt", "NetDebt"],
+    "ebit":               ["ebit", "EBIT", "NormalizedEBIT"],
+    "tax_rate":           ["tax_rate", "tax_rate_base", "GAAP_TaxRate", "CashTaxRate"],
+    "screening_p_e":      ["p_per_e_ratio"],
+    "market_p_e":         ["market_p_e"],
+    "market_ev_ebitda":   ["market_ev_ebitda"],
+    "justified_ev_ebitda":["justified_ev_ebitda"],
+    "growth_rate":        ["growth_rate"],
+    "roic":               ["roic"],
+    "current_price":      ["current_price"],
+    "DilutedEPS":         ["DilutedEPS", "diluted_eps"],
+    "eps_growth_rate":    ["eps_growth_rate"],
+    "base_intrinsic_per_share": ["base_intrinsic_per_share"],
+    "beta":               ["beta"],
+    "risk_free_rate":     ["risk_free_rate"],
+    "equity_risk_premium":["equity_risk_premium"],
+}
+
+
+def _resolve_input(
+    input_name: str, bundle: Dict[str, Any],
+) -> Optional[Any]:
+    """Look up an input value by name across the Stage 3 bundle.
+    Tries known aliases first, then exact name match in each sub-dict.
+    Returns None when the input doesn't resolve (caller marks it as
+    "<from upstream>").
+    """
+    candidates = [input_name] + _INPUT_ALIASES.get(input_name, [])
+    for sub_key in _BUNDLE_SEARCH_PATHS:
+        sub = bundle.get(sub_key) or {}
+        if not isinstance(sub, dict):
+            continue
+        for cand in candidates:
+            if cand in sub and sub[cand] is not None:
+                return sub[cand]
+    # Also try top-level (some calc results live there directly)
+    for cand in candidates:
+        if cand in bundle and bundle[cand] is not None:
+            return bundle[cand]
+    return None
+
+
+def trace_value(name: str, bundle: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    """Build a runtime trace for one derived value.
+
+    Combines the registry entry (formula + methodology) with the
+    actual runtime values from the Stage 3 bundle. The result is what
+    you'd see on a "show your work" page next to the value:
+
+      {
+        "name": "fcf",
+        "label": "FCF",
+        "result": 46_110_000_000,         # actual value from bundle
+        "formula": "OperatingCF − abs(CapEx)",
+        "input_values": [
+          ("OperatingCF", 91_330_000_000),    # resolved from dcf bundle
+          ("CapEx_Total", "<from upstream>"), # not in bundle, came from cleaning
+        ],
+        "methodology": "...",
+        "category_d": True,
+      }
+
+    Returns None when the registry has no entry for ``name``.
+    """
+    entry = lookup(name)
+    if entry is None:
+        return None
+    # Result value — try direct name first, then alias map
+    result = _resolve_input(name, bundle)
+    # Resolve each declared input
+    input_values: List[Any] = []
+    for inp in entry.inputs:
+        v = _resolve_input(inp, bundle)
+        input_values.append((inp, v if v is not None else "<from upstream>"))
+    return {
+        "name": entry.name,
+        "label": entry.label,
+        "category": entry.category,
+        "result": result,
+        "formula": entry.formula,
+        "input_values": input_values,
+        "methodology": entry.methodology,
+        "alternates": entry.alternates,
+        "fmp_equivalent": entry.fmp_equivalent,
+        "category_d": entry.category_d,
+    }
+
+
 __all__ = [
     "DerivationEntry",
     "DERIVATIONS",
@@ -685,4 +817,5 @@ __all__ = [
     "lookup_by_label",
     "entries_by_category",
     "category_d_entries",
+    "trace_value",
 ]

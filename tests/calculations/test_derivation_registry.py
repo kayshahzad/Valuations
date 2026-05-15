@@ -97,6 +97,59 @@ def test_entries_by_category():
     assert len(cleaning_entries) >= 4
 
 
+def test_trace_value_returns_none_for_unknown_entry():
+    from aletheia.calculations.derivation_registry import trace_value
+    assert trace_value("nonexistent_name", {}) is None
+
+
+def test_trace_value_resolves_inputs_from_dcf_subbundle():
+    """trace_value should find DCF-side inputs (NOPAT, EBIT, wacc) when
+    they live in the bundle's dcf sub-dict."""
+    from aletheia.calculations.derivation_registry import trace_value
+    bundle = {
+        "dcf": {
+            "nopat":   75_932_000_000.0,
+            "ebit":    83_280_000_000.0,
+            "roic":    0.311,
+            "wacc_base": 0.0984,
+            "fcf":     46_109_000_000.0,
+        },
+    }
+    trace = trace_value("nopat", bundle)
+    assert trace is not None
+    assert trace["result"] == 75_932_000_000.0
+    # Inputs declared in registry: ["NormalizedEBIT", "tax_rate"]. The
+    # alias map should resolve "NormalizedEBIT" → dcf.ebit.
+    input_dict = dict(trace["input_values"])
+    assert input_dict.get("NormalizedEBIT") == 83_280_000_000.0
+
+
+def test_trace_value_marks_unresolvable_inputs_as_upstream():
+    """When an input doesn't appear in any bundle sub-dict, the trace
+    marks it as '<from upstream>' rather than failing."""
+    from aletheia.calculations.derivation_registry import trace_value
+    bundle = {"dcf": {"fcf": 46_109_000_000.0}}  # missing OperatingCF / CapEx
+    trace = trace_value("fcf", bundle)
+    assert trace is not None
+    assert trace["result"] == 46_109_000_000.0
+    input_dict = dict(trace["input_values"])
+    # Neither OperatingCF nor CapEx_Total in bundle — both should be
+    # marked as upstream placeholder
+    assert input_dict.get("OperatingCF") == "<from upstream>"
+    assert input_dict.get("CapEx_Total") == "<from upstream>"
+
+
+def test_trace_value_carries_methodology_and_category_d():
+    """The trace surfaces the registry entry's methodology + category_d
+    flag so the UI can render the right chips."""
+    from aletheia.calculations.derivation_registry import trace_value
+    trace = trace_value("fcf", {"dcf": {"fcf": 46_109_000_000.0}})
+    assert trace is not None
+    assert "Damodaran" in trace["methodology"]
+    assert trace["category_d"] is True
+    assert trace["fmp_equivalent"]  # FCF has documented FMP divergence
+
+
 def test_no_duplicate_names_or_labels():
     from aletheia.calculations.derivation_registry import DERIVATIONS
     names = [e.name for e in DERIVATIONS]
