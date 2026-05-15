@@ -1223,11 +1223,38 @@ def check_fcf_pathway_reconciliation(
         # fallback also indicates pre-data-era reliability issues.
         if prior is None or tax_source == "statutory":
             exception_category = "first_year_or_pre_data"
-        # Catch-all for non-categorical FCF failures: deferred taxes
-        # and other non-cash items not yet in Pathway B. Phase 2.5
-        # would extend the formula to include deferred-tax movement.
         else:
-            exception_category = "fcf_pathway_residual_complexity"
+            # Direction-based diagnostic. The current Pathway B includes
+            # SBC but not deferred-tax or other non-cash items, so
+            # systematic over/under is informative even when we can't
+            # fully close the identity.
+            # Acquisition-year detection: when Goodwill grew materially,
+            # acquired-company OCF distorts the year's bridge.
+            gw_beg = _field(prior, "Goodwill") or 0.0 if prior else 0.0
+            gw_end = _field(current, "Goodwill") or 0.0
+            gw_growth = (
+                (gw_end - gw_beg) / abs(gw_beg) if abs(gw_beg) > 1e7 else 0.0
+            )
+            if gw_growth > 0.10:
+                # Material acquisition — acquired OCF + step-up CapEx
+                # blur the NOPAT bridge.
+                exception_category = "fcf_pathway_acquisition_distortion"
+            elif disc_pct_extended > 10.0:
+                # Pathway A excess: OCF − CapEx > NOPAT + DA + SBC −
+                # CapEx − ΔNWC. Pathway B under-models — missing
+                # add-backs like deferred-tax benefits, non-cash
+                # impairment add-backs, or favorable WC release we
+                # don't fully capture.
+                exception_category = "fcf_pathway_a_excess_under_modeled_addbacks"
+            elif disc_pct_extended < -10.0:
+                # Pathway B excess: NOPAT bridge overshoots OCF − CapEx.
+                # Typically over-counted add-backs (SBC over-applied for
+                # treasury-method filers), unfavorable WC consumption,
+                # or non-recurring OCF reductions.
+                exception_category = "fcf_pathway_b_excess_over_modeled_addbacks"
+            else:
+                # Remaining residual — small drift not fitting any pattern.
+                exception_category = "fcf_pathway_residual_complexity"
 
     return IdentityCheckResult(
         ticker=ticker, fiscal_year=fy, period=period,
