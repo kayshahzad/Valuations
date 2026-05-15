@@ -472,6 +472,69 @@ def run_stage3(
             if upstream_inputs.get(k) is None and v is not None:
                 upstream_inputs[k] = v
 
+    # L2 V3a — find the FY-1 record (prior year). Lets pair-rollforward
+    # inputs like Cash_beg / APIC_beg / RetainedEarnings_beg resolve.
+    prior_year_inputs: Dict[str, Any] = {}
+    if anchor.period == "FY":
+        # Prior FY relative to the anchor — look for an FY record one year back.
+        prior_fy = anchor.fiscal_year - 1
+        prior_record = next(
+            (r for r in records
+             if r.period == "FY" and r.fiscal_year == prior_fy),
+            None,
+        )
+        if prior_record is not None:
+            for ns in ("raw", "clean", "derived"):
+                ns_dict = getattr(prior_record, ns, None) or {}
+                for k, v in ns_dict.items():
+                    if prior_year_inputs.get(k) is None and v is not None:
+                        prior_year_inputs[k] = v
+
+    # L2 V3a — enrich both anchor + prior dicts with key BS tags from
+    # raw XBRL companyfacts that the cleaning_engine doesn't carry as
+    # canonical fields. Closes the visible "<from upstream>" markers
+    # for RetainedEarnings / APIC / AOCI on the rollforward traces.
+    # Reuses the same RecordLoader the identity-audit uses, so the
+    # XBRL parsing path is consistent.
+    try:
+        from aletheia.calculations.identity_checks import RecordLoader
+        _xbrl_loader = RecordLoader()
+        # Enrichment fields (canonical key in bundle → list of XBRL
+        # tags to try in order). Keys match what the registry strips
+        # _beg/_end inputs to (RetainedEarnings, APIC, AOCI).
+        _BS_XBRL_ENRICH = [
+            ("RetainedEarnings", ["RetainedEarningsAccumulatedDeficit"]),
+            ("APIC",
+             ["AdditionalPaidInCapital",
+              "CommonStocksIncludingAdditionalPaidInCapital",
+              "AdditionalPaidInCapitalCommonStock"]),
+            ("AOCI",
+             ["AccumulatedOtherComprehensiveIncomeLossNetOfTax"]),
+        ]
+        for canonical, xbrl_tags in _BS_XBRL_ENRICH:
+            # Anchor FY value
+            if anchor.period == "FY" and canonical not in upstream_inputs:
+                for tag in xbrl_tags:
+                    v = _xbrl_loader.xbrl_fact(ticker, tag, anchor.fiscal_year)
+                    if v is not None:
+                        upstream_inputs[canonical] = v
+                        break
+            # Prior FY value
+            if (anchor.period == "FY" and prior_year_inputs
+                    and canonical not in prior_year_inputs):
+                for tag in xbrl_tags:
+                    v = _xbrl_loader.xbrl_fact(
+                        ticker, tag, anchor.fiscal_year - 1,
+                    )
+                    if v is not None:
+                        prior_year_inputs[canonical] = v
+                        break
+    except Exception:
+        # Enrichment is best-effort; failures (missing companyfacts
+        # cache, network errors) just leave the original dicts and the
+        # affected traces show "<from upstream>". Doesn't block Stage 3.
+        pass
+
     return CalculationBundle(
         ticker=ticker,
         fiscal_year=bundle_fiscal_year,
@@ -487,6 +550,7 @@ def run_stage3(
         reality_checks=reality_dict,
         accounting_identities=identities_dict,
         upstream_inputs=upstream_inputs,
+        prior_year_inputs=prior_year_inputs,
         schema_violations=schema_violations,
         bundle_fingerprint=bundle_fingerprint,
         input_record_fingerprint=input_record_fingerprint,

@@ -750,16 +750,38 @@ def _resolve_input(
       1. Engine sub-bundles (dcf, reverse_dcf, multiple_decomposition,
          screening, moat_fingerprint, cyclicality) — V1
       2. ``upstream_inputs`` — V2 flat raw+clean+derived echo from
-         the anchor FY record (captures OperatingCF, CapEx_Total,
-         NetIncome, TotalEquity, etc.)
-      3. Top-level bundle keys
+         the anchor FY record (OperatingCF, CapEx_Total, NetIncome,
+         TotalEquity, etc.)
+      3. ``prior_year_inputs`` (only for ``_beg``-suffixed inputs) —
+         V3a flat raw+clean+derived from the FY-1 record. A bare
+         ``Cash_beg`` input resolves by stripping the suffix and
+         reading ``Cash`` from the prior-year dict.
+      4. Top-level bundle keys
 
-    Tries known aliases first for each tier, then exact name match.
-    Returns None when the input doesn't resolve anywhere (caller marks
-    as "<from upstream>" — typically a pair-rollforward delta or
-    engine-synthetic intermediate that V2 doesn't capture).
+    Tries known aliases for each tier; then exact name. Returns None
+    when the input doesn't resolve (caller marks "<from upstream>" —
+    typically engine-synthetic intermediates V3b doesn't yet capture).
     """
     candidates = [input_name] + _INPUT_ALIASES.get(input_name, [])
+
+    # V3a — pair-rollforward semantic suffix handling:
+    #   "Cash_beg" → look up bare "Cash" in prior_year_inputs (FY-1)
+    #   "Cash_end" → look up bare "Cash" in upstream_inputs (anchor FY)
+    if input_name.endswith("_beg"):
+        base = input_name[: -len("_beg")]
+        prior = bundle.get("prior_year_inputs") or {}
+        if isinstance(prior, dict):
+            for cand in [base] + _INPUT_ALIASES.get(base, []):
+                if cand in prior and prior[cand] is not None:
+                    return prior[cand]
+    elif input_name.endswith("_end"):
+        base = input_name[: -len("_end")]
+        upstream = bundle.get("upstream_inputs") or {}
+        if isinstance(upstream, dict):
+            for cand in [base] + _INPUT_ALIASES.get(base, []):
+                if cand in upstream and upstream[cand] is not None:
+                    return upstream[cand]
+
     # 1. Engine sub-bundles
     for sub_key in _BUNDLE_SEARCH_PATHS:
         sub = bundle.get(sub_key) or {}
@@ -768,7 +790,7 @@ def _resolve_input(
         for cand in candidates:
             if cand in sub and sub[cand] is not None:
                 return sub[cand]
-    # 2. V2 — upstream_inputs (anchor record raw+clean+derived)
+    # 2. V2 — upstream_inputs (anchor FY raw+clean+derived)
     upstream = bundle.get("upstream_inputs") or {}
     if isinstance(upstream, dict):
         for cand in candidates:

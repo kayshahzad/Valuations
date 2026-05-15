@@ -355,6 +355,16 @@ class CalculationBundle(BaseModel):
             "echo so UI / agents reading the bundle don't have to re-join."
         ),
     )
+    prior_year_inputs: Dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "L2 V3a — flattened raw+clean+derived from the FY-1 record "
+            "(prior to the anchor). Lets the trace resolver handle "
+            "pair-rollforward inputs: ``Cash_beg`` reads ``Cash`` from "
+            "prior_year_inputs; ``Cash_end`` reads ``Cash`` from "
+            "upstream_inputs. Same source-of-truth caveat as upstream_inputs."
+        ),
+    )
 
     schema_violations: List[Dict[str, Any]] = Field(
         default_factory=list,
