@@ -117,14 +117,50 @@ def _classification(ticker: str) -> Dict[str, str]:
     }
 
 
-def _navigate_to_explorer(ticker: str) -> None:
+def _navigate_to_explorer(
+    ticker: str, focus_stage: Optional[str] = None,
+) -> None:
     """Hand the analyst over to the Stage Explorer for one ticker.
     Uses the same pending-state pattern as Streamlit's other intra-app
     nav so the sidebar selectbox picks up the change on next rerun.
+
+    ``focus_stage`` (optional) hints which stage section the analyst
+    wants to land on (e.g., a ticker with a Stage 3 failure routes to
+    Stage 3 directly). The Stage Explorer reads
+    ``st.session_state._pending_focus_stage`` and scrolls/expands
+    that section; falls back to the default panel layout when unset.
     """
     st.session_state._pending_active_ticker = ticker
     st.session_state._pending_active_view = "⚙  Pipeline Explorer"
+    if focus_stage:
+        st.session_state._pending_focus_stage = focus_stage
     st.rerun()
+
+
+def _suggest_focus_stage(stage_rows: Dict[str, Dict[str, Any]]) -> Optional[str]:
+    """Pick the most-likely-interesting stage for the analyst to land
+    on based on the ticker's current pipeline status.
+
+    Priority order:
+      1. Any failed stage → land there to investigate
+      2. Any stale stage → land there to refresh
+      3. Most-recent successful stage (analyst likely wants to drill in)
+      4. None (Stage Explorer renders all stages by default)
+    """
+    for status, stage_priority in (
+        ("failed",  _STAGES),
+        ("stale",   _STAGES),
+    ):
+        for stage in stage_priority:
+            srow = stage_rows.get(stage)
+            if srow and srow.get("status") == status:
+                return stage
+    # Successful highest-numbered stage
+    for stage in reversed(_STAGES):
+        srow = stage_rows.get(stage)
+        if srow and srow.get("status") == "success":
+            return stage
+    return None
 
 
 def render_pipeline_status_matrix() -> None:
@@ -286,7 +322,10 @@ def render_pipeline_status_matrix() -> None:
                 key=f"status_matrix_nav_{ticker}",
                 use_container_width=True,
             ):
-                _navigate_to_explorer(ticker)
+                focus = _suggest_focus_stage(
+                    by_ticker_stage.get(ticker, {})
+                )
+                _navigate_to_explorer(ticker, focus_stage=focus)
 
 
 __all__ = ["render_pipeline_status_matrix"]

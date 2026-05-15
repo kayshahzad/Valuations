@@ -387,6 +387,29 @@ def test_stage2_validation_handles_no_overrides(monkeypatch):
     assert any("No overrides active" in c["args"][0] for c in captions)
 
 
+def test_overrides_snippet_renders_with_ticker_and_fields(monkeypatch):
+    """The OVERRIDES snippet helper produces a copy-paste-ready Python
+    dict pre-filled with the blocking ticker + fields."""
+    from aletheia.ui.pipeline_explorer_view import _render_overrides_snippet
+    mock = _install_st_mock(monkeypatch)
+    _render_overrides_snippet(
+        ticker="ZZZ",
+        tier_c_violations=[{
+            "category": "CalculationConsistencyError",
+            "field": "accounting_equation_a_eq_l_plus_e",
+            "message": "synthetic",
+        }],
+    )
+    # The snippet flows through st.code; find that call and verify
+    # the ticker + field appear in the rendered code block.
+    code_calls = [c for c in mock.calls if c["fn"] == "code"]
+    assert code_calls, "expected a code-block render"
+    snippet_text = code_calls[0]["args"][0]
+    assert '"ZZZ"' in snippet_text
+    assert "accounting_equation_a_eq_l_plus_e" in snippet_text
+    assert "review_by_date" in snippet_text
+
+
 def test_stage3_validation_renders_tax_rate_source(monkeypatch):
     """The headline assertion: every sub-engine's tax_rate_source is
     visible in the validation panel. This is the direct A11-status

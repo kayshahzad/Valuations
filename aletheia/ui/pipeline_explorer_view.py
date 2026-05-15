@@ -545,6 +545,16 @@ def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
                     f"{(v.get('message') or '')[:200]}"
                 )
 
+        # Cross-link: copy-paste-ready OVERRIDES waiver snippet pre-
+        # filled with the blocking field(s) for this ticker. The
+        # analyst still has to fill in the reason + dates, which is
+        # the point — keeps the analyst in the loop on waiver
+        # rationale rather than auto-waiving.
+        _render_overrides_snippet(
+            ticker=records[0].get("ticker", "TICKER"),
+            tier_c_violations=tier_c_violations,
+        )
+
     # Both the XBRL-extracted table and the XBRL ↔ FMP side-by-side
     # are driven by the same /pipeline/fmp-compare/{ticker} endpoint
     # result — single source of truth, ensures the period axis
@@ -594,6 +604,47 @@ def _render_stage2_validation(records: List[Dict[str, Any]]) -> None:
             "hasn't been wired through the typed contract yet (Week-5 "
             "follow-up)."
         )
+
+
+def _render_overrides_snippet(
+    ticker: str, tier_c_violations: List[Dict[str, Any]],
+) -> None:
+    """Surface a copy-paste-ready OVERRIDES dict entry for the blocking
+    fields. The analyst pastes this into
+    ``aletheia/calculations/_overrides.py`` after filling in the
+    reason + dates, and the next Stage 2 run downgrades the violation
+    to a soft-flag.
+    """
+    fields = sorted({v.get("field") for v in tier_c_violations if v.get("field")})
+    field_list = ", ".join(f'"{f}"' for f in fields)
+    from datetime import timezone as _tz
+    now = datetime.now(_tz.utc)
+    today = now.strftime("%Y-%m-%d")
+    # Default review_by_date = 12 months out; analyst should shorten
+    # when this is a stopgap rather than a stable edge case.
+    review_by = now.replace(year=now.year + 1).strftime("%Y-%m-%d")
+    snippet = f'''"{ticker}": {{
+    "accounting_equation_waiver": {{
+        "reason": "FILL IN — specific rationale, what's wrong with the "
+                  "data, why is the violation legitimate, path to real fix.",
+        "created_date":   "{today}",
+        "review_by_date": "{review_by}",
+        "fields":         [{field_list}],
+    }},
+}},'''
+    with st.expander(
+        "📝 OVERRIDES waiver snippet (copy-paste into _overrides.py)",
+        expanded=False,
+    ):
+        st.caption(
+            "Paste this into ``aletheia/calculations/_overrides.py`` "
+            "after the existing entries. Fill in the ``reason`` field "
+            "with a specific rationale; the registry refuses to load "
+            "entries with placeholder text. Shorten ``review_by_date`` "
+            "to 3-6 months when this is a stopgap for a real fix; "
+            "leave at 12 months for stable edge cases."
+        )
+        st.code(snippet, language="python")
 
 
 _FMP_CACHE_DIR_FOR_CALCS = Path("valuation_data/macro/fmp")

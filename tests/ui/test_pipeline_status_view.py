@@ -138,6 +138,46 @@ def test_render_matrix_handles_empty_status_endpoint(monkeypatch):
             assert col in first, f"missing column {col!r} in matrix row"
 
 
+def test_suggest_focus_stage_prioritizes_failed():
+    """A ticker with a failed stage should route the analyst to that
+    stage first. Investigation > everything else."""
+    from aletheia.ui.pipeline_status_view import _suggest_focus_stage
+    stage_rows = {
+        "stage1_ingest":    {"status": "success"},
+        "stage2_validate":  {"status": "success"},
+        "stage3_calculate": {"status": "failed"},
+        "stage4_agents":    {"status": "pending"},
+    }
+    assert _suggest_focus_stage(stage_rows) == "stage3_calculate"
+
+
+def test_suggest_focus_stage_prioritizes_stale_when_no_failures():
+    from aletheia.ui.pipeline_status_view import _suggest_focus_stage
+    stage_rows = {
+        "stage1_ingest":    {"status": "success"},
+        "stage2_validate":  {"status": "stale"},
+        "stage3_calculate": {"status": "stale"},
+    }
+    # First stale by stage order
+    assert _suggest_focus_stage(stage_rows) == "stage2_validate"
+
+
+def test_suggest_focus_stage_picks_highest_success_when_clean():
+    from aletheia.ui.pipeline_status_view import _suggest_focus_stage
+    stage_rows = {
+        "stage1_ingest":    {"status": "success"},
+        "stage2_validate":  {"status": "success"},
+        "stage3_calculate": {"status": "success"},
+        "stage4_agents":    {"status": "pending"},
+    }
+    assert _suggest_focus_stage(stage_rows) == "stage3_calculate"
+
+
+def test_suggest_focus_stage_returns_none_when_no_data():
+    from aletheia.ui.pipeline_status_view import _suggest_focus_stage
+    assert _suggest_focus_stage({}) is None
+
+
 def test_render_matrix_displays_status_chips(monkeypatch):
     """Real status rows from the endpoint should translate into chip
     characters in the matrix rows."""
