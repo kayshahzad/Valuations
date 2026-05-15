@@ -524,10 +524,24 @@ def check_retained_earnings_rollforward(
         # cumulative buybacks driving it negative or near zero).
         elif abs(beg) < 0.1 * abs(ni):
             exception_category = "near_zero_re_denominator"
+        # Cumulative-effect accounting-standard transition years.
+        # FY2018: ASC 606 revenue recognition.
+        # FY2020: ASU 2016-13 CECL credit losses (financials).
+        # Material RE drift in transition years is typically the
+        # cumulative-effect adjustment that hits RE on adoption date.
+        elif fy in (2018, 2020) and abs(disc_pct_extended) > 5.0:
+            exception_category = "cumulative_effect_adjustment_era"
+        # Treasury-method filer detection: drift POSITIVE (reported RE
+        # > implied) while buybacks are material → the formula's full
+        # buyback subtraction overshoots. These filers route buybacks
+        # to TreasuryStockValue (not share retirement), so the RE
+        # charge is smaller than the gross buyback amount.
+        elif (disc_pct_extended > 5.0
+              and abs(buybacks) > 0.05 * abs(ni)):
+            exception_category = "treasury_method_filer"
         # Catch-all: residual equity-bridge complexity not yet modelled.
-        # Likely share-issuance from options, treasury reclassifications,
-        # or cumulative-effect adjustments from accounting-standard
-        # changes. Surface for analyst rather than leaving unflagged.
+        # Likely share-issuance from options at unusual prices, OCI
+        # reclassifications, or stock-comp policy interactions.
         else:
             exception_category = "equity_bridge_residual_complexity"
 
