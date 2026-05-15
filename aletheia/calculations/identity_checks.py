@@ -35,11 +35,18 @@ import json
 import logging
 import math
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from aletheia.contracts.pipeline import ValidatedCleanedRecord
+from aletheia.calculations.rollforward import (
+    cash_rollforward as _rf_cash,
+    debt_rollforward as _rf_debt,
+    fcf_pathway_b as _rf_fcf_b,
+    ppe_rollforward as _rf_ppe,
+    re_rollforward as _rf_re,
+    wc_rollforward as _rf_wc,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -438,12 +445,11 @@ def check_retained_earnings_rollforward(
         if fy >= IRA_EXCISE_TAX_START_FY else 0.0
     )
 
-    implied_basic = beg + ni - div
-    implied_extended = (
-        implied_basic
-        - abs(buybacks) - abs(tax_withhold)
-        + abs(sbc)
-        - delta_apic
+    implied_basic = _rf_re(beg=beg, ni=ni, div=div)
+    implied_extended = _rf_re(
+        beg=beg, ni=ni, div=div,
+        buybacks=buybacks, tax_withhold=tax_withhold,
+        sbc=sbc, delta_apic=delta_apic,
     )
 
     disc_abs_basic    = end - implied_basic
@@ -593,7 +599,7 @@ def check_cash_rollforward(
                 f"OCF={ocf!r} ICF={icf!r} FCF={fcf!r}"
             ),
         )
-    implied = beg + ocf + icf + fcf + fx
+    implied = _rf_cash(beg=beg, ocf=ocf, icf=icf, fcf=fcf, fx_effect=fx)
     if not end:
         return IdentityCheckResult.skipped(
             ticker=ticker, fiscal_year=fy, period=period,
@@ -675,7 +681,7 @@ def check_ppe_rollforward(
                 f"capex={capex!r} da={da!r}"
             ),
         )
-    implied = beg + capex - da
+    implied = _rf_ppe(beg=beg, capex=capex, da=da)
     if not beg:
         return IdentityCheckResult.skipped(
             ticker=ticker, fiscal_year=fy, period=period,
@@ -827,8 +833,9 @@ def check_debt_rollforward(
             identity_name=name,
             reason=f"beginning + ending debt both 0 (components={beg_comps})",
         )
-    net_activity = issued - repaid + cp_net
-    implied = beg_total + net_activity
+    implied = _rf_debt(
+        beg=beg_total, issued=issued, repaid=repaid, cp_net=cp_net,
+    )
     disc_abs = end_total - implied
     # Denominator: max(|beg|, |end|). Using |beg| alone makes the % drift
     # meaningless when debt grows from near-zero to material (META FY2022
@@ -962,7 +969,7 @@ def check_working_capital_reconciliation(
             ))
             continue
         bs_change = end - beg
-        disc_abs = cf_reported - bs_change
+        disc_abs = _rf_wc(bs_change=bs_change, cf_reported_change=cf_reported)
         # C5 — Inventory near-zero ($10M floor for services/digital filers).
         if label == "inventory" and abs(beg) + abs(end) < 10e6:
             out.append(IdentityCheckResult.skipped(
@@ -1104,8 +1111,12 @@ def check_fcf_pathway_reconciliation(
     # back when bridging from NOPAT to FCF. Without this term, SBC-heavy
     # filers (META, AAPL, GOOGL) systematically fail this identity.
     sbc = _field(current, "SBC") or 0.0
-    fcf_b_basic    = nopat + da - abs(capex) - delta_nwc
-    fcf_b_extended = nopat + da + sbc - abs(capex) - delta_nwc
+    fcf_b_basic    = _rf_fcf_b(
+        nopat=nopat, da=da, capex=capex, delta_nwc=delta_nwc,
+    )
+    fcf_b_extended = _rf_fcf_b(
+        nopat=nopat, da=da, capex=capex, delta_nwc=delta_nwc, sbc=sbc,
+    )
 
     disc_abs_basic    = fcf_a - fcf_b_basic
     disc_abs_extended = fcf_a - fcf_b_extended
