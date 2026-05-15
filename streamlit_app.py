@@ -607,7 +607,7 @@ def main():
     # Dive (lead thesis, contrarian, value chain, moat, strategic context all
     # render there), and agent runs can be triggered from the Universe tab's
     # ▶ Run agents footer or the sidebar's per-ticker pipeline button.
-    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report", "⚙  Pipeline Explorer", "⚙  Pipeline Status"]
+    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report", "⚙  Pipeline Explorer", "⚙  Pipeline Status", "📐  Calc Framework"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
     if "active_view" not in st.session_state:
@@ -1716,6 +1716,10 @@ def main():
     elif active_view == "⚙  Pipeline Status":
         from aletheia.ui.pipeline_status_view import render_pipeline_status_matrix
         render_pipeline_status_matrix()
+
+    elif active_view == "📐  Calc Framework":
+        from aletheia.ui.calculation_framework_view import render_calculation_framework
+        render_calculation_framework()
 
 
 if __name__ == "__main__":
