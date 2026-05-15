@@ -165,7 +165,11 @@ DERIVATIONS: List[DerivationEntry] = [
             "(Σ FCF_projected_t / (1+wacc)^t + TerminalValue / (1+wacc)^N "
             "− NetDebt) / SharesDiluted"
         ),
-        inputs=["fcf_projections", "wacc", "terminal_value", "net_debt",
+        # NB: fcf_projections is an in-flight intermediate (10y FCF
+        # series the DCFEngine projects forward). Not exposed on the
+        # bundle in V3; analyst sees individual fcf, wacc, terminal_value
+        # values that produced it. V4 would emit the per-year series.
+        inputs=["fcf", "wacc", "terminal_value", "net_debt",
                 "shares_diluted"],
         methodology=(
             "DCFEngine base scenario. Forecast horizon = 10y "
@@ -553,11 +557,19 @@ DERIVATIONS: List[DerivationEntry] = [
         label="Cyclical Z-score",
         category="Cyclic",
         formula="(current_metric − historical_avg) / historical_stddev",
-        inputs=["EBIT_margin", "historical_EBIT_margin_series"],
+        # Cyclicality engine z-scores REVENUE not EBIT margin. The
+        # historical series lives in cyclicality.details.revenues
+        # (not resolvable by bare input name; surfaced for analyst via
+        # the details payload).
+        inputs=["Revenue"],
         methodology=(
-            "Z-score of current period's EBIT margin vs the 10y "
-            "trailing distribution. |z| > 1.0 → peak/trough; haircut "
-            "applied to DCF in peak years."
+            "Cyclicality engine computes z-score of current period's "
+            "revenue (or industrial-cyclical proxy) vs the trailing "
+            "distribution. |z| > 1.0 → peak/trough; haircut applied "
+            "to DCF in peak years. Historical series is in "
+            "cyclicality.details.revenues; engine is not yet "
+            "instrumented to expose per-period EBIT-margin series "
+            "for true margin-based cyclicality."
         ),
         alternates=[],
         fmp_equivalent=None,
@@ -566,11 +578,19 @@ DERIVATIONS: List[DerivationEntry] = [
         name="moat_score",
         label="Moat score",
         category="Moat",
-        formula="weighted_sum(ROIC_persistence + margin_stability + market_share)",
-        inputs=["roic_10y_avg", "ebit_margin_volatility", "revenue_growth_consistency"],
+        formula="weighted_sum(roic_persistence + gm_stability + capex_intensity)",
+        # Moat engine combines 3 sub-scores already exposed in
+        # moat_fingerprint output. The underlying time-series (roic
+        # history, gross-margin history) are engine-internal — V4
+        # would emit them for full trace fidelity.
+        inputs=["roic_persistence_score", "gm_stability_score",
+                "capex_intensity_score"],
         methodology=(
-            "Moat fingerprint composite. 0-10 score where 10 = wide "
-            "durable moat (Buffett-style)."
+            "Moat fingerprint composite. 0-10 score combining three "
+            "sub-scores: ROIC persistence (consistency of high "
+            "returns), gross-margin stability (low volatility), and "
+            "capex intensity (low reinvestment as %FCF). Higher = "
+            "wider durable moat (Buffett-style)."
         ),
         alternates=[
             "Morningstar moat rating (narrow/wide/none)",
@@ -790,13 +810,19 @@ def _resolve_input(
         for cand in candidates:
             if cand in sub and sub[cand] is not None:
                 return sub[cand]
-    # 2. V2 — upstream_inputs (anchor FY raw+clean+derived)
+    # 2. V2 — upstream_inputs (anchor FY raw+clean+derived + V3 enrichment)
     upstream = bundle.get("upstream_inputs") or {}
     if isinstance(upstream, dict):
         for cand in candidates:
             if cand in upstream and upstream[cand] is not None:
                 return upstream[cand]
-    # 3. Top-level bundle keys (some calc results live there directly)
+    # 3. V3 — config_inputs (ERP, statutory rates, date-aware constants)
+    config = bundle.get("config_inputs") or {}
+    if isinstance(config, dict):
+        for cand in candidates:
+            if cand in config and config[cand] is not None:
+                return config[cand]
+    # 4. Top-level bundle keys (some calc results live there directly)
     for cand in candidates:
         if cand in bundle and bundle[cand] is not None:
             return bundle[cand]

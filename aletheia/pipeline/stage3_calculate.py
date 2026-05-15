@@ -501,7 +501,10 @@ def run_stage3(
         _xbrl_loader = RecordLoader()
         # Enrichment fields (canonical key in bundle → list of XBRL
         # tags to try in order). Keys match what the registry strips
-        # _beg/_end inputs to (RetainedEarnings, APIC, AOCI).
+        # _beg/_end inputs to (RetainedEarnings, APIC, AOCI) plus the
+        # rollforward / sub-component inputs cleaning canonical
+        # doesn't surface (FX_effect, TaxWithholding_RSU, sub-debt,
+        # CapEx sub-components).
         _BS_XBRL_ENRICH = [
             ("RetainedEarnings", ["RetainedEarningsAccumulatedDeficit"]),
             ("APIC",
@@ -510,29 +513,100 @@ def run_stage3(
               "AdditionalPaidInCapitalCommonStock"]),
             ("AOCI",
              ["AccumulatedOtherComprehensiveIncomeLossNetOfTax"]),
+            ("FX_effect",
+             ["EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+              "EffectOfExchangeRateOnCashAndCashEquivalents",
+              "EffectOfExchangeRateOnCash"]),
+            ("TaxWithholding_RSU",
+             ["PaymentsRelatedToTaxWithholdingForShareBasedCompensation",
+              "AdjustmentsRelatedToTaxWithholdingForShareBasedCompensation"]),
+            ("ShortTermDebt",
+             ["ShortTermBorrowings", "CommercialPaper", "NotesPayableCurrent"]),
+            ("Inventory", ["InventoryNet"]),
+            ("AccountsPayable",
+             ["AccountsPayableCurrent", "AccountsPayableTradeCurrent"]),
+            ("capitalized_software",
+             ["CapitalizedComputerSoftwareGross", "CapitalizedSoftware"]),
+            ("intangibles_purchased",
+             ["PaymentsToAcquireIntangibleAssets"]),
         ]
+        # When ALL XBRL candidates return None for these canonicals,
+        # the filer genuinely doesn't report that line (META has zero
+        # inventory; AAPL has zero capitalized_software in some years).
+        # Default to 0 rather than "<from upstream>" — semantically
+        # correct and more informative for the analyst.
+        _DEFAULT_ZERO_WHEN_ABSENT = {
+            "ShortTermDebt", "FX_effect", "TaxWithholding_RSU",
+            "capitalized_software", "intangibles_purchased",
+            "Inventory", "AccountsPayable",
+        }
         for canonical, xbrl_tags in _BS_XBRL_ENRICH:
             # Anchor FY value
             if anchor.period == "FY" and canonical not in upstream_inputs:
+                resolved = None
                 for tag in xbrl_tags:
                     v = _xbrl_loader.xbrl_fact(ticker, tag, anchor.fiscal_year)
                     if v is not None:
-                        upstream_inputs[canonical] = v
+                        resolved = v
                         break
+                if resolved is not None:
+                    upstream_inputs[canonical] = resolved
+                elif canonical in _DEFAULT_ZERO_WHEN_ABSENT:
+                    upstream_inputs[canonical] = 0.0
             # Prior FY value
             if (anchor.period == "FY" and prior_year_inputs
                     and canonical not in prior_year_inputs):
+                resolved_prior = None
                 for tag in xbrl_tags:
                     v = _xbrl_loader.xbrl_fact(
                         ticker, tag, anchor.fiscal_year - 1,
                     )
                     if v is not None:
-                        prior_year_inputs[canonical] = v
+                        resolved_prior = v
                         break
+                if resolved_prior is not None:
+                    prior_year_inputs[canonical] = resolved_prior
+                elif canonical in _DEFAULT_ZERO_WHEN_ABSENT:
+                    prior_year_inputs[canonical] = 0.0
     except Exception:
         # Enrichment is best-effort; failures (missing companyfacts
         # cache, network errors) just leave the original dicts and the
         # affected traces show "<from upstream>". Doesn't block Stage 3.
+        pass
+
+    # L2 V3 completion — synthesized values + config constants
+    # Inputs that aren't single fields but COMPOSITIONS of fields:
+    #   TotalDebt    = LongTermDebt + ShortTermDebt
+    #   EBIT_margin  = NormalizedEBIT / Revenue
+    #   terminal_value ≈ base_ev × base_tv_pct_of_ev (DCF base scenario)
+    # These would otherwise show "<from upstream>" in the trace.
+    ltd = upstream_inputs.get("LongTermDebt") or 0.0
+    std = upstream_inputs.get("ShortTermDebt") or 0.0
+    if (ltd or std) and "TotalDebt" not in upstream_inputs:
+        upstream_inputs["TotalDebt"] = ltd + std
+    norm_ebit = (
+        upstream_inputs.get("NormalizedEBIT")
+        or upstream_inputs.get("OperatingIncome")
+    )
+    rev = upstream_inputs.get("Revenue")
+    if norm_ebit and rev and rev > 0 and "EBIT_margin" not in upstream_inputs:
+        upstream_inputs["EBIT_margin"] = norm_ebit / rev
+    base_ev = dcf_dict.get("base_ev") if dcf_dict else None
+    tv_pct = dcf_dict.get("base_tv_pct_of_ev") if dcf_dict else None
+    if base_ev and tv_pct:
+        upstream_inputs["terminal_value"] = base_ev * tv_pct
+
+    # Config constants — exposed via a separate ``config_inputs`` slot
+    # so they're discoverable without polluting upstream_inputs. The
+    # resolver consults this tier in addition to engine sub-bundles and
+    # upstream_inputs.
+    config_inputs: Dict[str, Any] = {}
+    try:
+        from aletheia.data.historical_macro import get_equity_risk_premium
+        # ERP is date-aware; use the anchor period_end_date when available
+        as_of = anchor.period_end_date or datetime.now(timezone.utc).date().isoformat()
+        config_inputs["equity_risk_premium"] = get_equity_risk_premium(as_of)
+    except Exception:
         pass
 
     return CalculationBundle(
@@ -551,6 +625,7 @@ def run_stage3(
         accounting_identities=identities_dict,
         upstream_inputs=upstream_inputs,
         prior_year_inputs=prior_year_inputs,
+        config_inputs=config_inputs,
         schema_violations=schema_violations,
         bundle_fingerprint=bundle_fingerprint,
         input_record_fingerprint=input_record_fingerprint,

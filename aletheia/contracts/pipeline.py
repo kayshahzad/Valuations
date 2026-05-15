@@ -365,6 +365,16 @@ class CalculationBundle(BaseModel):
             "upstream_inputs. Same source-of-truth caveat as upstream_inputs."
         ),
     )
+    config_inputs: Dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "L2 V3 — date-aware config constants (equity_risk_premium, "
+            "statutory tax rate, etc.) consulted by the trace resolver "
+            "as the last tier before falling back to ``<from upstream>``. "
+            "Lets WACC and similar derivations show the actual ERP "
+            "value that fed the calc."
+        ),
+    )
 
     schema_violations: List[Dict[str, Any]] = Field(
         default_factory=list,
