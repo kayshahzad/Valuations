@@ -622,6 +622,16 @@ def main():
         st.session_state.active_ticker = st.session_state.pop("_pending_active_ticker")
     if "_pending_active_view" in st.session_state:
         st.session_state.active_view = st.session_state.pop("_pending_active_view")
+        # The navigation widget binds with key="nav"; once instantiated
+        # it stores the user's last click in st.session_state.nav and
+        # ignores `default=`. Clearing it forces the widget to re-read
+        # `default=st.session_state.active_view` on next render, which
+        # is the value we just promoted from _pending_active_view.
+        # Without this, line 809 (st.session_state.active_view =
+        # active_view) silently clobbers the promotion with the widget's
+        # stale value.
+        if "nav" in st.session_state:
+            del st.session_state.nav
 
     # If the universe shrank (e.g. ticker removed mid-session) and the
     # stored value is no longer a valid option, reset before the widget
