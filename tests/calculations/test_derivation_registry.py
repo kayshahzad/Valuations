@@ -139,6 +139,45 @@ def test_trace_value_marks_unresolvable_inputs_as_upstream():
     assert input_dict.get("CapEx_Total") == "<from upstream>"
 
 
+def test_trace_value_resolves_input_from_upstream_inputs():
+    """V2: when an input doesn't live in any engine sub-bundle, the
+    resolver should fall through to bundle.upstream_inputs (the
+    flattened raw+clean+derived from the anchor FY record)."""
+    from aletheia.calculations.derivation_registry import trace_value
+    bundle = {
+        "dcf": {"fcf": 46_109_000_000.0},
+        "upstream_inputs": {
+            "OperatingCF": 91_330_000_000.0,
+            "CapEx_Total": 37_260_000_000.0,
+        },
+    }
+    trace = trace_value("fcf", bundle)
+    assert trace is not None
+    inp_dict = dict(trace["input_values"])
+    # Both inputs that V1 returned "<from upstream>" should now resolve.
+    assert inp_dict["OperatingCF"] == 91_330_000_000.0
+    assert inp_dict["CapEx_Total"] == 37_260_000_000.0
+
+
+def test_trace_value_engine_subbundle_beats_upstream_inputs():
+    """When the same name appears in both an engine sub-bundle AND
+    upstream_inputs, the engine sub-bundle wins. The engine output is
+    the computed result; upstream is the input the engine consumed."""
+    from aletheia.calculations.derivation_registry import trace_value
+    bundle = {
+        "dcf": {"nopat": 75_932_000_000.0, "ebit": 83_280_000_000.0},
+        "upstream_inputs": {
+            # Synthetic conflict — engines should win
+            "ebit": 999_999_999.0,
+            "NormalizedEBIT": 88_000_000_000.0,
+        },
+    }
+    trace = trace_value("nopat", bundle)
+    inp_dict = dict(trace["input_values"])
+    # Registry input is "NormalizedEBIT"; alias map → dcf.ebit wins
+    assert inp_dict["NormalizedEBIT"] == 83_280_000_000.0
+
+
 def test_trace_value_carries_methodology_and_category_d():
     """The trace surfaces the registry entry's methodology + category_d
     flag so the UI can render the right chips."""

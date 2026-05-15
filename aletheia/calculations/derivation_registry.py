@@ -745,11 +745,22 @@ def _resolve_input(
     input_name: str, bundle: Dict[str, Any],
 ) -> Optional[Any]:
     """Look up an input value by name across the Stage 3 bundle.
-    Tries known aliases first, then exact name match in each sub-dict.
-    Returns None when the input doesn't resolve (caller marks it as
-    "<from upstream>").
+
+    Resolution order (first non-None wins):
+      1. Engine sub-bundles (dcf, reverse_dcf, multiple_decomposition,
+         screening, moat_fingerprint, cyclicality) — V1
+      2. ``upstream_inputs`` — V2 flat raw+clean+derived echo from
+         the anchor FY record (captures OperatingCF, CapEx_Total,
+         NetIncome, TotalEquity, etc.)
+      3. Top-level bundle keys
+
+    Tries known aliases first for each tier, then exact name match.
+    Returns None when the input doesn't resolve anywhere (caller marks
+    as "<from upstream>" — typically a pair-rollforward delta or
+    engine-synthetic intermediate that V2 doesn't capture).
     """
     candidates = [input_name] + _INPUT_ALIASES.get(input_name, [])
+    # 1. Engine sub-bundles
     for sub_key in _BUNDLE_SEARCH_PATHS:
         sub = bundle.get(sub_key) or {}
         if not isinstance(sub, dict):
@@ -757,7 +768,13 @@ def _resolve_input(
         for cand in candidates:
             if cand in sub and sub[cand] is not None:
                 return sub[cand]
-    # Also try top-level (some calc results live there directly)
+    # 2. V2 — upstream_inputs (anchor record raw+clean+derived)
+    upstream = bundle.get("upstream_inputs") or {}
+    if isinstance(upstream, dict):
+        for cand in candidates:
+            if cand in upstream and upstream[cand] is not None:
+                return upstream[cand]
+    # 3. Top-level bundle keys (some calc results live there directly)
     for cand in candidates:
         if cand in bundle and bundle[cand] is not None:
             return bundle[cand]

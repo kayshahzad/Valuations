@@ -343,6 +343,18 @@ class CalculationBundle(BaseModel):
             "aletheia/calculations/identity_checks.py."
         ),
     )
+    upstream_inputs: Dict[str, Any] = Field(
+        default_factory=dict,
+        description=(
+            "L2 V2 — flattened raw+clean+derived dict from the anchor "
+            "FY record. Lets the derivation-registry's runtime trace "
+            "(trace_value) resolve cleaning-side input names that don't "
+            "appear in the engine outputs (OperatingCF, CapEx_Total, "
+            "NetIncome, TotalEquity, etc.). Source-of-truth is still "
+            "the underlying ValidatedCleanedRecord; this is a convenience "
+            "echo so UI / agents reading the bundle don't have to re-join."
+        ),
+    )
 
     schema_violations: List[Dict[str, Any]] = Field(
         default_factory=list,

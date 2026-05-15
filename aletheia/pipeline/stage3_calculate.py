@@ -456,6 +456,22 @@ def run_stage3(
         pipeline_version=pipeline_version,
     )
 
+    # L2 V2 — surface anchor-record upstream cleaning values into the
+    # bundle so the derivation-registry's runtime trace can resolve
+    # input names that don't appear in engine outputs (OperatingCF,
+    # CapEx_Total, NetIncome, TotalEquity, etc.). Source-of-truth is
+    # still the ValidatedCleanedRecord — this is a flat convenience
+    # echo for UI + agent consumers.
+    anchor = anchor_records[0]
+    upstream_inputs: Dict[str, Any] = {}
+    for ns in ("raw", "clean", "derived"):
+        ns_dict = getattr(anchor, ns, None) or {}
+        for k, v in ns_dict.items():
+            # First non-None wins; preserves raw → clean → derived
+            # precedence (raw is the most-direct XBRL value).
+            if upstream_inputs.get(k) is None and v is not None:
+                upstream_inputs[k] = v
+
     return CalculationBundle(
         ticker=ticker,
         fiscal_year=bundle_fiscal_year,
@@ -470,6 +486,7 @@ def run_stage3(
         capital_structure={},  # populated when strategist is detangled
         reality_checks=reality_dict,
         accounting_identities=identities_dict,
+        upstream_inputs=upstream_inputs,
         schema_violations=schema_violations,
         bundle_fingerprint=bundle_fingerprint,
         input_record_fingerprint=input_record_fingerprint,
