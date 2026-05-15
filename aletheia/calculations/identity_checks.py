@@ -909,19 +909,35 @@ def check_debt_rollforward(
     if not passed and exception_category is None and fy < 2019:
         exception_category = "pre_asc842_debt_era"
 
-    # Refinancing-year signal: large gross issuance + large gross
-    # repayment in the same year. When both exceed 30% of beginning
-    # debt, the rollforward's net-flow assumption breaks down because
-    # gross flows include reclassifications and intra-year refinancings.
+    # Refinancing-year signal: gross issuance + gross repayment of
+    # similar magnitude in the same year. Threshold lowered from 30% →
+    # 5% empirically: many filers (AAPL FY2022) refinance at 5-10% of
+    # beginning debt and still produce systematic gross-flow drift.
     if not passed and exception_category is None:
         if (
-            abs(issued) > 0.3 * abs(beg_total)
-            and abs(repaid) > 0.3 * abs(beg_total)
+            abs(issued) > 0.05 * abs(beg_total)
+            and abs(repaid) > 0.05 * abs(beg_total)
         ):
             exception_category = "refinancing_year_gross_flows"
 
-    # Catch-all: small residual that doesn't fit any specific category.
-    # Surface for analyst rather than leaving unflagged.
+    # Zero-flow signal: debt balance changed materially but CF reports
+    # no debt issuance or repayment. Likely a non-CF reclassification
+    # (LTD-noncurrent shifting to current portion, or a non-cash
+    # capital-structure adjustment booked through OCI/APIC).
+    if not passed and exception_category is None:
+        if abs(issued) < 0.01 * abs(beg_total) and abs(repaid) < 0.01 * abs(beg_total):
+            exception_category = "debt_reclassification_no_cf_flow"
+
+    # Near-zero debt denominator: when both beg + end debt are small
+    # (<$1B), the % drift becomes noisy. Material in absolute terms
+    # (sub-$100M discrepancy on $200M debt = 50% drift, not analyst-
+    # actionable). Distinguish from the legitimate failure modes above.
+    if not passed and exception_category is None:
+        if abs(beg_total) < 1e9 and abs(end_total) < 1e9:
+            exception_category = "near_zero_debt_denominator"
+
+    # Catch-all: remaining small residual that doesn't fit any specific
+    # category. Surface for analyst rather than leaving unflagged.
     if not passed and exception_category is None:
         exception_category = "debt_rollforward_residual_complexity"
     return IdentityCheckResult(
