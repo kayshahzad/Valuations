@@ -45,6 +45,7 @@ from aletheia.calculations import (
     _guard_mode,
     resolve_tax_rate,
 )
+from aletheia.calculations.rollforward import fcf_pathway_b as _rf_fcf_b
 
 
 
@@ -788,8 +789,14 @@ def _project_scenario(
         delta_nwc = nwc - prev_nwc
         prev_nwc = nwc
 
-        # FCFF = NOPAT + D&A - CapEx - ΔNWC
-        fcff = nopat + da - capex - delta_nwc
+        # FCFF = NOPAT + D&A − CapEx − ΔNWC
+        # Routes through aletheia.calculations.rollforward.fcf_pathway_b
+        # — the same L3 primitive identity_checks uses for audit-side
+        # reconciliation. Both audit and projection share the same
+        # arithmetic, so the formula is named once and used twice.
+        fcff = _rf_fcf_b(
+            nopat=nopat, da=da, capex=capex, delta_nwc=delta_nwc,
+        )
 
         # Discount factor
         discount = (1 + wacc) ** yr
