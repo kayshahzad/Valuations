@@ -214,6 +214,23 @@ def _fmp_url(endpoint: str, period: Optional[str]) -> str:
     return f"https://financialmodelingprep.com/stable/{endpoint}?{qs}symbol=<TICKER>"
 
 
+def _sources_for_provider(provider: Optional[str]) -> Optional[List[str]]:
+    """Derive the Stage 1 source allow-list from the active provider.
+
+    Returns ``None`` (= fetch every source) for ``xbrl`` and
+    ``hybrid`` because both need SEC companyfacts for specialty-tag
+    lookups. For ``fmp`` returns the FMP-only source list — skips
+    SEC ingest entirely (~80s savings per ticker on cold cache).
+    """
+    if provider is None:
+        return None  # caller explicitly didn't constrain
+    if provider == "fmp":
+        # FMP-only: every fmp_* source, no SEC, no market snapshot.
+        return [src_id for src_id, *_ in _FMP_SOURCES]
+    # xbrl + hybrid both need SEC. Falls through to "fetch all".
+    return None
+
+
 def run_stage1(
     ticker: str,
     *,
@@ -221,6 +238,7 @@ def run_stage1(
     force_refresh: bool = False,
     sources: Optional[List[str]] = None,
     include_market_snapshot: bool = True,
+    provider: Optional[str] = None,
 ) -> IngestedRawBundle:
     """Fetch all canonical sources for ``ticker`` and return a typed
     ``IngestedRawBundle``.
@@ -248,6 +266,14 @@ def run_stage1(
             f"{ticker!r} not in UNIVERSE; add to "
             "config/ticker_classification.UNIVERSE before ingest."
         )
+
+    # Provider-aware source allow-list — when ``provider="fmp"`` is
+    # supplied AND ``sources`` is not explicitly set, skip SEC
+    # companyfacts entirely (saves ~80s per ticker on cold cache).
+    # Explicit ``sources`` arg always wins so surgical re-fetch flows
+    # remain unaffected.
+    if sources is None and provider is not None:
+        sources = _sources_for_provider(provider)
 
     sources_set = set(sources) if sources is not None else None
     collected: Dict[str, RawSource] = {}

@@ -147,6 +147,33 @@ def _render_status_badge(stage_id: str, status_rows: Dict[str, Dict[str, Any]]) 
 # Validation-panel helpers — "is this stage's output trustworthy?"
 # ─────────────────────────────────────────────────────────────────────
 
+def _build_period_label(
+    fiscal_year: int, period: str, period_end_date: Optional[str],
+) -> str:
+    """Column / expander label for one (fy, period).
+
+    Annual → ``FY2025``. Quarterly with end-date → ``FY2026 Q3 · Feb 2026``
+    so non-calendar-FY filers (ORCL May-FYE, AAPL Sept-FYE) don't get
+    mis-read as future calendar quarters. Falls back to the bare
+    ``FY{fy} {Q}`` form when no end-date is available.
+
+    Mirrors ``FieldComparison.period_label`` in
+    ``aletheia.pipeline._fmp_compare`` — keep the two in sync.
+    """
+    base = (
+        f"FY{fiscal_year}" if period == "FY"
+        else f"FY{fiscal_year} {period}"
+    )
+    if period == "FY" or not period_end_date:
+        return base
+    from datetime import datetime as _dt
+    try:
+        d = _dt.strptime(period_end_date[:10], "%Y-%m-%d")
+        return f"{base} · {d.strftime('%b %Y')}"
+    except (TypeError, ValueError):
+        return base
+
+
 def _fmt_size(n_bytes: Optional[int]) -> str:
     if n_bytes is None:
         return "—"
@@ -325,9 +352,15 @@ def _render_stage2_fmp_comparison(payload: Dict[str, Any]) -> None:
     # which the backend ordered chronologically (oldest FY → newest
     # FY → current-year quarters Q1..Q4).
     cells_by_period: Dict[tuple, List[Dict[str, Any]]] = {}
+    period_end_by_key: Dict[tuple, Optional[str]] = {}
     for cell in cells:
         key = (cell["fiscal_year"], cell.get("period") or "FY")
         cells_by_period.setdefault(key, []).append(cell)
+        # Track the period_end_date so the column label can carry a
+        # calendar marker (e.g. 'FY2026 Q3 · Feb 2026') for non-
+        # calendar-FY filers.
+        if cell.get("period_end_date") and key not in period_end_by_key:
+            period_end_by_key[key] = cell["period_end_date"]
 
     from aletheia.pipeline._field_catalog import CATEGORIES
 
@@ -342,7 +375,7 @@ def _render_stage2_fmp_comparison(payload: Dict[str, Any]) -> None:
 
     for key in ordered_keys:
         fy, period = key
-        period_label = f"FY{fy}" if period == "FY" else f"FY{fy} {period}"
+        period_label = _build_period_label(fy, period, period_end_by_key.get(key))
         with st.expander(
             f"{period_label} — XBRL ↔ FMP",
             expanded=(key == latest_key),
@@ -405,11 +438,14 @@ def _render_stage2_xbrl_extracted(payload: Dict[str, Any]) -> None:
         return
 
     # Build a lookup: (period_label, field_label) → xbrl_value.
+    # The plabel here must match `period_labels` from the payload so
+    # the wide-format renderer's column header lookup hits — same
+    # date-decorated convention for non-calendar-FY quarters.
     by_period_field: Dict[tuple, Optional[float]] = {}
     for cell in cells:
         fy = cell.get("fiscal_year")
         period = cell.get("period") or "FY"
-        plabel = f"FY{fy}" if period == "FY" else f"FY{fy} {period}"
+        plabel = _build_period_label(fy, period, cell.get("period_end_date"))
         by_period_field[(plabel, cell.get("field_label"))] = cell.get("xbrl_value")
 
     st.markdown(
@@ -777,7 +813,7 @@ _STAGE3_CALC_SPEC: List[Dict[str, Any]] = [
     {"cat": "Screen",  "label": "Passes / flags / fails",   "path": None,                           "kind": "text",  "fmp": None, "computed": "screening_counts"},
     # ── Moat / Cyclicality / Reality ────────────────────────────────
     {"cat": "Moat",    "label": "Moat score",               "path": "moat_fingerprint/score",       "kind": "ratio", "fmp": None},
-    {"cat": "Cyclic",  "label": "Z-score",                  "path": "cyclicality/z_score",          "kind": "ratio", "fmp": None},
+    {"cat": "Cyclic",  "label": "Cyclical Z-score",         "path": "cyclicality/z_score",          "kind": "ratio", "fmp": None},
     {"cat": "Cyclic",  "label": "Is peak",                  "path": "cyclicality/is_peak",          "kind": "text",  "fmp": None},
     {"cat": "Cyclic",  "label": "3-yr average",             "path": "cyclicality/avg_3yr",          "kind": "usd",   "fmp": None},
     # ── FMP-published metrics not in our calcs (cross-references) ──
@@ -821,7 +857,7 @@ def _render_stage3_calculations_panel(
     documented FMP divergence note.
     """
     from aletheia.calculations.derivation_registry import (
-        lookup_by_label,
+        DERIVATIONS, lookup_by_label,
     )
 
     fmp = _load_fmp_calc_metrics(ticker)
@@ -829,6 +865,7 @@ def _render_stage3_calculations_panel(
 
     rows: List[Dict[str, str]] = []
     methodology_seen: List[str] = []  # labels with registry entries (for the expander)
+    _seen_label_set: set = set()
     for spec in _STAGE3_CALC_SPEC:
         if spec.get("computed") == "screening_counts":
             ours_val = (
@@ -853,11 +890,15 @@ def _render_stage3_calculations_panel(
             drift_disp = (
                 f"{drift * 100:+.1f}%" if drift is not None else "—"
             )
-        # Layer 2: registry lookup for methodology chip
+        # Layer 2: registry lookup for methodology chip. Dedupe so a
+        # label appearing in multiple spec rows (e.g. WACC in DCF + MD)
+        # only renders once in the methodology expander.
         entry = lookup_by_label(spec["label"])
         calc_label = spec["label"]
         if entry is not None:
-            methodology_seen.append(spec["label"])
+            if spec["label"] not in _seen_label_set:
+                methodology_seen.append(spec["label"])
+                _seen_label_set.add(spec["label"])
             if entry.category_d:
                 calc_label = f"📐 {calc_label}"
         rows.append({
@@ -879,7 +920,20 @@ def _render_stage3_calculations_panel(
         "not a bug). See methodology expander below for details."
     )
 
-    # Layer 2: per-value derivation methodology expander + live trace
+    # Layer 2: per-value derivation methodology expander + live trace.
+    # Backfill with any registry entries not yet covered by spec rows
+    # so building-block derivations (NormalizedEBIT, EBITDA, D&A, CapEx,
+    # ΔNWC) surface too. L1_identity / L3_rollforward entries are
+    # excluded — they're shown in the dedicated L1 live-trace panel
+    # to avoid double-render of identity-check duals.
+    for entry in DERIVATIONS:
+        if entry.category in ("L1_identity", "L3_rollforward"):
+            continue
+        if entry.label in _seen_label_set:
+            continue
+        methodology_seen.append(entry.label)
+        _seen_label_set.add(entry.label)
+
     if methodology_seen:
         _render_methodology_expander(methodology_seen, bundle=bundle)
 
@@ -900,7 +954,8 @@ def _render_methodology_expander(
     )
 
     with st.expander(
-        "📖 How each value is derived (Layer-2 methodology + live trace)",
+        f"📖 How each value is derived — {len(labels)} L2 derivations "
+        f"(methodology + live trace)",
         expanded=False,
     ):
         st.caption(
@@ -1063,13 +1118,6 @@ def _render_identity_audit_panel(identities: Dict[str, Any]) -> None:
         st.caption("Identity audit: no results in this bundle.")
         return
 
-    cols = st.columns(5)
-    cols[0].metric("Identity checks", summary.get("n_checks", 0))
-    cols[1].metric("✓ Passed", summary.get("n_passed", 0))
-    cols[2].metric("⚠️ Expected exceptions", summary.get("n_expected_exception", 0))
-    cols[3].metric("✗ Failed", summary.get("n_failed", 0))
-    cols[4].metric("Skipped", summary.get("n_skipped", 0))
-
     results = identities.get("results") or []
     non_passing = [
         r for r in results
@@ -1078,6 +1126,27 @@ def _render_identity_audit_panel(identities: Dict[str, Any]) -> None:
     ]
     flagged = [r for r in non_passing if r.get("exception_category")]
     unflagged = [r for r in non_passing if not r.get("exception_category")]
+
+    # Split flagged into actionable vs era-fixed for the top strip.
+    from aletheia.calculations.identity_checks import (
+        ERA_FIXED_EXCEPTION_CATEGORIES,
+    )
+    n_actionable = sum(
+        1 for r in flagged
+        if r["exception_category"] not in ERA_FIXED_EXCEPTION_CATEGORIES
+    )
+    n_era = sum(
+        1 for r in flagged
+        if r["exception_category"] in ERA_FIXED_EXCEPTION_CATEGORIES
+    )
+
+    cols = st.columns(6)
+    cols[0].metric("Identity checks", summary.get("n_checks", 0))
+    cols[1].metric("✓ Passed", summary.get("n_passed", 0))
+    cols[2].metric("⚠️ Actionable", n_actionable)
+    cols[3].metric("⏳ Era-fixed", n_era)
+    cols[4].metric("✗ Failed", summary.get("n_failed", 0))
+    cols[5].metric("Skipped", summary.get("n_skipped", 0))
 
     # Unflagged failures get prominent treatment — these are the
     # genuinely unexplained gaps the analyst needs to investigate.
@@ -1105,30 +1174,250 @@ def _render_identity_audit_panel(identities: Dict[str, Any]) -> None:
                 } for r in rows], use_container_width=True, hide_index=True)
 
     # Expected exceptions get a separate, less alarming expander.
+    # Split into era-fixed (reporting-standard transitions, not
+    # investigatable) and actionable (Category-C structural reasons
+    # where extending the formula could close the gap).
     if flagged:
-        # Group by exception_category so the analyst sees the pattern.
-        by_cat: Dict[str, List[Dict[str, Any]]] = {}
-        for r in flagged:
-            by_cat.setdefault(r["exception_category"], []).append(r)
-        with st.expander(
-            f"⚠️ Expected exceptions ({len(flagged)}, "
-            f"{len(by_cat)} categor{'y' if len(by_cat)==1 else 'ies'}) — "
-            "documented structural reasons",
-            expanded=False,
-        ):
-            for cat in sorted(by_cat):
-                rows = by_cat[cat]
-                st.markdown(f"**`{cat}`** — {len(rows)} occurrence(s)")
-                st.dataframe([{
-                    "Identity": r.get("identity_name"),
-                    "FY": r.get("fiscal_year"),
-                    "Period": r.get("period"),
-                    "Discrepancy %": f"{r.get('discrepancy_pct'):.2f}%"
-                        if isinstance(r.get("discrepancy_pct"), (int, float)) else "—",
-                } for r in rows], use_container_width=True, hide_index=True)
+        from aletheia.calculations.identity_checks import (
+            ERA_FIXED_EXCEPTION_CATEGORIES,
+        )
+        actionable = [
+            r for r in flagged
+            if r["exception_category"] not in ERA_FIXED_EXCEPTION_CATEGORIES
+        ]
+        era_fixed = [
+            r for r in flagged
+            if r["exception_category"] in ERA_FIXED_EXCEPTION_CATEGORIES
+        ]
+
+        def _by_category(rows: List[Dict[str, Any]]) -> Dict[str, List[Dict[str, Any]]]:
+            grouped: Dict[str, List[Dict[str, Any]]] = {}
+            for r in rows:
+                grouped.setdefault(r["exception_category"], []).append(r)
+            return grouped
+
+        if actionable:
+            by_cat = _by_category(actionable)
+            with st.expander(
+                f"⚠️ Expected exceptions ({len(actionable)}, "
+                f"{len(by_cat)} categor{'y' if len(by_cat)==1 else 'ies'}) — "
+                "structural reasons; formula refinement could close these",
+                expanded=False,
+            ):
+                for cat in sorted(by_cat):
+                    rows = by_cat[cat]
+                    st.markdown(f"**`{cat}`** — {len(rows)} occurrence(s)")
+                    st.dataframe([{
+                        "Identity": r.get("identity_name"),
+                        "FY": r.get("fiscal_year"),
+                        "Period": r.get("period"),
+                        "Discrepancy %": f"{r.get('discrepancy_pct'):.2f}%"
+                            if isinstance(r.get("discrepancy_pct"), (int, float)) else "—",
+                    } for r in rows], use_container_width=True, hide_index=True)
+
+        if era_fixed:
+            by_cat = _by_category(era_fixed)
+            with st.expander(
+                f"⏳ Era-fixed ({len(era_fixed)}, "
+                f"{len(by_cat)} categor{'y' if len(by_cat)==1 else 'ies'}) — "
+                "reporting-standard transitions; not investigatable",
+                expanded=False,
+            ):
+                st.caption(
+                    "These failures reflect real differences in how "
+                    "accounting was reported across reporting-standard "
+                    "transitions (ASU 2016-18 broad cash, ASC 842 leases, "
+                    "ASC 606 cumulative effects) or absent flows "
+                    "(pre-buyback era). The math IS structurally "
+                    "different across these boundaries — no formula fix "
+                    "would close them."
+                )
+                for cat in sorted(by_cat):
+                    rows = by_cat[cat]
+                    st.markdown(f"**`{cat}`** — {len(rows)} occurrence(s)")
+                    st.dataframe([{
+                        "Identity": r.get("identity_name"),
+                        "FY": r.get("fiscal_year"),
+                        "Period": r.get("period"),
+                        "Discrepancy %": f"{r.get('discrepancy_pct'):.2f}%"
+                            if isinstance(r.get("discrepancy_pct"), (int, float)) else "—",
+                    } for r in rows], use_container_width=True, hide_index=True)
 
     if not non_passing:
         st.caption("All identity checks passed (or were skipped on missing data).")
+
+    # Per-ticker live trace — formula + actual component values for
+    # every identity. Mirrors the L2 methodology-expander pattern.
+    _render_identity_live_trace_panel(identities)
+
+
+def _fmt_component_value(v: Any) -> str:
+    """Format an identity-check component value for tabular display.
+
+    Distinguishes numeric magnitudes ≥ 1e6 (USD-suffixed) from small
+    numerics (4-significant-digit raw) from booleans and free strings.
+    """
+    if v is None:
+        return "—"
+    if isinstance(v, bool):
+        return "✓" if v else "—"
+    if isinstance(v, (int, float)):
+        try:
+            fv = float(v)
+        except (TypeError, ValueError):
+            return "—"
+        if not (fv == fv):  # NaN
+            return "—"
+        if abs(fv) >= 1e6:
+            return _fmt_usd(fv)
+        return f"{fv:.4g}"
+    return str(v)
+
+
+def _render_identity_live_trace_panel(identities: Dict[str, Any]) -> None:
+    """L1 live trace — formula + actual component values per identity.
+
+    The L2 methodology expander surfaces `trace_value(name, bundle)` for
+    each derivation; the equivalent surface for L1 is the
+    ``components`` dict on every ``IdentityCheckResult``. Each L1
+    identity is rendered once with its formula on top and a dataframe
+    of per-year/period component values below.
+
+    All 9 catalog identities surface — including ones with no computed
+    results (no prior FY) or all-skipped results (missing inputs), so
+    coverage gaps are visible rather than silently dropped.
+
+    The L3 primitives (`ppe_rollforward`, `cash_rollforward`, …) are
+    called from inside L1 identity checkers — their inputs/outputs ARE
+    these component values. Surfacing them here is the L3 live-trace
+    too, scoped to the rollforward identities.
+    """
+    results = identities.get("results") or []
+    if not results:
+        return
+
+    by_identity: Dict[str, List[Dict[str, Any]]] = {}
+    for r in results:
+        by_identity.setdefault(r.get("identity_name", "?"), []).append(r)
+
+    try:
+        from aletheia.ui.calculation_framework_view import _L1_IDENTITIES
+        from aletheia.calculations.identity_checks import TOLERANCE_THRESHOLDS
+    except Exception:  # noqa: BLE001
+        _L1_IDENTITIES = []
+        TOLERANCE_THRESHOLDS = {}
+    catalog = {entry["id"]: entry for entry in _L1_IDENTITIES}
+
+    # Iterate over the catalog so every defined identity surfaces —
+    # even when the bundle has no results for it (first-FY ticker,
+    # missing tags, etc.). Catalog order is the canonical reading
+    # order (BS equation first, rollforwards next, WC, FCF pathway).
+    catalog_ids = [e["id"] for e in _L1_IDENTITIES]
+    # Include any identity_names present in results but missing from
+    # the catalog (defensive — keeps us honest if checkers drift).
+    extra_ids = [n for n in by_identity if n not in catalog_ids]
+
+    n_total = len(catalog_ids) + len(extra_ids)
+    n_with_data = sum(
+        1 for n in catalog_ids + extra_ids
+        if any(
+            not (r.get("notes") or "").startswith("skipped:")
+            for r in by_identity.get(n, [])
+        )
+    )
+
+    with st.expander(
+        f"💎 L1 + L3 live trace — identity formulas + rollforward "
+        f"primitive inputs/outputs · {n_with_data}/{n_total} with data",
+        expanded=False,
+    ):
+        st.caption(
+            "Same pattern as the L2 derivation methodology — each "
+            "identity's formula appears alongside the actual component "
+            "values pulled from this ticker. For the 6 rollforward "
+            "identities (cash, RE, PP&E, debt, WC ×3, FCF pathway), the "
+            "💎 components ARE the L3 primitive's inputs and outputs — "
+            "this is the L3 live trace, scoped to the ticker. Identities "
+            "with no results or all-skipped rows are listed too so "
+            "coverage gaps are visible."
+        )
+        for identity_name in catalog_ids + extra_ids:
+            rows = by_identity.get(identity_name, [])
+            cat_entry = catalog.get(identity_name, {})
+            display_name = cat_entry.get("name") or identity_name
+            formula = cat_entry.get("formula") or "—"
+            tol_from_rows = rows[0].get("tolerance_pct") if rows else None
+            tol_from_catalog = TOLERANCE_THRESHOLDS.get(identity_name)
+            tol_pct = ((tol_from_rows or tol_from_catalog or 0.0)) * 100.0
+
+            st.markdown(
+                f"##### {display_name}  ·  `{identity_name}`  ·  "
+                f"tol {tol_pct:.1f}%"
+            )
+            st.markdown(f"**Formula**: `{formula}`")
+
+            if not rows:
+                st.caption(
+                    "_No results in this bundle — typically the ticker "
+                    "has no prior-FY pair (first year of history) or the "
+                    "checker wasn't reached._"
+                )
+                st.markdown("---")
+                continue
+
+            # Union of component keys across non-skipped rows. Skipped
+            # rows contribute no components but still render with the
+            # reason in the Status column.
+            non_skipped = [
+                r for r in rows
+                if not (r.get("notes") or "").startswith("skipped:")
+            ]
+            all_keys: List[str] = []
+            seen_keys: set = set()
+            for r in non_skipped:
+                for k in (r.get("components") or {}).keys():
+                    if k not in seen_keys:
+                        seen_keys.add(k)
+                        all_keys.append(k)
+
+            df_rows: List[Dict[str, Any]] = []
+            for r in sorted(
+                rows,
+                key=lambda x: (
+                    x.get("fiscal_year") or 0,
+                    0 if x.get("period") == "FY" else 1,
+                ),
+            ):
+                comps = r.get("components") or {}
+                notes = r.get("notes") or ""
+                exc = r.get("exception_category")
+                if notes.startswith("skipped:"):
+                    # Full skip reason — Streamlit's dataframe wraps
+                    # long cells, so leaving this untruncated lets the
+                    # analyst see exactly which field was None.
+                    status = f"⊘ {notes[len('skipped:'):].strip()}"
+                elif r.get("passed"):
+                    status = "✓"
+                elif exc:
+                    status = f"⚠️ {exc}"
+                else:
+                    status = "✗"
+                row: Dict[str, Any] = {
+                    "FY": r.get("fiscal_year"),
+                    "Period": r.get("period"),
+                    "Status": status,
+                }
+                for k in all_keys:
+                    row[k] = _fmt_component_value(comps.get(k))
+                disc_pct = r.get("discrepancy_pct")
+                row["Residual %"] = (
+                    f"{disc_pct:.2f}%"
+                    if isinstance(disc_pct, (int, float)) else "—"
+                )
+                df_rows.append(row)
+
+            st.dataframe(df_rows, use_container_width=True, hide_index=True)
+            st.markdown("---")
 
 
 def _render_stage4_validation(bundle: Dict[str, Any]) -> None:

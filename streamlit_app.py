@@ -325,7 +325,16 @@ def _run_pipeline_subprocess(ticker: str) -> None:
 
     repo_root = Path(__file__).resolve().parent
     cmd = [sys.executable, "main.py", "--ticker", ticker]
-    env = {**os.environ, "PYTHONPATH": str(repo_root)}
+    # Pass the active provider through to the subprocess so Stage 1
+    # can route source selection accordingly (skip SEC fetch when
+    # FMP-only, etc.). Falls back to session state, then config
+    # default if nothing's set.
+    selected_provider = st.session_state.get("provider", "fmp")
+    env = {
+        **os.environ,
+        "PYTHONPATH": str(repo_root),
+        "ALETHEIA_PROVIDER": selected_provider,
+    }
 
     progress_container = st.empty()
     log_lines: list[str] = []
@@ -607,7 +616,7 @@ def main():
     # Dive (lead thesis, contrarian, value chain, moat, strategic context all
     # render there), and agent runs can be triggered from the Universe tab's
     # ▶ Run agents footer or the sidebar's per-ticker pipeline button.
-    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report", "⚙  Pipeline Explorer", "⚙  Pipeline Status", "📐  Calc Framework"]
+    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report", "⚙  Pipeline Explorer", "⚙  Pipeline Status", "📐  Calc Framework", "🧪  Stage 3 (provider)"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
     if "active_view" not in st.session_state:
@@ -658,6 +667,60 @@ def main():
         label_visibility="collapsed",
         help="🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
     )
+
+    # ── Data source selector (P4: global, per-session sticky) ────────
+    # Writes ``st.session_state["provider"]`` which the registry's
+    # ``get_provider()`` reads. The choice flows through every view
+    # that consumes a bundle. Per-ticker pins in
+    # ``config/provider_pins.py`` override the selection for known
+    # broken-on-one-source tickers; the status chip below surfaces
+    # the override + its reason.
+    st.sidebar.markdown("### 📊 Data Source")
+    _PROVIDER_OPTIONS = ["fmp", "xbrl", "hybrid"]
+    _PROVIDER_LABELS = {
+        "fmp": "FMP (default)",
+        "xbrl": "XBRL (legacy)",
+        "hybrid": "Hybrid (FMP + XBRL specialty)",
+    }
+    if "provider" not in st.session_state:
+        st.session_state["provider"] = "fmp"
+    st.sidebar.selectbox(
+        "Provider",
+        options=_PROVIDER_OPTIONS,
+        key="provider",
+        format_func=lambda p: _PROVIDER_LABELS.get(p, p),
+        label_visibility="collapsed",
+        help=(
+            "FMP — financialmodelingprep.com data (default). "
+            "XBRL — SEC EDGAR companyfacts + cleaning engine. "
+            "Some tickers may be pinned to a specific provider; "
+            "see the chip below."
+        ),
+    )
+
+    # Status chip — shows the effective provider for the active
+    # ticker, including any per-ticker pin override + reason.
+    from aletheia.providers import resolve_provider_name
+    _active_ticker = st.session_state.get("active_ticker", "")
+    _selected = st.session_state.get("provider", "fmp")
+    _effective, _pin_reason = resolve_provider_name(
+        _selected, ticker=_active_ticker or None,
+    )
+    if _pin_reason:
+        st.sidebar.markdown(
+            f"<div style='font-size:12px;padding:6px 10px;"
+            f"background:#fef3c7;border-radius:6px;color:#92400e;"
+            f"margin-top:4px'>📌 <b>Pinned to {_effective.upper()}</b> "
+            f"for {_active_ticker} · {_pin_reason}</div>",
+            unsafe_allow_html=True,
+        )
+    else:
+        st.sidebar.markdown(
+            f"<div style='font-size:12px;padding:6px 10px;"
+            f"background:#dbeafe;border-radius:6px;color:#1e3a8a;"
+            f"margin-top:4px'>📊 Active source: <b>{_effective.upper()}</b></div>",
+            unsafe_allow_html=True,
+        )
 
     if st.session_state.active_ticker:
         report = fetch_ticker(st.session_state.active_ticker)
@@ -1720,6 +1783,10 @@ def main():
     elif active_view == "📐  Calc Framework":
         from aletheia.ui.calculation_framework_view import render_calculation_framework
         render_calculation_framework()
+
+    elif active_view == "🧪  Stage 3 (provider)":
+        from aletheia.ui.stage3_validation_view import render_stage3_validation
+        render_stage3_validation(st.session_state.active_ticker)
 
 
 if __name__ == "__main__":

@@ -89,11 +89,34 @@ class FieldComparison:
     drift_pct: Optional[float]        # decimal — UI formats
     tier: str                         # "ok" | "minor" | "notable" | "material" | "incomplete"
     note: str = ""                    # carried from the catalog FieldSpec.note
+    period_end_date: Optional[str] = None   # ISO date string YYYY-MM-DD for
+                                            # quarterly columns; lets the UI
+                                            # disambiguate fiscal quarters
+                                            # from calendar quarters (ORCL
+                                            # FY26 Q3 = Dec'25–Feb'26 etc.)
 
     @property
     def period_label(self) -> str:
-        """``FY2025`` for annual; ``FY2026 Q1`` for current-year quarters."""
-        return f"FY{self.fiscal_year}" if self.period == "FY" else f"FY{self.fiscal_year} {self.period}"
+        """``FY2025`` for annual; ``FY2026 Q3 · Feb 2026`` for current-year
+        quarters when ``period_end_date`` is available, otherwise
+        ``FY2026 Q3``. The dated form disambiguates fiscal-quarter labels
+        for non-calendar-FY filers (ORCL May-FYE, MSFT June-FYE, AAPL
+        Sept-FYE) where ``Q3`` of the fiscal year covers different
+        calendar months than the reader's intuition for ``Q3``.
+        """
+        base = (
+            f"FY{self.fiscal_year}"
+            if self.period == "FY"
+            else f"FY{self.fiscal_year} {self.period}"
+        )
+        if self.period == "FY" or not self.period_end_date:
+            return base
+        from datetime import datetime as _dt
+        try:
+            d = _dt.strptime(self.period_end_date[:10], "%Y-%m-%d")
+            return f"{base} · {d.strftime('%b %Y')}"
+        except (TypeError, ValueError):
+            return base
 
     @property
     def cleaning_effect(self) -> str:
@@ -284,18 +307,71 @@ def _xbrl_fact_for_period(
             if u.get("form") != form or u.get("fp") != fp:
                 continue
             end = u.get("end") or ""
-            # end format is "YYYY-MM-DD"; year prefix indicates the
-            # period the value covers (independent of the filing year).
-            if not end.startswith(f"{fiscal_year}-"):
+            # Bug 1 fix — non-calendar-FY filers (ORCL May-FYE, AAPL
+            # Sept-FYE, MSFT June-FYE) have quarters whose end dates
+            # fall in calendar year ``fiscal_year - 1``. The original
+            # ``end.startswith(fiscal_year)`` filter dropped those.
+            # Now match when:
+            #   (a) SEC `fy` field matches AND end is in {fy, fy-1}
+            #       — defends against the META/ORCL pattern where
+            #         prior-year comparative data inside a later
+            #         10-Q gets tagged with the filing year's `fy`
+            #       — `end` calendar year is at most one year off
+            #         the fiscal year for any plausible FY-month
+            #   (b) calendar-year prefix matches (legacy path; META
+            #       restatement case the original comment described)
+            entry_fy = u.get("fy")
+            try:
+                end_year = int(end[:4]) if end else None
+            except ValueError:
+                end_year = None
+            fy_match = (
+                entry_fy == fiscal_year
+                and end_year is not None
+                and end_year in (fiscal_year, fiscal_year - 1)
+            )
+            cal_match = end.startswith(f"{fiscal_year}-")
+            if not (fy_match or cal_match):
                 continue
             candidates.append(u)
     if not candidates:
         return None
+
+    # Bug 2 fix — for quarterly income / cash flow items, XBRL publishes
+    # BOTH the standalone-quarter value AND the cumulative-YTD value as
+    # separate entries with same `fp`/`fy`/`end` but different `start`.
+    # The non-deterministic max() previously picked YTD for many fields
+    # (ORCL FY26 Q3 Revenue rendered as $48.17B = 9-month YTD instead
+    # of $17.19B standalone Q3). Prefer the entry whose duration is a
+    # single quarter (~90 days). Fall back to whatever's there for
+    # filers that publish only one variant.
+    if period in ("Q1", "Q2", "Q3"):
+        def _duration_days(u: Dict[str, Any]) -> int:
+            try:
+                from datetime import date as _date
+                s = _date.fromisoformat(u.get("start") or "")
+                e = _date.fromisoformat(u.get("end") or "")
+                return (e - s).days
+            except (TypeError, ValueError):
+                return 0
+        # Prefer single-quarter entries (~80-100 days). Filter on this
+        # only when at least one such candidate exists; otherwise fall
+        # back to all candidates (some filers may not publish standalone
+        # entries for every tag — keep YTD as a usable fallback).
+        single_q = [u for u in candidates if 80 <= _duration_days(u) <= 100]
+        if single_q:
+            candidates = single_q
+
     # When the same period appears in multiple 10-Ks (comparative
-    # restatements), prefer the most recently filed value.
+    # restatements), prefer the most recently filed value. Tie-break
+    # on `end` to disambiguate ORCL-style cases where the current Q
+    # and prior-year comparative Q share a `filed` date (the filer
+    # tags both with the same 10-Q's fy field). The entry with the
+    # more recent end-date is the current-period value; the older
+    # end-date is the prior-year comparative.
     latest = max(
         candidates,
-        key=lambda u: u.get("filed") or u.get("end") or "",
+        key=lambda u: (u.get("filed") or "", u.get("end") or ""),
     )
     return _coerce(latest.get("val"))
 
@@ -499,8 +575,46 @@ def compare_xbrl_to_fmp(
     current_fy: Optional[int] = current_fy_candidates[0] if current_fy_candidates else None
 
     historical_fys = all_annual_fys[-n_years:]
-    # Build the period axis: [(fy, "FY"), ...] then [(current_fy, "Q1"), ...].
-    period_axis: List[tuple] = [(fy, "FY") for fy in historical_fys]
+
+    def _period_end_for(fy: int, period: str) -> Optional[str]:
+        """Resolve the period-end ISO date for one (fy, period) so the
+        UI column label can include a calendar marker (Mon YYYY)."""
+        # Prefer FMP's `date` — most reliable when present.
+        if period == "FY":
+            for src in ("income", "balance", "cashflow"):
+                stmt = fmp_annual.get(src, {}).get(fy, {})
+                d = stmt.get("date")
+                if d:
+                    return d[:10]
+        else:
+            for src in ("income", "balance", "cashflow"):
+                stmt = fmp_quarterly.get(src, {}).get((fy, period), {})
+                d = stmt.get("date")
+                if d:
+                    return d[:10]
+        # Fall back to XBRL Revenues `end` field for the same period.
+        rev_entry = us_gaap.get("Revenues") or us_gaap.get(
+            "RevenueFromContractWithCustomerExcludingAssessedTax", {}
+        )
+        if not rev_entry:
+            return None
+        fp = "FY" if period == "FY" else period
+        form = "10-K" if period == "FY" else "10-Q"
+        for items in (rev_entry.get("units") or {}).values():
+            best = None
+            for u in items:
+                if u.get("form") == form and u.get("fp") == fp and u.get("fy") == fy:
+                    if not best or (u.get("end") or "") > (best.get("end") or ""):
+                        best = u
+            if best and best.get("end"):
+                return best["end"][:10]
+        return None
+
+    # Build the period axis: [(fy, "FY", end_date), ...] then
+    # [(current_fy, "Q1", end_date), ...].
+    period_axis: List[tuple] = [
+        (fy, "FY", _period_end_for(fy, "FY")) for fy in historical_fys
+    ]
     if current_fy is not None:
         for q in ("Q1", "Q2", "Q3", "Q4"):
             # Only include a quarter if either side has data for it.
@@ -510,11 +624,11 @@ def compare_xbrl_to_fmp(
                 for src in ("income", "balance", "cashflow")
             )
             if has_xbrl or has_fmp:
-                period_axis.append((current_fy, q))
+                period_axis.append((current_fy, q, _period_end_for(current_fy, q)))
 
     # ── Build cells ─────────────────────────────────────────────────
     cells: List[FieldComparison] = []
-    for fy, period in period_axis:
+    for fy, period, end_date in period_axis:
         # XBRL: when looking at FY use the cleaned record; when looking
         # at a quarter the cleaner's record dict is empty (we don't
         # currently materialise quarterly records) so the resolver
@@ -575,14 +689,30 @@ def compare_xbrl_to_fmp(
                 drift_pct=drift_pct,
                 tier=_classify_drift(drift_pct),
                 note=spec.note,
+                period_end_date=end_date,
             ))
+
+    # Build period_labels using the same logic as FieldComparison's
+    # period_label property — so the UI's lookup-by-label stays in
+    # lockstep across the payload's `period_labels` list and the
+    # per-cell `period_label`.
+    def _build_label(fy: int, p: str, end_date: Optional[str]) -> str:
+        base = f"FY{fy}" if p == "FY" else f"FY{fy} {p}"
+        if p == "FY" or not end_date:
+            return base
+        from datetime import datetime as _dt
+        try:
+            d = _dt.strptime(end_date[:10], "%Y-%m-%d")
+            return f"{base} · {d.strftime('%b %Y')}"
+        except (TypeError, ValueError):
+            return base
 
     return FmpComparisonResult(
         ticker=ticker,
-        fiscal_years=sorted({fy for fy, _ in period_axis}),
+        fiscal_years=sorted({fy for fy, _, _ in period_axis}),
         period_labels=[
-            f"FY{fy}" if p == "FY" else f"FY{fy} {p}"
-            for fy, p in period_axis
+            _build_label(fy, p, end_date)
+            for fy, p, end_date in period_axis
         ],
         fields=field_labels,
         categories=categories_present,

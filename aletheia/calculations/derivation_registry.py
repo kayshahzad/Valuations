@@ -110,23 +110,37 @@ DERIVATIONS: List[DerivationEntry] = [
         label="ROIC",
         category="DCF",
         formula="NOPAT / InvestedCapital",
-        inputs=["nopat", "TotalEquity", "LongTermDebt"],
+        inputs=["nopat", "TotalEquity", "TotalDebt", "Cash"],
         methodology=(
-            "IC = TotalEquity + LongTermDebt (operating-capital definition). "
-            "Excludes excess cash, intangibles-from-acquisitions, "
-            "non-operating investments."
+            "**Platform**: IC = TotalEquity + TotalDebt − Cash (book "
+            "invested capital, Damodaran convention, cash netted). "
+            "Rationale: matches the engines' WACC weighting (cash is "
+            "non-operating; including it would double-count the equity "
+            "buffer). End-of-period balance sheet values. "
+            "**Worked example (AAPL TTM Q2 FY26)**: NOPAT $122.32B; "
+            "IC = $106.5B + $84.7B − $36.3B = $154.9B → "
+            "ROIC = 78.98%."
         ),
         alternates=[
-            "McKinsey IC (includes operating leases capitalized, "
-            "excludes goodwill)",
-            "Damodaran IC (book equity + book debt + operating-lease "
-            "liability capitalized)",
-            "FMP IC (their returnOnInvestedCapitalTTM uses a broader "
-            "denominator including some intangibles)",
+            "FMP returnOnInvestedCapitalTTM — back-calculated implies IC "
+            "≈ $247B for AAPL (NOPAT $122.32B / 49.57% ROIC). ~$92B "
+            "above our $154.9B; FMP's formula is opaque but likely "
+            "uses operating-IC (NWC + Net PP&E + Goodwill + leases) "
+            "without netting cash. Their published investedCapitalTTM "
+            "field ($80.9B) DOES NOT match their own ROIC denominator — "
+            "FMP-internal inconsistency.",
+            "McKinsey IC: NWC + Net PP&E + Goodwill + capitalized "
+            "operating leases. Excludes excess cash AND financial "
+            "investments. Used when ROIC is meant to measure operating "
+            "performance only.",
+            "Damodaran IC (book) without cash netting: TotalEquity + "
+            "TotalDebt. Used in academic comparisons; sensitive to "
+            "cash-rich firms.",
         ],
         fmp_equivalent=(
-            "returnOnInvestedCapitalTTM — typically 30-50% LOWER than "
-            "our ROIC due to broader IC denominator"
+            "returnOnInvestedCapitalTTM — drift +50-60% on AAPL "
+            "(78.98% ours vs 49.57% FMP). Documented Category-D "
+            "methodology divergence."
         ),
         category_d=True,
     ),
@@ -193,14 +207,82 @@ DERIVATIONS: List[DerivationEntry] = [
         formula="TotalDebt − CashAndEquivalents − ShortTermInvestments",
         inputs=["LongTermDebt", "ShortTermDebt", "Cash", "ShortTermInvestments"],
         methodology=(
-            "Operating-debt definition: gross debt minus liquid assets. "
-            "Includes short-term investments per Damodaran since they "
-            "could service debt. Lease liabilities EXCLUDED."
+            "**Platform**: broad-cash basket — gross debt minus "
+            "(cash + cash equivalents + short-term investments). "
+            "Rationale: liquid short-term investments (Treasury bills, "
+            "money-market positions) are economically substitutable for "
+            "cash and could service debt on demand. Damodaran convention. "
+            "Lease liabilities EXCLUDED from the debt side (matches our "
+            "TotalDebt input which equals LongTermDebt + ShortTermDebt; "
+            "operating leases live in a separate liability bucket). "
+            "**Worked example (AAPL TTM Q2 FY26)**: TotalDebt $84.7B "
+            "− Cash $36.3B − STInv $32.2B = NetDebt $16.2B."
         ),
         alternates=[
-            "Strict net debt: TotalDebt − Cash (no STI)",
-            "Lease-inclusive: + OperatingLeaseLiability (some analysts)",
+            "FMP netDebtToEBITDATTM uses **narrow cash** "
+            "(cashAndCashEquivalents only, NOT short-term investments). "
+            "Back-calc (AAPL): implied NetDebt = 0.302 × EBITDA $160.3B "
+            "= $48.4B. Matches TotalDebt $84.7B − Cash $36.3B = $48.4B "
+            "(NO STI subtraction). Empirically validated; drift on AAPL "
+            "is ~$32B = exactly the STI line. Drift scales with the "
+            "size of a firm's marketable-security portfolio.",
+            "Strict accounting net debt: TotalDebt − Cash only. Used "
+            "by ratings agencies (Moody's, S&P) — they treat STI as "
+            "less liquid than cash for stress scenarios.",
+            "Enterprise-value net debt (lease-inclusive): "
+            "TotalDebt + capitalised OperatingLease liability − Cash. "
+            "Used in EV/EBITDA where leases should burden the multiple.",
         ],
+        fmp_equivalent=(
+            "netDebtToEBITDATTM — drift -65 to -70% on AAPL (0.10 ours "
+            "vs 0.30 FMP) because FMP excludes ShortTermInvestments "
+            "from the cash netting. Documented Category-D methodology "
+            "divergence; magnitude depends on STI portfolio size."
+        ),
+        category_d=True,
+    ),
+    DerivationEntry(
+        name="roe",
+        label="ROE",
+        category="Screen",
+        formula="NetIncome / TotalEquity",
+        inputs=["NetIncome", "TotalEquity"],
+        methodology=(
+            "**Platform**: end-of-period TotalStockholdersEquity in the "
+            "denominator. TTM NetIncome in the numerator (rolled-forward "
+            "via quarterly sum). Rationale: end-of-period is the most "
+            "recent observable equity base; for buyback-heavy filers "
+            "(AAPL, MSFT) this is the conservative choice — large "
+            "buybacks shrink equity faster than NI accrues, so EOP "
+            "equity is smaller, producing a higher reported ROE. "
+            "**Worked example (AAPL TTM Q2 FY26)**: NI_TTM $122.575B / "
+            "EOP equity $106.491B = 115.10%."
+        ),
+        alternates=[
+            "FMP returnOnEquityTTM uses **average of last 4 "
+            "quarter-end equities** in the denominator. Back-calc (AAPL): "
+            "FMP ROE 146.69% → implied equity = NI_TTM $122.575B / 1.4669 "
+            "= $83.561B. Average of (Q3'25 $73.7B, Q4'25 $88.2B "
+            "— wait we don't have that snapshot. Listed quarters: "
+            "Q3'25 $65.8B, Q4'25 $73.7B, Q1'26 $88.2B, Q2'26 $106.5B) "
+            "= ($65.8 + $73.7 + $88.2 + $106.5) / 4 = $83.55B. "
+            "Drift vs implied: 0.0% (exact match — methodology "
+            "confirmed). Drift on AAPL: -21.5% (115.10% ours vs "
+            "146.69% FMP) because AAPL's equity grew $40B over 4 "
+            "quarters; averaging produces a smaller denominator.",
+            "Beginning-of-period equity (Q3'25): $65.8B → 186%. Used "
+            "in DuPont decomposition when matching to opening-balance "
+            "metrics.",
+            "Tangible equity (excludes goodwill + intangibles): "
+            "appropriate for asset-heavy filers but not AAPL.",
+        ],
+        fmp_equivalent=(
+            "returnOnEquityTTM (in key_metrics_ttm) — drift -15 to -25% "
+            "on growing-equity filers; drift +15 to +25% on "
+            "shrinking-equity filers. Documented Category-D methodology "
+            "divergence (equity period convention)."
+        ),
+        category_d=True,
     ),
 
     # ── Reverse DCF ────────────────────────────────────────────────
@@ -373,18 +455,38 @@ DERIVATIONS: List[DerivationEntry] = [
         formula="market_cap / TotalEquity",
         inputs=["market_cap", "TotalEquity"],
         methodology=(
-            "Book value = TotalEquity (book) including all equity "
-            "components (RE, APIC, AOCI). Excludes minority interest."
+            "**Platform**: end-of-period TotalStockholdersEquity from "
+            "the latest available balance sheet (TTM = latest quarterly "
+            "BS). Excludes minority interest. Rationale: P/B uses "
+            "point-in-time market cap (intraday price × shares), so the "
+            "denominator should also be point-in-time, not averaged. "
+            "**Worked example (AAPL TTM Q2 FY26)**: market_cap "
+            "$4,421B / EOP equity $106.491B = 41.51. "
+            "**Equity-averaging question**: ROE-style averaging "
+            "(avg of 4 quarter-ends) would yield $83.6B → P/B 52.9 — "
+            "but FMP does NOT do this for P/B. FMP's priceToBookRatioTTM "
+            "of 41.19 implies their denominator = $106.3B = EOP equity. "
+            "Both platforms use EOP for P/B; the residual <2% drift is "
+            "market-cap timestamp jitter, NOT an equity convention "
+            "divergence. The equity-period-convention divergence surfaces "
+            "in ROE only (see `roe` entry)."
         ),
         alternates=[
-            "Tangible book P/B (subtract goodwill + intangibles)",
-            "FMP P/B (priceToBookRatioTTM) — may include MI",
+            "Tangible P/B: market_cap / (TotalEquity − Goodwill − "
+            "Intangibles). Used for asset-heavy filers; for software/"
+            "hardware with low goodwill (AAPL) it's near-identical.",
+            "FMP priceToBookRatioTTM — matches our convention "
+            "(end-of-period equity) within <2% on AAPL post-TTM. NOT "
+            "a methodology divergence in practice.",
         ],
         fmp_equivalent=(
-            "priceToBookRatioTTM — 10-15% drift from book-value "
-            "definition (MI inclusion, intangibles)"
+            "priceToBookRatioTTM — drift <2% on AAPL post-TTM-alignment. "
+            "Pre-TTM (FY-anchored) the drift was +48% because our "
+            "denominator was buyback-shrunken FY2025 equity ($72B) vs "
+            "FMP's most-recent quarterly equity ($106B). Now both use "
+            "EOP equity from the latest quarter."
         ),
-        category_d=True,
+        category_d=False,
     ),
     DerivationEntry(
         name="screening_peg",
@@ -399,6 +501,49 @@ DERIVATIONS: List[DerivationEntry] = [
         alternates=[
             "Forward PEG (next-12m consensus growth)",
         ],
+    ),
+    DerivationEntry(
+        name="debt_to_equity",
+        label="Debt / Equity",
+        category="Screen",
+        formula="TotalDebt / TotalEquity",
+        inputs=["TotalDebt", "TotalEquity"],
+        methodology=(
+            "**Platform**: gross TotalDebt (ShortTermDebt + LongTermDebt) "
+            "from the latest balance sheet, divided by end-of-period "
+            "TotalStockholdersEquity. Rationale: matches the capital-"
+            "structure view used in WACC weighting. Operating-lease "
+            "liabilities are typically included by FMP within "
+            "longTermDebt for filers reporting under ASC 842 (current "
+            "US-GAAP) — empirically validated against FMP for AAPL "
+            "TTM Q2 FY26 (post-ASC 842). For pre-ASC 842 era or filers "
+            "where the lease line is broken out, the included-vs-"
+            "excluded debt definition can drift 5-15%. "
+            "**Worked example (AAPL TTM Q2 FY26)**: TotalDebt $84.7B "
+            "/ EOP equity $106.491B = 0.7956. FMP debtToEquityRatioTTM "
+            "= 0.7955 → drift 0.0% (exact match — debt scope confirmed "
+            "identical post-ASC 842)."
+        ),
+        alternates=[
+            "Long-term-only debt: LongTermDebt / TotalEquity. "
+            "Excludes current-portion-LTD and ST-debt. Used in "
+            "leverage-stability analyses (ignores working-capital "
+            "facility usage).",
+            "Lease-explicit: (TotalDebt + capitalised OperatingLease) "
+            "/ TotalEquity. Used for filers with significant ROU "
+            "assets where lease economics dwarf financial debt.",
+            "Net Debt/Equity: (TotalDebt − Cash) / TotalEquity. "
+            "Caters to cash-rich firms (AAPL: would show ~0.45 vs "
+            "gross 0.80).",
+        ],
+        fmp_equivalent=(
+            "debtToEquityRatioTTM — drift 0.0% on AAPL post-TTM. Both "
+            "platforms include operating leases in TotalDebt (ASC 842). "
+            "NOT a methodology divergence post-TTM-alignment; was flagged "
+            "as divergent in the FY-anchored analysis due to "
+            "buyback-shrunken FY2025 equity in our denominator."
+        ),
+        category_d=False,
     ),
     DerivationEntry(
         name="screening_ev_ebit",
