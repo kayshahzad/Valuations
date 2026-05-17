@@ -31,14 +31,23 @@ _STAGE_LABELS = {
     "stage4_agents":    "Stage 4",
 }
 
-# Status → display chip.
+# Status → display chip. Keys match the values written to the
+# pipeline_status table by ``aletheia.pipeline.orchestrator`` via
+# the ``StageStatus`` enum in ``aletheia.contracts.pipeline``.
+# Legacy "success" / "stale" / "pending" labels kept for back-
+# compatibility with any pre-migration rows still in the DB.
 _STATUS_CHIPS = {
-    "success":  "🟢",
-    "running":  "🟡",
-    "failed":   "🔴",
-    "stale":    "🟠",
-    "pending":  "⚪",
-    "unknown":  "⬜",
+    # Orchestrator-written values (current)
+    "ok":                  "🟢",
+    "skipped_cached":      "🟢",
+    "running":             "🟡",
+    "failed":              "🔴",
+    "skipped_dependency":  "🟠",
+    "pending":             "⚪",
+    # Legacy / fallback labels
+    "success":             "🟢",
+    "stale":               "🟠",
+    "unknown":             "⬜",
 }
 
 
@@ -147,18 +156,18 @@ def _suggest_focus_stage(stage_rows: Dict[str, Dict[str, Any]]) -> Optional[str]
       3. Most-recent successful stage (analyst likely wants to drill in)
       4. None (Stage Explorer renders all stages by default)
     """
-    for status, stage_priority in (
-        ("failed",  _STAGES),
-        ("stale",   _STAGES),
-    ):
-        for stage in stage_priority:
-            srow = stage_rows.get(stage)
-            if srow and srow.get("status") == status:
-                return stage
-    # Successful highest-numbered stage
+    # Failed / blocked first — analyst needs to investigate
+    for stage in _STAGES:
+        srow = stage_rows.get(stage)
+        s = srow.get("status") if srow else None
+        if s in ("failed", "skipped_dependency", "stale"):
+            return stage
+    # Otherwise: most-recent successful stage (drill-in target).
+    # Orchestrator writes "ok" + "skipped_cached"; legacy writes "success".
     for stage in reversed(_STAGES):
         srow = stage_rows.get(stage)
-        if srow and srow.get("status") == "success":
+        s = srow.get("status") if srow else None
+        if s in ("ok", "skipped_cached", "success"):
             return stage
     return None
 
@@ -245,27 +254,29 @@ def render_pipeline_status_matrix() -> None:
 
     st.caption(f"Showing **{len(tickers)}** ticker(s)")
 
-    # Summary counts across visible tickers
-    n_running = sum(
-        1 for t in tickers
-        for s in _STAGES
-        if by_ticker_stage.get(t, {}).get(s, {}).get("status") == "running"
+    # Summary counts across visible tickers — match orchestrator-
+    # written status values, with legacy labels covered too.
+    def _count_by_status(predicate) -> int:
+        return sum(
+            1 for t in tickers for s in _STAGES
+            if predicate(
+                by_ticker_stage.get(t, {}).get(s, {}).get("status")
+            )
+        )
+    n_ok = _count_by_status(
+        lambda s: s in ("ok", "skipped_cached", "success")
     )
-    n_failed = sum(
-        1 for t in tickers
-        for s in _STAGES
-        if by_ticker_stage.get(t, {}).get(s, {}).get("status") == "failed"
+    n_running = _count_by_status(lambda s: s == "running")
+    n_failed = _count_by_status(lambda s: s == "failed")
+    n_blocked = _count_by_status(
+        lambda s: s in ("skipped_dependency", "stale")
     )
-    n_stale = sum(
-        1 for t in tickers
-        for s in _STAGES
-        if by_ticker_stage.get(t, {}).get(s, {}).get("status") == "stale"
-    )
-    cols = st.columns(4)
+    cols = st.columns(5)
     cols[0].metric("Tickers", len(tickers))
-    cols[1].metric("🟡 Running stages", n_running)
-    cols[2].metric("🔴 Failed stages", n_failed)
-    cols[3].metric("🟠 Stale stages", n_stale)
+    cols[1].metric("🟢 OK stages", n_ok)
+    cols[2].metric("🟡 Running", n_running)
+    cols[3].metric("🔴 Failed", n_failed)
+    cols[4].metric("🟠 Blocked / stale", n_blocked)
 
     # Build the table rows. The "navigate" column is rendered as a
     # separate column of buttons below the dataframe because Streamlit's

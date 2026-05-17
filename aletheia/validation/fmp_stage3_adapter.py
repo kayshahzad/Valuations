@@ -165,6 +165,14 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     ebitda = rec.get("EBITDA")
     if ebitda is None and op_inc is not None and da is not None:
         ebitda = op_inc + da
+    # Always mirror EBITDA into derived so ``derived_EBITDA`` column
+    # populates regardless of whether FMP supplied the value directly
+    # or we synthesized it from OpInc + D&A. Same FMP-adapter → DB
+    # column mismatch pattern as Depreciation_Total: the DB schema
+    # has ``derived_EBITDA`` but no ``raw_EBITDA``; the fmp_compare
+    # view reads ``L.get("derived_EBITDA")`` which would otherwise
+    # render "—".
+    if ebitda is not None:
         derived["EBITDA"] = ebitda
 
     # GAAP tax rate from current-period income statement. Falls back
@@ -234,6 +242,26 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     # ``derived_ROE`` as a decimal fraction.
     if net_income is not None and total_equity and abs(total_equity) > 1e3:
         derived["ROE"] = net_income / total_equity
+
+    # ── Schema-aligned mirror to derived dict ──────────────────────
+    # The DB has ``derived_*`` columns for several fields the cleaning_
+    # engine emits in its derived dict. FMP records put the values in
+    # ``raw`` (under FMP-friendly names) which don't always have a
+    # matching ``raw_*`` column. Without an explicit derived mirror,
+    # ``derived_X`` lands as NaN even though we have the value — which
+    # breaks every view that reads ``derived_X`` directly (fmp_compare
+    # EBITDA row, DCFEngine D&A lookup, etc.).
+    #
+    # Same pattern + same fix as Depreciation_Total: write into
+    # ``derived`` so the post-persist DB row carries the value in
+    # the column downstream code expects.
+    if da is not None:
+        derived["Depreciation_Total"] = da
+    if op_inc is not None:
+        derived["OperatingIncome"] = op_inc
+    capex_pos = rec.get("CapEx")
+    if capex_pos is not None:
+        derived["CapEx"] = capex_pos
 
     # ── Mirror cleaning-engine fields into the clean dict ─────────
     # ReverseDCF reads ``clean_NormalizedEBIT``, ``clean_NOPAT``, and
