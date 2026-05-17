@@ -62,11 +62,20 @@ def _validate_ticker_format(ticker: str) -> Optional[str]:
     return t
 
 
-def run_add_ticker_pipeline(ticker: str) -> Generator[Any, None, None]:
+def run_add_ticker_pipeline(
+    ticker: str, *, provider: Optional[str] = None,
+) -> Generator[Any, None, None]:
     """
     Generator that yields `StepUpdate` objects in real time and a final
     `PipelineResult` as its last value. The UI consumes the stream to drive
     a live progress panel.
+
+    Args:
+        ticker: Symbol to add.
+        provider: Data-source provider for Stage 1-3. Defaults to whatever
+            the registry resolves (``ALETHEIA_PROVIDER`` env var, then
+            config default — currently ``"fmp"``). Add Ticker honours the
+            sidebar selector when invoked from the UI.
     """
     clean_ticker = _validate_ticker_format(ticker)
     if not clean_ticker:
@@ -119,37 +128,78 @@ def run_add_ticker_pipeline(ticker: str) -> Generator[Any, None, None]:
             f"Could not write classification: {type(e).__name__}: {e}",
         )
 
-    # ── Step 1: SEC ingestion (CIK → companyfacts → clean → DB) ────────────
+    # ── Step 1: Stages 1-3 via the modern orchestrator ──────────────────
+    # Replaces the legacy EdgarIngester-only path. The orchestrator
+    # runs Stage 1 (ingest) → Stage 2 (clean / provider) → Stage 3
+    # (calc engines + identity audit), writes pipeline_status rows,
+    # and honors the active provider for source routing. Stage 4 is
+    # deliberately deferred — the analyst clicks the sidebar
+    # "🧠 Run Stage 4 (LLM)" button when ready to spend LLM budget.
     yield StepUpdate(
-        "ingest", "running",
-        f"Downloading SEC filings and running cleaning engine for {clean_ticker}…",
+        "orchestrator", "running",
+        f"Running Stages 1-3 via orchestrator for {clean_ticker} "
+        f"(provider={provider or 'default'})…",
     )
     try:
-        from aletheia.data.edgar_client import EdgarIngester
-        ingester = EdgarIngester()
-        ok = ingester.ingest(clean_ticker)
+        from aletheia.pipeline.orchestrator import Orchestrator
+        from aletheia.cli.pipeline import detect_pipeline_version
+        pipeline_version = detect_pipeline_version()
+        with Orchestrator() as orch:
+            orch_result = orch.run(
+                clean_ticker,
+                pipeline_version=pipeline_version,
+                auto_agents=False,
+                provider=provider,
+            )
     except Exception as e:
-        ok = False
         yield StepUpdate(
-            "ingest", "error",
-            f"Ingestion crashed: {type(e).__name__}: {e}",
+            "orchestrator", "error",
+            f"Orchestrator crashed: {type(e).__name__}: {e}",
         )
-        result.steps.append(StepUpdate("ingest", "error", str(e)))
+        result.steps.append(StepUpdate("orchestrator", "error", str(e)))
         yield result
         return
 
-    if not ok:
-        msg = (
-            f"Ingestion failed for {clean_ticker}. Common causes: "
-            "ticker not found at SEC (foreign company without 20-F); "
-            "tag resolver doesn't recognise the issuer's XBRL tags."
-        )
-        yield StepUpdate("ingest", "error", msg)
-        result.steps.append(StepUpdate("ingest", "error", msg))
-        yield result
-        return
+    # Per-stage step updates so the analyst sees what happened. Stage 3
+    # failures degrade to "warning" (the ticker is still added; DCF
+    # may not be available for routing_required / ddm_required filers
+    # but Stage 1/2 data is valid).
+    stage_labels = {
+        "stage1_ingest":    "Stage 1 (ingest)",
+        "stage2_validate":  "Stage 2 (clean)",
+        "stage3_calculate": "Stage 3 (calc)",
+    }
+    for stage_id, label in stage_labels.items():
+        outcome = orch_result.stages.get(stage_id)
+        if outcome is None:
+            continue
+        status = outcome.status.value
+        if status == "ok":
+            msg = f"✓ {label} OK ({outcome.duration_seconds:.1f}s)"
+            yield StepUpdate(stage_id, "ok", msg)
+            result.steps.append(StepUpdate(stage_id, "ok", msg))
+        elif status == "skipped_cached":
+            msg = f"⊘ {label} cached (fingerprint match)"
+            yield StepUpdate(stage_id, "ok", msg)
+            result.steps.append(StepUpdate(stage_id, "ok", msg))
+        else:
+            # failed / skipped_dependency — Stage 3 failure on
+            # routing_required tickers is expected. Tag as warning so
+            # the rest of the flow continues.
+            severity = "warning" if stage_id == "stage3_calculate" else "error"
+            msg = (
+                f"⚠ {label} {status}: "
+                f"{outcome.error_message or 'no detail'}"
+            )
+            yield StepUpdate(stage_id, severity, msg)
+            result.steps.append(StepUpdate(stage_id, severity, msg))
+            if severity == "error":
+                yield result
+                return
 
-    # Confirm DB has rows; pull latest fiscal year for downstream validation.
+    # Confirm DB has rows; pull latest fiscal year for downstream
+    # validation. (Same as before, but DB is now populated by Stage 2
+    # regardless of provider choice.)
     try:
         from aletheia.utils.calc_input_builder import make_calc_input
         calc = make_calc_input(clean_ticker)
@@ -157,7 +207,7 @@ def run_add_ticker_pipeline(ticker: str) -> Generator[Any, None, None]:
         if df.empty:
             yield StepUpdate(
                 "ingest", "error",
-                "Cleaning engine ran but no records reached the DB.",
+                "Stage 2 ran but no records reached the DB.",
             )
             yield result
             return
@@ -167,16 +217,20 @@ def run_add_ticker_pipeline(ticker: str) -> Generator[Any, None, None]:
     except Exception as e:
         yield StepUpdate(
             "ingest", "error",
-            f"Could not load cleaned records: {type(e).__name__}: {e}",
+            f"Could not load post-orchestrator records: "
+            f"{type(e).__name__}: {e}",
         )
         yield result
         return
 
-    yield StepUpdate(
-        "ingest", "ok",
-        f"Cleaned {n_years} fiscal years (through FY{latest_fy}) and persisted to DB.",
+    # Compact summary the analyst can confirm at a glance before the
+    # SEC/FMP validation tables render.
+    summary_msg = (
+        f"DB has {n_years} records (latest FY{latest_fy}). "
+        f"Pipeline Status matrix updated for stages 1-3."
     )
-    result.steps.append(StepUpdate("ingest", "ok", f"FY{latest_fy} latest, {n_years} years"))
+    yield StepUpdate("db_ready", "ok", summary_msg)
+    result.steps.append(StepUpdate("db_ready", "ok", summary_msg))
 
     # ── Step 2: SEC XBRL validation ────────────────────────────────────────
     yield StepUpdate(
@@ -235,11 +289,28 @@ def run_add_ticker_pipeline(ticker: str) -> Generator[Any, None, None]:
         yield StepUpdate("fmp_validate", "ok", msg)
         result.steps.append(StepUpdate("fmp_validate", "ok", msg))
 
-    # ── Step 4: TTM derivation + Gate A.TTM ────────────────────────────────
-    # Run the same TTM-ingest logic `scripts/ingest_ttm.py --ticker` uses,
-    # so a freshly-added ticker is indistinguishable from a `--all`-run
-    # universe member: it gets a TTM row, Gate A.TTM byte-perfect-required
-    # cross-checks, and Phase Q-6 per-quarter consistency receipts.
+    # ── Step 4: TTM derivation + Gate A.TTM (XBRL provider only) ────────
+    # When the active provider is FMP or Hybrid, Stage 2 already
+    # produced a TTM record (FmpProvider builds it from the last 4
+    # quarters as part of `to_validated_records`). Skipping the TTM
+    # step in that case avoids a redundant write + Gate A.TTM check
+    # against a record that doesn't exist in the legacy parquet path.
+    #
+    # XBRL path still relies on `scripts/ingest_ttm._process_one` for
+    # TTM because the cleaning_engine doesn't produce TTM rows.
+    resolved_provider = (provider or "fmp").lower()
+    if resolved_provider != "xbrl":
+        ttm_skip_msg = (
+            f"TTM step skipped: provider={resolved_provider!r} already "
+            "built the TTM record in Stage 2. (Legacy `scripts/ingest_ttm` "
+            "path is XBRL-provider-only.)"
+        )
+        yield StepUpdate("ttm_ingest", "ok", ttm_skip_msg)
+        result.steps.append(StepUpdate("ttm_ingest", "ok", ttm_skip_msg))
+        result.success = True
+        yield result
+        return
+
     yield StepUpdate(
         "ttm_ingest", "running",
         "Deriving TTM and running Gate A.TTM cross-check…",

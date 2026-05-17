@@ -44,7 +44,6 @@ from typing import Any, Callable, Dict, List, Optional
 
 from aletheia.contracts.pipeline import IngestedRawBundle, RawSource
 from aletheia.data import edgar_client, fmp_client
-from config.ticker_classification import UNIVERSE
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -261,10 +260,17 @@ def run_stage1(
             empty (e.g., SEC EDGAR returns 403).
     """
     ticker = ticker.upper()
-    if ticker not in UNIVERSE:
+    # Consult the extended universe (curated UNIVERSE + runtime
+    # classifications). Newly-added tickers via Add Ticker flow land
+    # in the runtime layer first; gating on the curated dict alone
+    # would block them. ``get_extended_universe`` merges both views
+    # with curated entries winning on collision.
+    from config.ticker_classification import get_extended_universe
+    _extended = get_extended_universe()
+    if ticker not in _extended:
         raise Stage1IngestError(
-            f"{ticker!r} not in UNIVERSE; add to "
-            "config/ticker_classification.UNIVERSE before ingest."
+            f"{ticker!r} not in extended UNIVERSE; add via "
+            "Add Ticker flow or config/ticker_classification.UNIVERSE."
         )
 
     # Provider-aware source allow-list — when ``provider="fmp"`` is
@@ -349,7 +355,9 @@ def run_stage1(
     )
 
     # ── Classification snapshot ─────────────────────────────────────
-    classification = UNIVERSE[ticker]
+    # Read from the same extended view used at the membership check
+    # so a newly-added ticker's classification is captured here too.
+    classification = _extended[ticker]
     classification_snapshot = {
         "ticker": classification.ticker,
         "sector": classification.sector,

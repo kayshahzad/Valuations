@@ -13,7 +13,7 @@ from typing import Optional
 import pandas as pd
 
 from aletheia.contracts.interfaces import CalculationInput, ValuationProfile
-from config.ticker_classification import UNIVERSE
+from config.ticker_classification import get_extended_universe
 from config.known_issues import KNOWN_ISSUES
 from config.valuation_defaults import (
     LIFECYCLE_PROFILES,
@@ -27,14 +27,16 @@ def make_calc_input(ticker: str, df: Optional[pd.DataFrame] = None) -> Calculati
     Build a CalculationInput for `ticker`. If `df` is omitted, loads the
     cleaned multi-year history from DuckDB.
 
-    Raises if the ticker isn't in UNIVERSE — calc tools require classification
+    Raises if the ticker isn't in the extended UNIVERSE (curated +
+    runtime classifications) — calc tools require classification
     metadata to dispatch sector/lifecycle behavior correctly.
     """
-    classification = UNIVERSE.get(ticker)
+    classification = get_extended_universe().get(ticker)
     if classification is None:
         raise ValueError(
-            f"Ticker {ticker!r} not in UNIVERSE — add it to "
-            f"config/ticker_classification.py before calling calc tools."
+            f"Ticker {ticker!r} not in extended UNIVERSE — add it to "
+            f"config/ticker_classification.py or via the Add Ticker flow "
+            f"before calling calc tools."
         )
 
     issues = KNOWN_ISSUES.get(ticker, [])

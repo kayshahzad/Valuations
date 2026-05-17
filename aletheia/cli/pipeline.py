@@ -50,6 +50,7 @@ def _run_one(args, pipeline_version: str) -> int:
             bust_cache=bust_cache,
             force_refresh=args.force_refresh,
             include_market_snapshot=not args.no_market_snapshot,
+            provider=args.provider,
         )
 
     print(json.dumps({
@@ -86,6 +87,7 @@ def _run_universe(args, pipeline_version: str) -> int:
                 bust_cache=bust_cache,
                 force_refresh=args.force_refresh,
                 include_market_snapshot=not args.no_market_snapshot,
+                provider=args.provider,
             )
             summary = " ".join(
                 f"{s.split('_')[0]}={o.status.value[:2]}"
@@ -205,6 +207,13 @@ def build_parser() -> argparse.ArgumentParser:
     run_p.add_argument("--pipeline-version", default=None,
                        help="Override stamped pipeline version "
                             "(defaults to git rev-parse HEAD).")
+    run_p.add_argument("--provider", default=None,
+                       choices=["fmp", "xbrl", "hybrid"],
+                       help="Data-source provider. "
+                            "Default reads ALETHEIA_PROVIDER env var, "
+                            "then config/data_source.py "
+                            "(currently 'fmp'). Routes Stage 1 source "
+                            "allow-list + Stage 2 record construction.")
 
     # status
     status_p = sub.add_parser("status", help="Show pipeline status.")

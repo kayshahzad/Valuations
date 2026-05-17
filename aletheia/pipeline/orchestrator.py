@@ -147,6 +147,7 @@ class Orchestrator:
         bust_cache: Optional[Sequence[str]] = None,
         force_refresh: bool = False,
         include_market_snapshot: bool = True,
+        provider: Optional[str] = None,
     ) -> OrchestratorResult:
         """Execute the pipeline for one ticker.
 
@@ -164,7 +165,21 @@ class Orchestrator:
                 bypass.
             include_market_snapshot: Forwarded to Stage 1. Set False
                 for offline / CI runs.
+            provider: Data-source provider name (``"fmp"``, ``"xbrl"``,
+                or ``"hybrid"``). When None, falls back to
+                ``ALETHEIA_PROVIDER`` env var, then config default.
+                Routes Stage 1 source allow-list (FMP skips SEC fetch)
+                and Stage 2 record construction (FMP/Hybrid bypass
+                cleaning_engine in favor of provider.to_validated_records).
         """
+        # Resolve provider once at the top of the run so all stages
+        # see the same value (env-var resolution can shift between
+        # process invocations otherwise).
+        if provider is None:
+            import os
+            provider = os.environ.get(
+                "ALETHEIA_PROVIDER", "fmp",
+            ).strip().lower()
         ticker = ticker.upper()
         started = datetime.now(timezone.utc)
         result = OrchestratorResult(
@@ -190,6 +205,7 @@ class Orchestrator:
             force_refresh=force_refresh,
             include_market_snapshot=include_market_snapshot,
             bust=("stage1_ingest" in bust_set),
+            provider=provider,
         )
         result.stages["stage1_ingest"] = stage1_outcome
         if stage1_outcome.status == StageStatus.FAILED:
@@ -211,6 +227,7 @@ class Orchestrator:
             pipeline_version=pipeline_version,
             input_bundle_fingerprint=stage1_outcome.fingerprint,
             bust=("stage2_validate" in bust_set),
+            provider=provider,
         )
         result.stages["stage2_validate"] = stage2_outcome
         if stage2_outcome.status == StageStatus.FAILED:
@@ -265,6 +282,7 @@ class Orchestrator:
         force_refresh: bool,
         include_market_snapshot: bool,
         bust: bool,
+        provider: Optional[str] = None,
     ) -> StageOutcome:
         stage = "stage1_ingest"
         # Capture prior status BEFORE mark_running overwrites it.
@@ -279,6 +297,7 @@ class Orchestrator:
                 pipeline_version=pipeline_version,
                 force_refresh=force_refresh,
                 include_market_snapshot=include_market_snapshot,
+                provider=provider,
             )
         except Stage1IngestError as exc:
             duration = time.perf_counter() - t0
@@ -328,17 +347,28 @@ class Orchestrator:
         pipeline_version: str,
         input_bundle_fingerprint: Optional[str],
         bust: bool,
+        provider: Optional[str] = None,
     ) -> StageOutcome:
         stage = "stage2_validate"
         prior = self._status_store.get(ticker, stage)
         self._status_store.mark_running(ticker, stage)
         t0 = time.perf_counter()
         try:
-            records: List[ValidatedCleanedRecord] = run_stage2(
-                ticker=ticker,
-                pipeline_version=pipeline_version,
-                input_bundle_fingerprint=input_bundle_fingerprint,
-            )
+            # Provider-aware Stage 2 routing:
+            #   xbrl / None  → legacy cleaning_engine path via run_stage2
+            #   fmp / hybrid → provider.to_validated_records() bypass +
+            #                  DB persistence via _persist_provider_records
+            if provider in ("fmp", "hybrid"):
+                records = self._run_stage2_via_provider(
+                    ticker, provider=provider,
+                    pipeline_version=pipeline_version,
+                )
+            else:
+                records = run_stage2(
+                    ticker=ticker,
+                    pipeline_version=pipeline_version,
+                    input_bundle_fingerprint=input_bundle_fingerprint,
+                )
         except Stage2ValidateError as exc:
             duration = time.perf_counter() - t0
             self._status_store.mark_failed(
@@ -441,6 +471,104 @@ class Orchestrator:
             fingerprint=bundle.bundle_fingerprint,
             duration_seconds=duration, payload=bundle,
         )
+
+    def _run_stage2_via_provider(
+        self,
+        ticker: str,
+        *,
+        provider: str,
+        pipeline_version: str,
+    ) -> List[ValidatedCleanedRecord]:
+        """B-2: Stage 2 records sourced from the provider abstraction
+        rather than the legacy cleaning_engine path.
+
+        For ``provider in {"fmp", "hybrid"}`` this bypasses the
+        cleaning_engine entirely. The provider returns
+        ``ValidatedCleanedRecord`` directly (FmpProvider already
+        applies sign conventions + derived-field computation; the
+        hybrid path additionally surfaces XBRL specialty tags via
+        ``get_companyfact``). Records are persisted to DuckDB via
+        the ``CleanedRecord`` adapter so all DB-backed UI views
+        (Pipeline Explorer, Dashboard, Universe, etc.) see the
+        provider-flavoured data — same DB schema, different source.
+
+        Provider records carry a ``validation.fmp_validation['source']``
+        tag identifying which provider produced them. The pipeline
+        version stamped on each record includes the provider name
+        for downstream attribution.
+        """
+        from aletheia.providers import get_provider
+        prov = get_provider(provider)
+        records = prov.to_validated_records(ticker)
+        if not records:
+            raise Stage2ValidateError(
+                f"Provider {provider!r} returned no records for {ticker!r}. "
+                "Check FMP cache + API availability."
+            )
+
+        # Re-stamp each record's ``pipeline_version`` so downstream
+        # audit / cache-hit logic ties this run to the orchestrator's
+        # version string (provider's default is its own internal tag).
+        # ValidatedCleanedRecord is pydantic-frozen, so use
+        # ``.model_copy(update=...)`` to produce a new instance.
+        records = [
+            r.model_copy(update={"pipeline_version": pipeline_version})
+            for r in records
+        ]
+
+        # Adapt + persist each ValidatedCleanedRecord to DuckDB. The
+        # CleanedRecord adapter strips ValidatedCleanedRecord-only
+        # metadata (validation receipt, fingerprints) and keeps the
+        # data dicts the legacy DB schema understands. Quality
+        # scoring + flags default to provider-source-pass; the
+        # underlying provider already validated the records on its
+        # side before we got them.
+        self._persist_provider_records(records, provider=provider)
+        return records
+
+    def _persist_provider_records(
+        self,
+        records: List[ValidatedCleanedRecord],
+        *,
+        provider: str,
+    ) -> None:
+        """B-3: write provider-sourced records to the DB.
+
+        Each ``ValidatedCleanedRecord`` becomes a ``CleanedRecord``
+        with the same raw/clean/derived blobs and an empty flag set.
+        The DB's ``upsert_record`` schema-contract gate still runs;
+        records that violate Tier-C identities raise (matching
+        legacy behaviour).
+        """
+        from aletheia.data.cleaning_engine import CleanedRecord
+        from aletheia.data.database import InvestmentDatabase
+        db = InvestmentDatabase(verbose=False)
+        try:
+            for vr in records:
+                cr = CleanedRecord(
+                    ticker=vr.ticker,
+                    fiscal_year=vr.fiscal_year,
+                    period_end_date=vr.period_end_date,
+                    period=vr.period,
+                    raw=dict(vr.raw),
+                    clean=dict(vr.clean),
+                    derived=dict(vr.derived),
+                )
+                # Best-effort persist — schema-contract violations
+                # raise CalculationError; we swallow per-record errors
+                # so a single bad year doesn't kill the run, but mark
+                # the failure on stderr for the operator.
+                try:
+                    db.upsert_record(cr)
+                except Exception as exc:  # noqa: BLE001
+                    import sys
+                    print(
+                        f"  ⚠ persist failed: {vr.ticker} FY{vr.fiscal_year} "
+                        f"{vr.period} ({provider}): {type(exc).__name__}: {exc}",
+                        file=sys.stderr,
+                    )
+        finally:
+            db.close()
 
     def _run_stage4(
         self,

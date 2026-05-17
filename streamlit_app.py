@@ -310,12 +310,26 @@ def fetch_financials_bundle(ticker: str):
     return ticker_detail(ticker)
 
 
-def _run_pipeline_subprocess(ticker: str) -> None:
+def _run_pipeline_subprocess(
+    ticker: str, *, auto_agents: bool = False,
+    bust_cache: Optional[str] = None,
+) -> None:
     """
-    Spawn `python3 main.py --ticker {ticker}` and stream output to a
-    Streamlit progress UI. Stores result in session_state for sidebar render.
-    On completion, clears the API and financials caches so the next view
-    refresh picks up the new report.
+    Invoke the modern orchestrator via ``python -m aletheia.cli.pipeline run``.
+
+    Args:
+        ticker: Symbol to refresh.
+        auto_agents: When True, also runs Stage 4 (LLM agents). Default
+            False — stops after Stage 3, refreshing all numeric data
+            but skipping the LLM-cost step.
+        bust_cache: Optional stage id to force re-run (e.g.
+            "stage4_agents" to re-run only LLM agents when Stage 3 is
+            already cached).
+
+    Writes through to ``pipeline_status`` for every stage executed, so
+    the Pipeline Status matrix reflects the run automatically. Bursts
+    API + financials caches on completion so the next view fetch picks
+    up the fresh DB state.
     """
     import os
     import subprocess
@@ -324,11 +338,20 @@ def _run_pipeline_subprocess(ticker: str) -> None:
     from pathlib import Path
 
     repo_root = Path(__file__).resolve().parent
-    cmd = [sys.executable, "main.py", "--ticker", ticker]
+    # Migrated from main.py (deprecated LangGraph workflow) to the
+    # modern orchestrator. Stages 1→2→3 always; Stage 4 only when
+    # auto_agents=True. The orchestrator writes pipeline_status rows
+    # at every stage transition — no separate status plumbing needed.
+    cmd = [
+        sys.executable, "-m", "aletheia.cli.pipeline", "run", ticker,
+    ]
+    if auto_agents:
+        cmd.append("--auto-agents")
+    if bust_cache:
+        cmd.extend(["--bust-cache", bust_cache])
     # Pass the active provider through to the subprocess so Stage 1
     # can route source selection accordingly (skip SEC fetch when
-    # FMP-only, etc.). Falls back to session state, then config
-    # default if nothing's set.
+    # FMP-only, etc.).
     selected_provider = st.session_state.get("provider", "fmp")
     env = {
         **os.environ,
@@ -405,8 +428,14 @@ def _run_add_ticker_pipeline_ui(ticker_input: str) -> None:
     final: Optional["PipelineResult"] = None
     step_log: list[str] = []
 
+    # Honor the sidebar provider selection for the new ticker's
+    # Stages 1-3. Defaults to "fmp" when unset.
+    selected_provider = st.session_state.get("provider", "fmp")
+
     with st.status(f"Adding {ticker_input.upper()}…", expanded=True) as status:
-        for evt in run_add_ticker_pipeline(ticker_input):
+        for evt in run_add_ticker_pipeline(
+            ticker_input, provider=selected_provider,
+        ):
             if isinstance(evt, StepUpdate):
                 glyph = {"running": "▷", "ok": "✓", "warning": "⚠", "error": "✗"}.get(evt.status, "•")
                 step_log.append(f"{glyph} **{evt.step}** — {evt.message}")
@@ -748,14 +777,41 @@ def main():
             """, unsafe_allow_html=True)
 
     # ── Sidebar Run Pipeline ─────────────────────────────────────────────────
+    # Migrated from legacy main.py invocation to the modern orchestrator
+    # (aletheia.cli.pipeline). Stages 1-3 button refreshes ALL numeric
+    # data + pipeline_status; Stage 4 button runs LLM agents on top
+    # without re-running cached upstream stages.
     if st.session_state.active_ticker:
+        t = st.session_state.active_ticker
         st.sidebar.markdown("<hr style='margin: 16px 0'>", unsafe_allow_html=True)
-        run_label = f"▶ Run pipeline for {st.session_state.active_ticker}"
-        if st.sidebar.button(run_label, use_container_width=True, key="run_pipeline_btn"):
-            _run_pipeline_subprocess(st.session_state.active_ticker)
+        st.sidebar.markdown("### ⚡ Refresh")
+        if st.sidebar.button(
+            f"▶ Run Stages 1-3 for {t}",
+            use_container_width=True, key="run_stages_123_btn",
+            help=(
+                "Re-runs ingest → clean → calc through the orchestrator. "
+                "Refreshes Stage 1-3 data, identity audits, and the "
+                "Pipeline Status matrix. Does NOT call LLM agents."
+            ),
+        ):
+            _run_pipeline_subprocess(t, auto_agents=False)
+        if st.sidebar.button(
+            f"🧠 Run Stage 4 (LLM) for {t}",
+            use_container_width=True, key="run_stage4_btn",
+            help=(
+                "Runs LLM agents (thesis, qualitative, contrarian) on "
+                "top of the existing Stage 3 bundle. Skips upstream "
+                "stages when they're cache-fresh. Forces re-run of "
+                "Stage 4 even if previously completed."
+            ),
+        ):
+            _run_pipeline_subprocess(
+                t, auto_agents=True, bust_cache="stage4_agents",
+            )
+
         if "last_pipeline_run" in st.session_state:
             last = st.session_state.last_pipeline_run
-            if last["ticker"] == st.session_state.active_ticker:
+            if last["ticker"] == t:
                 if last["returncode"] == 0:
                     st.sidebar.success(
                         f"✓ Pipeline ran ({last['elapsed_s']:.1f}s). "

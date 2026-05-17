@@ -42,7 +42,9 @@ from aletheia.contracts.interfaces import (
     CalculationInput,
     ValuationProfile,
 )
-from config.ticker_classification import TickerClassification, UNIVERSE
+from config.ticker_classification import (
+    TickerClassification, get_extended_universe,
+)
 from config.known_issues import KNOWN_ISSUES
 from config.valuation_defaults import (
     LIFECYCLE_PROFILES,
@@ -274,7 +276,7 @@ def run_stage3(
     ticker = next(iter(tickers))
 
     if classification is None:
-        classification = UNIVERSE.get(ticker)
+        classification = get_extended_universe().get(ticker)
     if classification is None:
         raise Stage3InputError(
             f"No classification for {ticker!r}. Add it to "
