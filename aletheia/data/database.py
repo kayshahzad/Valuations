@@ -252,6 +252,21 @@ class InvestmentDatabase:
             "clean_SGA_Combined",
             "clean_GeneralAndAdministrative",
             "clean_SellingAndMarketing",
+            # Capital-IQ alignment: FMP bundles impairment / restructuring
+            # / settlement gains into ``otherExpenses``; these fields strip
+            # that bucket from operating profit so cross-source comparisons
+            # work for tickers with material one-time items (Macy's FY2023
+            # $957M goodwill writedown is the canonical example).
+            "clean_OperatingIncome_ExUnusual",
+            "clean_EBITDA_ExUnusual",
+            "clean_OtherOperatingItems",
+            # Per-share metrics straight from FMP plus computed DPS /
+            # payout ratio. EPS columns previously dropped silently due
+            # to a case-mismatched key in the FMP adapter map.
+            "clean_EPS_Basic",
+            "clean_EPS_Diluted",
+            "clean_DividendsPerShare",
+            "clean_PayoutRatio",
         ):
             self._conn.execute(
                 f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} DOUBLE"
@@ -266,6 +281,11 @@ class InvestmentDatabase:
             ("fmp_validation_skip_reason", "VARCHAR"),   # NULL when status != skipped
             ("fmp_validation_json",        "VARCHAR"),   # full payload as JSON
             ("fmp_validated_at",           "VARCHAR"),   # ISO8601
+            # Provenance for OperatingIncome_ExUnusual / EBITDA_ExUnusual:
+            #   'xbrl_discrete_tags'        = hybrid path (precise)
+            #   'fmp_other_expenses_bucket' = FMP-only path (approximate)
+            #   NULL                        = neither available; OpInc unchanged
+            ("clean_OperatingIncome_ExUnusual_Source", "VARCHAR"),
         ):
             self._conn.execute(
                 f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} {sqltype}"
@@ -714,6 +734,26 @@ class InvestmentDatabase:
             "clean_SGA_Combined": record.clean.get("SGA_Combined"),
             "clean_GeneralAndAdministrative": record.clean.get("GeneralAndAdministrative"),
             "clean_SellingAndMarketing": record.clean.get("SellingAndMarketing"),
+            # Capital-IQ alignment + per-share metrics (Phase: FMP-adapter
+            # extensions). See database.py migration block for context.
+            "clean_OperatingIncome_ExUnusual": record.clean.get("OperatingIncome_ExUnusual"),
+            # Provenance: translate the numeric code stored in clean back
+            # to the human label. ValidatedCleanedRecord.clean is typed
+            # Dict[str, Optional[float]], so the upstream FMP adapter
+            # writes a code; we resolve to a string for the VARCHAR
+            # column. None when no add-back was applied.
+            "clean_OperatingIncome_ExUnusual_Source": (
+                __import__("aletheia.validation.fmp_stage3_adapter",
+                           fromlist=["SOURCE_LABELS"]).SOURCE_LABELS.get(
+                    record.clean.get("OperatingIncome_ExUnusual_Source_Code")
+                )
+            ),
+            "clean_EBITDA_ExUnusual": record.clean.get("EBITDA_ExUnusual"),
+            "clean_OtherOperatingItems": record.clean.get("OtherOperatingItems"),
+            "clean_EPS_Basic": record.clean.get("EPS_Basic"),
+            "clean_EPS_Diluted": record.clean.get("EPS_Diluted"),
+            "clean_DividendsPerShare": record.clean.get("DividendsPerShare"),
+            "clean_PayoutRatio": record.clean.get("PayoutRatio"),
             "clean_FCF": record.clean.get("FCF"),
             "clean_FCFF": record.clean.get("FCFF"),
             "clean_CashTaxRate": record.clean.get("CashTaxRate"),

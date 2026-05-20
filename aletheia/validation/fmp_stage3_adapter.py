@@ -49,7 +49,18 @@ _INCOME_MAP: Dict[str, str] = {
     "depreciationAndAmortization": "Depreciation_Total_Aggregate",
     "weightedAverageShsOut": "SharesBasic",
     "weightedAverageShsOutDil": "SharesDiluted",
-    "epsdiluted": "DilutedEPS",
+    # Per-share metrics straight from FMP. The legacy ``epsdiluted`` key
+    # (all-lowercase) never matched FMP's actual camelCase response,
+    # silently producing NaN — fixed here.
+    "eps": "EPS_Basic",
+    "epsDiluted": "EPS_Diluted",
+    # FMP's catch-all "other" line. For tickers with material one-time
+    # items (goodwill impairment, restructuring, settlement) this can
+    # equal the Capital-IQ ``Asset Writedown`` line; for other years it
+    # may be net of offsetting credits. Exposed here so analysts can
+    # see the gap between FMP's ``operatingIncome`` and Capital IQ's
+    # ex-unusual view rather than guessing.
+    "otherExpenses": "OtherOperatingItems",
 }
 
 # Balance sheet fields.
@@ -86,6 +97,13 @@ _CASHFLOW_MAP: Dict[str, str] = {
     "netCashUsedProvidedByFinancingActivities": "FinancingCF",
     "netCashProvidedByFinancingActivities": "FinancingCF",
     "capitalExpenditure": "CapEx_signed",  # FMP signs negative; we convert
+    # DAL FY2023+ populates ``commonDividendsPaid`` ($128M/$321M/$440M)
+    # while ``dividendsPaid`` returns None. Listed first so the broader
+    # ``dividendsPaid`` total can supersede when both fields are
+    # populated (``_apply_map`` lets later mappings overwrite earlier
+    # ones). Tickers where only the common-stock line populates fall
+    # back to that value.
+    "commonDividendsPaid": "DividendsPaid",
     "dividendsPaid": "DividendsPaid",
     "stockBasedCompensation": "SBC",
     "commonStockRepurchased": "Buybacks",
@@ -136,6 +154,70 @@ def _normalize_signs(rec: Dict[str, Any]) -> None:
         rec["CapEx"] = abs(rec.pop("CapEx_signed"))
 
 
+# XBRL specialty tags the hybrid provider injects when available. Sum
+# of any non-None values = the ex-impairment add-back for OpInc/EBITDA.
+# Order doesn't matter; we just sum magnitudes. Adding new tags here
+# (e.g., AssetWritedown, ImpairmentOfLongLivedAssetsHeldForUse) expands
+# coverage without touching the derivation logic.
+_IMPAIRMENT_TAGS = (
+    "AssetImpairmentCharges",
+    "GoodwillImpairmentLoss",
+    "IntangibleAssetImpairmentCharge",
+    "ImpairmentOfLongLivedAssetsHeldForUse",
+    "RestructuringCharges",
+)
+
+# Provenance codes — ValidatedCleanedRecord.clean is typed
+# Dict[str, Optional[float]] so the source label can't ride in the
+# record dict as a string. Numeric code goes in; the DB-upsert
+# translates back to a human label via the reverse map below.
+_SOURCE_CODES: Dict[str, float] = {
+    "xbrl_discrete_tags":        1.0,
+    "fmp_other_expenses_bucket": 2.0,
+}
+SOURCE_LABELS: Dict[float, str] = {v: k for k, v in _SOURCE_CODES.items()}
+
+
+_FMP_FALLBACK_MAX_PCT_OF_REVENUE = 0.05
+
+
+def _ex_impairment_addback(rec: Dict[str, Any]):
+    """Decide how much to ADD BACK to OperatingIncome / EBITDA to
+    strip one-time impairment / restructuring. Returns
+    ``(amount, source)`` or ``(None, None)`` when no signal is
+    available.
+
+    Preference order:
+      1. ``xbrl_discrete_tags`` — sum of explicit XBRL impairment tags
+         supplied by the hybrid provider. Most precise; aligns with
+         Capital IQ's "Asset Writedown" line.
+      2. ``fmp_other_expenses_bucket`` — FMP's ``otherExpenses`` field,
+         gated by a materiality threshold (default 5% of revenue).
+         FMP's ``otherExpenses`` is a kitchen sink: for retail filers
+         like Macy's it happens to be the goodwill writedown ($966M /
+         4% of revenue ≈ Capital IQ's $957M Asset Writedown). For tech
+         filers like Amazon it's the rest of operating costs ($99B /
+         15% of revenue), and applying it as an impairment add-back
+         produces fantasy ex-unusual numbers. The threshold filters
+         out the structural-cost case while keeping the impairment
+         case. Threshold is symmetric — large negative otherExpenses
+         (net credits) also fail the test.
+      3. None — leave OperatingIncome / EBITDA as reported.
+    """
+    discrete = [
+        abs(rec[k]) for k in _IMPAIRMENT_TAGS
+        if rec.get(k) is not None
+    ]
+    if discrete:
+        return sum(discrete), "xbrl_discrete_tags"
+    other = rec.get("OtherOperatingItems")
+    revenue = rec.get("Revenue")
+    if (other is not None and revenue and revenue > 0
+            and abs(other) / revenue <= _FMP_FALLBACK_MAX_PCT_OF_REVENUE):
+        return other, "fmp_other_expenses_bucket"
+    return None, None
+
+
 def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     """Compute the cleaning-engine-equivalent derived fields that
     DCF / Multiple Decomposition / Screening read.
@@ -145,11 +227,38 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     ``InvestedCapital``, ``GAAP_TaxRate``. Computing them from FMP raw
     inputs unblocks the engines to produce real output for parity.
     """
+    # Centralized formula functions — Phase 1-3 of the centralization
+    # refactor. All numeric derivations in this function now flow
+    # through these functions; both the FMP path (this file) and the
+    # XBRL path (cleaning_engine) call the same code. See
+    # docs/methodology_changes/ for each phase's methodology memo.
+    from aletheia.calculations.formulas import (
+        nopat as _nopat,
+        invested_capital as _invested_capital,
+        roic as _roic,
+        fcf as _fcf,
+        fcff as _fcff,
+        gross_debt as _gross_debt,
+        liquid_assets as _liquid_assets,
+        net_debt as _net_debt,
+        ebitda as _ebitda,
+        gross_margin_pct as _gross_margin_pct,
+        ebit_margin_pct as _ebit_margin_pct,
+        ebitda_margin_pct as _ebitda_margin_pct,
+        fcf_margin_pct as _fcf_margin_pct,
+        roe as _roe,
+    )
+
     derived: Dict[str, Optional[float]] = {}
     op_inc = rec.get("OperatingIncome")
     pretax = rec.get("PretaxIncome")
     tax_expense = rec.get("TaxExpense")
     net_income = rec.get("NetIncome")
+    # Revenue is needed early for the centralized invested-capital
+    # formula (5%-of-revenue floor + excess-cash netting at 2% of
+    # revenue). The duplicate read further down is preserved for the
+    # margin block to keep that block independently readable.
+    revenue = rec.get("Revenue")
     cash = rec.get("Cash") or 0.0
     st_inv = rec.get("ShortTermInvestments") or 0.0
     total_debt = rec.get("TotalDebt")
@@ -163,8 +272,9 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     sbc = rec.get("SBC") or 0.0
     da = rec.get("Depreciation_Total")
     ebitda = rec.get("EBITDA")
-    if ebitda is None and op_inc is not None and da is not None:
-        ebitda = op_inc + da
+    if ebitda is None:
+        # Central synthesis: EBITDA = OperatingIncome + Depreciation_Total
+        ebitda = _ebitda(operating_income=op_inc, depreciation_total=da)
     # Always mirror EBITDA into derived so ``derived_EBITDA`` column
     # populates regardless of whether FMP supplied the value directly
     # or we synthesized it from OpInc + D&A. Same FMP-adapter → DB
@@ -183,13 +293,16 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
         if -0.5 <= gaap_rate <= 0.6:
             derived["GAAP_TaxRate"] = gaap_rate
 
-    # NOPAT = OperatingIncome × (1 − tax_rate). Use GAAP when sensible,
-    # statutory 21% otherwise.
-    if op_inc is not None:
-        rate = derived.get("GAAP_TaxRate")
-        if rate is None:
-            rate = 0.21
-        derived["NOPAT"] = op_inc * (1.0 - rate)
+    # NOPAT — uses GAAP rate when available, statutory 21% as fallback.
+    # Tax-rate resolution stays here because FMP doesn't have access
+    # to the full _tax_rate resolver's fallback ladder (which reads
+    # historical cash tax from the DB).
+    tax_rate = derived.get("GAAP_TaxRate")
+    if tax_rate is None:
+        tax_rate = 0.21
+    nopat_val = _nopat(operating_income=op_inc, tax_rate=tax_rate)
+    if nopat_val is not None:
+        derived["NOPAT"] = nopat_val
 
     # NormalizedEBIT — simple proxy in the absence of non-recurring
     # adjustments. The cleaning engine refines this with one-off
@@ -197,23 +310,69 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     if op_inc is not None:
         derived["NormalizedEBIT"] = op_inc
 
-    # FCF from cash flow direct (avoids DCFEngine's None fallback).
-    if op_cf is not None:
-        derived["FCF"] = op_cf - abs(capex)
+    # FCF — central formula.
+    fcf_val = _fcf(operating_cf=op_cf, capex=capex)
+    if fcf_val is not None:
+        derived["FCF"] = fcf_val
 
-    # Net debt: total debt minus cash and short-term liquid investments.
-    if total_debt is not None:
-        derived["NetDebt"] = total_debt - cash - st_inv
+    # FCFF — Phase 2 canonicalization. FMP exposes
+    # ``changeInWorkingCapital`` directly so the full CFA-textbook
+    # formula (NOPAT + D&A − CapEx − ΔNWC) is now feasible on this
+    # path. Previously aliased to FCF, which understated the firm-
+    # level cash generation by ΔNWC magnitude.
+    delta_nwc = rec.get("ChangeInWorkingCapital")
+    fcff_val = _fcff(
+        nopat=nopat_val,
+        depreciation=da,
+        capex=capex,
+        delta_nwc=delta_nwc,
+    )
+    if fcff_val is not None:
+        derived["FCFF"] = fcff_val
+    elif fcf_val is not None:
+        # Fallback to FCF when D&A or NOPAT inputs missing — preserves
+        # the prior FCF-shaped value rather than dropping the field.
+        derived["FCFF"] = fcf_val
 
-    # Invested capital: book equity + interest-bearing debt − excess cash.
-    if total_equity is not None and total_debt is not None:
-        derived["InvestedCapital"] = total_equity + total_debt - cash
+    # Net debt — central formula. Phase 2 canonicalization includes
+    # current LT-debt portion + finance leases + LT investments,
+    # bringing FMP path in line with cleaning_engine's EV-aligned
+    # definition. FMP doesn't decompose finance-lease current/non-
+    # current; uses the consolidated total when available.
+    current_lt = rec.get("CurrentPortionLongTermDebt") or 0.0
+    fl_total = rec.get("FinanceLeaseLiability_Total") or 0.0
+    lt_inv = rec.get("LongTermInvestments") or 0.0
+    gd = _gross_debt(
+        long_term_debt=rec.get("LongTermDebt"),
+        short_term_debt=rec.get("ShortTermDebt"),
+        current_portion_lt_debt=current_lt,
+        finance_lease_total=fl_total,
+    )
+    la = _liquid_assets(
+        cash=cash,
+        short_term_investments=st_inv,
+        long_term_investments=lt_inv,
+    )
+    nd_val = _net_debt(gross_debt=gd, liquid_assets=la)
+    if nd_val is not None:
+        derived["NetDebt"] = nd_val
 
-    # ROIC = NOPAT / InvestedCapital. Skip when denominator near zero.
-    nopat = derived.get("NOPAT")
-    ic = derived.get("InvestedCapital")
-    if nopat is not None and ic and abs(ic) > 1e3:
-        derived["ROIC"] = nopat / ic
+    # Invested capital — central formula, ExcessCash netting + 5%
+    # revenue floor.
+    ic_val = _invested_capital(
+        total_equity=total_equity,
+        total_debt=total_debt,
+        cash=cash,
+        revenue=revenue,
+    )
+    if ic_val is not None:
+        derived["InvestedCapital"] = ic_val
+
+    # ROIC = NOPAT / InvestedCapital. Central formula returns None
+    # when IC <= 0, replacing the local "abs(ic) > 1e3" guard.
+    roic_val = _roic(nopat=nopat_val, invested_capital=ic_val)
+    if roic_val is not None:
+        derived["ROIC"] = roic_val
 
     # EBITDA_ExcludingSBC — treats SBC as a real expense (Buffett view).
     if ebitda is not None:
@@ -223,25 +382,34 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     if net_income is not None:
         derived["NetIncome"] = net_income
 
-    # ── Margin-percent fields read by ScreeningEngine ──────────────
+    # ── Margin-percent fields read by ScreeningEngine + FMP Compare ──
     # ScreeningEngine reads `derived_EBIT_Margin_Pct`,
     # `derived_FCF_Margin_Pct`, `derived_GrossMargin_Pct` as percent
-    # values (not fractions — multiply by 100).
-    revenue = rec.get("Revenue")
+    # values (not fractions — multiply by 100). FMP Compare view also
+    # reads `derived_EBITDA_Margin_Pct` for its EBITDA Margin row.
+    # All four margins now flow through the central formula module
+    # (Phase 3 mechanical consolidation; identical formulas).
     gross_profit = rec.get("GrossProfit")
-    fcf = derived.get("FCF")
-    if revenue and revenue > 0:
-        if op_inc is not None:
-            derived["EBIT_Margin_Pct"] = op_inc / revenue * 100.0
-        if fcf is not None:
-            derived["FCF_Margin_Pct"] = fcf / revenue * 100.0
-        if gross_profit is not None:
-            derived["GrossMargin_Pct"] = gross_profit / revenue * 100.0
+    fcf_for_margin = derived.get("FCF")
+    ebit_m = _ebit_margin_pct(ebit=op_inc, revenue=revenue)
+    if ebit_m is not None:
+        derived["EBIT_Margin_Pct"] = ebit_m
+    ebitda_m = _ebitda_margin_pct(ebitda=ebitda, revenue=revenue)
+    if ebitda_m is not None:
+        derived["EBITDA_Margin_Pct"] = ebitda_m
+    fcf_m = _fcf_margin_pct(fcf=fcf_for_margin, revenue=revenue)
+    if fcf_m is not None:
+        derived["FCF_Margin_Pct"] = fcf_m
+    gross_m = _gross_margin_pct(gross_profit=gross_profit, revenue=revenue)
+    if gross_m is not None:
+        derived["GrossMargin_Pct"] = gross_m
 
-    # ROE = NetIncome / TotalEquity. ScreeningEngine reads
-    # ``derived_ROE`` as a decimal fraction.
-    if net_income is not None and total_equity and abs(total_equity) > 1e3:
-        derived["ROE"] = net_income / total_equity
+    # ROE — central formula. Returns None on non-positive equity,
+    # matching the cleaning_engine's suppression behavior for
+    # aggressive-buyback filers with negative book equity.
+    roe_val = _roe(net_income=net_income, total_equity=total_equity)
+    if roe_val is not None:
+        derived["ROE"] = roe_val
 
     # ── Schema-aligned mirror to derived dict ──────────────────────
     # The DB has ``derived_*`` columns for several fields the cleaning_
@@ -281,6 +449,56 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     # without the _Total suffix) — RDCF reads this for D&A pct.
     if "Depreciation_Total" in rec and "Depreciation" not in rec:
         rec["Depreciation"] = rec["Depreciation_Total"]
+
+    # NetBuyback_AfterSBC — the buyback_discipline qualitative computer
+    # reads this column. Only the XBRL cleaning_engine populated it
+    # historically; under the FMP provider it was always NaN, so every
+    # FMP-sourced ticker rendered "buyback data unavailable." Compute it
+    # here whenever both fields are present in the raw FMP payload —
+    # abs(Buybacks) flips FMP's outflow-negative convention to magnitude,
+    # SBC is already positive (cash-flow addback). When either field is
+    # missing entirely, leave NaN so the computer's data-quality threshold
+    # can still distinguish "no data" from "true zero."
+    if "Buybacks" in rec and "SBC" in rec:
+        buybacks_magnitude = abs(rec["Buybacks"] or 0.0)
+        sbc_value = rec["SBC"] or 0.0
+        rec["NetBuyback_AfterSBC"] = buybacks_magnitude - sbc_value
+
+    # OperatingIncome / EBITDA ex-unusual items — fallback chain:
+    #   1. Discrete XBRL impairment tags (preferred): hybrid provider
+    #      enriches the record with AssetImpairmentCharges,
+    #      GoodwillImpairmentLoss, IntangibleAssetImpairmentCharge,
+    #      RestructuringCharges. When present, sum them — that's the
+    #      precise Capital-IQ "Asset Writedown" add-back. Source:
+    #      "xbrl_discrete_tags".
+    #   2. FMP's catch-all ``otherExpenses`` (fallback): bundles the
+    #      same items into a single kitchen-sink line, sometimes with
+    #      offsetting credits. Works for Macy's FY2023 (pure $957M
+    #      goodwill) but produces nonsense for Macy's FY2025 (-$1B
+    #      net credit because of an offsetting gain). Source:
+    #      "fmp_other_expenses_bucket".
+    # Provenance is stored on the record so the UI can show analysts
+    # which path produced the ex-unusual number.
+    addback, source = _ex_impairment_addback(rec)
+    if op_inc is not None and addback is not None:
+        rec["OperatingIncome_ExUnusual"] = op_inc + addback
+        # ValidatedCleanedRecord.clean is typed Dict[str, Optional[float]],
+        # so provenance is stored as a numeric code here; the DB upsert
+        # translates back to a human label via _SOURCE_LABELS.
+        rec["OperatingIncome_ExUnusual_Source_Code"] = _SOURCE_CODES[source]
+        if ebitda is not None:
+            rec["EBITDA_ExUnusual"] = ebitda + addback
+
+    # Per-share metrics — FMP exposes EPS directly; DPS and payout
+    # ratio compute from existing fields. abs() on dividends flips FMP's
+    # negative outflow convention to a magnitude consistent with the
+    # external Capital-IQ/S&P presentation.
+    dps_source = rec.get("DividendsPaid")
+    shares_dil = rec.get("SharesDiluted")
+    if dps_source is not None and shares_dil and shares_dil > 0:
+        rec["DividendsPerShare"] = abs(dps_source) / shares_dil
+    if dps_source is not None and net_income and net_income > 0:
+        rec["PayoutRatio"] = abs(dps_source) / net_income
 
     return derived
 

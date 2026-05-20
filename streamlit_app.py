@@ -352,7 +352,7 @@ def _run_pipeline_subprocess(
     # Pass the active provider through to the subprocess so Stage 1
     # can route source selection accordingly (skip SEC fetch when
     # FMP-only, etc.).
-    selected_provider = st.session_state.get("provider", "fmp")
+    selected_provider = st.session_state.get("provider") or __import__("config.data_source", fromlist=["DEFAULT_PROVIDER"]).DEFAULT_PROVIDER
     env = {
         **os.environ,
         "PYTHONPATH": str(repo_root),
@@ -430,7 +430,7 @@ def _run_add_ticker_pipeline_ui(ticker_input: str) -> None:
 
     # Honor the sidebar provider selection for the new ticker's
     # Stages 1-3. Defaults to "fmp" when unset.
-    selected_provider = st.session_state.get("provider", "fmp")
+    selected_provider = st.session_state.get("provider") or __import__("config.data_source", fromlist=["DEFAULT_PROVIDER"]).DEFAULT_PROVIDER
 
     with st.status(f"Adding {ticker_input.upper()}…", expanded=True) as status:
         for evt in run_add_ticker_pipeline(
@@ -685,17 +685,53 @@ def main():
     def _format_ticker(t: str) -> str:
         return f"{_STATUS_ICON.get(status_by_ticker.get(t, 'ready'), '·')}  {t}"
 
-    # Bind directly to session_state via key= so Streamlit syncs widget ↔
-    # state atomically. Avoids the stale-on-first-change behavior of the
-    # legacy "st.session_state.X = st.selectbox(..., index=...)" pattern.
-    st.sidebar.selectbox(
-        "Select Ticker",
-        options=available,
-        key="active_ticker",
-        format_func=_format_ticker,
+    # Search-as-you-type ticker picker.
+    #
+    # Streamlit doesn't have a single autocomplete widget, so the
+    # pattern is text_input → filter → selectbox. The text_input
+    # triggers a rerun on every keystroke, the selectbox options
+    # narrow live, and the user picks from the shortened list. This
+    # gives the autofill UX (typing "GOO" surfaces GOOGL) without
+    # adding an external streamlit-searchbox dependency.
+    search = st.sidebar.text_input(
+        "Search ticker",
+        key="ticker_search",
+        placeholder="🔍 Type to filter (e.g. GOO)",
         label_visibility="collapsed",
-        help="🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
     )
+    if search.strip():
+        q = search.strip().upper()
+        matches = [t for t in available if q in t.upper()]
+    else:
+        matches = available
+
+    if matches:
+        # Streamlit's selectbox(key=...) reads st.session_state[key]
+        # as its initial value. When the search filter would exclude
+        # the currently-active ticker, we must reset BEFORE rendering
+        # the widget — otherwise Streamlit raises because key= refers
+        # to a value not in options.
+        if st.session_state.get("active_ticker") not in matches:
+            st.session_state.active_ticker = matches[0]
+
+        # Bind directly to session_state via key= so Streamlit syncs
+        # widget ↔ state atomically. Avoids the stale-on-first-change
+        # behavior of the legacy
+        # ``st.session_state.X = st.selectbox(..., index=...)`` pattern.
+        st.sidebar.selectbox(
+            "Select Ticker",
+            options=matches,
+            key="active_ticker",
+            format_func=_format_ticker,
+            label_visibility="collapsed",
+            help="🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
+        )
+        if search.strip() and len(matches) < len(available):
+            st.sidebar.caption(
+                f"{len(matches)} of {len(available)} ticker(s) match."
+            )
+    else:
+        st.sidebar.caption(f"No ticker matches '{search}'.")
 
     # ── Data source selector (P4: global, per-session sticky) ────────
     # Writes ``st.session_state["provider"]`` which the registry's
@@ -707,12 +743,19 @@ def main():
     st.sidebar.markdown("### 📊 Data Source")
     _PROVIDER_OPTIONS = ["fmp", "xbrl", "hybrid"]
     _PROVIDER_LABELS = {
-        "fmp": "FMP (default)",
+        "fmp": "FMP",
         "xbrl": "XBRL (legacy)",
         "hybrid": "Hybrid (FMP + XBRL specialty)",
     }
+    # Initial provider matches config.data_source.DEFAULT_PROVIDER so
+    # the UI default tracks the platform default. Adding "(default)"
+    # to the matching label is purely cosmetic.
+    from config.data_source import DEFAULT_PROVIDER as _CFG_DEFAULT_PROVIDER
+    _PROVIDER_LABELS[_CFG_DEFAULT_PROVIDER] = (
+        f"{_PROVIDER_LABELS[_CFG_DEFAULT_PROVIDER]} (default)"
+    )
     if "provider" not in st.session_state:
-        st.session_state["provider"] = "fmp"
+        st.session_state["provider"] = _CFG_DEFAULT_PROVIDER
     st.sidebar.selectbox(
         "Provider",
         options=_PROVIDER_OPTIONS,
@@ -731,7 +774,7 @@ def main():
     # ticker, including any per-ticker pin override + reason.
     from aletheia.providers import resolve_provider_name
     _active_ticker = st.session_state.get("active_ticker", "")
-    _selected = st.session_state.get("provider", "fmp")
+    _selected = st.session_state.get("provider") or __import__("config.data_source", fromlist=["DEFAULT_PROVIDER"]).DEFAULT_PROVIDER
     _effective, _pin_reason = resolve_provider_name(
         _selected, ticker=_active_ticker or None,
     )
@@ -796,7 +839,7 @@ def main():
         ):
             _run_pipeline_subprocess(t, auto_agents=False)
         if st.sidebar.button(
-            f"🧠 Run Stage 4 (LLM) for {t}",
+            f"🧠 Run Stage 4 Agents for {t}",
             use_container_width=True, key="run_stage4_btn",
             help=(
                 "Runs LLM agents (thesis, qualitative, contrarian) on "
@@ -1554,6 +1597,11 @@ def main():
                         f"Recompute done — written: {written}, "
                         f"unchanged: {unchanged}, no-data: {no_data}"
                     )
+                    # Clear cached responses so the rerun reads fresh
+                    # records from the DB instead of the pre-recompute
+                    # snapshot — same pattern as _on_submit_success.
+                    fetch_qualitative.clear()
+                    fetch_qualitative_categories.clear()
                     st.rerun()
 
             def _on_submit_success():

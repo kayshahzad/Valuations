@@ -210,6 +210,107 @@ def _load_llm_payload(ticker: str) -> Optional[Dict[str, Any]]:
     return None
 
 
+def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
+    """Run the ValuationRouter for specialized-engine tickers (NEE rate-base,
+    DDM filers, BRK-B embedded value) and reshape the result into the same
+    dict ``_compute_dcf_live`` produces. Used as the fallback when
+    ``DCFEngine.run()`` raises ``NotImplementedError`` for non-FCFF business
+    models.
+
+    The returned dict has the router's IV in the ``base`` scenario;
+    ``bear`` / ``bull`` are None (these engines don't produce scenario
+    spreads). ``engine`` + ``valuation_decomposition`` + ``source_citation``
+    surface the engine identity and year-by-year breakdown for the Deep
+    Dive UI.
+
+    Raises HTTPException(422) only when the router itself can't produce an
+    IV (CNC empty-state, V KNOWN_ISSUES bypass) so the client gets the
+    same empty-state UX as before for those genuinely-unvaluable tickers.
+    """
+    from aletheia.tools.valuation_router import (
+        UnknownBusinessModelError, ValuationRouter,
+    )
+
+    try:
+        vresult = ValuationRouter().execute(calc)
+    except NotImplementedError as e:
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"ValuationRouter bypassed {ticker}: {e}. "
+                f"Ticker is flagged in KNOWN_ISSUES (typically a data-gap "
+                f"filer); no engine ran."
+            ),
+        )
+    except UnknownBusinessModelError as e:
+        raise HTTPException(
+            status_code=422,
+            detail=f"Unknown business model for {ticker}: {e}",
+        )
+
+    if vresult.intrinsic_per_share is None:
+        # CNC-style empty-state (no dividend → DDM undefined). Surface as
+        # 422 with the engine's warning so the client can show a friendly
+        # "specialized engine can't value this ticker" message.
+        warning = (vresult.warnings or ["no IV produced"])[0]
+        raise HTTPException(
+            status_code=422,
+            detail=(
+                f"{vresult.engine.upper()} engine produced empty-state for "
+                f"{ticker}: {warning}"
+            ),
+        )
+
+    snap = vresult.inputs_snapshot or {}
+    ips = float(vresult.intrinsic_per_share)
+    price = float(vresult.current_price) if vresult.current_price else None
+    mos = float(vresult.margin_of_safety) if vresult.margin_of_safety is not None else None
+    shares = snap.get("shares_diluted")
+    market_cap = (
+        float(price * shares)
+        if (price is not None and shares is not None) else None
+    )
+    ke = snap.get("cost_of_equity")
+    decomposition = (vresult.engine_specific or {}).get("decomposition")
+
+    return {
+        "ticker":                 vresult.ticker.upper(),
+        "wacc":                   float(ke) if ke is not None else None,
+        "beta":                   (float(snap["beta"])
+                                   if snap.get("beta") is not None else None),
+        "risk_free_rate":         (float(snap["risk_free_rate"])
+                                   if snap.get("risk_free_rate") is not None
+                                   else None),
+        "current_price":          price,
+        "market_cap":             market_cap,
+        "shares_diluted":         float(shares) if shares is not None else None,
+        "run_date":               None,
+        "base_period":            "FY",
+        "base_period_end_date":   None,
+        "fy_fiscal_year":         int(vresult.fiscal_year) or None,
+        "bear":                   None,
+        "base":                   {
+            "intrinsic_per_share": ips,
+            "margin_of_safety":    mos,
+            "ev":                  (float(vresult.equity_value)
+                                    if vresult.equity_value is not None else None),
+        },
+        "bull":                   None,
+        "reverse_dcf":            None,
+        "multiple_decomposition": None,
+        # Specialized-engine extras (surface to DCFResponse for the Deep Dive).
+        "engine":                 vresult.engine,
+        "valuation_decomposition": decomposition,
+        "source_citation":        snap.get("source"),
+        "as_of_date":             snap.get("as_of_date"),
+        "engine_warnings":        list(vresult.warnings or []),
+        # _result kept as None — the specialized engines don't expose a
+        # DCFResult-shaped object; `_calc_only_summary` already handles
+        # this via its `result is None` fallback.
+        "_result":                None,
+    }
+
+
 def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
     """Run DCFEngine + ReverseDCF live against the cleaned DB and return a
     dict shaped like `DCFResponse`.
@@ -241,6 +342,12 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
 
     try:
         result = DCFEngine(verbose=False).run(calc)
+    except NotImplementedError:
+        # Specialized-engine ticker (NEE rate-base, JPM/AXP/UNH DDM,
+        # BRK-B embedded-value, CNC empty-state, V KNOWN_ISSUES bypass).
+        # Route through the ValuationRouter and reshape into the DCF
+        # response so the Deep Dive renders the IV instead of a 422.
+        return _compute_specialized_live(ticker, calc)
     except Exception as e:
         raise HTTPException(
             status_code=422,
@@ -423,6 +530,14 @@ class DCFResponse(BaseModel):
     bull: Optional[DCFScenario]
     reverse_dcf: Optional[dict]
     multiple_decomposition: Optional[dict]
+    # Specialized-engine identity + decomposition (NEE rate-base, JPM/AXP/UNH
+    # DDM, BRK-B embedded value). For FCFF tickers these stay None — the
+    # standard bull/base/bear + reverse_dcf carry the full picture.
+    engine: Optional[str] = None
+    valuation_decomposition: Optional[dict] = None
+    source_citation: Optional[str] = None
+    as_of_date: Optional[str] = None
+    engine_warnings: Optional[List[str]] = None
 
 
 class FundamentalsResponse(BaseModel):
@@ -1035,6 +1150,11 @@ def get_ticker_dcf(ticker: str, response: Response):
         bull=DCFScenario(**payload["bull"]) if payload["bull"] else None,
         reverse_dcf=payload["reverse_dcf"],
         multiple_decomposition=payload["multiple_decomposition"],
+        engine=payload.get("engine"),
+        valuation_decomposition=payload.get("valuation_decomposition"),
+        source_citation=payload.get("source_citation"),
+        as_of_date=payload.get("as_of_date"),
+        engine_warnings=payload.get("engine_warnings"),
     )
 
 

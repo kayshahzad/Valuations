@@ -27,10 +27,13 @@ LLM cost gating:
 
 from __future__ import annotations
 
+import logging
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Sequence, Set
+
+logger = logging.getLogger(__name__)
 
 from aletheia.contracts.pipeline import (
     AgentBundle,
@@ -174,12 +177,20 @@ class Orchestrator:
         """
         # Resolve provider once at the top of the run so all stages
         # see the same value (env-var resolution can shift between
-        # process invocations otherwise).
+        # process invocations otherwise). Falls through to
+        # ``config.data_source.DEFAULT_PROVIDER`` (hybrid) when the
+        # env var isn't set.
         if provider is None:
             import os
-            provider = os.environ.get(
-                "ALETHEIA_PROVIDER", "fmp",
-            ).strip().lower()
+            env_provider = os.environ.get("ALETHEIA_PROVIDER", "").strip().lower()
+            if env_provider:
+                provider = env_provider
+            else:
+                try:
+                    from config.data_source import DEFAULT_PROVIDER
+                    provider = str(DEFAULT_PROVIDER).lower()
+                except ImportError:
+                    provider = "hybrid"
         ticker = ticker.upper()
         started = datetime.now(timezone.utc)
         result = OrchestratorResult(
@@ -259,6 +270,16 @@ class Orchestrator:
             result.finished_at = datetime.now(timezone.utc)
             return result
 
+        # ── Deterministic qualitative recompute ────────────────────
+        # Runs after every successful Stage 3 so the 5 deterministic
+        # qualitative dimensions (roiic_trend, buyback_discipline,
+        # dividend_policy, cyclicality, industry_concentration) stay
+        # in sync with the freshly-cleaned DB rows. The runner is
+        # idempotent — fingerprint-matched records get skipped so
+        # cached Stage 3 runs are near-free. Failures here don't
+        # block the pipeline; qualitative is a downstream concern.
+        self._run_qualitative_recompute(ticker)
+
         # ── Stage 4 (opt-in) ───────────────────────────────────────
         if auto_agents:
             stage4_outcome = self._run_stage4(
@@ -271,6 +292,20 @@ class Orchestrator:
 
         result.finished_at = datetime.now(timezone.utc)
         return result
+
+    def _run_qualitative_recompute(self, ticker: str) -> None:
+        """Run all deterministic qualitative computers and persist their
+        results. Called after Stage 3 success. Idempotent; failures
+        are logged-not-raised so a broken computer never blocks
+        ingestion."""
+        try:
+            from aletheia.qualitative.runner import recompute_deterministic
+            recompute_deterministic(ticker)
+        except Exception as exc:
+            logger.warning(
+                "qualitative_recompute_failed ticker=%s error=%s: %s",
+                ticker, type(exc).__name__, exc,
+            )
 
     # ── per-stage runners ───────────────────────────────────────────
 

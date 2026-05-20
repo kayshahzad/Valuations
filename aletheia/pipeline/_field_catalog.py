@@ -47,6 +47,19 @@ class FieldSpec:
     fmp_keys: List[str]            # FMP statement keys to try
     abs_compare: bool = False      # True → compare abs() values (CapEx sign)
     note: str = ""                 # optional context shown next to the field
+    # Component-sum fallback. When the catalog's primary ``xbrl_fallback_tags``
+    # all miss for a given (ticker, period), the resolver tries to SUM these
+    # tags instead of picking the first hit. Needed for filers (e.g. MSFT
+    # quarterly) that report D&A as ``Depreciation`` +
+    # ``AmortizationOfIntangibleAssets`` + ``FinanceLeaseRightOfUseAssetAmortization``
+    # without an aggregate tag. Empty list = no sum-mode fallback.
+    xbrl_sum_tags: List[str] = None  # type: ignore[assignment]
+
+    def __post_init__(self):
+        # Frozen dataclass — bypass setattr via object.__setattr__ for the
+        # default-mutable list field. None means "no sum-mode fallback."
+        if self.xbrl_sum_tags is None:
+            object.__setattr__(self, "xbrl_sum_tags", [])
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -107,6 +120,16 @@ _INCOME = [
         xbrl_fallback_tags=[
             "DepreciationDepletionAndAmortization",
             "DepreciationAndAmortization",
+        ],
+        # Component-sum fallback for filers that report D&A as discrete
+        # line items rather than the aggregate tag (MSFT 10-Q is the
+        # canonical case — Depreciation + AmortizationOfIntangibleAssets +
+        # FinanceLeaseRightOfUseAssetAmortization, no aggregate).
+        # Order doesn't matter — the resolver sums whichever resolve.
+        xbrl_sum_tags=[
+            "Depreciation",
+            "AmortizationOfIntangibleAssets",
+            "FinanceLeaseRightOfUseAssetAmortization",
         ],
         fmp_source="income", fmp_keys=["depreciationAndAmortization"],
     ),
@@ -410,16 +433,25 @@ _CASHFLOW = [
         label="FX Effect on Cash", category="Cash Flow", tier="important",
         xbrl_clean_keys=[], xbrl_raw_keys=[],
         xbrl_fallback_tags=[
+            # Pre-ASU-2016-18 (legacy filings, ~2010-2017).
             "EffectOfExchangeRateOnCashAndCashEquivalents",
-            "EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
             "EffectOfExchangeRateOnCash",
+            # Post-ASU-2016-18 (restricted-cash inclusion, ~2018+).
+            "EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents",
+            # Disposal-group variant — MSFT and other filers with
+            # ongoing discontinued-operations disclosure use the
+            # longest us-gaap form. The disclosure is required even
+            # when there are no actual disposal groups (defensive
+            # taxonomy); MSFT switched to it in FY2022.
+            "EffectOfExchangeRateOnCashCashEquivalentsRestrictedCashAndRestrictedCashEquivalentsIncludingDisposalGroupAndDiscontinuedOperations",
         ],
         fmp_source="cashflow", fmp_keys=["effectOfForexChangesOnCash"],
         note=(
             "Filers switched tags around 2018-2020 when restricted-cash "
             "ASU 2016-18 took effect — modern filings use "
             "``EffectOfExchangeRateOnCashCashEquivalentsRestrictedCash...``. "
-            "Fallback list covers both eras."
+            "MSFT and similar filers use the ``IncludingDisposalGroupAnd"
+            "DiscontinuedOperations`` variant. Fallback list covers all eras."
         ),
     ),
     FieldSpec(

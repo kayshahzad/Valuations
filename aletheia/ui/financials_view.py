@@ -219,39 +219,106 @@ def _validation_banner(ticker: str, fy: int, ident: Dict[str, Any]) -> None:
 
 # ── Statement table renderer ───────────────────────────────────────────────
 
+def _pp_str(curr: Optional[float], prior: Optional[float]) -> str:
+    """Year-over-year delta for percentage metrics, expressed in
+    percentage points (pp). Robust to mixed unit conventions: if the
+    field stores a fraction (<=1.0) it's converted to % first."""
+    if curr is None or prior is None:
+        return "—"
+    c = curr if abs(curr) > 1.0 else curr * 100
+    p = prior if abs(prior) > 1.0 else prior * 100
+    return f"{c - p:+.1f}pp"
+
+
+_EX_UNUSUAL_SOURCE_LABEL = {
+    "xbrl_discrete_tags":        ("XBRL discrete tags", "green"),
+    "fmp_other_expenses_bucket": ("FMP otherExpenses", "orange"),
+}
+
+
+def _ex_unusual_provenance(inc: Dict[str, Any]) -> None:
+    """Small caption under the income statement explaining where the
+    ex-unusual add-back came from. Renders only when the row actually
+    has a value — keeps the income statement quiet for the common case
+    of "no material one-time items this year"."""
+    src = inc.get("OperatingIncome_ExUnusual_Source")
+    val = inc.get("OperatingIncome_ExUnusual")
+    if not src or val is None:
+        return
+    label, color = _EX_UNUSUAL_SOURCE_LABEL.get(src, (src, "gray"))
+    explainer = {
+        "xbrl_discrete_tags": (
+            "Add-back sums AssetImpairmentCharges, GoodwillImpairmentLoss, "
+            "IntangibleAssetImpairmentCharge, ImpairmentOfLongLivedAssetsHeldForUse, "
+            "and RestructuringCharges from SEC XBRL companyfacts. "
+            "Capital-IQ-aligned precision."
+        ),
+        "fmp_other_expenses_bucket": (
+            "Add-back uses FMP's ``otherExpenses`` field (one-time + other "
+            "non-recurring items), gated by a 5%-of-revenue materiality "
+            "threshold. Approximate — switch this ticker to the hybrid "
+            "provider for XBRL-discrete-tag precision."
+        ),
+    }.get(src, "")
+    cols = st.columns([1, 4])
+    with cols[0]:
+        st.badge(label, color=color)
+    with cols[1]:
+        st.caption(explainer)
+
+
 def _statement_table(
     title: str,
     ticker: str,
     rows: List[Tuple[str, str, Optional[float], Optional[float], str]],
+    *,
+    hide_empty: bool = True,
+    current_header: str = "Current FY",
+    prior_header: str = "Prior FY",
 ) -> None:
     """Render a statement section.
 
     Each row: (display_label, badge_key, current_value, prior_value, fmt_kind)
       fmt_kind: "$" → dollar, "%" → percent, "n" → number, "x" → multiple
+
+    When ``hide_empty`` is True (default), rows where both Current and
+    Prior values are None are omitted — keeps non-applicable metrics
+    (e.g. lease items for pre-ASC842 filers, growth-CapEx that the
+    cleaner couldn't split) from cluttering the table.
     """
     st.markdown(f"#### {title}")
     df_rows = []
     for label, badge_key, curr, prior, fmt in rows:
+        if hide_empty and curr is None and prior is None:
+            continue
         status = _status_for(ticker, badge_key) if badge_key else "unknown"
         dot = _STATUS_DOT.get(status, "·")
         if fmt == "$":
             curr_s = _bn(curr); prior_s = _bn(prior)
+            yoy_s = _yoy_str(curr, prior)
         elif fmt == "%":
             curr_s = _pct(curr); prior_s = _pct(prior)
+            yoy_s = _pp_str(curr, prior)
         elif fmt == "x":
             curr_s = f"{curr:,.2f}x" if curr is not None else "—"
             prior_s = f"{prior:,.2f}x" if prior is not None else "—"
+            yoy_s = _yoy_str(curr, prior)
         else:
             curr_s = f"{curr:,.2f}" if curr is not None else "—"
             prior_s = f"{prior:,.2f}" if prior is not None else "—"
+            yoy_s = _yoy_str(curr, prior)
 
         df_rows.append({
             "": dot,
             "Metric": label,
-            "Current FY": curr_s,
-            "Prior FY":   prior_s,
-            "YoY":        _yoy_str(curr, prior) if fmt in ("$", "n") else "—",
+            current_header: curr_s,
+            prior_header:   prior_s,
+            "YoY":          yoy_s,
         })
+
+    if not df_rows:
+        st.caption("No data for this section.")
+        return
 
     df = pd.DataFrame(df_rows)
     st.dataframe(
@@ -259,11 +326,12 @@ def _statement_table(
         hide_index=True,
         use_container_width=True,
         column_config={
-            "":           st.column_config.TextColumn("", width="small", help="Validation status"),
-            "Metric":     st.column_config.TextColumn("Metric", width="medium"),
-            "Current FY": st.column_config.TextColumn("Current FY", width="small"),
-            "Prior FY":   st.column_config.TextColumn("Prior FY", width="small"),
-            "YoY":        st.column_config.TextColumn("YoY", width="small"),
+            "":             st.column_config.TextColumn("", width="small", help="Validation status"),
+            "Metric":       st.column_config.TextColumn("Metric", width="medium"),
+            current_header: st.column_config.TextColumn(current_header, width="small"),
+            prior_header:   st.column_config.TextColumn(prior_header, width="small"),
+            "YoY":          st.column_config.TextColumn("YoY", width="small",
+                                help="Δ vs prior FY. $ rows: % change. % rows: percentage-point change."),
         },
     )
 
@@ -272,24 +340,51 @@ def _statement_table(
 
 def _fiscal_history_table(history: List[Dict[str, Any]],
                           ttm: Optional[Dict[str, Any]] = None) -> None:
+    from aletheia.ui.validation_badge import (
+        convention_flag as _convention_flag,
+        CONVENTION_TOOLTIP as _CONVENTION_TOOLTIP,
+    )
     if not history:
         return
-    rows = []
-    # Phase Q-7: prepend a TTM row when ingested. Period column flags
-    # the row as TTM so the table reader can spot it without reading
-    # column-by-column. Rev-growth is YoY-TTM (TTM vs same-period FY)
-    # only when the FY history has the matching prior year, otherwise
-    # left blank to avoid misleading "growth vs last FY-end" framing
-    # the user flagged as a seasonality trap.
+    # YoY math is computed against the chronologically prior row, then
+    # rows are reversed at render time so the most recent FY sits at the
+    # top — matches how 10-K comparative statements present periods
+    # (current → oldest, top-to-bottom).
+    fy_rows: List[Dict[str, Any]] = []
+    for i, r in enumerate(history):
+        rev = r.get("Revenue")
+        prev_rev = history[i - 1].get("Revenue") if i > 0 else None
+        rev_growth = (
+            (rev / prev_rev - 1.0) * 100
+            if rev and prev_rev else None
+        )
+        fy_rows.append({
+            "FY":            r["fiscal_year"],
+            "Period":        "FY",
+            "Period end":    r.get("period_end_date") or "",
+            "Revenue":       (rev/1e9) if rev else None,
+            "Rev Growth":    rev_growth,
+            "EBITDA":        (r["EBITDA"]/1e9) if r["EBITDA"] else None,
+            "Net Income":    (r["NetIncome"]/1e9) if r["NetIncome"] else None,
+            "CapEx":         (r["CapEx"]/1e9) if r["CapEx"] else None,
+            "FCF":           (r["FCF"]/1e9) if r["FCF"] else None,
+            "ROIC":          (r["ROIC"]*100) if r["ROIC"] else None,
+            "Quality":       r["QualityScore"],
+            "FMP":           _fmp_status_glyph(r.get("FMPStatus")),
+        })
+
+    # Reverse FY rows so the most recent FY is at the top of the table.
+    # The YoY (Rev Growth) values were already computed against the
+    # chronologically prior row, so reversing only affects display order.
+    fy_rows.reverse()
+
+    rows: List[Dict[str, Any]] = []
+    # TTM (when ingested) sits above the FY rows — it's the freshest
+    # snapshot in the table. Rev-growth here is TTM-vs-prior-TTM (sum of
+    # FMP quarters [4..7]) so the comparison spans matching 12-month
+    # windows and avoids the seasonality trap of TTM-vs-FY-end.
     if ttm and ttm.get("Revenue"):
         ttm_rev = ttm["Revenue"]
-        # YoY TTM-vs-prior-TTM: compare against the same-period TTM a
-        # year earlier (computed from FMP quarterly statements at
-        # bundle-build time). This eliminates the seasonality trap of
-        # comparing a TTM-through-Q1 against a calendar-FY-end snapshot.
-        # Falls through to None silently when FMP doesn't have ≥8
-        # quarters of data — the Rev Growth cell renders blank rather
-        # than misleading.
         prior_ttm_rev = ttm.get("PriorYearRevenue")
         ttm_growth = (
             (ttm_rev / prior_ttm_rev - 1.0) * 100
@@ -309,27 +404,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Quality":       None,
             "FMP":           _fmp_status_glyph(ttm.get("FMPStatus")),
         })
-    for i, r in enumerate(history):
-        rev = r.get("Revenue")
-        prev_rev = history[i - 1].get("Revenue") if i > 0 else None
-        rev_growth = (
-            (rev / prev_rev - 1.0) * 100
-            if rev and prev_rev else None
-        )
-        rows.append({
-            "FY":            r["fiscal_year"],
-            "Period":        "FY",
-            "Period end":    r.get("period_end_date") or "",
-            "Revenue":       (rev/1e9) if rev else None,
-            "Rev Growth":    rev_growth,
-            "EBITDA":        (r["EBITDA"]/1e9) if r["EBITDA"] else None,
-            "Net Income":    (r["NetIncome"]/1e9) if r["NetIncome"] else None,
-            "CapEx":         (r["CapEx"]/1e9) if r["CapEx"] else None,
-            "FCF":           (r["FCF"]/1e9) if r["FCF"] else None,
-            "ROIC":          (r["ROIC"]*100) if r["ROIC"] else None,
-            "Quality":       r["QualityScore"],
-            "FMP":           _fmp_status_glyph(r.get("FMPStatus")),
-        })
+    rows.extend(fy_rows)
     df = pd.DataFrame(rows)
 
     st.dataframe(
@@ -373,7 +448,9 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "CapEx":      st.column_config.NumberColumn("CapEx", format="$%.1fB"),
             "FCF":        st.column_config.NumberColumn("FCF", format="$%.1fB"),
             "ROIC":       st.column_config.ProgressColumn(
-                "ROIC", format="%.1f%%", min_value=-10.0, max_value=80.0,
+                f"ROIC{_convention_flag('ROIC')}",
+                format="%.1f%%", min_value=-10.0, max_value=80.0,
+                help=_CONVENTION_TOOLTIP if _convention_flag('ROIC') else None,
             ),
             "Quality":    st.column_config.ProgressColumn(
                 "Quality", format="%.2f", min_value=0.0, max_value=1.0,
@@ -541,6 +618,11 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
     bs        = bundle["balance_sheet"]
     ret       = bundle["returns_capital"]
     leases    = bundle["lease_items"]
+    prior_inc    = bundle.get("prior_income_statement") or {}
+    prior_bs     = bundle.get("prior_balance_sheet") or {}
+    prior_ret    = bundle.get("prior_returns_capital") or {}
+    prior_leases = bundle.get("prior_lease_items") or {}
+    prior_fy     = bundle.get("prior_fiscal_year")
     history   = bundle.get("fiscal_history") or []
     ttm       = bundle.get("ttm_snapshot")
     freshness = bundle.get("freshness") or {}
@@ -570,100 +652,147 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
     st.markdown("---")
 
     # ── Two-column layout: Income + Balance ───────────────────────────────
-    prior = history[-2] if len(history) >= 2 else {}
+    # Prior-FY snapshots are built server-side from the second-to-last FY
+    # row so every line (not just the 5 fields tracked in fiscal_history)
+    # has a Prior FY + YoY value.
+    def pi(field: str) -> Optional[float]:
+        return prior_inc.get(field)
 
-    def p(field: str) -> Optional[float]:
-        v = prior.get(field)
-        return v
+    def pb(field: str) -> Optional[float]:
+        return prior_bs.get(field)
 
+    def pr(field: str) -> Optional[float]:
+        return prior_ret.get(field)
+
+    def pl(field: str) -> Optional[float]:
+        return prior_leases.get(field)
+
+    # Split the prior "Income Statement & Cash Flow" mega-table into two
+    # focused sections. Income Statement walks Revenue → EPS; Cash Flow
+    # & CapEx is the funds-flow + reinvestment view. Keeps each table
+    # short enough to scan top-to-bottom without a scroll.
     inc_rows = [
         # (display_label, validation badge key, curr, prior, format)
-        ("Revenue",            "Revenue",            inc["Revenue"],          p("Revenue"),           "$"),
-        ("COGS",               "COGS",               inc["COGS"],             None,                   "$"),
-        ("Gross Margin",       "Gross Margin",       inc["GrossMargin_Pct"],  None,                   "%"),
-        ("R&D",                None,                 inc["RnD"],              None,                   "$"),
-        ("SG&A",               None,                 inc["SGnA"],             None,                   "$"),
-        ("Operating Income",   "Operating Income",   inc["OperatingIncome"],  None,                   "$"),
-        ("EBIT Margin",        "EBIT Margin",        inc["EBIT_Margin_Pct"],  None,                   "%"),
-        ("EBITDA",             "EBITDA",             inc["EBITDA"],           p("EBITDA"),            "$"),
-        ("EBITDA Margin",      "EBITDA Margin",      inc["EBITDA_Margin_Pct"],None,                   "%"),
-        ("D&A",                None,                 inc["DepreciationAmortization"], None,           "$"),
-        ("NOPAT",              None,                 inc["NOPAT"],            None,                   "$"),
-        ("Net Income",         "Net Income",         inc["NetIncome"],        p("NetIncome"),         "$"),
-        ("Diluted EPS",        "Diluted EPS",        inc["DilutedEPS"],       None,                   "n"),
-        ("Operating CF",       "Operating CF",       inc["OperatingCF"],      None,                   "$"),
-        ("Investing CF",       None,                 inc["InvestingCF"],      None,                   "$"),
-        ("Financing CF",       None,                 inc["FinancingCF"],      None,                   "$"),
-        ("FCF",                "FCF",                inc["FCF"],              p("FCF"),               "$"),
-        ("FCFF",               None,                 inc["FCFF"],             None,                   "$"),
-        ("FCF Margin",         None,                 inc["FCF_Margin_Pct"],   None,                   "%"),
-        ("CapEx",              "CapEx",              inc["CapEx"],            p("CapEx"),             "$"),
-        ("Maintenance CapEx",  None,                 inc["MaintenanceCapEx"], None,                   "$"),
-        ("Growth CapEx",       None,                 inc["GrowthCapEx"],      None,                   "$"),
+        ("Revenue",            "Revenue",            inc["Revenue"],          pi("Revenue"),           "$"),
+        ("COGS",               "COGS",               inc["COGS"],             pi("COGS"),              "$"),
+        ("Gross Margin",       "Gross Margin",       inc["GrossMargin_Pct"],  pi("GrossMargin_Pct"),   "%"),
+        ("R&D",                None,                 inc["RnD"],              pi("RnD"),               "$"),
+        ("SG&A",               None,                 inc["SGnA"],             pi("SGnA"),              "$"),
+        ("Operating Income",   "Operating Income",   inc["OperatingIncome"],  pi("OperatingIncome"),   "$"),
+        # Ex-unusual: strips impairment + restructuring from reported OpInc.
+        # Capital-IQ-aligned when source = xbrl_discrete_tags; FMP-only
+        # approximation (gated by 5% materiality threshold) otherwise.
+        ("Operating Income — ex unusual", None, inc.get("OperatingIncome_ExUnusual"), pi("OperatingIncome_ExUnusual"), "$"),
+        ("EBIT Margin",        "EBIT Margin",        inc["EBIT_Margin_Pct"],  pi("EBIT_Margin_Pct"),   "%"),
+        ("EBITDA",             "EBITDA",             inc["EBITDA"],           pi("EBITDA"),            "$"),
+        ("EBITDA — ex unusual", None, inc.get("EBITDA_ExUnusual"), pi("EBITDA_ExUnusual"), "$"),
+        ("EBITDA Margin",      "EBITDA Margin",      inc["EBITDA_Margin_Pct"],pi("EBITDA_Margin_Pct"), "%"),
+        ("D&A",                None,                 inc["DepreciationAmortization"], pi("DepreciationAmortization"), "$"),
+        ("NOPAT",              None,                 inc["NOPAT"],            pi("NOPAT"),             "$"),
+        ("Net Income",         "Net Income",         inc["NetIncome"],        pi("NetIncome"),         "$"),
+        ("Diluted EPS",        "Diluted EPS",        inc["DilutedEPS"],       pi("DilutedEPS"),        "n"),
+    ]
+
+    cf_rows = [
+        ("Operating CF",       "Operating CF",       inc["OperatingCF"],      pi("OperatingCF"),       "$"),
+        ("Investing CF",       None,                 inc["InvestingCF"],      pi("InvestingCF"),       "$"),
+        ("Financing CF",       None,                 inc["FinancingCF"],      pi("FinancingCF"),       "$"),
+        ("FCF",                "FCF",                inc["FCF"],              pi("FCF"),               "$"),
+        ("FCFF",               None,                 inc["FCFF"],             pi("FCFF"),              "$"),
+        ("FCF Margin",         None,                 inc["FCF_Margin_Pct"],   pi("FCF_Margin_Pct"),    "%"),
+        ("CapEx",              "CapEx",              inc["CapEx"],            pi("CapEx"),             "$"),
+        ("Maintenance CapEx",  None,                 inc["MaintenanceCapEx"], pi("MaintenanceCapEx"),  "$"),
+        ("Growth CapEx",       None,                 inc["GrowthCapEx"],      pi("GrowthCapEx"),       "$"),
     ]
 
     bs_rows = [
-        ("Total Assets",         "Total Assets",         bs["TotalAssets"],         None, "$"),
-        ("Cash",                 "Cash",                 bs["Cash"],                None, "$"),
-        ("Short-Term Investments","Short-Term Investments", bs["ShortTermInvestments"], None, "$"),
-        ("Accounts Receivable",  "Accounts Receivable",  bs["AccountsReceivable"],  None, "$"),
-        ("Inventory",            "Inventory",            bs["Inventory"],           None, "$"),
-        ("PPE Net",              "PPE Net",              bs["PPE_Net"],             None, "$"),
-        ("PPE Gross",            None,                   bs["PPE_Gross"],           None, "$"),
-        ("Accum. Depreciation",  None,                   bs["AccumulatedDepreciation"], None, "$"),
-        ("Total Liabilities",    "Total Liabilities",    bs["TotalLiabilities"],    None, "$"),
-        ("Current Liabilities",  "Current Liabilities",  bs["LiabilitiesCurrent"],  None, "$"),
-        ("Short-Term Debt",      "Short-Term Debt",      bs["ShortTermDebt"],       None, "$"),
-        ("Long-Term Debt",       "Long-Term Debt",       bs["LongTermDebt"],        None, "$"),
-        ("Accounts Payable",     "Accounts Payable",     bs["AccountsPayable"],     None, "$"),
-        ("Total Equity",         "Total Equity",         bs["TotalEquity"],         None, "$"),
-        ("Net Working Capital",  None,                   bs["NWC"],                 None, "$"),
-        ("Net Debt",             None,                   bs["NetDebt"],             None, "$"),
+        ("Total Assets",         "Total Assets",         bs["TotalAssets"],         pb("TotalAssets"),         "$"),
+        ("Cash",                 "Cash",                 bs["Cash"],                pb("Cash"),                "$"),
+        ("Short-Term Investments","Short-Term Investments", bs["ShortTermInvestments"], pb("ShortTermInvestments"), "$"),
+        ("Accounts Receivable",  "Accounts Receivable",  bs["AccountsReceivable"],  pb("AccountsReceivable"),  "$"),
+        ("Inventory",            "Inventory",            bs["Inventory"],           pb("Inventory"),           "$"),
+        ("PPE Net",              "PPE Net",              bs["PPE_Net"],             pb("PPE_Net"),             "$"),
+        ("PPE Gross",            None,                   bs["PPE_Gross"],           pb("PPE_Gross"),           "$"),
+        ("Accum. Depreciation",  None,                   bs["AccumulatedDepreciation"], pb("AccumulatedDepreciation"), "$"),
+        ("Total Liabilities",    "Total Liabilities",    bs["TotalLiabilities"],    pb("TotalLiabilities"),    "$"),
+        ("Current Liabilities",  "Current Liabilities",  bs["LiabilitiesCurrent"],  pb("LiabilitiesCurrent"),  "$"),
+        ("Short-Term Debt",      "Short-Term Debt",      bs["ShortTermDebt"],       pb("ShortTermDebt"),       "$"),
+        ("Long-Term Debt",       "Long-Term Debt",       bs["LongTermDebt"],        pb("LongTermDebt"),        "$"),
+        ("Accounts Payable",     "Accounts Payable",     bs["AccountsPayable"],     pb("AccountsPayable"),     "$"),
+        ("Total Equity",         "Total Equity",         bs["TotalEquity"],         pb("TotalEquity"),         "$"),
+        ("Net Working Capital",  None,                   bs["NWC"],                 pb("NWC"),                 "$"),
+        ("Net Debt",             None,                   bs["NetDebt"],             pb("NetDebt"),             "$"),
     ]
 
-    # Section titles include the FY + period-end so the analyst sees at a
-    # glance which 12-month window is being shown — matters for filers with
-    # non-calendar fiscal years (NVDA Jan, HD/LOW Feb, COST Aug/Sep).
-    period_end_str = _fmt_period_end(ident.get("period_end_date"))
-    fy_suffix = (f" — FY{ident['fiscal_year']} · {period_end_str}"
-                 if period_end_str else f" — FY{ident['fiscal_year']}")
+    # Column-header labels carry the actual fiscal years so analysts don't
+    # have to mentally map "Current FY / Prior FY" to dates — matters most
+    # for non-calendar filers (NVDA, ASML, ORCL). Section titles drop the
+    # FY suffix now that the column headers carry it.
+    curr_header = f"FY{ident['fiscal_year']}"
+    prior_header = f"FY{prior_fy}" if prior_fy else "Prior FY"
+
+    # Row 1: Income Statement (P&L walk) | Balance Sheet
     ls, rs = st.columns(2)
     with ls:
-        _statement_table(f"Income Statement & Cash Flow{fy_suffix}", ticker, inc_rows)
+        _statement_table(
+            "Income Statement", ticker, inc_rows,
+            current_header=curr_header, prior_header=prior_header,
+        )
+        _ex_unusual_provenance(inc)
     with rs:
-        _statement_table(f"Balance Sheet{fy_suffix}", ticker, bs_rows)
+        _statement_table(
+            "Balance Sheet", ticker, bs_rows,
+            current_header=curr_header, prior_header=prior_header,
+        )
 
-    st.markdown("---")
-
-    # ── Capital structure + leases ───────────────────────────────────────
+    # ── Cash flow & capital allocation ────────────────────────────────────
+    from aletheia.ui.validation_badge import convention_flag
     cap_rows = [
-        ("ROIC",                "ROIC",         ret["ROIC"],          None, "%"),
-        ("ROE",                 "ROE",          ret["ROE"],           None, "%"),
-        ("Invested Capital",    "Invested Capital", ret["InvestedCapital"], None, "$"),
-        ("Diluted Shares",      "Diluted Shares", ret["SharesDiluted"], None, "n"),
-        ("Basic Shares",        None,           ret["SharesBasic"],    None, "n"),
-        ("Outstanding Shares",  None,           ret["SharesOutstanding"], None, "n"),
-        ("Buybacks",            "Buybacks",     ret["Buybacks"],       None, "$"),
-        ("SBC",                 None,           ret["SBC"],            None, "$"),
-        ("Net Buyback after SBC", None,         ret["NetBuyback_AfterSBC"], None, "$"),
-        ("SBC % of FCF",        None,           ret["SBC_PctFCF"],     None, "%"),
-        ("Dilution %",          None,           ret["DilutionPct"],    None, "%"),
-        ("Dividends Paid",      "Dividends Paid", ret["DividendsPaid"], None, "$"),
+        (f"ROIC{convention_flag('ROIC')}",                "ROIC",         ret["ROIC"],          pr("ROIC"),          "%"),
+        ("ROE",                 "ROE",          ret["ROE"],           pr("ROE"),           "%"),
+        (f"Invested Capital{convention_flag('Invested Capital')}",    "Invested Capital", ret["InvestedCapital"], pr("InvestedCapital"), "$"),
+        ("Diluted Shares",      "Diluted Shares", ret["SharesDiluted"], pr("SharesDiluted"), "n"),
+        ("Basic Shares",        None,           ret["SharesBasic"],    pr("SharesBasic"),   "n"),
+        ("Outstanding Shares",  None,           ret["SharesOutstanding"], pr("SharesOutstanding"), "n"),
+        ("Buybacks",            "Buybacks",     ret["Buybacks"],       pr("Buybacks"),      "$"),
+        ("SBC",                 None,           ret["SBC"],            pr("SBC"),           "$"),
+        ("Net Buyback after SBC", None,         ret["NetBuyback_AfterSBC"], pr("NetBuyback_AfterSBC"), "$"),
+        ("SBC % of FCF",        None,           ret["SBC_PctFCF"],     pr("SBC_PctFCF"),    "%"),
+        ("Dilution %",          None,           ret["DilutionPct"],    pr("DilutionPct"),   "%"),
+        ("Dividends Paid",      "Dividends Paid", ret["DividendsPaid"], pr("DividendsPaid"), "$"),
     ]
 
-    lease_rows = [
-        ("ROU Asset (Operating)", None, leases["ROUAsset_Operating"],         None, "$"),
-        ("ROU Asset (Finance)",   None, leases["ROUAsset_Finance"],           None, "$"),
-        ("Lease Liab Operating",  None, leases["LeaseLiability_Operating_Total"], None, "$"),
-        ("Lease Liab Finance",    None, leases["LeaseLiability_Finance_Total"],   None, "$"),
-        ("Lease Cost (annual)",   None, leases["LeaseCost"],                  None, "$"),
-    ]
-
+    # Row 2: Cash Flow & Reinvestment | Returns & Capital Structure
     ls2, rs2 = st.columns(2)
     with ls2:
-        _statement_table("Returns & Capital Structure", ticker, cap_rows)
+        _statement_table(
+            "Cash Flow & Reinvestment", ticker, cf_rows,
+            current_header=curr_header, prior_header=prior_header,
+        )
     with rs2:
-        _statement_table("Lease Items", ticker, lease_rows)
+        _statement_table(
+            "Returns & Capital Structure", ticker, cap_rows,
+            current_header=curr_header, prior_header=prior_header,
+        )
+
+    # ── Lease items (hidden when filer has no lease disclosures) ─────────
+    lease_rows = [
+        ("ROU Asset (Operating)", None, leases["ROUAsset_Operating"],         pl("ROUAsset_Operating"),         "$"),
+        ("ROU Asset (Finance)",   None, leases["ROUAsset_Finance"],           pl("ROUAsset_Finance"),           "$"),
+        ("Lease Liab Operating",  None, leases["LeaseLiability_Operating_Total"], pl("LeaseLiability_Operating_Total"), "$"),
+        ("Lease Liab Finance",    None, leases["LeaseLiability_Finance_Total"],   pl("LeaseLiability_Finance_Total"),   "$"),
+        ("Lease Cost (annual)",   None, leases["LeaseCost"],                  pl("LeaseCost"),                  "$"),
+    ]
+    has_lease_data = any(
+        curr is not None or prior is not None
+        for _, _, curr, prior, _ in lease_rows
+    )
+    if has_lease_data:
+        with st.expander("Lease items (ASC 842)", expanded=False):
+            _statement_table(
+                "Lease Items", ticker, lease_rows,
+                current_header=curr_header, prior_header=prior_header,
+            )
 
     # ── Fiscal history ────────────────────────────────────────────────────
     if history:

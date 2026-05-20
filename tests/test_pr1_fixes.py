@@ -1,6 +1,9 @@
 import pytest
 import duckdb
-from aletheia.agents.forensic import load_db_context
+# Note: forensic.py was removed in week-1.5 consolidation. The DB helpers
+# now live in qualitative_sections; tests below import them inline where
+# used (rather than top-level) since the original top-level
+# `load_db_context` import was unused.
 # from aletheia.agents.lead import _generate_report
 from unittest.mock import patch, MagicMock
 
@@ -32,7 +35,7 @@ def test_quality_screens_retrieval():
 
 def test_sbc_pct_fcf_formatting_bounds():
     """Fix 3: SBC as % of FCF is stored as a percentage. Formatting shouldn't multiply by 100 again."""
-    from aletheia.agents.forensic import build_db_context_str
+    from aletheia.agents.qualitative_sections import build_db_context_str_forensic as build_db_context_str
     
     # Test our pre_pct formatting logic indirectly via build_db_context_str
     db_mock = {"fiscal_year": 2024, "sbc_pct_fcf": 6.98, "roic": 0.24}

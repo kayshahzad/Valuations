@@ -50,16 +50,30 @@ def _compute_justified_ev_ebitda(
     nopat: float, ebitda: float, roic: float, wacc: float, g_terminal: float
 ) -> Tuple[float, float]:
     """
-    Compute justified EV/EBITDA and cash conversion ratio using the Liberti formula.
-    EV/EBITDA = [ NOPAT * (1 - g/ROIC) / EBITDA ] / (WACC - g)
+    Compute justified EV/EBITDA and cash conversion ratio using the
+    Liberti formula. Delegates to the central
+    ``aletheia.calculations.formulas.valuation_multiples`` module
+    (Phase 4 of the centralization refactor) so the math is shared
+    with every other site that decomposes multiples.
+
     Returns: (justified_ev_ebitda, cash_conversion_ratio)
     """
-    effective_roic = max(roic, 0.08)
-    if ebitda > 0 and wacc > g_terminal:
-        cash_conv = nopat * (1 - g_terminal / effective_roic) / ebitda
-        justified_ev_ebitda = max(cash_conv / (wacc - g_terminal), 0.0)
-        return justified_ev_ebitda, cash_conv
-    return 0.0, 0.0
+    from aletheia.calculations.formulas import (
+        justified_ev_ebitda as _justified_ev_ebitda,
+        cash_conversion_ratio as _cash_conversion_ratio,
+    )
+    justified = _justified_ev_ebitda(
+        nopat=nopat, ebitda=ebitda, roic=roic,
+        wacc=wacc, terminal_growth=g_terminal,
+    )
+    cash_conv = _cash_conversion_ratio(
+        nopat=nopat, ebitda=ebitda, roic=roic,
+        terminal_growth=g_terminal,
+    )
+    # Preserve legacy tuple-of-floats contract: (0.0, 0.0) when
+    # inputs degenerate (cleaning_engine's `MultipleDriver`
+    # expectations).
+    return (justified or 0.0, cash_conv or 0.0)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

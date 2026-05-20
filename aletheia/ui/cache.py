@@ -45,7 +45,22 @@ def cached_dcf_summary(ticker: str) -> Dict[str, Any]:
     from aletheia.tools.dcf_engine import DCFEngine
 
     calc = make_calc_input(ticker)
-    result = DCFEngine(verbose=False).run(calc)
+    try:
+        result = DCFEngine(verbose=False).run(calc)
+    except NotImplementedError as e:
+        # Tickers classified as ddm_required / embedded_value_required /
+        # routing_required (banks, insurers, asset managers) intentionally
+        # raise here. Dashboard catches the sentinel and renders an
+        # explanatory panel instead of the standard scenario cards.
+        from config.ticker_classification import UNIVERSE
+        meta = UNIVERSE.get(ticker.upper())
+        return {
+            "error":          "specialized_model_required",
+            "ticker":         ticker.upper(),
+            "business_model": meta.business_model if meta else None,
+            "reason":         meta.notes if meta else None,
+            "message":        str(e),
+        }
 
     def _scenario(s, label: str) -> Optional[Dict[str, Any]]:
         if s is None:
@@ -93,6 +108,63 @@ def cached_dcf_summary(ticker: str) -> Dict[str, Any]:
         "bear": _scenario(result.bear, "Bear"),
         "warnings":       list(result.warnings or []),
         "errors":         list(result.errors or []),
+    }
+
+
+@st.cache_data(ttl=_TTL_SEC, show_spinner=False)
+def cached_valuation(ticker: str) -> Optional[Dict[str, Any]]:
+    """Engine-agnostic valuation via the ValuationRouter.
+
+    Returns the IV/MoS produced by whichever engine the ticker's
+    business_model dispatches to (FCFF, rate_base, DDM, embedded_value).
+    Unlike ``cached_dcf_summary`` — which is FCFF-only and stamps an
+    ``error`` sentinel for non-FCFF tickers — this surface gives the
+    dashboard the engine output for *every* ticker, so utilities /
+    banks / insurers / managed-care render their real intrinsic value
+    instead of a "no DCF available" warning.
+    """
+    from aletheia.tools.valuation_router import (
+        UnknownBusinessModelError, ValuationRouter,
+    )
+    from aletheia.utils.calc_input_builder import make_calc_input
+
+    try:
+        calc = make_calc_input(ticker)
+        result = ValuationRouter().execute(calc)
+    except NotImplementedError as e:
+        return {"error": "bypass", "message": str(e), "ticker": ticker.upper()}
+    except UnknownBusinessModelError as e:
+        return {"error": "unknown_business_model", "message": str(e),
+                "ticker": ticker.upper()}
+    except Exception as e:
+        return {"error": type(e).__name__, "message": str(e),
+                "ticker": ticker.upper()}
+
+    snap = result.inputs_snapshot or {}
+    decomposition = (result.engine_specific or {}).get("decomposition")
+    return {
+        "ticker":              result.ticker,
+        "fiscal_year":         int(result.fiscal_year),
+        "engine":              result.engine,
+        "intrinsic_per_share": (float(result.intrinsic_per_share)
+                                if result.intrinsic_per_share is not None else None),
+        "equity_value":        (float(result.equity_value)
+                                if result.equity_value is not None else None),
+        "current_price":       (float(result.current_price)
+                                if result.current_price is not None else None),
+        "margin_of_safety":    (float(result.margin_of_safety)
+                                if result.margin_of_safety is not None else None),
+        "cost_of_equity":      snap.get("cost_of_equity"),
+        "risk_free_rate":      snap.get("risk_free_rate"),
+        "beta":                snap.get("beta"),
+        "shares_diluted":      snap.get("shares_diluted"),
+        "source":              snap.get("source"),
+        "as_of_date":          snap.get("as_of_date"),
+        "inputs_snapshot":     {k: v for k, v in snap.items()
+                                if isinstance(v, (int, float, str, bool, type(None)))},
+        "decomposition":       decomposition,
+        "notes":               result.notes,
+        "warnings":            list(result.warnings or []),
     }
 
 

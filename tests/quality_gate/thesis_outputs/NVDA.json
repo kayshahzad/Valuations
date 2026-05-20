@@ -1,0 +1,71 @@
+{
+  "thesis_statement": "NVDA is a dominant, high-quality compounder currently trading at a massive speculative premium driven by peak cyclical earnings, requiring careful monitoring of hyperscaler capex and geopolitical risks despite strong baseline momentum.",
+  "bull_case": {
+    "claim": "The bull case relies on NVDA maintaining its dominant strategic position and pricing power, allowing it to outgrow its already high implied CAGR of 31.6%. Even under severe stress tests like the 'Geopolitical Export Shock' scenario, baseline momentum pushes IPS to $394.55, reflecting the sheer scale of current value creation and lack of upstream value leakage.",
+    "cited_signals": [
+      "qualitative.strategic_context.strategic_position",
+      "qualitative.forensic.has_pricing_power",
+      "phase2.implied_cagr",
+      "scenarios.Geopolitical Export Shock.intrinsic_per_share",
+      "qualitative.value_chain.upstream_value_leak"
+    ]
+  },
+  "bear_case": {
+    "claim": "The bear case is anchored by extreme valuation distortions, with a +479% multiple premium and a cyclical Z-score of 3.22 indicating massive over-earning. The contrarian view highlights a 'Narrative Premium / FOMO' bias, warning that if margins collapse entirely, absolute downside could be catastrophic, while the 'Hyperscaler ASIC Substitution' scenario models long-term margin compression from custom silicon migration.",
+    "cited_signals": [
+      "phase2.multiple_decomposition.premium_pct",
+      "phase2.cyclicality.z_score",
+      "contrarian.bias_detected",
+      "contrarian.bear_case_summary",
+      "scenarios.Hyperscaler ASIC Substitution.intrinsic_per_share"
+    ]
+  },
+  "base_case": {
+    "claim": "The base case reflects a cyclical digestion period where hyperscalers pause infrastructure build-outs, normalizing revenue from current peak levels. Modeled in the 'AI Capex Peak Reversion' scenario, this yields an IPS of $222.61, aligning with the reverse DCF signal of fair value while acknowledging the high historical CAGR of 50.0% and strong moat score.",
+    "cited_signals": [
+      "scenarios.AI Capex Peak Reversion.intrinsic_per_share",
+      "phase2.reverse_dcf_signal",
+      "phase2.historical_cagr",
+      "qualitative.forensic.moat.score"
+    ]
+  },
+  "decision_conditions": [
+    {
+      "trigger": "Cyclicality z-score normalizes below 1.0",
+      "observable": "phase2.cyclicality.z_score < 1.0",
+      "action": "add",
+      "priority": "amber"
+    },
+    {
+      "trigger": "Multiple premium expands beyond 500%",
+      "observable": "phase2.multiple_decomposition.premium_pct > 5.0",
+      "action": "trim",
+      "priority": "red"
+    },
+    {
+      "trigger": "Implied CAGR exceeds historical CAGR",
+      "observable": "phase2.implied_cagr > phase2.historical_cagr",
+      "action": "trim",
+      "priority": "red"
+    },
+    {
+      "trigger": "Moat score deteriorates due to ASIC substitution",
+      "observable": "qualitative.forensic.moat.score < 8.0",
+      "action": "exit",
+      "priority": "red"
+    }
+  ],
+  "thesis_confidence": "medium",
+  "time_horizon": "3_years",
+  "position_sizing_implications": "Despite the conviction score of 7 and 'conviction' position tier suggesting a 'Strong' size, the extreme multiple premium (479%) and peak cyclicality (Z-score 3.22) warrant a directional adjustment to a starter or trimmed position until cyclical digestion occurs. Cite conviction.position_tier and conviction.position_size_pct.",
+  "required_analyst_judgment": [
+    "Timing and magnitude of hyperscaler AI capex digestion cycle.",
+    "Probability and impact of US government expanding export controls to broader regions.",
+    "Pace of CSP internal AI workload migration to custom silicon (TPUs, Trainium)."
+  ],
+  "update_conditions": [
+    "Hyperscaler capex announcements show a sequential decline in AI infrastructure spend.",
+    "New export control regulations are announced targeting Middle East or other emerging AI markets.",
+    "Reverse-DCF signal flips from fair_value to overvalued."
+  ]
+}

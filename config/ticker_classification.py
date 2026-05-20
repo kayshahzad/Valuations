@@ -53,8 +53,8 @@ UNIVERSE: Dict[str, TickerClassification] = {
 
     # --- Financials ---
     "V": TickerClassification("V", "Financials", "Payments", "growth_compounder", "fcff_compatible", "Payments toll-bridge", date.today()),
-    "JPM": TickerClassification("JPM", "Financials", "Banks", "mature", "routing_required", "Financial bank requiring specialized model", date.today()),
-    "BRK-B": TickerClassification("BRK-B", "Financials", "Diversified", "mature", "routing_required", "Conglomerate/Insurer requiring specialized model", date.today()),
+    "JPM": TickerClassification("JPM", "Financials", "Banks", "mature", "ddm_required", "Universal bank — capital is the product; DDM via sustainable EPS growth + payout ratio", date.today()),
+    "BRK-B": TickerClassification("BRK-B", "Financials", "Diversified", "mature", "embedded_value_required", "Insurance conglomerate / sum-of-parts; book-value compounding + target P/B framework", date.today()),
 
     # --- Consumer Defensive / Retail ---
     "COST": TickerClassification("COST", "Consumer Defensive", "Retail", "growth_compounder_consumer", "fcff_compatible", "Consumer-defensive compounder, modest margin improvement", date.today()),
@@ -83,7 +83,7 @@ UNIVERSE: Dict[str, TickerClassification] = {
 
     # --- Financials (FCFF-compatible) ---
     "MCO": TickerClassification("MCO", "Financials", "Credit Ratings", "growth_compounder", "fcff_compatible", "Credit-rating duopoly + analytics; toll-bridge economics", date.today()),
-    "AXP": TickerClassification("AXP", "Financials", "Payments & Cards", "growth_compounder", "routing_required", "Closed-loop card *issuer* — has consumer-lending book, files bank-style income statement (no OperatingIncome line). FCFF DCF can't run; needs schema-specific framework.", date.today()),
+    "AXP": TickerClassification("AXP", "Financials", "Payments & Cards", "growth_compounder", "ddm_required", "Closed-loop card *issuer* with consumer-lending book; files bank-style income statement. DDM via sustainable EPS growth + payout ratio (low ~21% payout, 12-15% earnings growth).", date.today()),
 
     # --- Technology Services ---
     "ACN": TickerClassification("ACN", "Technology", "IT Services & Consulting", "mature", "fcff_compatible", "IT services + consulting; mature growth", date.today()),

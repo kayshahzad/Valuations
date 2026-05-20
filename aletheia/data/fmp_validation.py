@@ -596,6 +596,8 @@ def validate_ttm_record(
     sec_quarterly_revenue: Optional[List[Dict[str, Any]]] = None,
     sec_quarterly_net_income: Optional[List[Dict[str, Any]]] = None,
     fmp_quarterly_income: Optional[List[Dict[str, Any]]] = None,
+    prior_fy_net_debt: Optional[float] = None,
+    prior_fy_total_assets: Optional[float] = None,
 ) -> Dict[str, Any]:
     """Gate A.TTM — cross-check our derived TTM against FMP's TTM blob
     plus two second-source lanes added in Phase Q-6 full:
@@ -734,7 +736,17 @@ def validate_ttm_record(
         sec_quarterly_revenue, sec_quarterly_net_income,
         fmp_quarterly_income, fields,
     )
-    n_drift += nd_drift + ar_drift + qc_drift
+    # Period-over-period balance-sheet sanity check. Catches cases like
+    # ABT's $20B Q1 2026 debt issuance that BOTH our cleaning engine
+    # AND FMP correctly captured but neither flag would catch on its
+    # own (because they cross-check sources, not period-over-period
+    # changes within a single source). Non-blocking — legitimate M&A
+    # trips this intentionally; the analyst should cross-check against
+    # an 8-K but the data isn't wrong.
+    pop_drift = _add_ttm_period_over_period_check(
+        record, prior_fy_net_debt, prior_fy_total_assets, fields,
+    )
+    n_drift += nd_drift + ar_drift + qc_drift + pop_drift
 
     if n_p0_breach > 0:
         result_status = "blocking_drift"
@@ -752,6 +764,66 @@ def validate_ttm_record(
 
 
 # ── Phase Q-6 full helpers ─────────────────────────────────────────────
+
+def _add_ttm_period_over_period_check(
+    record: Any,
+    prior_fy_net_debt: Optional[float],
+    prior_fy_total_assets: Optional[float],
+    fields: Dict[str, Dict[str, Any]],
+) -> int:
+    """Period-over-period balance-sheet sanity check. Flags as
+    `structural_drift` when |ΔNetDebt|/prior_FY_TotalAssets > 20% — a
+    threshold tuned to catch material corporate actions (large debt
+    issuance / refinance / paydown / acquisition funding) that warrant
+    analyst review. 5–20% is the `acceptable` (monitor) band.
+
+    Non-blocking by design. Legitimate M&A trips this intentionally;
+    the analyst should cross-check against an 8-K. The data isn't
+    wrong — the SHAPE of the change is unusual and worth a manual
+    look. ABT's Q1 2026 was the case study ($20B debt issuance,
+    25% of total assets — would have fired the warning).
+
+    Returns the drift count contribution (0 or 1)."""
+    label = "period_over_period_netdebt_jump"
+    ttm_nd = _resolve_record_path(record, "derived.NetDebt")
+
+    if (ttm_nd is None or prior_fy_net_debt is None
+            or prior_fy_total_assets is None
+            or prior_fy_total_assets <= 0):
+        fields[label] = {
+            "ours":             ttm_nd,
+            "fmp":              prior_fy_net_debt,
+            "drift_pct":        None,
+            "tier":             "definitional",
+            "p0":               False,
+            "status":           "n_a",
+            "source_endpoint":  "internal:period_over_period",
+            "fmp_key_resolved": "prior_fy_net_debt|total_assets",
+        }
+        return 0
+
+    delta = float(ttm_nd) - float(prior_fy_net_debt)
+    delta_pct_assets = abs(delta) / float(prior_fy_total_assets)
+    # Anything above 20% of total assets is a structural change worth
+    # flagging (M&A, large issuance/refi). Below 5% is routine; 5-20% is
+    # "monitor." Threshold tuned on ABT Q1 2026 ($20B issuance ≈ 23% of
+    # total assets) — we want that to fire.
+    status = (
+        "structural_drift" if delta_pct_assets > 0.20
+        else ("acceptable" if delta_pct_assets > 0.05 else "byte_perfect")
+    )
+    fields[label] = {
+        "ours":             ttm_nd,
+        "fmp":              prior_fy_net_debt,   # the comparison anchor
+        "drift_pct":        delta / float(prior_fy_total_assets),
+        "tier":             "definitional",
+        "p0":               False,
+        "status":           status,
+        "source_endpoint":  "internal:period_over_period",
+        "fmp_key_resolved": "ΔNetDebt / prior_FY_TotalAssets",
+    }
+    return 1 if status == "structural_drift" else 0
+
 
 def _add_ttm_ev_identity_check(
     record: Any,

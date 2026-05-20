@@ -37,7 +37,8 @@ def render_stage3_validation(ticker: str) -> None:
     honouring per-ticker pins from ``config/provider_pins.py``.
     """
     from aletheia.providers import resolve_provider_name
-    selected = st.session_state.get("provider", "fmp")
+    from config.data_source import DEFAULT_PROVIDER
+    selected = st.session_state.get("provider") or DEFAULT_PROVIDER
     effective, pin_reason = resolve_provider_name(selected, ticker=ticker)
 
     st.markdown("## 🧪 Stage 3 validation")

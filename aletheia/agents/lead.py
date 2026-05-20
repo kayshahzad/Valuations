@@ -71,6 +71,37 @@ def _ratios_block(_g) -> dict:
     }
 
 
+def _implied_growth_label(p2: dict) -> str | None:
+    """Return the human-readable string for ``dcf_model.implied_growth``.
+
+    Depends on which engine produced the valuation:
+      - FCFF: a real ReverseDCF implied CAGR is available via
+        ``p2.implied_cagr`` — formatted as a percentage string when
+        present, falling back to ``None`` when ReverseDCF errored.
+      - Rate-base: no ReverseDCF runs (the model isn't a free-FCF
+        projection). Return a descriptive label naming the model
+        used so downstream consumers don't show the old misleading
+        ``"Pending Expectations Engine"`` placeholder.
+      - Future engines (DDM, embedded-value): same pattern — label
+        names the model, no ReverseDCF.
+    """
+    engine = p2.get("engine") or "fcff"
+    if engine == "fcff":
+        cagr = p2.get("implied_cagr")
+        if cagr is None:
+            return None
+        return f"{cagr * 100:.1f}% (ReverseDCF implied 10-year revenue CAGR)"
+    if engine == "rate_base":
+        # Rate-base perpetuity model — implied growth is the rate-plan g
+        # (analyst-curated input), not a market-implied CAGR. The
+        # ReverseDCF math doesn't apply to regulator-set growth.
+        return (
+            "Rate-base perpetuity (FPL rate plan); no market-implied "
+            "CAGR — ReverseDCF doesn't apply to regulator-set growth"
+        )
+    return f"Implied growth from {engine} engine"
+
+
 class ServingReportWriter:
     def __init__(self):
         self.base_path = Path("valuation_data/serving/latest")
@@ -195,6 +226,18 @@ class ServingReportWriter:
             print(f"✅ Lead: Detailed markdown saved to {detailed_path}")
         except Exception as e:
             print(f"❌ Lead: Report generation failed: {e}")
+
+        # DCF Excel — same cadence as HTML + Detailed MD so the Reports
+        # tab's "⬇ DCF Excel" button never shows stale-on-disk content.
+        # Independent try/except so an xlsx-writer failure doesn't drop
+        # the HTML/MD outputs above.
+        try:
+            from aletheia.tools.dcf_excel_exporter import export_ticker
+            xlsx_path = export_ticker(ticker)
+            if xlsx_path:
+                print(f"✅ Lead: DCF Excel saved to {xlsx_path}")
+        except Exception as e:
+            print(f"❌ Lead: DCF Excel generation failed: {e}")
 
 
 def lead_agent(state):
@@ -499,9 +542,18 @@ def lead_agent(state):
                 # remove entirely when the export pipeline drops the field.
                 "intrinsic_value":  None,
                 "upside_percent":   None,
-                "implied_growth":   "Pending Expectations Engine",
+                # Implied-growth label depends on which engine ran. FCFF has
+                # a real reverse-DCF implied CAGR (from p2.implied_cagr).
+                # Rate-base doesn't run reverse DCF — labeled accordingly.
+                # The literal string "Pending Expectations Engine" (legacy
+                # placeholder) is replaced by an engine-aware label.
+                "implied_growth":   _implied_growth_label(p2),
             },
             "phase2_valuation": {
+                # Phase A.4: surface which engine produced these numbers
+                # (fcff / rate_base / future ddm + embedded_value). UI
+                # provenance pill + thesis synthesizer branching read this.
+                "engine":          p2.get("engine"),
                 "three_scenario_dcf": {
                     "bear": {
                         "intrinsic_per_share": p2_intrinsic.get("bear"),

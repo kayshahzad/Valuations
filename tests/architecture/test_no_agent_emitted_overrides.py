@@ -31,10 +31,10 @@ FORBIDDEN_OVERRIDE_NAMES = frozenset({
     "max_growth_rate",
 })
 
-# Files that are exempt from the scan. The deprecated valuation_node shim and
-# the deprecated fundamentalist agent are still in the tree for backwards
-# compatibility but their bodies should not produce these fields. Add new
-# exempt paths only after PR review.
+# Files that are exempt from the scan. Empty since the agent-consolidation
+# cleanup removed `fundamentalist`, `valuation_node`, `intake`, and
+# `contrarian` v1. Every remaining agent file must comply with the lock.
+# Add new exempt paths only after PR review.
 EXEMPT_FILES = frozenset({
     # (none currently — all agent files must comply)
 })

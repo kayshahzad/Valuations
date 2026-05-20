@@ -79,6 +79,7 @@ from langgraph.graph import StateGraph, END
 from aletheia.state import AgentState
 from aletheia.agents.librarian import librarian_agent
 from aletheia.agents.calc_node import calc_node
+from aletheia.agents.qualitative_extraction import qualitative_extraction_node
 from aletheia.agents.qualitative_synthesis import qualitative_synthesis_agent
 from aletheia.agents.scenario_eval_node import scenario_eval_node
 from aletheia.agents.strategist import strategist_agent
@@ -106,6 +107,7 @@ def create_workflow():
     # ── Nodes ────────────────────────────────────────────────────────────────
     workflow.add_node("librarian",             librarian_agent)
     workflow.add_node("calc_node",             calc_node)
+    workflow.add_node("qualitative_extraction", qualitative_extraction_node)
     workflow.add_node("qualitative_synthesis", qualitative_synthesis_agent)
     workflow.add_node("scenario_eval",         scenario_eval_node)
     workflow.add_node("strategist",            strategist_agent)
@@ -115,12 +117,19 @@ def create_workflow():
     workflow.add_node("lead",                  lead_agent)
 
     # ── DAG ──────────────────────────────────────────────────────────────────
+    # qualitative_extraction (Phase B): one Gemini call extracts the 3
+    # LLM_AUGMENTED dims (competitor_identification, regulatory_exposure,
+    # customer_concentration) from the 10-K and writes them to
+    # qualitative_assessments BEFORE dashboard_fetch reads. Keeps Stage 4
+    # cost at +1 LLM call rather than +3.
+    #
     # dashboard_fetch projects qualitative-dashboard state for the ticker
     # so thesis_synthesizer can cite analyst-structured judgment alongside
     # calc_node and other agent outputs without violating its AST lock.
     workflow.set_entry_point("librarian")
     workflow.add_edge("librarian",             "calc_node")
-    workflow.add_edge("calc_node",             "qualitative_synthesis")
+    workflow.add_edge("calc_node",             "qualitative_extraction")
+    workflow.add_edge("qualitative_extraction", "qualitative_synthesis")
     workflow.add_edge("qualitative_synthesis", "scenario_eval")
     workflow.add_edge("scenario_eval",         "strategist")
     workflow.add_edge("strategist",            "contrarian")

@@ -482,21 +482,42 @@ class ScreeningEngine:
         eps_series  = ni_series / shares if shares > 0 else ni_series * 0
         eps_cagr    = _robust_cagr(eps_series)
 
-        pe          = price / (net_income / shares) if (net_income and shares > 0 and price > 0) else None
+        # Valuation multiples + ratios — delegated to the central
+        # formula module (Phase 4 centralization). The central
+        # functions encode the same None-on-non-positive-denom policy
+        # this block enforced inline; behavior is identical.
+        from aletheia.calculations.formulas import (
+            price_to_earnings as _pe,
+            price_to_book as _pb,
+            ev_to_ebitda as _ev_ebitda,
+            ev_to_ebit as _ev_ebit,
+            ev_to_fcf as _ev_fcf,
+            net_debt_to_ebitda as _nd_ebitda,
+            debt_to_equity as _de,
+            interest_coverage as _interest_cov,
+            current_ratio as _current_ratio_fn,
+            dividend_yield as _div_yield,
+        )
+        eps_val = (net_income / shares) if (net_income and shares > 0) else None
+        book_per_share = (total_equity / shares) if (total_equity and shares > 0) else None
+        pe          = _pe(price=price if price > 0 else None, eps=eps_val)
         peg         = pe / (eps_cagr * 100) if (pe and eps_cagr and eps_cagr > 0) else None
-        pb          = price / (total_equity / shares) if (total_equity and shares > 0 and price > 0) else None
-        ev_ebitda   = ev / ebitda if (ev and ebitda and ebitda > 0) else None
-        ev_ebit     = ev / ebit if (ev and ebit and ebit > 0) else None
-        ev_fcf      = ev / fcf if (ev and fcf and fcf > 0) else None
+        pb          = _pb(market_cap=price if price > 0 else None,
+                          book_equity=book_per_share)
+        ev_ebitda   = _ev_ebitda(enterprise_value=ev if ev else None, ebitda=ebitda)
+        ev_ebit     = _ev_ebit(enterprise_value=ev if ev else None, ebit=ebit)
+        ev_fcf      = _ev_fcf(enterprise_value=ev if ev else None, fcf=fcf)
         mos         = (nopat / tax_rate / 0.09 - ev) / ev if (nopat and ev > 0) else None  # rough EPV MoS
 
-        de_ratio    = total_debt / total_equity if (total_equity and total_equity > 0) else None
-        interest_cov = ebit / abs(interest_exp) if (ebit and interest_exp and interest_exp != 0) else None
-        current_ratio = current_assets / current_liab if (current_assets and current_liab and current_liab > 0) else None
-        nd_ebitda   = net_debt / ebitda if (net_debt is not None and ebitda and ebitda > 0) else None
+        de_ratio    = _de(total_debt=total_debt, total_equity=total_equity)
+        interest_cov = _interest_cov(ebit=ebit, interest_expense=interest_exp)
+        current_ratio = _current_ratio_fn(
+            current_assets=current_assets, current_liabilities=current_liab,
+        )
+        nd_ebitda   = _nd_ebitda(net_debt=net_debt, ebitda=ebitda)
         std_pct_debt = std / total_debt if (std and total_debt and total_debt > 0) else None
 
-        div_yield   = dividends / mktcap if (dividends and mktcap > 0) else None
+        div_yield   = _div_yield(dividends_paid=dividends, market_cap=mktcap)
 
         # EPS leverage: EPS CAGR - Revenue CAGR
         eps_leverage = (eps_cagr - rev_cagr) if (eps_cagr is not None and rev_cagr is not None) else None

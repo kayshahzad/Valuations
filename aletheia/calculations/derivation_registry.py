@@ -148,7 +148,7 @@ DERIVATIONS: List[DerivationEntry] = [
         name="fcf",
         label="FCF",
         category="DCF",
-        formula="OperatingCF − abs(CapEx)",
+        formula="OperatingCF − |CapEx|",
         inputs=["OperatingCF", "CapEx_Total"],
         methodology=(
             "Damodaran FCFF definition: OCF minus signed-positive CapEx. "
@@ -204,19 +204,27 @@ DERIVATIONS: List[DerivationEntry] = [
         name="net_debt",
         label="Net debt",
         category="DCF",
-        formula="TotalDebt − CashAndEquivalents − ShortTermInvestments",
-        inputs=["LongTermDebt", "ShortTermDebt", "Cash", "ShortTermInvestments"],
+        formula="GrossDebt − LiquidAssets",
+        inputs=["LongTermDebt", "ShortTermDebt", "CurrentPortionLongTermDebt",
+                "FinanceLeaseLiability_Total", "Cash", "ShortTermInvestments",
+                "LongTermInvestments"],
         methodology=(
-            "**Platform**: broad-cash basket — gross debt minus "
-            "(cash + cash equivalents + short-term investments). "
-            "Rationale: liquid short-term investments (Treasury bills, "
-            "money-market positions) are economically substitutable for "
-            "cash and could service debt on demand. Damodaran convention. "
-            "Lease liabilities EXCLUDED from the debt side (matches our "
-            "TotalDebt input which equals LongTermDebt + ShortTermDebt; "
-            "operating leases live in a separate liability bucket). "
-            "**Worked example (AAPL TTM Q2 FY26)**: TotalDebt $84.7B "
-            "− Cash $36.3B − STInv $32.2B = NetDebt $16.2B."
+            "**Platform (Phase 2 canonicalized, 2026-05)**: EV-aligned "
+            "definition. Gross debt = LongTermDebt + ShortTermDebt + "
+            "CurrentPortionLongTermDebt + FinanceLeaseLiability_Total. "
+            "Liquid assets = Cash + ShortTermInvestments + "
+            "LongTermInvestments. Rationale: long-term marketable "
+            "securities (AAPL ~$77B portfolio) are debt-equivalent "
+            "offsets — liquid in the debt-repayment sense even when "
+            "classified non-current. Finance leases are treated as "
+            "debt-equivalent obligations under ASC 842. The XBRL path "
+            "preserves a finance-lease fallback ladder "
+            "(curr+nc → consolidated total → PV from maturity schedule) "
+            "for filers that don't tag the consolidated total. "
+            "**Worked example (AAPL TTM Q2 FY26)**: GrossDebt ~$84.7B "
+            "+ $13B finance leases = $97.7B; LiquidAssets $36.3B + "
+            "$32.2B STI + $77B LT inv = $145.5B; NetDebt = -$47.8B "
+            "(net cash position)."
         ),
         alternates=[
             "FMP netDebtToEBITDATTM uses **narrow cash** "
@@ -404,7 +412,7 @@ DERIVATIONS: List[DerivationEntry] = [
         name="justified_ev_ebitda",
         label="Justified EV/EBITDA",
         category="MultDec",
-        formula="(1 − g/ROIC) / (WACC − g) × (1 − tax_rate) × EBIT/EBITDA",
+        formula="[NOPAT × (1 − g/ROIC) / EBITDA] / (WACC − g)",
         inputs=["growth_rate", "roic", "wacc", "tax_rate", "ebit_margin"],
         methodology=(
             "Damodaran's justified-multiple formula. Decomposes the "

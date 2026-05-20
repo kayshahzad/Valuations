@@ -235,3 +235,40 @@ def compute_historical_beta(
     if var <= 0:
         return None
     return float(cov / var)
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# GDP projections (Reality Checks — Feature 1)
+# ────────────────────────────────────────────────────────────────────────────
+
+def get_gdp_projection(year: int) -> Optional[float]:
+    """
+    Return projected US nominal GDP for `year` in USD billions, linearly
+    interpolated between the curated CBO projection points in
+    `config/gdp_projections.py`. Returns None if `year` is outside the
+    curated range (i.e., requires extrapolation).
+
+    Used by the Reality Checks GDP comparison: terminal-year projected
+    revenue ÷ projected GDP at that horizon.
+    """
+    try:
+        from config.gdp_projections import GDP_PROJECTIONS_USD_BILLIONS
+    except Exception:
+        return None
+
+    if not GDP_PROJECTIONS_USD_BILLIONS:
+        return None
+
+    pts = sorted(GDP_PROJECTIONS_USD_BILLIONS.keys())
+    if year < pts[0] or year > pts[-1]:
+        return None
+    if year in GDP_PROJECTIONS_USD_BILLIONS:
+        return float(GDP_PROJECTIONS_USD_BILLIONS[year])
+
+    # Linear interpolation between the two surrounding curated points.
+    lo = max(p for p in pts if p < year)
+    hi = min(p for p in pts if p > year)
+    lo_v = GDP_PROJECTIONS_USD_BILLIONS[lo]
+    hi_v = GDP_PROJECTIONS_USD_BILLIONS[hi]
+    frac = (year - lo) / (hi - lo)
+    return float(lo_v + frac * (hi_v - lo_v))

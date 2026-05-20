@@ -88,4 +88,5 @@ class AgentState(TypedDict):
     rules_content: str # Loaded from RULES.md
 
     raw_10k_text: str # For Long Context Task
+    raw_def14a_text: str # DEF 14A proxy statement excerpt (Phase C management dim extraction)
     dcf_config: Optional[DCFConfig] # Dynamic inputs

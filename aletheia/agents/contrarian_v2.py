@@ -1,22 +1,32 @@
 """
 aletheia/agents/contrarian_v2.py
 
-Phase 3 — Enhanced Contrarian Agent
-=====================================
-Drop-in replacement for contrarian.py that adds the Phase 2 reverse DCF
-signal as a structured adversarial input.
+Contrarian Agent — adversarial bear-case synthesis from structured inputs.
 
-The key upgrade: instead of only searching for bear case news, the contrarian
-now has the mathematical implied CAGR from the reverse DCF. It challenges:
-  1. Whether the implied CAGR is realistic given historical growth
-  2. Whether the multiple premium is justified
-  3. Whether the bear case DCF scenario is too optimistic
+Inputs:
+  1. phase2_valuation — reverse DCF signal, multiple decomposition,
+                         bear scenario IPS (deterministic math)
+  2. scenario_results — agent-proposed scenarios with named overrides
+                         and DCF outputs (each scenario carries its own
+                         IPS / upside)
+  3. (removed in week-1.5 A/B) — DuckDuckGo web search
+
+Web search was removed after the controlled A/B (`scripts/contrarian_ab.py`,
+`scripts/compare_contrarian_ab.py`) on 9 tickers showed:
+  - DuckDuckGo dependency was architecture-broken on the test machine,
+    so every `with-search` run was effectively `no-search` + a 735-char
+    error string the LLM ignored
+  - Bias-category match across with/without was 6/9 with the 3 mismatches
+    being label variants of the same diagnosis
+  - Sentiment scores matched 8/9 (1 ticker within 2 points)
+  - Recency markers (Q3 2024 / "recently" / "earnings call") appeared
+    ZERO times in either version's bear case — the LLM never used live
+    search content to anchor recency claims even when the search succeeded
+  - The contrarian's adversarial value comes from the structured
+    quant_challenge (reverse-DCF math + multiple decomposition) and the
+    scenario_results IPSs, not from web text
 
 The ContrarianOutput schema is UNCHANGED so lead_agent reads it identically.
-The only change is richer context passed to the LLM.
-
-To use: rename this file to contrarian.py and it replaces the existing one.
-Or update graph.py to import from contrarian_v2.
 """
 
 import os
@@ -24,7 +34,6 @@ from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
-from langchain_community.tools import DuckDuckGoSearchRun
 from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
 
@@ -93,13 +102,13 @@ BEAR CASE INTRINSIC VALUE:
   • Downside in bear case: {(((bear_iv - current_price) / current_price) if current_price else 0.0):+.1%}
 """
 
-    # ── Web search for qualitative bear case ─────────────────────────────────
-    search = DuckDuckGoSearchRun()
-    query = f"{ticker} stock bear case risks negative analysis concerns"
-    try:
-        raw_web_results = search.invoke(query)
-    except Exception as e:
-        raw_web_results = f"Search failed: {e}"
+    # ── Web search REMOVED in week-1.5 A/B (see module docstring) ────────────
+    # The contrarian's adversarial bite comes from quant_challenge +
+    # scenario_results, not from web text. The `raw_results` field is
+    # retained on the output dict for backward compatibility with any
+    # consumer that still reads it; populated with a stable explanatory
+    # marker rather than a search response.
+    raw_web_results = "(web search removed; bear case derives from structured inputs)"
 
     # ── LLM Analysis ──────────────────────────────────────────────────────────
     if not os.environ.get("GOOGLE_API_KEY"):
@@ -143,15 +152,12 @@ BEAR CASE INTRINSIC VALUE:
 You are The Contrarian — the adversarial voice of the investment committee.
 Your goal is to construct the strongest possible bear case for {ticker}.
 
-You have THREE sources of evidence:
+You have TWO sources of evidence:
 
 1. MATHEMATICAL CHALLENGES (from Reverse DCF and Multiple Decomposition):
 {quant_challenge}
 
-2. QUALITATIVE BEAR CASE (from live search):
-{web_results}
-
-3. AGENT-PROPOSED ALTERNATE SCENARIOS (already evaluated by DCFEngine —
+2. AGENT-PROPOSED ALTERNATE SCENARIOS (already evaluated by DCFEngine —
    these are typed, bounded hypotheses with concrete IPS implications):
 {scenario_summary}
 
@@ -159,12 +165,12 @@ YOUR TASKS:
 1. **Bias Detection**: What cognitive bias is driving the current valuation?
    - If implied CAGR >> historical CAGR: "Growth Extrapolation Bias"
    - If multiple premium >> 100%: "Narrative Premium / FOMO"
-   - If web results show consensus optimism: "Herding Bias"
+   - If high cyclical Z-score driving the multiple: "Anchoring on Peak Earnings"
+   - If structurally weak ROIC trend with growth premium: "Hope-Driven Mean Reversion"
 
-2. **Bear Case Synthesis**: Combine the mathematical, qualitative, and
-   scenario-based challenges:
+2. **Bear Case Synthesis**: Combine the mathematical and scenario-based
+   challenges:
    - Start with the quantitative impossibility from Reverse DCF
-   - Layer in the qualitative risks from web search
    - REFERENCE ANY BEAR/BASE_ALTERNATIVE SCENARIOS BY NAME and cite the
      resulting IPS — e.g. "In the 'AI capex peak' scenario proposed by
      forensic_agent, IV drops to $X (-Y% vs current price)"
@@ -208,9 +214,6 @@ Return structured JSON.
         report: ContrarianOutput = chain.invoke({
             "ticker": ticker,
             "quant_challenge": quant_challenge if quant_challenge else "Phase 2 data unavailable.",
-            "web_results": raw_web_results,
-            "implied_cagr": f"{implied_cagr:.1%}" if implied_cagr else "N/A",
-            "historical_cagr": f"{historical_cagr:.1%}" if historical_cagr else "N/A",
             "scenario_summary": scenario_summary,
         })
 

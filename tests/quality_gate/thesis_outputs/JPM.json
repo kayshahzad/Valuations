@@ -1,0 +1,64 @@
+{
+  "thesis_statement": "JPM possesses a dominant strategic position and a wide moat, but current peak cyclical earnings and impending regulatory capital pressures warrant caution until net interest margins normalize.",
+  "bull_case": {
+    "claim": "JPM's dominant strategic position and high growth quality provide a strong foundation for continued market leadership. With a moat score of 9.0/10 and demonstrated pricing power, the bank is well-positioned to navigate substitution pressures and maintain its competitive advantage over the long term without suffering from upstream value leaks.",
+    "cited_signals": [
+      "qualitative.forensic.moat_score",
+      "qualitative.forensic.has_pricing_power",
+      "qualitative.value_chain.strategic_position",
+      "qualitative.strategic_context.growth_quality",
+      "qualitative.value_chain.upstream_value_leak"
+    ]
+  },
+  "bear_case": {
+    "claim": "The contrarian view highlights a significant risk of anchoring on peak earnings, supported by a highly negative sentiment score of -7. The 'Regulatory Capital Squeeze' scenario outlines how increased Basel III endgame requirements and higher Stress Capital Buffers could force deleveraging and compress terminal growth, while cyclical normalization threatens to revert unsustainably wide NIMs.",
+    "cited_signals": [
+      "contrarian.bias_detected",
+      "contrarian.sentiment_score",
+      "contrarian.bear_case_summary",
+      "scenarios.Regulatory Capital Squeeze.rationale"
+    ]
+  },
+  "base_case": {
+    "claim": "The base case centers on the 'Cyclical Normalization' scenario, acknowledging that the current revenue z-score of 2.33 indicates peak cyclicality. As net interest margins mean-revert to their 3-year average, earnings will likely contract from current elevated levels despite the bank's lack of concentration risk and strong structural defenses.",
+    "cited_signals": [
+      "phase2.cyclicality.z_score",
+      "scenarios.Cyclical Normalization.rationale",
+      "qualitative.forensic.concentration_risk",
+      "qualitative.strategic_context.cyclicality_classification"
+    ]
+  },
+  "decision_conditions": [
+    {
+      "trigger": "Revenue z-score normalizes below 1.0 indicating NIM mean reversion has occurred.",
+      "observable": "phase2.cyclicality.z_score < 1.0",
+      "action": "add",
+      "priority": "amber"
+    },
+    {
+      "trigger": "Regulatory capital squeeze materializes with higher than expected SCB.",
+      "observable": "scenarios.Regulatory Capital Squeeze.probability > 0.5",
+      "action": "trim",
+      "priority": "red"
+    },
+    {
+      "trigger": "Moat score drops below 8.0 due to rising substitution pressure.",
+      "observable": "qualitative.forensic.moat_score < 8.0",
+      "action": "exit",
+      "priority": "red"
+    }
+  ],
+  "thesis_confidence": "insufficient_signal",
+  "time_horizon": "1_year",
+  "position_sizing_implications": "Conviction scores are currently unavailable (`conviction.position_tier` is N/A). Given the lack of valuation data and the high cyclicality z-score indicating peak earnings, a watchlist or underweight position is recommended until cyclical normalization occurs and quantitative valuation metrics become available.",
+  "required_analyst_judgment": [
+    "Determine the exact impact of Basel III endgame capital requirements on JPM's ROE, as quantitative IPS impacts are currently N/A.",
+    "Assess the timing and magnitude of NIM mean reversion in the current macroeconomic rate environment.",
+    "Evaluate the qualitative impact of the -7 sentiment score against the bank's dominant strategic position."
+  ],
+  "update_conditions": [
+    "Phase 2 valuation metrics (WACC, Implied CAGR, IPS) become available to anchor quantitative analysis.",
+    "Federal Reserve announces final Basel III endgame rules, clarifying the SCB impact.",
+    "Q-o-Q earnings show NIM compression accelerating faster than the 3-year average mean reversion."
+  ]
+}

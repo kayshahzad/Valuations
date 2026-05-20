@@ -88,8 +88,19 @@ def _build_income_statement(latest: pd.Series, clean_json: dict, raw_json: dict)
         "RnD":              _safe_get(latest, "raw_RnD") or _f(clean_json.get("R&D") or raw_json.get("R&D")),
         "SGnA":             _f(clean_json.get("SG&A") or raw_json.get("SG&A")),
         "OperatingIncome":  _safe_get(latest, "raw_OperatingIncome", "derived_OperatingIncome") or _f(clean_json.get("OperatingIncome")),
+        # Capital-IQ-aligned operating income: OpInc + impairment/restructuring
+        # add-back. Source provenance is rendered as a pill in the UI.
+        # Hybrid path uses discrete XBRL tags; FMP-only fallback uses
+        # ``otherExpenses`` bucket gated by a 5%-of-revenue materiality test.
+        "OperatingIncome_ExUnusual":        _f(latest.get("clean_OperatingIncome_ExUnusual")),
+        "OperatingIncome_ExUnusual_Source": (
+            latest.get("clean_OperatingIncome_ExUnusual_Source")
+            if isinstance(latest.get("clean_OperatingIncome_ExUnusual_Source"), str)
+            else None
+        ),
         "EBIT_Margin_Pct":  _f(latest.get("derived_EBIT_Margin_Pct")),
         "EBITDA":           _safe_get(latest, "clean_EBITDA", "derived_EBITDA") or _f(clean_json.get("EBITDA")),
+        "EBITDA_ExUnusual": _f(latest.get("clean_EBITDA_ExUnusual")),
         "EBITDA_Margin_Pct": _f(latest.get("derived_EBITDA_Margin_Pct")),
         "DepreciationAmortization": _safe_get(latest, "derived_Depreciation_Total") or _f(clean_json.get("Depreciation_Total")),
         "NOPAT":            _safe_get(latest, "clean_NOPAT") or _f(clean_json.get("NOPAT")),
@@ -498,11 +509,23 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
     if fy_history.empty:
         return {"error": f"No FY data for {ticker} in DB."}
 
-    latest = fy_history[
-        fy_history["fiscal_year"] == fy_history["fiscal_year"].max()
-    ].iloc[0]
+    fy_sorted = fy_history.sort_values("fiscal_year")
+    latest = fy_sorted.iloc[-1]
     clean_json = _parse_json_field(latest.get("clean_json"))
     raw_json   = _parse_json_field(latest.get("raw_json"))
+
+    # Prior-FY row (one step back). Used to populate the "Prior FY" column
+    # across every section table — without this, only the five fields
+    # tracked in `_build_fiscal_history` had prior data and the remaining
+    # ~50 rows in the Financials tab rendered "—" for Prior FY / YoY.
+    if len(fy_sorted) >= 2:
+        prior_row = fy_sorted.iloc[-2]
+        prior_clean_json = _parse_json_field(prior_row.get("clean_json"))
+        prior_raw_json   = _parse_json_field(prior_row.get("raw_json"))
+    else:
+        prior_row = None
+        prior_clean_json = {}
+        prior_raw_json = {}
 
     ttm_snapshot = _build_ttm_snapshot(ttm_history)
     # Phase Q-7: enrich TTM snapshot with a prior-year TTM revenue +
@@ -545,6 +568,28 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
         "balance_sheet":    _build_balance_sheet(latest, clean_json, raw_json),
         "returns_capital":  _build_returns_capital(latest, clean_json, raw_json),
         "lease_items":      _build_lease_items(clean_json, raw_json),
+        "prior_income_statement": (
+            _build_income_statement(prior_row, prior_clean_json, prior_raw_json)
+            if prior_row is not None else {}
+        ),
+        "prior_balance_sheet": (
+            _build_balance_sheet(prior_row, prior_clean_json, prior_raw_json)
+            if prior_row is not None else {}
+        ),
+        "prior_returns_capital": (
+            _build_returns_capital(prior_row, prior_clean_json, prior_raw_json)
+            if prior_row is not None else {}
+        ),
+        "prior_lease_items": (
+            _build_lease_items(prior_clean_json, prior_raw_json)
+            if prior_row is not None else {}
+        ),
+        "prior_fiscal_year": (int(prior_row["fiscal_year"])
+                              if prior_row is not None else None),
+        "prior_period_end_date": (
+            str(prior_row.get("period_end_date") or "")[:10]
+            if prior_row is not None else None
+        ),
         "fiscal_history":   _build_fiscal_history(fy_history),
         "schema_violations": schema_violations,
         "dcf_inputs":       {},

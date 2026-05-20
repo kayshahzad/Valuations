@@ -226,6 +226,49 @@ LEGEND_MD = (
 
 
 # ────────────────────────────────────────────────────────────────────────────
+# Convention-change flag — Phase 1 of formula centralization
+#
+# Surfaces a small marker beside affected metric labels so analysts know
+# the number's methodology was canonicalized on a known date. Date-gated
+# retirement (set at definition time) means the flag disappears
+# automatically once the convention has had time to settle — no code
+# change required.
+#
+# Spec: docs/methodology_changes/2026-05-roic-ui-flag-spec.md
+# ────────────────────────────────────────────────────────────────────────────
+
+import datetime as _dt
+
+_CONVENTION_FLAG_RETIRES = "2026-12-31"
+_CONVENTION_FLAG = "📐 2026-05"
+CONVENTION_TOOLTIP = (
+    "Convention canonicalized 2026-05. ROIC now excludes excess cash "
+    "from invested capital. See docs/methodology_changes/"
+    "2026-05-roic-invested-capital.md. Flag retires 2026-12-31."
+)
+_CONVENTION_AFFECTED_METRICS = frozenset({
+    "ROIC",
+    "Invested Capital",
+    "InvestedCapital",
+})
+
+
+def convention_flag(metric_label: str) -> str:
+    """Return the convention-canonicalized flag suffix (with leading
+    space), or empty string when the metric isn't affected or the
+    flag has retired.
+
+    Use as: ``f"ROIC{convention_flag('ROIC')}"`` → ``"ROIC 📐 2026-05"``
+    until 2026-12-31, then bare ``"ROIC"``.
+    """
+    if metric_label not in _CONVENTION_AFFECTED_METRICS:
+        return ""
+    if _dt.date.today() > _dt.date.fromisoformat(_CONVENTION_FLAG_RETIRES):
+        return ""
+    return f" {_CONVENTION_FLAG}"
+
+
+# ────────────────────────────────────────────────────────────────────────────
 # Full legend
 #
 # The same emoji glyphs (🟢/🟡/🔴/⚪) appear in several places with related

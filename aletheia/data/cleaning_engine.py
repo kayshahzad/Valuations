@@ -872,10 +872,13 @@ class CleaningEngine:
         # Produce normalized EBIT
         record.clean["NormalizedEBIT"] = normalized_ebit
 
-        # NOPAT = NormalizedEBIT × (1 − cash_tax_rate)
-        # Tax rate from Domain 10 — use placeholder 21% if not yet computed
+        # NOPAT — delegates to central formula (Phase 1 centralization).
+        # Tax-rate fallback (CashTaxRate → statutory 21%) stays here
+        # because Domain 10 owns the cash-tax computation; we just pick
+        # up whatever it produced.
+        from aletheia.calculations.formulas import nopat as _nopat
         tax_rate = record.clean.get("CashTaxRate") or 0.21
-        nopat = normalized_ebit * (1 - tax_rate)
+        nopat = _nopat(operating_income=normalized_ebit, tax_rate=tax_rate)
         record.clean["NOPAT"] = nopat
 
         record.add_flag(CleaningFlag(
@@ -1715,12 +1718,15 @@ class CleaningEngine:
         cash = r.raw.get("Cash") or 0.0
         cash_ops = r.raw.get("OperatingCF") or r.raw.get("NetCashProvidedByUsedInOperatingActivities") or r.clean.get("OperatingCF") or 0.0
 
-        # EBITDA
+        # EBITDA — central formula (Phase 3 mechanical consolidation).
+        # Same formula as before; just routed through the central
+        # module so future tweaks (e.g. SBC addback policy) happen in
+        # one place.
+        from aletheia.calculations.formulas import ebitda as _ebitda
         if ebit is not None:
-            if depreciation is not None:
-                ebitda = ebit + depreciation
-            else:
-                ebitda = None
+            ebitda = _ebitda(
+                operating_income=ebit, depreciation_total=depreciation,
+            ) if depreciation is not None else None
             r.derived["EBITDA"] = ebitda
             # Also store in clean for Domain 5 to use
             r.clean["EBITDA"] = ebitda
@@ -1773,24 +1779,37 @@ class CleaningEngine:
             r.derived["FCF"] = fcf
             r.clean["FCF"] = fcf
 
-        # FCF (CFA formula): NOPAT + D&A - CapEx - ΔNWC
-        if nopat is not None:
-            if depreciation is not None and capex is not None:
-                fcff = nopat + depreciation - capex - delta_nwc
-            else:
-                fcff = None
-            r.derived["FCFF"] = fcff
+        # FCFF — central formula (Phase 2). The function returns None
+        # when any of (nopat, depreciation, capex) is missing; ΔNWC
+        # defaults to 0 inside the formula.
+        from aletheia.calculations.formulas import fcff as _fcff
+        fcff = _fcff(
+            nopat=nopat,
+            depreciation=depreciation,
+            capex=capex,
+            delta_nwc=delta_nwc,
+        )
+        r.derived["FCFF"] = fcff
 
         # Gross margin
         cogs = r.raw.get("COGS")
         if cogs is None:
             cogs = r.raw.get("CostOfServices") or r.raw.get("MedicalClaims")
         
+        # Margins — central formulas (Phase 3 mechanical consolidation).
+        from aletheia.calculations.formulas import (
+            gross_margin_pct as _gross_margin_pct,
+            ebit_margin_pct as _ebit_margin_pct,
+            ebitda_margin_pct as _ebitda_margin_pct,
+            fcf_margin_pct as _fcf_margin_pct,
+        )
         if revenue and revenue > 0:
             if cogs is not None:
                 gross_profit = revenue - cogs
                 r.derived["GrossProfit"] = gross_profit
-                r.derived["GrossMargin_Pct"] = gross_profit / revenue * 100
+                r.derived["GrossMargin_Pct"] = _gross_margin_pct(
+                    gross_profit=gross_profit, revenue=revenue,
+                )
             else:
                 r.derived["GrossProfit"] = None
                 r.derived["GrossMargin_Pct"] = None
@@ -1798,15 +1817,21 @@ class CleaningEngine:
                     print(f"[AUDIT] {r.ticker} missing COGS/CostOfServices; GrossMargin set to None")
 
             if ebit:
-                r.derived["EBIT_Margin_Pct"] = ebit / revenue * 100
+                r.derived["EBIT_Margin_Pct"] = _ebit_margin_pct(
+                    ebit=ebit, revenue=revenue,
+                )
             ebitda_val = r.derived.get("EBITDA")
             if ebitda_val:
-                r.derived["EBITDA_Margin_Pct"] = ebitda_val / revenue * 100
+                r.derived["EBITDA_Margin_Pct"] = _ebitda_margin_pct(
+                    ebitda=ebitda_val, revenue=revenue,
+                )
 
         # FCF margin
         fcf_val = r.derived.get("FCF")
         if fcf_val and revenue and revenue > 0:
-            r.derived["FCF_Margin_Pct"] = fcf_val / revenue * 100
+            r.derived["FCF_Margin_Pct"] = _fcf_margin_pct(
+                fcf=fcf_val, revenue=revenue,
+            )
 
         # ROE — suppress when book equity is negative or zero. Aggressive-
         # buyback companies (LOW, HD, AZO, DRI etc.) drive book equity
@@ -1815,9 +1840,13 @@ class CleaningEngine:
         # operational problem the company doesn't have. ROIC (computed
         # against invested capital) remains the meaningful return metric
         # for these names.
-        if net_income and total_equity and total_equity > 0:
-            r.derived["ROE"] = net_income / total_equity
+        from aletheia.calculations.formulas import roe as _roe
+        roe_val = _roe(net_income=net_income, total_equity=total_equity)
+        if roe_val is not None:
+            r.derived["ROE"] = roe_val
         elif total_equity is not None and total_equity <= 0:
+            # Central formula returns None on non-positive equity; we
+            # still want the analyst-facing suppression flag.
             r.derived["ROE"] = None
             r.derived["ROE_suppressed_reason"] = "negative_or_zero_book_equity"
 
@@ -1857,35 +1886,56 @@ class CleaningEngine:
             else:
                 finance_lease_total = 0.0
 
-        gross_debt = long_term_debt + st_debt + current_lt_debt + finance_lease_total
-
+        # Net Debt — central formula (Phase 2). The cleaning_engine
+        # retains responsibility for the finance-lease fallback ladder
+        # above (curr+nc → consolidated total → PV from maturity
+        # schedule) because XBRL-specific filer quirks; the result
+        # feeds the centralized gross_debt + net_debt helpers.
+        from aletheia.calculations.formulas import (
+            gross_debt as _gross_debt,
+            liquid_assets as _liquid_assets,
+            net_debt as _net_debt,
+        )
         st_invest = r.raw.get("ShortTermInvestments") or 0.0
         lt_invest = r.raw.get("LongTermInvestments") or 0.0
-        liquid_assets = cash + st_invest + lt_invest
-
-        net_debt = gross_debt - liquid_assets
+        gd = _gross_debt(
+            long_term_debt=long_term_debt,
+            short_term_debt=st_debt,
+            current_portion_lt_debt=current_lt_debt,
+            finance_lease_total=finance_lease_total,
+        )
+        la = _liquid_assets(
+            cash=cash,
+            short_term_investments=st_invest,
+            long_term_investments=lt_invest,
+        )
+        net_debt = _net_debt(gross_debt=gd, liquid_assets=la)
         r.derived["NetDebt"] = net_debt
 
-        # Invested Capital (financing approach)
+        # Invested Capital + ROIC — delegated to central formulas
+        # (Phase 1 centralization). Convention canonicalized 2026-05:
+        # ExcessCash netting at 2% of revenue + 5%-of-revenue floor.
+        # See docs/methodology_changes/2026-05-roic-invested-capital.md.
         if total_assets > 0:
-            excess_cash = max(0.0, cash - (revenue or 0) * 0.02) if revenue else 0.0
+            from aletheia.calculations.formulas import (
+                invested_capital as _invested_capital,
+                roic as _roic,
+            )
             short_term_debt = r.raw.get("ShortTermDebt", 0.0) or 0.0
             total_debt = long_term_debt + short_term_debt
-            
-            # Financing-side definition: TotalDebt + TotalEquity - ExcessCash
-            # Cleanly sidesteps operating liability distortions (e.g. ORCL deferred revenue trap)
-            invested_capital_raw = total_debt + total_equity - excess_cash
-            
-            # Floor invested capital at 5% of revenue to prevent absurd ROICs 
-            # for companies operating with negative working capital / high cash
-            floor_ic = (revenue * 0.05) if revenue else 0.0
-            invested_capital = max(floor_ic, invested_capital_raw)
-                
-            r.derived["InvestedCapital"] = invested_capital
 
-            # ROIC = NOPAT / Invested Capital
-            if nopat and invested_capital and invested_capital != 0:
-                r.derived["ROIC"] = nopat / invested_capital
+            invested_capital = _invested_capital(
+                total_equity=total_equity,
+                total_debt=total_debt,
+                cash=cash,
+                revenue=revenue,
+            )
+            if invested_capital is not None:
+                r.derived["InvestedCapital"] = invested_capital
+
+            roic_val = _roic(nopat=nopat, invested_capital=invested_capital)
+            if roic_val is not None:
+                r.derived["ROIC"] = roic_val
 
         if self.verbose:
             ebitda_str = f"{r.derived.get('EBITDA', 0):,.0f}" if r.derived.get("EBITDA") else "N/A"

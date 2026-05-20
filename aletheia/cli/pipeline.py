@@ -41,8 +41,11 @@ def detect_pipeline_version() -> str:
 
 def _run_one(args, pipeline_version: str) -> int:
     bust_cache = _parse_bust_cache(args.bust_cache)
+    agent_runner, runner_id = _resolve_agent_runner(args.auto_agents)
 
-    with Orchestrator() as orch:
+    with Orchestrator(
+        agent_runner=agent_runner, runner_id=runner_id,
+    ) as orch:
         result = orch.run(
             args.ticker.upper(),
             pipeline_version=pipeline_version,
@@ -76,9 +79,12 @@ def _run_one(args, pipeline_version: str) -> int:
 def _run_universe(args, pipeline_version: str) -> int:
     from config.ticker_classification import UNIVERSE
     bust_cache = _parse_bust_cache(args.bust_cache)
+    agent_runner, runner_id = _resolve_agent_runner(args.auto_agents)
     failures = 0
 
-    with Orchestrator() as orch:
+    with Orchestrator(
+        agent_runner=agent_runner, runner_id=runner_id,
+    ) as orch:
         for ticker in sorted(UNIVERSE):
             result = orch.run(
                 ticker,
@@ -100,6 +106,30 @@ def _run_universe(args, pipeline_version: str) -> int:
     print(f"\nuniverse: {len(UNIVERSE) - failures}/{len(UNIVERSE)} all-ok",
           file=sys.stderr)
     return 0 if failures == 0 else 1
+
+
+def _resolve_agent_runner(auto_agents: bool):
+    """Return ``(runner, runner_id)`` for the Stage 4 orchestrator.
+
+    When ``--auto-agents`` is set, wires the LangGraph-backed runner so
+    Stage 4 actually invokes the LLM agents (qualitative_synthesis,
+    contrarian_v2, thesis_synthesizer) and writes
+    ``valuation_data/serving/latest/{T}_report.json`` via ``lead_agent``.
+    Without this wiring the orchestrator falls through to
+    ``_default_agent_runner`` — a placeholder that returns empty dicts
+    and marks ``pipeline_status.stage4_agents`` ``ok`` after ~1s,
+    leaving the serving file (and the dashboard's narrative) stale.
+
+    ``--auto-agents`` off keeps the runner unset so Stage 4 stays the
+    no-op typed-boundary call — useful for Stages 1-3 only runs that
+    must not spend LLM dollars.
+    """
+    if not auto_agents:
+        return None, None
+    from aletheia.pipeline.langgraph_agent_runner import (
+        langgraph_agent_runner,
+    )
+    return langgraph_agent_runner, "langgraph-v1"
 
 
 def _parse_bust_cache(value: Optional[str]) -> Optional[List[str]]:

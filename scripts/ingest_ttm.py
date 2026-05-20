@@ -58,6 +58,40 @@ def _select_tickers(
     return out
 
 
+def _safe_fetch_prior_fy(
+    db: InvestmentDatabase, ticker: str
+) -> tuple[Optional[float], Optional[float]]:
+    """Pull the latest FY's NetDebt + TotalAssets so the validator can run a
+    period-over-period balance-sheet sanity check. Returns (None, None) on
+    any failure — the check degrades to 'n_a' when anchors are missing."""
+    try:
+        df = db.query(
+            "SELECT derived_NetDebt, raw_TotalAssets "
+            "FROM company_records_latest "
+            "WHERE ticker = ? AND period = 'FY' "
+            "ORDER BY fiscal_year DESC LIMIT 1",
+            [ticker],
+        )
+        if df.empty:
+            return None, None
+        row = df.iloc[0]
+        nd = row["derived_NetDebt"]
+        ta = row["raw_TotalAssets"]
+        return (
+            float(nd) if nd is not None and not _is_nan(nd) else None,
+            float(ta) if ta is not None and not _is_nan(ta) else None,
+        )
+    except Exception:
+        return None, None
+
+
+def _is_nan(x) -> bool:
+    try:
+        return x != x  # NaN check without importing math
+    except Exception:
+        return False
+
+
 def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
     """Returns a per-ticker result dict for the summary tally.
 
@@ -141,6 +175,12 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
         fmp_client.fetch_income_statements, ticker, period="quarter",
     )
 
+    # Period-over-period anchor: prior-FY NetDebt + TotalAssets so the
+    # validator can flag material balance-sheet movements (ABT-class
+    # $20B debt jumps that all single-source gates miss because they
+    # cross-check sources, not period-over-period changes).
+    prior_fy_net_debt, prior_fy_total_assets = _safe_fetch_prior_fy(db, ticker)
+
     gate = validate_ttm_record(
         ticker, record,
         fmp_key_metrics_ttm=km_ttm,
@@ -151,6 +191,8 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
         sec_quarterly_revenue=sec_result.quarterly_standalone_revenue,
         sec_quarterly_net_income=sec_result.quarterly_standalone_net_income,
         fmp_quarterly_income=fmp_quarterly_income,
+        prior_fy_net_debt=prior_fy_net_debt,
+        prior_fy_total_assets=prior_fy_total_assets,
     )
     # validate_ttm_record copies ttm_source into the result already, so
     # overwriting fmp_validation with `gate` keeps the source-primacy

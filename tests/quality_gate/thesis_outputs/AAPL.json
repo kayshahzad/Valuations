@@ -1,0 +1,61 @@
+{
+  "thesis_statement": "AAPL possesses a dominant strategic position and high-quality moat, but its current market price reflects extreme growth extrapolation and narrative premium, rendering it uninvestable with significant downside risk across all modeled scenarios.",
+  "bull_case": {
+    "claim": "The bull case relies on continued structural gross margin expansion driven by a revenue mix shift toward high-margin Services like the App Store and iCloud. However, even under the 'Services-led margin expansion' scenario, the intrinsic value per share reaches only $124.09, representing a 57.8% downside from current prices, indicating that even optimistic operational execution cannot justify the current valuation multiple.",
+    "cited_signals": [
+      "scenarios.Services-led margin expansion.intrinsic_per_share_base",
+      "qualitative.forensic.moat.score",
+      "qualitative.value_chain.strategic_position"
+    ]
+  },
+  "bear_case": {
+    "claim": "The bear case highlights a massive speculative premium and mathematical disconnect from reality, with the market demanding a 17.6% implied 10-year CAGR compared to a historical 4.8%. A 'Supply chain geopolitical shock' disrupting Asian manufacturing or TSMC wafer supply would compress margins and drop intrinsic value to $123.81, while the contrarian analysis flags severe growth extrapolation and a 174% multiple premium over justified levels.",
+    "cited_signals": [
+      "contrarian.bear_case_summary",
+      "contrarian.bias_detected",
+      "phase2.implied_cagr",
+      "phase2.multiple_decomposition.premium_pct",
+      "scenarios.Supply chain geopolitical shock.intrinsic_per_share_base"
+    ]
+  },
+  "base_case": {
+    "claim": "The base case reflects a high-quality, non-cyclical compounder that is currently priced for unrealistic growth, as evidenced by the reverse DCF signal and a multiple premium of 174%. With base DCF metrics unavailable and both agent-proposed scenarios yielding ~58% downside, the math strongly suggests the stock is overvalued despite its 9.0/10 moat score and lack of upstream value leakage.",
+    "cited_signals": [
+      "phase2.reverse_dcf_signal",
+      "phase2.multiple_decomposition.premium_pct",
+      "qualitative.strategic_context.cyclicality_classification",
+      "qualitative.forensic.moat.score"
+    ]
+  },
+  "decision_conditions": [
+    {
+      "trigger": "Implied CAGR drops below historical average",
+      "observable": "phase2.implied_cagr < 0.048",
+      "action": "hold",
+      "priority": "amber"
+    },
+    {
+      "trigger": "Multiple premium compresses to zero",
+      "observable": "phase2.multiple_decomposition.premium_pct <= 0",
+      "action": "add",
+      "priority": "green"
+    },
+    {
+      "trigger": "Conviction score turns positive",
+      "observable": "conviction.conviction_score > 0",
+      "action": "hold",
+      "priority": "amber"
+    }
+  ],
+  "thesis_confidence": "high",
+  "time_horizon": "3_years",
+  "position_sizing_implications": "The conviction scorer assigns a 'pass' position tier with a position size 'Below minimum analytical threshold' and a conviction score of -1. Given the extreme multiple premium and ~58% downside in even the bull scenario, this aligns perfectly with a strict avoid/pass stance.",
+  "required_analyst_judgment": [
+    "Assessment of whether AAPL's ecosystem lock-in can sustain a permanent narrative premium defying traditional DCF math.",
+    "Evaluation of the exact probability and timing of a supply chain geopolitical shock involving TSMC."
+  ],
+  "update_conditions": [
+    "Market price corrects by >50%, bringing implied CAGR closer to historical averages.",
+    "New product category (e.g., AR/VR or Auto) fundamentally alters the historical revenue CAGR trajectory to match the 17.6% implied rate."
+  ]
+}

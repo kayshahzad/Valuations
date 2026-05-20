@@ -446,6 +446,22 @@ def _resolve_xbrl_values(
             raw_val = v
             break
 
+    # Component-sum fallback. When the primary fallback tags all missed
+    # AND the spec exposes a ``xbrl_sum_tags`` list, sum whichever
+    # components resolve for the period. Required for filers (e.g. MSFT
+    # quarterly) that report D&A as discrete components without an
+    # aggregate tag. Returns None when *no* component resolves —
+    # one-of-N partial is acceptable (the spec lists each component
+    # because each is a legitimate input).
+    if raw_val is None and getattr(spec, "xbrl_sum_tags", None):
+        components = []
+        for tag in spec.xbrl_sum_tags:
+            v = _xbrl_fact_for_period(us_gaap, tag, fiscal_year, period)
+            if v is not None:
+                components.append(v)
+        if components:
+            raw_val = sum(components)
+
     # Coverage-gap fallback: when cleaning_engine emits no canonical
     # value for this field but the raw companyfacts tag resolves,
     # surface the raw value into the Cleaned slot so the diagnostic

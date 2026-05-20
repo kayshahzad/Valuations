@@ -50,6 +50,55 @@ from aletheia.utils.tracing import tracer
 from aletheia.utils.calc_input_builder import make_calc_input
 
 
+def _phase2_dcf_dict(valuation_result, dcf_result) -> Dict[str, Any]:
+    """Project a ValuationResult into the legacy ``phase2["dcf"]``
+    dict shape that downstream consumers (lead.py,
+    thesis_synthesizer, Streamlit views) read.
+
+    Two paths:
+      1. **FCFF result** (``engine="fcff"``): ``dcf_result`` is the
+         underlying ``DCFResult``. We just call its ``to_dict()`` —
+         identical to pre-Phase-A.4 behavior. Zero regression risk
+         for the 35 FCFF-compatible tickers.
+
+      2. **Non-FCFF result** (rate-base today, DDM/embedded-value
+         later): build a minimal compat dict from the ValuationResult.
+         Only fields lead.py + thesis_synthesizer actually read are
+         populated; bull/bear scenario fields stay None since
+         rate-base produces a single-point IV. The ``engine`` field
+         lets consumers branch when they want to render differently.
+    """
+    if dcf_result is not None:
+        # FCFF path — defer to the existing rich serializer
+        return dcf_result.to_dict()
+
+    # Non-FCFF: synthesize the dict shape lead.py expects
+    snap = valuation_result.inputs_snapshot or {}
+    return {
+        "ticker":         valuation_result.ticker,
+        "fiscal_year":    valuation_result.fiscal_year,
+        "current_price":  valuation_result.current_price,
+        "shares_diluted": snap.get("shares_diluted"),
+        "market_cap":     (
+            (valuation_result.current_price or 0)
+            * (snap.get("shares_diluted") or 0) or None
+        ),
+        "risk_free_rate": snap.get("risk_free_rate"),
+        "beta":           snap.get("beta"),
+        "wacc_base":      snap.get("cost_of_equity"),
+        # Base-case fields lead.py reads for IPS/MoS
+        "base_intrinsic_per_share": valuation_result.intrinsic_per_share,
+        "base_upside":              valuation_result.margin_of_safety,
+        "base_ev":                  valuation_result.equity_value,
+        # No bull/bear scenarios in rate-base; consumers fall back to
+        # base for any "if scenario" branches
+        "bull_intrinsic_per_share": None,
+        "bear_intrinsic_per_share": None,
+        # Engine-specific payload for the Deep Dive view
+        "engine_specific":          valuation_result.engine_specific,
+    }
+
+
 def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     """
     Run all deterministic calculations for the current ticker and write the
@@ -75,29 +124,61 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
             )],
         }
 
-    # ── Step 1: DCF Engine ──────────────────────────────────────────────────
+    # ── Step 1: Valuation (router dispatches by business_model) ─────────────
+    # Phase A.4: replaced direct DCFEngine call with ValuationRouter.
+    # Router picks the right engine per classification.business_model:
+    #   - fcff_compatible  → FcffEngine (wraps DCFEngine; zero behavior change)
+    #   - routing_required → RateBaseEngine (NEE today; Phase A.7 extends)
+    #   - ddm_required / embedded_value_required → EngineNotImplementedError
+    #     (Phase A.7 will fill these in)
     dcf_result = None
+    valuation_result = None
     bypass_reason = None
     try:
-        from aletheia.tools.dcf_engine import DCFEngine
-        engine = DCFEngine(verbose=False)
-        dcf_result = engine.run(calc_input)
-        if dcf_result.errors:
+        from aletheia.tools.valuation_router import (
+            EngineNotImplementedError, ValuationRouter,
+        )
+        valuation_result = ValuationRouter().execute(calc_input)
+        # Extract the underlying DCFResult when the FCFF engine ran; it's
+        # the rich object ReverseDCF + MultipleDecomposition + lead.py
+        # expect. Non-FCFF engines write a compatibility dict directly.
+        dcf_result = valuation_result.engine_specific.get("dcf_result")
+        phase2["dcf"] = _phase2_dcf_dict(valuation_result, dcf_result)
+        phase2["wacc"] = (
+            dcf_result.wacc if dcf_result is not None
+            else valuation_result.inputs_snapshot.get("cost_of_equity")
+        )
+        # Phase A.4: surface which engine ran. Used by Deep Dive UI
+        # provenance pill + serving-report engine field.
+        phase2["engine"] = valuation_result.engine
+        if dcf_result is not None and dcf_result.errors:
             errors.extend(dcf_result.errors)
-        phase2["dcf"] = dcf_result.to_dict()
-        phase2["wacc"] = dcf_result.wacc
-        if dcf_result.bull and dcf_result.base and dcf_result.bear:
-            print(f"  ✓ DCF: bull=${dcf_result.bull.enterprise_value/1e9:.0f}B "
+        if valuation_result.warnings:
+            errors.extend(valuation_result.warnings)
+
+        if valuation_result.engine == "fcff" and dcf_result is not None and \
+                dcf_result.bull and dcf_result.base and dcf_result.bear:
+            print(f"  ✓ FCFF DCF: bull=${dcf_result.bull.enterprise_value/1e9:.0f}B "
                   f"base=${dcf_result.base.enterprise_value/1e9:.0f}B "
                   f"bear=${dcf_result.bear.enterprise_value/1e9:.0f}B")
+        elif valuation_result.engine == "rate_base":
+            ips = valuation_result.intrinsic_per_share
+            ips_str = f"${ips:.2f}" if ips is not None else "N/A"
+            ev = valuation_result.equity_value
+            ev_str = f"${ev/1e9:.0f}B" if ev is not None else "N/A"
+            print(f"  ✓ Rate-base DCF: IPS={ips_str}  Equity={ev_str}")
         else:
-            print("  ✓ DCF: completed (partial)")
+            print(f"  ✓ Valuation: completed ({valuation_result.engine}, partial)")
+    except EngineNotImplementedError as e:
+        bypass_reason = str(e)
+        print(f"  ⊘ Valuation bypassed: {e}")
     except NotImplementedError as e:
+        # Legacy path — DCFEngine's hard-stop fired (e.g. KNOWN_ISSUES bypass)
         bypass_reason = str(e)
         print(f"  ⊘ DCF bypassed: {e}")
     except Exception as e:
-        errors.append(f"DCFEngine failed: {e}")
-        print(f"  ✗ DCF failed: {e}")
+        errors.append(f"Valuation router failed: {e}")
+        print(f"  ✗ Valuation failed: {e}")
 
     # ── Step 2: Reverse DCF ─────────────────────────────────────────────────
     if dcf_result is not None:

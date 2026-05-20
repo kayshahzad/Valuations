@@ -31,7 +31,57 @@ from aletheia.ui.cache import (
     cached_library_scenario,
     cached_macro_context,
     cached_screening_card,
+    cached_valuation,
 )
+
+
+# ────────────────────────────────────────────────────────────────────────
+# Visual tokens — theme-agnostic colors matching financials_view +
+# deep_dive_view. Body text uses `inherit` / opacity-modulated overlays
+# so the dashboard reads cleanly in both light and dark themes.
+# ────────────────────────────────────────────────────────────────────────
+
+_GREEN, _AMBER, _RED = "#10b981", "#f59e0b", "#ef4444"
+_MUTED_TEXT = "rgba(120,120,128,0.85)"
+_BAR_BG     = "rgba(120,120,128,0.20)"
+_PANEL_BG_NEUTRAL = "rgba(120,120,128,0.06)"
+_PANEL_BG_AMBER   = "rgba(245,158,11,0.08)"
+_PANEL_BG_GREEN   = "rgba(16,185,129,0.06)"
+_PANEL_BG_RED     = "rgba(239,68,68,0.06)"
+
+_STATUS_DOT = {
+    "validated": "🟢",
+    "near":      "🟡",
+    "drift":     "🔴",
+    "missing":   "⚪",
+    "unknown":   "·",
+}
+
+
+def _panel(html_body: str, accent_color: str, bg: str = _PANEL_BG_NEUTRAL) -> None:
+    """Reusable bordered-panel wrapper used by Synthesis + Override blocks.
+    Visual semantics match the deep-dive thesis/contrarian panels."""
+    st.markdown(
+        f"""
+<div style='background:{bg};border-left:4px solid {accent_color};
+            padding:14px 18px;border-radius:0 6px 6px 0;color:inherit;
+            font-size:14px;line-height:1.7;margin:6px 0 10px 0'>
+{html_body}
+</div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def _status_dot_for(ticker: Optional[str], label: str) -> str:
+    """Look up the validation status of a metric label and return its emoji."""
+    if not ticker:
+        return _STATUS_DOT["unknown"]
+    try:
+        from aletheia.ui.validation_badge import lookup_status
+        return _STATUS_DOT.get(lookup_status(ticker, label), _STATUS_DOT["unknown"])
+    except Exception:
+        return _STATUS_DOT["unknown"]
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -215,12 +265,36 @@ def render_header(ticker: str, dcf: Dict[str, Any], df: pd.DataFrame) -> None:
 # ────────────────────────────────────────────────────────────────────────
 
 def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
+    """5-year fundamentals — pivoted by FY for at-a-glance trend reading.
+
+    Shows status dots inline with metric names so the analyst can see
+    which fields are externally validated. FY column headers carry the
+    period-end date so non-calendar fiscal years (NVDA Jan, HD Feb,
+    COST Aug/Sep) are unambiguous.
+    """
     st.markdown("### 5-year fundamentals")
     if df.empty:
         st.info("No fundamentals available.")
         return
 
-    sorted_df = df.sort_values("fiscal_year").tail(5).copy()
+    # Drop TTM rows whose period_end_date is the same as the latest
+    # FY row's — this happens for tickers like NVDA (FY ends Jan, TTM
+    # synthesised from last-4-quarters also ends Jan = same data
+    # point). Without this guard, the YoY column for the duplicated
+    # period renders as "+0.0%" comparing identical revenues.
+    sorted_all = df.sort_values("fiscal_year").copy()
+    fy_only = sorted_all[sorted_all["period"] == "FY"]
+    if not fy_only.empty:
+        latest_fy_end = fy_only.iloc[-1]["period_end_date"]
+        sorted_all = sorted_all[
+            ~(
+                (sorted_all["period"] == "TTM")
+                & (sorted_all["period_end_date"] == latest_fy_end)
+            )
+        ]
+    sorted_df = sorted_all.tail(5).copy().reset_index(drop=True)
+
+    # Year-over-year revenue growth
     rev_yoy: List[Optional[float]] = []
     revs = sorted_df["clean_Revenue"].tolist()
     for i, r in enumerate(revs):
@@ -229,22 +303,40 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
         else:
             rev_yoy.append(float(r) / float(revs[i - 1]) - 1)
 
-    # Badge metric labels with their validation status (* / ~ / ⚠).
-    from aletheia.ui.validation_badge import badge_label
-    fy = [int(y) for y in sorted_df["fiscal_year"].tolist()]
+    # FY column headers: include period-end date so the 12-month window
+    # is unambiguous on non-calendar filers.
+    def _fmt_period_end(v: Any) -> str:
+        try:
+            from datetime import datetime as _dt
+            return _dt.strptime(str(v)[:10], "%Y-%m-%d").strftime("%b %d, %Y")
+        except Exception:
+            return str(v)[:10] if v else ""
+
+    headers = []
+    for _, r in sorted_df.iterrows():
+        fy = int(r["fiscal_year"])
+        end = _fmt_period_end(r.get("period_end_date"))
+        headers.append(f"FY{fy}\n{end}" if end else f"FY{fy}")
+
+    # Status-dot prefix on each metric row, sourced from validation_badge.
+    rev_dot   = _status_dot_for(ticker, "Revenue")
+    ebit_dot  = _status_dot_for(ticker, "EBIT Margin")
+    roic_dot  = _status_dot_for(ticker, "ROIC")
+    from aletheia.ui.validation_badge import convention_flag
+    _roic_flag = convention_flag("ROIC")
+
     out = pd.DataFrame({
         "metric": [
-            badge_label("Revenue", ticker) + " ($B)",
-            "Revenue YoY %",
-            badge_label("EBIT Margin", ticker) + " %",
-            "FCF margin %",
-            badge_label("ROIC", ticker) + " %",
-            "Net Debt ($B)",
+            f"{rev_dot}  Revenue ($B)",
+            f"      Revenue YoY",
+            f"{ebit_dot}  EBIT Margin",
+            f"      FCF Margin",
+            f"{roic_dot}  ROIC{_roic_flag}",
+            f"      Net Debt ($B)",
         ],
     })
-    for i, year in enumerate(fy):
-        col_name = f"FY{year}"
-        out[col_name] = [
+    for i, h in enumerate(headers):
+        out[h] = [
             _bn(sorted_df["clean_Revenue"].iloc[i] if i < len(sorted_df) else None).replace("$", "").replace("B", ""),
             _pct(rev_yoy[i]) if i < len(rev_yoy) else "—",
             _pct_unsigned((sorted_df["derived_EBIT_Margin_Pct"].iloc[i] or 0) / 100)
@@ -255,7 +347,19 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
                 if pd.notna(sorted_df["derived_ROIC"].iloc[i]) else "—",
             _bn(sorted_df["derived_NetDebt"].iloc[i] if i < len(sorted_df) else None).replace("$", "").replace("B", ""),
         ]
-    st.dataframe(out, use_container_width=True, hide_index=True)
+
+    st.dataframe(
+        out,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "metric": st.column_config.TextColumn("Metric", width="medium"),
+        },
+    )
+    st.caption(
+        "🟢 validated SEC/FMP within 1% · 🟡 within 5% · "
+        "🔴 >5% drift · ⚪ field absent on validator side · · not yet validated"
+    )
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -296,32 +400,74 @@ def render_scenarios(ticker: str, dcf: Dict[str, Any]) -> List[Dict[str, Any]]:
         with col:
             label = s.get("label", "?")
             if s.get("error"):
-                st.markdown(f"**{label}**")
-                st.caption(f"_unavailable: {s['error'][:80]}_")
+                # Unavailable scenario — neutral-tinted card so the column
+                # doesn't render empty (which would imply data is missing
+                # rather than the scenario being a stub).
+                st.markdown(
+                    f"<div style='background:{_PANEL_BG_NEUTRAL};padding:14px 12px;"
+                    f"border-radius:6px;height:100%;'>"
+                    f"<div style='font-weight:600;font-size:13px'>{label}</div>"
+                    f"<div style='color:{_MUTED_TEXT};font-size:12px;margin-top:8px'>"
+                    f"<em>unavailable: {s['error'][:80]}</em></div></div>",
+                    unsafe_allow_html=True,
+                )
                 continue
 
             iv = s.get("iv_per_share")
             upside = s.get("upside_pct")
-            st.markdown(f"**{label}**")
-            st.markdown(f"### {_money(iv)}")
-            if upside is not None:
-                st.caption(f"vs price: {_pct(upside)}")
 
+            # Color by upside band: green > 0 (positive MoS), amber -20% to 0
+            # (modest premium), red < -20% (significant premium). Matches the
+            # severity-tinted panels used elsewhere on the page.
+            if upside is None:
+                accent, bg = _MUTED_TEXT, _PANEL_BG_NEUTRAL
+            elif upside > 0:
+                accent, bg = _GREEN, _PANEL_BG_GREEN
+            elif upside > -0.20:
+                accent, bg = _AMBER, _PANEL_BG_AMBER
+            else:
+                accent, bg = _RED, _PANEL_BG_RED
+
+            iv_str = _money(iv) if iv else "—"
+            upside_str = (f"{upside*100:+.1f}% vs price"
+                          if upside is not None else "")
+            upside_color = (accent if upside is not None else _MUTED_TEXT)
+
+            # Compact assumptions footer
             wacc = s.get("wacc")
             tg = s.get("terminal_growth")
             tm = s.get("terminal_margin")
-            y1_5 = s.get("y1_5_cagr") or s.get("y1_5_cagr")
-            assumption_lines = []
+            y1_5 = s.get("y1_5_cagr")
+            assumption_pairs: List[str] = []
             if y1_5 is not None:
-                assumption_lines.append(f"Y1-5: {y1_5*100:.1f}%")
+                assumption_pairs.append(f"Y1-5 <b>{y1_5*100:.1f}%</b>")
             if tg is not None:
-                assumption_lines.append(f"g: {tg*100:.2f}%")
+                assumption_pairs.append(f"g <b>{tg*100:.2f}%</b>")
             if wacc is not None:
-                assumption_lines.append(f"WACC: {wacc*100:.2f}%")
+                assumption_pairs.append(f"WACC <b>{wacc*100:.2f}%</b>")
             if tm is not None:
-                assumption_lines.append(f"margin: {tm*100:.1f}%")
-            for line in assumption_lines:
-                st.caption(line)
+                assumption_pairs.append(f"margin <b>{tm*100:.1f}%</b>")
+            assumption_html = " · ".join(assumption_pairs)
+
+            st.markdown(
+                f"""
+<div style='background:{bg};border-top:3px solid {accent};
+            padding:14px 14px 10px 14px;border-radius:6px;color:inherit;
+            min-height:170px'>
+  <div style='font-size:12px;font-weight:600;color:inherit;
+              opacity:0.85;letter-spacing:0.02em;margin-bottom:8px'>{label}</div>
+  <div style='font-family:Syne,sans-serif;font-size:26px;font-weight:800;
+              line-height:1.2;color:inherit'>{iv_str}</div>
+  <div style='font-size:12px;color:{upside_color};font-weight:600;
+              font-family:DM Mono,monospace;margin-top:4px'>{upside_str}</div>
+  <div style='font-size:11px;color:{_MUTED_TEXT};
+              font-family:DM Mono,monospace;margin-top:10px;line-height:1.6'>
+    {assumption_html}
+  </div>
+</div>
+                """,
+                unsafe_allow_html=True,
+            )
 
     return scenarios
 
@@ -345,8 +491,9 @@ def render_synthesis(ticker: str, dcf: Dict[str, Any], scenarios: List[Dict[str,
 
     parts: List[str] = []
     parts.append(
-        f"At ${price:,.2f}, {len(above)} of {len(valid)} scenarios put IV above current price "
-        f"and {len(below)} put it at or below."
+        f"At <strong>${price:,.2f}</strong>, "
+        f"<strong>{len(above)} of {len(valid)}</strong> scenarios put IV "
+        f"above current price and <strong>{len(below)}</strong> put it at or below."
     )
 
     base = next((s for s in valid if s.get("label", "").startswith("Base")), None)
@@ -357,30 +504,35 @@ def render_synthesis(ticker: str, dcf: Dict[str, Any], scenarios: List[Dict[str,
         diff = (engine_y1_5 - consensus_y1_5) * 100
         if abs(diff) > 1.5:
             direction = "more aggressive than" if diff > 0 else "more conservative than"
+            color = _AMBER if diff > 0 else _GREEN
             parts.append(
-                f"The engine's base case Y1-5 growth ({engine_y1_5*100:.1f}%) is {direction} "
-                f"analyst consensus ({consensus_y1_5*100:.1f}%); applying consensus produces "
-                f"IV ${consensus['iv_per_share']:,.2f}."
+                f"The engine's base case Y1-5 growth "
+                f"<strong style='color:{color}'>{engine_y1_5*100:.1f}%</strong> "
+                f"is {direction} analyst consensus "
+                f"<strong>{consensus_y1_5*100:.1f}%</strong>; applying consensus produces "
+                f"IV <strong>${consensus['iv_per_share']:,.2f}</strong>."
             )
 
     ivs = [s["iv_per_share"] for s in valid]
     spread = max(ivs) - min(ivs)
     if price and spread > 0:
         parts.append(
-            f"Cross-scenario IV spread is ${spread:,.2f} "
-            f"({spread / price * 100:.0f}% of current price), driven primarily by "
-            f"differences in terminal growth and discount rate assumptions."
+            f"Cross-scenario IV spread is <strong>${spread:,.2f}</strong> "
+            f"(<strong>{spread / price * 100:.0f}%</strong> of current price), "
+            f"driven primarily by differences in terminal growth and discount-rate assumptions."
         )
 
     wacc = dcf.get("wacc_base")
     if wacc:
         parts.append(
-            f"The base-case WACC is {wacc*100:.2f}% (Rf {dcf.get('risk_free_rate', 0)*100:.2f}% + "
-            f"β {dcf.get('beta', 0):.2f} × ERP). A 100bp WACC change typically moves IV "
-            f"by 10-20%; sensitivity tornado on the Sensitivity tab quantifies this for {ticker}."
+            f"Base-case WACC is <strong>{wacc*100:.2f}%</strong> "
+            f"(Rf {dcf.get('risk_free_rate', 0)*100:.2f}% + "
+            f"β {dcf.get('beta', 0):.2f} × ERP). A 100bp WACC change typically moves IV by "
+            f"10–20%; the sensitivity tornado on the Sensitivity tab quantifies this for {ticker}."
         )
 
-    st.markdown(" ".join(parts))
+    # Bordered panel matching the lead-thesis / contrarian style on Deep Dive.
+    _panel(" ".join(parts), accent_color=_AMBER, bg=_PANEL_BG_AMBER)
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -405,61 +557,94 @@ def render_top_ratios(ticker: str) -> None:
         st.info("No matching ratios in screening output.")
         return
 
-    from aletheia.ui.validation_badge import badge_label
     rows = []
     for m in selected:
         v = m.get("value")
         name = m.get("name") or ""
+        # Status-dot prefix (validation), separate signal column (pass/flag/fail).
         rows.append({
-            "ratio":     badge_label(name, ticker),
-            "value":     v if v is not None else "—",
-            "threshold": m.get("threshold", "—"),
-            "status":    m.get("signal", "—"),
+            "":         _status_dot_for(ticker, name),
+            "Ratio":     name,
+            "Value":     f"{v:.2f}" if isinstance(v, (int, float)) else (v if v is not None else "—"),
+            "Threshold": m.get("threshold", "—"),
+            "Signal":    m.get("signal", "—"),
         })
     df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(
+        df,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "":          st.column_config.TextColumn("", width="small",
+                                                     help="Validation status"),
+            "Ratio":     st.column_config.TextColumn("Ratio", width="medium"),
+            "Value":     st.column_config.TextColumn("Value", width="small"),
+            "Threshold": st.column_config.TextColumn("Threshold", width="medium"),
+            "Signal":    st.column_config.TextColumn("Signal", width="small"),
+        },
+    )
     st.caption(
-        "Status labels (pass / flag / fail) are uncolored by design — "
-        "analyst reads value vs threshold and forms own view. "
-        "Ratio names with `*` are externally validated against FMP."
+        "Status dots reflect external validation against SEC/FMP. "
+        "Signal column (pass/flag/fail) is uncolored by design — "
+        "analyst reads value vs threshold and forms own view."
     )
 
 
 def render_override_visibility(ticker: str) -> None:
-    st.markdown("### Active overrides")
+    """Active overrides — lifecycle profile, KNOWN_ISSUES, saved scenarios.
+
+    Collapsed by default unless something material is present (KNOWN_ISSUES
+    entries or saved scenarios). The lifecycle profile is informational and
+    not enough to force expansion on its own.
+    """
     issues = cached_known_issues(ticker)
     cls = cached_classification(ticker)
 
-    has_anything = False
-    if cls:
-        st.write(f"**Lifecycle profile:** `{cls.get('lifecycle', '?')}`")
-        has_anything = True
-    if issues:
-        st.write(f"**KNOWN_ISSUES entries:** {len(issues)}")
-        for it in issues:
-            field = it.get("field") or "general"
-            wkn = it.get("workaround") or "—"
-            desc = (it.get("description") or "")[:120]
-            st.markdown(f"  - `{field}` ({wkn}): {desc}")
-        has_anything = True
-
-    saved_paths = []
+    saved = []
     try:
         from aletheia.scenarios.persistence import list_scenarios
-        saved = list_scenarios(ticker)
-        if saved:
-            st.write(f"**Saved scenarios:** {len(saved)}")
-            for s in saved[:5]:
-                st.markdown(f"  - {s.created_at}: {s.name}")
-            has_anything = True
+        saved = list_scenarios(ticker) or []
     except Exception:
-        pass
+        saved = []
 
-    if not has_anything:
-        st.caption("_No active overrides for this ticker._")
+    material = bool(issues) or bool(saved)
+    summary = []
+    if cls:
+        summary.append(f"`{cls.get('lifecycle', '?')}`")
+    if issues:
+        summary.append(f"{len(issues)} KNOWN_ISSUES")
+    if saved:
+        summary.append(f"{len(saved)} saved scenarios")
+    summary_str = " · ".join(summary) if summary else "none"
+
+    with st.expander(f"### Active overrides — {summary_str}", expanded=material):
+        if cls:
+            st.markdown(f"**Lifecycle profile:** `{cls.get('lifecycle', '?')}`")
+            if cls.get("notes"):
+                st.caption(f"_{cls['notes']}_")
+        if issues:
+            st.markdown(f"**KNOWN_ISSUES entries** ({len(issues)})")
+            for it in issues:
+                field = it.get("field") or "general"
+                wkn = it.get("workaround") or "—"
+                desc = (it.get("description") or "")[:160]
+                st.markdown(f"- `{field}` *({wkn})*: {desc}")
+        if saved:
+            st.markdown(f"**Saved scenarios** ({len(saved)})")
+            for s in saved[:5]:
+                st.markdown(f"- {s.created_at}: {s.name}")
+        if not material and not cls:
+            st.caption("_No active overrides for this ticker._")
 
 
 def render_quality_warnings(ticker: str, df: pd.DataFrame) -> None:
+    """Data-quality flags from the cleaning engine.
+
+    Only renders when there's something to show. Visual treatment matches
+    the panel-tinted alerts elsewhere on the page so severity is obvious
+    at a glance.
+    """
+    del ticker  # passed for symmetry with other render_* signatures
     if df.empty:
         return
     latest = df.sort_values("fiscal_year").iloc[-1]
@@ -468,14 +653,220 @@ def render_quality_warnings(ticker: str, df: pd.DataFrame) -> None:
     if warning_count == 0 and error_count == 0:
         return
 
-    with st.expander(
-        f"⚠ Data quality: {warning_count} warnings, {error_count} errors", expanded=False
-    ):
-        st.caption(
-            "Quality flags are emitted by the cleaning engine when it adjusts values, "
-            "fills missing fields by derivation, or detects boundary conditions. "
-            "These are informational; review when interpreting model outputs."
+    accent, bg = (_RED, _PANEL_BG_RED) if error_count else (_AMBER, _PANEL_BG_AMBER)
+    icon = "❌" if error_count else "⚠"
+    label = (
+        f"{icon} Data quality — "
+        f"<strong>{warning_count}</strong> warning{'s' if warning_count != 1 else ''}"
+        f" · <strong>{error_count}</strong> error{'s' if error_count != 1 else ''}"
+    )
+    body = (
+        f"<div style='font-weight:600;margin-bottom:6px'>{label}</div>"
+        "<div style='font-size:12px;opacity:0.85'>"
+        "Quality flags are emitted by the cleaning engine when it adjusts values, "
+        "fills missing fields by derivation, or detects boundary conditions. "
+        "These are informational; review when interpreting model outputs."
+        "</div>"
+    )
+    _panel(body, accent_color=accent, bg=bg)
+
+
+# ────────────────────────────────────────────────────────────────────────
+# Specialized-model notice (banks, insurers, asset managers)
+# ────────────────────────────────────────────────────────────────────────
+
+_MODEL_LABEL = {
+    "ddm_required":             "Dividend Discount Model",
+    "embedded_value_required":  "Embedded Value (life insurance)",
+    "routing_required":         "Specialized routing (bank / asset manager)",
+}
+
+_ENGINE_LABEL = {
+    "fcff":           "FCFF DCF",
+    "rate_base":      "Rate-base DCF (regulated utility)",
+    "ddm":            "Dividend Discount Model",
+    "embedded_value": "Embedded Value (book-value compounding)",
+}
+
+_ENGINE_DESCRIPTION = {
+    "rate_base": (
+        "Two-stage rate-base valuation: equity value = Σ (rate base × "
+        "allowed ROE) discounted at cost of equity, plus terminal "
+        "perpetuity. Inputs from the latest rate-case order."
+    ),
+    "ddm": (
+        "Two-stage Dividend Discount Model: explicit DPS growth + "
+        "Gordon-growth terminal. Used for bank / managed-care filers "
+        "where FCFF doesn't apply."
+    ),
+    "embedded_value": (
+        "Book-value compounding × target P/B horizon model. Used for "
+        "insurance conglomerates where consolidated economics span "
+        "underwriting, float, and operating subsidiaries."
+    ),
+}
+
+
+def _render_specialized_engine_dashboard(
+    ticker: str, valuation: Dict[str, Any], df: pd.DataFrame,
+) -> None:
+    """Dashboard for tickers valued by a non-FCFF engine (NEE rate-base,
+    JPM/AXP/UNH DDM, BRK-B embedded value). Surfaces the engine's IV,
+    MoS, year-by-year decomposition, and source citation."""
+    engine = valuation.get("engine") or "specialized"
+    engine_label = _ENGINE_LABEL.get(engine, engine)
+    engine_desc = _ENGINE_DESCRIPTION.get(engine, "")
+
+    cls = cached_classification(ticker)
+    ips = valuation.get("intrinsic_per_share")
+    price = valuation.get("current_price")
+    mos = valuation.get("margin_of_safety")
+    ke = valuation.get("cost_of_equity")
+
+    # Header row
+    col1, col2, col3 = st.columns([3, 2, 2])
+    with col1:
+        st.markdown(f"## {ticker}")
+        if cls:
+            pill = (f"{cls.get('sector', '?')} · {cls.get('industry', '?')} "
+                    f"· `{cls.get('lifecycle', '?')}`")
+            st.caption(pill)
+        st.caption(f"Valuation engine: **{engine_label}**")
+    with col2:
+        st.metric("Price", _money(price))
+    with col3:
+        st.metric("Intrinsic value", _money(ips))
+
+    # MoS / Ke / engine description
+    col1, col2, col3 = st.columns([1, 1, 3])
+    with col1:
+        if mos is None:
+            st.metric("Margin of safety", "—")
+        else:
+            accent = (_GREEN if mos > 0
+                      else (_AMBER if mos > -0.20 else _RED))
+            st.markdown(
+                f"<div style='font-size:12px;color:{_MUTED_TEXT};"
+                f"margin-bottom:4px'>Margin of safety</div>"
+                f"<div style='font-size:22px;font-weight:700;color:{accent}'>"
+                f"{_pct(mos)}</div>",
+                unsafe_allow_html=True,
+            )
+    with col2:
+        st.metric(
+            "Cost of equity",
+            f"{ke*100:.2f}%" if ke else "—",
         )
+    with col3:
+        if engine_desc:
+            _panel(engine_desc, accent_color=_MUTED_TEXT)
+
+    # Source citation
+    source = valuation.get("source")
+    as_of = valuation.get("as_of_date")
+    if source:
+        st.caption(
+            f"_Inputs as of **{as_of or '—'}** · Source: {source}_"
+        )
+
+    # Engine-specific decomposition
+    decomposition = valuation.get("decomposition")
+    if decomposition:
+        st.markdown("---")
+        _render_engine_decomposition(engine, decomposition)
+
+    # Analyst warnings (decomposition pre-flight notes)
+    warnings = valuation.get("warnings") or []
+    for w in warnings:
+        st.caption(f"⚠ {w}")
+
+    # Still show 5-year fundamentals — useful context even when FCFF
+    # doesn't apply.
+    st.markdown("---")
+    render_trends_table(df, ticker=ticker)
+
+    # Quality warnings render conditionally (only if something to show).
+    render_quality_warnings(ticker, df)
+
+
+def _render_engine_decomposition(
+    engine: str, decomp: Dict[str, Any],
+) -> None:
+    """Year-by-year breakdown — engine-specific shape:
+      - rate_base: yearly = [{year, rate_base, earnings, pv}]
+      - ddm:       yearly = [{year, dps, pv}]
+      - embedded_value: yearly_bvps = [{year, bvps}]
+    """
+    st.markdown("### Year-by-year breakdown")
+    if engine == "rate_base":
+        yearly = decomp.get("yearly") or []
+        rows = [{
+            "Year":         y.get("year"),
+            "Rate base":    _bn(y.get("rate_base")),
+            "Earnings":     _bn(y.get("earnings")),
+            "PV":           _bn(y.get("pv")),
+        } for y in yearly]
+        if rows:
+            st.dataframe(pd.DataFrame(rows), hide_index=True,
+                         use_container_width=True)
+        cols = st.columns(4)
+        cols[0].metric("PV explicit", _bn(decomp.get("pv_explicit")))
+        cols[1].metric("PV terminal", _bn(decomp.get("pv_terminal")))
+        cols[2].metric("Equity value", _bn(decomp.get("equity_value")))
+        cols[3].metric("TV share", _pct_unsigned(decomp.get("tv_share_of_equity")))
+    elif engine == "ddm":
+        yearly = decomp.get("yearly") or []
+        rows = [{
+            "Year":    y.get("year"),
+            "DPS":     _money(y.get("dps")),
+            "PV":      _money(y.get("pv")),
+        } for y in yearly]
+        if rows:
+            st.dataframe(pd.DataFrame(rows), hide_index=True,
+                         use_container_width=True)
+        cols = st.columns(3)
+        cols[0].metric("PV explicit", _money(decomp.get("pv_explicit")))
+        cols[1].metric("PV terminal", _money(decomp.get("pv_terminal")))
+        cols[2].metric("Intrinsic / share",
+                       _money(decomp.get("intrinsic_per_share")))
+    elif engine == "embedded_value":
+        yearly = decomp.get("yearly_bvps") or []
+        rows = [{
+            "Year": y.get("year"),
+            "BVPS": _money(y.get("bvps")),
+        } for y in yearly]
+        if rows:
+            st.dataframe(pd.DataFrame(rows), hide_index=True,
+                         use_container_width=True)
+        cols = st.columns(3)
+        cols[0].metric("Starting BVPS", _money(decomp.get("starting_bvps")))
+        cols[1].metric("Future BVPS",   _money(decomp.get("future_bvps")))
+        cols[2].metric("Intrinsic / share",
+                       _money(decomp.get("intrinsic_per_share")))
+
+
+def _render_specialized_model_notice(ticker: str, dcf: Dict[str, Any]) -> None:
+    """Friendly fallback when the DCFEngine refuses to value a ticker
+    because its business model needs a specialized framework we haven't
+    shipped yet (UNH, CNC, banks, insurers, asset managers)."""
+    bm = dcf.get("business_model") or "specialized"
+    label = _MODEL_LABEL.get(bm, bm)
+    reason = dcf.get("reason") or "Float-based or financial-services business; FCFF DCF inappropriate."
+    st.markdown(f"## {ticker}")
+    st.warning(
+        f"**No FCFF DCF available for {ticker}.**\n\n"
+        f"Classified as **{bm}** — requires {label}, which isn't implemented "
+        f"in this build. Showing financials and scenarios for this ticker "
+        f"would produce misleading numbers (cash-flow definitions don't map "
+        f"to a free-cash-flow framework)."
+    )
+    st.caption(f"Classification rationale: {reason}")
+    st.info(
+        "What you can still use: the **Financials** tab for raw filings, "
+        "and the **Quality Report** tab for ingestion validation. The "
+        "Deep Dive and Scenarios tabs depend on the DCF and are "
+        "intentionally hidden for this ticker."
+    )
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -491,17 +882,45 @@ def render_dashboard(ticker: str) -> None:
     df = cached_calc_df(ticker)
     dcf = cached_dcf_summary(ticker)
 
-    render_header(ticker, dcf, df)
-    st.divider()
-    render_trends_table(df, ticker=ticker)
-    st.divider()
-    scenarios = render_scenarios(ticker, dcf)
-    st.divider()
-    render_synthesis(ticker, dcf, scenarios)
-    st.divider()
+    # Specialized-model tickers (NEE, JPM/AXP/UNH, BRK-B, CNC) don't have
+    # an FCFF DCF — they route to a dedicated engine via ValuationRouter.
+    # Run that here and render an engine-specific dashboard. Falls back
+    # to the legacy "no DCF available" notice only when the router
+    # itself can't produce an IV (e.g. CNC's no-dividend empty-state,
+    # KNOWN_ISSUES bypass).
+    if isinstance(dcf, dict) and dcf.get("error") == "specialized_model_required":
+        valuation = cached_valuation(ticker)
+        if (isinstance(valuation, dict)
+                and not valuation.get("error")
+                and valuation.get("intrinsic_per_share") is not None):
+            _render_specialized_engine_dashboard(ticker, valuation, df)
+            return
+        _render_specialized_model_notice(ticker, dcf)
+        return
 
+    # 1. Header strip — ticker, classification, price, business description,
+    #    quality, macro context.
+    render_header(ticker, dcf, df)
+
+    # 2. 5-year fundamentals — pivoted by FY with status dots inline.
+    st.markdown("---")
+    render_trends_table(df, ticker=ticker)
+
+    # 3. Five scenarios — severity-tinted cards (green positive MoS, amber
+    #    modest premium, red >20% premium).
+    st.markdown("---")
+    scenarios = render_scenarios(ticker, dcf)
+
+    # 4. Synthesis — bordered panel matching the lead-thesis style.
+    st.markdown("---")
+    render_synthesis(ticker, dcf, scenarios)
+
+    # 5. Diagnostics — top ratios + active overrides + quality flags.
+    st.markdown("---")
     render_top_ratios(ticker)
-    st.divider()
+
+    st.markdown("---")
     render_override_visibility(ticker)
 
+    # Quality warnings render conditionally (only if something to show).
     render_quality_warnings(ticker, df)

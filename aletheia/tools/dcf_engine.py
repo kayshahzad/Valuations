@@ -478,39 +478,44 @@ def compute_wacc(
     mrp: float = MARKET_RISK_PREMIUM,
 ) -> Tuple[float, float, float, float]:
     """
-    Compute WACC from first principles.
+    Compute WACC for ``ticker``.
+
+    Orchestration only: resolves Rf from live market data, computes
+    beta from the ticker's price history, then delegates the math to
+    ``aletheia.calculations.formulas.cost_of_capital``. The central
+    module owns the formula, bounds, and fallback policy — see Phase 4
+    of the centralization refactor.
 
     Returns:
         (wacc, ke, kd, beta)
     """
+    from aletheia.calculations.formulas import (
+        cost_of_equity as _cost_of_equity,
+        cost_of_debt as _cost_of_debt,
+        wacc as _wacc,
+    )
+
     rf = risk_free_rate or _fetch_risk_free_rate()
     b = beta or _compute_beta(ticker)
 
-    # Cost of equity: CAPM
-    ke = rf + b * mrp
+    ke = _cost_of_equity(
+        risk_free_rate=rf, beta=b, market_risk_premium=mrp,
+    )
+    kd = _cost_of_debt(
+        interest_expense=interest_expense,
+        total_debt=total_debt,
+        risk_free_rate=rf,
+    )
+    wacc_val = _wacc(
+        cost_of_equity=ke,
+        cost_of_debt=kd,
+        total_equity=total_equity,
+        total_debt=total_debt,
+        tax_rate=tax_rate,
+        risk_free_rate=rf,
+    )
 
-    # Cost of debt
-    if total_debt and total_debt > 0 and interest_expense and interest_expense > 0:
-        kd = abs(interest_expense) / total_debt
-        kd = min(kd, 0.15)   # Cap at 15% — higher suggests data error
-    else:
-        kd = rf + 0.015       # Fallback: Rf + 150bps credit spread
-
-    # Capital structure weights
-    total_capital = total_equity + total_debt
-    if total_capital <= 0:
-        return DEFAULT_WACC, ke, kd, b
-
-    we = total_equity / total_capital
-    wd = total_debt / total_capital
-
-    wacc = we * ke + wd * kd * (1 - tax_rate)
-
-    # Bound WACC: floor = max(4%, Rf + 1%) to prevent sub-Rf WACC (CNC, utility-like cos)
-    wacc_floor = max(0.04, (risk_free_rate or 0.04) + 0.01)
-    wacc = float(np.clip(wacc, wacc_floor, 0.18))
-
-    return wacc, ke, kd, b
+    return float(wacc_val), float(ke or 0.0), float(kd or 0.0), float(b)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

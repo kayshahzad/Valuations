@@ -4,7 +4,7 @@ Resolution precedence (highest wins):
   1. Explicit ``name`` arg to ``get_provider(name)``
   2. ``st.session_state.provider`` (Streamlit per-session selector)
   3. ``ALETHEIA_PROVIDER`` env var
-  4. ``config/data_source.py:DEFAULT_PROVIDER`` (currently "fmp")
+  4. ``config/data_source.py:DEFAULT_PROVIDER`` (currently "hybrid")
 
 XBRL + Hybrid providers land in P2 / P5. Until then, requesting them
 raises a clear error rather than silently falling back to FMP — that

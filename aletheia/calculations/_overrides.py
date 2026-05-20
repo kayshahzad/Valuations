@@ -221,6 +221,21 @@ OVERRIDES: Dict[str, Dict[str, Dict[str, Any]]] = {
             "fields":          ["accounting_equation_a_eq_l_plus_e"],
         },
     },
+    "DAL": {
+        "accounting_equation_historical_disruptions": {
+            "reason": "FY1996-1998 pre-XBRL coverage; FY2003 pre-bankruptcy "
+                      "distressed filings; FY2007 fresh-start accounting on "
+                      "Chapter 11 emergence (April 2007); FY2009 first full "
+                      "consolidated year post-Northwest merger; FY2017 ASC 606 "
+                      "/ pension reclass transition. Modern filings (FY2010+ "
+                      "except 2017) reconcile cleanly. Historical analysis "
+                      "only; current DCF unaffected. Same pattern family as "
+                      "CAT pre-2012 + NVDA FY2016 + TSLA pre-IPO overrides.",
+            "created_date":    "2026-05-18",
+            "review_by_date":  "2027-05-18",
+            "fields":          ["accounting_equation_a_eq_l_plus_e"],
+        },
+    },
     # A14 — V (Visa) shares_diluted universe-wide ingest bug.
     # tag_resolver.py fails to extract shares_diluted from Visa's XBRL
     # filings (every FY 2009-2025 affected). Real ingest bug; this

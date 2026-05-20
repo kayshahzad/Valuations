@@ -1,0 +1,103 @@
+{
+  "ticker": "AAPL",
+  "generated_at": "2026-05-02T18:55:16.105103",
+  "forensic": {
+    "business_description": "Apple designs, manufactures, and markets premium consumer electronics, including smartphones (iPhone), personal computers (Mac), and wearables. It generates revenue through the sale of these hardware devices as well as a growing ecosystem of high-margin services, including digital content, cloud storage, and payment services, targeting consumers, businesses, and government entities.",
+    "operating_leverage_score": 6.8,
+    "operating_leverage_analysis": "Apple's operating leverage score of 6.8/10 reflects a hybrid cost structure. Major fixed costs include substantial R&D investments to maintain technological leadership, a global headcount of approximately 166,000 employees, and SBC representing 13.0% of FCF. Variable costs are primarily tied to outsourced component procurement and manufacturing. With a gross margin of 46.9%, incremental high-margin Services revenue and premium hardware sales flow efficiently to the bottom line, supporting a robust 32.0% EBIT margin.",
+    "revenue_segments": [
+      {
+        "segment": "Americas",
+        "pct_revenue": null,
+        "growth_trend": "stable"
+      },
+      {
+        "segment": "Europe",
+        "pct_revenue": null,
+        "growth_trend": "stable"
+      },
+      {
+        "segment": "Greater China",
+        "pct_revenue": null,
+        "growth_trend": "uncertain"
+      },
+      {
+        "segment": "Japan",
+        "pct_revenue": null,
+        "growth_trend": "stable"
+      },
+      {
+        "segment": "Rest of Asia Pacific",
+        "pct_revenue": null,
+        "growth_trend": "stable"
+      }
+    ],
+    "key_customers": [
+      "Consumers",
+      "Small and mid-sized businesses",
+      "Education",
+      "Enterprise",
+      "Government"
+    ],
+    "competitive_landscape": "Key competitors include Google, Microsoft, and Amazon. Apple differentiates itself by designing nearly the entire solution (hardware, OS, and services) to create a seamless, integrated user experience, backed by strong brand equity and proprietary custom components.",
+    "regulatory_risk": "The company faces significant regulatory and geopolitical risks, including U.S. tariffs on imports from key manufacturing hubs like China and potential restrictions on international trade and digital content distribution.",
+    "moat": {
+      "score": 9.0,
+      "switching_costs": 9.0,
+      "network_effects": 8.0,
+      "cost_advantage": 7.0,
+      "intangibles": 10.0,
+      "evidence": "Evidence of a wide moat includes a massive 76.8% ROIC, a broad portfolio of patents and trademarks, and a highly integrated hardware-software-services ecosystem. The 10-K highlights reliance on third-party software developers who build for Apple's platforms, creating strong network effects and high switching costs for users entrenched in iOS/macOS.",
+      "has_pricing_power": true,
+      "pricing_power_evidence": "Despite the 10-K noting that competitors 'aggressively cut prices and lowered product margins,' Apple maintains a premium 46.9% gross margin and 32.0% EBIT margin, demonstrating the ability to command premium pricing without material churn."
+    }
+  },
+  "value_chain": {
+    "power_ratio": 1.13,
+    "upstream_leak": false,
+    "strategic_leverage": 9.0,
+    "bottleneck_analysis": "Advanced semiconductor manufacturing (e.g., TSMC) and custom display panels act as critical bottlenecks. Apple relies on single-source suppliers for cutting-edge custom silicon. While Apple's massive procurement scale provides immense buyer leverage, the consolidated nature of advanced foundries gives key suppliers pricing power. If suppliers raise prices, Apple typically absorbs the cost or passes it to consumers, though it is actively exploring lower-tier suppliers to defend its 46.9% gross margin.",
+    "substitution_risk_score": 2.0,
+    "top_substitutes": "1. Premium Android smartphones (Samsung Galaxy, Google Pixel). 2. Windows-based PCs. 3. Alternative smart wearables (Garmin, Samsung). Switching requires abandoning the highly integrated iOS ecosystem, iCloud data, and purchased App Store content, creating massive friction.",
+    "pricing_power_assessment": "Exceptional pricing power evidenced by expanding gross margins (46.9%) and an ROIC of 76.8%. Apple consistently maintains premium pricing and drives ASP growth (e.g., Pro models) despite aggressive competitor price cuts and a highly saturated smartphone market.",
+    "pass_through_capability": true,
+    "analysis_summary": "Apple holds a dominant strategic position characterized by immense pricing power, deep ecosystem lock-in, and low substitution threat. While upstream supplier power is balanced by Apple's massive procurement scale, reliance on single-source advanced semiconductor manufacturing remains a critical bottleneck, exacerbated by geopolitical and tariff risks. Buyer power is exceptionally low due to intense brand loyalty and high switching costs. Overall, Apple's value chain dynamics strongly support sustained high margins and robust returns on invested capital."
+  },
+  "industry_structure": {
+    "cyclicality_z_score": 1.508869635903481,
+    "is_peak": false
+  },
+  "strategic_context": {
+    "deferred_revenue_trend": "Deferred revenue grew 9.8% to $9.1B, tracking well with overall revenue trends. The D8 Revenue Score of 1.00 confirms clean revenue recognition without pull-forward risk.",
+    "quality_of_growth_risk": false,
+    "intangible_risk_assessment": "Apple's 10-K explicitly states that no single intellectual property right is solely responsible for protecting its products. The company relies on a broad, diversified portfolio of patents, copyrights, and trademarks. No specific patent cliffs or material contract expirations within the next 5 years were identified.",
+    "revenue_at_risk_percent": 0.0,
+    "terminal_haircut": false,
+    "summary": "Apple demonstrates high-quality, non-cyclical growth. The revenue Z-score of 1.51 confirms the company is not at a cyclical peak, and deferred revenue trends are healthy with a clean D8 score of 1.00 indicating no pull-forward risk. Intangible decay risk is negligible, as the company relies on a broad ecosystem and diversified IP portfolio rather than single expiring patents, leaving 0% of revenue at material risk from near-term expirations."
+  },
+  "scenarios": [
+    {
+      "name": "Supply Chain & Tariff Margin Compression",
+      "scenario_type": "bear",
+      "proposed_by": "forensic",
+      "rationale": "Escalating U.S. tariffs and the costly restructuring of highly concentrated Asian supply chains could structurally compress terminal EBIT margins.",
+      "overrides": {
+        "terminal_margin_decay": 0.85,
+        "terminal_growth": 0.02
+      },
+      "ips_base": 98.05532092890591,
+      "upside_pct": -64.99774548382146
+    },
+    {
+      "name": "Supply Chain Cost Squeeze",
+      "scenario_type": "bear",
+      "proposed_by": "value_chain",
+      "rationale": "Escalating geopolitical tensions and new semiconductor tariffs force Apple to absorb higher component costs, compressing terminal margins as pass-through capability hits consumer price ceilings.",
+      "overrides": {
+        "terminal_margin_decay": 0.85
+      },
+      "ips_base": 108.09119279497318,
+      "upside_pct": -61.41529694334367
+    }
+  ]
+}

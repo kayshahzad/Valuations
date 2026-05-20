@@ -22,31 +22,44 @@ class LifecycleDefaults:
 # The original `growth_compounder` key is retained for backward compatibility
 # with any caller that hasn't migrated to a sub-profile.
 LIFECYCLE_PROFILES: Dict[str, LifecycleDefaults] = {
-    "secular_hyper_growth":         LifecycleDefaults(0.35,  0.05,  15, 0.10),
-    "hyper_growth":                 LifecycleDefaults(0.25,  0.05,  15, 0.10),
-    "high_growth_compounder":       LifecycleDefaults(0.18,  0.045, 10, 0.10),  # was 0.04 / 0.15
-    "growth_compounder":            LifecycleDefaults(0.135, 0.035, 10, 0.20),  # legacy fallback
-    "growth_compounder_software":   LifecycleDefaults(0.135, 0.05,  10, 0.05),  # cloud/AI tailwind
+    # Terminal growth is the *perpetual* rate after the explicit forecast
+    # period ends. Even hyper-growth businesses must converge to GDP-like
+    # rates in the truly-long run — a company growing perpetually faster
+    # than GDP would eventually become the entire economy. Long-run nominal
+    # US GDP growth is ~4% (2-2.5% real + 2% inflation target), so terminal
+    # growth above 4% is economically unsound regardless of profile.
+    #
+    # Hyper-growth optimism is expressed through the EXPLICIT forecast
+    # period (Y1-5/Y6-10 CAGR, margins, longer fade) — NOT through perpetual
+    # super-GDP terminal growth. Profile defaults below all respect the
+    # MAX_TERMINAL_G = 0.04 ceiling.
+    "secular_hyper_growth":         LifecycleDefaults(0.35,  0.04,  15, 0.10),  # was 0.05; capped at GDP perpetuity
+    "hyper_growth":                 LifecycleDefaults(0.25,  0.04,  15, 0.10),  # was 0.05; same reason
+    "high_growth_compounder":       LifecycleDefaults(0.18,  0.04,  10, 0.10),  # was 0.045
+    "growth_compounder":            LifecycleDefaults(0.135, 0.035, 10, 0.20),  # already ≤ 4%
+    "growth_compounder_software":   LifecycleDefaults(0.135, 0.04,  10, 0.05),  # was 0.05; cloud/AI tailwind expressed via Y1-5
     "growth_compounder_consumer":   LifecycleDefaults(0.10,  0.035, 10, 0.15),  # retail steady-state
     "growth_compounder_pharma":     LifecycleDefaults(0.12,  0.04,  10, 0.10),  # sticky margins
-    "mature":                       LifecycleDefaults(0.05,  0.030, 10, 0.30),  # was 0.025
+    "mature":                       LifecycleDefaults(0.05,  0.030, 10, 0.30),
     "cyclical_industrial":          LifecycleDefaults(0.04,  0.025, 10, 0.50),
 }
 
 
 # Per-lifecycle hard ceiling on terminal growth in any scenario. Threaded
-# into ValuationProfile via make_calc_input so the DCF can't accidentally
-# project software at perpetual 6% (which would imply real growth above
-# developed-economy long-run rates). Software gets 5.5% (raised from 4%);
-# pharma 5%; consumer stays at 4%; mature drops to 3.5%.
+# into ValuationProfile via make_calc_input. Caps respect the global
+# MAX_TERMINAL_G = 4% — terminal growth above long-run GDP is economically
+# unsound (perpetual super-GDP growth means the company eventually becomes
+# the entire economy). High-growth profiles express their optimism through
+# explicit-period assumptions (Y1-5 growth, margins, WACC), not by raising
+# the perpetual terminal-growth ceiling.
 TERMINAL_GROWTH_CAP_BY_LIFECYCLE: Dict[str, float] = {
-    "secular_hyper_growth":       0.06,
-    "hyper_growth":               0.055,
-    "high_growth_compounder":     0.055,
+    "secular_hyper_growth":       0.04,   # was 0.06
+    "hyper_growth":               0.04,   # was 0.055
+    "high_growth_compounder":     0.04,   # was 0.055
     "growth_compounder":          0.04,
-    "growth_compounder_software": 0.055,  # raised from 0.04
+    "growth_compounder_software": 0.04,   # was 0.055
     "growth_compounder_consumer": 0.04,
-    "growth_compounder_pharma":   0.05,
+    "growth_compounder_pharma":   0.04,   # was 0.05
     "mature":                     0.035,
     "cyclical_industrial":        0.035,
 }

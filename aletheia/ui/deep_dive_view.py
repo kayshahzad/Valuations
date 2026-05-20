@@ -244,6 +244,59 @@ def _dot(ticker: str, label: str) -> str:
     return _STATUS_DOT.get(_status_for(ticker, label), "·")
 
 
+# Phase A.4 — engine provenance pill on Deep Dive
+_ENGINE_LABEL = {
+    "fcff":           "📐 FCFF DCF",
+    "rate_base":      "📐 Rate-base DCF (regulated utility)",
+    "ddm":            "📐 Dividend Discount Model",
+    "embedded_value": "📐 Embedded Value (sum-of-parts)",
+}
+
+_ENGINE_DESCRIPTION = {
+    "fcff": (
+        "Standard corporate FCFF discounted cash flow. Three "
+        "scenarios (bull / base / bear); WACC-discounted projection "
+        "+ terminal value."
+    ),
+    "rate_base": (
+        "Regulated-utility valuation: equity value = Σ (rate base × "
+        "allowed ROE) discounted at cost of equity, plus terminal "
+        "perpetuity. Allowed ROE + rate-base growth from the latest "
+        "rate-case order."
+    ),
+    "ddm": (
+        "Dividend Discount Model for float-based / bank filers where "
+        "FCFF doesn't apply."
+    ),
+    "embedded_value": (
+        "Embedded-value framework for insurance conglomerates."
+    ),
+}
+
+
+def _engine_banner(p2v: Dict[str, Any]) -> None:
+    """Single-line banner identifying which valuation engine produced
+    the numbers on this page. Ahead of the hero strip so analysts can
+    contextualize the IV/MoS before reading them.
+
+    For unknown / missing engine values (legacy report rows from
+    before Phase A.4), renders nothing — the hero strip is still
+    the primary signal."""
+    engine = p2v.get("engine")
+    if not engine:
+        return
+    label = _ENGINE_LABEL.get(engine, f"📐 {engine}")
+    desc = _ENGINE_DESCRIPTION.get(engine, "")
+    st.markdown(
+        f"<div style='padding:8px 0;'>"
+        f"<span style='font-weight:600; font-size:14px;'>"
+        f"Valuation engine: {label}</span>"
+        f"<br><span style='font-size:12px; color:#888;'>{desc}</span>"
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+
 # ── Hero strip ────────────────────────────────────────────────────────────
 
 def _hero_strip(
@@ -285,7 +338,9 @@ def _hero_strip(
                   delta=(_signed_pct(base_mos) if base_mos is not None else None))
     # ROIC – WACC spread
     with cols[2]:
-        st.metric(f"{_dot(ticker, 'ROIC')} ROIC − WACC spread",
+        from aletheia.ui.validation_badge import convention_flag
+        _flag = convention_flag("ROIC")
+        st.metric(f"{_dot(ticker, 'ROIC')} ROIC{_flag} − WACC spread",
                   _signed_pct(spread) if spread is not None else "—",
                   delta=(f"ROIC {_pct(roic)} · WACC {_pct(wacc)}"
                          if (roic is not None and wacc is not None) else None),
@@ -1685,6 +1740,14 @@ def render_deep_dive_view(
 
     # ── Freshness methodology explainer (one-time read for new users) ───
     _freshness_methodology_explainer(dcf, p2v)
+
+    # ── Valuation engine banner (Phase A.4) ──────────────────────────────
+    # Surfaces which engine produced the IV + MoS — FCFF (standard
+    # corporate cash-flow DCF), rate-base (regulated utilities), DDM
+    # (banks / managed care; Phase A.7), embedded-value (insurance
+    # conglomerates; Phase A.7). Analysts shouldn't have to read the
+    # underlying numbers to know which model produced them.
+    _engine_banner(p2v)
 
     # ── Hero strip ────────────────────────────────────────────────────────
     _hero_strip(ticker, investment_thesis, dcf, fund, universe_row)
