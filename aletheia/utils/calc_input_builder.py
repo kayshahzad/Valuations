@@ -22,7 +22,55 @@ from config.valuation_defaults import (
 from config.lifecycle_thresholds import STAGE_THRESHOLDS, Stage
 
 
-def make_calc_input(ticker: str, df: Optional[pd.DataFrame] = None) -> CalculationInput:
+def _apply_persisted_dcf_overrides(
+    ticker: str, profile: ValuationProfile,
+) -> ValuationProfile:
+    """If the analyst has saved DCF-assumption overrides for this ticker,
+    clone the lifecycle-derived profile with them applied. Returns the
+    profile unchanged when no overrides are on file or anything fails —
+    overrides are a what-if layer and must never break the base calc.
+    """
+    try:
+        from aletheia.data.database import InvestmentDatabase
+        from aletheia.contracts.interfaces import ScenarioOverride
+        from aletheia.agents.scenario_eval_node import (
+            _clone_profile_with_overrides,
+        )
+        db = InvestmentDatabase(verbose=False)
+        try:
+            saved = db.get_dcf_overrides(ticker)
+        finally:
+            db.close()
+        if not saved:
+            return profile
+        fields = {
+            k: saved[k] for k in (
+                "revenue_growth_y1_5", "revenue_growth_y6_10",
+                "terminal_ebit_margin", "capex_pct_revenue",
+                "tax_rate", "discount_rate", "terminal_growth",
+            ) if saved.get(k) is not None
+        }
+        if not fields:
+            return profile
+        override = ScenarioOverride(
+            name="Analyst assumptions",
+            scenario_type="base_alternative",
+            proposed_by="analyst",
+            rationale=(saved.get("note") or "Analyst-edited base assumptions.")[:600],
+            **fields,
+        )
+        return _clone_profile_with_overrides(profile, override)
+    except Exception:
+        # Never let a what-if override break the canonical calc path.
+        return profile
+
+
+def make_calc_input(
+    ticker: str,
+    df: Optional[pd.DataFrame] = None,
+    *,
+    apply_overrides: bool = True,
+) -> CalculationInput:
     """
     Build a CalculationInput for `ticker`. If `df` is omitted, loads the
     cleaned multi-year history from DuckDB.
@@ -30,6 +78,12 @@ def make_calc_input(ticker: str, df: Optional[pd.DataFrame] = None) -> Calculati
     Raises if the ticker isn't in the extended UNIVERSE (curated +
     runtime classifications) — calc tools require classification
     metadata to dispatch sector/lifecycle behavior correctly.
+
+    When ``apply_overrides`` is True (default), persisted analyst
+    DCF-assumption overrides for the ticker are applied to the valuation
+    profile so every DCF consumer reflects them. Pass ``apply_overrides=
+    False`` to get the pure model-derived baseline (used for the
+    reset-preview and the Layer-3 plausibility comparison).
     """
     classification = get_extended_universe().get(ticker)
     if classification is None:
@@ -52,6 +106,12 @@ def make_calc_input(ticker: str, df: Optional[pd.DataFrame] = None) -> Calculati
         terminal_margin_decay=profile_cfg.terminal_margin_decay,
         terminal_growth_cap=tg_cap,
     )
+
+    # Apply persisted analyst DCF-assumption overrides (what-if layer) so
+    # every consumer of this calc input reflects them. Skipped when the
+    # caller explicitly wants the model-derived baseline.
+    if apply_overrides:
+        vp = _apply_persisted_dcf_overrides(ticker, vp)
 
     try:
         stage = Stage(lifecycle)

@@ -50,7 +50,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field, ValidationError, model_validator
 
-from config import MODEL_NAME, TEMPERATURE
+from config import MODEL_NAME
 from aletheia.utils.tracing import tracer
 
 # Schemas + DB-context helpers extracted from the now-removed legacy
@@ -491,7 +491,15 @@ def qualitative_synthesis_agent(state: Dict[str, Any]) -> Dict[str, Any]:
     # the LLM, and retry once with stronger guidance. Retrying more than
     # once is rarely useful — if the LLM can't produce depth on the
     # second pass, the prompt is the problem, not the LLM's effort.
-    llm = ChatGoogleGenerativeAI(model=MODEL_NAME, temperature=TEMPERATURE)
+    # Temperature pinned to 0 (not the global 0.1) for reproducibility.
+    # This agent emits structured numeric scores (moat_score,
+    # switching_costs, network_effects, etc.) that downstream consumers
+    # — constitution checks, terminal-growth caps, pillar scores — treat
+    # as deterministic outputs of stable inputs. Even small stochasticity
+    # at temp=0.1 produced visible drift across reruns (moat 7.5 → 7.0,
+    # switching_costs 9.0 → 8.0 on identical filings). Other narrative
+    # agents retain temp=0.1 where prose variability isn't a problem.
+    llm = ChatGoogleGenerativeAI(model=MODEL_NAME, temperature=0.0)
     structured_llm = llm.with_structured_output(QualitativeSynthesis)
     chain = _PROMPT | structured_llm
 

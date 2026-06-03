@@ -60,6 +60,160 @@ def _bn(v: Optional[float], dp: int = 2) -> str:
     return f"${v:,.0f}"
 
 
+# ── DCF editable-assumptions support ────────────────────────────────────────
+
+_FV_API_BASE = "http://localhost:8000"
+
+# (label, assumptions-bundle key, ScenarioOverride field). The 7 wired
+# editable fields. Order matches the original read-only table.
+_DCF_EDITABLE = [
+    ("CAGR Y1-5",          "revenue_cagr_y1_5",    "revenue_growth_y1_5"),
+    ("CAGR Y6-10",         "revenue_cagr_y6_10",   "revenue_growth_y6_10"),
+    ("EBIT margin term.",  "ebit_margin_terminal", "terminal_ebit_margin"),
+    ("CapEx % revenue",    "capex_pct_revenue",    "capex_pct_revenue"),
+    ("Tax rate",           "tax_rate",             "tax_rate"),
+    ("WACC",               "wacc",                 "discount_rate"),
+    ("Terminal growth",    "terminal_growth",      "terminal_growth"),
+]
+# Model-derived, not yet overridable (no ScenarioOverride field).
+_DCF_READONLY = [
+    ("EBIT margin start",  "ebit_margin_current"),
+    ("D&A % revenue",      "da_pct_revenue"),
+    ("NWC % revenue",      "nwc_pct_revenue"),
+    ("Terminal ROIC",      "terminal_roic"),
+    ("Base ROIC",          "base_roic"),
+]
+
+
+def _dcf_api(method: str, path: str, body: Optional[dict] = None):
+    """Minimal API client for the DCF-override endpoints. Returns
+    (data, error_message). error_message is None on success."""
+    import httpx
+    try:
+        r = httpx.request(method, f"{_FV_API_BASE}{path}",
+                          json=body, timeout=30)
+    except httpx.RequestError as exc:
+        return None, f"Cannot reach API: {exc}"
+    if r.status_code >= 400:
+        try:
+            detail = r.json().get("detail")
+        except Exception:
+            detail = r.text
+        return None, detail if isinstance(detail, str) else (
+            (detail or {}).get("message", "") + " "
+            + "; ".join((detail or {}).get("errors", []))
+            if isinstance(detail, dict) else str(detail)
+        )
+    return r.json(), None
+
+
+def _render_editable_assumptions(ticker: str, asn: Dict[str, Any]) -> None:
+    """Editable Base-assumptions panel. Pre-fills with the ticker's effective
+    assumptions (model-derived + persisted overrides), lets the analyst edit
+    the 7 wired fields within bounds, then persists + recomputes via the API.
+    Falls back to a read-only table if the assumptions endpoint is unavailable
+    (e.g. specialized non-FCFF tickers)."""
+    st.markdown("##### Base assumptions")
+
+    payload, err = _dcf_api("GET", f"/ticker/{ticker}/dcf/assumptions")
+    if err or not payload:
+        # Read-only fallback — keeps the panel working if the endpoint is down.
+        st.caption("Editing unavailable (assumptions endpoint not reachable); "
+                   "showing model values.")
+        ro = [{"Field": lbl, "Value": _pct(asn.get(k))}
+              for lbl, k, _ in _DCF_EDITABLE] + \
+             [{"Field": lbl, "Value": _pct(asn.get(k))}
+              for lbl, k in _DCF_READONLY]
+        st.dataframe(pd.DataFrame(ro), hide_index=True, use_container_width=True)
+        return
+
+    eff = payload.get("assumptions") or {}
+    baseline = payload.get("baseline_assumptions") or {}
+    bounds = payload.get("bounds") or {}
+    overridden = set(payload.get("overridden_fields") or [])
+    prov = payload.get("provenance") or {}
+    validation = payload.get("validation") or {}
+
+    if overridden:
+        who = prov.get("updated_by", "analyst")
+        when = (prov.get("updated_at") or "")[:10]
+        st.info(f"✎ Analyst overrides active on {len(overridden)} field(s) "
+                f"— set by {who}{(' on ' + when) if when else ''}.")
+
+    with st.form(f"dcf_assumptions_{ticker}"):
+        edits: Dict[str, float] = {}
+        for label, akey, okey in _DCF_EDITABLE:
+            cur = eff.get(akey)
+            lo, hi = bounds.get(okey, [None, None])
+            val_pct = float(cur * 100) if cur is not None else 0.0
+            lo_pct = lo * 100 if lo is not None else None
+            hi_pct = hi * 100 if hi is not None else None
+            # The model value can legitimately sit outside the override
+            # bounds — e.g. CHWY's terminal EBIT margin (~1.6%) is below the
+            # 5% floor (thin-margin retailer). Streamlit raises if the
+            # pre-filled value falls outside [min, max], so widen the input
+            # range to include it. The PUT validator still enforces the
+            # canonical bounds on save.
+            if lo_pct is not None:
+                lo_pct = min(lo_pct, val_pct)
+            if hi_pct is not None:
+                hi_pct = max(hi_pct, val_pct)
+            badge = " ✎" if okey in overridden else ""
+            val = st.number_input(
+                f"{label}{badge} (%)",
+                min_value=lo_pct,
+                max_value=hi_pct,
+                value=val_pct,
+                step=0.1, format="%.2f",
+                key=f"dcf_in_{ticker}_{okey}",
+                help=("Analyst override active" if okey in overridden
+                      else "Model-derived; edit to override"),
+            )
+            edits[okey] = val / 100.0
+
+        # Read-only model-derived fields.
+        st.caption("Model-derived (not editable): " + " · ".join(
+            f"{lbl} {_pct(eff.get(k))}" for lbl, k in _DCF_READONLY))
+
+        submitted = st.form_submit_button("↻ Recompute", type="primary")
+
+    if submitted:
+        # Only send fields that differ from the model baseline — overrides
+        # capture genuine deviations, not pins on model-equal values.
+        body: Dict[str, Any] = {"updated_by": "analyst",
+                                "note": "Edited via Financials tab"}
+        for label, akey, okey in _DCF_EDITABLE:
+            base_v = baseline.get(akey)
+            new_v = edits[okey]
+            if base_v is None or abs(new_v - base_v) > 1e-6:
+                body[okey] = new_v
+        result, perr = _dcf_api("PUT", f"/ticker/{ticker}/dcf/overrides", body)
+        if perr:
+            st.error(f"Recompute rejected: {perr}")
+        else:
+            st.cache_data.clear()
+            st.success("Assumptions saved — recomputing valuation…")
+            st.rerun()
+
+    # Reset (outside the form so it's a plain button).
+    if overridden and st.button("⟲ Reset to model defaults",
+                                key=f"dcf_reset_{ticker}"):
+        _, derr = _dcf_api("DELETE", f"/ticker/{ticker}/dcf/overrides")
+        if derr:
+            st.error(f"Reset failed: {derr}")
+        else:
+            st.cache_data.clear()
+            st.success("Reverted to model defaults — recomputing…")
+            st.rerun()
+
+    # Validation verdict (also drives the Stage 4 gate).
+    vstatus = validation.get("status")
+    if vstatus == "error":
+        st.error("⛔ Assumptions invalid: " + "; ".join(validation.get("errors", [])))
+    elif vstatus == "warn":
+        st.warning("⚠ " + "; ".join(validation.get("warnings", [])))
+
+
 def _pct(v: Optional[float], dp: int = 1) -> str:
     if v is None:
         return "—"
@@ -364,9 +518,13 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Period end":    r.get("period_end_date") or "",
             "Revenue":       (rev/1e9) if rev else None,
             "Rev Growth":    rev_growth,
+            "EBIT":          (r["EBIT"]/1e9) if r.get("EBIT") else None,
+            "EBIT %":        (r["EBIT"]/rev*100) if (r.get("EBIT") and rev) else None,
             "EBITDA":        (r["EBITDA"]/1e9) if r["EBITDA"] else None,
             "Net Income":    (r["NetIncome"]/1e9) if r["NetIncome"] else None,
+            "Tax rate":      (r["TaxRate"]*100) if r.get("TaxRate") is not None else None,
             "CapEx":         (r["CapEx"]/1e9) if r["CapEx"] else None,
+            "CapEx %":       (r["CapEx"]/rev*100) if (r.get("CapEx") and rev) else None,
             "FCF":           (r["FCF"]/1e9) if r["FCF"] else None,
             "ROIC":          (r["ROIC"]*100) if r["ROIC"] else None,
             "Quality":       r["QualityScore"],
@@ -396,9 +554,13 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Period end":    ttm.get("period_end_date") or "",
             "Revenue":       (ttm_rev / 1e9) if ttm_rev else None,
             "Rev Growth":    ttm_growth,
+            "EBIT":          (ttm["EBIT"] / 1e9) if ttm.get("EBIT") else None,
+            "EBIT %":        (ttm["EBIT"] / ttm_rev * 100) if (ttm.get("EBIT") and ttm_rev) else None,
             "EBITDA":        (ttm["EBITDA"] / 1e9) if ttm.get("EBITDA") else None,
             "Net Income":    (ttm["NetIncome"] / 1e9) if ttm.get("NetIncome") else None,
+            "Tax rate":      (ttm["TaxRate"]*100) if ttm.get("TaxRate") is not None else None,
             "CapEx":         (ttm["CapEx"] / 1e9) if ttm.get("CapEx") else None,
+            "CapEx %":       (ttm["CapEx"] / ttm_rev * 100) if (ttm.get("CapEx") and ttm_rev) else None,
             "FCF":           (ttm["FCF"] / 1e9) if ttm.get("FCF") else None,
             "ROIC":          (ttm["ROIC"] * 100) if ttm.get("ROIC") else None,
             "Quality":       None,
@@ -406,6 +568,21 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
         })
     rows.extend(fy_rows)
     df = pd.DataFrame(rows)
+
+    # Adaptive $ formatting. The dollar columns above were scaled to
+    # billions; a fixed "$%.1fB" format crushes small-cap / asset-light
+    # values to "$0.0B" (e.g. CELH CapEx ~$36M, ~1.4% of revenue). Render
+    # them as auto-scaled strings instead ($B for ≥$1B, $M below) so the
+    # value is legible across the whole universe — mega-caps still read
+    # "$390.0B", CELH reads "$36.1M". _bn expects raw dollars, so undo the
+    # /1e9 scaling. Numeric columns (Rev Growth, ROIC, Quality) stay typed
+    # for their NumberColumn / ProgressColumn rendering.
+    _dollar_cols = ("Revenue", "EBIT", "EBITDA", "Net Income", "CapEx", "FCF")
+    for _c in _dollar_cols:
+        if _c in df.columns:
+            df[_c] = df[_c].map(
+                lambda x: _bn(x * 1e9, 1) if x is not None and x == x else ""
+            )
 
     st.dataframe(
         df,
@@ -430,7 +607,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
                 width="small",
                 help="Fiscal-year end date — useful for non-calendar filers like NVDA (Jan), HD/LOW (Feb), COST (Aug/Sep)",
             ),
-            "Revenue":    st.column_config.NumberColumn("Revenue", format="$%.1fB"),
+            "Revenue":    st.column_config.TextColumn("Revenue", width="small"),
             "Rev Growth": st.column_config.NumberColumn(
                 "Rev Growth", format="%+.1f%%",
                 help=(
@@ -443,10 +620,21 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
                     "data on file."
                 ),
             ),
-            "EBITDA":     st.column_config.NumberColumn("EBITDA", format="$%.1fB"),
-            "Net Income": st.column_config.NumberColumn("Net Income", format="$%.1fB"),
-            "CapEx":      st.column_config.NumberColumn("CapEx", format="$%.1fB"),
-            "FCF":        st.column_config.NumberColumn("FCF", format="$%.1fB"),
+            "EBIT":       st.column_config.TextColumn("EBIT", width="small"),
+            "EBIT %":     st.column_config.NumberColumn(
+                "EBIT %", format="%.1f%%",
+                help="EBIT (operating income) as % of revenue — the operating margin."),
+            "EBITDA":     st.column_config.TextColumn("EBITDA", width="small"),
+            "Net Income": st.column_config.TextColumn("Net Income", width="small"),
+            "Tax rate":   st.column_config.NumberColumn(
+                "Tax rate", format="%.1f%%",
+                help="GAAP effective tax rate. Can be negative (tax benefit) "
+                     "or near-zero in years with large credits/one-offs."),
+            "CapEx":      st.column_config.TextColumn("CapEx", width="small"),
+            "CapEx %":    st.column_config.NumberColumn(
+                "CapEx %", format="%.1f%%",
+                help="CapEx as % of revenue — capital intensity."),
+            "FCF":        st.column_config.TextColumn("FCF", width="small"),
             "ROIC":       st.column_config.ProgressColumn(
                 f"ROIC{_convention_flag('ROIC')}",
                 format="%.1f%%", min_value=-10.0, max_value=80.0,
@@ -816,13 +1004,30 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
 
     # ── DCF section preserved (delegated to existing block) ──────────────
     if bundle.get("dcf_inputs"):
-        _render_dcf_section(bundle)
+        _render_dcf_section(ticker, bundle)
 
 
-def _render_dcf_section(bundle: Dict[str, Any]) -> None:
+def _render_dcf_section(ticker: str, bundle: Dict[str, Any]) -> None:
     """Render the DCF subsections (inputs, scenarios, projections, terminal)."""
     st.markdown("---")
     st.markdown("#### DCF Analysis")
+
+    # Override provenance banner — make an analyst-overridden valuation
+    # impossible to mistake for the model-derived one.
+    _ov = bundle.get("dcf_overrides") or {}
+    _ov_fields = [k for k in (
+        "revenue_growth_y1_5", "revenue_growth_y6_10", "terminal_ebit_margin",
+        "capex_pct_revenue", "tax_rate", "discount_rate", "terminal_growth",
+    ) if _ov.get(k) is not None]
+    if _ov_fields:
+        who = _ov.get("updated_by", "analyst")
+        when = (_ov.get("updated_at") or "")[:10]
+        st.warning(
+            f"✎ **Analyst-overridden valuation** — {len(_ov_fields)} assumption(s) "
+            f"differ from the model"
+            f"{' (set by ' + who + (' on ' + when if when else '') + ')' if who else ''}. "
+            "Intrinsic values below reflect these overrides, not the model defaults."
+        )
 
     dcfi    = bundle["dcf_inputs"]
     scens   = bundle["dcf_scenarios"]
@@ -922,21 +1127,4 @@ def _render_dcf_section(bundle: Dict[str, Any]) -> None:
                 st.dataframe(tv_df, hide_index=True, use_container_width=True)
         if asn:
             with d:
-                st.markdown("##### Base assumptions")
-                asn_df = pd.DataFrame([
-                    {"Field": "CAGR Y1-5",          "Value": _pct(asn.get("revenue_cagr_y1_5"))},
-                    {"Field": "CAGR Y6-10",         "Value": _pct(asn.get("revenue_cagr_y6_10"))},
-                    {"Field": "EBIT margin start",  "Value": _pct(asn.get("ebit_margin_current"))},
-                    {"Field": "EBIT margin term.",  "Value": _pct(asn.get("ebit_margin_terminal"))},
-                    {"Field": "CapEx % revenue",    "Value": _pct(asn.get("capex_pct_revenue"))},
-                    {"Field": "D&A % revenue",      "Value": _pct(asn.get("da_pct_revenue"))},
-                    {"Field": "NWC % revenue",      "Value": _pct(asn.get("nwc_pct_revenue"))},
-                    {"Field": "Tax rate",           "Value": _pct(asn.get("tax_rate"))},
-                    {"Field": "WACC",               "Value": _pct(asn.get("wacc"))},
-                    {"Field": "Terminal growth",    "Value": _pct(asn.get("terminal_growth"))},
-                    {"Field": "Terminal ROIC",      "Value": _pct(asn.get("terminal_roic"))},
-                    {"Field": "Base ROIC",          "Value": _pct(asn.get("base_roic"))},
-                ])
-                st.dataframe(asn_df, hide_index=True, use_container_width=True)
-                if asn.get("justification"):
-                    st.caption(asn["justification"])
+                _render_editable_assumptions(ticker, asn)

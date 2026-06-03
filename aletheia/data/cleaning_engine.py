@@ -333,6 +333,29 @@ class CleaningEngine:
             rec.error(f"No canonical data found for {ticker} FY{fiscal_year}")
             return rec
 
+        # 1b. Mezzanine / temporary-equity FMP fallback. Redeemable
+        # convertible preferred (CELH: PepsiCo's 2022 Series A) sits between
+        # liabilities and permanent equity. XBRL tags it under
+        # TemporaryEquityCarryingAmountAttributableToParent, but SEC
+        # companyfacts excludes company *extension* tags — so a filer that
+        # reports it under one (CELH FY2025) leaves the line unresolved and
+        # A=L+E fails by the preferred's carrying amount, tripping the
+        # validation gate below AND the Stage 3 schema contract. FMP exposes
+        # it on the annual balance sheet (preferredStock) across every year,
+        # so fall back to FMP when XBRL didn't populate it. Injected into
+        # raw_wide here so the gate, the domains, and the schema contract all
+        # see it. Second-source only; no-op for the universe's many filers
+        # without preferred.
+        if raw_wide.get("TemporaryEquityCarryingAmount") is None:
+            from aletheia.data.preferred_equity_resolver import (
+                resolve_temporary_equity_from_fmp,
+            )
+            temp_eq, _temp_eq_source = resolve_temporary_equity_from_fmp(
+                ticker=ticker, fiscal_year=fiscal_year,
+            )
+            if temp_eq:
+                raw_wide["TemporaryEquityCarryingAmount"] = temp_eq
+
         # 2. Initialise record
         record = CleanedRecord(
             ticker=ticker,

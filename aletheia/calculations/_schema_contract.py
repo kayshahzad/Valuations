@@ -421,19 +421,55 @@ def validate_cleaned_record_schema_contract(
             or _safe_record_field(
                 record, "raw",
                 "TemporaryEquityCarryingAmountIncludingPortionAttributableToNoncontrollingInterests")
+            # Mezzanine temporary equity attributable to the PARENT —
+            # redeemable convertible preferred between liabilities and
+            # permanent equity (resolver canonical: TemporaryEquityCarryingAmount).
+            # CELH FY2022+ carries PepsiCo's $550M convertible preferred
+            # (~$824M accreted) here, in neither TotalLiabilities nor
+            # parent-only TotalEquity.
+            or _safe_record_field(
+                record, "raw", "TemporaryEquityCarryingAmount")
+            or 0.0
+        )
+
+        # Non-redeemable minority interest in consolidated subsidiaries.
+        # FMP exposes this as ``minorityInterest``; the XBRL canonical
+        # name is ``MinorityInterest`` (older) or ``NoncontrollingInterest``
+        # (post-2009). Lives on the equity side but excluded from
+        # ``totalStockholdersEquity`` (which is parent-only in both FMP
+        # and modern XBRL filings). Resolves the chronic 0.3-0.6% A=L+E
+        # gap on multinational filers like APH, ACN, KO, JNJ.
+        minority_interest = (
+            _safe_record_field(record, "raw", "MinorityInterest")
+            or _safe_record_field(record, "raw", "NoncontrollingInterest")
             or 0.0
         )
 
         tol = IDENTITY_TOLERANCES["accounting_equation_a_eq_l_plus_e"]
         expected_no_nci = total_liab + total_equity
         expected_with_nci = expected_no_nci + redeemable_nci
+        # Third form: parent equity + non-redeemable minority interest.
+        # Filers where the consolidated TotalEquity tag was used (already
+        # includes minority) will fail this form harmlessly — the first
+        # two forms still match for them.
+        expected_with_minority = expected_no_nci + minority_interest
+        # Fourth form: both — for filers that report RNCI AND minority
+        # separately. Same harmless-failure rule for filers that don't
+        # have both.
+        expected_with_both = expected_with_nci + minority_interest
 
         def _within(actual_v: float, expected_v: float) -> bool:
             if abs(expected_v) < 1e-9:
                 return abs(actual_v - expected_v) <= 1.0
             return abs(actual_v - expected_v) / abs(expected_v) <= tol
 
-        if _within(total_assets, expected_with_nci) or _within(total_assets, expected_no_nci):
+        candidates = (
+            expected_with_nci,
+            expected_no_nci,
+            expected_with_minority,
+            expected_with_both,
+        )
+        if any(_within(total_assets, c) for c in candidates):
             pass  # at least one form holds
         elif _override_covers_field(ticker, "accounting_equation_a_eq_l_plus_e"):
             # Override registry covers this ticker's accounting-equation
@@ -449,12 +485,11 @@ def validate_cleaned_record_schema_contract(
                 mode_override=mode_override,
             )
         else:
-            # Neither form satisfies — real violation. Emit via the
-            # closer of the two forms for the most informative error.
-            err_with = abs(total_assets - expected_with_nci)
-            err_no = abs(total_assets - expected_no_nci)
-            chosen_expected = (expected_with_nci if err_with < err_no
-                               else expected_no_nci)
+            # None of the four forms satisfies — real violation. Emit via
+            # the closest form for the most informative error message.
+            chosen_expected = min(
+                candidates, key=lambda c: abs(total_assets - c),
+            )
             exc = _collect_violation(
                 _require_consistent,
                 actual=total_assets, expected=chosen_expected,

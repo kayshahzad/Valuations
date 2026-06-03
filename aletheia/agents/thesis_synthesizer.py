@@ -712,9 +712,27 @@ def _summarize_phase2(state: Dict[str, Any]) -> str:
     p2 = state.get("phase2_valuation") or {}
     if not p2:
         return "(phase2 unavailable)"
-    bear = (p2.get("three_scenario_dcf", {}) or {}).get("bear", {}) or {}
-    base = (p2.get("three_scenario_dcf", {}) or {}).get("base", {}) or {}
-    bull = (p2.get("three_scenario_dcf", {}) or {}).get("bull", {}) or {}
+    # Scenario IPS/MoS live as flat keys on ``phase2["dcf"]`` in the agent
+    # state (DCFResult.to_dict()). The ``three_scenario_dcf`` nested shape is
+    # only assembled later for the serving report, so reading it here yielded
+    # "$N/A" — the source of the recurring "base case currently N/A /
+    # unevaluable" language even when the engine base is a real number.
+    _dcf = p2.get("dcf", {}) or {}
+    _dcf3 = p2.get("three_scenario_dcf", {}) or {}
+
+    def _scn(name):
+        flat_iv = _dcf.get(f"{name}_intrinsic_per_share")
+        flat_up = _dcf.get(f"{name}_upside")
+        nested = _dcf3.get(name) or {}
+        iv = flat_iv if flat_iv is not None else nested.get("intrinsic_per_share", "N/A")
+        mos = flat_up if flat_up is not None else nested.get("margin_of_safety", "N/A")
+        iv_s = f"{iv:.2f}" if isinstance(iv, (int, float)) else iv
+        mos_s = f"{mos:+.1%}" if isinstance(mos, (int, float)) else mos
+        return iv_s, mos_s
+
+    bear_iv, bear_mos = _scn("bear")
+    base_iv, base_mos = _scn("base")
+    bull_iv, bull_mos = _scn("bull")
     md = p2.get("multiple_decomposition") or {}
     cyc = state.get("cyclicality") or {}
     lines = [
@@ -722,9 +740,9 @@ def _summarize_phase2(state: Dict[str, Any]) -> str:
         f"  Implied CAGR (10y):   {p2.get('implied_cagr'):.1%}" if p2.get('implied_cagr') else "  Implied CAGR:         N/A",
         f"  Historical CAGR:      {p2.get('historical_cagr'):.1%}" if p2.get('historical_cagr') else "  Historical CAGR:      N/A",
         f"  Reverse DCF signal:   {p2.get('reverse_dcf_signal', 'N/A')}",
-        f"  Bear IPS / MoS:       ${bear.get('intrinsic_per_share', 'N/A')} / {bear.get('margin_of_safety', 'N/A')}",
-        f"  Base IPS / MoS:       ${base.get('intrinsic_per_share', 'N/A')} / {base.get('margin_of_safety', 'N/A')}",
-        f"  Bull IPS / MoS:       ${bull.get('intrinsic_per_share', 'N/A')} / {bull.get('margin_of_safety', 'N/A')}",
+        f"  Bear IPS / MoS:       ${bear_iv} / {bear_mos}",
+        f"  Base IPS / MoS:       ${base_iv} / {base_mos}",
+        f"  Bull IPS / MoS:       ${bull_iv} / {bull_mos}",
         f"  Multiple premium pct: {md.get('premium_pct')}",
         f"  Multiple signal:      {md.get('signal', 'N/A')}",
         f"  Value creation:       {md.get('value_creation', 'N/A')}",

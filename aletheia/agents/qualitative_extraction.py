@@ -161,6 +161,20 @@ def qualitative_extraction_node(state: Dict[str, Any]) -> Dict[str, Any]:
                     for dim_id in BUNDLE_DIMS
                 ])
 
+    # ── HITL proposer (Phase 1 of HITL auto-fill) ──────────────────
+    # Reuses the 10-K text from the bundle above. One LLM call
+    # proposes scores for all 9 HITL dimensions. Analyst-overridden
+    # / analyst-adjusted records are preserved automatically.
+    if raw_10k.strip():
+        try:
+            results.extend(_run_hitl_proposer(ticker, raw_10k))
+        except Exception as exc:
+            print(f"  ⚠ HITL proposer failed for {ticker}: {exc}")
+            traceback.print_exc()
+            # Don't enumerate dims here — the proposer is the single
+            # source of truth for which dims it tried. An error means
+            # zero rows were touched.
+
     # ── DEF 14A bundle path (Phase C) ──────────────────────────────
     if have_def14a_bundle:
         if not raw_def14a.strip():
@@ -261,6 +275,142 @@ def _run_def14a_bundle(ticker: str, raw_def14a: str) -> List[Dict[str, Any]]:
         make_def14a_bundle_extractor,
     )
     return _run_bundle_generic(ticker, raw_def14a, make_def14a_bundle_extractor)
+
+
+# ── HITL proposer (Phase 1 of HITL auto-fill) ──────────────────────
+
+
+def _run_hitl_proposer(
+    ticker: str, raw_10k: str,
+) -> List[Dict[str, Any]]:
+    """One bundled LLM call proposes scores for all 9 HITL dimensions
+    (moat_strength, pricing_power, brand_strength, switching_costs,
+    capital_allocation_track_record, reinvestment_opportunity,
+    market_position, competitive_trajectory, technology_disruption_risk).
+
+    Different from the 10-K extraction bundle in two ways:
+      1. Returns AssessmentRecord objects with provenance already
+         stamped — the proposer's job is to produce reviewable HITL
+         proposals, not raw extractions.
+      2. Persistence honors analyst-overridden records: when the
+         existing row has provenance in {"analyst_adjusted",
+         "analyst_overridden"}, we DO NOT overwrite. The Phase 4
+         drift-report layer (separate) computes the divergence between
+         the new proposal and the persisted analyst version.
+    """
+    from aletheia.qualitative.extractors.hitl_proposer import (
+        make_hitl_proposer,
+    )
+    from aletheia.qualitative.runner import _GIT_SHA
+    from aletheia.data.database import InvestmentDatabase
+
+    propose = make_hitl_proposer()
+    record_by_dim = propose(ticker, raw_10k)
+
+    outcomes: List[Dict[str, Any]] = []
+    if not record_by_dim:
+        return outcomes
+
+    db = InvestmentDatabase(verbose=False)
+    try:
+        for dim_id, rec in record_by_dim.items():
+            prior = db.get_latest_assessment(ticker.upper(), dim_id)
+
+            # Honor analyst overrides — never overwrite analyst work,
+            # but persist a drift-snapshot of the new LLM proposal in
+            # ``llm_proposal_latest`` so the UI can render a "LLM
+            # disagrees" banner.
+            if prior and prior.get("provenance") in (
+                "analyst_adjusted", "analyst_overridden",
+            ):
+                _write_drift_snapshot(db, prior, rec)
+                outcomes.append({
+                    "dimension_id": dim_id,
+                    "score":        rec.score,
+                    "status":       "drift_recorded",
+                    "reason":       f"prior={prior.get('provenance')}; "
+                                    f"new LLM proposal stored as drift snapshot",
+                })
+                continue
+
+            # Idempotency: skip when source fingerprint + git SHA match
+            # the prior LLM proposal — re-running on the same 10-K
+            # doesn't burn a write or re-propose.
+            if (prior
+                    and prior.get("provenance") == "llm_proposed"
+                    and prior.get("input_fingerprint") == rec.input_fingerprint
+                    and prior.get("code_git_sha") == _GIT_SHA):
+                outcomes.append({
+                    "dimension_id": dim_id,
+                    "score":        rec.score,
+                    "status":       "unchanged",
+                    "reason":       None,
+                })
+                continue
+
+            # New proposal becomes the latest record. Also stamp it as
+            # the drift baseline so the UI's drift comparison treats
+            # this proposal as the reference until the analyst reviews.
+            rec_with_latest = _attach_latest_snapshot(rec)
+            db.upsert_qualitative_assessment(rec_with_latest)
+            outcomes.append({
+                "dimension_id": dim_id,
+                "score":        rec.score,
+                "status":       "written",
+                "reason":       None,
+            })
+    finally:
+        db.close()
+    return outcomes
+
+
+def _attach_latest_snapshot(rec):
+    """Set llm_proposal_latest = llm_proposal so freshly-proposed records
+    have zero drift between proposal and latest. Returns a new
+    AssessmentRecord via dataclasses.replace (frozen dataclass)."""
+    import dataclasses
+    return dataclasses.replace(rec, llm_proposal_latest=rec.llm_proposal)
+
+
+def _write_drift_snapshot(db, prior_record_dict, new_proposal_record) -> None:
+    """Persist a new LLM proposal as a drift snapshot on the analyst's
+    existing record. We rewrite the latest row (insert new versioned
+    row identical to prior, with updated ``llm_proposal_latest_json``).
+    Analyst's score / sub_scores / narrative are preserved exactly.
+
+    Updating in place keeps the analyst's review state untouched —
+    no need for them to re-review; the banner just appears when they
+    next open the qualitative tab."""
+    import datetime, uuid, dataclasses
+    from aletheia.qualitative.runner import _GIT_SHA
+    from aletheia.qualitative.types import AssessmentRecord, SourceCategory
+
+    # Reconstitute prior as AssessmentRecord (its source_category came
+    # through as a string from the DB read).
+    sc = prior_record_dict.get("source_category")
+    if isinstance(sc, str):
+        sc = SourceCategory(sc)
+
+    refreshed = AssessmentRecord(
+        assessment_id=str(uuid.uuid4()),
+        ticker=prior_record_dict["ticker"],
+        dimension_id=prior_record_dict["dimension_id"],
+        score=prior_record_dict.get("score"),
+        sub_scores=prior_record_dict.get("sub_scores"),
+        narrative=prior_record_dict.get("narrative"),
+        source_category=sc,
+        source_payload=prior_record_dict.get("source_payload") or {},
+        assessed_at=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        analyst_id=prior_record_dict.get("analyst_id", "primary"),
+        code_git_sha=_GIT_SHA,
+        input_fingerprint=prior_record_dict.get("input_fingerprint"),
+        provenance=prior_record_dict.get("provenance"),
+        review_state=prior_record_dict.get("review_state"),
+        confidence=prior_record_dict.get("confidence"),
+        llm_proposal=prior_record_dict.get("llm_proposal"),
+        llm_proposal_latest=new_proposal_record.llm_proposal,
+    )
+    db.upsert_qualitative_assessment(refreshed)
 
 
 __all__ = ["qualitative_extraction_node"]

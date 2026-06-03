@@ -137,8 +137,10 @@ class ScenarioOverride(BaseModel):
     terminal_ebit_margin: Optional[float] = Field(
         default=None,
         description="Direct override for terminal EBIT margin (decimal, e.g. "
-                    "0.30 for 30%). Bounded [0.05, 0.65]. Bypasses the "
-                    "lifecycle margin-decay computation."
+                    "0.30 for 30%). Bounded [0.0, 0.65]. Floor is 0 (not 5%) "
+                    "so thin-margin businesses (retailers/distributors like "
+                    "CHWY ~1.6%) are representable. Bypasses the lifecycle "
+                    "margin-decay computation."
     )
     capex_pct_revenue: Optional[float] = Field(
         default=None,
@@ -194,8 +196,8 @@ class ScenarioOverride(BaseModel):
     @field_validator("terminal_ebit_margin")
     @classmethod
     def _check_terminal_margin(cls, v):
-        if v is not None and not (0.05 <= v <= 0.65):
-            raise ValueError(f"terminal_ebit_margin must be in [0.05, 0.65], got {v}")
+        if v is not None and not (0.0 <= v <= 0.65):
+            raise ValueError(f"terminal_ebit_margin must be in [0.0, 0.65], got {v}")
         return v
 
     @field_validator("capex_pct_revenue")

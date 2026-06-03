@@ -181,11 +181,25 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
         print(f"  ✗ Valuation failed: {e}")
 
     # ── Step 2: Reverse DCF ─────────────────────────────────────────────────
+    # Pass the engine BASE scenario's assumption stack through so the
+    # reverse DCF solves for "what CAGR makes IV = market price under
+    # the same terminal margin / WACC / terminal growth the base case
+    # uses?" — instead of running independently against its own
+    # hardcoded constants. Without this, base IV could move materially
+    # (e.g., terminal growth clamp from 3.5% → 2.5%) while reverse DCF
+    # silently retains a stale implied CAGR.
     if dcf_result is not None:
         try:
             from aletheia.tools.reverse_dcf import ReverseDCF
             rdcf = ReverseDCF(verbose=False)
-            rdcf_result = rdcf.run(calc_input)
+            base_sc = getattr(dcf_result, "base", None)
+            base_assumptions = getattr(base_sc, "assumptions", None) if base_sc else None
+            kwargs = {}
+            if base_assumptions is not None:
+                kwargs["wacc_override"] = float(base_assumptions.wacc)
+                kwargs["margin_override"] = float(base_assumptions.ebit_margin_terminal)
+                kwargs["terminal_growth_override"] = float(base_assumptions.terminal_growth)
+            rdcf_result = rdcf.run(calc_input, **kwargs)
             phase2["reverse_dcf"]      = rdcf_result.to_dict()
             phase2["implied_cagr"]      = rdcf_result.implied_revenue_cagr_10y
             phase2["historical_cagr"]   = rdcf_result.historical_cagr_5y
@@ -465,6 +479,11 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
         "conviction": conviction,
         "calc_bypassed": bypass_reason,
         "_calc_validation": calc_validation,
+        # Pass the DCFResult object (not JSON-serializable) through state
+        # so lead.py can build the 5_financial_metrics block. Underscore
+        # prefix marks it as Python-only — never serialized into the
+        # report JSON. None for non-FCFF engines (rate-base / DDM / EV).
+        "_dcf_result": dcf_result,
         "messages": [HumanMessage(content=f"CalcNode: {ticker} — {len(errors)} errors")],
     }
     tracer.log_step("CalcNode", state, output)

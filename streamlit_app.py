@@ -412,12 +412,18 @@ def _run_pipeline_subprocess(
     }
 
 
-def _run_add_ticker_pipeline_ui(ticker_input: str) -> None:
+def _run_add_ticker_pipeline_ui(
+    ticker_input: str, *, auto_agents: bool = False,
+) -> None:
     """
     Drive the `add_ticker_pipeline` orchestrator from the Streamlit UI:
     stream step updates into a status panel, render the SEC + FMP
     validation tables inline, and stash a summary into `session_state`
     for the sidebar.
+
+    When ``auto_agents`` is True the orchestrator extends through Stage
+    4 — LLM extractors + HITL proposer pre-fill the qualitative dims so
+    the analyst lands on a fully-scored ticker rather than blank cards.
     """
     import time
     from aletheia.ui.add_ticker_pipeline import (
@@ -432,9 +438,10 @@ def _run_add_ticker_pipeline_ui(ticker_input: str) -> None:
     # Stages 1-3. Defaults to "fmp" when unset.
     selected_provider = st.session_state.get("provider") or __import__("config.data_source", fromlist=["DEFAULT_PROVIDER"]).DEFAULT_PROVIDER
 
-    with st.status(f"Adding {ticker_input.upper()}…", expanded=True) as status:
+    label_suffix = " (with Stage 4 agents)" if auto_agents else ""
+    with st.status(f"Adding {ticker_input.upper()}{label_suffix}…", expanded=True) as status:
         for evt in run_add_ticker_pipeline(
-            ticker_input, provider=selected_provider,
+            ticker_input, provider=selected_provider, auto_agents=auto_agents,
         ):
             if isinstance(evt, StepUpdate):
                 glyph = {"running": "▷", "ok": "✓", "warning": "⚠", "error": "✗"}.get(evt.status, "•")
@@ -1038,8 +1045,19 @@ def main():
                     use_container_width=True,
                     disabled=not new_ticker,
                 )
+            # Stage 4 opt-in. Default ON so a fresh ticker lands with all
+            # qualitative dims populated (HITL proposer + LLM extractors)
+            # — analyst reviews instead of cold-starting. Toggle OFF for
+            # "free" ingest when budget-conscious or batch-adding many
+            # tickers.
+            run_agents = st.checkbox(
+                "Run Stage 4 agents after ingest (LLM ~$1-2; auto-fills "
+                "all qualitative dims)",
+                value=True,
+                key="universe_add_ticker_run_agents",
+            )
         if add_clicked and new_ticker:
-            _run_add_ticker_pipeline_ui(new_ticker)
+            _run_add_ticker_pipeline_ui(new_ticker, auto_agents=run_agents)
             fetch_universe.clear()
             fetch_health.clear()
             st.rerun()

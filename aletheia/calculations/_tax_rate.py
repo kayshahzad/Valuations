@@ -45,6 +45,16 @@ US_STATUTORY: float = 0.21
 DEFAULT_LOOKBACK_YEARS: int = 5
 MIN_LOOKBACK_YEARS_FOR_AVG: int = 3
 
+# Below this, a single-year effective rate is almost certainly a one-time
+# artifact (NOL release, DTA reversal, large credits, negative/benefit
+# years) rather than the rate that persists in a perpetuity valuation.
+# Foreign filers with genuinely low statutory rates (Irish MDT ~14-16%,
+# ASML, TSM) sit ABOVE this floor, so they are not misclassified.
+MIN_NORMAL_RATE: float = 0.10
+# A current-FY rate this many percentage points off the multi-year mean is
+# treated as an outlier year and normalized to the mean.
+TAX_OUTLIER_DEVIATION: float = 0.10
+
 
 def _is_usable_rate(value) -> bool:
     """A tax rate is usable when finite and inside the Tier-3 range
@@ -135,12 +145,47 @@ def resolve_tax_rate(
     Python logger so the audit trail captures every silent-fallback
     event without coupling this module to the guards audit log.
     """
+    # Current-FY rate (cash preferred, then GAAP).
+    current_rate = None
+    current_source = None
     if _is_usable_rate(cash_tax_rate):
-        return float(cash_tax_rate), "cash"
-    if _is_usable_rate(gaap_tax_rate):
-        return float(gaap_tax_rate), "gaap"
+        current_rate, current_source = float(cash_tax_rate), "cash"
+    elif _is_usable_rate(gaap_tax_rate):
+        current_rate, current_source = float(gaap_tax_rate), "gaap"
 
     company_rate = company_fy_effective_tax_rate(df, fy, lookback_years)
+
+    if current_rate is not None:
+        # Normalize anomalous single-year rates. A DCF prices a perpetuity,
+        # so a one-time benefit (AVGO TTM 1.8% / FY2025 −1.7%) or an outlier
+        # year (AVGO FY2024 37.8%) must not become the perpetual tax rate.
+        # When the current rate is below the one-time floor OR sits far from
+        # the company's own multi-year mean, defer to that normalized mean.
+        is_anomalous = (
+            current_rate < MIN_NORMAL_RATE
+            or (company_rate is not None
+                and abs(current_rate - company_rate) >= TAX_OUTLIER_DEVIATION)
+        )
+        if is_anomalous and company_rate is not None:
+            log.info(
+                "tax_rate_normalize: ticker=%s fn=%s source=company_fy_normalized "
+                "current=%.4f (%s) normalized=%.4f fy=%d lookback=%d "
+                "reason=current_fy_rate_anomalous",
+                ticker, fn, current_rate, current_source, company_rate,
+                fy, lookback_years,
+            )
+            return company_rate, "company_fy_normalized"
+        if is_anomalous and company_rate is None:
+            # Anomalous current rate but too little history to normalize —
+            # fall back to statutory rather than ship a one-time figure.
+            log.warning(
+                "tax_rate_normalize: ticker=%s fn=%s source=statutory "
+                "current=%.4f (%s) reason=anomalous_current_no_history fy=%d",
+                ticker, fn, current_rate, current_source, fy,
+            )
+            return US_STATUTORY, "statutory"
+        return current_rate, current_source
+
     if company_rate is not None:
         log.info(
             "tax_rate_fallback: ticker=%s fn=%s source=company_fy "

@@ -469,6 +469,61 @@ def render_scenarios(ticker: str, dcf: Dict[str, Any]) -> List[Dict[str, Any]]:
                 unsafe_allow_html=True,
             )
 
+    # ── Probability-weighted expected value ─────────────────────────────
+    # Turn the five-scenario visual into an explicit expected-value calc:
+    # the analyst assigns a probability to each scenario (defaults to equal
+    # weighting); weights are normalized to 100% and used to compute the
+    # probability-weighted expected IPS and expected return vs price.
+    valid = [s for s in scenarios if s.get("iv_per_share") and not s.get("error")]
+    price = dcf.get("current_price")
+    if valid and price:
+        st.markdown("#### Probability-weighted expected value")
+        st.caption(
+            "Assign a probability to each scenario (defaults to equal "
+            "weighting). Weights are normalized to 100%; expected IPS = "
+            "Σ(probability × scenario IPS)."
+        )
+        n = len(valid)
+        default_w = round(100.0 / n, 1)
+        wcols = st.columns(n)
+        raw_weights: List[float] = []
+        for wc, s in zip(wcols, valid):
+            with wc:
+                w = st.number_input(
+                    f"{s['label']} (%)",
+                    min_value=0.0, max_value=100.0, value=default_w, step=5.0,
+                    key=f"scen_prob_{ticker}_{s['label']}",
+                    help="Probability you assign to this scenario.",
+                )
+                raw_weights.append(w)
+
+        total_w = sum(raw_weights)
+        if total_w > 0:
+            norm = [w / total_w for w in raw_weights]
+            exp_ips = sum(wn * s["iv_per_share"] for wn, s in zip(norm, valid))
+            exp_ret = (exp_ips - price) / price
+            m1, m2, m3 = st.columns(3)
+            m1.metric("Expected IPS", _money(exp_ips))
+            m2.metric("Expected return", f"{exp_ret*100:+.1f}%",
+                      help="(Expected IPS − current price) / current price.")
+            m3.metric(
+                "Σ weights",
+                f"{total_w:.0f}%",
+                help=("Raw weights entered above. Anything ≠ 100% is "
+                      "normalized before the expected value is computed.")
+                if abs(total_w - 100.0) > 0.5 else None,
+            )
+            # Per-scenario contribution to the expected IPS.
+            contrib = " · ".join(
+                f"{s['label'].split(' (')[0]} {wn*100:.0f}%→"
+                f"${wn * s['iv_per_share']:,.0f}"
+                for wn, s in zip(norm, valid)
+            )
+            st.caption(f"Contributions: {contrib}")
+        else:
+            st.caption("Set at least one non-zero probability to compute "
+                       "the expected value.")
+
     return scenarios
 
 

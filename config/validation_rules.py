@@ -55,8 +55,16 @@ def check_layer3_identities(record: dict, industry: str) -> list:
     assets = record.get("TotalAssets")
     liabilities = record.get("TotalLiabilities")
     equity = record.get("TotalEquity")
-    mezzanine = record.get("RedeemableNoncontrollingInterest", 0.0)
-    
+    # Mezzanine / temporary equity sits between liabilities and permanent
+    # equity (ASC 480-10-S99) and belongs on the right side of A=L+E.
+    # Two variants: redeemable NCI (subsidiary minority) and parent-
+    # attributable redeemable convertible preferred. CELH carries PepsiCo's
+    # 2022 Series A convertible preferred under the latter ($824M FY2022-
+    # 2024, growing to $1.76B at FY2025), in neither TotalLiabilities nor
+    # parent-only TotalEquity.
+    mezzanine = (record.get("RedeemableNoncontrollingInterest") or 0.0) \
+        + (record.get("TemporaryEquityCarryingAmount") or 0.0)
+
     # 1. Accounting Equation: Assets = Liabilities + Equity + Mezzanine
     if assets is not None and liabilities is not None and equity is not None:
         computed_assets = liabilities + equity + mezzanine

@@ -467,6 +467,26 @@ def validate_ingestion_record(
         is_violation = (status == "structural_drift")
         is_blocking_violation = (blocking and is_violation)
 
+        # FMP self-consistency guard for EBITDA. EBITDA = EBIT + D&A, so
+        # FMP's own ``ebitda`` can never be below its ``operatingIncome``
+        # (D&A ≥ 0). When it is, FMP mis-tagged the income statement — seen
+        # on CELH FY2025 (Alani Nu acquisition year): FMP ebitda=$203M <
+        # FMP operatingIncome=$469M, while our EBITDA=$498M=EBIT+D&A is
+        # internally consistent. FMP's ebitda is not a trustworthy blocking
+        # reference here, so demote the drift to non-blocking — an FMP data
+        # bug must not drop an internally-consistent record of ours.
+        fmp_unreliable: Optional[str] = None
+        if field_name == "ebitda" and fmp is not None:
+            fmp_opinc = _fmp_value_for_gate(
+                fmp_data, "income", ["operatingIncome"], False)
+            if fmp_opinc is not None and fmp < fmp_opinc - 1.0:
+                is_blocking_violation = False
+                fmp_unreliable = (
+                    f"FMP ebitda={fmp:.0f} < FMP operatingIncome={fmp_opinc:.0f} "
+                    "(EBITDA<EBIT impossible); FMP value untrustworthy — "
+                    "drift recorded but not blocking"
+                )
+
         fields[field_name] = {
             "ours":            ours,
             "fmp":             fmp,
@@ -476,6 +496,7 @@ def validate_ingestion_record(
             "status":          status,
             "source_endpoint": endpoint,
             "fmp_key_resolved": fmp_keys[0],
+            "fmp_unreliable":  fmp_unreliable,
         }
         if is_violation:
             n_drift += 1

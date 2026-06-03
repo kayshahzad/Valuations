@@ -78,6 +78,25 @@ _BALANCE_MAP: Dict[str, str] = {
     "longTermDebt": "LongTermDebt",
     "totalCurrentLiabilities": "LiabilitiesCurrent",
     "totalLiabilities": "TotalLiabilities",
+    # Non-redeemable noncontrolling interest in consolidated subsidiaries.
+    # Sits at the equity tier of A=L+E but FMP's ``totalStockholdersEquity``
+    # is parent-only and excludes it. Without this mapping, the
+    # schema-contract A=L+E identity emits chronic ~0.3-0.6% gaps for
+    # multinational filers (APH, ACN, KO, JNJ, etc.) where consolidated
+    # subsidiaries have material minority partners. Schema contract uses
+    # this to construct a third "expected_with_minority_interest" form.
+    "minorityInterest": "MinorityInterest",
+    # Mezzanine / temporary equity (redeemable convertible preferred) sitting
+    # between liabilities and permanent equity. FMP exposes the full carrying
+    # amount here even when SEC companyfacts drops it (company extension tags
+    # are excluded from companyfacts). Canonical case: CELH carries PepsiCo's
+    # 2022 convertible preferred — $824M FY2022-2024, growing to $1.76B at
+    # FY2025 year-end (Alani Nu acquisition consideration), where the XBRL
+    # TemporaryEquityCarryingAmountAttributableToParent tag stops reporting.
+    # Schema contract's A=L+E uses it as the redeemable-equity term; the
+    # multi-form auto-detection ignores it harmlessly for filers whose
+    # totalStockholdersEquity already includes permanent preferred.
+    "preferredStock": "TemporaryEquityCarryingAmount",
     "totalStockholdersEquity": "TotalEquity",
     "totalDebt": "TotalDebt",
     "totalEquity": "TotalEquity_All",

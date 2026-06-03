@@ -79,6 +79,41 @@ def _format_timestamp(iso_str: Optional[str]) -> str:
     return iso_str[:10]
 
 
+def _drift_summary(d: Dict[str, Any]) -> Optional[tuple]:
+    """Compare ``llm_proposal_latest`` against the analyst's current
+    sub_scores. Returns ``(n_changed, biggest_delta, direction)`` when
+    drift is material (≥1 sub-score changed by ≥1 point), else None.
+
+    Triggers only on analyst-owned rows (analyst_adjusted /
+    analyst_overridden). Drift on un-reviewed LLM proposals isn't
+    interesting — the latest proposal already IS the canonical score.
+    """
+    if d.get("provenance") not in ("analyst_adjusted", "analyst_overridden"):
+        return None
+    latest = d.get("llm_proposal_latest") or {}
+    llm_sub = latest.get("sub_scores") or {}
+    analyst_sub = d.get("sub_scores") or {}
+    if not llm_sub or not analyst_sub:
+        return None
+    diffs = []
+    for k, llm_v in llm_sub.items():
+        a_v = analyst_sub.get(k)
+        if a_v is None:
+            continue
+        try:
+            delta = float(llm_v) - float(a_v)
+        except (TypeError, ValueError):
+            continue
+        if abs(delta) >= 1:
+            diffs.append((k, delta))
+    if not diffs:
+        return None
+    diffs.sort(key=lambda kv: abs(kv[1]), reverse=True)
+    biggest = diffs[0]
+    direction = "higher" if biggest[1] > 0 else "lower"
+    return (len(diffs), biggest[0], direction, biggest[1])
+
+
 def _provenance_pill(d: Dict[str, Any]) -> Optional[tuple]:
     """Return ``(label, color)`` for the source-provenance pill.
 
@@ -109,6 +144,23 @@ def _provenance_pill(d: Dict[str, Any]) -> Optional[tuple]:
         return f"📊 {version}", "blue"
 
     if src == "hitl":
+        # LLM-proposer pipeline (Phase 1 + 2) flips this to richer
+        # badges that distinguish proposed / confirmed / adjusted /
+        # overridden. Legacy "👤 Analyst" stays as the fallback for
+        # rows persisted before the provenance schema landed.
+        prov = d.get("provenance")
+        if prov == "llm_proposed":
+            confidence = d.get("confidence") or ""
+            label = "🤖 LLM proposed"
+            if confidence:
+                label += f" · {confidence}"
+            return label, "orange"
+        if prov == "analyst_confirmed":
+            return "✓ Analyst confirmed", "green"
+        if prov == "analyst_adjusted":
+            return "✎ Analyst adjusted", "blue"
+        if prov == "analyst_overridden":
+            return "👤 Analyst override", "violet"
         return "👤 Analyst", "violet"
 
     if src == "llm_augmented":
@@ -209,13 +261,42 @@ def _render_dimension_card(d: Dict[str, Any], on_assess: Optional[Callable] = No
             st.markdown(" ")  # spacing
             _render_status_line(d)
 
-            # Assess button — HITL only
+            # Drift banner — surfaces when the latest LLM proposal
+            # diverges materially from the analyst's recorded scores.
+            # Only renders on analyst-owned rows; un-reviewed LLM
+            # proposals already use the latest as canonical.
+            drift = _drift_summary(d)
+            if drift:
+                n_changed, biggest_q, direction, delta = drift
+                st.warning(
+                    f"⚡ **LLM drift detected** — re-run after a new filing "
+                    f"now rates {biggest_q} **{abs(delta):.0f} points "
+                    f"{direction}** than you did "
+                    f"({n_changed} sub-score{'s' if n_changed != 1 else ''} "
+                    f"differ by ≥1). Review the LLM proposal to decide if "
+                    f"the new disclosure changes the analysis."
+                )
+
+            # Assess button — HITL only. Label + emphasis follow the
+            # provenance state so the analyst's next action is obvious:
+            # unreviewed proposals get a primary "Review" CTA; confirmed
+            # assessments get a quiet "Re-assess" link.
             if on_assess is not None and src == "hitl":
-                label = "Re-assess" if status in ("assessed", "stale") else "Assess this dimension"
+                prov = d.get("provenance")
+                review_state = d.get("review_state")
+                if prov == "llm_proposed" and review_state == "unreviewed":
+                    label = "🔍 Review LLM proposal"
+                    btn_type = "primary"
+                elif status in ("assessed", "stale"):
+                    label = "Re-assess"
+                    btn_type = "secondary"
+                else:
+                    label = "Assess this dimension"
+                    btn_type = "primary"
                 if st.button(
                     label,
                     key=f"qual_assess_btn__{d['dimension_id']}",
-                    type="secondary" if status == "assessed" else "primary",
+                    type=btn_type,
                 ):
                     on_assess(d["dimension_id"])
 
@@ -495,6 +576,33 @@ def _render_dimension_detail(d: Dict[str, Any]) -> None:
             st.divider()
             st.markdown("**Narrative**")
             st.markdown(f"> {d['narrative']}")
+
+        # LLM proposal trail — surfaces evidence quotes + the original
+        # LLM-proposed snapshot. Shown whenever an llm_proposal payload
+        # exists (i.e. the dim has been touched by the proposer at any
+        # point, regardless of current provenance).
+        proposal = d.get("llm_proposal") or {}
+        if proposal:
+            st.divider()
+            prov = d.get("provenance") or "—"
+            conf = proposal.get("confidence") or d.get("confidence") or "—"
+            st.markdown(
+                f"**LLM proposal**  ·  provenance: `{prov}`  ·  "
+                f"confidence: `{conf}`"
+            )
+            llm_narr = proposal.get("narrative")
+            if llm_narr:
+                st.markdown(f"_LLM narrative:_  {llm_narr}")
+            quotes = proposal.get("evidence_quotes") or []
+            if quotes:
+                st.markdown("_Evidence quotes:_")
+                for q in quotes:
+                    qid = q.get("question_id", "—")
+                    txt = q.get("quote", "")
+                    src_label = q.get("source", "")
+                    st.markdown(
+                        f"- **{qid}** ({src_label}): _\"{txt}\"_"
+                    )
 
     elif src == "llm_augmented":
         sp = d.get("source_payload") or {}

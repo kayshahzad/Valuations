@@ -476,8 +476,13 @@ class ScreeningEngine:
             all_years_df["fiscal_year"] <= fy
         )
 
-        # Computed ratios
-        rev_cagr    = _robust_cagr(rev_series)
+        # Computed ratios. Revenue CAGR uses the framework-canonical
+        # FY-only normalized CAGR (shared with ReverseDCF) so "historical
+        # revenue CAGR" is ONE number across the screening table, the deep
+        # dive, and the report — the prior _robust_cagr here pulled in the
+        # TTM row and disagreed (AAPL 6.6% vs the canonical 4.8%).
+        from aletheia.tools.reverse_dcf import normalized_revenue_cagr
+        rev_cagr    = normalized_revenue_cagr(all_years_df, fy)
         fcf_cagr    = _robust_cagr(fcf_series)
         eps_series  = ni_series / shares if shares > 0 else ni_series * 0
         eps_cagr    = _robust_cagr(eps_series)
@@ -607,10 +612,11 @@ class ScreeningEngine:
             tv_signal = FLAG
         else:
             tv_signal = FAIL
-        add("Implied DCF Multiple", cat, "Liberti", implied_tv_ebitda,
+        add("Terminal EV/EBITDA (implied)", cat, "Liberti", implied_tv_ebitda,
             "TV multiple should decline as business matures (<12× ideal)",
             tv_signal,
-            note=("Implied EBITDA multiple at terminal year (TV / terminal EBITDA). "
+            note=("Implied EBITDA multiple at the TERMINAL year (TV / terminal "
+                  "EBITDA) — NOT the justified EV/EBITDA in multiple_decomposition. "
                   "Source: dcf_engine.py base.terminal.")
                   if implied_tv_ebitda is not None
                   else "→ See dcf_engine.py terminal.implied_tv_ebitda_multiple")
@@ -652,11 +658,11 @@ class ScreeningEngine:
             "≥15% sustained across full cycle",
             PASS if roe and roe > 0.15 else FLAG if roe and roe > 0.08 else FAIL if roe else NA)
 
-        add("ROIC vs WACC", cat, "Liberti/Framework",
+        add("ROIC", cat, "Liberti/Framework",
             roic * 100 if roic else None,
             "ROIC>WACC = value creation; gap drives multiple premium",
             PASS if roic and roic > 0.12 else FLAG if roic and roic > 0.08 else FAIL if roic else NA,
-            note=f"ROIC-WACC spread ≈ {(roic - wacc)*100:.1f}%" if roic else "")
+            note=f"ROIC−WACC spread ≈ {(roic - wacc)*100:.1f}% (this row shows ROIC, not the spread)" if roic else "")
 
         add("Gross Margin %", cat, "Framework",
             gross_margin,

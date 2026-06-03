@@ -467,6 +467,11 @@ def lead_agent(state):
     contrarian_bias       = contrarian_structured.get("bias_detected", "")
     contrarian_sentiment  = contrarian_structured.get("sentiment_score")
     contrarian_quant      = contrarian.get("quant_challenge", "")
+    # Engine-bear / tail-risk separation (so the UI can label the
+    # analytically-defensible engine bear distinctly from a $0
+    # constitutional-floor / existential scenario).
+    contrarian_engine_bear = contrarian_structured.get("engine_bear_iv")
+    contrarian_tail_risk   = contrarian_structured.get("tail_risk_present")
 
     # ── Deterministic narrative assembly (replaces lead's LLM call) ──────────
     # Previously, lead made an LLM call producing growth_decay_assessment +
@@ -577,6 +582,19 @@ def lead_agent(state):
                     "signal":           p2.get("reverse_dcf_signal"),
                     "reasons":          p2.get("reverse_dcf_reasons", []),
                 },
+                # Flat aliases for fields nested above. The
+                # thesis_synthesizer prompt documents observable paths as
+                # `phase2.implied_cagr`, `phase2.historical_cagr`,
+                # `phase2.reverse_dcf_signal` (not the nested
+                # `phase2.reverse_dcf.implied_cagr_10y`). Persisting the
+                # flat names lets the dashboard / HTML decision-condition
+                # evaluator resolve those paths at render time, so the
+                # MET / WATCHING status chips actually reflect the live
+                # value. Without these the chips render "—" even when
+                # the data exists.
+                "implied_cagr":         p2.get("implied_cagr"),
+                "historical_cagr":      p2.get("historical_cagr"),
+                "reverse_dcf_signal":   p2.get("reverse_dcf_signal"),
                 "multiple_decomposition": {
                     "market_ev_ebitda":    p2.get("ev_ebitda_market"),
                     "justified_ev_ebitda": p2.get("ev_ebitda_justified"),
@@ -604,6 +622,8 @@ def lead_agent(state):
                 "bear_case_summary": contrarian_bear,
                 "sentiment_score":   contrarian_sentiment,
                 "quant_challenge":   contrarian_quant,
+                "engine_bear_iv":    contrarian_engine_bear,
+                "tail_risk_present": contrarian_tail_risk,
             },
             "investment_thesis": {
                 "conviction_score":   conviction,
@@ -630,6 +650,35 @@ def lead_agent(state):
             "agent_scenarios":      state.get("scenario_results", []),
         },
     }
+
+    # 5_financial_metrics — self-contained quantitative block stamped
+    # onto the report JSON so report_generator.py can render historical
+    # fundamentals, comprehensive ratios, DCF scenario assumptions, and
+    # WACC build without re-opening DuckDB at HTML-render time. Helper
+    # tolerates missing DCFResult (non-FCFF engines); the HTML renderer
+    # degrades gracefully when assumption sub-fields are None.
+    try:
+        from aletheia.data.database import InvestmentDatabase
+        from aletheia.utils.financial_metrics import build_financial_metrics
+        # Use the RESHAPED phase2 from the final report (where
+        # market_cap / current_price / wacc are flattened to the top
+        # level), not state's calc_node phase2 (where they nest under
+        # `dcf`). Keeps the helper aligned with what the HTML
+        # consumer sees — single source of truth.
+        reshaped_p2 = (
+            final_report.get("4_valuation_synthesis", {}).get("phase2_valuation", {})
+        )
+        with InvestmentDatabase(verbose=False) as fm_db:
+            final_report["5_financial_metrics"] = build_financial_metrics(
+                ticker=ticker,
+                db=fm_db,
+                dcf_result=state.get("_dcf_result"),
+                p2=reshaped_p2,
+            )
+    except Exception as fm_exc:
+        # Don't fail the whole report on metrics computation issues —
+        # log and leave the block empty (HTML render shows "—").
+        print(f"  ⚠ 5_financial_metrics build failed for {ticker}: {fm_exc}")
 
     writer = ServingReportWriter()
     writer.save_report(ticker, final_report, state=state)

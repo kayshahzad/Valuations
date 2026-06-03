@@ -55,6 +55,14 @@ class AgentState(TypedDict):
     # Shape: {status, skip_reason, fields[], blocking_fields[], fetched_at}.
     _calc_validation: Dict[str, Any]
 
+    # Raw DCFResult object (NOT JSON-serializable) passed from calc_node
+    # to lead_agent for the 5_financial_metrics block's per-scenario
+    # assumption stack. LangGraph's TypedDict schema strips undeclared
+    # keys, so this must be on the schema even though it's never
+    # written to disk. None when the active engine isn't FCFF
+    # (rate_base / DDM / embedded_value).
+    _dcf_result: Optional[Any]
+
     # ── Scenario eval (Phase C) ────────────────────────────────────────────
     # List of evaluated agent-proposed scenarios. Empty when no agent
     # proposed any. Each entry is the per-scenario summary written by

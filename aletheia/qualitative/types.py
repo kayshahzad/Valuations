@@ -159,9 +159,23 @@ class AssessmentRecord:
     source_category: SourceCategory
     source_payload: Dict[str, Any]
     assessed_at: str            # ISO8601 UTC
-    analyst_id: str             # "primary" by default; multi-analyst-ready
+    analyst_id: str             # "primary" by default; "llm_proposer" for auto-fill
     code_git_sha: Optional[str]
     input_fingerprint: Optional[str]   # only set for DETERMINISTIC
+    # LLM-proposer fields (Phase 1 — HITL auto-fill). None for legacy /
+    # deterministic / non-proposed records. Together they form an
+    # append-only proposal trail so subsequent LLM runs can compute a
+    # drift report without losing analyst edits.
+    provenance: Optional[str] = None             # "llm_proposed" | "analyst_confirmed" | "analyst_adjusted" | "analyst_overridden"
+    review_state: Optional[str] = None           # "unreviewed" | "reviewed_no_change" | "reviewed_adjusted"
+    confidence: Optional[str] = None             # "high" | "medium" | "low" — LLM self-rated calibration
+    llm_proposal: Optional[Dict[str, Any]] = None  # Snapshot of LLM proposal preserved across analyst edits
+    # Drift tracking (Phase 4). Always reflects the MOST RECENT LLM
+    # proposal even when the analyst has already adjusted/overridden the
+    # dim. UI compares this against the analyst's current scores to
+    # render a "LLM disagrees with your review" banner without
+    # disturbing the analyst's record.
+    llm_proposal_latest: Optional[Dict[str, Any]] = None
 
 
 __all__ = [

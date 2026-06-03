@@ -371,50 +371,45 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
             "ev":                  ev,
         }
 
-    base = result.base
-    market_ev_ebitda    = float(base.implied_ev_ebitda)   if base else None
-    justified_ev_ebitda = float(base.justified_ev_ebitda) if base else None
-    premium = (
-        market_ev_ebitda / justified_ev_ebitda - 1.0
-        if (market_ev_ebitda and justified_ev_ebitda) else None
-    )
-    if premium is None:
-        mult_signal = None
-    elif premium < 0:
-        mult_signal = "undervalued"
-    elif premium < 0.20:
-        mult_signal = "fairly_valued"
-    elif premium < 0.50:
-        mult_signal = "premium"
-    elif premium < 1.00:
-        mult_signal = "high_premium"
-    else:
-        mult_signal = "speculative_premium"
+    # Multiple decomposition — run the SAME standalone MultipleDecomposition
+    # tool the agent report uses (calc_node), so "justified EV/EBITDA",
+    # premium, and the multiple signal are IDENTICAL across the report, the
+    # deep dive, and the financials tab. Previously this reused the DCF base
+    # scenario's own justified multiple (forecast-growth-based), which
+    # diverged from the report's tool value (historical-growth-based) — e.g.
+    # CHWY showed 8.2x here vs 5.7x in the report. Single source of truth.
+    from aletheia.tools.multiple_decomposition import MultipleDecomposition
+    multiple_decomposition = None
+    try:
+        _mdres = MultipleDecomposition(verbose=False).run(calc)
+        multiple_decomposition = {
+            "market_ev_ebitda":    _mdres.market_ev_ebitda,
+            "justified_ev_ebitda": _mdres.justified_ev_ebitda,
+            "premium_pct":         _mdres.ev_ebitda_premium_pct,
+            "signal":              _mdres.signal,
+            "roic_wacc_spread":    _mdres.roic_wacc_spread,
+            "value_creation":      _mdres.value_creation,
+            "roic":                _mdres.roic,
+            "wacc":                _mdres.wacc,
+        }
+    except Exception:
+        multiple_decomposition = None
 
-    roic_wacc_spread = float(base.roic_wacc_spread) if base else None
-    value_creation = (
-        "creating" if (roic_wacc_spread is not None and roic_wacc_spread > 0)
-        else "destroying" if (roic_wacc_spread is not None and roic_wacc_spread < 0)
-        else None
-    )
-
-    multiple_decomposition = {
-        "market_ev_ebitda":    market_ev_ebitda,
-        "justified_ev_ebitda": justified_ev_ebitda,
-        "premium_pct":         premium,
-        "signal":              mult_signal,
-        "roic_wacc_spread":    roic_wacc_spread,
-        "value_creation":      value_creation,
-        "roic":                float(result.roic) if result.roic else None,
-        "wacc":                float(result.wacc_base) if result.wacc_base else None,
-    }
-
-    # Reverse DCF — same tool the agent path uses, so signal classification
-    # (`deep_value` / `fair_value` / `priced_for_growth` / `caution` / `flag`)
-    # matches what reports show for ready tickers.
+    # Reverse DCF — same tool the agent path uses, AND anchored to the engine
+    # BASE scenario's assumptions (WACC, terminal margin, terminal growth) the
+    # SAME way calc_node does for the report. Without these overrides the live
+    # reverse DCF ran against its own hardcoded constants and diverged from the
+    # report (CHWY: live implied +16% 'caution' vs report -0.9% 'deep_value').
     reverse_dcf: Optional[Dict[str, Any]] = None
     try:
-        rdcf_result = ReverseDCF(verbose=False).run(calc)
+        _rkwargs: Dict[str, Any] = {}
+        _bsc = getattr(result, "base", None)
+        _basm = getattr(_bsc, "assumptions", None) if _bsc else None
+        if _basm is not None:
+            _rkwargs["wacc_override"] = float(_basm.wacc)
+            _rkwargs["margin_override"] = float(_basm.ebit_margin_terminal)
+            _rkwargs["terminal_growth_override"] = float(_basm.terminal_growth)
+        rdcf_result = ReverseDCF(verbose=False).run(calc, **_rkwargs)
         reverse_dcf = rdcf_result.to_dict()
         # The agent-written field is `signal_reasons`; surface it as
         # `reasons` for UI compatibility with the JSON-shaped output.
@@ -540,6 +535,21 @@ class DCFResponse(BaseModel):
     engine_warnings: Optional[List[str]] = None
 
 
+class DCFOverridesRequest(BaseModel):
+    """Analyst edits to the DCF base assumptions. All optional — a field
+    left None means 'use the model-derived value'. Bounds are enforced by
+    ScenarioOverride when these are applied."""
+    revenue_growth_y1_5:  Optional[float] = None
+    revenue_growth_y6_10: Optional[float] = None
+    terminal_ebit_margin: Optional[float] = None
+    capex_pct_revenue:    Optional[float] = None
+    tax_rate:             Optional[float] = None
+    discount_rate:        Optional[float] = None   # WACC
+    terminal_growth:      Optional[float] = None
+    note:                 Optional[str] = None
+    updated_by:           Optional[str] = None
+
+
 class FundamentalsResponse(BaseModel):
     ticker: str
     fiscal_year: Optional[int]
@@ -633,6 +643,16 @@ class QualitativeDimensionState(BaseModel):
     # Catalog questions — only populated by the detail endpoint
     questions: Optional[List[QualitativeSubQuestion]] = None
     formula_citation: Optional[str] = None
+
+    # LLM proposer (Phase 1 + 2). None for legacy / non-proposed rows.
+    # The UI renders a badge based on `provenance` + `review_state`,
+    # pre-fills the review dialog from `llm_proposal`, and shows the
+    # confidence chip from `confidence`.
+    provenance: Optional[str] = None              # "llm_proposed" | "analyst_confirmed" | "analyst_adjusted" | "analyst_overridden"
+    review_state: Optional[str] = None            # "unreviewed" | "reviewed_no_change" | "reviewed_adjusted"
+    confidence: Optional[str] = None              # "high" | "medium" | "low"
+    llm_proposal: Optional[Dict[str, Any]] = None  # Snapshot of LLM proposal at the time of review
+    llm_proposal_latest: Optional[Dict[str, Any]] = None  # Latest LLM proposal — may differ from `llm_proposal` after Stage 4 re-run
 
 
 class QualitativeListResponse(BaseModel):
@@ -1158,6 +1178,247 @@ def get_ticker_dcf(ticker: str, response: Response):
     )
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# DCF assumption overrides (analyst what-if, persisted per ticker)
+# ─────────────────────────────────────────────────────────────────────────────
+
+_DCF_OVERRIDE_FIELDS = (
+    "revenue_growth_y1_5", "revenue_growth_y6_10", "terminal_ebit_margin",
+    "capex_pct_revenue", "tax_rate", "discount_rate", "terminal_growth",
+)
+
+
+def _assumptions_dict_from_result(result: Any) -> Dict[str, Any]:
+    """Extract the base-scenario assumptions into the bundle dict shape the
+    UI + validator use (mirrors ui/financials.py)."""
+    base = getattr(result, "base", None)
+    a = getattr(base, "assumptions", None) if base else None
+    if a is None:
+        return {}
+    def _f(v):
+        try:
+            return float(v) if v is not None else None
+        except (TypeError, ValueError):
+            return None
+    return {
+        "revenue_cagr_y1_5":  _f(a.revenue_cagr_y1_5),
+        "revenue_cagr_y6_10": _f(a.revenue_cagr_y6_10),
+        "ebit_margin_current": _f(a.ebit_margin_current),
+        "ebit_margin_terminal": _f(a.ebit_margin_terminal),
+        "capex_pct_revenue":  _f(a.capex_pct_revenue),
+        "da_pct_revenue":     _f(a.da_pct_revenue),
+        "nwc_pct_revenue":    _f(a.nwc_pct_revenue),
+        "tax_rate":           _f(a.tax_rate),
+        "wacc":               _f(a.wacc),
+        "terminal_growth":    _f(a.terminal_growth),
+        "terminal_roic":      _f(a.terminal_roic),
+        "base_roic":          _f(a.base_roic),
+    }
+
+
+def _build_dcf_assumptions_payload(
+    ticker: str,
+    *,
+    candidate_overrides: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Compute the effective + baseline DCF assumptions for a ticker and
+    validate them. Used by the GET/PUT assumptions endpoints and the Stage 4
+    gate.
+
+    When ``candidate_overrides`` is provided, those are applied (NOT
+    persisted) instead of the saved ones — used by PUT to validate before
+    committing. Otherwise the persisted overrides are used.
+
+    Raises HTTPException(404) for unknown ticker, (409) when the ticker
+    routes to a specialized (non-FCFF) engine where these assumptions don't
+    apply.
+    """
+    from aletheia.utils.calc_input_builder import make_calc_input
+    from aletheia.contracts.interfaces import ScenarioOverride
+    from aletheia.agents.scenario_eval_node import _clone_profile_with_overrides
+    from aletheia.contracts.interfaces import CalculationInput
+    from aletheia.tools.dcf_engine import DCFEngine
+    from aletheia.calculations.dcf_assumption_validation import (
+        validate_dcf_assumptions,
+    )
+    from aletheia.data.database import InvestmentDatabase
+
+    # Baseline (model-derived, no overrides).
+    try:
+        baseline_calc = make_calc_input(ticker, apply_overrides=False)
+    except Exception as e:
+        raise HTTPException(status_code=404,
+                            detail=f"No cleaned data for {ticker}: {e}")
+
+    # Determine which overrides apply: candidate (unsaved) or persisted.
+    if candidate_overrides is not None:
+        applied = {k: candidate_overrides[k] for k in _DCF_OVERRIDE_FIELDS
+                   if candidate_overrides.get(k) is not None}
+        provenance = {}
+    else:
+        db = InvestmentDatabase(verbose=False)
+        try:
+            saved = db.get_dcf_overrides(ticker)
+        finally:
+            db.close()
+        applied = {k: saved[k] for k in _DCF_OVERRIDE_FIELDS
+                   if saved.get(k) is not None}
+        provenance = {k: saved.get(k) for k in ("updated_at", "updated_by", "note")
+                      if saved.get(k) is not None}
+
+    # Build the effective calc input from the baseline profile + applied
+    # overrides. ScenarioOverride enforces the per-field bounds (raises 422).
+    effective_calc = baseline_calc
+    if applied:
+        try:
+            override = ScenarioOverride(
+                name="Analyst assumptions", scenario_type="base_alternative",
+                proposed_by="analyst",
+                rationale=(provenance.get("note") or "Analyst-edited base assumptions.")[:600],
+                **applied,
+            )
+        except Exception as e:
+            raise HTTPException(status_code=422, detail=f"Invalid override: {e}")
+        eff_profile = _clone_profile_with_overrides(
+            baseline_calc.valuation_profile, override)
+        effective_calc = CalculationInput(
+            df=baseline_calc.df, classification=baseline_calc.classification,
+            known_issues=baseline_calc.known_issues, valuation_profile=eff_profile,
+            lifecycle_thresholds=baseline_calc.lifecycle_thresholds,
+        )
+
+    engine = DCFEngine(verbose=False)
+    try:
+        eff_result = engine.run(effective_calc)
+        base_result = engine.run(baseline_calc) if applied else eff_result
+    except NotImplementedError:
+        raise HTTPException(
+            status_code=409,
+            detail=(f"{ticker} routes to a specialized (non-FCFF) valuation "
+                    "engine; editable DCF assumptions don't apply."),
+        )
+    except Exception as e:
+        raise HTTPException(status_code=422,
+                            detail=f"DCF compute failed for {ticker}: {e}")
+
+    eff_assumptions = _assumptions_dict_from_result(eff_result)
+    base_assumptions = _assumptions_dict_from_result(base_result)
+
+    overridden_overrides = set(applied.keys())
+
+    # Validate the analyst's RAW inputs for overridden fields, not the
+    # engine's post-clamp values. The engine silently clamps e.g.
+    # terminal_growth to MAX_TERMINAL_G, so reading it back would hide an
+    # out-of-cap input. Overlay the raw override values onto the effective
+    # assumptions (non-overridden fields stay model-derived) so validation
+    # reflects what the analyst actually asked for.
+    from aletheia.calculations.dcf_assumption_validation import (
+        ASSUMPTION_TO_OVERRIDE,
+    )
+    _override_to_assumption = {v: k for k, v in ASSUMPTION_TO_OVERRIDE.items()}
+    to_validate = dict(eff_assumptions)
+    for ov_field, raw_val in applied.items():
+        akey = _override_to_assumption.get(ov_field)
+        if akey is not None:
+            to_validate[akey] = raw_val
+
+    tg_cap = getattr(baseline_calc.valuation_profile, "terminal_growth_cap", None)
+    validation = validate_dcf_assumptions(
+        to_validate, overridden_overrides,
+        terminal_growth_cap=tg_cap, baseline=base_assumptions,
+    )
+
+    def _scn(s):
+        if s is None:
+            return None
+        ev = float(s.enterprise_value)
+        ips = eff_result.intrinsic_per_share(ev, eff_result.net_debt)
+        return {
+            "intrinsic_per_share": float(ips) if ips is not None else None,
+            "margin_of_safety": float(eff_result.upside(ips)) if ips else None,
+        }
+
+    return {
+        "ticker": ticker.upper(),
+        "assumptions": eff_assumptions,
+        "baseline_assumptions": base_assumptions,
+        "overridden_fields": sorted(overridden_overrides),
+        "provenance": provenance,
+        "current_price": float(getattr(eff_result, "current_price", 0.0) or 0.0) or None,
+        "scenarios": {
+            "bear": _scn(eff_result.bear),
+            "base": _scn(eff_result.base),
+            "bull": _scn(eff_result.bull),
+        },
+        "validation": validation.to_dict(),
+        "bounds": {
+            "revenue_growth_y1_5": [0.0, 0.45],
+            "revenue_growth_y6_10": [0.0, 0.25],
+            "terminal_ebit_margin": [0.0, 0.65],
+            "capex_pct_revenue": [0.0, 0.50],
+            "tax_rate": [0.0, 0.40],
+            "discount_rate": [0.04, 0.16],
+            "terminal_growth": [-0.02, 0.06],
+        },
+    }
+
+
+@app.get("/ticker/{ticker}/dcf/assumptions", tags=["Ticker"])
+def get_dcf_assumptions(ticker: str):
+    """Effective DCF base assumptions (model-derived + any persisted
+    overrides), with validation, provenance, and editable-field bounds."""
+    return _build_dcf_assumptions_payload(ticker.upper())
+
+
+@app.get("/ticker/{ticker}/dcf/assumptions/validate", tags=["Ticker"])
+def validate_dcf_assumptions_endpoint(ticker: str):
+    """Run the 4-layer DCF-assumption validation against the ticker's
+    current effective assumptions. The Stage 4 confirmation panel reads this."""
+    return _build_dcf_assumptions_payload(ticker.upper())["validation"]
+
+
+@app.put("/ticker/{ticker}/dcf/overrides", tags=["Ticker"])
+def put_dcf_overrides(ticker: str, body: DCFOverridesRequest):
+    """Validate candidate overrides, persist them, and return the recomputed
+    DCF assumptions bundle. Rejects (422) when validation finds a hard error
+    — the override is NOT persisted in that case."""
+    ticker = ticker.upper()
+    candidate = {k: getattr(body, k) for k in _DCF_OVERRIDE_FIELDS}
+    # Compute + validate against the candidate (not yet persisted).
+    payload = _build_dcf_assumptions_payload(ticker, candidate_overrides=candidate)
+    if payload["validation"]["status"] == "error":
+        raise HTTPException(
+            status_code=422,
+            detail={"message": "DCF assumptions failed validation; not saved.",
+                    "errors": payload["validation"]["errors"]},
+        )
+    from aletheia.data.database import InvestmentDatabase
+    db = InvestmentDatabase(verbose=False)
+    try:
+        db.upsert_dcf_overrides(
+            ticker, candidate,
+            updated_by=(body.updated_by or "analyst"), note=body.note,
+        )
+    finally:
+        db.close()
+    # Re-read from persisted state so provenance is populated in the response.
+    return _build_dcf_assumptions_payload(ticker)
+
+
+@app.delete("/ticker/{ticker}/dcf/overrides", tags=["Ticker"])
+def delete_dcf_overrides(ticker: str):
+    """Clear all persisted overrides for a ticker — revert to model defaults.
+    Returns the recomputed (model-default) assumptions bundle."""
+    ticker = ticker.upper()
+    from aletheia.data.database import InvestmentDatabase
+    db = InvestmentDatabase(verbose=False)
+    try:
+        db.clear_dcf_overrides(ticker)
+    finally:
+        db.close()
+    return _build_dcf_assumptions_payload(ticker)
+
+
 @app.get("/ticker/{ticker}/fundamentals", response_model=FundamentalsResponse, tags=["Ticker"])
 def get_ticker_fundamentals(ticker: str, response: Response):
     """
@@ -1185,13 +1446,21 @@ def get_ticker_fundamentals(ticker: str, response: Response):
             detail=f"No cleaned data for {ticker}. Run ingestion first.",
         )
 
-    row = df[df["fiscal_year"] == df["fiscal_year"].max()].iloc[0]
+    # "Current FY" fundamentals must be the latest *FY* row, NOT simply the
+    # max fiscal_year — the TTM row carries a higher fiscal_year (e.g. 2026
+    # TTM vs 2025 FY), so a plain max() silently returns TTM numbers under a
+    # "current FY" label. That mislabel made ORCL's FY FCF margin (−0.7%)
+    # render as the TTM figure (−38.6%), contradicting the ratios table.
+    fy_df = df[df["period"] == "FY"] if "period" in df.columns else df
+    if fy_df.empty:
+        fy_df = df  # no FY rows on file — fall back to whatever exists
+    row = fy_df[fy_df["fiscal_year"] == fy_df["fiscal_year"].max()].iloc[0]
 
     def gdb(col, fb=None):
         v = row.get(col)
         return float(v) if v is not None and not (isinstance(v, float) and np.isnan(v)) else fb
 
-    fy = int(df["fiscal_year"].max())
+    fy = int(fy_df["fiscal_year"].max())
     revenue = gdb("clean_Revenue")
     ebitda  = gdb("derived_EBITDA") or gdb("clean_EBITDA")
     fcf     = gdb("derived_FCF") or gdb("clean_FCF")
@@ -1541,6 +1810,15 @@ def _build_dimension_state(catalog_entry, latest_record: Optional[Dict[str, Any]
         "assessed_by":     latest_record.get("analyst_id") if latest_record else None,
         "code_git_sha":    latest_record.get("code_git_sha") if latest_record else None,
         "source_payload":  latest_record.get("source_payload") if latest_record else None,
+        # LLM-proposer fields surfaced for the dashboard badge + review dialog.
+        # All None for deterministic / pending / legacy rows.
+        "provenance":      latest_record.get("provenance") if latest_record else None,
+        "review_state":    latest_record.get("review_state") if latest_record else None,
+        "confidence":      latest_record.get("confidence") if latest_record else None,
+        "llm_proposal":    latest_record.get("llm_proposal") if latest_record else None,
+        "llm_proposal_latest": (
+            latest_record.get("llm_proposal_latest") if latest_record else None
+        ),
     }
 
     if include_questions:
@@ -1625,6 +1903,46 @@ def get_qualitative_dimension(ticker: str, dimension_id: str):
     ))
 
 
+def _classify_analyst_submission(
+    *,
+    sub_scores: Dict[str, float],
+    narrative: Optional[str],
+    prior_proposal: Dict[str, Any],
+    prior_provenance: Optional[str],
+) -> tuple[str, str]:
+    """Compute (provenance, review_state) for a HITL submission.
+
+    The badge on the dashboard distinguishes three review outcomes:
+      - analyst_confirmed: submission matches the prior LLM proposal verbatim
+      - analyst_adjusted:  prior LLM proposal exists but analyst changed
+        at least one sub-score or the narrative
+      - analyst_overridden: no LLM proposal existed, OR the prior was
+        already analyst-owned (re-submission)
+
+    Numeric sub-scores compared as ints; narrative compared after
+    whitespace strip + lowercase for robustness against trivial edits.
+    """
+    if not prior_proposal or prior_provenance in (
+        "analyst_overridden", "analyst_adjusted",
+    ):
+        return "analyst_overridden", "reviewed_adjusted"
+
+    llm_sub = (prior_proposal or {}).get("sub_scores") or {}
+    same_scores = (
+        set(sub_scores.keys()) == set(llm_sub.keys())
+        and all(int(sub_scores[k]) == int(llm_sub.get(k, -1))
+                for k in sub_scores)
+    )
+
+    llm_narr = (prior_proposal or {}).get("narrative") or ""
+    sub_narr = narrative or ""
+    same_narr = llm_narr.strip().lower() == sub_narr.strip().lower()
+
+    if same_scores and same_narr:
+        return "analyst_confirmed", "reviewed_no_change"
+    return "analyst_adjusted", "reviewed_adjusted"
+
+
 @app.post("/ticker/{ticker}/qualitative/{dimension_id}",
           response_model=QualitativeSubmitResponse, tags=["Qualitative"])
 def submit_qualitative_assessment(
@@ -1685,27 +2003,47 @@ def submit_qualitative_assessment(
         or "primary"
     )
 
-    record = AssessmentRecord(
-        assessment_id=str(uuid.uuid4()),
-        ticker=ticker_u,
-        dimension_id=dimension_id,
-        score=float(composite),
-        sub_scores={k: float(v) for k, v in request.sub_scores.items()},
-        narrative=request.narrative,
-        source_category=SourceCategory.HITL,
-        source_payload={
-            "prompts_version":     catalog_entry.code_version,
-            "catalog_hash":        catalog_entry.catalog_hash(),
-            "questions_answered":  len(request.sub_scores),
-        },
-        assessed_at=datetime.now(timezone.utc).isoformat(),
-        analyst_id=analyst_id,
-        code_git_sha=_GIT_SHA,
-        input_fingerprint=None,   # HITL has no deterministic inputs
-    )
-
+    # Provenance computation — compare the submission to the prior
+    # LLM proposal (if any) so the dashboard can distinguish
+    # "analyst confirmed LLM's proposal verbatim" from
+    # "analyst adjusted the LLM proposal" from "analyst wrote their
+    # own from scratch with no prior proposal".
     db = InvestmentDatabase(verbose=False)
     try:
+        prior = db.get_latest_assessment(ticker_u, dimension_id)
+        prior_proposal = (prior or {}).get("llm_proposal") or {}
+        provenance, review_state = _classify_analyst_submission(
+            sub_scores=request.sub_scores,
+            narrative=request.narrative,
+            prior_proposal=prior_proposal,
+            prior_provenance=(prior or {}).get("provenance"),
+        )
+
+        record = AssessmentRecord(
+            assessment_id=str(uuid.uuid4()),
+            ticker=ticker_u,
+            dimension_id=dimension_id,
+            score=float(composite),
+            sub_scores={k: float(v) for k, v in request.sub_scores.items()},
+            narrative=request.narrative,
+            source_category=SourceCategory.HITL,
+            source_payload={
+                "prompts_version":     catalog_entry.code_version,
+                "catalog_hash":        catalog_entry.catalog_hash(),
+                "questions_answered":  len(request.sub_scores),
+            },
+            assessed_at=datetime.now(timezone.utc).isoformat(),
+            analyst_id=analyst_id,
+            code_git_sha=_GIT_SHA,
+            input_fingerprint=None,   # HITL has no deterministic inputs
+            provenance=provenance,
+            review_state=review_state,
+            confidence=None,   # confidence is LLM-self-rated; not relevant for analyst
+            # Carry the original LLM proposal forward so future re-runs
+            # can compute drift without losing it. None when there was
+            # no prior LLM proposal.
+            llm_proposal=(prior_proposal or None),
+        )
         db.upsert_qualitative_assessment(record)
     finally:
         db.close()
@@ -2227,8 +2565,14 @@ class _PipelineCalculateRequest(BaseModel):
 class _PipelineAgentsRequest(BaseModel):
     """Stage 4 incurs LLM cost. ``confirm_llm_cost`` must be True
     explicitly — the endpoint refuses without it. Deliberate friction
-    so the UI never accidentally triggers a paid run."""
+    so the UI never accidentally triggers a paid run.
+
+    ``confirm_assumptions_validated`` is the second gate: the analyst
+    confirms the DCF assumptions (the basis for the Stage 4 thesis) have
+    been reviewed. The endpoint also runs a hard validation pass and
+    refuses on any error regardless of this flag."""
     confirm_llm_cost: bool = False
+    confirm_assumptions_validated: bool = False
 
 
 class _PipelineRunRequest(BaseModel):
@@ -2336,6 +2680,45 @@ def pipeline_stage_agents(ticker: str, body: _PipelineAgentsRequest):
                 "estimated cost before issuing this call."
             ),
         )
+    ticker = ticker.upper()
+
+    # ── DCF-assumptions validation gate ─────────────────────────────────
+    # Stage 4's LLM thesis is built ON the DCF. Refuse to burn LLM calls
+    # on a valuation whose assumptions are economically invalid (Gordon
+    # divergence, out-of-cap terminal growth, broken bounds). Hard errors
+    # block unconditionally; warnings require explicit analyst
+    # confirmation via `confirm_assumptions_validated`.
+    try:
+        _assum = _build_dcf_assumptions_payload(ticker)
+        _val = _assum["validation"]
+    except HTTPException as exc:
+        # 409 = specialized non-FCFF engine: editable DCF assumptions don't
+        # apply, so there's nothing to validate — let Stage 4 proceed.
+        _val = None if exc.status_code == 409 else None
+        if exc.status_code not in (409,):
+            raise
+    if _val is not None:
+        if _val["status"] == "error":
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "message": (f"Stage 4 blocked: {ticker} DCF assumptions "
+                                "failed validation. Fix the assumptions (or "
+                                "reset overrides) before running agents."),
+                    "errors": _val["errors"],
+                },
+            )
+        if _val["status"] == "warn" and not body.confirm_assumptions_validated:
+            raise HTTPException(
+                status_code=412,
+                detail={
+                    "message": (f"Stage 4 needs confirmation: {ticker} DCF "
+                                "assumptions have warnings. Review them and "
+                                "set `confirm_assumptions_validated: true`."),
+                    "warnings": _val["warnings"],
+                },
+            )
+
     from aletheia.cli.calc import load_records
     from aletheia.pipeline.stage3_calculate import (
         Stage3InputError, run_stage3,

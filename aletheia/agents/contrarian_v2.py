@@ -72,9 +72,30 @@ def contrarian_agent(state: dict) -> dict:
     ev_ebitda_justified = phase2.get("ev_ebitda_justified", 0)
     ev_ebitda_premium_pct = phase2.get("ev_ebitda_premium_pct", 0)
     multiple_signal = phase2.get("multiple_signal", "unknown")
-    bear_iv = phase2.get("intrinsic_per_share", {}).get("bear", 0)
-    base_iv = phase2.get("intrinsic_per_share", {}).get("base", 0)
-    current_price = phase2.get("dcf", {}).get("current_price", 0)
+    # Engine scenario IVs. In the AGENT STATE these live as flat keys on
+    # ``phase2["dcf"]`` (= DCFResult.to_dict()): ``bear_intrinsic_per_share``,
+    # etc. The ``three_scenario_dcf`` nested shape is only built later by
+    # lead.py for the serving report, so it is ABSENT here — reading it (or
+    # the dead ``intrinsic_per_share`` dict) silently returned 0, which is the
+    # real root cause of the recurring "$0 engine bear case" the contrarian
+    # narrates (LDOS/CELH/ORCL/CHWY): the LLM was handed bear_iv=$0 and
+    # faithfully wrote "collapses to $0" when the engine bear was e.g. $17.
+    _dcf = phase2.get("dcf", {}) or {}
+    _dcf3 = phase2.get("three_scenario_dcf", {}) or {}
+    bear_iv = (
+        _dcf.get("bear_intrinsic_per_share")
+        or (_dcf3.get("bear") or {}).get("intrinsic_per_share")
+        or phase2.get("intrinsic_per_share", {}).get("bear", 0)
+    )
+    base_iv = (
+        _dcf.get("base_intrinsic_per_share")
+        or (_dcf3.get("base") or {}).get("intrinsic_per_share")
+        or phase2.get("intrinsic_per_share", {}).get("base", 0)
+    )
+    current_price = (
+        _dcf.get("current_price", 0)
+        or (_dcf3.get("base") or {}).get("current_price", 0)
+    )
 
     # Build the quantitative challenge context
     quant_challenge = ""
@@ -170,11 +191,24 @@ YOUR TASKS:
 
 2. **Bear Case Synthesis**: Combine the mathematical and scenario-based
    challenges:
-   - Start with the quantitative impossibility from Reverse DCF
-   - REFERENCE ANY BEAR/BASE_ALTERNATIVE SCENARIOS BY NAME and cite the
-     resulting IPS — e.g. "In the 'AI capex peak' scenario proposed by
-     forensic_agent, IV drops to $X (-Y% vs current price)"
-   - What is the most likely path to the bear case intrinsic value?
+   - Start with the quantitative impossibility from Reverse DCF.
+   - ALWAYS distinguish the **engine bear** (the DCFEngine's structured
+     bear case run by calc_node — IV at
+     ``phase2.three_scenario_dcf.bear.intrinsic_per_share``) from any
+     **tail-risk scenarios** (agent-proposed catastrophic overrides
+     in ``scenario_results`` that produce $0 or near-$0 IPS). They are
+     NOT alternative bear cases at the same severity tier — the engine
+     bear is the analytically defensible downside; tail-risk is
+     stress-test under existential shock.
+   - REFERENCE SCENARIOS BY NAME and cite the resulting IPS — e.g.
+     "Engine bear: $X/share (-Y% vs current). Tail-risk: 'contract
+     debarment' scenario proposed by forensic_agent zeros IPS to $0".
+   - If a scenario lands at IPS=$0, label it explicitly as a
+     **tail-risk** or **existential** scenario in your narrative.
+     Never present a $0 IPS as the "bear case" — that conflates the
+     ordinary downside with the existential tail and misleads the
+     reader about what's actually priced.
+   - What is the most likely path to the engine bear IV?
 
 3. **Sentiment Score**: Rate -10 to +10 based on ALL evidence combined,
    including the worst-case agent scenario IPS.
@@ -190,25 +224,47 @@ Return structured JSON.
 
     # Build a compact scenario summary string for the prompt. We want the
     # LLM to be able to reference scenarios by name with their IPS impact.
+    # A scenario IPS at or near $0 is an EXISTENTIAL stress test (e.g.
+    # contract debarment, going-concern), NOT the analytically defensible
+    # engine bear. Used to label scenarios in the prompt AND to expose a
+    # structured engine-bear/tail-risk split on the output.
+    def _near_zero(v):
+        return v is not None and (
+            v <= 1.0 or (current_price and v < 0.10 * current_price))
+
     scenarios = state.get("scenario_results") or []
     if scenarios:
-        scenario_lines = []
+        # Pre-classify each scenario's tier so the LLM cannot conflate a
+        # near-$0 tail-risk override with the engine bear. We label it in the
+        # data itself — prompt instructions alone weren't enough (the LLM
+        # kept citing "$0 bear case" on ET/LDOS/CELH).
+        scenario_lines = [
+            f"  ENGINE BEAR (the analytically defensible downside, from "
+            f"phase2.three_scenario_dcf.bear): ${bear_iv:,.2f}/share. "
+            f"The agent scenarios below are STRESS TESTS around this — a $0 "
+            f"IPS is an existential tail-risk, NOT the bear case:"
+        ]
         for s in scenarios:
             ips = s.get("intrinsic_per_share_base")
             ups = s.get("upside_pct_base")
             ips_str = f"IPS=${ips:,.2f}" if ips is not None else "IPS=N/A"
             ups_str = f"upside={ups:+.1f}%" if ups is not None else "upside=N/A"
+            tier = ("[TAIL-RISK / existential — NOT the bear case]"
+                    if _near_zero(ips) else "[stress scenario]")
             err = s.get("error")
             line = (
-                f"  - '{s['name']}' ({s['scenario_type']}, by {s['proposed_by']}): "
-                f"{ips_str} {ups_str}. Rationale: {s['rationale']}"
+                f"  - '{s['name']}' ({s['scenario_type']}, by {s['proposed_by']}) "
+                f"{tier}: {ips_str} {ups_str}. Rationale: {s['rationale']}"
             )
             if err:
                 line += f" [eval error: {err}]"
             scenario_lines.append(line)
         scenario_summary = "\n".join(scenario_lines)
     else:
-        scenario_summary = "(no agent-proposed scenarios)"
+        scenario_summary = (
+            f"(no agent-proposed scenarios) — engine bear is "
+            f"${bear_iv:,.2f}/share."
+        )
 
     try:
         report: ContrarianOutput = chain.invoke({
@@ -221,7 +277,17 @@ Return structured JSON.
             "contrarian_report": {
                 "raw_results": raw_web_results,
                 "quant_challenge": quant_challenge,
-                "structured_analysis": report.dict()
+                "structured_analysis": {
+                    **report.dict(),
+                    # Deterministic anchor: the engine bear is the defensible
+                    # downside; tail-risk ($0) scenarios are separate. Surfaced
+                    # structurally so the UI/report shows the correct number +
+                    # label even if the LLM prose still conflates them.
+                    "engine_bear_iv": bear_iv,
+                    "tail_risk_present": any(
+                        _near_zero(s.get("intrinsic_per_share_base"))
+                        for s in scenarios),
+                },
             },
             "messages": [HumanMessage(content=(
                 f"Contrarian (Phase 3): [{report.bias_detected}] "

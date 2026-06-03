@@ -17,9 +17,66 @@ Missing renders as "N/A" to avoid fake 0% WACC, $0 intrinsic value.
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence
+from typing import Any, Dict, List, Optional, Sequence, Tuple
+
+
+# Decision-condition observable evaluator — twin of the live UI version
+# in ``aletheia/ui/deep_dive_view.py``. Parses the canonical
+# ``phase2.field op value`` expression and returns True/False/None.
+# Keep behavior in sync with the UI evaluator so the HTML report's
+# MET/WATCHING status agrees with the on-screen dashboard.
+_OBSERVABLE_RE = re.compile(
+    r"^\s*(?P<path>[A-Za-z_][\w.]*)\s*(?P<op>>=|<=|==|>|<)\s*"
+    r"(?P<value>-?\d+(?:\.\d+)?)\s*$"
+)
+
+
+def _evaluate_observable(
+    observable: Optional[str], p2v: Dict[str, Any]
+) -> Optional[bool]:
+    """Evaluate a decision-condition ``observable`` expression against the
+    phase2 valuation block. Returns True when the trigger is met now,
+    False when not, None when the expression is free-form text or the
+    path doesn't resolve.
+
+    Only ``phase2.X`` paths are supported — the thesis_synthesizer prompt
+    enforces phase2-rooted observables, and the report JSON doesn't carry
+    a separate ``dcf`` root the way the live dashboard does."""
+    if not observable or not isinstance(observable, str):
+        return None
+    m = _OBSERVABLE_RE.match(observable)
+    if m is None:
+        return None
+    path = m.group("path")
+    op = m.group("op")
+    try:
+        threshold = float(m.group("value"))
+    except ValueError:
+        return None
+    parts = path.split(".")
+    if not parts or parts[0] != "phase2":
+        return None
+    cur: Any = p2v
+    for k in parts[1:]:
+        if isinstance(cur, dict):
+            cur = cur.get(k)
+        else:
+            cur = getattr(cur, k, None)
+        if cur is None:
+            return None
+    try:
+        actual = float(cur)
+    except (TypeError, ValueError):
+        return None
+    if op == ">":  return actual >  threshold
+    if op == "<":  return actual <  threshold
+    if op == ">=": return actual >= threshold
+    if op == "<=": return actual <= threshold
+    if op == "==": return actual == threshold
+    return None
 
 
 class ReportGenerator:
@@ -56,6 +113,9 @@ class ReportGenerator:
         sc   = econ.get("strategic_context") or {}
         bm   = econ.get("business_model") or {}
         industry = econ.get("industry_structure") or {}
+        # Quantitative detail block (added by lead.py post Stage 4).
+        # Renders empty-safe when the block is missing on legacy reports.
+        metrics = data.get("5_financial_metrics") or {}
 
         html = f"""<!DOCTYPE html>
 <html>
@@ -75,8 +135,12 @@ class ReportGenerator:
     {self._render_pillar_scorecard(pillar_scores)}
     {self._render_business_snapshot(bm)}
     {self._render_scenario_triangle(p2)}
-    {self._render_structured_thesis(thesis_synth)}
+    {self._render_structured_thesis(thesis_synth, p2)}
     {self._render_phase2_section(p2)}
+    {self._render_dcf_assumptions(metrics)}
+    {self._render_wacc_build(metrics)}
+    {self._render_historical_fundamentals(metrics)}
+    {self._render_comprehensive_ratios(metrics)}
     {self._render_moat_detail(moat)}
     {self._render_value_chain_detail(vc)}
     {self._render_strategic_context_detail(sc)}
@@ -150,7 +214,7 @@ class ReportGenerator:
         # Structured thesis from thesis_synthesizer (Phase 1.5+). Only
         # rendered when present — legacy reports fall back to the
         # narrative summary above.
-        structured_md = self._render_structured_thesis_md(thesis_synth)
+        structured_md = self._render_structured_thesis_md(thesis_synth, p2)
         if structured_md:
             lines += [structured_md, "\n---\n"]
 
@@ -349,11 +413,19 @@ class ReportGenerator:
   <p style="line-height:1.6">{narrative}</p>
 </div>""".strip()
 
-    def _render_structured_thesis(self, ts: Dict[str, Any]) -> str:
+    def _render_structured_thesis(
+        self, ts: Dict[str, Any], p2: Optional[Dict[str, Any]] = None
+    ) -> str:
         """Full thesis_synthesizer output: bull/base/bear cases with
         cited_signals, decision_conditions, update_conditions, confidence,
         time_horizon. Empty string if no thesis_synthesis (legacy reports
-        pre-Phase 1.5)."""
+        pre-Phase 1.5).
+
+        ``p2`` (phase2_valuation) is threaded in so each decision-condition
+        row can evaluate its ``observable`` expression and render a live
+        MET/WATCHING status chip — without it, the table only encodes
+        the analyst-target priority, not the current trigger state."""
+        p2 = p2 or {}
         if not ts or not ts.get("thesis_statement"):
             return ""
 
@@ -424,10 +496,31 @@ class ReportGenerator:
             obs = dc.get("observable", "") or ""
             p_color = priority_color.get(pri, "#a1a1aa")
             a_color = action_color.get(act, "#a1a1aa")
+
+            is_met = _evaluate_observable(obs, p2)
+            if is_met is True:
+                status_html = (
+                    '<span style="font-family:monospace;font-size:10px;'
+                    'font-weight:700;letter-spacing:0.5px;color:#10b981;">'
+                    '● MET</span>'
+                )
+            elif is_met is False:
+                status_html = (
+                    '<span style="font-family:monospace;font-size:10px;'
+                    'font-weight:700;letter-spacing:0.5px;color:#f59e0b;">'
+                    '● WATCHING</span>'
+                )
+            else:
+                status_html = (
+                    '<span style="font-family:monospace;font-size:10px;'
+                    'color:#a1a1aa;">—</span>'
+                )
+
             dc_rows.append(
                 f'<tr style="border-bottom:1px solid #e4e4e7">'
                 f'<td style="padding:8px 12px;color:{p_color};font-family:monospace;'
                 f'font-size:11px;font-weight:700;text-transform:uppercase;">● {pri or "—"}</td>'
+                f'<td style="padding:8px 12px;">{status_html}</td>'
                 f'<td style="padding:8px 12px;font-size:13px;">{trigger}'
                 f'<div style="font-family:monospace;font-size:11px;color:#71717a;'
                 f'margin-top:4px;">{obs}</div></td>'
@@ -446,6 +539,8 @@ class ReportGenerator:
                 f'<thead><tr style="background:#f4f4f5;">'
                 f'<th style="padding:10px 12px;text-align:left;font-size:11px;'
                 f'text-transform:uppercase;letter-spacing:0.5px;color:#71717a;">Priority</th>'
+                f'<th style="padding:10px 12px;text-align:left;font-size:11px;'
+                f'text-transform:uppercase;letter-spacing:0.5px;color:#71717a;">Status</th>'
                 f'<th style="padding:10px 12px;text-align:left;font-size:11px;'
                 f'text-transform:uppercase;letter-spacing:0.5px;color:#71717a;">Trigger / Observable</th>'
                 f'<th style="padding:10px 12px;text-align:right;font-size:11px;'
@@ -1099,8 +1194,12 @@ class ReportGenerator:
         rar_str = f"{rar*100:.1f}%" if rar is not None else "—"
         rows = [
             ("Revenue at risk",   rar_str),
-            ("Quality of growth", "⚠ YES" if sc.get("quality_of_growth_risk") else "✓ NO"),
-            ("Terminal haircut",  "YES" if sc.get("terminal_haircut") else "NO"),
+            # Descriptive labels avoid "✓ NO" ambiguity — readers see
+            # the glyph + word as one parse, not as "yes/no answered ✓".
+            ("Quality of growth",
+             "⚠ Concern flagged" if sc.get("quality_of_growth_risk") else "✓ Clean"),
+            ("Terminal haircut",
+             "⚠ Applied" if sc.get("terminal_haircut") else "✓ Not applied"),
         ]
         rows_html = "".join(f'<tr><td>{k}</td><td>{v}</td></tr>' for k, v in rows)
 
@@ -1185,6 +1284,287 @@ class ReportGenerator:
   {reasons_html}
 </div>""".strip()
 
+    # ─────────────────────────────────────────────────────────────────────────
+    # 5_financial_metrics renderers (Option B — quant detail in the JSON)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    @staticmethod
+    def _fmt_pct_or_dash(v: Any, dp: int = 1) -> str:
+        if v is None:
+            return "—"
+        try:
+            return f"{float(v) * 100:.{dp}f}%"
+        except (TypeError, ValueError):
+            return "—"
+
+    @staticmethod
+    def _fmt_x_or_dash(v: Any, dp: int = 1) -> str:
+        if v is None:
+            return "—"
+        try:
+            return f"{float(v):,.{dp}f}×"
+        except (TypeError, ValueError):
+            return "—"
+
+    @staticmethod
+    def _fmt_num_or_dash(v: Any, dp: int = 2) -> str:
+        if v is None:
+            return "—"
+        try:
+            return f"{float(v):,.{dp}f}"
+        except (TypeError, ValueError):
+            return "—"
+
+    @staticmethod
+    def _fmt_bn_or_dash(v: Any, dp: int = 1) -> str:
+        """v is already in billions."""
+        if v is None:
+            return "—"
+        try:
+            return f"${float(v):,.{dp}f}B"
+        except (TypeError, ValueError):
+            return "—"
+
+    def _render_historical_fundamentals(self, metrics: Dict[str, Any]) -> str:
+        """5-year FY pivot — Revenue / EBITDA / OpInc / FCF / NI / EPS /
+        margins. Empty string when no historical rows are available."""
+        rows = (metrics or {}).get("historical") or []
+        if not rows:
+            return ""
+
+        years = [str(r["fiscal_year"]) for r in rows]
+        header_cells = "".join(f"<th>FY{y}</th>" for y in years)
+
+        def line(label: str, key: str, fmt) -> str:
+            cells = "".join(f"<td>{fmt(r.get(key))}</td>" for r in rows)
+            return f"<tr><td><b>{label}</b></td>{cells}</tr>"
+
+        body = []
+        body.append(line("Revenue",        "revenue_bn",     lambda v: self._fmt_bn_or_dash(v)))
+        body.append(line("EBITDA",         "ebitda_bn",      lambda v: self._fmt_bn_or_dash(v)))
+        body.append(line("Operating Inc.", "op_income_bn",   lambda v: self._fmt_bn_or_dash(v)))
+        body.append(line("FCF",            "fcf_bn",         lambda v: self._fmt_bn_or_dash(v)))
+        body.append(line("Net Income",     "net_income_bn",  lambda v: self._fmt_bn_or_dash(v)))
+        body.append(line("Diluted EPS",    "eps_diluted",    lambda v: f"${self._fmt_num_or_dash(v, 2)}" if v else "—"))
+        body.append(line("Diluted Shares (M)", "shares_diluted_m",
+                         lambda v: self._fmt_num_or_dash(v, 0)))
+        body.append(line("Gross Margin",   "gross_margin",   lambda v: self._fmt_pct_or_dash(v)))
+        body.append(line("EBIT Margin",    "ebit_margin",    lambda v: self._fmt_pct_or_dash(v)))
+        body.append(line("EBITDA Margin",  "ebitda_margin",  lambda v: self._fmt_pct_or_dash(v)))
+        body.append(line("FCF Margin",     "fcf_margin",     lambda v: self._fmt_pct_or_dash(v)))
+
+        return f"""
+<div class="card" style="page-break-inside:avoid">
+  <h3>📜 5-Year Historical Fundamentals</h3>
+  <table class="table-styled">
+    <thead><tr><th>Line item</th>{header_cells}</tr></thead>
+    <tbody>{"".join(body)}</tbody>
+  </table>
+  <div style="font-size:11.5px;color:#71717a;margin-top:8px;line-height:1.5">
+    Pulled from cleaned FY rows in DuckDB at report-generation time. Margins
+    are computed from the same rows (no separate ratios cache).
+  </div>
+</div>""".strip()
+
+    def _render_comprehensive_ratios(self, metrics: Dict[str, Any]) -> str:
+        """6 ratio sub-tables in a 2-column grid: profitability, liquidity,
+        leverage, valuation, quality, growth."""
+        ratios = (metrics or {}).get("ratios") or {}
+        if not ratios:
+            return ""
+
+        def _table(title: str, rows: List[Tuple[str, str]]) -> str:
+            body = "".join(
+                f"<tr><td>{label}</td><td style='text-align:right'><b>{val}</b></td></tr>"
+                for label, val in rows
+            )
+            return (
+                f'<div class="card" style="page-break-inside:avoid">'
+                f'<h4>{title}</h4>'
+                f'<table class="table-styled">{body}</table>'
+                f'</div>'
+            )
+
+        prof = ratios.get("profitability") or {}
+        liq  = ratios.get("liquidity") or {}
+        lev  = ratios.get("leverage") or {}
+        val  = ratios.get("valuation") or {}
+        qual = ratios.get("quality") or {}
+        grw  = ratios.get("growth") or {}
+
+        prof_rows = [
+            ("Gross margin",   self._fmt_pct_or_dash(prof.get("gross_margin"))),
+            ("EBIT margin",    self._fmt_pct_or_dash(prof.get("ebit_margin"))),
+            ("EBITDA margin",  self._fmt_pct_or_dash(prof.get("ebitda_margin"))),
+            ("Net margin",     self._fmt_pct_or_dash(prof.get("net_margin"))),
+            ("FCF margin",     self._fmt_pct_or_dash(prof.get("fcf_margin"))),
+            ("ROIC",           self._fmt_pct_or_dash(prof.get("roic"))),
+            ("ROE",            self._fmt_pct_or_dash(prof.get("roe"))),
+            ("ROA",            self._fmt_pct_or_dash(prof.get("roa"))),
+        ]
+        liq_rows = [
+            ("Current ratio",  self._fmt_x_or_dash(liq.get("current_ratio"), 2)),
+            ("Quick ratio",    self._fmt_x_or_dash(liq.get("quick_ratio"), 2)),
+            ("Cash ratio",     self._fmt_x_or_dash(liq.get("cash_ratio"), 2)),
+        ]
+        lev_rows = [
+            ("Debt / Equity",            self._fmt_x_or_dash(lev.get("debt_to_equity"), 2)),
+            ("Debt / EBITDA",            self._fmt_x_or_dash(lev.get("debt_to_ebitda"), 2)),
+            ("Net Debt / EBITDA",        self._fmt_x_or_dash(lev.get("net_debt_to_ebitda"), 2)),
+            ("Interest coverage",        self._fmt_x_or_dash(lev.get("interest_coverage"), 1)),
+        ]
+        val_rows = [
+            ("P/E",            self._fmt_x_or_dash(val.get("pe"), 1)),
+            ("P/B",            self._fmt_x_or_dash(val.get("pb"), 1)),
+            ("P/S",            self._fmt_x_or_dash(val.get("ps"), 1)),
+            ("EV / Sales",     self._fmt_x_or_dash(val.get("ev_sales"), 1)),
+            ("EV / EBITDA",    self._fmt_x_or_dash(val.get("ev_ebitda"), 1)),
+            ("FCF yield",      self._fmt_pct_or_dash(val.get("fcf_yield"), 2)),
+            ("Dividend yield", self._fmt_pct_or_dash(val.get("dividend_yield"), 2)),
+        ]
+        qual_rows = [
+            ("SBC % of FCF",       self._fmt_pct_or_dash(qual.get("sbc_pct_fcf"))),
+            ("Share dilution %",   self._fmt_pct_or_dash(qual.get("share_dilution_pct"))),
+            ("Payout ratio",       self._fmt_pct_or_dash(qual.get("payout_ratio"))),
+            ("Accrual ratio",      self._fmt_pct_or_dash(qual.get("accrual_ratio"), 2)),
+        ]
+        grw_rows = [
+            ("Revenue CAGR 1Y",  self._fmt_pct_or_dash(grw.get("revenue_cagr_1y"))),
+            ("Revenue CAGR 3Y",  self._fmt_pct_or_dash(grw.get("revenue_cagr_3y"))),
+            ("Revenue CAGR 5Y",  self._fmt_pct_or_dash(grw.get("revenue_cagr_5y"))),
+            ("EBITDA CAGR 5Y",   self._fmt_pct_or_dash(grw.get("ebitda_cagr_5y"))),
+            ("FCF CAGR 5Y",      self._fmt_pct_or_dash(grw.get("fcf_cagr_5y"))),
+            ("EPS growth (1Y)",  self._fmt_pct_or_dash(grw.get("eps_growth_ttm"))),
+        ]
+
+        return f"""
+<h2>📐 Comprehensive Ratios</h2>
+<div class="grid-2">
+  {_table("💰 Profitability", prof_rows)}
+  {_table("💧 Liquidity",     liq_rows)}
+</div>
+<div class="grid-2">
+  {_table("⚖️ Leverage",       lev_rows)}
+  {_table("📈 Valuation",      val_rows)}
+</div>
+<div class="grid-2">
+  {_table("✨ Quality",        qual_rows)}
+  {_table("🚀 Growth",         grw_rows)}
+</div>""".strip()
+
+    def _render_dcf_assumptions(self, metrics: Dict[str, Any]) -> str:
+        """Bull/Base/Bear scenario assumption stacks side-by-side. Empty
+        when dcf_assumptions wasn't captured (non-FCFF engines)."""
+        asmp = (metrics or {}).get("dcf_assumptions") or {}
+        if not asmp:
+            return ""
+
+        rows = [
+            ("Revenue CAGR Y1-5",   "revenue_cagr_y1_5",   self._fmt_pct_or_dash),
+            ("Revenue CAGR Y6-10",  "revenue_cagr_y6_10",  self._fmt_pct_or_dash),
+            ("Terminal EBIT margin","ebit_margin_terminal",self._fmt_pct_or_dash),
+            ("Terminal growth",     "terminal_growth",     self._fmt_pct_or_dash),
+            ("WACC",                "wacc",                self._fmt_pct_or_dash),
+            ("Tax rate",            "tax_rate",            self._fmt_pct_or_dash),
+            ("CapEx % revenue",     "capex_pct_revenue",   self._fmt_pct_or_dash),
+            ("D&A % revenue",       "da_pct_revenue",      self._fmt_pct_or_dash),
+            ("NWC % revenue",       "nwc_pct_revenue",     self._fmt_pct_or_dash),
+        ]
+
+        bear = asmp.get("bear") or {}
+        base = asmp.get("base") or {}
+        bull = asmp.get("bull") or {}
+
+        body = []
+        for label, key, fmt in rows:
+            body.append(
+                f'<tr><td>{label}</td>'
+                f'<td style="text-align:right;color:#ef4444"><b>{fmt(bear.get(key))}</b></td>'
+                f'<td style="text-align:right;color:#f59e0b"><b>{fmt(base.get(key))}</b></td>'
+                f'<td style="text-align:right;color:#10b981"><b>{fmt(bull.get(key))}</b></td>'
+                f'</tr>'
+            )
+
+        return f"""
+<div class="card" style="page-break-inside:avoid">
+  <h3>🎚️ DCF Scenario Assumptions</h3>
+  <table class="table-styled">
+    <thead>
+      <tr>
+        <th>Lever</th>
+        <th style="text-align:right;color:#ef4444">BEAR</th>
+        <th style="text-align:right;color:#f59e0b">BASE</th>
+        <th style="text-align:right;color:#10b981">BULL</th>
+      </tr>
+    </thead>
+    <tbody>{"".join(body)}</tbody>
+  </table>
+  <div style="font-size:11.5px;color:#71717a;margin-top:8px;line-height:1.5">
+    Each scenario tilts all assumption levers in one direction — bull cases
+    use higher growth + margins + lower WACC, bear cases the inverse. The
+    base case mirrors the FY-anchored DCFEngine defaults.
+  </div>
+</div>""".strip()
+
+    def _render_wacc_build(self, metrics: Dict[str, Any]) -> str:
+        """Cost-of-capital breakdown. Renders the Rf + β × ERP = Ke walk,
+        plus the WACC blend (when capital structure is known). Falls back
+        to a single-line presentation when only Ke is available."""
+        wb = (metrics or {}).get("wacc_build") or {}
+        if not wb:
+            return ""
+
+        rf  = wb.get("risk_free_rate")
+        beta = wb.get("beta")
+        erp  = wb.get("equity_risk_premium")
+        ke   = wb.get("cost_of_equity")
+        wacc = wb.get("wacc")
+        kd_at = wb.get("cost_of_debt_aftertax")
+        we    = wb.get("weight_equity")
+        wd    = wb.get("weight_debt")
+
+        ke_formula = (
+            f'Ke = Rf <b>{self._fmt_pct_or_dash(rf, 2)}</b> '
+            f'+ β <b>{self._fmt_num_or_dash(beta, 2)}</b> '
+            f'× ERP <b>{self._fmt_pct_or_dash(erp, 2)}</b> '
+            f'= <span style="color:#27ae60;font-weight:700">'
+            f'{self._fmt_pct_or_dash(ke, 2)}</span>'
+        )
+
+        wacc_block = (
+            f'<div style="margin-top:12px;font-size:13px;line-height:1.7;">'
+            f'WACC = Ke × Equity weight + Kd(1-t) × Debt weight'
+            f'</div>'
+            f'<div style="margin-top:6px;font-family:DM Mono,monospace;'
+            f'font-size:13px;color:#3f3f46;">'
+            f'WACC = '
+            f'<b>{self._fmt_pct_or_dash(ke, 2)}</b> × <b>{self._fmt_pct_or_dash(we, 1)}</b> '
+            f'+ <b>{self._fmt_pct_or_dash(kd_at, 2)}</b> × <b>{self._fmt_pct_or_dash(wd, 1)}</b> '
+            f'= <span style="color:#27ae60;font-weight:700">'
+            f'{self._fmt_pct_or_dash(wacc, 2)}</span>'
+            f'</div>'
+        ) if (we is not None or wd is not None) else (
+            f'<div style="margin-top:12px;font-size:13px;line-height:1.6;color:#71717a;">'
+            f'Capital structure decomposition unavailable for this filer. '
+            f'Reported WACC: <b style="color:#27ae60">{self._fmt_pct_or_dash(wacc, 2)}</b> '
+            f'(typically Ke for net-cash filers; the DCF engine treats firms '
+            f'with negative net debt as equity-funded).'
+            f'</div>'
+        )
+
+        return f"""
+<div class="card" style="page-break-inside:avoid">
+  <h3>📊 Cost of Capital Build</h3>
+  <div style="font-family:DM Mono,monospace;font-size:13.5px;line-height:1.7;">
+    {ke_formula}
+  </div>
+  {wacc_block}
+</div>""".strip()
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # Contrarian / existing renderers
+    # ─────────────────────────────────────────────────────────────────────────
+
     def _render_contrarian_block(self, ca: Dict[str, Any]) -> str:
         """Contrarian bear case — bias, sentiment, bear case summary, quant challenge."""
         if not ca:
@@ -1220,11 +1600,18 @@ class ReportGenerator:
   {quant_html}
 </div>""".strip()
 
-    def _render_structured_thesis_md(self, ts: Dict[str, Any]) -> str:
+    def _render_structured_thesis_md(
+        self, ts: Dict[str, Any], p2: Optional[Dict[str, Any]] = None
+    ) -> str:
         """Markdown twin of `_render_structured_thesis`. Returns "" when
-        thesis_synthesis is absent (legacy reports pre-Phase 1.5)."""
+        thesis_synthesis is absent (legacy reports pre-Phase 1.5).
+
+        ``p2`` is threaded in so each decision-condition row can show a
+        live MET/WATCHING status alongside its priority — same evaluator
+        as the HTML and dashboard versions for cross-surface consistency."""
         if not ts or not ts.get("thesis_statement"):
             return ""
+        p2 = p2 or {}
 
         statement = ts.get("thesis_statement", "")
         confidence = (ts.get("thesis_confidence") or "—").upper()
@@ -1260,15 +1647,25 @@ class ReportGenerator:
             out += [
                 "### Decision conditions",
                 "",
-                "| Priority | Trigger | Observable | Action |",
-                "| :--- | :--- | :--- | :--- |",
+                "| Priority | Status | Trigger | Observable | Action |",
+                "| :--- | :--- | :--- | :--- | :--- |",
             ]
             for dc in dcs:
                 pri = (dc.get("priority") or "—").upper()
                 act = (dc.get("action") or "—").upper()
                 trigger = (dc.get("trigger", "") or "—").replace("|", "\\|")
-                obs = (dc.get("observable", "") or "—").replace("|", "\\|")
-                out.append(f"| **{pri}** | {trigger} | `{obs}` | **{act}** |")
+                obs_raw = dc.get("observable", "") or ""
+                obs = (obs_raw or "—").replace("|", "\\|")
+                is_met = _evaluate_observable(obs_raw, p2)
+                if is_met is True:
+                    status = "● MET"
+                elif is_met is False:
+                    status = "● WATCHING"
+                else:
+                    status = "—"
+                out.append(
+                    f"| **{pri}** | {status} | {trigger} | `{obs}` | **{act}** |"
+                )
             out.append("")
 
         raj = ts.get("required_analyst_judgment") or []

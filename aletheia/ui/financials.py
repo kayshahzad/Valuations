@@ -273,8 +273,10 @@ def _build_ttm_snapshot(ttm_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
         "period_end_date":     str(r.get("period_end_date") or "")[:10] or None,
         "ttm_source":          _ttm_source_from_validation(r.get("fmp_validation_json")),
         "Revenue":             _f(r.get("clean_Revenue")),
+        "EBIT":                _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome")),
         "EBITDA":              _f(r.get("derived_EBITDA")),
         "NetIncome":           _f(r.get("raw_NetIncome")),
+        "TaxRate":             _f(r.get("clean_GAAP_TaxRate")),
         "CapEx":               _f(r.get("derived_CapEx")) or _f(r.get("raw_CapEx")),
         "FCF":                 _f(r.get("derived_FCF")) or _f(r.get("clean_FCF")),
         "ROIC":                _f(r.get("derived_ROIC")),
@@ -349,8 +351,11 @@ def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
             "fiscal_year":     int(r["fiscal_year"]),
             "period_end_date": str(r.get("period_end_date") or "")[:10],
             "Revenue":         _f(r.get("clean_Revenue")),
+            "EBIT":            _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome")),
+            "EBIT_Margin_Pct": _f(r.get("derived_EBIT_Margin_Pct")),
             "EBITDA":          _f(r.get("derived_EBITDA")),
             "NetIncome":       _f(r.get("raw_NetIncome")),
+            "TaxRate":         _f(r.get("clean_GAAP_TaxRate")),
             "CapEx":           _f(r.get("derived_CapEx")) or _f(r.get("raw_CapEx")),
             "FCF":             _f(r.get("derived_FCF")) or _f(r.get("clean_FCF")),
             "ROIC":            _f(r.get("derived_ROIC")),
@@ -618,5 +623,18 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
         bundle["bypass"] = str(e)
     except Exception as e:
         bundle["bypass"] = f"DCF failed: {type(e).__name__}: {e}"
+
+    # Provenance: whether analyst DCF-assumption overrides are active.
+    # Lets the view banner an overridden valuation so it's never mistaken
+    # for the model-derived one.
+    try:
+        from aletheia.data.database import InvestmentDatabase
+        _ovdb = InvestmentDatabase(verbose=False)
+        try:
+            bundle["dcf_overrides"] = _ovdb.get_dcf_overrides(ticker)
+        finally:
+            _ovdb.close()
+    except Exception:
+        bundle["dcf_overrides"] = {}
 
     return bundle

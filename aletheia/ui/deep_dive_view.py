@@ -608,10 +608,15 @@ def _strategic_context_block(sc: Dict[str, Any]) -> None:
         return
     st.markdown("##### Strategic Context")
     rev_at_risk = sc.get("revenue_at_risk_percent")
+    # Use descriptive labels for the boolean risk flags instead of
+    # "YES/NO + glyph" which reads contradictorily ("✓ NO" looks like
+    # an affirmative when it actually means "no risk found").
     rows = [
         {"Field": "Revenue at risk", "Value": f"{rev_at_risk*100:.1f}%" if rev_at_risk is not None else "—"},
-        {"Field": "Quality risk",    "Value": "YES ⚠" if sc.get("quality_of_growth_risk") else "NO ✓"},
-        {"Field": "Terminal haircut", "Value": "YES" if sc.get("terminal_haircut") else "NO"},
+        {"Field": "Quality of growth",
+         "Value": "⚠ Concern flagged" if sc.get("quality_of_growth_risk") else "✓ Clean"},
+        {"Field": "Terminal haircut",
+         "Value": "⚠ Applied" if sc.get("terminal_haircut") else "✓ Not applied"},
     ]
     st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
     if sc.get("summary"):
@@ -626,6 +631,57 @@ def _strategic_context_block(sc: Dict[str, Any]) -> None:
 
 
 # ── Reverse DCF chart ─────────────────────────────────────────────────────
+
+# Direction of each valuation signal: +1 = cheap/bullish, -1 = expensive/
+# bearish, 0 = neutral. Two unmapped/None signals → no verdict.
+_REV_DCF_DIR = {
+    "deep_value": 1, "fair_value": 0, "priced_for_growth": -1,
+    "caution": -1, "flag": -1,
+}
+_MULT_DIR = {
+    "undervalued": 1, "discount": 1, "deep_value": 1,
+    "fair_value": 0, "fairly_valued": 0, "justified": 0,
+    "priced_for_growth": -1, "premium": -1, "speculative_premium": -1,
+    "overvalued": -1,
+}
+
+
+def _signal_reconciliation(rdcf: Dict[str, Any], md: Dict[str, Any]) -> None:
+    """Surface agreement/conflict between the two primary valuation signals.
+
+    Reverse-DCF reads the *top-line growth* the price embeds; multiple-
+    decomposition reads the *EV/EBITDA* vs its justified level. They can
+    genuinely point opposite ways (e.g. CHWY: reverse-DCF 'deep value' on
+    revenue while the multiple screens 'speculative premium') — the framework
+    had no layer that said so out loud. This makes the conflict explicit so
+    an analyst never reads one signal in isolation."""
+    rsig = (rdcf.get("signal") or "").strip().lower()
+    msig = (md.get("signal") or "").strip().lower()
+    rdir = _REV_DCF_DIR.get(rsig)
+    mdir = _MULT_DIR.get(msig)
+    if rdir is None or mdir is None:
+        return
+
+    def _lbl(s):
+        return s.replace("_", " ").upper()
+
+    if rdir * mdir < 0:
+        st.warning(
+            f"⚠ **Valuation signals diverge.** Reverse-DCF reads "
+            f"**{_lbl(rsig)}** (on the *revenue growth* the price implies) "
+            f"while multiple-decomposition reads **{_lbl(msig)}** (on "
+            f"*EV/EBITDA* vs justified). Both can be right at once — it means "
+            f"the market is paying a rich cash-flow multiple while pricing in "
+            f"little top-line growth, so the thesis hinges on **margin / FCF "
+            f"conversion**, not revenue. Don't read either signal alone."
+        )
+    elif rdir == mdir and rdir != 0:
+        side = "cheap" if rdir > 0 else "expensive"
+        st.caption(
+            f"✓ Valuation signals agree ({side}): reverse-DCF "
+            f"**{_lbl(rsig)}** and multiple **{_lbl(msig)}** point the same way."
+        )
+
 
 def _reverse_dcf_chart(rdcf: Dict[str, Any]) -> None:
     if not rdcf:
@@ -654,7 +710,7 @@ def _reverse_dcf_chart(rdcf: Dict[str, Any]) -> None:
 
     fig = go.Figure()
     fig.add_bar(
-        x=["Historical CAGR", "Market-implied CAGR"],
+        x=["Historical CAGR (normalized)", "Market-implied CAGR"],
         y=[hist, impl],
         marker_color=["#3b82f6", _AMBER],
         text=[f"{hist*100:.1f}%", f"{impl*100:.1f}%"],
@@ -690,6 +746,14 @@ def _reverse_dcf_chart(rdcf: Dict[str, Any]) -> None:
             + (f" · <em style='color:{_MUTED_TEXT}'>{sig_text}</em>" if sig_text else "")
             + "</div>",
             unsafe_allow_html=True,
+        )
+        st.caption(
+            "Historical CAGR here is a **robust/normalized** anchor — the "
+            "trimmed median across multiple lookback windows, which "
+            "down-weights M&A and one-off hyper-growth years. It "
+            "deliberately differs from the raw point-to-point 5Y CAGR shown "
+            "in the ratios table (that one is undistorted-by-design and can "
+            "be far higher for serial acquirers / post-IPO scalers)."
         )
 
 
@@ -770,6 +834,63 @@ def _priority_color(priority: Optional[str]) -> str:
     )
 
 
+_OBSERVABLE_RE = __import__("re").compile(
+    r"^\s*(?P<path>[A-Za-z_][\w.]*)\s*(?P<op>>=|<=|==|>|<)\s*(?P<value>-?\d+(?:\.\d+)?)\s*$"
+)
+
+
+def _evaluate_observable(
+    observable: Optional[str], dcf: Dict[str, Any], p2v: Dict[str, Any]
+) -> Optional[bool]:
+    """Parse a simple ``phase2.field op value`` expression and evaluate
+    against live data. Returns True when the trigger is CURRENTLY met,
+    False when not met, None when the expression is free-form text or
+    the field path doesn't resolve.
+
+    Supports the canonical decision-condition format used by the
+    thesis_synthesizer: ``phase2.implied_cagr > 0.0`` and similar.
+    Anything more complex falls back to None so the UI doesn't lie
+    about a state it can't actually compute."""
+    if not observable or not isinstance(observable, str):
+        return None
+    m = _OBSERVABLE_RE.match(observable)
+    if m is None:
+        return None
+    path = m.group("path")
+    op = m.group("op")
+    try:
+        threshold = float(m.group("value"))
+    except ValueError:
+        return None
+
+    # Resolve "phase2.X" against p2v dict; "dcf.X" against dcf dict.
+    parts = path.split(".")
+    if not parts:
+        return None
+    root_name, sub_path = parts[0], parts[1:]
+    root = {"phase2": p2v, "dcf": dcf}.get(root_name)
+    if root is None:
+        return None
+    cur: Any = root
+    for k in sub_path:
+        if isinstance(cur, dict):
+            cur = cur.get(k)
+        else:
+            cur = getattr(cur, k, None)
+        if cur is None:
+            return None
+    try:
+        actual = float(cur)
+    except (TypeError, ValueError):
+        return None
+    if op == ">":  return actual >  threshold
+    if op == "<":  return actual <  threshold
+    if op == ">=": return actual >= threshold
+    if op == "<=": return actual <= threshold
+    if op == "==": return actual == threshold
+    return None
+
+
 def _cited_signals_chips(signals: list) -> str:
     """Inline pills listing the upstream-signal field paths a claim cites.
     Renders compactly to keep the visual weight on the claim text."""
@@ -835,15 +956,21 @@ _ACTION_COLOR = {
 }
 
 
-def _decision_conditions_table(conditions: list) -> None:
+def _decision_conditions_table(
+    conditions: list, dcf: Dict[str, Any], p2v: Dict[str, Any]
+) -> None:
     """Card-style decision-condition rows.
 
     Streamlit's `:color[text]` markdown only accepts named colors, so the
     earlier `st.dataframe` approach rendered raw hex markup as literal text.
     Switched to bordered cards: colored left-border encodes priority,
-    action chip on the right encodes direction. Reads top-to-bottom rather
-    than as a dense table — easier on the eye and matches the case-card
-    visual language above.
+    action chip on the right encodes direction.
+
+    Priority chip = analyst-assigned urgency (red/amber/green target).
+    Status chip = live evaluation of the observable expression
+    (● MET green / ● WATCHING amber). The two are distinct because the
+    priority describes how seriously to take the condition, while the
+    status describes whether it's actually firing right now.
     """
     if not conditions:
         return
@@ -860,6 +987,18 @@ def _decision_conditions_table(conditions: list) -> None:
         observable = dc.get("observable", "") or ""
         p_color = _priority_color(priority)
         a_color = _ACTION_COLOR.get(action, _MUTED_TEXT)
+
+        # Live state evaluation: is the trigger met right now?
+        is_met = _evaluate_observable(observable, dcf, p2v)
+        if is_met is True:
+            status_color = _GREEN
+            status_label = "MET"
+        elif is_met is False:
+            status_color = _AMBER
+            status_label = "WATCHING"
+        else:
+            status_color = None
+            status_label = None
 
         observable_html = (
             f'<div style="font-family:DM Mono,monospace;font-size:11px;'
@@ -882,12 +1021,21 @@ def _decision_conditions_table(conditions: list) -> None:
             f'● {priority or "—"}</span>'
         )
 
+        status_chip = ""
+        if status_label is not None:
+            status_chip = (
+                f'<span style="display:inline-block;font-family:DM Mono,monospace;'
+                f'font-size:10px;font-weight:700;letter-spacing:0.5px;'
+                f'color:{status_color};margin-right:10px;">'
+                f'● {status_label}</span>'
+            )
+
         rows_html.append(
             f'<div style="border:1px solid {_BAR_BG};border-left:4px solid {p_color};'
             f'border-radius:0 6px 6px 0;padding:14px 18px;margin-bottom:8px;'
             f'color:inherit;display:flex;align-items:flex-start;gap:14px;">'
             f'  <div style="flex:1;min-width:0;">'
-            f'    <div style="margin-bottom:4px;">{priority_chip}</div>'
+            f'    <div style="margin-bottom:4px;">{priority_chip}{status_chip}</div>'
             f'    <div style="font-size:14px;line-height:1.6;">{trigger}</div>'
             f'    {observable_html}'
             f'  </div>'
@@ -900,10 +1048,17 @@ def _decision_conditions_table(conditions: list) -> None:
     st.markdown("".join(rows_html), unsafe_allow_html=True)
 
 
-def _structured_thesis_section(thesis: Dict[str, Any]) -> None:
+def _structured_thesis_section(
+    thesis: Dict[str, Any], dcf: Dict[str, Any], p2v: Dict[str, Any]
+) -> None:
     """Render the thesis_synthesizer output: thesis statement, bull/bear/base
     cards with cited_signals, decision conditions, required analyst judgment,
     and update conditions.
+
+    ``dcf`` and ``p2v`` are threaded down to the decision-conditions table
+    so each row can show a live MET / WATCHING status alongside its
+    priority chip. Without them the table would only encode the analyst's
+    target severity, not the current state.
 
     Renders nothing if the section is empty (pre-thesis_synthesizer reports
     or schema-mismatched tickers where the thesis fell back to mock)."""
@@ -950,7 +1105,7 @@ def _structured_thesis_section(thesis: Dict[str, Any]) -> None:
     conditions = thesis.get("decision_conditions") or []
     if conditions:
         st.markdown("<div style='margin-top:24px;'></div>", unsafe_allow_html=True)
-        _decision_conditions_table(conditions)
+        _decision_conditions_table(conditions, dcf, p2v)
 
     # Required analyst judgment + update conditions in a two-column layout
     raj = thesis.get("required_analyst_judgment") or []
@@ -979,10 +1134,41 @@ def _structured_thesis_section(thesis: Dict[str, Any]) -> None:
         )
 
 
-def _contrarian_block(ca: Dict[str, Any]) -> None:
+def _contrarian_block(ca: Dict[str, Any], dcf: Optional[Dict[str, Any]] = None) -> None:
     if not ca:
         return
     st.markdown("##### Contrarian bear case")
+
+    # Engine-bear vs constitutional-floor separation. The contrarian
+    # narrative tends to cite a $0 "bear case" that is actually an
+    # existential tail-risk scenario, not the engine's analytically
+    # defensible bear. Surface both explicitly so a $0 floor is never
+    # mistaken for the DCF bear. engine_bear_iv comes from the (fixed)
+    # contrarian output; fall back to the live DCF bear IPS for older
+    # reports that predate that field.
+    engine_bear = ca.get("engine_bear_iv")
+    # Treat 0/missing as "use the live DCF bear" — older reports stored
+    # engine_bear_iv=0 from the wrong-path bug; the live /dcf bear is correct.
+    if not engine_bear and dcf:
+        engine_bear = (dcf.get("bear") or {}).get("intrinsic_per_share")
+    tail_risk = ca.get("tail_risk_present")
+    if engine_bear is not None or tail_risk:
+        eb_str = _money(engine_bear) if engine_bear else "—"
+        floor_html = (
+            f"<span style='color:{_MUTED_TEXT}'> · </span>"
+            f"<strong>Constitutional floor:</strong> $0.00 "
+            f"<span style='color:{_MUTED_TEXT}'>(existential tail-risk, "
+            f"not the DCF bear)</span>"
+        ) if tail_risk else ""
+        st.markdown(
+            f"<div style='font-family:DM Mono,monospace;font-size:12px;"
+            f"margin-bottom:8px;color:inherit'>"
+            f"<strong>Engine bear:</strong> {eb_str} "
+            f"<span style='color:{_MUTED_TEXT}'>(DCF, bear assumptions)</span>"
+            f"{floor_html}</div>",
+            unsafe_allow_html=True,
+        )
+
     bias = ca.get("bias_detected", "None")
     bear = ca.get("bear_case_summary", "")
     sentiment = ca.get("sentiment_score")
@@ -1769,6 +1955,7 @@ def render_deep_dive_view(
     if md:
         st.markdown("<br>", unsafe_allow_html=True)
         _multiple_decomposition(md)
+    _signal_reconciliation(rdcf, md)
 
     # ── Two-column body ──────────────────────────────────────────────────
     st.markdown("---")
@@ -1795,9 +1982,9 @@ def render_deep_dive_view(
         # thesis_synthesis block (pre-consolidation reports / mock fallbacks).
         if thesis_synth.get("thesis_statement"):
             st.markdown("<br>", unsafe_allow_html=True)
-            _structured_thesis_section(thesis_synth)
+            _structured_thesis_section(thesis_synth, dcf, p2v)
         st.markdown("<br>", unsafe_allow_html=True)
-        _contrarian_block(contrarian)
+        _contrarian_block(contrarian, dcf)
 
     # ── Reality Checks (new — Feature 1: GDP comparison) ─────────────────
     # Pulls the actual base-case CAGR + base revenue from the financials

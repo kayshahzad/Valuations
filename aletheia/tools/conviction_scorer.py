@@ -452,7 +452,13 @@ class ConvictionScorer:
         multiple_premium = self._safe(md.get("premium_pct"))
         rdcf             = p2.get("reverse_dcf", {}) or {}
         implied_cagr     = self._safe(rdcf.get("implied_cagr_10y"))
-        hist_cagr        = self._safe(rdcf.get("historical_cagr"))
+        # Reverse-DCF exposes the historical anchor as ``historical_cagr_5y``;
+        # the legacy ``historical_cagr`` key is absent, which silently disabled
+        # the implied/historical penalty for BOTH P3 (tailwind priced-in) and
+        # P4 (optical discount). Read the real field, fall back to legacy.
+        hist_cagr        = self._safe(rdcf.get("historical_cagr_5y")
+                                      or rdcf.get("historical_cagr"))
+        rdcf_signal      = rdcf.get("signal")
 
         # From DB for FCF margin, net debt, revenue CAGR
         df = calc_input.df
@@ -503,6 +509,7 @@ class ConvictionScorer:
             calc_input=calc_input,
             roe=roe,
             state=state,
+            reverse_dcf_signal=rdcf_signal,
         )
 
     def score_from_report(self, ticker: str, calc_input: 'CalculationInput' = None, report_path: str = None) -> ConvictionResult:
@@ -542,7 +549,8 @@ class ConvictionScorer:
             ebitda_bn=self._safe(cf.get("ebitda_bn")),
             data_quality=self._safe(cf.get("data_quality")),
             rev_cagr=None,  # not in report — use hist_cagr
-            hist_cagr=self._safe(rdcf.get("historical_cagr")),
+            hist_cagr=self._safe(rdcf.get("historical_cagr_5y")
+                                 or rdcf.get("historical_cagr")),
             sector=calc_input.classification.sector if (calc_input and calc_input.classification) else "",
             cyclicality_z=self._safe(ind.get("cyclicality_z_score")),
             is_peak=bool(context.get("applies_cyclical_haircut")),
@@ -570,6 +578,7 @@ class ConvictionScorer:
             implied_cagr=self._safe(rdcf.get("implied_cagr_10y")),
             calc_input=calc_input,
             roe=roe,
+            reverse_dcf_signal=rdcf.get("signal"),
         )
 
     def _compute(
@@ -584,6 +593,7 @@ class ConvictionScorer:
         calc_input: 'CalculationInput' = None,
         roe=None,
         state=None,
+        reverse_dcf_signal=None,
     ) -> ConvictionResult:
 
         result = ConvictionResult(ticker=ticker)
@@ -663,6 +673,48 @@ class ConvictionScorer:
                     p4_score = score
                     p4_reasons = [f"Base MoS {base_mos:+.1%} — {reason}"]
                     break
+
+            # Reconcile the MoS pillar with the reverse-DCF verdict. A large
+            # raw MoS is NOT a real margin of safety when the base-DCF IV that
+            # produced it rests on growth the market already prices in — the
+            # discount is optical, not undervaluation. Previously P4 printed
+            # "fortress margin of safety" even when the reverse-DCF signal was
+            # CAUTION/FLAG and the contrarian flagged "Growth Extrapolation
+            # Bias" — the framework shouting at itself.
+            #
+            # The reverse-DCF `signal` is the canonical verdict (it already
+            # weighs implied CAGR vs BOTH historical and sector-75th). Cap P4
+            # by it so the pillar can never out-rank the verdict:
+            #   flag             → cap 2  (extraordinary growth priced — FAIL tier)
+            #   caution          → cap 3  (above-norm growth priced — CAUTION tier)
+            #   priced_for_growth→ cap 4  (growth premium being paid)
+            #   fair_value/deep_value → no cap (genuine discount)
+            # Fall back to the constitution implied/historical ratio bands
+            # (>2.0 FAIL, >1.3 CAUTION) when the signal isn't available, so the
+            # pillar and the lead's constitution check stay consistent.
+            _sig = (reverse_dcf_signal or "").strip().lower()
+            _cap = None
+            _tier = None
+            if _sig == "flag":
+                _cap, _tier = 2, "reverse-DCF FLAG (extraordinary growth priced)"
+            elif _sig == "caution":
+                _cap, _tier = 3, "reverse-DCF CAUTION (above-norm growth priced)"
+            elif _sig == "priced_for_growth":
+                _cap, _tier = 4, "reverse-DCF growth-premium (above historical)"
+            elif _sig in ("", None) and implied_cagr is not None and hist_cagr and hist_cagr > 0:
+                _ratio = implied_cagr / hist_cagr
+                if _ratio > 2.0:
+                    _cap, _tier = 2, f"implied CAGR {_ratio:.1f}× historical (FAIL)"
+                elif _ratio > 1.3:
+                    _cap, _tier = 3, f"implied CAGR {_ratio:.1f}× historical (CAUTION)"
+            if _cap is not None and p4_score > _cap:
+                # Relabel — never print "fortress" alongside a CAUTION/FLAG
+                # verdict. The headline now reflects the optical discount.
+                p4_score = _cap
+                p4_reasons = [
+                    f"⚠ Optical discount — base MoS {base_mos:+.1%} but {_tier}; "
+                    f"the discount reflects priced-in growth, not undervaluation"
+                ]
         else:
             p4_reasons = ["Margin of safety unavailable — defaulting to 1"]
         result.p4_mos = PillarScore("Margin of Safety", p4_score, 0.20, p4_reasons)

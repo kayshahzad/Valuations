@@ -363,6 +363,11 @@ def check_balance_sheet_equation(
     redeemable_nci = (
         _field(record, "RedeemableNoncontrollingInterest")
         or _field(record, "RedeemableNoncontrollingInterestEquityCarryingAmount")
+        # Mezzanine temporary equity attributable to the parent (redeemable
+        # convertible preferred). CELH FY2022+ carries PepsiCo's $550M
+        # convertible preferred (~$824M accreted) here — excluded from both
+        # TotalLiabilities and parent-only TotalEquity.
+        or _field(record, "TemporaryEquityCarryingAmount")
         or 0.0
     )
 

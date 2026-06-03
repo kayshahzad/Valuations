@@ -46,6 +46,41 @@ from aletheia.calculations import (
 )
 
 
+def normalized_revenue_cagr(df, fy) -> Optional[float]:
+    """Canonical historical revenue CAGR — ONE definition shared across the
+    framework (ReverseDCF anchor + screening "Revenue CAGR (robust)").
+
+    Robust trimmed median of the [3, 5, 7, 10]Y point-to-point CAGRs, computed
+    on FY-ONLY revenue. FY-only is essential: the TTM row carries the same
+    ``fiscal_year`` as the latest FY, and leaving it in duplicates that year —
+    every ``iloc[-lookback]`` window then reaches one extra year back, silently
+    depressing the CAGR and making surfaces disagree (CHWY: 6.5% with the TTM
+    dupe vs the correct 10.8% FY-only; AAPL: 6.6% vs 4.8%). Returns ``None``
+    when there's too little history; the caller supplies its own fallback.
+    """
+    if df is None or "fiscal_year" not in getattr(df, "columns", []):
+        return None
+    h = df[df["fiscal_year"] <= fy].sort_values("fiscal_year")
+    if "period" in h.columns:
+        h = h[h["period"] == "FY"]
+    rev = h["clean_Revenue"].dropna()
+    rev = rev[rev > 0]
+    if len(rev) < 2:
+        return None
+    now = float(rev.iloc[-1])
+    cands = []
+    for lb in (3, 5, 7, 10):
+        if len(rev) >= lb:
+            r0 = float(rev.iloc[-lb])
+            if r0 > 0:
+                cands.append((now / r0) ** (1.0 / lb) - 1.0)
+    if len(cands) >= 3:
+        return float(np.median(sorted(cands)[1:-1]))
+    if cands:
+        return float(np.median(cands))
+    return None
+
+
 def _reverse_dcf_mode() -> str:
     """Phase 6 Migration Step 3 — reverse_dcf is in hard-mode enforcement.
 
@@ -232,6 +267,7 @@ class ReverseDCF:
         fiscal_year: Optional[int] = None,
         wacc_override: Optional[float] = None,
         margin_override: Optional[float] = None,
+        terminal_growth_override: Optional[float] = None,
         current_price: Optional[float] = None,
         market_cap: Optional[float] = None,
         **kwargs
@@ -244,6 +280,10 @@ class ReverseDCF:
             fiscal_year: defaults to latest
             wacc_override: use this WACC instead of computing from market data
             margin_override: use this EBIT margin instead of historical
+            terminal_growth_override: when provided, use this terminal growth
+                instead of the class constant TERMINAL_GROWTH. Lets
+                calc_node pass the engine's moat-aware base case g so
+                reverse DCF and forward DCF use the same g.
 
         Returns:
             ReverseDCFResult with implied growth and signal
@@ -253,6 +293,15 @@ class ReverseDCF:
         max_growth_rate = kwargs.get('max_growth_rate', 0.50)
 
         result = ReverseDCFResult(ticker=ticker, fiscal_year=fiscal_year or 0)
+
+        # Resolve the terminal-growth value used downstream. Override
+        # wins (passed by calc_node from the engine base case's moat-
+        # aware terminal g); otherwise fall back to the class constant.
+        terminal_growth_used = (
+            terminal_growth_override
+            if terminal_growth_override is not None
+            else self.TERMINAL_GROWTH
+        )
 
         # ── Load data ─────────────────────────────────────────────────────────
         df = calc_input.df
@@ -397,22 +446,11 @@ class ReverseDCF:
         result.tax_rate = tax_rate
         result.net_debt = net_debt
 
-        # Historical 5Y CAGR
-        hist = df[df["fiscal_year"] <= fy].sort_values("fiscal_year")
-        rev_series = hist["clean_Revenue"].dropna()
-        rev_now = float(rev_series.iloc[-1]) if len(rev_series) > 0 else 0.0
-        cagr_candidates2 = []
-        for lookback in [3, 5, 7, 10]:
-            if len(rev_series) >= lookback:
-                r0 = float(rev_series.iloc[-lookback])
-                if r0 > 0 and rev_now > 0:
-                    cagr_candidates2.append((rev_now / r0) ** (1/lookback) - 1)
-        if len(cagr_candidates2) >= 3:
-            s = sorted(cagr_candidates2)
-            hist_cagr = float(np.median(s[1:-1]))
-        elif cagr_candidates2:
-            hist_cagr = float(np.median(cagr_candidates2))
-        else:
+        # Historical 5Y CAGR — canonical FY-only robust median (see
+        # normalized_revenue_cagr). Shared with the screening engine so the
+        # "historical revenue CAGR" is ONE number across every surface.
+        hist_cagr = normalized_revenue_cagr(df, fy)
+        if hist_cagr is None:
             hist_cagr = 0.08
         result.historical_cagr_5y = float(np.clip(hist_cagr, 0.0, max_growth_rate))
 
@@ -521,9 +559,10 @@ class ReverseDCF:
                 fcff = nopat_yr + da_yr - capex_yr - delta_nwc
                 pv_total += fcff / (1 + wacc) ** yr
 
-            # Terminal value
+            # Terminal value — use the resolved terminal_growth_used so
+            # the override (engine base case's moat-aware g) flows in.
             final_nopat = rev * ebit_margin * (1 - tax_rate)
-            g = self.TERMINAL_GROWTH + terminal_g_delta
+            g = terminal_growth_used + terminal_g_delta
             effective_roic = max(roic, 0.08)
             if wacc > g:
                 tv = final_nopat * (1 - g / effective_roic) / (wacc - g)
@@ -607,8 +646,10 @@ class ReverseDCF:
             result.implied_tv_ebitda = result.current_ev_ebitda
         result.implied_tv_ebitda = result.current_ev_ebitda   # Rough proxy
 
-        # Liberti justified multiple
-        g = self.TERMINAL_GROWTH
+        # Liberti justified multiple — also honors the override so the
+        # forward EV/EBITDA computation stays consistent with the
+        # base-case terminal growth.
+        g = terminal_growth_used
         effective_roic = max(roic, 0.08)
         if ebitda > 0 and wacc > g and effective_roic > g:
             terminal_nopat = (revenue * (1 + implied_cagr) ** 10

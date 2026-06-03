@@ -896,6 +896,45 @@ def _project_scenario(
     return projections, terminal, enterprise_value
 
 
+def _organic_cagr_ex_breaks(df_fy):
+    """Detect outlier YoY revenue jumps (transformative M&A / regime breaks)
+    and return ``(organic_cagr, [break_fiscal_years])``.
+
+    A single YoY above ``max(40%, 2.0× the trailing median YoY)`` is treated
+    as a structural break — e.g. AVGO's VMware acquisition (FY2024 +44%) —
+    because such a jump inflates EVERY lookback window, so the
+    longest-vs-shortest M&A heuristic in ``run()`` can't catch a *recent*
+    deal. The organic CAGR is the geometric mean of the remaining (non-break)
+    YoY factors. Returns ``(None, [])`` when there's too little history or no
+    break is detected, so the caller keeps its existing CAGR.
+    """
+    if df_fy is None or "clean_Revenue" not in getattr(df_fy, "columns", []):
+        return None, []
+    d = df_fy.dropna(subset=["clean_Revenue"]).sort_values("fiscal_year")
+    revs = [float(x) for x in d["clean_Revenue"].tolist()]
+    years = [int(x) for x in d["fiscal_year"].tolist()]
+    if len(revs) < 4:
+        return None, []
+    yoy = [
+        (years[i], revs[i] / revs[i - 1] - 1.0)
+        for i in range(1, len(revs)) if revs[i - 1] > 0
+    ]
+    if len(yoy) < 3:
+        return None, []
+    med = float(np.median([g for _, g in yoy]))
+    threshold = max(0.40, 2.0 * med) if med > 0 else 0.40
+    break_years = [y for y, g in yoy if g > threshold]
+    if not break_years:
+        return None, []
+    organic = [g for y, g in yoy if y not in break_years]
+    if len(organic) < 2:
+        return None, []
+    prod = 1.0
+    for g in organic:
+        prod *= (1.0 + g)
+    return prod ** (1.0 / len(organic)) - 1.0, break_years
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Main engine
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1069,11 +1108,27 @@ class DCFEngine:
         if revenue is None:
             raise MissingFieldError(f"Missing required field 'Revenue' for {ticker}")
 
-        ebit, ebit_prov = get_with_provenance("OperatingIncome")
+        # Ex-impairment OpInc preference. Phase 5 (hybrid-XBRL specialty
+        # tags) populates ``clean_OperatingIncome_ExUnusual`` from
+        # discrete impairment / restructuring tags. When present we use
+        # it as base-year EBIT so years with one-time non-recurring
+        # charges (e.g., LDOS FY2023 Dynetics goodwill writedown) don't
+        # depress the base case and inflate the implied recovery in
+        # bull / base projections. Falls back to raw OpInc when the
+        # ex-unusual variant is missing.
+        ebit_exu = get("clean_OperatingIncome_ExUnusual")
+        if ebit_exu is not None and ebit_exu > 0:
+            ebit, ebit_prov = ebit_exu, "ex_unusual"
+        else:
+            ebit, ebit_prov = get_with_provenance("OperatingIncome")
         if ebit_prov == "missing":
             raise MissingFieldError(f"Missing required field 'OperatingIncome' for {ticker}")
 
-        ebitda, ebitda_prov = get_with_provenance("EBITDA")
+        ebitda_exu = get("clean_EBITDA_ExUnusual")
+        if ebitda_exu is not None and ebitda_exu > 0:
+            ebitda, ebitda_prov = ebitda_exu, "ex_unusual"
+        else:
+            ebitda, ebitda_prov = get_with_provenance("EBITDA")
         if ebitda_prov == "missing": ebitda = ebit
         
         nopat = get("clean_NOPAT", ebit * 0.79)
@@ -1196,19 +1251,66 @@ class DCFEngine:
 
         forecast_years_applied = profile.forecast_years
 
-        # Select the longest lookback that meets the 50% data integrity threshold
+        # Select the longest lookback that meets the 50% data integrity
+        # threshold, BUT detect M&A structural breaks. When a longer
+        # lookback's CAGR is >1.5× a shorter lookback's CAGR, the longer
+        # window likely spans a transformative acquisition (LDOS / IS&GS
+        # merger 2016 doubled the company; long-window CAGR captures the
+        # mechanical doubling rather than organic growth). In that case
+        # we prefer the shorter window — the post-break organic rate.
         valid_cagrs = [c for c in cagr_candidates if c[1] >= c[2] * 0.5]
-        
+
         if valid_cagrs:
-            # Sort by lookback period (longest first)
+            # Sort by lookback period (longest first).
             valid_cagrs.sort(key=lambda x: x[3], reverse=True)
             selected = valid_cagrs[0]
+
+            # M&A break heuristic: compare longest-window CAGR to the
+            # 3-5Y CAGR. If 3-5Y is materially lower (<= 60% of long),
+            # the long window probably includes a step-change acquisition.
+            # Prefer the shortest valid window in that case so the base
+            # year reflects organic post-merger growth.
+            short_candidates = [c for c in valid_cagrs if 3 <= c[3] <= 5]
+            if short_candidates and selected[3] >= 7:
+                # Use the longest in the 3-5Y bucket as the "organic"
+                # benchmark.
+                short_candidates.sort(key=lambda x: x[3], reverse=True)
+                short_ref = short_candidates[0]
+                long_cagr = selected[0]
+                short_cagr = short_ref[0]
+                if (long_cagr > 0 and short_cagr > 0
+                        and short_cagr <= long_cagr * 0.6):
+                    if self.verbose:
+                        print(f"  [M&A break detected] {selected[3]}Y CAGR "
+                              f"{long_cagr:.1%} vs {short_ref[3]}Y CAGR "
+                              f"{short_cagr:.1%}; using shorter window "
+                              "(organic post-break growth).")
+                    selected = short_ref
+
             hist_cagr = selected[0]
             if self.verbose:
                 print(f"  Selected {selected[3]}Y Exact-Date CAGR: {hist_cagr:.1%} (Data density: {selected[1]}/{selected[2]})")
         else:
             print(f"  [WARN] Missing or sparse SEC history for {ticker}. Using lifecycle default ({lifecycle}).")
             hist_cagr = profile.growth_rate
+
+        # M&A / regime-break adjustment. A single outlier YoY revenue jump
+        # (e.g. AVGO's VMware FY2024 +44%) inflates EVERY lookback window, so
+        # the longest-vs-shortest heuristic above can't catch a *recent*
+        # transformative deal. Recompute an organic CAGR that chain-links the
+        # non-break YoY factors and prefer it when a break is detected. The
+        # analyst can still refine via the Y1-5 override (applied below).
+        organic_cagr, break_years = _organic_cagr_ex_breaks(df_fy)
+        if organic_cagr is not None and break_years:
+            if self.verbose:
+                print(f"  [M&A/regime break] FY{break_years} excluded; organic "
+                      f"CAGR {organic_cagr:.1%} (raw {hist_cagr:.1%})")
+            result.warnings.append(
+                f"Historical CAGR adjusted for transformative event(s) in "
+                f"FY{break_years}: organic {organic_cagr:.1%} vs raw "
+                f"{hist_cagr:.1%}. Verify the forward Y1-5 assumption."
+            )
+            hist_cagr = organic_cagr
 
         # Scenario-override path: when an agent-proposed scenario provides
         # an explicit Y1-5 CAGR, it must replace the historical reference
@@ -1311,6 +1413,14 @@ class DCFEngine:
         
         result.risk_free_rate = rf
         result.beta = beta
+        # Honor the analyst WACC override at the headline level too. The
+        # per-scenario WACC is overridden inside _build_assumptions, but the
+        # top-level wacc_base (reported as `wacc` in the /dcf payload and the
+        # Deep Dive hero) was still the CAPM-derived value — so an overridden
+        # valuation showed the model WACC there while the IV reflected the
+        # override. Pin wacc_base to the override so they're consistent.
+        if profile.discount_rate_override is not None:
+            wacc_base = profile.discount_rate_override
         result.wacc_base = wacc_base
 
         # Tier-3 input range check on resolved WACC. compute_wacc clips
@@ -1336,6 +1446,54 @@ class DCFEngine:
             print(f"  Ke:      {ke:.2%}")
             print(f"  Kd:      {kd:.2%}")
             print(f"  WACC:    {wacc_base:.2%}")
+
+        # ── Step 4.5: Moat-aware terminal-growth enforcement ──────────────────
+        # The constitution rule (lead.py) flags terminal_g > 3% with moat < 9
+        # as a discipline violation, but historically just warned without
+        # enforcement. Apply the cap HERE — before scenarios are built —
+        # so the base/bull/bear all respect the moat-implied terminal
+        # ceiling. Reads latest moat_strength assessment from DuckDB;
+        # falls back to a conservative 2.5% when no assessment yet exists
+        # (protects first-ingest runs from inflated terminal multiples).
+        try:
+            from aletheia.data.database import InvestmentDatabase
+            with InvestmentDatabase(verbose=False) as _moat_db:
+                _moat_rec = _moat_db.get_latest_assessment(
+                    ticker.upper(), "moat_strength",
+                )
+            _moat_score = _moat_rec.get("score") if _moat_rec else None
+        except Exception:
+            _moat_score = None
+
+        if _moat_score is not None:
+            _moat_score = float(_moat_score)
+            if _moat_score >= 6.0:
+                _moat_cap = 0.040
+            elif _moat_score >= 5.0:
+                _moat_cap = 0.030
+            elif _moat_score >= 4.0:
+                _moat_cap = 0.025
+            else:
+                _moat_cap = 0.020
+        else:
+            # First-ingest case: no moat in DB yet. Use a defensive 2.5%
+            # so the initial DCF doesn't run with an inflated terminal
+            # cap; subsequent re-runs after qualitative ingest will use
+            # the assessed score.
+            _moat_cap = 0.025
+
+        # Apply as additional terminal_growth_cap (kept alongside any
+        # lifecycle-set cap — whichever is tighter wins). ValuationProfile
+        # is frozen, so use dataclasses.replace to swap in the new cap.
+        import dataclasses as _dc
+        _existing_cap = profile.terminal_growth_cap
+        _new_cap = (_moat_cap if _existing_cap is None
+                    else min(_existing_cap, _moat_cap))
+        profile = _dc.replace(profile, terminal_growth_cap=_new_cap)
+
+        if self.verbose:
+            _src = f"moat {_moat_score:.1f}" if _moat_score is not None else "no-moat default"
+            print(f"  Terminal-g cap: {profile.terminal_growth_cap*100:.2f}% ({_src})")
 
         # ── Step 5: Build scenarios and project ───────────────────────────────
         for scenario_name in ["bull", "base", "bear"]:

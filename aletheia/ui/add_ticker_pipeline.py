@@ -63,7 +63,9 @@ def _validate_ticker_format(ticker: str) -> Optional[str]:
 
 
 def run_add_ticker_pipeline(
-    ticker: str, *, provider: Optional[str] = None,
+    ticker: str, *,
+    provider: Optional[str] = None,
+    auto_agents: bool = False,
 ) -> Generator[Any, None, None]:
     """
     Generator that yields `StepUpdate` objects in real time and a final
@@ -74,8 +76,12 @@ def run_add_ticker_pipeline(
         ticker: Symbol to add.
         provider: Data-source provider for Stage 1-3. Defaults to whatever
             the registry resolves (``ALETHEIA_PROVIDER`` env var, then
-            config default — currently ``"fmp"``). Add Ticker honours the
-            sidebar selector when invoked from the UI.
+            config default).
+        auto_agents: When True, Stage 4 (LLM agents) runs immediately
+            after Stages 1-3. Includes the HITL proposer that pre-fills
+            all 9 HITL qualitative dimensions for analyst review.
+            Default False keeps the legacy "free ingest, paid agents"
+            split — UI surfaces an opt-in checkbox.
     """
     clean_ticker = _validate_ticker_format(ticker)
     if not clean_ticker:
@@ -128,16 +134,19 @@ def run_add_ticker_pipeline(
             f"Could not write classification: {type(e).__name__}: {e}",
         )
 
-    # ── Step 1: Stages 1-3 via the modern orchestrator ──────────────────
-    # Replaces the legacy EdgarIngester-only path. The orchestrator
-    # runs Stage 1 (ingest) → Stage 2 (clean / provider) → Stage 3
-    # (calc engines + identity audit), writes pipeline_status rows,
-    # and honors the active provider for source routing. Stage 4 is
-    # deliberately deferred — the analyst clicks the sidebar
-    # "🧠 Run Stage 4 (LLM)" button when ready to spend LLM budget.
+    # ── Step 1: Stages 1-3 (+ optional Stage 4) via the orchestrator ────
+    # The orchestrator runs Stage 1 (ingest) → Stage 2 (clean / provider)
+    # → Stage 3 (calc engines + identity audit), writes pipeline_status
+    # rows, and honors the active provider for source routing. When
+    # ``auto_agents`` is True the caller is asking to extend the run
+    # through Stage 4 (LLM agents) — librarian fetches 10-K + DEF 14A,
+    # qualitative_extraction_node generates LLM_AUGMENTED extractions
+    # + the HITL proposer pre-fills all 9 HITL dims for analyst review,
+    # narrative agents (qualitative_synthesis, contrarian, etc.) run.
+    stage_label = "Stages 1-4" if auto_agents else "Stages 1-3"
     yield StepUpdate(
         "orchestrator", "running",
-        f"Running Stages 1-3 via orchestrator for {clean_ticker} "
+        f"Running {stage_label} via orchestrator for {clean_ticker} "
         f"(provider={provider or 'default'})…",
     )
     try:
@@ -148,7 +157,7 @@ def run_add_ticker_pipeline(
             orch_result = orch.run(
                 clean_ticker,
                 pipeline_version=pipeline_version,
-                auto_agents=False,
+                auto_agents=auto_agents,
                 provider=provider,
             )
     except Exception as e:

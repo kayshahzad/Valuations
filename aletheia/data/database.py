@@ -487,6 +487,27 @@ class InvestmentDatabase:
             )
         """)
 
+        # LLM-proposer phase 1: provenance + review-state + confidence +
+        # llm_proposal snapshot. Added via ALTER so existing DBs upgrade
+        # without rebuild. NULL on legacy rows = "no proposal trail" —
+        # the UI renders those as plain HITL/Deterministic without a
+        # proposer badge.
+        for col, sqltype in (
+            ("provenance",        "VARCHAR"),
+            ("review_state",      "VARCHAR"),
+            ("confidence",        "VARCHAR"),
+            ("llm_proposal_json", "VARCHAR"),
+            # Drift tracking (Phase 4): always the LATEST LLM proposal,
+            # even on analyst-owned rows. Lets the UI render
+            # "LLM disagrees" banners without rewriting the analyst's
+            # canonical record.
+            ("llm_proposal_latest_json", "VARCHAR"),
+        ):
+            self._conn.execute(
+                f"ALTER TABLE qualitative_assessments "
+                f"ADD COLUMN IF NOT EXISTS {col} {sqltype}"
+            )
+
         # ── Views ─────────────────────────────────────────────────────────────
 
         # Latest version of each (company, fiscal year, period). The period
@@ -627,8 +648,44 @@ class InvestmentDatabase:
             AND qa.assessed_at = latest.latest_at
         """)
 
+        # Analyst DCF-assumption overrides. One latest row per ticker
+        # (history preserved by version for audit). Each of the 7 wired
+        # ScenarioOverride fields is stored nullable — NULL means "use the
+        # model-derived value". These feed _clone_profile_with_overrides at
+        # calc time so every DCF consumer reflects the analyst's edits.
+        self._conn.execute("""
+            CREATE TABLE IF NOT EXISTS dcf_assumption_overrides (
+                ticker                  VARCHAR NOT NULL,
+                version                 INTEGER NOT NULL,
+                revenue_growth_y1_5     DOUBLE,
+                revenue_growth_y6_10    DOUBLE,
+                terminal_ebit_margin    DOUBLE,
+                capex_pct_revenue       DOUBLE,
+                tax_rate                DOUBLE,
+                discount_rate           DOUBLE,   -- WACC
+                terminal_growth         DOUBLE,
+                updated_at              VARCHAR NOT NULL,
+                updated_by              VARCHAR NOT NULL,
+                note                    VARCHAR,
+                PRIMARY KEY (ticker, version)
+            )
+        """)
+
+        # Latest override row per ticker — single row, most recent version.
+        self._conn.execute("""
+            CREATE OR REPLACE VIEW dcf_assumption_overrides_latest AS
+            SELECT o.*
+            FROM dcf_assumption_overrides o
+            INNER JOIN (
+                SELECT ticker, MAX(version) AS max_version
+                FROM dcf_assumption_overrides
+                GROUP BY ticker
+            ) latest
+            ON o.ticker = latest.ticker AND o.version = latest.max_version
+        """)
+
         if self.verbose:
-            print("  ✓ Schema initialized (company_records, cleaning_flags, screen_results, universe_status, agent_runs, qualitative_assessments)")
+            print("  ✓ Schema initialized (company_records, cleaning_flags, screen_results, universe_status, agent_runs, qualitative_assessments, dcf_assumption_overrides)")
 
     # ─────────────────────────────────────────────────────────────────────────
     # Write operations
@@ -1163,8 +1220,10 @@ class InvestmentDatabase:
             INSERT INTO qualitative_assessments
             (assessment_id, ticker, dimension_id, score, sub_scores, narrative,
              source_category, source_payload, assessed_at, analyst_id,
-             code_git_sha, input_fingerprint)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+             code_git_sha, input_fingerprint,
+             provenance, review_state, confidence, llm_proposal_json,
+             llm_proposal_latest_json)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             [
                 record.assessment_id,
@@ -1179,6 +1238,13 @@ class InvestmentDatabase:
                 record.analyst_id,
                 record.code_git_sha,
                 record.input_fingerprint,
+                record.provenance,
+                record.review_state,
+                record.confidence,
+                (json.dumps(record.llm_proposal, default=str)
+                 if record.llm_proposal is not None else None),
+                (json.dumps(record.llm_proposal_latest, default=str)
+                 if record.llm_proposal_latest is not None else None),
             ],
         )
 
@@ -1202,13 +1268,19 @@ class InvestmentDatabase:
             return None
         cols = [d[0] for d in self._conn.description]
         record = dict(zip(cols, row))
-        for k in ("sub_scores", "source_payload"):
+        for k in ("sub_scores", "source_payload",
+                  "llm_proposal_json", "llm_proposal_latest_json"):
             v = record.get(k)
             if v is not None and isinstance(v, str):
                 try:
                     record[k] = json.loads(v)
                 except json.JSONDecodeError:
                     record[k] = None
+        # Surface the decoded blobs under clean keys for callers.
+        if "llm_proposal_json" in record:
+            record["llm_proposal"] = record.pop("llm_proposal_json")
+        if "llm_proposal_latest_json" in record:
+            record["llm_proposal_latest"] = record.pop("llm_proposal_latest_json")
         return record
 
     def get_all_assessments_for_ticker(self, ticker: str) -> Dict[str, Dict[str, Any]]:
@@ -1225,15 +1297,102 @@ class InvestmentDatabase:
         out: Dict[str, Dict[str, Any]] = {}
         for row in rows:
             record = dict(zip(cols, row))
-            for k in ("sub_scores", "source_payload"):
+            for k in ("sub_scores", "source_payload",
+                      "llm_proposal_json", "llm_proposal_latest_json"):
                 v = record.get(k)
                 if v is not None and isinstance(v, str):
                     try:
                         record[k] = json.loads(v)
                     except json.JSONDecodeError:
                         record[k] = None
+            if "llm_proposal_json" in record:
+                record["llm_proposal"] = record.pop("llm_proposal_json")
+            if "llm_proposal_latest_json" in record:
+                record["llm_proposal_latest"] = record.pop("llm_proposal_latest_json")
             out[record["dimension_id"]] = record
         return out
+
+    # ─────────────────────────────────────────────────────────────────────────
+    # DCF assumption overrides (analyst what-if, persisted per ticker)
+    # ─────────────────────────────────────────────────────────────────────────
+
+    # The 7 wired ScenarioOverride fields the UI exposes as editable. Kept
+    # here as the single source of truth for the column set so the API and
+    # validator stay in sync with the table schema.
+    DCF_OVERRIDE_FIELDS = (
+        "revenue_growth_y1_5",
+        "revenue_growth_y6_10",
+        "terminal_ebit_margin",
+        "capex_pct_revenue",
+        "tax_rate",
+        "discount_rate",
+        "terminal_growth",
+    )
+
+    def get_dcf_overrides(self, ticker: str) -> Dict[str, Any]:
+        """Return the latest persisted DCF overrides for a ticker.
+
+        Returns a dict with only the non-NULL override fields plus
+        provenance (``updated_at``, ``updated_by``, ``note``). Empty dict
+        when the ticker has no overrides on file — callers treat that as
+        "use model-derived assumptions".
+        """
+        row = self._conn.execute(
+            "SELECT * FROM dcf_assumption_overrides_latest WHERE ticker = ?",
+            [ticker.upper()],
+        ).fetchone()
+        if row is None:
+            return {}
+        cols = [d[0] for d in self._conn.description]
+        rec = dict(zip(cols, row))
+        out: Dict[str, Any] = {}
+        for f in self.DCF_OVERRIDE_FIELDS:
+            if rec.get(f) is not None:
+                out[f] = float(rec[f])
+        for meta in ("updated_at", "updated_by", "note"):
+            if rec.get(meta) is not None:
+                out[meta] = rec[meta]
+        return out
+
+    def upsert_dcf_overrides(
+        self, ticker: str, overrides: Dict[str, Any], *,
+        updated_by: str = "analyst", note: Optional[str] = None,
+    ) -> int:
+        """Insert a new override version for a ticker. Only the 7 wired
+        fields are persisted; unknown keys are ignored. A field absent
+        from ``overrides`` (or explicitly None) is stored NULL = "use the
+        model value". Returns the new version number.
+        """
+        ticker = ticker.upper()
+        next_version = (self._conn.execute(
+            "SELECT COALESCE(MAX(version), 0) + 1 FROM "
+            "dcf_assumption_overrides WHERE ticker = ?", [ticker],
+        ).fetchone() or [1])[0]
+        values = [ticker, int(next_version)]
+        values += [
+            (float(overrides[f]) if overrides.get(f) is not None else None)
+            for f in self.DCF_OVERRIDE_FIELDS
+        ]
+        values += [
+            datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            updated_by, note,
+        ]
+        placeholders = ", ".join(["?"] * (2 + len(self.DCF_OVERRIDE_FIELDS) + 3))
+        cols = ("ticker, version, "
+                + ", ".join(self.DCF_OVERRIDE_FIELDS)
+                + ", updated_at, updated_by, note")
+        self._conn.execute(
+            f"INSERT INTO dcf_assumption_overrides ({cols}) VALUES ({placeholders})",
+            values,
+        )
+        return int(next_version)
+
+    def clear_dcf_overrides(self, ticker: str) -> None:
+        """Remove all override rows for a ticker — reverts to model defaults."""
+        self._conn.execute(
+            "DELETE FROM dcf_assumption_overrides WHERE ticker = ?",
+            [ticker.upper()],
+        )
 
     # ─────────────────────────────────────────────────────────────────────────
     # Read operations

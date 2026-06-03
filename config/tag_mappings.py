@@ -617,6 +617,24 @@ FIELD_MAPPINGS = {
         ],
     },
 
+    "TemporaryEquityCarryingAmount": {
+        # Mezzanine / temporary equity attributable to the PARENT (not NCI):
+        # redeemable convertible preferred stock that sits between liabilities
+        # and permanent stockholders' equity on the balance sheet
+        # (ASC 480-10-S99). The NCI variant lives in
+        # RedeemableNoncontrollingInterest above. Captured so the A=L+E
+        # identity can account for it — without it, parent-only TotalEquity
+        # plus TotalLiabilities understates total assets by the preferred's
+        # carrying amount. Canonical case: CELH FY2022+ carries PepsiCo's
+        # 2022 $550M Series A convertible preferred (~$824M with accretion)
+        # under TemporaryEquityCarryingAmountAttributableToParent, which is
+        # in neither TotalLiabilities nor parent-only TotalEquity.
+        "default": [
+            "TemporaryEquityCarryingAmountAttributableToParent",
+            "TemporaryEquityCarryingAmountIncludingPortionAttributableToNoncontrollingInterests",
+        ],
+    },
+
     # ─────────────────────────────────────────────────────────────────────────
     # Cash Flow Statement
     # ─────────────────────────────────────────────────────────────────────────

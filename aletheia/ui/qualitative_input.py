@@ -48,6 +48,8 @@ _MUTED = "rgba(120,120,128,0.85)"
 _BAR_BG = "rgba(120,120,128,0.20)"
 _PANEL_BG_AMBER = "rgba(245,158,11,0.08)"
 _PANEL_BG_GREEN = "rgba(16,185,129,0.06)"
+_VIOLET = "#8b5cf6"
+_PANEL_BG_VIOLET = "rgba(139,92,246,0.08)"
 
 
 def _score_color(score: float) -> str:
@@ -87,6 +89,49 @@ def _render_anchor_help(anchors: Dict[int, str]) -> None:
             "</div>",
             unsafe_allow_html=True,
         )
+
+
+def _render_llm_proposal_banner(
+    proposal: Dict[str, Any],
+    confidence: Optional[str],
+) -> None:
+    """Top-of-dialog banner when the dialog opens against an unreviewed
+    LLM proposal. Tells the analyst what they're reviewing, surfaces
+    confidence + evidence quotes, and visually distinguishes a review
+    session from a from-scratch assessment."""
+    conf_color = {
+        "high":   _GREEN,
+        "medium": _AMBER,
+        "low":    _AMBER,
+    }.get(confidence or "", _MUTED)
+    conf_label = f"confidence: {confidence}" if confidence else "confidence: —"
+    st.markdown(
+        f'<div style="background:{_PANEL_BG_VIOLET};border-left:3px solid {_VIOLET};'
+        f'padding:10px 14px;margin-bottom:12px;font-size:13px;color:inherit;'
+        f'line-height:1.5;">'
+        f'<div style="font-weight:600;color:{_VIOLET};margin-bottom:4px;">'
+        f'🤖 Reviewing LLM proposal</div>'
+        f'<div style="font-size:12px;color:{_MUTED};margin-bottom:6px;">'
+        f'Sliders pre-populated with the LLM’s scores. Adjust where '
+        f'you disagree; submit to confirm or override. '
+        f'<span style="color:{conf_color};font-weight:600">'
+        f'{conf_label}</span>'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+    quotes = proposal.get("evidence_quotes") or []
+    if quotes:
+        with st.expander(f"Evidence cited by LLM ({len(quotes)} quotes)", expanded=False):
+            for q in quotes:
+                qid = q.get("question_id", "—")
+                txt = q.get("quote", "")
+                src = q.get("source", "")
+                st.markdown(
+                    f"- **{qid}** ({src}): _\"{txt}\"_"
+                )
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def _render_restore_banner(
@@ -221,13 +266,31 @@ def render_assessment_dialog(
     # ── Restore previous draft if applicable ────────────────────────────
     draft = _render_restore_banner(ticker, dim_id, catalog_hash)
 
-    # Initialize session_state form values from draft (or empty)
+    # Initialize session_state form values. Precedence:
+    #   1. Persisted draft (highest — analyst was mid-edit)
+    #   2. LLM proposal (auto-fill the sliders with the LLM's scores)
+    #   3. Empty (slider defaults to 4 = midpoint)
     sub_scores: Dict[str, int] = {}
     initial_narrative = ""
+    proposal = dimension.get("llm_proposal") or {}
+
     if draft:
         for q_id, score in (draft.get("sub_scores") or {}).items():
             sub_scores[q_id] = int(score)
         initial_narrative = draft.get("narrative") or ""
+    elif proposal:
+        for q_id, score in (proposal.get("sub_scores") or {}).items():
+            try:
+                sub_scores[q_id] = int(score)
+            except (TypeError, ValueError):
+                continue
+        initial_narrative = proposal.get("narrative") or ""
+
+    # ── LLM-proposed banner (only when there's an unreviewed proposal) ──
+    prov = dimension.get("provenance")
+    review_state = dimension.get("review_state")
+    if proposal and prov == "llm_proposed" and review_state == "unreviewed":
+        _render_llm_proposal_banner(proposal, dimension.get("confidence"))
 
     # ── Description ─────────────────────────────────────────────────────
     if dimension.get("description"):

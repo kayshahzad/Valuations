@@ -27,6 +27,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import httpx
+import pandas as pd
 import streamlit as st
 
 
@@ -1581,17 +1582,79 @@ def _render_stage3(ticker: str, status_rows: Dict[str, Dict[str, Any]]) -> None:
 def _render_stage4(ticker: str, status_rows: Dict[str, Dict[str, Any]]) -> None:
     st.markdown(f"### Stage 4 — Agents   ·   {_render_status_badge('stage4_agents', status_rows)}")
     st.caption("⚠ Stage 4 invokes LLM agents — incurs ~$1-3 in API cost per run.")
-    confirm = st.checkbox(
+
+    # ── DCF-assumptions validation gate ─────────────────────────────────
+    # Stage 4's thesis is built on the DCF. Surface the assumptions +
+    # validation verdict here and require the analyst to confirm them
+    # before the (paid) agents run. A hard error blocks the run entirely.
+    assum_status = "ok"
+    assum_unavailable = False
+    av = _api_get(f"/ticker/{ticker}/dcf/assumptions")
+    if av["ok"]:
+        payload = av["data"]
+        validation = payload.get("validation") or {}
+        assum_status = validation.get("status", "ok")
+        overridden = payload.get("overridden_fields") or []
+        with st.expander(
+            f"DCF assumptions {'· ✎ ' + str(len(overridden)) + ' overridden' if overridden else '(model-derived)'}"
+            f"  —  validation: {assum_status.upper()}",
+            expanded=(assum_status != "ok"),
+        ):
+            asn = payload.get("assumptions") or {}
+            rows = [
+                {"Field": lbl, "Value": (f"{asn[k]*100:.1f}%" if asn.get(k) is not None else "—"),
+                 "Source": "✎ override" if okey in overridden else "model"}
+                for lbl, k, okey in (
+                    ("CAGR Y1-5", "revenue_cagr_y1_5", "revenue_growth_y1_5"),
+                    ("CAGR Y6-10", "revenue_cagr_y6_10", "revenue_growth_y6_10"),
+                    ("EBIT margin term.", "ebit_margin_terminal", "terminal_ebit_margin"),
+                    ("CapEx % revenue", "capex_pct_revenue", "capex_pct_revenue"),
+                    ("Tax rate", "tax_rate", "tax_rate"),
+                    ("WACC", "wacc", "discount_rate"),
+                    ("Terminal growth", "terminal_growth", "terminal_growth"),
+                )
+            ]
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+            if assum_status == "error":
+                st.error("⛔ " + "; ".join(validation.get("errors", [])))
+            elif assum_status == "warn":
+                st.warning("⚠ " + "; ".join(validation.get("warnings", [])))
+            else:
+                st.success("✓ Assumptions valid.")
+            if overridden:
+                st.caption("Edit assumptions on the **Financials** tab; Stage 4 "
+                           "uses the saved overrides.")
+    else:
+        # Endpoint unreachable or specialized (non-FCFF) ticker — don't block.
+        assum_unavailable = True
+        st.caption("DCF-assumptions validation unavailable for this ticker "
+                   "(specialized engine or API offline); proceeding without it.")
+
+    confirm_cost = st.checkbox(
         "I confirm this will incur LLM cost",
         key=f"s4_confirm_{ticker}",
     )
+    confirm_assum = st.checkbox(
+        "I confirm the DCF assumptions have been reviewed and validated",
+        key=f"s4_confirm_assum_{ticker}",
+        disabled=(assum_status == "error"),
+    )
+    if assum_status == "error":
+        st.error("Stage 4 is blocked until the DCF assumptions validate. "
+                 "Fix them on the Financials tab (or reset overrides).")
+
     col1, _ = st.columns([2, 4])
-    run_disabled = not confirm
+    run_disabled = (
+        not confirm_cost
+        or (not confirm_assum and not assum_unavailable)
+        or assum_status == "error"
+    )
     if col1.button("▶ Run with agents", key=f"s4_run_{ticker}", disabled=run_disabled):
         with st.spinner(f"Running Stage 4 (LLM) for {ticker}…"):
             res = _api_post(
                 f"/pipeline/stages/{ticker}/agents",
-                {"confirm_llm_cost": True},
+                {"confirm_llm_cost": True,
+                 "confirm_assumptions_validated": confirm_assum},
             )
         if res["ok"]:
             _store_bundle(ticker, "stage4_agents", res["data"])
