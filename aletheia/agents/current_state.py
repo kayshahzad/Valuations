@@ -230,24 +230,51 @@ def build_current_state(
         res.reconciliation.append(rec)
 
     # ── Event-driven flags (Source 2) ───────────────────────────────────
-    # Each event the agent classified as material (4-5) of an adverse
-    # category raises a flag tied to the relevant assumption.
-    _ADVERSE_CATS = {
-        "guidance_cut": ("growth", "Y1/terminal growth"),
-        "clinical_failure": ("moat", "long-term growth / moat"),
-        "competitive": ("moat", "moat / substitution risk"),
-        "pricing_regulatory": ("margin", "terminal margin"),
-        "regulatory_legal": ("moat", "moat / risk"),
+    # Only ADVERSE material events raise risk flags (the dangerous direction).
+    # FAVORABLE events are recorded as supportive context, not risk — e.g.
+    # LLY's own oral-GLP-1 approval helps LLY and must NOT read as a HIGH risk.
+    _AFFECTED = {
+        "guidance_cut": "Y1/terminal growth",
+        "clinical_failure": "long-term growth / moat",
+        "competitive": "moat / substitution risk",
+        "pricing_regulatory": "terminal margin",
+        "regulatory_legal": "moat / risk",
+        "capital": "capital structure",
+        "management": "execution risk",
     }
     for ev in res.events:
         mat = ev.get("materiality") or 0
         cat = (ev.get("category") or "").lower()
-        if mat >= 4 and cat in _ADVERSE_CATS:
-            _, affected = _ADVERSE_CATS[cat]
+        direction = (ev.get("direction") or "").lower()
+        if direction not in ("adverse", "favorable", "neutral"):
+            # Default by category (matches the events parser) so events lacking
+            # an explicit direction — older caches, manual entry — are still
+            # classified: clearly-bad categories adverse, the rest neutral.
+            direction = ("adverse"
+                         if cat in ("guidance_cut", "clinical_failure", "regulatory_legal")
+                         else "neutral")
+        if cat not in _AFFECTED or mat < 4:
+            continue
+        if direction == "favorable":
+            res.flags.append(CurrentStateFlag(
+                LOW, cat,
+                f"✅ {ev.get('date','')}: {ev.get('headline','(event)')} "
+                f"(favorable — supports the thesis)",
+                recommendation="Supportive — confirm it's reflected, not double-counted",
+                source=ev.get("source", ""),
+            ))
+        elif direction == "adverse":
             res.flags.append(CurrentStateFlag(
                 HIGH if mat >= 5 else MEDIUM, cat,
                 f"{ev.get('date','')}: {ev.get('headline','(event)')}",
-                recommendation=f"Revisit {affected}",
+                recommendation=f"Revisit {_AFFECTED[cat]}",
+                source=ev.get("source", ""),
+            ))
+        else:  # neutral — watch item, doesn't drive severity hard
+            res.flags.append(CurrentStateFlag(
+                MEDIUM if mat >= 5 else LOW, cat,
+                f"{ev.get('date','')}: {ev.get('headline','(event)')} (watch)",
+                recommendation=f"Assess impact on {_AFFECTED[cat]}",
                 source=ev.get("source", ""),
             ))
 

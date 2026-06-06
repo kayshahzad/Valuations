@@ -58,8 +58,15 @@ Classify each event into exactly one category:
 Score materiality 1-5 (5 = changes the thesis; 1 = minor). Only return events \
 with materiality >= 3.
 
+For EACH event set "direction" relative to {company}'s value:
+- "adverse"   = hurts {company} (its guidance cut, its trial failed, a rival won, a price cut on its drug)
+- "favorable" = helps {company} (its trial succeeded, its drug approved, it gained share, favorable coverage)
+- "neutral"   = ambiguous / informational
+A competitor's win in the same class is ADVERSE to {company}; {company}'s own \
+approval/trial win is FAVORABLE.
+
 Return ONLY a JSON array (no prose), each item:
-{{"date":"YYYY-MM-DD","category":"<slug>","headline":"...","materiality":<1-5>,"source":"<publisher>","impact":"which assumption it affects"}}
+{{"date":"YYYY-MM-DD","category":"<slug>","direction":"adverse|favorable|neutral","headline":"...","materiality":<1-5>,"source":"<publisher>","impact":"which assumption it affects"}}
 If there are no material events, return []."""
 
 
@@ -109,10 +116,18 @@ def _parse_events(text: str) -> List[Dict[str, Any]]:
             mat = int(e.get("materiality") or 0)
         except (TypeError, ValueError):
             mat = 0
+        direction = str(e.get("direction", "")).lower().strip()
+        if direction not in ("adverse", "favorable", "neutral"):
+            # Default by category when the model omits direction: clearly-bad
+            # categories are adverse; the rest neutral.
+            direction = ("adverse"
+                         if cat in ("guidance_cut", "clinical_failure", "regulatory_legal")
+                         else "neutral")
         if cat in _CATEGORIES and mat >= 3 and e.get("headline"):
             out.append({
                 "date": str(e.get("date", "")),
                 "category": cat,
+                "direction": direction,
                 "headline": str(e.get("headline", ""))[:280],
                 "materiality": max(1, min(5, mat)),
                 "source": str(e.get("source", ""))[:120],
