@@ -311,6 +311,25 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     }
 
 
+def _current_state_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]:
+    """Current-State Awareness (Phase 1.5) for the /dcf payload: reconcile the
+    engine's near-term growth vs forward analyst consensus + cached events.
+    Cache-only events (no LLM call on the read path). Never raises."""
+    try:
+        from aletheia.agents.current_state import build_current_state
+        from aletheia.agents.current_state_events import cached_events
+        base = getattr(result, "base", None)
+        eng_y1 = getattr(getattr(base, "assumptions", None), "revenue_cagr_y1_5", None) if base else None
+        fy = getattr(result, "fy_fiscal_year", None) or getattr(result, "fiscal_year", None)
+        return build_current_state(
+            ticker, engine_y1_growth=eng_y1,
+            latest_fy=int(fy) if fy else None,
+            events=cached_events(ticker),
+        ).to_dict()
+    except Exception:
+        return None
+
+
 def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
     """Run DCFEngine + ReverseDCF live against the cleaned DB and return a
     dict shaped like `DCFResponse`.
@@ -437,6 +456,7 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "bull":                   scenario_dict(result.bull),
         "reverse_dcf":            reverse_dcf,
         "multiple_decomposition": multiple_decomposition,
+        "current_state":          _current_state_payload(ticker, result),
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
         # twice.
@@ -533,6 +553,7 @@ class DCFResponse(BaseModel):
     source_citation: Optional[str] = None
     as_of_date: Optional[str] = None
     engine_warnings: Optional[List[str]] = None
+    current_state: Optional[dict] = None
 
 
 class DCFOverridesRequest(BaseModel):
@@ -1175,6 +1196,7 @@ def get_ticker_dcf(ticker: str, response: Response):
         source_citation=payload.get("source_citation"),
         as_of_date=payload.get("as_of_date"),
         engine_warnings=payload.get("engine_warnings"),
+        current_state=payload.get("current_state"),
     )
 
 

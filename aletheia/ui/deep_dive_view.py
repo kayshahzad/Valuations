@@ -384,16 +384,25 @@ _PILLAR_DEFS = [
 ]
 
 
-def _pillar_section(pillar_scores: Dict[str, Any]) -> None:
+def _pillar_section(pillar_scores: Dict[str, Any], cs_severity: str = "NONE") -> None:
     if not pillar_scores:
         return
     capped = pillar_scores.get("capped_total")
     tier = (pillar_scores.get("position_tier") or "—").upper()
+    # Current-State gate: a HIGH flag tags the tier 'FLAGS PENDING' so a clean
+    # CONVICTION can't be read off the scorecard without reconciliation.
+    tier_tag = ""
+    if cs_severity == "HIGH":
+        tier_tag = (" · <span style='color:#dc2626;font-weight:700'>"
+                    "⛔ FLAGS PENDING</span>")
+    elif cs_severity == "MEDIUM":
+        tier_tag = (" · <span style='color:#d97706;font-weight:700'>"
+                    "⚠ flags</span>")
 
     st.markdown("##### Pillar scores  ·  "
                 f"<span style='color:inherit;opacity:0.7;"
                 f"font-family:DM Mono,monospace;font-size:13px;font-weight:400'>"
-                f"total {capped}/25 · tier {tier}</span>",
+                f"total {capped}/25 · tier {tier}{tier_tag}</span>",
                 unsafe_allow_html=True)
 
     for name, key, hint in _PILLAR_DEFS:
@@ -1878,6 +1887,49 @@ def _rdcf_reasons(rdcf: Dict[str, Any]) -> None:
         st.markdown(f"- {r}")
 
 
+def _current_state_gate(cs: Dict[str, Any]) -> str:
+    """Render the Current-State gate above the conviction/hero and return the
+    max severity ('HIGH'/'MEDIUM'/'LOW'/'NONE'). On HIGH, the conviction tier
+    is tagged 'FLAGS PENDING' downstream — the analyst must reconcile the
+    engine's assumptions with current reality before treating the rating as
+    actionable."""
+    if not cs or cs.get("error"):
+        return "NONE"
+    sev = cs.get("max_severity", "NONE")
+    flags = cs.get("flags") or []
+    if sev not in ("HIGH", "MEDIUM"):
+        return sev
+    pillar = cs.get("pillar_score")
+    title = ("⛔ Current-State: CONVICTION GATED — HIGH flags pending"
+             if sev == "HIGH" else
+             "⚠️ Current-State: review flags before relying on the rating")
+    with st.container(border=True):
+        st.markdown(f"#### {title}" + (f"  ·  pillar {pillar}/5" if pillar else ""))
+        if sev == "HIGH":
+            st.error(
+                "Engine assumptions conflict with current signals. The tier "
+                "below is shown **FLAGS PENDING** — reconcile (apply overrides "
+                "or document why not) before treating it as a final rating."
+            )
+        recs = cs.get("reconciliation") or []
+        for r in recs:
+            eng, sig, dl = r.get("engine"), r.get("signal"), r.get("delta")
+            if isinstance(eng, (int, float)) and isinstance(sig, (int, float)):
+                st.markdown(
+                    f"- **{r.get('assumption','')}**: engine {eng*100:+.1f}% vs "
+                    f"{r.get('signal_label','signal')} {sig*100:+.1f}% "
+                    f"({dl*100:+.1f}pp) — {r.get('recommendation','')}")
+        for f in flags:
+            fsev = f.get("severity")
+            dot = "🔴" if fsev == "HIGH" else "🟠" if fsev == "MEDIUM" else "🟡"
+            src = f" _({f.get('source')})_" if f.get("source") else ""
+            st.markdown(f"{dot} **{fsev}** · {f.get('message','')}{src}")
+        if not (cs.get("events")):
+            st.caption("Consensus-based flags only — open the Financials tab "
+                       "and click **Events** to pull recent event coverage.")
+    return sev
+
+
 # ── Main render ───────────────────────────────────────────────────────────
 
 def render_deep_dive_view(
@@ -1918,6 +1970,12 @@ def render_deep_dive_view(
     _dcf_method_badge(ticker)
     _cyclicality_banner(industry)
 
+    # ── Current-State gate (Phase 1.5) ──────────────────────────────────
+    # Rendered BEFORE the hero/conviction so HIGH current-state flags confront
+    # the analyst before the IV/MoS/tier. Gates a clean CONVICTION rating.
+    _current_state = (dcf or {}).get("current_state") or {}
+    _cs_severity = _current_state_gate(_current_state)
+
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})
 
@@ -1941,7 +1999,7 @@ def render_deep_dive_view(
     # ── Pillar scorecard ──────────────────────────────────────────────────
     if pillar_scores:
         st.markdown("---")
-        _pillar_section(pillar_scores)
+        _pillar_section(pillar_scores, _cs_severity)
 
     # ── Business snapshot (new) ──────────────────────────────────────────
     if bm:
