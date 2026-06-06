@@ -1887,30 +1887,126 @@ def _rdcf_reasons(rdcf: Dict[str, Any]) -> None:
         st.markdown(f"- {r}")
 
 
-def _current_state_gate(cs: Dict[str, Any]) -> str:
+_CS_API_BASE = "http://localhost:8000"
+_ACK_DECISION_LABELS = {
+    "override_applied":   "Override applied — assumptions edited to reflect this",
+    "accepted_rationale": "Accept — immaterial / already priced (rationale required)",
+    "rejected":           "Reject — flag is inaccurate (rationale required)",
+    "needs_analysis":     "Needs more analysis — park (does NOT clear the gate)",
+}
+
+
+def _cs_api(method: str, path: str, body: Optional[dict] = None):
+    """Minimal API client for the current-state ack endpoints.
+    Returns (data, error_message)."""
+    import httpx
+    try:
+        r = httpx.request(method, f"{_CS_API_BASE}{path}", json=body, timeout=30)
+    except httpx.RequestError as exc:
+        return None, f"Cannot reach API: {exc}"
+    if r.status_code >= 400:
+        try:
+            detail = r.json().get("detail")
+        except Exception:
+            detail = r.text
+        return None, detail if isinstance(detail, str) else str(detail)
+    return r.json(), None
+
+
+def _render_flag_ack(ticker: str, f: Dict[str, Any]) -> None:
+    """One flag row + its acknowledgment control. Acked flags show the
+    decision/rationale + a Reopen button; open flags show a decision form."""
+    fsev = f.get("severity")
+    dot = "🔴" if fsev == "HIGH" else "🟠" if fsev == "MEDIUM" else "🟡"
+    src = f" _({f.get('source')})_" if f.get("source") else ""
+    key = f.get("key") or ""
+    ack = f.get("ack")
+
+    st.markdown(f"{dot} **{fsev}** · {f.get('message','')}{src}")
+    if f.get("recommendation"):
+        st.caption(f"↳ {f.get('recommendation')}")
+
+    if f.get("acknowledged") and ack:
+        when = (ack.get("decided_at") or "")[:10]
+        st.success(
+            f"✓ Resolved — **{_ACK_DECISION_LABELS.get(ack.get('decision'), ack.get('decision'))}**"
+            + (f" · _{ack.get('rationale')}_" if ack.get("rationale") else "")
+            + f"  ·  {ack.get('decided_by','analyst')}, {when}")
+        if st.button("Reopen", key=f"cs_reopen_{key}"):
+            _, err = _cs_api("DELETE",
+                             f"/ticker/{ticker}/current_state/acknowledgments?flag_key={key}")
+            if err:
+                st.error(err)
+            else:
+                st.rerun()
+        return
+
+    # Parked (needs_analysis) — show state but keep the form open to resolve.
+    if ack and ack.get("decision") == "needs_analysis":
+        st.warning("⏳ Parked: needs more analysis — still pending for the gate.")
+
+    with st.expander("Acknowledge this flag", expanded=(fsev == "HIGH" and not ack)):
+        decision = st.selectbox(
+            "Decision", list(_ACK_DECISION_LABELS),
+            format_func=lambda d: _ACK_DECISION_LABELS[d],
+            key=f"cs_dec_{key}")
+        rationale = st.text_area(
+            "Rationale" + (" (required)" if decision in ("accepted_rationale", "rejected") else ""),
+            key=f"cs_rat_{key}", height=70,
+            placeholder="Why this decision? Recorded in the audit trail.")
+        if st.button("Save decision", key=f"cs_save_{key}", type="primary"):
+            if decision in ("accepted_rationale", "rejected") and not rationale.strip():
+                st.error("A written rationale is required for this decision.")
+            else:
+                _, err = _cs_api(
+                    "PUT", f"/ticker/{ticker}/current_state/acknowledgments",
+                    {"flag_key": key, "decision": decision,
+                     "rationale": rationale.strip() or None,
+                     "category": f.get("category"), "severity": fsev})
+                if err:
+                    st.error(err)
+                else:
+                    st.rerun()
+
+
+def _current_state_gate(cs: Dict[str, Any], ticker: str = "") -> str:
     """Render the Current-State gate above the conviction/hero and return the
-    max severity ('HIGH'/'MEDIUM'/'LOW'/'NONE'). On HIGH, the conviction tier
-    is tagged 'FLAGS PENDING' downstream — the analyst must reconcile the
-    engine's assumptions with current reality before treating the rating as
-    actionable."""
+    UNRESOLVED max severity ('HIGH'/'MEDIUM'/'LOW'/'NONE') — acknowledged flags
+    no longer count. While any HIGH flag is unresolved the conviction tier is
+    tagged 'FLAGS PENDING' downstream; once every HIGH flag is acknowledged
+    (override / accept-with-rationale / reject) the gate clears."""
     if not cs or cs.get("error"):
         return "NONE"
-    sev = cs.get("max_severity", "NONE")
+    raw_sev = cs.get("max_severity", "NONE")
+    eff_sev = cs.get("unresolved_severity", raw_sev)
     flags = cs.get("flags") or []
-    if sev not in ("HIGH", "MEDIUM"):
-        return sev
+    # Nothing material at all → no gate.
+    if raw_sev not in ("HIGH", "MEDIUM"):
+        return eff_sev
     pillar = cs.get("pillar_score")
-    title = ("⛔ Current-State: CONVICTION GATED — HIGH flags pending"
-             if sev == "HIGH" else
-             "⚠️ Current-State: review flags before relying on the rating")
+    n_unresolved_high = cs.get("unresolved_high", 0)
+
+    if eff_sev == "HIGH":
+        title = "⛔ Current-State: CONVICTION GATED — HIGH flags pending"
+    elif n_unresolved_high == 0 and raw_sev == "HIGH":
+        title = "✅ Current-State: HIGH flags acknowledged — gate cleared"
+    elif eff_sev == "MEDIUM":
+        title = "⚠️ Current-State: review flags before relying on the rating"
+    else:
+        title = "✅ Current-State: flags acknowledged"
+
     with st.container(border=True):
         st.markdown(f"#### {title}" + (f"  ·  pillar {pillar}/5" if pillar else ""))
-        if sev == "HIGH":
+        if eff_sev == "HIGH":
             st.error(
-                "Engine assumptions conflict with current signals. The tier "
-                "below is shown **FLAGS PENDING** — reconcile (apply overrides "
-                "or document why not) before treating it as a final rating."
-            )
+                f"Engine assumptions conflict with current signals — "
+                f"**{n_unresolved_high} HIGH flag(s) unresolved**. The tier below "
+                "is shown **FLAGS PENDING**. Acknowledge each (apply an override, "
+                "accept with rationale, or reject) to clear the gate.")
+        elif n_unresolved_high == 0 and raw_sev == "HIGH":
+            st.success("All HIGH flags acknowledged. The decisions below are "
+                       "recorded in the audit trail; the conviction tier is no "
+                       "longer gated.")
         recs = cs.get("reconciliation") or []
         for r in recs:
             eng, sig, dl = r.get("engine"), r.get("signal"), r.get("delta")
@@ -1919,15 +2015,13 @@ def _current_state_gate(cs: Dict[str, Any]) -> str:
                     f"- **{r.get('assumption','')}**: engine {eng*100:+.1f}% vs "
                     f"{r.get('signal_label','signal')} {sig*100:+.1f}% "
                     f"({dl*100:+.1f}pp) — {r.get('recommendation','')}")
+        st.markdown("---")
         for f in flags:
-            fsev = f.get("severity")
-            dot = "🔴" if fsev == "HIGH" else "🟠" if fsev == "MEDIUM" else "🟡"
-            src = f" _({f.get('source')})_" if f.get("source") else ""
-            st.markdown(f"{dot} **{fsev}** · {f.get('message','')}{src}")
+            _render_flag_ack(ticker, f)
         if not (cs.get("events")):
             st.caption("Consensus-based flags only — open the Financials tab "
                        "and click **Events** to pull recent event coverage.")
-    return sev
+    return eff_sev
 
 
 # ── Main render ───────────────────────────────────────────────────────────
@@ -1974,7 +2068,7 @@ def render_deep_dive_view(
     # Rendered BEFORE the hero/conviction so HIGH current-state flags confront
     # the analyst before the IV/MoS/tier. Gates a clean CONVICTION rating.
     _current_state = (dcf or {}).get("current_state") or {}
-    _cs_severity = _current_state_gate(_current_state)
+    _cs_severity = _current_state_gate(_current_state, ticker)
 
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})

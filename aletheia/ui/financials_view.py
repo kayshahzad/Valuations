@@ -842,7 +842,9 @@ def _render_current_state(cs: Dict[str, Any], ticker: str = "",
     if not cs or cs.get("error"):
         return
     flags = cs.get("flags") or []
-    sev = cs.get("max_severity", "NONE")
+    sev = cs.get("unresolved_severity", cs.get("max_severity", "NONE"))
+    raw_sev = cs.get("max_severity", "NONE")
+    n_unresolved_high = cs.get("unresolved_high", 0)
     pillar = cs.get("pillar_score")
     events = cs.get("events") or []
 
@@ -870,10 +872,14 @@ def _render_current_state(cs: Dict[str, Any], ticker: str = "",
             return
         if sev == "HIGH":
             st.error(
-                "**HIGH-severity flag(s) pending.** Engine assumptions conflict "
-                "with current signals. Reconcile before treating the valuation "
-                "below as actionable (tier shows **FLAGS PENDING**)."
+                f"**{n_unresolved_high} HIGH-severity flag(s) unresolved.** Engine "
+                "assumptions conflict with current signals. Acknowledge each in the "
+                "**Deep Dive → Current-State gate** (override / accept / reject) to "
+                "clear (tier shows **FLAGS PENDING** until then)."
             )
+        elif raw_sev == "HIGH" and n_unresolved_high == 0:
+            st.success("All HIGH current-state flags acknowledged — gate cleared. "
+                       "Decisions are recorded in the audit trail.")
         st.caption(
             "Signals from the last ~180 days that may not be reflected in the "
             "engine's historical-anchored assumptions. The engine math is "
@@ -899,7 +905,16 @@ def _render_current_state(cs: Dict[str, Any], ticker: str = "",
             fsev = f.get("severity")
             bullet = "🔴" if fsev == "HIGH" else "🟠" if fsev == "MEDIUM" else "🟡"
             src = f" _({f.get('source')})_" if f.get("source") else ""
+            if f.get("acknowledged"):
+                bullet = "✅"  # resolved
             st.markdown(f"{bullet} **{fsev}** · {f.get('message','')}{src}")
+            ack = f.get("ack")
+            if ack:
+                tag = "resolved" if f.get("acknowledged") else "parked"
+                st.caption(
+                    f"  ↳ _{tag}: {ack.get('decision')}"
+                    + (f" — {ack.get('rationale')}" if ack.get("rationale") else "")
+                    + f" ({ack.get('decided_by','analyst')})_")
 
         events = cs.get("events") or []
         if events:

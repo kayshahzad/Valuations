@@ -24,8 +24,15 @@ for non-USD filers (NVO/DKK) without FX conversion.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
+
+
+def _slug(text: str, n: int = 48) -> str:
+    """Stable lowercase token from free text (for flag keys)."""
+    s = re.sub(r"[^a-z0-9]+", "-", (text or "").lower()).strip("-")
+    return s[:n]
 
 # Severity ladder.
 HIGH, MEDIUM, LOW, NONE = "HIGH", "MEDIUM", "LOW", "NONE"
@@ -43,12 +50,13 @@ class CurrentStateFlag:
     message: str
     recommendation: str = ""
     source: str = ""
+    key: str = ""  # stable id for acknowledgment persistence
 
     def to_dict(self) -> Dict[str, Any]:
         return {
             "severity": self.severity, "category": self.category,
             "message": self.message, "recommendation": self.recommendation,
-            "source": self.source,
+            "source": self.source, "key": self.key,
         }
 
 
@@ -226,6 +234,7 @@ def build_current_state(
                 + (" Override required." if sev == HIGH else " Review recommended."),
                 recommendation=rec["recommendation"],
                 source=res.consensus.get("source", ""),
+                key="growth_vs_consensus",
             ))
         res.reconciliation.append(rec)
 
@@ -255,27 +264,32 @@ def build_current_state(
                          else "neutral")
         if cat not in _AFFECTED or mat < 4:
             continue
+        headline = ev.get("headline", "(event)")
+        ev_key = f"{cat}:{_slug(headline)}"
         if direction == "favorable":
             res.flags.append(CurrentStateFlag(
                 LOW, cat,
-                f"✅ {ev.get('date','')}: {ev.get('headline','(event)')} "
+                f"✅ {ev.get('date','')}: {headline} "
                 f"(favorable — supports the thesis)",
                 recommendation="Supportive — confirm it's reflected, not double-counted",
                 source=ev.get("source", ""),
+                key=ev_key,
             ))
         elif direction == "adverse":
             res.flags.append(CurrentStateFlag(
                 HIGH if mat >= 5 else MEDIUM, cat,
-                f"{ev.get('date','')}: {ev.get('headline','(event)')}",
+                f"{ev.get('date','')}: {headline}",
                 recommendation=f"Revisit {_AFFECTED[cat]}",
                 source=ev.get("source", ""),
+                key=ev_key,
             ))
         else:  # neutral — watch item, doesn't drive severity hard
             res.flags.append(CurrentStateFlag(
                 MEDIUM if mat >= 5 else LOW, cat,
-                f"{ev.get('date','')}: {ev.get('headline','(event)')} (watch)",
+                f"{ev.get('date','')}: {headline} (watch)",
                 recommendation=f"Assess impact on {_AFFECTED[cat]}",
                 source=ev.get("source", ""),
+                key=ev_key,
             ))
 
     # ── Pillar score (6th pillar) ───────────────────────────────────────

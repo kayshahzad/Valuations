@@ -28,6 +28,42 @@ from aletheia.utils.calc_input_builder import make_calc_input
 # Helpers
 # ─────────────────────────────────────────────────────────────────────────────
 
+_FLAG_SEV_RANK = {"NONE": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 3}
+
+
+def _annotate_flag_acks(ticker: str, cs: Dict[str, Any]) -> Dict[str, Any]:
+    """Merge persisted current-state flag acks into a cs payload (DB read).
+
+    Mirrors the API's `_annotate_acks` so the Financials panel shows the same
+    resolution state as the Deep Dive gate. `needs_analysis` does NOT resolve."""
+    try:
+        from aletheia.data.database import InvestmentDatabase
+        db = InvestmentDatabase(verbose=False)
+        try:
+            acks = db.get_flag_acks(ticker)
+        finally:
+            db.close()
+    except Exception:
+        acks = {}
+    unresolved_rank, unresolved_high = 0, 0
+    for f in cs.get("flags", []):
+        ack = acks.get(f.get("key", ""))
+        resolved = bool(ack) and ack["decision"] != "needs_analysis"
+        f["acknowledged"] = resolved
+        f["ack"] = {
+            "decision": ack["decision"], "rationale": ack.get("rationale"),
+            "decided_by": ack.get("decided_by"), "decided_at": ack.get("decided_at"),
+        } if ack else None
+        if not resolved:
+            unresolved_rank = max(unresolved_rank, _FLAG_SEV_RANK.get(f.get("severity"), 0))
+            if f.get("severity") == "HIGH":
+                unresolved_high += 1
+    cs["unresolved_severity"] = next(
+        (s for s, r in _FLAG_SEV_RANK.items() if r == unresolved_rank), "NONE")
+    cs["unresolved_high"] = unresolved_high
+    return cs
+
+
 def _f(v: Any) -> Optional[float]:
     """Coerce to float, returning None for null/NaN."""
     if v is None:
@@ -646,7 +682,7 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
         from aletheia.agents.current_state import build_current_state
         from aletheia.agents.current_state_events import cached_events
         _eng_y1 = (bundle.get("assumptions") or {}).get("revenue_cagr_y1_5")
-        bundle["current_state"] = build_current_state(
+        _cs = build_current_state(
             ticker,
             engine_y1_growth=_eng_y1,
             latest_fy=int(latest["fiscal_year"]),
@@ -654,6 +690,7 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
             # fetch runs on an explicit refresh (fetch_events force=True).
             events=cached_events(ticker),
         ).to_dict()
+        bundle["current_state"] = _annotate_flag_acks(ticker, _cs)
     except Exception as e:
         bundle["current_state"] = {"error": f"{type(e).__name__}: {e}"}
 

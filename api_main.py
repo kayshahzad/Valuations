@@ -321,13 +321,54 @@ def _current_state_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]
         base = getattr(result, "base", None)
         eng_y1 = getattr(getattr(base, "assumptions", None), "revenue_cagr_y1_5", None) if base else None
         fy = getattr(result, "fy_fiscal_year", None) or getattr(result, "fiscal_year", None)
-        return build_current_state(
+        cs = build_current_state(
             ticker, engine_y1_growth=eng_y1,
             latest_fy=int(fy) if fy else None,
             events=cached_events(ticker),
         ).to_dict()
+        return _annotate_acks(ticker, cs)
     except Exception:
         return None
+
+
+_SEV_RANK = {"NONE": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 3}
+
+
+def _annotate_acks(ticker: str, cs: Dict[str, Any]) -> Dict[str, Any]:
+    """Merge analyst flag acknowledgments into the current-state payload.
+
+    Each flag gains ``acknowledged`` + ``ack`` (decision/rationale/decided_*).
+    Adds ``unresolved_severity`` = max severity among UNacknowledged flags, and
+    ``unresolved_high`` count. The gate uses ``unresolved_severity`` (not the
+    raw ``max_severity``) so resolving every HIGH flag clears FLAGS-PENDING.
+    """
+    try:
+        from aletheia.data.database import InvestmentDatabase
+        db = InvestmentDatabase(verbose=False)
+        try:
+            acks = db.get_flag_acks(ticker)
+        finally:
+            db.close()
+    except Exception:
+        acks = {}
+    unresolved_rank, unresolved_high = 0, 0
+    for f in cs.get("flags", []):
+        ack = acks.get(f.get("key", ""))
+        # "needs_analysis" is parked, not resolved — it must NOT clear the gate.
+        resolved = bool(ack) and ack["decision"] != "needs_analysis"
+        f["acknowledged"] = resolved
+        f["ack"] = {
+            "decision": ack["decision"], "rationale": ack.get("rationale"),
+            "decided_by": ack.get("decided_by"), "decided_at": ack.get("decided_at"),
+        } if ack else None
+        if not resolved:
+            unresolved_rank = max(unresolved_rank, _SEV_RANK.get(f.get("severity"), 0))
+            if f.get("severity") == "HIGH":
+                unresolved_high += 1
+    cs["unresolved_severity"] = next(
+        (s for s, r in _SEV_RANK.items() if r == unresolved_rank), "NONE")
+    cs["unresolved_high"] = unresolved_high
+    return cs
 
 
 def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
@@ -569,6 +610,21 @@ class DCFOverridesRequest(BaseModel):
     terminal_growth:      Optional[float] = None
     note:                 Optional[str] = None
     updated_by:           Optional[str] = None
+
+
+class FlagAckRequest(BaseModel):
+    """Analyst decision on a current-state flag (Phase 1.5 acknowledgment).
+
+    ``decision`` is one of: override_applied (assumptions edited to reflect the
+    flag), accepted_rationale (flag judged immaterial / already priced, with a
+    written reason), rejected (flag disputed as inaccurate), needs_analysis
+    (parked pending more work — does NOT clear the gate)."""
+    flag_key:    str
+    decision:    str
+    rationale:   Optional[str] = None
+    category:    Optional[str] = None
+    severity:    Optional[str] = None
+    decided_by:  Optional[str] = None
 
 
 class FundamentalsResponse(BaseModel):
@@ -1439,6 +1495,64 @@ def delete_dcf_overrides(ticker: str):
     finally:
         db.close()
     return _build_dcf_assumptions_payload(ticker)
+
+
+# ── Current-State flag acknowledgments (Phase 1.5) ──────────────────────────
+
+_ACK_DECISIONS = {"override_applied", "accepted_rationale", "rejected", "needs_analysis"}
+
+
+@app.get("/ticker/{ticker}/current_state/acknowledgments", tags=["Ticker"])
+def get_flag_acks_endpoint(ticker: str):
+    """All persisted flag acknowledgments for a ticker (the audit trail)."""
+    from aletheia.data.database import InvestmentDatabase
+    db = InvestmentDatabase(verbose=False)
+    try:
+        return {"ticker": ticker.upper(), "acknowledgments": db.get_flag_acks(ticker)}
+    finally:
+        db.close()
+
+
+@app.put("/ticker/{ticker}/current_state/acknowledgments", tags=["Ticker"])
+def put_flag_ack_endpoint(ticker: str, body: FlagAckRequest):
+    """Record an analyst's decision on a current-state flag. Persisting an
+    ack with a clearing decision (anything but ``needs_analysis``) resolves
+    that flag in the gate. Returns the refreshed current-state payload."""
+    ticker = ticker.upper()
+    if body.decision not in _ACK_DECISIONS:
+        raise HTTPException(
+            status_code=422,
+            detail=f"decision must be one of {sorted(_ACK_DECISIONS)}")
+    if body.decision in ("accepted_rationale", "rejected") and not (body.rationale or "").strip():
+        raise HTTPException(
+            status_code=422,
+            detail=f"a written rationale is required for decision '{body.decision}'")
+    from aletheia.data.database import InvestmentDatabase
+    db = InvestmentDatabase(verbose=False)
+    try:
+        db.upsert_flag_ack(
+            ticker, body.flag_key, decision=body.decision,
+            rationale=body.rationale, category=body.category,
+            severity=body.severity, decided_by=(body.decided_by or "analyst"))
+        acks = db.get_flag_acks(ticker)
+    finally:
+        db.close()
+    return {"ticker": ticker, "acknowledgments": acks}
+
+
+@app.delete("/ticker/{ticker}/current_state/acknowledgments", tags=["Ticker"])
+def delete_flag_ack_endpoint(ticker: str, flag_key: Optional[str] = None):
+    """Remove one ack (``?flag_key=...``) or all acks for a ticker (re-opens
+    the flag in the gate)."""
+    ticker = ticker.upper()
+    from aletheia.data.database import InvestmentDatabase
+    db = InvestmentDatabase(verbose=False)
+    try:
+        db.clear_flag_ack(ticker, flag_key)
+        acks = db.get_flag_acks(ticker)
+    finally:
+        db.close()
+    return {"ticker": ticker, "acknowledgments": acks}
 
 
 @app.get("/ticker/{ticker}/fundamentals", response_model=FundamentalsResponse, tags=["Ticker"])
@@ -2595,6 +2709,7 @@ class _PipelineAgentsRequest(BaseModel):
     refuses on any error regardless of this flag."""
     confirm_llm_cost: bool = False
     confirm_assumptions_validated: bool = False
+    confirm_current_state_flags: bool = False
 
 
 class _PipelineRunRequest(BaseModel):
@@ -2740,6 +2855,37 @@ def pipeline_stage_agents(ticker: str, body: _PipelineAgentsRequest):
                     "warnings": _val["warnings"],
                 },
             )
+
+    # ── Current-State flag gate (Phase 1.5) ─────────────────────────────
+    # An unresolved HIGH current-state flag means the engine's assumptions
+    # disconnect from current reality (the NVO case) or a material adverse
+    # event is unaddressed. Refuse to finalize a memo on top of that until
+    # the analyst resolves each HIGH flag (override / accept-with-rationale /
+    # reject) — `needs_analysis` does NOT clear it. The analyst can still
+    # force past with `confirm_current_state_flags: true` (logged downstream).
+    try:
+        from aletheia.utils.calc_input_builder import make_calc_input
+        from aletheia.tools.dcf_engine import DCFEngine
+        _cs = _current_state_payload(
+            ticker, DCFEngine(verbose=False).run(make_calc_input(ticker)))
+    except Exception:
+        _cs = None
+    if _cs and _cs.get("unresolved_high", 0) > 0 and not body.confirm_current_state_flags:
+        _pending = [f for f in _cs.get("flags", [])
+                    if f.get("severity") == "HIGH" and not f.get("acknowledged")]
+        raise HTTPException(
+            status_code=412,
+            detail={
+                "message": (f"Stage 4 blocked: {ticker} has "
+                            f"{_cs['unresolved_high']} unresolved HIGH "
+                            "current-state flag(s). Acknowledge each (apply an "
+                            "override, accept with rationale, or reject) in the "
+                            "Current-State gate, or set "
+                            "`confirm_current_state_flags: true` to override."),
+                "flags": [{"key": f.get("key"), "category": f.get("category"),
+                           "message": f.get("message")} for f in _pending],
+            },
+        )
 
     from aletheia.cli.calc import load_records
     from aletheia.pipeline.stage3_calculate import (

@@ -684,6 +684,24 @@ class InvestmentDatabase:
             ON o.ticker = latest.ticker AND o.version = latest.max_version
         """)
 
+        # Current-State flag acknowledgments (Phase 1.5). One row per
+        # (ticker, flag_key) = the analyst's decision on that flag. A HIGH
+        # current-state flag is "resolved" once an ack exists, which clears
+        # the FLAGS-PENDING gate. The table IS the audit trail.
+        self._conn.execute("""
+            CREATE TABLE IF NOT EXISTS current_state_acknowledgments (
+                ticker      VARCHAR NOT NULL,
+                flag_key    VARCHAR NOT NULL,
+                category    VARCHAR,
+                severity    VARCHAR,
+                decision    VARCHAR NOT NULL,   -- override_applied | accepted_rationale | rejected | needs_analysis
+                rationale   VARCHAR,
+                decided_by  VARCHAR NOT NULL,
+                decided_at  VARCHAR NOT NULL,
+                PRIMARY KEY (ticker, flag_key)
+            )
+        """)
+
         if self.verbose:
             print("  ✓ Schema initialized (company_records, cleaning_flags, screen_results, universe_status, agent_runs, qualitative_assessments, dcf_assumption_overrides)")
 
@@ -1393,6 +1411,47 @@ class InvestmentDatabase:
             "DELETE FROM dcf_assumption_overrides WHERE ticker = ?",
             [ticker.upper()],
         )
+
+    # ── Current-State flag acknowledgments (Phase 1.5) ──────────────────────
+
+    def get_flag_acks(self, ticker: str) -> Dict[str, Dict[str, Any]]:
+        """Return {flag_key: ack record} for a ticker."""
+        rows = self._conn.execute(
+            "SELECT * FROM current_state_acknowledgments WHERE ticker = ?",
+            [ticker.upper()],
+        ).fetchall()
+        cols = [d[0] for d in self._conn.description]
+        return {r[cols.index("flag_key")]: dict(zip(cols, r)) for r in rows}
+
+    def upsert_flag_ack(
+        self, ticker: str, flag_key: str, *, decision: str,
+        rationale: Optional[str] = None, category: Optional[str] = None,
+        severity: Optional[str] = None, decided_by: str = "analyst",
+    ) -> None:
+        """Record (or replace) the analyst's decision on a current-state flag."""
+        self._conn.execute(
+            "DELETE FROM current_state_acknowledgments WHERE ticker = ? AND flag_key = ?",
+            [ticker.upper(), flag_key],
+        )
+        self._conn.execute(
+            "INSERT INTO current_state_acknowledgments "
+            "(ticker, flag_key, category, severity, decision, rationale, "
+            "decided_by, decided_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [ticker.upper(), flag_key, category, severity, decision, rationale,
+             decided_by,
+             datetime.datetime.now(datetime.timezone.utc).isoformat()],
+        )
+
+    def clear_flag_ack(self, ticker: str, flag_key: Optional[str] = None) -> None:
+        """Remove one ack (flag_key given) or all acks for a ticker."""
+        if flag_key:
+            self._conn.execute(
+                "DELETE FROM current_state_acknowledgments WHERE ticker = ? AND flag_key = ?",
+                [ticker.upper(), flag_key])
+        else:
+            self._conn.execute(
+                "DELETE FROM current_state_acknowledgments WHERE ticker = ?",
+                [ticker.upper()])
 
     # ─────────────────────────────────────────────────────────────────────────
     # Read operations
