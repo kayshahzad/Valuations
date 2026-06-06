@@ -1045,15 +1045,15 @@ def main():
                     use_container_width=True,
                     disabled=not new_ticker,
                 )
-            # Stage 4 opt-in. Default ON so a fresh ticker lands with all
-            # qualitative dims populated (HITL proposer + LLM extractors)
-            # — analyst reviews instead of cold-starting. Toggle OFF for
-            # "free" ingest when budget-conscious or batch-adding many
-            # tickers.
+            # Stage 4 opt-in. Default OFF — a fresh ticker ingests through
+            # Stages 1-3 (cleaning + DCF + validation) for free; the analyst
+            # explicitly opts in to the paid LLM agents. Toggle ON to also
+            # auto-fill the qualitative dims (HITL proposer + LLM extractors)
+            # in the same run.
             run_agents = st.checkbox(
                 "Run Stage 4 agents after ingest (LLM ~$1-2; auto-fills "
                 "all qualitative dims)",
-                value=True,
+                value=False,
                 key="universe_add_ticker_run_agents",
             )
         if add_clicked and new_ticker:

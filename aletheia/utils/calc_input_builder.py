@@ -127,6 +127,16 @@ def make_calc_input(
         finally:
             db.close()
 
+    # FX: convert non-USD filers (NVO/DKK, ASML/EUR, TSM/TWD) to USD so the
+    # DCF, multiple decomposition, reverse-DCF and screening — all of which
+    # compare against the USD (ADR) price — are valid. Idempotent (tagged via
+    # df.attrs), so a frame already converted upstream is left alone.
+    try:
+        from aletheia.data.fx import convert_financials_to_usd
+        df, _fx_ccy, _fx_rate = convert_financials_to_usd(df, ticker)
+    except Exception:
+        pass
+
     # Phase Q-1+ schemas carry a `period` column. The DCF engine
     # (Phase Q-5) selects TTM as the base row when present and falls
     # back to the latest FY row otherwise. We pass both shapes through;

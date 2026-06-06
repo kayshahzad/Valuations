@@ -499,6 +499,13 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
     if history is None or history.empty:
         return {"error": f"No data for {ticker} in DB."}
 
+    # FX: convert non-USD filers (NVO/DKK, ASML/EUR, TSM/TWD) to USD so the
+    # multi-year history + hero match the USD-priced DCF. Idempotent — the same
+    # frame is passed to make_calc_input below, which sees the df.attrs tag and
+    # won't re-convert.
+    from aletheia.data.fx import convert_financials_to_usd
+    history, _fx_currency, _fx_rate = convert_financials_to_usd(history, ticker)
+
     # Phase Q-7 minimal: split FY rows from TTM. The income/balance/
     # returns blocks continue to be FY-based (Phase Q-5 wires TTM into
     # the calc engine; this MVP slice surfaces TTM as a separate row in
@@ -566,6 +573,14 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
     }
 
     bundle: Dict[str, Any] = {
+        "currency": {
+            "reporting": _fx_currency,
+            "fx_rate":   _fx_rate,
+            "converted": _fx_rate != 1.0,
+            # True when the filer is non-USD but the FX rate couldn't be
+            # fetched — the displayed numbers are still in native currency.
+            "fx_unavailable": (_fx_currency != "USD" and _fx_rate == 1.0),
+        },
         "identity":         _build_identity(ticker, latest),
         "freshness":        _build_freshness(latest, ttm_snapshot),
         "ttm_snapshot":     ttm_snapshot,
@@ -623,6 +638,24 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
         bundle["bypass"] = str(e)
     except Exception as e:
         bundle["bypass"] = f"DCF failed: {type(e).__name__}: {e}"
+
+    # Current-State Awareness (Phase 1.5): reconcile the engine's near-term
+    # growth assumption against forward analyst consensus, surface flags. Does
+    # not change the engine math — adds metadata + flags for the analyst.
+    try:
+        from aletheia.agents.current_state import build_current_state
+        from aletheia.agents.current_state_events import cached_events
+        _eng_y1 = (bundle.get("assumptions") or {}).get("revenue_cagr_y1_5")
+        bundle["current_state"] = build_current_state(
+            ticker,
+            engine_y1_growth=_eng_y1,
+            latest_fy=int(latest["fiscal_year"]),
+            # Cache-only read — no LLM call on page load. The grounded events
+            # fetch runs on an explicit refresh (fetch_events force=True).
+            events=cached_events(ticker),
+        ).to_dict()
+    except Exception as e:
+        bundle["current_state"] = {"error": f"{type(e).__name__}: {e}"}
 
     # Provenance: whether analyst DCF-assumption overrides are active.
     # Lets the view banner an overridden valuation so it's never mistaken

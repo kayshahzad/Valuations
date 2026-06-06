@@ -526,6 +526,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "CapEx":         (r["CapEx"]/1e9) if r["CapEx"] else None,
             "CapEx %":       (r["CapEx"]/rev*100) if (r.get("CapEx") and rev) else None,
             "FCF":           (r["FCF"]/1e9) if r["FCF"] else None,
+            "FCF %":         (r["FCF"]/rev*100) if (r.get("FCF") and rev) else None,
             "ROIC":          (r["ROIC"]*100) if r["ROIC"] else None,
             "Quality":       r["QualityScore"],
             "FMP":           _fmp_status_glyph(r.get("FMPStatus")),
@@ -562,11 +563,46 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "CapEx":         (ttm["CapEx"] / 1e9) if ttm.get("CapEx") else None,
             "CapEx %":       (ttm["CapEx"] / ttm_rev * 100) if (ttm.get("CapEx") and ttm_rev) else None,
             "FCF":           (ttm["FCF"] / 1e9) if ttm.get("FCF") else None,
+            "FCF %":         (ttm["FCF"] / ttm_rev * 100) if (ttm.get("FCF") and ttm_rev) else None,
             "ROIC":          (ttm["ROIC"] * 100) if ttm.get("ROIC") else None,
             "Quality":       None,
             "FMP":           _fmp_status_glyph(ttm.get("FMPStatus")),
         })
     rows.extend(fy_rows)
+
+    # Average row across all FY records, pinned to the top. Computed from the
+    # numeric FY values (before the dollar columns are stringified below) so
+    # dollar averages format the same way. TTM is excluded — it's a current
+    # snapshot, not a historical year.
+    def _avg(col):
+        vals = [r.get(col) for r in fy_rows
+                if isinstance(r.get(col), (int, float))]
+        return (sum(vals) / len(vals)) if vals else None
+
+    if fy_rows:
+        # Keys MUST match the FY/TTM row order so pandas keeps column order
+        # (this row is inserted first, so its key order wins).
+        avg_row = {
+            "FY":         None,
+            "Period":     "Avg",
+            "Period end": f"{len(fy_rows)} FY",
+            "Revenue":    _avg("Revenue"),
+            "Rev Growth": _avg("Rev Growth"),
+            "EBIT":       _avg("EBIT"),
+            "EBIT %":     _avg("EBIT %"),
+            "EBITDA":     _avg("EBITDA"),
+            "Net Income": _avg("Net Income"),
+            "Tax rate":   _avg("Tax rate"),
+            "CapEx":      _avg("CapEx"),
+            "CapEx %":    _avg("CapEx %"),
+            "FCF":        _avg("FCF"),
+            "FCF %":      _avg("FCF %"),
+            "ROIC":       _avg("ROIC"),
+            "Quality":    _avg("Quality"),
+            "FMP":        "",
+        }
+        rows.insert(0, avg_row)
+
     df = pd.DataFrame(rows)
 
     # Adaptive $ formatting. The dollar columns above were scaled to
@@ -635,6 +671,9 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
                 "CapEx %", format="%.1f%%",
                 help="CapEx as % of revenue — capital intensity."),
             "FCF":        st.column_config.TextColumn("FCF", width="small"),
+            "FCF %":      st.column_config.NumberColumn(
+                "FCF %", format="%.1f%%",
+                help="Free cash flow as % of revenue — cash-conversion / FCF margin."),
             "ROIC":       st.column_config.ProgressColumn(
                 f"ROIC{_convention_flag('ROIC')}",
                 format="%.1f%%", min_value=-10.0, max_value=80.0,
@@ -794,12 +833,117 @@ def _fmp_status_glyph(status: Optional[str]) -> str:
 
 # ── Main entry point ───────────────────────────────────────────────────────
 
+def _render_current_state(cs: Dict[str, Any], ticker: str = "",
+                          company: str = "") -> None:
+    """Current-State Reconciliation panel (Phase 1.5). Surfaces conflicts
+    between engine assumptions and current signals (forward consensus +
+    material events) BEFORE the valuation, so an analyst can't anchor on a
+    +137% MoS without first confronting that consensus expects a decline."""
+    if not cs or cs.get("error"):
+        return
+    flags = cs.get("flags") or []
+    sev = cs.get("max_severity", "NONE")
+    pillar = cs.get("pillar_score")
+    events = cs.get("events") or []
+
+    icon = "⛔" if sev == "HIGH" else "⚠️" if sev == "MEDIUM" else "✓"
+    pill = f" · Current-State pillar {pillar}/5" if pillar else ""
+    with st.container(border=True):
+        hc, bc = st.columns([5, 1])
+        hc.markdown(f"#### {icon} Current-State Reconciliation{pill}")
+        # Refresh = the paid grounded events fetch (LLM + web search). Cached
+        # 7 days; page loads are free. Always reachable so events can be
+        # populated even when only the consensus flag exists.
+        if bc.button("🔄 Events", key=f"cs_refresh_{ticker}",
+                     help="Fetch material last-180-day events via LLM + web "
+                          "search (~$). Cached 7 days."):
+            from aletheia.agents.current_state_events import fetch_events
+            with st.spinner("Searching recent events…"):
+                fetch_events(ticker, company=company, force=True)
+            st.cache_data.clear()
+            st.rerun()
+
+        if sev not in ("HIGH", "MEDIUM") and not flags:
+            st.caption(
+                f"No material current-state conflicts. {'Events checked.' if events else 'No event feed pulled yet — click Events.'}"
+            )
+            return
+        if sev == "HIGH":
+            st.error(
+                "**HIGH-severity flag(s) pending.** Engine assumptions conflict "
+                "with current signals. Reconcile before treating the valuation "
+                "below as actionable (tier shows **FLAGS PENDING**)."
+            )
+        st.caption(
+            "Signals from the last ~180 days that may not be reflected in the "
+            "engine's historical-anchored assumptions. The engine math is "
+            "unchanged — these flag where an analyst override may be needed."
+        )
+
+        # Reconciliation table (engine vs signal).
+        recs = cs.get("reconciliation") or []
+        if recs:
+            rows = []
+            for r in recs:
+                eng = r.get("engine"); sig = r.get("signal"); dl = r.get("delta")
+                rows.append({
+                    "Assumption": r.get("assumption", ""),
+                    "Engine": f"{eng*100:+.1f}%" if isinstance(eng, (int, float)) else "—",
+                    f"Signal ({r.get('signal_label','')})": f"{sig*100:+.1f}%" if isinstance(sig, (int, float)) else "—",
+                    "Delta": f"{dl*100:+.1f}pp" if isinstance(dl, (int, float)) else "—",
+                    "Recommendation": r.get("recommendation", ""),
+                })
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+
+        for f in flags:
+            fsev = f.get("severity")
+            bullet = "🔴" if fsev == "HIGH" else "🟠" if fsev == "MEDIUM" else "🟡"
+            src = f" _({f.get('source')})_" if f.get("source") else ""
+            st.markdown(f"{bullet} **{fsev}** · {f.get('message','')}{src}")
+
+        events = cs.get("events") or []
+        if events:
+            st.caption(f"Material events ({len(events)}):")
+            for ev in events:
+                st.markdown(
+                    f"- {ev.get('date','')} · **{ev.get('category','')}** "
+                    f"(materiality {ev.get('materiality','?')}/5): "
+                    f"{ev.get('headline','')} _{ev.get('source','')}_"
+                )
+        elif sev == "HIGH":
+            st.caption("No event feed wired yet — consensus-based flag only. "
+                       "Run the events agent for trial/regulatory/competitive coverage.")
+
+
 def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
     """Render the redesigned Financials tab for `ticker`. `bundle` is the
     payload returned by `/ticker/<ticker>/financials`."""
     if not ticker or not bundle or bundle.get("error"):
         st.error(bundle.get("error") if bundle else "No financials available.")
         return
+
+    # Currency banner for non-USD filers (NVO/DKK, ASML/EUR, TSM/TWD).
+    _cur = bundle.get("currency") or {}
+    if _cur.get("converted"):
+        st.info(
+            f"💱 Filer reports in **{_cur.get('reporting')}** — all figures "
+            f"below (and the DCF) are converted to **USD** at the current "
+            f"spot rate (1 {_cur.get('reporting')} = ${_cur.get('fx_rate'):.4f}), "
+            f"so they're comparable to the USD share price."
+        )
+    elif _cur.get("fx_unavailable"):
+        st.warning(
+            f"⚠ Filer reports in **{_cur.get('reporting')}** but the USD FX "
+            f"rate couldn't be fetched — figures are shown in native currency "
+            f"and are **not** comparable to the USD price. Valuation unreliable."
+        )
+
+    # Current-State Reconciliation (Phase 1.5) — surfaced BEFORE the valuation
+    # so the analyst confronts current-reality conflicts before the IV/MoS.
+    _render_current_state(
+        bundle.get("current_state") or {}, ticker,
+        (bundle.get("identity") or {}).get("name") or ticker,
+    )
 
     ident     = bundle["identity"]
     inc       = bundle["income_statement"]

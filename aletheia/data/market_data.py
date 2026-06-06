@@ -39,6 +39,38 @@ class MarketDataCache:
                 time.sleep(0.5)
         return {"last_price": 0.0, "market_cap": 0.0, "shares": 0.0}
 
+def get_fx_to_usd(currency: str) -> float:
+    """USD per 1 unit of ``currency`` (e.g. DKK -> ~0.145). USD -> 1.0.
+
+    Fetched from yfinance (``{CUR}USD=X``) and cached for the process.
+    Returns 1.0 on failure — callers treat a 1.0 rate on a non-USD filer as
+    "conversion unavailable" and must surface it rather than silently
+    mixing currencies.
+    """
+    cur = (currency or "USD").upper()
+    if cur == "USD":
+        return 1.0
+    key = f"FX:{cur}"
+    cached = MarketDataCache._cache.get(key)
+    if cached is not None:
+        return cached.get("rate", 1.0)
+    rate = None
+    for _ in range(3):
+        try:
+            info = yf.Ticker(f"{cur}USD=X").fast_info
+            px = float(info.last_price) if info.last_price else None
+            if px and px > 0:
+                rate = px
+                break
+        except Exception:
+            time.sleep(0.5)
+    if rate is None:
+        print(f"  ⚠ FX: could not fetch {cur}USD rate; using 1.0 (NO conversion)")
+        rate = 1.0
+    MarketDataCache._cache[key] = {"rate": rate}
+    return rate
+
+
 def get_current_price(ticker: str) -> float:
     return MarketDataCache.get_info(ticker).get("last_price", 0.0)
 
