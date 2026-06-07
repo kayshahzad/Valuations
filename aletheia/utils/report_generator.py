@@ -1641,10 +1641,13 @@ class ReportGenerator:
         if impl is None and hist is None:
             return ""
 
-        # Determine bar widths — scale to whichever is larger
+        # Determine bar widths — scale to whichever is larger by MAGNITUDE, so a
+        # negative implied CAGR (market prices a declining business) still draws
+        # a proportional bar instead of being clipped to nothing.
         max_v = max(abs(impl or 0), abs(hist or 0)) or 0.01
-        impl_w = ((impl or 0) / max_v) * 100
-        hist_w = ((hist or 0) / max_v) * 100
+        impl_w = (abs(impl or 0) / max_v) * 100
+        hist_w = (abs(hist or 0) / max_v) * 100
+        impl_color = "#c0392b" if (impl or 0) < 0 else "#f59e0b"  # red when negative
         signal = (rdcf.get("signal") or "—").upper()
 
         def _bar(label: str, w: float, val_str: str, color: str) -> str:
@@ -1659,7 +1662,7 @@ class ReportGenerator:
                 f'text-align:right;">{val_str}</div></div>'
             )
 
-        bars = _bar("Implied (market)",  impl_w, self._fmt_pct(impl), "#f59e0b") \
+        bars = _bar("Implied (market)",  impl_w, self._fmt_pct(impl), impl_color) \
              + _bar("Historical (5y)",   hist_w, self._fmt_pct(hist), "#3b82f6")
 
         ratio_str = ""

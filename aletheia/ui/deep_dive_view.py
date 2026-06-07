@@ -728,14 +728,21 @@ def _reverse_dcf_chart(rdcf: Dict[str, Any]) -> None:
         # the same muted text token so it's legible in both themes.
         textfont=dict(size=13, color=_MUTED_TEXT),
     )
+    # Y-range must include 0 AND any negative value — a market-implied CAGR can
+    # be negative (price implies a *declining* business), and a [0, max] range
+    # would clip that bar to nothing (it sits below the axis floor).
+    _lo = min(0.0, hist, impl)
+    _hi = max(0.0, hist, impl)
+    _span = (_hi - _lo) or 1.0
     fig.update_layout(
         height=210,
-        margin=dict(l=0, r=0, t=20, b=0),
+        margin=dict(l=0, r=0, t=20, b=20),
         showlegend=False,
         xaxis=dict(showgrid=False, color=_MUTED_TEXT,
                    tickfont=dict(family="DM Mono", size=13)),
-        yaxis=dict(showgrid=False, zeroline=False, visible=False,
-                   range=[0, max(hist, impl) * 1.5] if max(hist, impl) > 0 else [0, 1]),
+        yaxis=dict(showgrid=False, zeroline=True, zerolinecolor=_MUTED_TEXT,
+                   visible=False,
+                   range=[_lo - _span * 0.2, _hi + _span * 0.25]),
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
     )
