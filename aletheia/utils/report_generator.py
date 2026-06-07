@@ -1027,11 +1027,21 @@ class ReportGenerator:
         fm = dp.get("failure_modes") or []
         fm_html = ""
         if fm:
-            items = "".join(f"<li>{m.get('name', m) if isinstance(m, dict) else m}</li>"
-                            for m in fm[:5])
-            fm_html = f"<p style='margin:8px 0 2px 0'><strong>Failure modes:</strong></p><ul>{items}</ul>"
+            items = ""
+            for m in fm[:5]:
+                if isinstance(m, dict):
+                    watch = (f" <span style='color:#666'>— watch: {m['monitoring_metric']}</span>"
+                             if m.get("monitoring_metric") else "")
+                    impact = (f"<br><span style='color:#888;font-size:12px'>{m['impact']}</span>"
+                              if m.get("impact") else "")
+                    items += f"<li><strong>{m.get('name','')}</strong>{watch}{impact}</li>"
+                else:
+                    items += f"<li>{m}</li>"
+            fm_html = (f"<p style='margin:8px 0 2px 0'><strong>Failure modes "
+                       f"(permanent-impairment events to monitor):</strong></p><ul>{items}</ul>")
         pm = dp.get("premortem")
-        pm_html = f'<p style="margin:6px 0"><strong>Pre-mortem:</strong> {pm}</p>' if pm else ""
+        pm_html = (f'<p style="margin:6px 0;padding:8px 10px;background:#fcf3f3;'
+                   f'border-radius:6px"><strong>🔮 Pre-mortem:</strong> {pm}</p>') if pm else ""
 
         return f"""
   <div class="card" style="page-break-inside:avoid">

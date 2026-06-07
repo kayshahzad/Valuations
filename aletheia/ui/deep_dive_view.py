@@ -2007,10 +2007,21 @@ def _downside_protection_panel(dp: Dict[str, Any]) -> None:
         siz = dp.get("position_sizing") or {}
         st.markdown(f"**Suggested size:** {siz.get('label','—')}  "
                     f"_({siz.get('basis','')})_")
-        for m in (dp.get("failure_modes") or [])[:5]:
-            st.caption(f"⚠ {m.get('name', m) if isinstance(m, dict) else m}")
+        fms = dp.get("failure_modes") or []
+        if fms:
+            st.markdown("**Failure modes** _(permanent-impairment events to monitor)_")
+            for m in fms[:5]:
+                if isinstance(m, dict):
+                    line = f"⚠ **{m.get('name','')}**"
+                    if m.get("monitoring_metric"):
+                        line += f" — watch: _{m['monitoring_metric']}_"
+                    st.markdown(line)
+                    if m.get("impact"):
+                        st.caption(f"   ↳ {m['impact']}")
+                else:
+                    st.markdown(f"⚠ {m}")
         if dp.get("premortem"):
-            st.caption(f"🔮 Pre-mortem: {dp['premortem']}")
+            st.info(f"🔮 **Pre-mortem:** {dp['premortem']}")
 
 
 def _current_state_gate(cs: Dict[str, Any], ticker: str = "") -> str:

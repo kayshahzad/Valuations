@@ -30,12 +30,24 @@ The ContrarianOutput schema is UNCHANGED so lead_agent reads it identically.
 """
 
 import os
+from typing import List
 from langchain_core.messages import HumanMessage
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
 from config import MODEL_NAME, TEMPERATURE
 from aletheia.utils.tracing import tracer
+
+
+class FailureMode(BaseModel):
+    """A specific event that would PERMANENTLY impair the thesis (not a
+    temporary drawdown), with the metric an analyst should monitor for it."""
+    name: str = Field(description="Short name, e.g. 'GLP-1 share loss to oral rival'")
+    trigger: str = Field(description="The event/development that sets it off")
+    impact: str = Field(description="How it permanently impairs value (which DCF lever)")
+    monitoring_metric: str = Field(
+        description="The specific metric + threshold to watch, e.g. "
+                    "'US script share < 55%' or 'gross margin < 70%'")
 
 
 class ContrarianOutput(BaseModel):
@@ -49,6 +61,16 @@ class ContrarianOutput(BaseModel):
     )
     sentiment_score: int = Field(
         description="Score from -10 (Extremely Negative) to +10 (Extremely Positive)"
+    )
+    failure_modes: List[FailureMode] = Field(
+        default_factory=list,
+        description="3-5 specific events that would PERMANENTLY impair the "
+                    "thesis (not temporary drawdowns), each with a monitoring metric"
+    )
+    premortem: str = Field(
+        default="",
+        description="Pre-mortem: 'It is 3 years from now and this investment has "
+                    "failed badly. In 2-3 sentences, what most likely happened?'"
     )
 
 
@@ -212,6 +234,16 @@ YOUR TASKS:
 
 3. **Sentiment Score**: Rate -10 to +10 based on ALL evidence combined,
    including the worst-case agent scenario IPS.
+
+4. **Failure Modes**: List 3-5 SPECIFIC events that would PERMANENTLY impair
+   this thesis (not temporary drawdowns). For each: the trigger, how it impairs
+   value (which DCF lever — growth, margin, moat, terminal value), and a
+   concrete MONITORING METRIC with a threshold an analyst can track (e.g.
+   "US prescription share < 55%", "gross margin < 70%", "net debt/EBITDA > 4×").
+   These must be company-specific, not generic ("competition", "recession").
+
+5. **Pre-mortem**: It is 3 years from now and this investment has failed badly.
+   In 2-3 sentences, state the single most likely story for what happened.
 
 CRITICAL: Be specific and mathematical. Cite numbers from scenarios where
 they exist. "The 'Patent cliff drag' scenario (proposed_by=context) lowers

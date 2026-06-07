@@ -178,10 +178,14 @@ class ServingReportWriter:
         # required-MoS-by-risk, position-sizing band. Deterministic — no LLM.
         try:
             from aletheia.tools.downside_protection import compose_downside_protection
-            _tier = (((report.get("4_valuation_synthesis") or {})
-                      .get("investment_thesis") or {})
+            _synth = report.get("4_valuation_synthesis") or {}
+            _tier = ((_synth.get("investment_thesis") or {})
                      .get("pillar_scores") or {}).get("position_tier")
-            dp = compose_downside_protection(ticker, conviction_tier=_tier)
+            _ca = _synth.get("contrarian_analysis") or {}
+            dp = compose_downside_protection(
+                ticker, conviction_tier=_tier,
+                failure_modes=_ca.get("failure_modes") or [],
+                premortem=_ca.get("premortem") or "")
             if dp:
                 report["downside_protection"] = dp
         except Exception as exc:
@@ -498,6 +502,9 @@ def lead_agent(state):
     # constitutional-floor / existential scenario).
     contrarian_engine_bear = contrarian_structured.get("engine_bear_iv")
     contrarian_tail_risk   = contrarian_structured.get("tail_risk_present")
+    # §8 downside extras (LLM): named failure modes + pre-mortem.
+    contrarian_failure_modes = contrarian_structured.get("failure_modes", []) or []
+    contrarian_premortem     = contrarian_structured.get("premortem", "") or ""
 
     # ── Deterministic narrative assembly (replaces lead's LLM call) ──────────
     # Previously, lead made an LLM call producing growth_decay_assessment +
@@ -650,6 +657,8 @@ def lead_agent(state):
                 "quant_challenge":   contrarian_quant,
                 "engine_bear_iv":    contrarian_engine_bear,
                 "tail_risk_present": contrarian_tail_risk,
+                "failure_modes":     contrarian_failure_modes,
+                "premortem":         contrarian_premortem,
             },
             "investment_thesis": {
                 "conviction_score":   conviction,

@@ -181,9 +181,15 @@ def build_downside_protection(
 
 def compose_downside_protection(
     ticker: str, *, conviction_tier: Optional[str] = None,
+    failure_modes: Optional[List[Dict[str, Any]]] = None,
+    premortem: Optional[str] = None,
 ) -> Optional[Dict[str, Any]]:
     """One-call composer (recomputes engine + multiples) for surfaces that only
-    have a ticker — e.g. HTML report generation. No LLM. None on failure."""
+    have a ticker — e.g. HTML report generation. No LLM. None on failure.
+
+    ``failure_modes`` / ``premortem`` are the LLM-sourced extras from the
+    contrarian agent (passed through when available); the deterministic core
+    is computed here."""
     try:
         from aletheia.utils.calc_input_builder import make_calc_input
         from aletheia.tools.dcf_engine import DCFEngine
@@ -199,7 +205,8 @@ def compose_downside_protection(
             md = None
         return build_downside_protection(
             calc, result, conviction_tier=conviction_tier,
-            multiple_decomposition=md)
+            multiple_decomposition=md,
+            failure_modes=failure_modes, premortem=premortem)
     except Exception:
         return None
 
