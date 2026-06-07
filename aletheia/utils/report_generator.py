@@ -529,114 +529,127 @@ class ReportGenerator:
             f"<th>Decision</th><th>Rationale</th><th>By / when</th></tr></thead>"
             f"<tbody>{rows}</tbody></table></div>")
 
+    # The six bottom-up themes (mirror the business-analysis map A–F).
+    _BA_THEMES = [
+        ("A", "What the company sells", "The product-level reality behind the revenue line", "A. What it sells"),
+        ("B", "Market size & capture", "Where the company sits in the market, room to grow", "B. Market size"),
+        ("C", "Unit economics", "The economic structure beneath the aggregate margins", "C. Unit economics"),
+        ("D", "Growth source decomposition", "Is the company growing the pie or taking share?", "D. Growth source"),
+        ("E", "Innovation & trend positioning", "Position relative to technology and demand shifts", "E. Innovation"),
+        ("F", "Industry context & dynamics", "Where the industry is in its lifecycle", "F. Industry"),
+    ]
+
     def _render_business_analysis(self, ba: Dict[str, Any]) -> str:
-        """§4 bottom-up business analysis: growth decomposition (organic/M&A)
-        + coverage map of the 12 dimensions. Empty-safe."""
+        """§4 bottom-up business analysis — one labeled sub-section per theme
+        (A–F), each showing its extracted/derived content + the dimensions still
+        pending. Empty-safe."""
         if not ba or not ba.get("available"):
             return ""
         pct = self._fmt_pct_or_dash
         gd = ba.get("growth_decomposition") or {}
-        gd_html = ""
-        if gd.get("available"):
-            breaks = gd.get("break_years") or []
-            gd_html = (
-                f'<p style="margin:4px 0"><strong>Growth source:</strong> raw CAGR '
-                f'{pct(gd.get("raw_cagr"))} = organic {pct(gd.get("organic_cagr"))} '
-                f'+ M&A {pct(gd.get("ma_contribution_pp"))}'
-                + (f' (transformative breaks FY{breaks})' if breaks else '')
-                + f' — <em>{gd.get("split","")}</em></p>')
-            if gd.get("share_gain_pp") is not None:
-                gd_html += (
-                    f'<p style="margin:2px 0"><strong>Market vs share:</strong> '
-                    f'organic {pct(gd.get("organic_cagr"))} vs sector market '
-                    f'{pct(gd.get("market_growth_ref"))} → share '
-                    f'{pct(gd.get("share_gain_pp"))} (<em>{gd.get("share_label","")}</em>) '
-                    f'<span style="color:#888;font-size:11px">'
-                    f'[{gd.get("market_ref_basis","")}]</span></p>')
-        # Extracted themes A+B (Phase 2 LLM), when present.
         ex = ba.get("extracted") or {}
-        ex_html = ""
-        if ex:
-            def _ul(items, fmt):
-                lis = "".join(f"<li>{fmt(i)}</li>" for i in (items or [])[:6])
-                return f"<ul style='margin:2px 0 6px 0'>{lis}</ul>" if lis else ""
-            prods = _ul(ex.get("product_lines"), lambda p:
-                        f"<strong>{p.get('name','')}</strong>"
-                        + (f" — {p.get('pricing_model')}" if p.get('pricing_model') else "")
-                        + (f" <span style='color:#888'>({p.get('segment')})</span>" if p.get('segment') else ""))
-            custs = _ul(ex.get("major_customers"), lambda c:
-                        f"<strong>{c.get('name','')}</strong>"
-                        + (f" — {c.get('relationship')}" if c.get('relationship') else "")
-                        + (f", recompete {c.get('recompete_or_renewal')}" if c.get('recompete_or_renewal') else "")
-                        + (f", {c.get('pct_revenue')} of rev" if c.get('pct_revenue') else ""))
-            chans = ", ".join(ex.get("distribution_channels") or [])
-            tam = ex.get("tam_estimate") or ""
-            share = ex.get("market_share") or ""
-            white = ex.get("whitespace_runway") or ""
-            adj = ", ".join(ex.get("adjacent_tams") or [])
-            parts = []
-            if prods: parts.append(f"<p style='margin:4px 0 0 0'><strong>Product lines</strong></p>{prods}")
-            if custs: parts.append(f"<p style='margin:4px 0 0 0'><strong>Major customers / contracts</strong></p>{custs}")
-            if chans: parts.append(f"<p style='margin:2px 0'><strong>Channels:</strong> {chans}</p>")
-            if tam: parts.append(f"<p style='margin:2px 0'><strong>TAM:</strong> {tam}"
-                                 + (f" <span style='color:#888'>({ex.get('tam_methodology')})</span>" if ex.get('tam_methodology') else "") + "</p>")
-            if share: parts.append(f"<p style='margin:2px 0'><strong>Market share:</strong> {share}</p>")
-            if white: parts.append(f"<p style='margin:2px 0'><strong>Whitespace:</strong> {white}</p>")
-            if adj: parts.append(f"<p style='margin:2px 0'><strong>Adjacent TAMs:</strong> {adj}</p>")
-            # Themes C (unit economics) + E (innovation).
-            for label, key in (("Contract economics", "contract_economics"),
-                               ("CAC / LTV", "cac_ltv"),
-                               ("Unit cost", "unit_cost"),
-                               ("Segment margin trajectory", "segment_margin_trajectory"),
-                               ("Operating leverage", "operating_leverage"),
-                               ("R&D pipeline", "rd_pipeline"),
-                               ("Trend positioning", "trend_positioning"),
-                               ("Disruption risk", "disruption_risk"),
-                               ("Acquisition strategy", "acquisition_strategy")):
-                v = ex.get(key)
-                if v:
-                    parts.append(f"<p style='margin:2px 0'><strong>{label}:</strong> {v}</p>")
-            launches = ex.get("new_product_launches") or []
-            if launches:
-                lis = "".join(
-                    f"<li><strong>{l.get('name','')}</strong>"
-                    + (f" ({l.get('timing')})" if l.get('timing') else "")
-                    + (f" — {l.get('traction')}" if l.get('traction') else "") + "</li>"
-                    for l in launches[:5])
-                parts.append(f"<p style='margin:4px 0 0 0'><strong>New launches</strong></p>"
-                             f"<ul style='margin:2px 0 6px 0'>{lis}</ul>")
-            ex_html = "".join(parts)
-
-        # Sector emphasis (Phase 4 template).
+        cov = ba.get("coverage") or []
         tpl = ba.get("sector_template") or {}
+
+        def _kv(label, val, methodology=None):
+            if not val:
+                return ""
+            extra = (f" <span style='color:#888'>({methodology})</span>"
+                     if methodology else "")
+            return f"<p style='margin:2px 0'><strong>{label}:</strong> {val}{extra}</p>"
+
+        def _list(label, items, fmt):
+            lis = "".join(f"<li>{fmt(i)}</li>" for i in (items or [])[:6])
+            return (f"<p style='margin:4px 0 0 0'><strong>{label}</strong></p>"
+                    f"<ul style='margin:2px 0 6px 0'>{lis}</ul>") if lis else ""
+
+        def _theme_body(letter):
+            if letter == "A":
+                return (_list("Product lines", ex.get("product_lines"), lambda p:
+                              f"<strong>{p.get('name','')}</strong>"
+                              + (f" — {p.get('pricing_model')}" if p.get('pricing_model') else "")
+                              + (f" <span style='color:#888'>({p.get('segment')})</span>" if p.get('segment') else ""))
+                        + _list("Major customers / contracts", ex.get("major_customers"), lambda c:
+                                f"<strong>{c.get('name','')}</strong>"
+                                + (f" — {c.get('relationship')}" if c.get('relationship') else "")
+                                + (f", recompete {c.get('recompete_or_renewal')}" if c.get('recompete_or_renewal') else "")
+                                + (f", {c.get('pct_revenue')} of rev" if c.get('pct_revenue') else ""))
+                        + _kv("Distribution channels", ", ".join(ex.get("distribution_channels") or [])))
+            if letter == "B":
+                return (_kv("TAM", ex.get("tam_estimate"), ex.get("tam_methodology"))
+                        + _kv("Market share", ex.get("market_share"))
+                        + _kv("Whitespace runway", ex.get("whitespace_runway"))
+                        + _kv("Adjacent TAMs", ", ".join(ex.get("adjacent_tams") or [])))
+            if letter == "C":
+                return (_kv("Contract economics", ex.get("contract_economics"))
+                        + _kv("CAC / LTV", ex.get("cac_ltv"))
+                        + _kv("Unit cost", ex.get("unit_cost"))
+                        + _kv("Segment margin trajectory", ex.get("segment_margin_trajectory"))
+                        + _kv("Operating leverage", ex.get("operating_leverage")))
+            if letter == "D":
+                out = ""
+                if gd.get("available"):
+                    breaks = gd.get("break_years") or []
+                    out += (f'<p style="margin:2px 0"><strong>Growth source:</strong> raw CAGR '
+                            f'{pct(gd.get("raw_cagr"))} = organic {pct(gd.get("organic_cagr"))} '
+                            f'+ M&A {pct(gd.get("ma_contribution_pp"))}'
+                            + (f' (breaks FY{breaks})' if breaks else '')
+                            + f' — <em>{gd.get("split","")}</em></p>')
+                    if gd.get("share_gain_pp") is not None:
+                        out += (f'<p style="margin:2px 0"><strong>Market vs share:</strong> '
+                                f'organic {pct(gd.get("organic_cagr"))} vs sector market '
+                                f'{pct(gd.get("market_growth_ref"))} → share '
+                                f'{pct(gd.get("share_gain_pp"))} (<em>{gd.get("share_label","")}</em>)</p>')
+                return out
+            if letter == "E":
+                return (_kv("R&D pipeline", ex.get("rd_pipeline"))
+                        + _kv("Trend positioning", ex.get("trend_positioning"))
+                        + _list("New product launches", ex.get("new_product_launches"), lambda l:
+                                f"<strong>{l.get('name','')}</strong>"
+                                + (f" ({l.get('timing')})" if l.get('timing') else "")
+                                + (f" — {l.get('traction')}" if l.get('traction') else ""))
+                        + _kv("Disruption risk", ex.get("disruption_risk"))
+                        + _kv("Acquisition strategy", ex.get("acquisition_strategy")))
+            if letter == "F":
+                return _kv("Industry lifecycle stage", ba.get("lifecycle"))
+            return ""
+
+        # Sector emphasis header.
         tpl_html = ""
         if tpl.get("emphasis"):
-            tpl_html = (f'<p style="margin:4px 0"><strong>Sector emphasis '
-                        f'({tpl.get("label","")}):</strong> '
-                        f'{" · ".join(tpl["emphasis"])}</p>')
+            tpl_html = (f'<p style="margin:2px 0 8px 0;padding:6px 10px;'
+                        f'background:#f7f9fb;border-radius:6px"><strong>Sector emphasis '
+                        f'({tpl.get("label","")}):</strong> {" · ".join(tpl["emphasis"])}</p>')
 
-        # Coverage map (sector-priority dimensions flagged ★ and sorted first).
-        cov = ba.get("coverage") or []
-        rows = ""
-        for c in cov:
-            badge = ("✅" if c.get("status") == "present" else "○")
-            color = "#27ae60" if c.get("status") == "present" else "#b0b0b0"
-            star = "★ " if c.get("priority") else ""
-            rows += (f"<tr><td>{c.get('theme','')}</td>"
-                     f"<td>{star}{c.get('dimension','')}</td>"
-                     f"<td style='color:{color}'>{badge} {c.get('status','')}</td>"
-                     f"<td style='color:#888;font-size:11px'>{c.get('source','')}</td></tr>")
-        cov_html = (
-            f"<table class='table-styled'><thead><tr><th>Theme</th><th>Dimension</th>"
-            f"<th>Status</th><th>Source</th></tr></thead><tbody>{rows}</tbody></table>")
+        # One sub-section per theme A–F.
+        sections = ""
+        for letter, title, subtitle, cov_prefix in self._BA_THEMES:
+            body = _theme_body(letter)
+            pend = [c["dimension"] for c in cov
+                    if c.get("theme", "").startswith(cov_prefix) and c.get("status") != "present"]
+            prio = {c["dimension"] for c in cov
+                    if c.get("theme", "").startswith(cov_prefix) and c.get("priority")}
+            pend_html = ""
+            if pend:
+                marked = ["★ " + d if d in prio else d for d in pend]
+                pend_html = (f'<p style="font-size:11px;color:#b0b0b0;margin:2px 0">'
+                             f'Pending extraction: {", ".join(marked)}</p>')
+            if not body and not pend_html:
+                continue
+            sections += (
+                f'<div style="margin:8px 0">'
+                f'<h4 style="margin:6px 0 2px 0">{letter} · {title}</h4>'
+                f'<p style="font-size:11px;color:#888;margin:0 0 4px 0">{subtitle}</p>'
+                f'{body or ""}{pend_html}</div>')
+
         return f"""
   <div class="card" style="page-break-inside:avoid">
   <h3>🔬 Bottom-up business analysis</h3>
   <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
-    The business reality beneath the revenue line. {ba.get('n_present','?')}/{ba.get('n_total','?')}
-    dimensions populated today; the rest pending structured extraction.
+    The business reality beneath the revenue line, by theme.
+    {ba.get('n_present','?')}/{ba.get('n_total','?')} dimensions populated; ★ = sector priority.
   </p>
-  {gd_html}{tpl_html}{ex_html}{cov_html}
+  {tpl_html}{sections}
   </div>"""
 
     def _render_assumption_grounding(self, ag: Dict[str, Any]) -> str:
