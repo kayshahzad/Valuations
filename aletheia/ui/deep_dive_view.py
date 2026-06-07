@@ -1993,6 +1993,24 @@ def _business_analysis_panel(ba: Dict[str, Any], ag: Dict[str, Any]) -> None:
                     f"{_p(gd.get('organic_cagr'))} + M&A {_p(gd.get('ma_contribution_pp'))}"
                     + (f" (breaks FY{breaks})" if breaks else "")
                     + f" — _{gd.get('split','')}_")
+            ex = (ba or {}).get("extracted") or {}
+            if ex:
+                prods = ex.get("product_lines") or []
+                if prods:
+                    st.markdown("**Product lines:** " + ", ".join(
+                        f"{p.get('name','')}" + (f" ({p.get('pricing_model')})" if p.get('pricing_model') else "")
+                        for p in prods[:5]))
+                custs = ex.get("major_customers") or []
+                if custs:
+                    st.markdown("**Major customers:** " + ", ".join(
+                        c.get("name", "") for c in custs[:5]))
+                if ex.get("tam_estimate"):
+                    st.caption(f"TAM: {ex['tam_estimate']}"
+                               + (f" — {ex.get('tam_methodology')}" if ex.get('tam_methodology') else ""))
+                if ex.get("market_share"):
+                    st.caption(f"Market share: {ex['market_share']}")
+                if ex.get("whitespace_runway"):
+                    st.caption(f"Whitespace: {ex['whitespace_runway']}")
             if ba and ba.get("available"):
                 st.caption(f"Coverage: {ba.get('n_present','?')}/{ba.get('n_total','?')} "
                            "bottom-up dimensions populated (rest pending extraction)")

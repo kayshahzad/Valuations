@@ -161,6 +161,22 @@ def qualitative_extraction_node(state: Dict[str, Any]) -> Dict[str, Any]:
                     for dim_id in BUNDLE_DIMS
                 ])
 
+    # ── Bottom-up business extraction (memo §4, Phase 2) ───────────
+    # One structured call against the 10-K already in hand → themes A+B
+    # (product/contracts, TAM/share). Cached to disk; read on the free
+    # path by business_analysis. Never fails the node.
+    if raw_10k.strip():
+        try:
+            from aletheia.agents.business_extraction import extract_business_ab
+            company = state.get("company") or state.get("company_name") or ""
+            ba = extract_business_ab(ticker, company, raw_10k, force=True)
+            results.append({"dimension_id": "business_ab",
+                            "status": "ok" if ba else "no_data"})
+        except Exception as exc:
+            print(f"  ⚠ business_ab extraction failed for {ticker}: {exc}")
+            results.append({"dimension_id": "business_ab", "status": "error",
+                            "reason": f"{type(exc).__name__}: {str(exc)[:200]}"})
+
     # ── HITL proposer (Phase 1 of HITL auto-fill) ──────────────────
     # Reuses the 10-K text from the bundle above. One LLM call
     # proposes scores for all 9 HITL dimensions. Analyst-overridden

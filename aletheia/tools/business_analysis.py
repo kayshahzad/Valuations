@@ -16,7 +16,7 @@ CAC/LTV) is added in later phases via structured extraction.
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 
 def build_growth_decomposition(calc) -> Dict[str, Any]:
@@ -92,8 +92,24 @@ _COVERAGE = [
 ]
 
 
+# Coverage dimensions the Phase-2 LLM extraction (themes A+B) can satisfy.
+_AB_FIELDS = {
+    "Product / service portfolio": "product_lines",
+    "Major customers / contracts": "major_customers",
+    "Distribution channels": "distribution_channels",
+    "TAM sizing": "tam_estimate",
+    "Market share / position": "market_share",
+    "Whitespace / adjacent TAMs": "whitespace_runway",
+}
+
+
 def _present(source: Optional[str], bm: Dict[str, Any], dims: Dict[str, Any],
-             gd: Dict[str, Any], lifecycle: Optional[str]) -> bool:
+             gd: Dict[str, Any], lifecycle: Optional[str],
+             ab: Dict[str, Any], dimension: str = "") -> bool:
+    # Phase-2 extraction fills several A/B dimensions directly.
+    ab_field = _AB_FIELDS.get(dimension)
+    if ab_field and ab.get(ab_field):
+        return True
     if not source:
         return False
     if source == "growth_decomposition":
@@ -130,20 +146,30 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
 
     gd = build_growth_decomposition(calc) if calc is not None else {"available": False}
 
+    # Phase-2 LLM extraction (themes A+B), read from disk cache (no LLM here).
+    ab: Dict[str, Any] = {}
+    try:
+        from aletheia.agents.business_extraction import cached_business_ab
+        ab = cached_business_ab(ticker) or {}
+    except Exception:
+        ab = {}
+
     coverage = []
     n_present = 0
     for theme, dimension, source in _COVERAGE:
-        present = _present(source, bm, dims, gd, lifecycle)
+        present = _present(source, bm, dims, gd, lifecycle, ab, dimension)
         n_present += int(present)
         coverage.append({
             "theme": theme, "dimension": dimension,
             "status": "present" if present else "pending",
-            "source": source or "needs extraction",
+            "source": ("business_ab extraction" if _AB_FIELDS.get(dimension) and ab.get(_AB_FIELDS[dimension])
+                       else source or "needs extraction"),
         })
 
     out.update({
         "available": True,
         "growth_decomposition": gd,
+        "extracted": ab or None,          # themes A+B (Phase 2 LLM)
         "coverage": coverage,
         "n_present": n_present,
         "n_total": len(coverage),

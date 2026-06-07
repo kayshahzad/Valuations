@@ -94,5 +94,35 @@ class TestAssumptionGrounding(unittest.TestCase):
         self.assertFalse(ag["available"])
 
 
+class TestPhase2Merge(unittest.TestCase):
+    """Phase-2 extracted A+B fields merge into the block + flip coverage."""
+
+    def test_extraction_flips_coverage(self):
+        from aletheia.tools import business_analysis as ba_mod
+        import aletheia.agents.business_extraction as bx
+        orig = bx.cached_business_ab
+        bx.cached_business_ab = lambda t: {
+            "product_lines": [{"name": "Widget", "pricing_model": "subscription"}],
+            "major_customers": [{"name": "US DoD"}],
+            "tam_estimate": "$50B",
+            "market_share": "8%",
+        }
+        # Also stub the DB call (no assessments).
+        try:
+            calc = _Calc([100, 106, 112, 119, 126, 134],
+                         [2018, 2019, 2020, 2021, 2022, 2023])
+            res = ba_mod.build_business_analysis({}, "TST", calc=calc)
+        finally:
+            bx.cached_business_ab = orig
+        self.assertTrue(res["available"])
+        self.assertIsNotNone(res["extracted"])
+        # Product/customer/TAM/share dimensions should now read 'present'.
+        cov = {c["dimension"]: c["status"] for c in res["coverage"]}
+        self.assertEqual(cov["Product / service portfolio"], "present")
+        self.assertEqual(cov["Major customers / contracts"], "present")
+        self.assertEqual(cov["TAM sizing"], "present")
+        self.assertEqual(cov["Market share / position"], "present")
+
+
 if __name__ == "__main__":
     unittest.main()

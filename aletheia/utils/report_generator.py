@@ -545,6 +545,38 @@ class ReportGenerator:
                 f'+ M&A {pct(gd.get("ma_contribution_pp"))}'
                 + (f' (transformative breaks FY{breaks})' if breaks else '')
                 + f' — <em>{gd.get("split","")}</em></p>')
+        # Extracted themes A+B (Phase 2 LLM), when present.
+        ex = ba.get("extracted") or {}
+        ex_html = ""
+        if ex:
+            def _ul(items, fmt):
+                lis = "".join(f"<li>{fmt(i)}</li>" for i in (items or [])[:6])
+                return f"<ul style='margin:2px 0 6px 0'>{lis}</ul>" if lis else ""
+            prods = _ul(ex.get("product_lines"), lambda p:
+                        f"<strong>{p.get('name','')}</strong>"
+                        + (f" — {p.get('pricing_model')}" if p.get('pricing_model') else "")
+                        + (f" <span style='color:#888'>({p.get('segment')})</span>" if p.get('segment') else ""))
+            custs = _ul(ex.get("major_customers"), lambda c:
+                        f"<strong>{c.get('name','')}</strong>"
+                        + (f" — {c.get('relationship')}" if c.get('relationship') else "")
+                        + (f", recompete {c.get('recompete_or_renewal')}" if c.get('recompete_or_renewal') else "")
+                        + (f", {c.get('pct_revenue')} of rev" if c.get('pct_revenue') else ""))
+            chans = ", ".join(ex.get("distribution_channels") or [])
+            tam = ex.get("tam_estimate") or ""
+            share = ex.get("market_share") or ""
+            white = ex.get("whitespace_runway") or ""
+            adj = ", ".join(ex.get("adjacent_tams") or [])
+            parts = []
+            if prods: parts.append(f"<p style='margin:4px 0 0 0'><strong>Product lines</strong></p>{prods}")
+            if custs: parts.append(f"<p style='margin:4px 0 0 0'><strong>Major customers / contracts</strong></p>{custs}")
+            if chans: parts.append(f"<p style='margin:2px 0'><strong>Channels:</strong> {chans}</p>")
+            if tam: parts.append(f"<p style='margin:2px 0'><strong>TAM:</strong> {tam}"
+                                 + (f" <span style='color:#888'>({ex.get('tam_methodology')})</span>" if ex.get('tam_methodology') else "") + "</p>")
+            if share: parts.append(f"<p style='margin:2px 0'><strong>Market share:</strong> {share}</p>")
+            if white: parts.append(f"<p style='margin:2px 0'><strong>Whitespace:</strong> {white}</p>")
+            if adj: parts.append(f"<p style='margin:2px 0'><strong>Adjacent TAMs:</strong> {adj}</p>")
+            ex_html = "".join(parts)
+
         # Coverage map.
         cov = ba.get("coverage") or []
         rows = ""
@@ -564,7 +596,7 @@ class ReportGenerator:
     The business reality beneath the revenue line. {ba.get('n_present','?')}/{ba.get('n_total','?')}
     dimensions populated today; the rest pending structured extraction.
   </p>
-  {gd_html}{cov_html}
+  {gd_html}{ex_html}{cov_html}
   </div>"""
 
     def _render_assumption_grounding(self, ag: Dict[str, Any]) -> str:
