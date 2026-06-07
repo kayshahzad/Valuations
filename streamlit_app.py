@@ -1258,6 +1258,14 @@ def main():
         if not selected:
             st.info("Select a ticker from the sidebar to begin analysis.")
             return
+        # /dcf is cached by Streamlit; a Stage-4 run (or report rebuild) won't
+        # bust it automatically. Offer a one-click refresh so freshly-extracted
+        # bottom-up content shows without restarting the app.
+        if st.button("🔄 Refresh data", key="bottomup_refresh",
+                     help="Clear the cached /dcf payload and re-fetch (e.g. after "
+                          "a Stage-4 run populates the A/B/C/E extraction)."):
+            fetch_dcf.clear()
+            st.rerun()
         dcf_data = fetch_dcf(selected)
         if not dcf_data:
             st.info(f"**No DCF / bottom-up available for {selected}.** The ticker "
