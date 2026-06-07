@@ -47,6 +47,10 @@ class ValuationProfile:
     # in the UI. This override field now bypasses the historical CAGR
     # path entirely when set.
     revenue_growth_y1_5_override:   Optional[float] = None
+    # Tier-2 — terminal ROIC override (assumption-grounding bridge). The engine
+    # otherwise holds terminal ROIC at max(base_roic, 8%); an analyst-grounded
+    # value (e.g. peer-set ROIC, or fade-to-WACC) flows in here.
+    terminal_roic_override:         Optional[float] = None
 
 @dataclass
 class UniverseSnapshot:
@@ -157,6 +161,13 @@ class ScenarioOverride(BaseModel):
         default=None,
         description="Effective tax rate override (decimal). Bounded [0.0, 0.40]."
     )
+    terminal_roic: Optional[float] = Field(
+        default=None,
+        description="Terminal ROIC override (decimal, e.g. 0.15 for 15%). "
+                    "Bounded [0.05, 0.60]. Replaces the engine's hold-base-ROIC "
+                    "(floored 8%) terminal assumption — e.g. to fade toward a "
+                    "peer-set ROIC or toward WACC."
+    )
 
     @field_validator("revenue_growth_y1_5")
     @classmethod
@@ -205,6 +216,13 @@ class ScenarioOverride(BaseModel):
     def _check_capex_pct(cls, v):
         if v is not None and not (0.0 <= v <= 0.50):
             raise ValueError(f"capex_pct_revenue must be in [0.0, 0.50], got {v}")
+        return v
+
+    @field_validator("terminal_roic")
+    @classmethod
+    def _check_terminal_roic(cls, v):
+        if v is not None and not (0.05 <= v <= 0.60):
+            raise ValueError(f"terminal_roic must be in [0.05, 0.60], got {v}")
         return v
 
     @field_validator("discount_rate")

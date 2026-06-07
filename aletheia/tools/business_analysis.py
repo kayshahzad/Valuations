@@ -257,25 +257,39 @@ def _parse_dollar(text: str) -> Optional[float]:
 
 def tam_assessment(ticker: str, extracted: Optional[Dict[str, Any]],
                    latest_revenue: Optional[float] = None) -> Dict[str, Any]:
-    """TAM + implied-share view (refinement P3). The $ TAM, methodology and
-    confidence come from the 10-K extraction (BusinessAB); implied share =
-    revenue ÷ TAM is computed deterministically when the TAM is parseable.
-    Always carries an explicit confidence so a rough figure never reads as fact."""
+    """TAM band + implied-share view (Tier-2 #1). The $ TAM band (low/base/high),
+    sizing approach, methodology and confidence come from the 10-K extraction
+    (BusinessAB). Implied share = revenue ÷ TAM is computed deterministically for
+    each band edge. Always carries an explicit confidence so a rough figure never
+    reads as fact; higher TAM → lower implied share, so the band inverts."""
     ab = extracted or {}
     tam_text = ab.get("tam_estimate") or ""
     out: Dict[str, Any] = {
         "available": bool(tam_text),
         "tam_estimate": tam_text or None,
+        "tam_low": ab.get("tam_low") or None,
+        "tam_high": ab.get("tam_high") or None,
+        "tam_approach": ab.get("tam_approach") or None,
         "tam_methodology": ab.get("tam_methodology") or None,
         "tam_confidence": (ab.get("tam_confidence") or "").lower() or None,
         "market_share": ab.get("market_share") or None,
         "implied_share": None,
+        "implied_share_low": None,    # at the HIGH TAM edge (smallest share)
+        "implied_share_high": None,   # at the LOW TAM edge (largest share)
         "tam_usd": None,
     }
+    rev = latest_revenue if isinstance(latest_revenue, (int, float)) and latest_revenue > 0 else None
     tam_usd = _parse_dollar(tam_text)
-    if tam_usd and isinstance(latest_revenue, (int, float)) and latest_revenue > 0:
+    if tam_usd and rev:
         out["tam_usd"] = tam_usd
-        out["implied_share"] = latest_revenue / tam_usd
+        out["implied_share"] = rev / tam_usd
+    if rev:
+        lo_usd = _parse_dollar(ab.get("tam_low") or "")     # smaller TAM → larger share
+        hi_usd = _parse_dollar(ab.get("tam_high") or "")    # larger TAM → smaller share
+        if lo_usd:
+            out["implied_share_high"] = rev / lo_usd
+        if hi_usd:
+            out["implied_share_low"] = rev / hi_usd
     return out
 
 

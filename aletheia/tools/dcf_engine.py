@@ -96,6 +96,7 @@ class ScenarioAssumptions:
 
     # ROIC Methodology
     base_roic: float = 0.10            # Historical starting ROIC
+    terminal_roic_override: Optional[float] = None  # analyst override of terminal ROIC
 
     # Justification (required for assumption discipline)
     justification: str = ""
@@ -103,14 +104,19 @@ class ScenarioAssumptions:
     @property
     def terminal_roic(self) -> float:
         """
-        Returns the terminal ROIC used to calculate the Liberti reinvestment-rate 
+        Returns the terminal ROIC used to calculate the Liberti reinvestment-rate
         terminal value.
-        
-        Methodology Choice: This framework rejects the standard academic assumption 
-        that competitive advantages erode and ROIC fades to WACC over the projection 
-        period. Instead, it explicitly holds the company's historical `base_roic` 
+
+        Methodology Choice: This framework rejects the standard academic assumption
+        that competitive advantages erode and ROIC fades to WACC over the projection
+        period. Instead, it explicitly holds the company's historical `base_roic`
         constant into perpetuity (floored at 8%), assuming genuine moats persist.
+
+        An explicit analyst ``terminal_roic_override`` (from the assumption-
+        grounding bridge) wins over the historical anchor when set.
         """
+        if self.terminal_roic_override is not None:
+            return max(float(self.terminal_roic_override), 0.0)
         return max(self.base_roic, 0.08)
 
 
@@ -674,6 +680,7 @@ def _build_assumptions(
     # Y6-10 values per scenario should construct three separate scenarios.
     if getattr(profile, "revenue_growth_y6_10_override", None) is not None:
         y6_10 = profile.revenue_growth_y6_10_override
+    roic_override = getattr(profile, "terminal_roic_override", None)
 
     # Numerical guardrail: terminal value formula divides by (WACC − g);
     # when historical Rf was near zero (2020-2021), software sub-profile g=5%
@@ -712,6 +719,7 @@ def _build_assumptions(
         terminal_growth=terminal_g,
         tax_rate=tax_rate if scenario_name != "bear" else min(tax_rate + 0.03, 0.30),
         base_roic=roic,
+        terminal_roic_override=roic_override,
         justification=f"{scenario_name.capitalize()}: {y1_5:.1%} Y1-5 CAGR, margin {ebit_margin_term/ebit_margin if ebit_margin > 0 else 1.0:.2f}x, g={terminal_g:.1%}"
     )
 

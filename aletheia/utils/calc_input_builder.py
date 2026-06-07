@@ -48,6 +48,7 @@ def _apply_persisted_dcf_overrides(
                 "revenue_growth_y1_5", "revenue_growth_y6_10",
                 "terminal_ebit_margin", "capex_pct_revenue",
                 "tax_rate", "discount_rate", "terminal_growth",
+                "terminal_roic",
             ) if saved.get(k) is not None
         }
         if not fields:

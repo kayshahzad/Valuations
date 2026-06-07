@@ -154,6 +154,62 @@ class TestOverrideRecompute(unittest.TestCase):
         w2, iv2 = self._run()
         self.assertAlmostEqual(iv1, iv2, places=6)
 
+    def test_terminal_roic_override_changes_iv(self):
+        # Lowering terminal ROIC raises the reinvestment rate (g/ROIC), cutting
+        # terminal FCF → lower IV. Confirms the Tier-2 bridge reaches the engine.
+        from aletheia.utils.calc_input_builder import make_calc_input
+        from aletheia.tools.dcf_engine import DCFEngine
+        _, base_iv = self._run()
+        base_roic = DCFEngine(verbose=False).run(
+            make_calc_input(self.TICKER, apply_overrides=False)
+        ).base.assumptions.terminal_roic
+        self.db.upsert_dcf_overrides(self.TICKER, {"terminal_roic": max(0.05, base_roic * 0.5)})
+        ov_roic = DCFEngine(verbose=False).run(
+            make_calc_input(self.TICKER)
+        ).base.assumptions.terminal_roic
+        _, ov_iv = self._run()
+        self.assertLess(ov_roic, base_roic)
+        self.assertLess(ov_iv, base_iv)
+
+    def test_terminal_roic_roundtrip(self):
+        self.db.upsert_dcf_overrides(self.TICKER, {"terminal_roic": 0.17})
+        self.assertAlmostEqual(
+            self.db.get_dcf_overrides(self.TICKER).get("terminal_roic"), 0.17, places=4)
+
+
+class TestTerminalRoicValidation(unittest.TestCase):
+
+    def _bundle(self, **over):
+        b = dict(_OK)
+        b.update(over)
+        return b
+
+    def test_roic_le_growth_is_error(self):
+        v = validate_dcf_assumptions(
+            self._bundle(terminal_roic=0.03, terminal_growth=0.02), {"terminal_roic"})
+        self.assertEqual(v.status, "error")  # 3% ROIC < per-field 5% floor + ≤g
+
+    def test_roic_below_wacc_is_warn(self):
+        # ROIC 7% > g 2% (ok) but < WACC 9.4% → warn (value-destructive terminal).
+        v = validate_dcf_assumptions(
+            self._bundle(terminal_roic=0.07), {"terminal_roic"})
+        self.assertEqual(v.status, "warn")
+
+    def test_roic_out_of_bounds_is_error(self):
+        v = validate_dcf_assumptions(self._bundle(terminal_roic=0.90), {"terminal_roic"})
+        self.assertEqual(v.status, "error")
+
+    def test_roic_above_wacc_is_ok(self):
+        v = validate_dcf_assumptions(self._bundle(terminal_roic=0.20), {"terminal_roic"})
+        self.assertEqual(v.status, "ok")
+
+    def test_scenario_override_enforces_roic_band(self):
+        from aletheia.contracts.interfaces import ScenarioOverride
+        with self.assertRaises(Exception):
+            ScenarioOverride(name="bad roic", scenario_type="base_alternative",
+                             proposed_by="analyst", rationale="out of band",
+                             terminal_roic=0.90)
+
 
 if __name__ == "__main__":
     unittest.main()

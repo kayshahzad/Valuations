@@ -74,13 +74,13 @@ _DCF_EDITABLE = [
     ("Tax rate",           "tax_rate",             "tax_rate"),
     ("WACC",               "wacc",                 "discount_rate"),
     ("Terminal growth",    "terminal_growth",      "terminal_growth"),
+    ("Terminal ROIC",      "terminal_roic",        "terminal_roic"),
 ]
 # Model-derived, not yet overridable (no ScenarioOverride field).
 _DCF_READONLY = [
     ("EBIT margin start",  "ebit_margin_current"),
     ("D&A % revenue",      "da_pct_revenue"),
     ("NWC % revenue",      "nwc_pct_revenue"),
-    ("Terminal ROIC",      "terminal_roic"),
     ("Base ROIC",          "base_roic"),
 ]
 

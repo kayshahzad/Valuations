@@ -69,9 +69,12 @@ class BusinessAB(BaseModel):
     distribution_channels: List[str] = Field(default_factory=list,
         description="How customers buy: direct sales, channel/VAR, marketplace, prime/sub, etc.")
     # Theme B — market size & capture
-    tam_estimate: str = Field(default="", description="Total addressable market $ size if stated/derivable (e.g. '$50 billion'), with definition. Leave blank if not estimable.")
-    tam_methodology: str = Field(default="", description="How TAM is defined/sized and its growth rate")
-    tam_confidence: str = Field(default="", description="REQUIRED when tam_estimate is non-blank: low / medium / high (how grounded the figure is in the filing) — or 'not_estimable' if the 10-K gives no basis to size it")
+    tam_estimate: str = Field(default="", description="BASE-case total addressable market $ size (e.g. '$50 billion'). Triangulate if the filing doesn't state one. Leave blank only if genuinely not estimable.")
+    tam_low: str = Field(default="", description="LOW (conservative) end of the TAM range (e.g. '$40 billion') — narrower market definition / slower adoption")
+    tam_high: str = Field(default="", description="HIGH (optimistic) end of the TAM range (e.g. '$70 billion') — broader definition / faster adoption")
+    tam_approach: str = Field(default="", description="The sector-appropriate sizing APPROACH used, e.g. 'top-down IT-spend share' (SaaS), 'addressable patients × annual price' (pharma), 'unit volume × ASP' (semis/hardware), 'store/branch count × revenue-per' (retail), 'served population × penetration × ARPU' (consumer)")
+    tam_methodology: str = Field(default="", description="How TAM is defined/sized + its growth rate; if split into sub-markets, list each with its size")
+    tam_confidence: str = Field(default="", description="REQUIRED when tam_estimate is non-blank: low (rough triangulation) / medium (consensus third-party sizing) / high (filing or citable source) — or 'not_estimable' only if the market genuinely cannot be sized")
     market_share: str = Field(default="", description="Current share of TAM (overall or by segment) and vs key competitors")
     whitespace_runway: str = Field(default="", description="Unaddressed segments/geographies/customers; realistic share ceiling")
     adjacent_tams: List[str] = Field(default_factory=list,
@@ -141,14 +144,21 @@ cycle is critical).
 VAR, marketplace, prime vs subcontractor, OEM, etc.).
 
 THEME B — market size & capture:
-- tam_estimate + tam_methodology + tam_confidence: the dollar size of the \
-addressable market with its definition and growth rate. DO give a number — use \
-the filing if it states one, otherwise TRIANGULATE from well-established industry \
-market-sizing and your own knowledge (this is the one place external knowledge is \
-expected). When the market splits into distinct sub-markets, size each in \
-tam_methodology (e.g. for a software company: cloud infrastructure ~$X by 20YY, \
-enterprise/productivity software ~$Y, AI services ~$Z) and give the rolled-up TAM \
-in tam_estimate. ALWAYS set tam_confidence by SOURCE quality:
+- TAM with a CONFIDENCE BAND + sector approach. Give a genuine range:
+  tam_estimate (BASE), tam_low (conservative — narrower definition / slower
+  adoption), tam_high (optimistic — broader definition / faster adoption). Do NOT
+  repeat the same number three times. Pick the sector-appropriate sizing APPROACH
+  and name it in tam_approach:
+    SaaS / software   → top-down IT-spend share, or bottoms-up customers × ACV;
+    pharma / biotech  → addressable patients × annual price × penetration;
+    semis / hardware  → unit volume × ASP;
+    retail / consumer → store/branch count × revenue-per, or served pop × penetration × ARPU;
+    financials        → addressable balances/transactions × take-rate.
+  DO give numbers — use the filing if it states them, otherwise TRIANGULATE from
+  well-established industry market-sizing and your own knowledge (this is the one
+  place external knowledge is expected). When the market splits into sub-markets,
+  size each in tam_methodology and roll up to tam_estimate. ALWAYS set
+  tam_confidence by SOURCE quality:
     high   = stated in the filing or a precise, citable third-party figure;
     medium = consensus third-party market sizing (Gartner/IDC-style);
     low    = rough triangulation (sum of sub-markets, or revenue ÷ assumed share);

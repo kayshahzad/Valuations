@@ -51,7 +51,11 @@ _BOUNDS: Dict[str, tuple] = {
     "tax_rate":             (0.0, 0.40),
     "wacc":                 (0.04, 0.16),
     "terminal_growth":      (-0.02, 0.06),
+    "terminal_roic":        (0.05, 0.60),
 }
+
+# Fields whose absence is NOT an error (engine derives them when unset).
+_OPTIONAL_BOUNDS = {"terminal_roic"}
 
 # Assumptions-bundle key → the ScenarioOverride field that overrides it.
 ASSUMPTION_TO_OVERRIDE: Dict[str, str] = {
@@ -62,6 +66,7 @@ ASSUMPTION_TO_OVERRIDE: Dict[str, str] = {
     "tax_rate":             "tax_rate",
     "wacc":                 "discount_rate",
     "terminal_growth":      "terminal_growth",
+    "terminal_roic":        "terminal_roic",
 }
 
 _LABELS = {
@@ -72,6 +77,7 @@ _LABELS = {
     "tax_rate": "Tax rate",
     "wacc": "WACC",
     "terminal_growth": "Terminal growth",
+    "terminal_roic": "Terminal ROIC",
 }
 
 
@@ -158,9 +164,19 @@ def validate_dcf_assumptions(
         """Return (verdict, message) for a single field's bounds check."""
         v = assumptions.get(name)
         if v is None:
+            # terminal_roic is optional — the engine derives it (hold-base-ROIC)
+            # when no override is set, so its absence is not an error.
+            if name in _OPTIONAL_BOUNDS:
+                return "ok", ""
             return "error", f"{_LABELS.get(name, name)} is missing"
         lo, hi = _BOUNDS[name]
         if not (lo <= v <= hi):
+            # Optional fields' bands constrain ANALYST OVERRIDES only. The
+            # engine's model-derived value can legitimately sit outside the
+            # override band (e.g. NVDA/AAPL hold base ROIC ~75% > the 60%
+            # override cap) — that is not a validation error.
+            if name in _OPTIONAL_BOUNDS and name not in overridden_bundle_keys:
+                return "ok", ""
             return "error", (
                 f"{_LABELS.get(name, name)} {_pct(v)} outside allowed "
                 f"[{_pct(lo)}, {_pct(hi)}]"
@@ -196,6 +212,7 @@ def validate_dcf_assumptions(
     margin_term = assumptions.get("ebit_margin_terminal")
     y1_5 = assumptions.get("revenue_cagr_y1_5")
     y6_10 = assumptions.get("revenue_cagr_y6_10")
+    troic = assumptions.get("terminal_roic")
 
     # ── Layer 2 — cross-field economic invariants ──────────────────────
     if g is not None and wacc is not None:
@@ -238,6 +255,19 @@ def validate_dcf_assumptions(
         _escalate("revenue_cagr_y6_10", "warn",
                   f"Y6-10 CAGR {_pct(y6_10)} exceeds Y1-5 {_pct(y1_5)} — "
                   "growth accelerates rather than fades. Unusual.")
+
+    # Terminal ROIC feeds the Liberti reinvestment rate (g / ROIC). It must
+    # exceed terminal growth, else reinvestment ≥ 100% of NOPAT (nonsensical);
+    # and ROIC ≤ WACC means terminal reinvestment destroys value.
+    if troic is not None and g is not None and troic <= g:
+        _escalate("terminal_roic", "error",
+                  f"Terminal ROIC {_pct(troic)} ≤ terminal growth {_pct(g)} — "
+                  "implied reinvestment rate ≥ 100% of NOPAT; TV is degenerate.")
+    elif troic is not None and wacc is not None and troic < wacc:
+        _escalate("terminal_roic", "warn",
+                  f"Terminal ROIC {_pct(troic)} below WACC {_pct(wacc)} — "
+                  "terminal reinvestment destroys value. Confirm a deliberate "
+                  "fade-to/below-WACC thesis.")
 
     # ── Layer 3 — plausibility vs. model baseline (warn-only) ───────────
     if baseline:

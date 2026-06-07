@@ -18,10 +18,14 @@ import re
 from typing import Any, Dict, List, Optional
 
 
-def _row(assumption, engine, grounded, basis, source, note="", build_up=None):
+def _row(assumption, engine, grounded, basis, source, note="", build_up=None,
+         override_field=None, override_value=None, computation=""):
     delta = None
     if isinstance(engine, (int, float)) and isinstance(grounded, (int, float)):
         delta = engine - grounded
+    # The value that would be pushed to the DCF override store if the analyst
+    # accepts the grounded reference (defaults to the grounded value itself).
+    ov = override_value if override_value is not None else grounded
     return {
         "assumption": assumption,
         "engine_value": engine,
@@ -31,6 +35,9 @@ def _row(assumption, engine, grounded, basis, source, note="", build_up=None):
         "source": source,
         "note": note,
         "build_up": build_up,            # optional driver decomposition (P4)
+        "computation": computation,      # how the grounded value was derived (shown)
+        "override_field": override_field, # DCF override field this row can write
+        "override_value": ov if (override_field and isinstance(ov, (int, float))) else None,
         "status": "grounded" if grounded is not None else "pending",
     }
 
@@ -44,6 +51,32 @@ def _parse_pct(text: str) -> Optional[float]:
         return None
     try:
         return float(m.group(1)) / 100.0
+    except Exception:
+        return None
+
+
+def _hist_capex_pct(calc) -> Optional[float]:
+    """Median |CapEx| / revenue over available FY history (the deterministic
+    grounding for the forward capex % assumption)."""
+    try:
+        import statistics
+        df = getattr(calc, "df", None)
+        if df is None:
+            return None
+        cols = getattr(df, "columns", [])
+        cap_col = "derived_CapEx" if "derived_CapEx" in cols else (
+            "raw_CapEx" if "raw_CapEx" in cols else None)
+        if cap_col is None or "clean_Revenue" not in cols:
+            return None
+        d = df
+        if "period" in cols:
+            d = d[d["period"] == "FY"]
+        ratios = []
+        for _, r in d.iterrows():
+            cap, rev = r.get(cap_col), r.get("clean_Revenue")
+            if isinstance(cap, (int, float)) and isinstance(rev, (int, float)) and rev > 0:
+                ratios.append(abs(float(cap)) / float(rev))
+        return statistics.median(ratios[-5:]) if len(ratios) >= 3 else None
     except Exception:
         return None
 
@@ -99,11 +132,13 @@ def build_assumption_grounding(
             "band_low": band_low,
             "band_high": band_high,
         }
+    cagr_comp = (f"mean({' , '.join(note)})" if refs else "no organic/consensus inputs")
     rows.append(_row(
         "Y1-5 revenue CAGR", eng_cagr, grounded_cagr,
         "organic historical + forward consensus",
         "growth decomposition + current-state consensus",
-        " · ".join(note), build_up=build_up))
+        " · ".join(note), build_up=build_up,
+        override_field="revenue_growth_y1_5", computation=cagr_comp))
 
     # ── Terminal growth ← industry lifecycle stage ──────────────────────
     eng_tg = float(getattr(asm, "terminal_growth", 0) or 0)
@@ -120,7 +155,9 @@ def build_assumption_grounding(
         f"lifecycle stage = {lifecycle or 'mature'}",
         "lifecycle profile",
         "engine derives terminal growth from the same lifecycle profile; a large "
-        "gap means an override moved it off the structural anchor."))
+        "gap means an override moved it off the structural anchor.",
+        override_field="terminal_growth",
+        computation=f"LIFECYCLE_PROFILES['{lifecycle or 'mature'}'].terminal_growth"))
 
     # ── Terminal EBIT margin ← current margin + segment mix (P4) ─────────
     eng_term_margin = getattr(asm, "ebit_margin_terminal", None)
@@ -154,10 +191,13 @@ def build_assumption_grounding(
             margin_note.append(f"mix-weighted {grounded_margin*100:.1f}%")
         if improving or declining:
             margin_note.append(f"segments improving {improving} / declining {declining}")
+    margin_comp = ("Σ(segment margin × rev %)" if margin_basis.startswith("revenue-weighted")
+                   else "current EBIT margin (held to terminal)")
     rows.append(_row(
         "Terminal EBIT margin", eng_term_margin, grounded_margin,
         margin_basis, "segment economics (FMP mix + extraction)",
-        " · ".join(margin_note) or "no segment margins disclosed yet"))
+        " · ".join(margin_note) or "no segment margins disclosed yet",
+        override_field="terminal_ebit_margin", computation=margin_comp))
 
     # ── Idiosyncratic WACC premium ← disruption + concentration dims ────
     dims: Dict[str, Any] = {}
@@ -203,12 +243,92 @@ def build_assumption_grounding(
         "qualitative dimensions",
         " · ".join(prem_note) or "no qualitative risk dimensions assessed yet"))
 
+    # ── Y6-10 revenue CAGR ← fade toward market / terminal (bridge) ─────
+    eng_y6_10 = float(getattr(asm, "revenue_cagr_y6_10", 0) or 0)
+    mkt_ref = gd.get("market_growth_ref")
+    grounded_y6_10 = y6_basis = y6_comp = None
+    if isinstance(mkt_ref, (int, float)):
+        grounded_y6_10 = mkt_ref
+        y6_basis = "peer-set market growth (company-specific share gains fade by yr 6-10)"
+        y6_comp = f"peer median revenue CAGR {mkt_ref*100:.1f}%"
+    elif isinstance(grounded_cagr, (int, float)) and isinstance(life_ref, (int, float)):
+        grounded_y6_10 = (grounded_cagr + life_ref) / 2.0
+        y6_basis = "linear fade from Y1-5 toward terminal growth"
+        y6_comp = f"mean(Y1-5 {grounded_cagr*100:.1f}%, terminal {life_ref*100:.1f}%)"
+    rows.append(_row(
+        "Y6-10 revenue CAGR", eng_y6_10, grounded_y6_10,
+        y6_basis or "fade reference unavailable",
+        "growth decomposition + lifecycle terminal",
+        y6_comp or "no fade reference", override_field="revenue_growth_y6_10",
+        computation=y6_comp or ""))
+
+    # ── CapEx % of revenue ← historical median (bridge) ────────────────
+    eng_capex = getattr(asm, "capex_pct_revenue", None)
+    eng_capex = float(eng_capex) if isinstance(eng_capex, (int, float)) else None
+    hist_capex = _hist_capex_pct(calc)
+    rows.append(_row(
+        "CapEx % of revenue", eng_capex, hist_capex,
+        "trailing FY median capital intensity",
+        "cleaned financials (FMP/SEC)",
+        (f"median {hist_capex*100:.1f}%" if hist_capex is not None
+         else "insufficient capex history"),
+        override_field="capex_pct_revenue",
+        computation="median(|CapEx| / revenue, last 5 FY)"))
+
+    # ── Terminal ROIC ← half-fade base ROIC toward WACC (bridge) ───────
+    # The engine HOLDS base ROIC into perpetuity (moat persists). The grounded
+    # reference fades it halfway to WACC — the academic "returns erode" prior —
+    # so the analyst sees the methodology gap explicitly and can override.
+    eng_roic = float(getattr(asm, "terminal_roic", 0) or 0)
+    base_roic = float(getattr(asm, "base_roic", 0) or 0)
+    wacc = float(getattr(asm, "wacc", 0) or 0)
+    grounded_roic = roic_comp = None
+    if base_roic > 0 and wacc > 0:
+        grounded_roic = (base_roic + wacc) / 2.0
+        roic_comp = f"mean(base ROIC {base_roic*100:.1f}%, WACC {wacc*100:.1f}%)"
+    rows.append(_row(
+        "Terminal ROIC", eng_roic, grounded_roic,
+        "half-fade of base ROIC toward WACC (returns-erode prior)",
+        "engine base ROIC + WACC",
+        (roic_comp + " — engine instead holds base ROIC" if roic_comp
+         else "base ROIC / WACC unavailable"),
+        override_field="terminal_roic", computation=roic_comp or ""))
+
+    # ── Margin / CapEx reconciliation (memo #7) ─────────────────────────
+    # Synthesize a verdict pairing the DCF's terminal-margin + capex path with
+    # the business reality (segment-margin trajectory + historical capex).
+    def _verdict(engine_v, grounded_v, tol=0.01):
+        if not isinstance(engine_v, (int, float)) or not isinstance(grounded_v, (int, float)):
+            return "n/a"
+        if engine_v > grounded_v + tol:
+            return "engine above business reference"
+        if engine_v < grounded_v - tol:
+            return "engine below business reference"
+        return "aligned"
+    seg_dir = None
+    if seg.get("available") and seg.get("has_margins"):
+        imp = sum(1 for s in seg.get("segments", [])
+                  if "improv" in (s.get("margin_trend") or "").lower()
+                  or "rising" in (s.get("margin_trend") or "").lower())
+        dec = sum(1 for s in seg.get("segments", [])
+                  if "declin" in (s.get("margin_trend") or "").lower()
+                  or "compress" in (s.get("margin_trend") or "").lower())
+        seg_dir = ("improving" if imp > dec else "declining" if dec > imp else "mixed")
+    reconciliation = {
+        "terminal_margin_verdict": _verdict(eng_term_margin, grounded_margin),
+        "segment_margin_trajectory": seg_dir,
+        "capex_verdict": _verdict(eng_capex, hist_capex),
+        "note": ("Terminal margin reconciles to the revenue-weighted segment mix "
+                 "and forward capex to trailing capital intensity (memo #7)."),
+    }
+
     # Count rows where engine and grounded diverge materially.
     material = sum(1 for r in rows if isinstance(r["delta"], (int, float))
                    and abs(r["delta"]) >= 0.02)
     out.update({
         "available": True,
         "rows": rows,
+        "reconciliation": reconciliation,
         "material_divergences": material,
         "note": "Business-grounded references are shown for triangulation; they "
                 "are NOT auto-applied to the headline IV.",

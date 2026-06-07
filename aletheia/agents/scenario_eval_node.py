@@ -130,6 +130,9 @@ def _clone_profile_with_overrides(
     # the override was captured but never reached the engine.
     if ov.revenue_growth_y6_10 is not None:
         updates["revenue_growth_y6_10_override"] = ov.revenue_growth_y6_10
+    # Tier-2 — terminal ROIC override (assumption-grounding bridge).
+    if getattr(ov, "terminal_roic", None) is not None:
+        updates["terminal_roic_override"] = ov.terminal_roic
 
     return replace(base, **updates)
 
@@ -191,6 +194,7 @@ def _evaluate_scenario(
             "capex_pct_revenue",
             "discount_rate",
             "tax_rate",
+            "terminal_roic",
         )
         if getattr(ov, f) is not None
     }

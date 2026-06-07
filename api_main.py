@@ -718,6 +718,7 @@ class DCFOverridesRequest(BaseModel):
     tax_rate:             Optional[float] = None
     discount_rate:        Optional[float] = None   # WACC
     terminal_growth:      Optional[float] = None
+    terminal_roic:        Optional[float] = None
     note:                 Optional[str] = None
     updated_by:           Optional[str] = None
 
@@ -1377,6 +1378,7 @@ def get_ticker_dcf(ticker: str, response: Response):
 _DCF_OVERRIDE_FIELDS = (
     "revenue_growth_y1_5", "revenue_growth_y6_10", "terminal_ebit_margin",
     "capex_pct_revenue", "tax_rate", "discount_rate", "terminal_growth",
+    "terminal_roic",
 )
 
 

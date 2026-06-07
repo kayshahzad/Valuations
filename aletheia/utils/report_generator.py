@@ -579,17 +579,27 @@ class ReportGenerator:
                 tam = ba.get("tam") or {}
                 tam_html = ""
                 if tam.get("tam_estimate"):
+                    band = ""
+                    if tam.get("tam_low") or tam.get("tam_high"):
+                        band = (f" <span style='color:#888'>[{tam.get('tam_low') or '?'} – "
+                                f"{tam.get('tam_high') or '?'}]</span>")
                     extra = []
-                    if tam.get("tam_methodology"):
-                        extra.append(tam["tam_methodology"])
+                    if tam.get("tam_approach"):
+                        extra.append(f"approach: {tam['tam_approach']}")
                     if tam.get("tam_confidence"):
                         extra.append(f"confidence: {tam['tam_confidence']}")
                     if tam.get("implied_share") is not None:
-                        extra.append(f"implied share {pct(tam['implied_share'])}")
+                        sh = f"implied share {pct(tam['implied_share'])}"
+                        if tam.get("implied_share_low") is not None and tam.get("implied_share_high") is not None:
+                            sh += f" [{pct(tam['implied_share_low'])}–{pct(tam['implied_share_high'])}]"
+                        extra.append(sh)
                     meta = (f" <span style='color:#888'>({'; '.join(extra)})</span>"
                             if extra else "")
                     tam_html = (f"<p style='margin:2px 0'><strong>TAM:</strong> "
-                                f"{tam['tam_estimate']}{meta}</p>")
+                                f"{tam['tam_estimate']}{band}{meta}</p>")
+                    if tam.get("tam_methodology"):
+                        tam_html += (f"<p style='margin:0 0 4px 0;font-size:11px;color:#888'>"
+                                     f"{tam['tam_methodology']}</p>")
                 return (tam_html
                         + _kv("Market share", ex.get("market_share"))
                         + _kv("Whitespace runway", ex.get("whitespace_runway"))
@@ -736,21 +746,46 @@ class ReportGenerator:
                     drivers.append(f"M&A run-rate {pct(b['ma_run_rate'])}")
                 note += (f"<br><span style='color:#888'>build-up: "
                          f"{' + '.join(drivers)} → band {pct(b['band_low'])}–{pct(b['band_high'])}</span>")
+            comp = r.get("computation") or ""
+            ovf = r.get("override_field")
+            apply_cell = (f"<span style='color:#2563eb'>{ovf} ← {pct(r.get('override_value'))}</span>"
+                          if ovf and r.get("override_value") is not None else "—")
             rows += (f"<tr><td>{r.get('assumption','')}</td>"
                      f"<td style='text-align:right'>{pct(r.get('engine_value'))}</td>"
                      f"<td style='text-align:right'>{pct(r.get('grounded_value'))}</td>"
                      f"<td style='text-align:right;color:{dcolor}'>{pct(d)}</td>"
-                     f"<td style='color:#666;font-size:11px'>{note}</td></tr>")
+                     f"<td style='color:#666;font-size:11px'>{comp}</td>"
+                     f"<td style='color:#666;font-size:11px'>{note}</td>"
+                     f"<td style='font-size:11px'>{apply_cell}</td></tr>")
         return f"""
   <div class="card" style="page-break-inside:avoid">
-  <h3>🧲 Assumption grounding (business vs history)</h3>
+  <h3>🧲 Assumption grounding (business → top-down bridge)</h3>
   <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
-    Each top-down assumption vs a business-grounded reference. Shown for
-    triangulation — NOT auto-applied to the headline IV.
+    Each top-down DCF assumption vs a business-grounded reference, with the
+    computation shown. The <em>Apply&nbsp;to</em> column names the DCF override
+    field + value an analyst can push in the app (validated before it changes
+    the IV). Shown for triangulation — not auto-applied.
   </p>
   <table class='table-styled'><thead><tr><th>Assumption</th><th>Engine</th>
-  <th>Grounded</th><th>Δ</th><th>Basis</th></tr></thead><tbody>{rows}</tbody></table>
+  <th>Grounded</th><th>Δ</th><th>Computation</th><th>Basis</th>
+  <th>Apply&nbsp;to</th></tr></thead><tbody>{rows}</tbody></table>
+  {self._render_margin_capex_reconciliation(ag.get('reconciliation'))}
   </div>"""
+
+    def _render_margin_capex_reconciliation(self, rec: Dict[str, Any]) -> str:
+        """Memo #7 — one-line margin/capex reconciliation verdict."""
+        if not rec:
+            return ""
+        tm = rec.get("terminal_margin_verdict")
+        cx = rec.get("capex_verdict")
+        traj = rec.get("segment_margin_trajectory")
+        if not tm and not cx:
+            return ""
+        return (f'<p style="font-size:12px;color:#444;margin:8px 0 0 0">'
+                f'<strong>Margin/CapEx reconciliation (memo&nbsp;#7):</strong> '
+                f'terminal margin <em>{tm}</em>'
+                f'{f" (segments {traj})" if traj else ""}; '
+                f'forward capex <em>{cx}</em>.</p>')
 
     def _render_required_judgment(self, ts: Dict[str, Any]) -> str:
         """§12 Required analyst judgment — the gaps the framework defers to the

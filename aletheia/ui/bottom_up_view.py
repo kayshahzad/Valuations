@@ -50,13 +50,21 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
     elif letter == "B":
         tam = ba.get("tam") or {}
         if tam.get("tam_estimate"):
+            band = ""
+            if tam.get("tam_low") or tam.get("tam_high"):
+                band = f"  [{tam.get('tam_low') or '?'} – {tam.get('tam_high') or '?'}]"
             extra = []
-            if tam.get("tam_methodology"): extra.append(tam["tam_methodology"])
+            if tam.get("tam_approach"): extra.append(f"approach: {tam['tam_approach']}")
             if tam.get("tam_confidence"): extra.append(f"confidence: {tam['tam_confidence']}")
             if tam.get("implied_share") is not None:
-                extra.append(f"implied share {_pct(tam['implied_share'])}")
-            st.markdown(f"**TAM:** {tam['tam_estimate']}"
+                sh = f"implied share {_pct(tam['implied_share'])}"
+                if tam.get("implied_share_low") is not None and tam.get("implied_share_high") is not None:
+                    sh += f" [{_pct(tam['implied_share_low'])}–{_pct(tam['implied_share_high'])}]"
+                extra.append(sh)
+            st.markdown(f"**TAM:** {tam['tam_estimate']}{band}"
                         + (f"  _({'; '.join(extra)})_" if extra else ""))
+            if tam.get("tam_methodology"):
+                st.caption(tam["tam_methodology"])
             rendered = True
         for label, key in (("Market share", "market_share"),
                            ("Whitespace runway", "whitespace_runway")):
@@ -199,12 +207,13 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
             if not had and not pend and not na:
                 st.caption("—")
 
-    # Assumption grounding (keystone).
+    # Assumption grounding — the bottom-up → top-down bridge (keystone).
     if ag.get("available"):
         with st.container(border=True):
-            st.markdown("#### 🧲 Assumption grounding — business vs history")
-            st.caption("Each top-down assumption vs a business-grounded reference. "
-                       "Shown for triangulation; NOT auto-applied to the IV.")
+            st.markdown("#### 🧲 Assumption grounding — business → top-down bridge")
+            st.caption("Each top-down DCF assumption vs a business-grounded "
+                       "reference, with the computation shown. Apply a grounded "
+                       "value to push it (validated) into the DCF as an override.")
             def _basis(r):
                 note = r.get("note", "")
                 b = r.get("build_up") or {}
@@ -216,12 +225,46 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
                 "Engine": _pct(r.get("engine_value")),
                 "Grounded": _pct(r.get("grounded_value")),
                 "Δ": _pct(r.get("delta")),
+                "Computation": r.get("computation", ""),
                 "Basis": _basis(r),
             } for r in (ag.get("rows") or [])]
             st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
             if ag.get("material_divergences"):
                 st.caption(f"⚠ {ag['material_divergences']} material divergence(s) "
                            "(≥2pp) between engine and business-grounded references.")
+            rec = ag.get("reconciliation") or {}
+            if rec.get("terminal_margin_verdict") or rec.get("capex_verdict"):
+                traj = rec.get("segment_margin_trajectory")
+                st.caption(
+                    f"**Margin/CapEx reconciliation (memo #7):** terminal margin "
+                    f"_{rec.get('terminal_margin_verdict')}_"
+                    + (f" (segments {traj})" if traj else "")
+                    + f"; forward capex _{rec.get('capex_verdict')}_.")
+
+            # Apply-grounded affordance: push a grounded value into the DCF via
+            # the existing validated PUT /dcf/overrides endpoint.
+            appliable = [r for r in (ag.get("rows") or [])
+                         if r.get("override_field") and r.get("override_value") is not None]
+            if appliable:
+                st.markdown("**Apply a grounded value as a DCF override**")
+                for r in appliable:
+                    c1, c2 = st.columns([4, 1])
+                    c1.markdown(
+                        f"{r['assumption']}: engine {_pct(r.get('engine_value'))} → "
+                        f"grounded **{_pct(r.get('grounded_value'))}** "
+                        f"(`{r['override_field']}`)")
+                    if c2.button("Apply", key=f"apply_{ticker}_{r['override_field']}"):
+                        from aletheia.ui.financials_view import _dcf_api
+                        body = {r["override_field"]: r["override_value"],
+                                "updated_by": "analyst",
+                                "note": f"Grounded: {r.get('computation','')}"[:200]}
+                        _, err = _dcf_api("PUT", f"/ticker/{ticker}/dcf/overrides", body)
+                        if err:
+                            st.error(f"Rejected: {err}")
+                        else:
+                            st.cache_data.clear()
+                            st.success(f"Applied {r['override_field']} — recomputing…")
+                            st.rerun()
 
 
 __all__ = ["render_bottom_up_view"]

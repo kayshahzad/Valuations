@@ -392,7 +392,7 @@ class TestSegmentEconomics(unittest.TestCase):
 
 
 class TestTamAssessment(unittest.TestCase):
-    """P3 — TAM confidence + deterministic implied-share."""
+    """P3/Tier-2 — TAM confidence band + deterministic implied-share range."""
 
     def test_implied_share_parsed(self):
         from aletheia.tools.business_analysis import tam_assessment, _parse_dollar
@@ -405,6 +405,65 @@ class TestTamAssessment(unittest.TestCase):
         self.assertTrue(tam["available"])
         self.assertEqual(tam["tam_confidence"], "medium")
         self.assertAlmostEqual(tam["implied_share"], 0.10, places=3)
+
+    def test_tam_band_implied_share_inverts(self):
+        from aletheia.tools.business_analysis import tam_assessment
+        tam = tam_assessment("TST", {
+            "tam_estimate": "$50 billion", "tam_low": "$40 billion",
+            "tam_high": "$80 billion", "tam_approach": "IT-spend share",
+        }, latest_revenue=4e9)
+        # base 4/50=8%; low-TAM($40B) → higher share 10%; high-TAM($80B) → 5%.
+        self.assertAlmostEqual(tam["implied_share"], 0.08, places=3)
+        self.assertAlmostEqual(tam["implied_share_high"], 0.10, places=3)
+        self.assertAlmostEqual(tam["implied_share_low"], 0.05, places=3)
+        self.assertEqual(tam["tam_approach"], "IT-spend share")
+
+
+class TestGroundingBridge(unittest.TestCase):
+    """Tier-2 #3 — bridge rows carry override targets + computation."""
+
+    class _Asm:
+        revenue_cagr_y1_5 = 0.10
+        revenue_cagr_y6_10 = 0.08
+        terminal_growth = 0.025
+        ebit_margin_current = 0.20
+        ebit_margin_terminal = 0.18
+        capex_pct_revenue = 0.06
+        base_roic = 0.25
+        wacc = 0.09
+        @property
+        def terminal_roic(self):
+            return max(self.base_roic, 0.08)
+
+    class _Res:
+        ticker = "TST"
+        class base:
+            assumptions = None
+
+    def _result(self):
+        r = self._Res(); r.base.assumptions = self._Asm(); return r
+
+    def test_new_rows_present_with_override_targets(self):
+        calc = _Calc([100, 106, 112, 119, 126, 134], [2018, 2019, 2020, 2021, 2022, 2023])
+        gd = build_growth_decomposition(calc)
+        ag = build_assumption_grounding(calc, self._result(), growth_decomposition=gd)
+        by = {r["assumption"]: r for r in ag["rows"]}
+        for name, field in [("Y6-10 revenue CAGR", "revenue_growth_y6_10"),
+                            ("CapEx % of revenue", "capex_pct_revenue"),
+                            ("Terminal ROIC", "terminal_roic")]:
+            self.assertIn(name, by)
+            self.assertEqual(by[name]["override_field"], field)
+            self.assertTrue(by[name]["computation"])
+        # Terminal ROIC grounded = half-fade base(25%)→WACC(9%) = 17%.
+        self.assertAlmostEqual(by["Terminal ROIC"]["grounded_value"], 0.17, places=3)
+        self.assertIsNotNone(by["Terminal ROIC"]["override_value"])
+
+    def test_reconciliation_verdict(self):
+        calc = _Calc([100, 106, 112, 119, 126, 134], [2018, 2019, 2020, 2021, 2022, 2023])
+        ag = build_assumption_grounding(calc, self._result())
+        rec = ag.get("reconciliation") or {}
+        self.assertIn("terminal_margin_verdict", rec)
+        self.assertIn("capex_verdict", rec)
 
     def test_no_tam(self):
         from aletheia.tools.business_analysis import tam_assessment

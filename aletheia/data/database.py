@@ -664,12 +664,19 @@ class InvestmentDatabase:
                 tax_rate                DOUBLE,
                 discount_rate           DOUBLE,   -- WACC
                 terminal_growth         DOUBLE,
+                terminal_roic           DOUBLE,
                 updated_at              VARCHAR NOT NULL,
                 updated_by              VARCHAR NOT NULL,
                 note                    VARCHAR,
                 PRIMARY KEY (ticker, version)
             )
         """)
+        # Migration: terminal_roic override (Tier-2 grounding bridge) added
+        # after the original 7-field table shipped.
+        self._conn.execute(
+            "ALTER TABLE dcf_assumption_overrides "
+            "ADD COLUMN IF NOT EXISTS terminal_roic DOUBLE"
+        )
 
         # Latest override row per ticker — single row, most recent version.
         self._conn.execute("""
@@ -1345,6 +1352,7 @@ class InvestmentDatabase:
         "tax_rate",
         "discount_rate",
         "terminal_growth",
+        "terminal_roic",
     )
 
     def get_dcf_overrides(self, ticker: str) -> Dict[str, Any]:
