@@ -61,13 +61,17 @@ class TestGrowthDecomposition(unittest.TestCase):
 
     def test_market_vs_share_split(self):
         from aletheia.tools import business_analysis as ba_mod
-        # Seed the sector cache so the split is deterministic (no DB).
-        ba_mod._SECTOR_GROWTH_CACHE["TestSector"] = 0.04  # market grew 4%
-        cls = _Cls(sector="TestSector")
+        # Stub the peer-group market-growth reference so the split is deterministic.
+        orig = ba_mod._sector_market_growth
+        ba_mod._sector_market_growth = lambda pg, ex: 0.04  # market grew 4%
+        cls = _Cls(sector="Energy")
         cls.ticker = "TST"
         calc = _Calc([100, 106, 112, 119, 126, 134],
                      [2018, 2019, 2020, 2021, 2022, 2023], classification=cls)
-        gd = ba_mod.build_growth_decomposition(calc)
+        try:
+            gd = ba_mod.build_growth_decomposition(calc)
+        finally:
+            ba_mod._sector_market_growth = orig
         self.assertAlmostEqual(gd["market_growth_ref"], 0.04, places=4)
         # Organic ~6% vs market 4% → ~+2pp share gain.
         self.assertGreater(gd["share_gain_pp"], 0)
@@ -188,6 +192,30 @@ class TestSectorTemplate(unittest.TestCase):
         self.assertTrue(res["coverage"][0]["priority"])
         prio = {c["dimension"] for c in res["coverage"] if c["priority"]}
         self.assertIn("Major customers / contracts", prio)
+
+
+class TestPeerGroupResolver(unittest.TestCase):
+    """Peer-group resolver fixes misclassified names + drives template uniformly."""
+
+    def test_override_fixes_misclassification(self):
+        from config.business_analysis_templates import peer_group_for, template_for
+        # LDOS is filed under Technology / IT Services but is govt-IT.
+        self.assertEqual(
+            peer_group_for("LDOS", "Technology", "Information Technology Services",
+                           "growth_compounder", "fcff_compatible"),
+            "defense_govt")
+        tpl = template_for("LDOS", "Technology", "Information Technology Services",
+                           "growth_compounder", "fcff_compatible")
+        self.assertEqual(tpl["key"], "defense_govt")
+        self.assertEqual(tpl["peer_group"], "defense_govt")
+
+    def test_keyword_inference(self):
+        from config.business_analysis_templates import peer_group_for
+        self.assertEqual(peer_group_for("X", "Technology", "Software - Infrastructure"), "tech_saas")
+        self.assertEqual(peer_group_for("X", "Semiconductors", "Semiconductors"), "semiconductors")
+        self.assertEqual(peer_group_for("X", "Financial Services", "Banks"), "banks")
+        self.assertEqual(peer_group_for("X", "Healthcare", "Drug Manufacturers"), "pharma")
+        self.assertEqual(peer_group_for("X", "Energy", "Oil & Gas E&P"), "energy")
 
 
 if __name__ == "__main__":

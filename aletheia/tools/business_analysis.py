@@ -28,26 +28,32 @@ def _raw_cagr_from_revs(revs: list) -> Optional[float]:
     return (revs[-1] / base) ** (1.0 / k) - 1.0 if base > 0 else None
 
 
-# Per-process cache of sector-median historical CAGR (computed from the
-# universe DB) — keyed by sector so it's derived once per sector per process.
+# Per-process cache of peer-group-median historical CAGR (from the universe DB)
+# — keyed by peer group so it's derived once per group per process.
 _SECTOR_GROWTH_CACHE: Dict[str, Optional[float]] = {}
 
 
-def _sector_market_growth(sector: Optional[str], exclude_ticker: str) -> Optional[float]:
-    """Market-growth reference = median historical revenue CAGR of same-sector
-    universe peers (our own DB). A proxy for how fast the *market* grew, so
-    organic-vs-market gives a share-gain estimate. Cached per sector."""
-    if not sector:
+def _sector_market_growth(peer_group: Optional[str], exclude_ticker: str) -> Optional[float]:
+    """Market-growth reference = median historical revenue CAGR of same-PEER-GROUP
+    universe peers (our own DB). Using the normalized peer group (not the raw
+    FMP sector) means e.g. a defense/govt-IT name is compared to its real peers,
+    not to high-growth semis. Cached per group; None when <3 peers."""
+    if not peer_group:
         return None
-    if sector in _SECTOR_GROWTH_CACHE:
-        return _SECTOR_GROWTH_CACHE[sector]
+    if peer_group in _SECTOR_GROWTH_CACHE:
+        return _SECTOR_GROWTH_CACHE[peer_group]
     median = None
     try:
         import statistics
         from config.ticker_classification import get_extended_universe
+        from config.business_analysis_templates import peer_group_for
         from aletheia.data.database import InvestmentDatabase
         peers = [t for t, c in get_extended_universe().items()
-                 if getattr(c, "sector", None) == sector and t != exclude_ticker.upper()]
+                 if t != exclude_ticker.upper()
+                 and peer_group_for(t, getattr(c, "sector", "") or "",
+                                    getattr(c, "industry", "") or "",
+                                    getattr(c, "lifecycle", "") or "",
+                                    getattr(c, "business_model", "") or "") == peer_group]
         cagrs = []
         if peers:
             db = InvestmentDatabase(verbose=False)
@@ -73,7 +79,7 @@ def _sector_market_growth(sector: Optional[str], exclude_ticker: str) -> Optiona
             median = statistics.median(cagrs)
     except Exception:
         median = None
-    _SECTOR_GROWTH_CACHE[sector] = median
+    _SECTOR_GROWTH_CACHE[peer_group] = median
     return median
 
 
@@ -110,11 +116,19 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
             ma_pp = 0.0
             break_years = []
             split = "all organic (no transformative break detected)"
-        # Market-vs-share split (Phase 5): organic growth above the sector
+        # Market-vs-share split (Phase 5): organic growth above the peer-group
         # market-growth reference is share gain; below is share loss / lagging.
-        sector = getattr(getattr(calc, "classification", None), "sector", None)
-        ticker = getattr(getattr(calc, "classification", None), "ticker", "") or ""
-        market_ref = _sector_market_growth(sector, ticker)
+        cls = getattr(calc, "classification", None)
+        ticker = getattr(cls, "ticker", "") or ""
+        try:
+            from config.business_analysis_templates import peer_group_for
+            pg = peer_group_for(ticker, getattr(cls, "sector", "") or "",
+                                getattr(cls, "industry", "") or "",
+                                getattr(cls, "lifecycle", "") or "",
+                                getattr(cls, "business_model", "") or "")
+        except Exception:
+            pg = getattr(cls, "sector", None)
+        market_ref = _sector_market_growth(pg, ticker)
         share_gain = None
         share_label = None
         if isinstance(organic, (int, float)) and isinstance(market_ref, (int, float)):
@@ -133,7 +147,7 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
             "market_growth_ref": market_ref,
             "share_gain_pp": share_gain,
             "share_label": share_label,
-            "market_ref_basis": ("same-sector universe-median historical CAGR"
+            "market_ref_basis": (f"same-peer-group ({pg}) universe-median historical CAGR"
                                  if market_ref is not None else None),
             "source": "DCF organic/M&A break detection + sector market-growth proxy",
         })
@@ -240,6 +254,7 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
     try:
         from config.business_analysis_templates import template_for
         template = template_for(
+            ticker,
             getattr(cls, "sector", "") or "",
             getattr(cls, "industry", "") or "",
             lifecycle or "",
@@ -274,6 +289,7 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
         "sector_template": {
             "key": template.get("key"),
             "label": template.get("label"),
+            "peer_group": template.get("peer_group"),
             "emphasis": template.get("emphasis") or [],
         } if template else None,
     })
