@@ -322,7 +322,7 @@ def _build_ttm_snapshot(ttm_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
         "Revenue":             _f(r.get("clean_Revenue")),
         "EBIT":                _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome")),
         "NormEBIT":            _dcf_base_ebit(r),
-        "EBITDA":              _f(r.get("derived_EBITDA")),
+        "EBITDA":              _ebitda(r),
         "NetIncome":           _f(r.get("raw_NetIncome")),
         "TaxRate":             _f(r.get("clean_GAAP_TaxRate")),
         "CapEx":               _f(r.get("derived_CapEx")) or _f(r.get("raw_CapEx")),
@@ -405,6 +405,18 @@ def _dcf_base_ebit(r) -> Optional[float]:
     return _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome"))
 
 
+def _ebitda(r) -> Optional[float]:
+    """EBITDA with fallbacks: derived → clean → EBIT + D&A. Some filers (e.g.
+    CRM) populate ``clean_EBITDA`` but not ``derived_EBITDA``; the history table
+    previously read only the derived field and showed a blank column."""
+    v = _f(r.get("derived_EBITDA")) or _f(r.get("clean_EBITDA"))
+    if v is not None:
+        return v
+    ebit = _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome"))
+    da = _f(r.get("derived_Depreciation_Total")) or _f(r.get("clean_Depreciation_Total"))
+    return (ebit + da) if (ebit is not None and da is not None) else None
+
+
 def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for _, r in history_df.sort_values("fiscal_year").iterrows():
@@ -415,7 +427,7 @@ def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
             "EBIT":            _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome")),
             "NormEBIT":        _dcf_base_ebit(r),
             "EBIT_Margin_Pct": _f(r.get("derived_EBIT_Margin_Pct")),
-            "EBITDA":          _f(r.get("derived_EBITDA")),
+            "EBITDA":          _ebitda(r),
             "NetIncome":       _f(r.get("raw_NetIncome")),
             "TaxRate":         _f(r.get("clean_GAAP_TaxRate")),
             "CapEx":           _f(r.get("derived_CapEx")) or _f(r.get("raw_CapEx")),

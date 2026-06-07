@@ -507,10 +507,16 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
     fy_rows: List[Dict[str, Any]] = []
     for i, r in enumerate(history):
         rev = r.get("Revenue")
-        prev_rev = history[i - 1].get("Revenue") if i > 0 else None
+        prev = history[i - 1] if i > 0 else None
+        prev_rev = prev.get("Revenue") if prev else None
+        # Only a CONSECUTIVE prior fiscal year is a valid YoY base. When the
+        # ingested series has a gap (e.g. CRM jumps FY2005 → FY2011 with
+        # 2006-2010 missing), a naive ratio yields a spurious multi-year
+        # "+840%". Suppress growth across gaps rather than misreport it.
+        consecutive = bool(prev) and (r.get("fiscal_year", 0) - prev.get("fiscal_year", 0) == 1)
         rev_growth = (
             (rev / prev_rev - 1.0) * 100
-            if rev and prev_rev else None
+            if rev and prev_rev and consecutive else None
         )
         fy_rows.append({
             "FY":            r["fiscal_year"],
@@ -581,6 +587,16 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
                 if isinstance(r.get(col), (int, float))]
         return (sum(vals) / len(vals)) if vals else None
 
+    def _median(col):
+        # Robust central tendency for rate columns (e.g. Rev Growth), where the
+        # arithmetic mean of YoY %s overweights early small-base years.
+        vals = sorted(r.get(col) for r in fy_rows
+                      if isinstance(r.get(col), (int, float)))
+        if not vals:
+            return None
+        n = len(vals)
+        return vals[n // 2] if n % 2 else (vals[n // 2 - 1] + vals[n // 2]) / 2
+
     if fy_rows:
         # Keys MUST match the FY/TTM row order so pandas keeps column order
         # (this row is inserted first, so its key order wins).
@@ -589,7 +605,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Period":     "Avg",
             "Period end": f"{len(fy_rows)} FY",
             "Revenue":    _avg("Revenue"),
-            "Rev Growth": _avg("Rev Growth"),
+            "Rev Growth": _median("Rev Growth"),   # median = typical-year growth
             "EBIT":       _avg("EBIT"),
             "EBIT %":     _avg("EBIT %"),
             "Norm. EBIT": _avg("Norm. EBIT"),
