@@ -122,6 +122,9 @@ class ReportGenerator:
         downside_protection = data.get("downside_protection") or {}
         # Discount-rate detail (memo §7; attached by lead.py).
         wacc_analysis = data.get("wacc_analysis") or {}
+        # Bottom-up business analysis (§4) + assumption grounding (keystone).
+        business_analysis = data.get("business_analysis") or {}
+        assumption_grounding = data.get("assumption_grounding") or {}
 
         html = f"""<!DOCTYPE html>
 <html>
@@ -149,9 +152,12 @@ class ReportGenerator:
             "event→assumption link not yet built")}
     {self._section(4,
         self._render_business_snapshot(bm)
+        + self._render_business_analysis(business_analysis)
         + self._render_historical_fundamentals(metrics)
         + self._render_economic_engine(econ)
-        + self._render_financial_engine(fin))}
+        + self._render_financial_engine(fin),
+        gap="market share, TAM, contracts, unit economics pending structured "
+            "extraction (bottom-up Phases 2-3)")}
     {self._section(5,
         self._render_pillar_scorecard(pillar_scores)
         + self._render_moat_detail(moat)
@@ -159,7 +165,8 @@ class ReportGenerator:
         + self._render_strategic_context_detail(sc),
         gap="current-state pillar exists but is not in the scored 25-pt total")}
     {self._section(6,
-        self._render_scenario_triangle(p2)
+        self._render_assumption_grounding(assumption_grounding)
+        + self._render_scenario_triangle(p2)
         + self._render_phase2_section(p2)
         + self._render_reverse_dcf_detail(p2)
         + self._render_dcf_assumptions(metrics)
@@ -521,6 +528,71 @@ class ReportGenerator:
             f"<table class='table-styled'><thead><tr><th>Flag</th><th>Severity</th>"
             f"<th>Decision</th><th>Rationale</th><th>By / when</th></tr></thead>"
             f"<tbody>{rows}</tbody></table></div>")
+
+    def _render_business_analysis(self, ba: Dict[str, Any]) -> str:
+        """§4 bottom-up business analysis: growth decomposition (organic/M&A)
+        + coverage map of the 12 dimensions. Empty-safe."""
+        if not ba or not ba.get("available"):
+            return ""
+        pct = self._fmt_pct_or_dash
+        gd = ba.get("growth_decomposition") or {}
+        gd_html = ""
+        if gd.get("available"):
+            breaks = gd.get("break_years") or []
+            gd_html = (
+                f'<p style="margin:4px 0"><strong>Growth source:</strong> raw CAGR '
+                f'{pct(gd.get("raw_cagr"))} = organic {pct(gd.get("organic_cagr"))} '
+                f'+ M&A {pct(gd.get("ma_contribution_pp"))}'
+                + (f' (transformative breaks FY{breaks})' if breaks else '')
+                + f' — <em>{gd.get("split","")}</em></p>')
+        # Coverage map.
+        cov = ba.get("coverage") or []
+        rows = ""
+        for c in cov:
+            badge = ("✅" if c.get("status") == "present" else "○")
+            color = "#27ae60" if c.get("status") == "present" else "#b0b0b0"
+            rows += (f"<tr><td>{c.get('theme','')}</td><td>{c.get('dimension','')}</td>"
+                     f"<td style='color:{color}'>{badge} {c.get('status','')}</td>"
+                     f"<td style='color:#888;font-size:11px'>{c.get('source','')}</td></tr>")
+        cov_html = (
+            f"<table class='table-styled'><thead><tr><th>Theme</th><th>Dimension</th>"
+            f"<th>Status</th><th>Source</th></tr></thead><tbody>{rows}</tbody></table>")
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>🔬 Bottom-up business analysis</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
+    The business reality beneath the revenue line. {ba.get('n_present','?')}/{ba.get('n_total','?')}
+    dimensions populated today; the rest pending structured extraction.
+  </p>
+  {gd_html}{cov_html}
+  </div>"""
+
+    def _render_assumption_grounding(self, ag: Dict[str, Any]) -> str:
+        """Assumption grounding (keystone): engine assumptions vs business-
+        grounded references. Shown, not applied. Empty-safe."""
+        if not ag or not ag.get("available"):
+            return ""
+        pct = self._fmt_pct_or_dash
+        rows = ""
+        for r in ag.get("rows") or []:
+            d = r.get("delta")
+            dcolor = ("#c0392b" if isinstance(d, (int, float)) and abs(d) >= 0.02
+                      else "#3f3f46")
+            rows += (f"<tr><td>{r.get('assumption','')}</td>"
+                     f"<td style='text-align:right'>{pct(r.get('engine_value'))}</td>"
+                     f"<td style='text-align:right'>{pct(r.get('grounded_value'))}</td>"
+                     f"<td style='text-align:right;color:{dcolor}'>{pct(d)}</td>"
+                     f"<td style='color:#666;font-size:11px'>{r.get('note','')}</td></tr>")
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>🧲 Assumption grounding (business vs history)</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
+    Each top-down assumption vs a business-grounded reference. Shown for
+    triangulation — NOT auto-applied to the headline IV.
+  </p>
+  <table class='table-styled'><thead><tr><th>Assumption</th><th>Engine</th>
+  <th>Grounded</th><th>Δ</th><th>Basis</th></tr></thead><tbody>{rows}</tbody></table>
+  </div>"""
 
     def _render_required_judgment(self, ts: Dict[str, Any]) -> str:
         """§12 Required analyst judgment — the gaps the framework defers to the

@@ -360,6 +360,36 @@ def _wacc_analysis_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]
         return None
 
 
+def _business_analysis_payload(ticker: str, calc: Any) -> Optional[Dict[str, Any]]:
+    """Bottom-up business analysis (memo §4): growth decomposition (organic/M&A)
+    + coverage map. Deterministic; no LLM. The /dcf path has no agent report, so
+    business_model-sourced coverage shows pending here (the HTML report path,
+    which has the report, fills those). Never raises."""
+    try:
+        from aletheia.tools.business_analysis import build_business_analysis
+        return build_business_analysis(None, ticker, calc=calc)
+    except Exception:
+        return None
+
+
+def _assumption_grounding_payload(
+    calc: Any, result: Any, business_analysis: Optional[Dict[str, Any]],
+    current_state: Optional[Dict[str, Any]],
+    wacc_analysis: Optional[Dict[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    """Assumption grounding (memo keystone): engine assumptions vs business-
+    grounded references (organic CAGR, lifecycle terminal growth, disruption/
+    concentration WACC premium). Shown, not applied. Never raises."""
+    try:
+        from aletheia.tools.assumption_grounding import build_assumption_grounding
+        gd = (business_analysis or {}).get("growth_decomposition")
+        return build_assumption_grounding(
+            calc, result, growth_decomposition=gd,
+            current_state=current_state, wacc_analysis=wacc_analysis)
+    except Exception:
+        return None
+
+
 def _current_state_payload(
     ticker: str, result: Any,
     multiple_decomposition: Optional[Dict[str, Any]] = None,
@@ -539,6 +569,14 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
     except Exception:
         reverse_dcf = None
 
+    # Current-state, WACC, downside, business-analysis + assumption-grounding —
+    # computed as locals so the grounding (Phase 1) can reuse them.
+    _cs_payload = _current_state_payload(ticker, result, multiple_decomposition)
+    _wa_payload = _wacc_analysis_payload(ticker, result)
+    _ba_payload = _business_analysis_payload(ticker, calc)
+    _ag_payload = _assumption_grounding_payload(
+        calc, result, _ba_payload, _cs_payload, _wa_payload)
+
     return {
         "ticker":                 ticker.upper(),
         "wacc":                   float(result.wacc_base) if result.wacc_base else None,
@@ -560,8 +598,10 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "reverse_dcf":            reverse_dcf,
         "multiple_decomposition": multiple_decomposition,
         "downside_protection":    _downside_protection_payload(calc, result, multiple_decomposition),
-        "wacc_analysis":          _wacc_analysis_payload(ticker, result),
-        "current_state":          _current_state_payload(ticker, result, multiple_decomposition),
+        "wacc_analysis":          _wa_payload,
+        "current_state":          _cs_payload,
+        "business_analysis":      _ba_payload,
+        "assumption_grounding":   _ag_payload,
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
         # twice.
@@ -661,6 +701,8 @@ class DCFResponse(BaseModel):
     current_state: Optional[dict] = None
     downside_protection: Optional[dict] = None
     wacc_analysis: Optional[dict] = None
+    business_analysis: Optional[dict] = None
+    assumption_grounding: Optional[dict] = None
 
 
 class DCFOverridesRequest(BaseModel):
@@ -1321,6 +1363,8 @@ def get_ticker_dcf(ticker: str, response: Response):
         current_state=payload.get("current_state"),
         downside_protection=payload.get("downside_protection"),
         wacc_analysis=payload.get("wacc_analysis"),
+        business_analysis=payload.get("business_analysis"),
+        assumption_grounding=payload.get("assumption_grounding"),
     )
 
 
@@ -2711,6 +2755,25 @@ def rebuild_report(ticker: str):
             refreshed.append("wacc_analysis")
     except Exception as e:
         report.setdefault("_rebuild_warnings", []).append(f"wacc_analysis: {e}")
+
+    # Bottom-up business analysis + assumption grounding (deterministic). The
+    # report context enriches the coverage map (business_model fields).
+    try:
+        from aletheia.tools.business_analysis import compose_business_analysis
+        ba = compose_business_analysis(ticker_u, report=report)
+        if ba:
+            report["business_analysis"] = ba
+            refreshed.append("business_analysis")
+    except Exception as e:
+        report.setdefault("_rebuild_warnings", []).append(f"business_analysis: {e}")
+    try:
+        from aletheia.tools.assumption_grounding import compose_assumption_grounding
+        ag = compose_assumption_grounding(ticker_u)
+        if ag:
+            report["assumption_grounding"] = ag
+            refreshed.append("assumption_grounding")
+    except Exception as e:
+        report.setdefault("_rebuild_warnings", []).append(f"assumption_grounding: {e}")
 
     try:
         path_json.write_text(json.dumps(report, indent=2))

@@ -1976,6 +1976,40 @@ def _render_flag_ack(ticker: str, f: Dict[str, Any]) -> None:
                     st.rerun()
 
 
+def _business_analysis_panel(ba: Dict[str, Any], ag: Dict[str, Any]) -> None:
+    """Bottom-up business analysis (growth decomposition + coverage) and the
+    assumption-grounding keystone. No-op when unavailable."""
+    def _p(v):
+        return f"{v*100:+.1f}%" if isinstance(v, (int, float)) else "—"
+
+    gd = (ba or {}).get("growth_decomposition") or {}
+    if gd.get("available") or (ag or {}).get("available"):
+        with st.container(border=True):
+            st.markdown("#### 🔬 Bottom-up business analysis")
+            if gd.get("available"):
+                breaks = gd.get("break_years") or []
+                st.markdown(
+                    f"**Growth source:** raw {_p(gd.get('raw_cagr'))} = organic "
+                    f"{_p(gd.get('organic_cagr'))} + M&A {_p(gd.get('ma_contribution_pp'))}"
+                    + (f" (breaks FY{breaks})" if breaks else "")
+                    + f" — _{gd.get('split','')}_")
+            if ba and ba.get("available"):
+                st.caption(f"Coverage: {ba.get('n_present','?')}/{ba.get('n_total','?')} "
+                           "bottom-up dimensions populated (rest pending extraction)")
+            # Assumption grounding (keystone).
+            if (ag or {}).get("available"):
+                st.markdown("**Assumption grounding** _(engine vs business-grounded; "
+                            "shown, not applied)_")
+                rows = [{
+                    "Assumption": r.get("assumption", ""),
+                    "Engine": _p(r.get("engine_value")),
+                    "Grounded": _p(r.get("grounded_value")),
+                    "Δ": _p(r.get("delta")),
+                    "Basis": r.get("note", ""),
+                } for r in (ag.get("rows") or [])]
+                st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+
+
 def _wacc_analysis_panel(wa: Dict[str, Any]) -> None:
     """Discount-rate detail panel (memo §7): build-up, premia, sensitivity,
     implied WACC. No-op when unavailable."""
@@ -2192,6 +2226,10 @@ def render_deep_dive_view(
 
     # ── Discount-rate detail (memo §7) ──────────────────────────────────
     _wacc_analysis_panel((dcf or {}).get("wacc_analysis") or {})
+
+    # ── Bottom-up business analysis + assumption grounding (§4 keystone) ─
+    _business_analysis_panel((dcf or {}).get("business_analysis") or {},
+                             (dcf or {}).get("assumption_grounding") or {})
 
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})

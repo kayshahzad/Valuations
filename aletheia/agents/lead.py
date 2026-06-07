@@ -201,6 +201,23 @@ class ServingReportWriter:
         except Exception as exc:
             print(f"⚠ Lead: wacc_analysis compose failed: {exc}")
 
+        # Bottom-up business analysis (§4) + assumption grounding (keystone).
+        # Deterministic; the report context enriches the coverage map.
+        try:
+            from aletheia.tools.business_analysis import compose_business_analysis
+            ba = compose_business_analysis(ticker, report=report)
+            if ba:
+                report["business_analysis"] = ba
+        except Exception as exc:
+            print(f"⚠ Lead: business_analysis compose failed: {exc}")
+        try:
+            from aletheia.tools.assumption_grounding import compose_assumption_grounding
+            ag = compose_assumption_grounding(ticker)
+            if ag:
+                report["assumption_grounding"] = ag
+        except Exception as exc:
+            print(f"⚠ Lead: assumption_grounding compose failed: {exc}")
+
         try:
             with open(path_json, "w") as f:
                 json.dump(report, f, indent=2)
