@@ -123,6 +123,26 @@ class TestPhase2Merge(unittest.TestCase):
         self.assertEqual(cov["TAM sizing"], "present")
         self.assertEqual(cov["Market share / position"], "present")
 
+    def test_phase3_ce_coverage(self):
+        from aletheia.tools import business_analysis as ba_mod
+        import aletheia.agents.business_extraction as bx
+        orig = bx.cached_business_ab
+        bx.cached_business_ab = lambda t: {
+            "cac_ltv": "LTV/CAC 4x, 14-mo payback",
+            "segment_margin_trajectory": "Cloud margins rising 200bps/yr",
+            "new_product_launches": [{"name": "Model X"}],
+        }
+        try:
+            calc = _Calc([100, 106, 112, 119, 126, 134],
+                         [2018, 2019, 2020, 2021, 2022, 2023])
+            res = ba_mod.build_business_analysis({}, "TST", calc=calc)
+        finally:
+            bx.cached_business_ab = orig
+        cov = {c["dimension"]: c["status"] for c in res["coverage"]}
+        self.assertEqual(cov["CAC / LTV / cohorts"], "present")
+        self.assertEqual(cov["Margin trajectory by segment"], "present")
+        self.assertEqual(cov["New product launches"], "present")
+
 
 if __name__ == "__main__":
     unittest.main()

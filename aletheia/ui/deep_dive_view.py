@@ -2011,6 +2011,20 @@ def _business_analysis_panel(ba: Dict[str, Any], ag: Dict[str, Any]) -> None:
                     st.caption(f"Market share: {ex['market_share']}")
                 if ex.get("whitespace_runway"):
                     st.caption(f"Whitespace: {ex['whitespace_runway']}")
+                for label, key in (("Contract economics", "contract_economics"),
+                                   ("CAC/LTV", "cac_ltv"),
+                                   ("Segment margins", "segment_margin_trajectory"),
+                                   ("Operating leverage", "operating_leverage"),
+                                   ("R&D pipeline", "rd_pipeline"),
+                                   ("Trend positioning", "trend_positioning"),
+                                   ("Disruption risk", "disruption_risk"),
+                                   ("Acquisition strategy", "acquisition_strategy")):
+                    if ex.get(key):
+                        st.caption(f"{label}: {ex[key]}")
+                launches = ex.get("new_product_launches") or []
+                if launches:
+                    st.markdown("**New launches:** " + ", ".join(
+                        l.get("name", "") for l in launches[:5]))
             if ba and ba.get("available"):
                 st.caption(f"Coverage: {ba.get('n_present','?')}/{ba.get('n_total','?')} "
                            "bottom-up dimensions populated (rest pending extraction)")

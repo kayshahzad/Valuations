@@ -92,14 +92,20 @@ _COVERAGE = [
 ]
 
 
-# Coverage dimensions the Phase-2 LLM extraction (themes A+B) can satisfy.
+# Coverage dimensions the LLM extraction (themes A+B+C+E) can satisfy.
 _AB_FIELDS = {
+    # A + B (Phase 2)
     "Product / service portfolio": "product_lines",
     "Major customers / contracts": "major_customers",
     "Distribution channels": "distribution_channels",
     "TAM sizing": "tam_estimate",
     "Market share / position": "market_share",
     "Whitespace / adjacent TAMs": "whitespace_runway",
+    # C + E (Phase 3)
+    "Operating leverage": "operating_leverage",
+    "CAC / LTV / cohorts": "cac_ltv",
+    "Margin trajectory by segment": "segment_margin_trajectory",
+    "New product launches": "new_product_launches",
 }
 
 

@@ -45,7 +45,15 @@ class CustomerContract(BaseModel):
     pct_revenue: str = Field(default="", description="Approx % of revenue if disclosed")
 
 
+class NewLaunch(BaseModel):
+    name: str = Field(description="Recent product/service launch")
+    timing: str = Field(default="", description="When launched")
+    traction: str = Field(default="", description="Early traction / contribution to growth")
+
+
 class BusinessAB(BaseModel):
+    """Bottom-up extraction covering themes A (what it sells), B (market),
+    C (unit economics) and E (innovation/trend) — one structured 10-K call."""
     # Theme A — what the company sells
     product_lines: List[ProductLine] = Field(default_factory=list,
         description="3-8 specific offerings with pricing/contract structure")
@@ -60,6 +68,19 @@ class BusinessAB(BaseModel):
     whitespace_runway: str = Field(default="", description="Unaddressed segments/geographies/customers; realistic share ceiling")
     adjacent_tams: List[str] = Field(default_factory=list,
         description="Adjacent markets the company could credibly enter")
+    # Theme C — unit economics
+    contract_economics: str = Field(default="", description="Typical deal size, length, and margin profile by contract type")
+    cac_ltv: str = Field(default="", description="CAC vs LTV, payback, retention/NRR, cohort behavior (often only SaaS discloses)")
+    unit_cost: str = Field(default="", description="Cost per unit produced / per service delivered; key labor or input costs")
+    segment_margin_trajectory: str = Field(default="", description="How unit/segment margins are evolving (leading indicator)")
+    operating_leverage: str = Field(default="", description="Fixed vs variable cost split; incremental margin on growth")
+    # Theme E — innovation & trend positioning
+    rd_pipeline: str = Field(default="", description="Active R&D projects, timeline to revenue, R&D as % of revenue, productivity")
+    trend_positioning: str = Field(default="", description="Leader / follower / laggard on the key trends affecting the industry")
+    new_product_launches: List[NewLaunch] = Field(default_factory=list,
+        description="Recent launches with early traction / growth contribution")
+    disruption_risk: str = Field(default="", description="Technologies/models that could displace the revenue base, and the firm's response")
+    acquisition_strategy: str = Field(default="", description="M&A pattern: what gets bought (capability vs scale), integration approach")
     confidence: str = Field(default="", description="low/medium/high — how grounded these are in the filing vs inferred")
 
 
@@ -113,6 +134,21 @@ vs named competitors.
 - whitespace_runway: unaddressed segments/geographies/customers and a realistic \
 share ceiling.
 - adjacent_tams: markets the company could credibly expand into.
+
+THEME C — unit economics (the structure beneath aggregate margins):
+- contract_economics: typical deal size, length, and margin by contract type.
+- cac_ltv: customer acquisition cost vs lifetime value, payback, retention/NRR, \
+cohort behavior (usually only SaaS/consumer disclose; leave blank otherwise).
+- unit_cost: cost per unit produced / per service delivered; key labor or input costs.
+- segment_margin_trajectory: how unit/segment margins are evolving (leading indicator).
+- operating_leverage: fixed vs variable cost split; incremental margin on growth.
+
+THEME E — innovation & trend positioning:
+- rd_pipeline: active R&D projects, timeline to revenue, R&D as % of revenue, productivity.
+- trend_positioning: leader / follower / laggard on the key industry trends.
+- new_product_launches: recent launches with early traction / growth contribution.
+- disruption_risk: technologies/models that could displace the revenue base + the response.
+- acquisition_strategy: M&A pattern — capability vs scale acquisition, integration.
 
 Return the structured object. Use the filing's own language and figures."""
 

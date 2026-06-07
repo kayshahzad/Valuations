@@ -575,6 +575,28 @@ class ReportGenerator:
             if share: parts.append(f"<p style='margin:2px 0'><strong>Market share:</strong> {share}</p>")
             if white: parts.append(f"<p style='margin:2px 0'><strong>Whitespace:</strong> {white}</p>")
             if adj: parts.append(f"<p style='margin:2px 0'><strong>Adjacent TAMs:</strong> {adj}</p>")
+            # Themes C (unit economics) + E (innovation).
+            for label, key in (("Contract economics", "contract_economics"),
+                               ("CAC / LTV", "cac_ltv"),
+                               ("Unit cost", "unit_cost"),
+                               ("Segment margin trajectory", "segment_margin_trajectory"),
+                               ("Operating leverage", "operating_leverage"),
+                               ("R&D pipeline", "rd_pipeline"),
+                               ("Trend positioning", "trend_positioning"),
+                               ("Disruption risk", "disruption_risk"),
+                               ("Acquisition strategy", "acquisition_strategy")):
+                v = ex.get(key)
+                if v:
+                    parts.append(f"<p style='margin:2px 0'><strong>{label}:</strong> {v}</p>")
+            launches = ex.get("new_product_launches") or []
+            if launches:
+                lis = "".join(
+                    f"<li><strong>{l.get('name','')}</strong>"
+                    + (f" ({l.get('timing')})" if l.get('timing') else "")
+                    + (f" — {l.get('traction')}" if l.get('traction') else "") + "</li>"
+                    for l in launches[:5])
+                parts.append(f"<p style='margin:4px 0 0 0'><strong>New launches</strong></p>"
+                             f"<ul style='margin:2px 0 6px 0'>{lis}</ul>")
             ex_html = "".join(parts)
 
         # Coverage map.
