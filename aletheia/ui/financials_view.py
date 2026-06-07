@@ -858,10 +858,15 @@ def _render_reused_signals(cs: Dict[str, Any]) -> None:
         mkt = sv.get("market_ev_ebitda"); med = sv.get("sector_median_ev_ebitda")
         prem = sv.get("premium_pct"); sect = sv.get("sector")
         prem_s = f"{prem*100:+.0f}%" if isinstance(prem, (int, float)) else "—"
-        st.markdown(
-            f"**🏭 Sector-relative valuation** — {sv.get('label','')}: "
-            f"EV/EBITDA **{mkt:.1f}×** vs {sect or 'sector'} median "
-            f"**{med:.1f}×** ({prem_s}).")
+        line = (f"**🏭 Sector-relative valuation** — {sv.get('label','')}: "
+                f"EV/EBITDA **{mkt:.1f}×** vs {sect or 'sector'} median "
+                f"**{med:.1f}×** ({prem_s})")
+        own = sv.get("own_5y_ev_ebitda"); own_p = sv.get("own_5y_premium_pct")
+        if isinstance(own, (int, float)):
+            own_s = f"{own_p*100:+.0f}%" if isinstance(own_p, (int, float)) else ""
+            line += (f"; vs own 5Y avg **{own:.1f}×** ({own_s}, "
+                     f"{sv.get('own_5y_label','')})")
+        st.markdown(line + ".")
         if sv.get("note"):
             st.caption(f"  ↳ {sv['note']}")
 
@@ -887,6 +892,9 @@ def _render_reused_signals(cs: Dict[str, Any]) -> None:
         up, dn = sent.get("recent_upgrades", 0), sent.get("recent_downgrades", 0)
         if up or dn:
             bits.append(f"{up}↑/{dn}↓ recent")
+        disp = sent.get("dispersion")
+        if isinstance(disp, (int, float)):
+            bits.append(f"PT spread {disp*100:.0f}% ({sent.get('dispersion_label','')})")
         st.markdown(f"**🗣️ Analyst sentiment** — {sent.get('label','')}"
                     + (f" ({' · '.join(bits)})" if bits else ""))
 

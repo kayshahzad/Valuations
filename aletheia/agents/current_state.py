@@ -185,9 +185,32 @@ def _microstructure(ticker: str) -> Dict[str, Any]:
     return out
 
 
-def _sector_relative_valuation(md: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    """Sector-relative valuation, REUSING the MultipleDecomposition tool's
-    already-computed market vs sector-median EV/EBITDA (no recompute, no fetch).
+def _own_5y_ev_ebitda(ticker: str) -> Optional[float]:
+    """Company's own ~5-year-average EV/EBITDA (trimmed mean) from FMP key
+    metrics history. Self-relative valuation anchor. None when unavailable."""
+    try:
+        from aletheia.data import fmp_client
+        km = fmp_client.fetch_key_metrics(ticker) or []
+        vals = []
+        for r in km[:5]:
+            v = r.get("evToEBITDA")
+            if isinstance(v, (int, float)) and 0 < v < 200:
+                vals.append(float(v))
+        if len(vals) < 3:
+            return None
+        vals.sort()
+        trimmed = vals[1:-1] if len(vals) >= 5 else vals  # drop hi/lo when ≥5
+        return sum(trimmed) / len(trimmed)
+    except Exception:
+        return None
+
+
+def _sector_relative_valuation(
+    md: Optional[Dict[str, Any]], ticker: str = "",
+) -> Dict[str, Any]:
+    """Sector- AND self-relative valuation. REUSES the MultipleDecomposition
+    tool's market vs sector-median EV/EBITDA, plus the company's own 5-year
+    average EV/EBITDA (self-historical anchor).
 
     Display-only: returns a context block (premium/discount + interpretation).
     It does NOT raise a flag or feed the pillar score in this phase."""
@@ -212,6 +235,15 @@ def _sector_relative_valuation(md: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         label = "cheap vs sector"
     else:
         label = "in line with sector"
+    # Self-relative: current vs the company's own 5Y average multiple.
+    own_5y = _own_5y_ev_ebitda(ticker) if ticker else None
+    own_premium_pct = (market / own_5y - 1.0) if (own_5y and own_5y > 0) else None
+    own_label = None
+    if own_premium_pct is not None:
+        own_label = ("above own 5Y avg" if own_premium_pct > 0.10
+                     else "below own 5Y avg" if own_premium_pct < -0.10
+                     else "near own 5Y avg")
+
     out.update({
         "available": True,
         "market_ev_ebitda": float(market),
@@ -220,7 +252,10 @@ def _sector_relative_valuation(md: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         "premium_x": float(premium_x) if isinstance(premium_x, (int, float)) else None,
         "premium_pct": float(premium_pct) if premium_pct is not None else None,
         "label": label,
-        "source": "MultipleDecomposition (market vs sector-median EV/EBITDA)",
+        "own_5y_ev_ebitda": float(own_5y) if own_5y else None,
+        "own_5y_premium_pct": own_premium_pct,
+        "own_5y_label": own_label,
+        "source": "MultipleDecomposition (market vs sector-median) + FMP own 5Y avg",
         "note": "Sector median is a static reference table, not a live peer set.",
     })
     return out
@@ -375,6 +410,7 @@ def _analyst_sentiment(ticker: str, current_price: Optional[float] = None) -> Di
     buy = hold = sell = None
     consensus = None
     recent_up = recent_down = 0
+    target_high = target_low = dispersion = None
     try:
         from aletheia.data import fmp_client
         pts = fmp_client.fetch_price_target_summary(ticker) or {}
@@ -386,6 +422,17 @@ def _analyst_sentiment(ticker: str, current_price: Optional[float] = None) -> Di
                 target_avg = float(v); break
         if target_avg and current_price:
             implied_upside = target_avg / current_price - 1.0
+
+        # Dispersion (analyst disagreement) from the consensus high/low.
+        ptc = fmp_client.fetch_price_target_consensus(ticker) or {}
+        th, tl = ptc.get("targetHigh"), ptc.get("targetLow")
+        tc = ptc.get("targetConsensus") or ptc.get("targetMedian") or target_avg
+        if isinstance(th, (int, float)) and th > 0:
+            target_high = float(th)
+        if isinstance(tl, (int, float)) and tl > 0:
+            target_low = float(tl)
+        if target_high and target_low and tc:
+            dispersion = (target_high - target_low) / float(tc)  # range ÷ consensus
 
         gc = fmp_client.fetch_grades_consensus(ticker) or {}
         buy = (gc.get("strongBuy") or 0) + (gc.get("buy") or 0)
@@ -419,16 +466,26 @@ def _analyst_sentiment(ticker: str, current_price: Optional[float] = None) -> Di
     score += 1 if recent_up > recent_down else -1 if recent_down > recent_up else 0
     label = ("bullish" if score >= 2 else "bearish" if score <= -2 else "neutral")
 
+    # Dispersion label: wide spread = low conviction in the consensus.
+    disp_label = None
+    if dispersion is not None:
+        disp_label = ("wide (low consensus conviction)" if dispersion > 0.6
+                      else "moderate" if dispersion > 0.3 else "tight")
+
     out.update({
         "available": True,
         "target_avg": target_avg,
+        "target_high": target_high,
+        "target_low": target_low,
+        "dispersion": dispersion,
+        "dispersion_label": disp_label,
         "implied_upside": implied_upside,
         "ratings": {"buy": buy, "hold": hold, "sell": sell},
         "consensus": consensus,
         "recent_upgrades": recent_up,
         "recent_downgrades": recent_down,
         "label": label,
-        "source": "FMP price-target summary + analyst grades",
+        "source": "FMP price-target summary/consensus + analyst grades",
     })
     return out
 
@@ -463,7 +520,7 @@ def build_current_state(
     res.microstructure = _microstructure(ticker)
     res.events = list(events or [])
     # Reused / derived signals (display-only).
-    res.sector_valuation = _sector_relative_valuation(multiple_decomposition)
+    res.sector_valuation = _sector_relative_valuation(multiple_decomposition, ticker)
     res.policy_regulatory = _policy_regulatory_context(res.events, regulatory_exposure)
     res.market_signal = _market_signal(ticker, res.microstructure)
     res.analyst_sentiment = _analyst_sentiment(

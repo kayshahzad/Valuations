@@ -120,6 +120,8 @@ class ReportGenerator:
         current_state = data.get("current_state") or {}
         # Downside-protection payload (memo §8; attached by lead.py).
         downside_protection = data.get("downside_protection") or {}
+        # Discount-rate detail (memo §7; attached by lead.py).
+        wacc_analysis = data.get("wacc_analysis") or {}
 
         html = f"""<!DOCTYPE html>
 <html>
@@ -139,6 +141,7 @@ class ReportGenerator:
     {self._render_pillar_scorecard(pillar_scores)}
     {self._render_current_state(current_state)}
     {self._render_downside_protection(downside_protection)}
+    {self._render_wacc_analysis(wacc_analysis)}
     {self._render_business_snapshot(bm)}
     {self._render_scenario_triangle(p2)}
     {self._render_structured_thesis(thesis_synth, p2)}
@@ -937,16 +940,22 @@ class ReportGenerator:
                 extra.append(f"{rt.get('buy',0)}B/{rt.get('hold',0)}H/{rt.get('sell',0)}S")
             up, dn = sent.get("recent_upgrades", 0), sent.get("recent_downgrades", 0)
             if up or dn: extra.append(f"{up}↑/{dn}↓ recent")
+            if sent.get("dispersion") is not None:
+                extra.append(f"PT spread {pct(sent['dispersion'],0)} ({sent.get('dispersion_label','')})")
             sig_bits.append(f"<li><strong>🗣️ Analyst sentiment:</strong> {sent.get('label','')}"
                             + (f" ({' · '.join(extra)})" if extra else "") + "</li>")
         sv = cs.get("sector_valuation") or {}
         if sv.get("available"):
+            own = ""
+            if sv.get("own_5y_ev_ebitda") is not None:
+                own = (f"; vs own 5Y avg {self._fmt_x_or_dash(sv.get('own_5y_ev_ebitda'))} "
+                       f"({pct(sv.get('own_5y_premium_pct'),0)}, {sv.get('own_5y_label','')})")
             sig_bits.append(
                 f"<li><strong>🏭 Sector-relative valuation:</strong> {sv.get('label','')} — "
                 f"EV/EBITDA {self._fmt_x_or_dash(sv.get('market_ev_ebitda'))} vs "
                 f"{sv.get('sector') or 'sector'} median "
                 f"{self._fmt_x_or_dash(sv.get('sector_median_ev_ebitda'))} "
-                f"({pct(sv.get('premium_pct'),0)})</li>")
+                f"({pct(sv.get('premium_pct'),0)}){own}</li>")
         pr = cs.get("policy_regulatory") or {}
         if pr.get("available"):
             bits = []
@@ -974,6 +983,72 @@ class ReportGenerator:
     policy/regulatory). Deterministic / cached — no extra LLM cost.
   </p>
   {body}
+  </div>"""
+
+    def _render_wacc_analysis(self, wa: Dict[str, Any]) -> str:
+        """Discount-rate detail card (memo §7): component build-up, premia +
+        adjusted WACC, sensitivity table, implied WACC. Empty-safe."""
+        if not wa or not wa.get("available"):
+            return ""
+        pct = self._fmt_pct_or_dash
+        c = wa.get("components") or {}
+        pr = wa.get("premia") or {}
+        q = wa.get("quality") or {}
+
+        # Component build-up line.
+        comp = (
+            f'<p style="margin:4px 0"><strong>Build-up:</strong> '
+            f'rf {pct(c.get("risk_free_rate"))} + β {self._fmt_num_or_dash(c.get("beta"))}'
+            f'×ERP {pct(c.get("erp"))} = Ke {pct(c.get("cost_of_equity"))}'
+            f' · Kd≈{pct(c.get("cost_of_debt_implied"))}'
+            f' · weights E {pct(c.get("equity_weight"),0)}/D {pct(c.get("debt_weight"),0)}'
+            f' → <strong>WACC {pct(c.get("wacc_base"))}</strong></p>')
+
+        # Premia → adjusted WACC.
+        prem = (
+            f'<p style="margin:4px 0"><strong>Risk build-up premia:</strong> '
+            f'size {pct(pr.get("size"))}, country {pct(pr.get("country"))} '
+            f'({pr.get("country_used") or "—"}), idiosyncratic {pct(pr.get("idiosyncratic"))}'
+            f' → <strong>adjusted WACC {pct(wa.get("adjusted_wacc"))}</strong> '
+            f'(IV {self._fmt_num_or_dash(wa.get("iv_at_adjusted_wacc"))} vs base '
+            f'{self._fmt_num_or_dash(wa.get("iv_base"))})</p>'
+            + (f'<p style="font-size:12px;color:#888;margin:0 0 4px 0">idiosyncratic: '
+               f'{", ".join(pr.get("idiosyncratic_reasons") or []) or "none"} · '
+               f'premia shown for triangulation; not auto-applied to the headline IV</p>'))
+
+        # Implied WACC.
+        iw = wa.get("implied_wacc")
+        impl = ""
+        if iw is not None:
+            bps = wa.get("implied_vs_base_bps")
+            impl = (f'<p style="margin:4px 0"><strong>Implied WACC:</strong> '
+                    f'{pct(iw)} — the rate the market price implies '
+                    f'({bps:+d} bps vs model base). '
+                    f'{"Market more cautious than the model." if (bps or 0) > 0 else "Market more optimistic than the model." if (bps or 0) < 0 else ""}</p>')
+
+        # Sensitivity table.
+        rows = ""
+        for s in wa.get("sensitivity") or []:
+            tag = " <strong>(base)</strong>" if s.get("is_base") else ""
+            rows += (f"<tr><td style='text-align:right'>{s.get('delta_bps'):+d} bps{tag}</td>"
+                     f"<td style='text-align:right'>{pct(s.get('wacc'))}</td>"
+                     f"<td style='text-align:right'>{self._fmt_num_or_dash(s.get('iv'))}</td>"
+                     f"<td style='text-align:right'>{pct(s.get('vs_price_pct'),0)}</td></tr>")
+        table = (f"<table class='table-styled'><thead><tr><th>WACC Δ</th><th>WACC</th>"
+                 f"<th>IV/sh</th><th>vs price</th></tr></thead><tbody>{rows}</tbody></table>")
+
+        qual = (f'<p style="font-size:12px;color:#666;margin:4px 0 0 0">'
+                f'Discount-rate quality {q.get("score","—")}/{q.get("max","—")} · '
+                f'ERP: {q.get("erp_method","")} · {q.get("notes","")}</p>')
+
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>📉 Discount-Rate Detail (WACC)</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
+    WACC drives ~15-25% of IV per 100 bps. Build-up, risk premia, the IV
+    sensitivity to the rate, and the discount rate the market price implies.
+  </p>
+  {comp}{prem}{impl}{table}{qual}
   </div>"""
 
     def _render_downside_protection(self, dp: Dict[str, Any]) -> str:

@@ -191,6 +191,16 @@ class ServingReportWriter:
         except Exception as exc:
             print(f"⚠ Lead: downside_protection compose failed: {exc}")
 
+        # Discount-rate detail (memo §7): WACC decomposition, premia, sensitivity
+        # table, implied WACC. Deterministic — no LLM.
+        try:
+            from aletheia.tools.wacc_analysis import compose_wacc_analysis
+            wa = compose_wacc_analysis(ticker)
+            if wa:
+                report["wacc_analysis"] = wa
+        except Exception as exc:
+            print(f"⚠ Lead: wacc_analysis compose failed: {exc}")
+
         try:
             with open(path_json, "w") as f:
                 json.dump(report, f, indent=2)

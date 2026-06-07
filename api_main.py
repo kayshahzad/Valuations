@@ -342,6 +342,24 @@ def _downside_protection_payload(
         return None
 
 
+def _wacc_analysis_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]:
+    """Discount-rate detail (memo §7) for the /dcf payload: component
+    decomposition, build-up premia + adjusted WACC, sensitivity table, and
+    implied WACC. Deterministic — re-discounts the base scenario; no LLM. The
+    country premium uses the cached FMP profile. Never raises."""
+    try:
+        from aletheia.tools.wacc_analysis import build_wacc_analysis
+        country = None
+        try:
+            from aletheia.data import fmp_client
+            country = (fmp_client.fetch_profile(ticker) or {}).get("country")
+        except Exception:
+            country = None
+        return build_wacc_analysis(result, country=country)
+    except Exception:
+        return None
+
+
 def _current_state_payload(
     ticker: str, result: Any,
     multiple_decomposition: Optional[Dict[str, Any]] = None,
@@ -542,6 +560,7 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "reverse_dcf":            reverse_dcf,
         "multiple_decomposition": multiple_decomposition,
         "downside_protection":    _downside_protection_payload(calc, result, multiple_decomposition),
+        "wacc_analysis":          _wacc_analysis_payload(ticker, result),
         "current_state":          _current_state_payload(ticker, result, multiple_decomposition),
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
@@ -641,6 +660,7 @@ class DCFResponse(BaseModel):
     engine_warnings: Optional[List[str]] = None
     current_state: Optional[dict] = None
     downside_protection: Optional[dict] = None
+    wacc_analysis: Optional[dict] = None
 
 
 class DCFOverridesRequest(BaseModel):
@@ -1300,6 +1320,7 @@ def get_ticker_dcf(ticker: str, response: Response):
         engine_warnings=payload.get("engine_warnings"),
         current_state=payload.get("current_state"),
         downside_protection=payload.get("downside_protection"),
+        wacc_analysis=payload.get("wacc_analysis"),
     )
 
 
@@ -2680,6 +2701,16 @@ def rebuild_report(ticker: str):
             refreshed.append("downside_protection")
     except Exception as e:
         report.setdefault("_rebuild_warnings", []).append(f"downside_protection: {e}")
+
+    # WACC analysis (deterministic).
+    try:
+        from aletheia.tools.wacc_analysis import compose_wacc_analysis
+        wa = compose_wacc_analysis(ticker_u)
+        if wa:
+            report["wacc_analysis"] = wa
+            refreshed.append("wacc_analysis")
+    except Exception as e:
+        report.setdefault("_rebuild_warnings", []).append(f"wacc_analysis: {e}")
 
     try:
         path_json.write_text(json.dumps(report, indent=2))

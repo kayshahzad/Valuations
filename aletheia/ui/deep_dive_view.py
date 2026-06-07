@@ -1969,6 +1969,52 @@ def _render_flag_ack(ticker: str, f: Dict[str, Any]) -> None:
                     st.rerun()
 
 
+def _wacc_analysis_panel(wa: Dict[str, Any]) -> None:
+    """Discount-rate detail panel (memo §7): build-up, premia, sensitivity,
+    implied WACC. No-op when unavailable."""
+    if not wa or not wa.get("available"):
+        return
+
+    def _p(v, dp=1):
+        return f"{v*100:.{dp}f}%" if isinstance(v, (int, float)) else "—"
+
+    c = wa.get("components") or {}
+    pr = wa.get("premia") or {}
+    with st.container(border=True):
+        st.markdown("#### 📉 Discount-rate detail (WACC)")
+        cc = st.columns(4)
+        cc[0].metric("WACC (base)", _p(c.get("wacc_base")))
+        cc[1].metric("Cost of equity", _p(c.get("cost_of_equity")))
+        iw = wa.get("implied_wacc"); bps = wa.get("implied_vs_base_bps")
+        cc[2].metric("Implied WACC", _p(iw) if iw is not None else "—",
+                     f"{bps:+d} bps vs base" if bps is not None else None)
+        cc[3].metric("Adjusted WACC", _p(wa.get("adjusted_wacc")),
+                     f"+{_p(pr.get('total'))} premia")
+        st.caption(
+            f"Build-up: rf {_p(c.get('risk_free_rate'))} + β "
+            f"{c.get('beta'):.2f}×ERP {_p(c.get('erp'))} = Ke "
+            f"{_p(c.get('cost_of_equity'))} · weights E "
+            f"{_p(c.get('equity_weight'),0)}/D {_p(c.get('debt_weight'),0)}")
+        if pr.get("total"):
+            st.caption(f"Premia — size {_p(pr.get('size'))}, country "
+                       f"{_p(pr.get('country'))} ({pr.get('country_used') or '—'}), "
+                       f"idiosyncratic {_p(pr.get('idiosyncratic'))} "
+                       f"[{', '.join(pr.get('idiosyncratic_reasons') or []) or 'none'}] "
+                       f"· shown for triangulation, not auto-applied")
+        sens = wa.get("sensitivity") or []
+        if sens:
+            rows = [{
+                "WACC Δ": f"{s.get('delta_bps'):+d} bps" + ("  (base)" if s.get("is_base") else ""),
+                "WACC": _p(s.get("wacc")),
+                "IV/sh": f"${s.get('iv'):,.2f}" if isinstance(s.get("iv"), (int, float)) else "—",
+                "vs price": _p(s.get("vs_price_pct"), 0),
+            } for s in sens]
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        q = wa.get("quality") or {}
+        st.caption(f"Discount-rate quality {q.get('score','—')}/{q.get('max','—')} · "
+                   f"{q.get('notes','')}")
+
+
 def _downside_protection_panel(dp: Dict[str, Any]) -> None:
     """Downside-protection panel (memo §8): asymmetry, downside ladder,
     required-MoS-by-risk, position-sizing band. No-op when unavailable."""
@@ -2136,6 +2182,9 @@ def render_deep_dive_view(
 
     # ── Downside protection (memo §8) ───────────────────────────────────
     _downside_protection_panel((dcf or {}).get("downside_protection") or {})
+
+    # ── Discount-rate detail (memo §7) ──────────────────────────────────
+    _wacc_analysis_panel((dcf or {}).get("wacc_analysis") or {})
 
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})
