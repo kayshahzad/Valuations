@@ -19,6 +19,64 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 
+def _raw_cagr_from_revs(revs: list) -> Optional[float]:
+    """Point-to-point raw CAGR over the last ≤5 fiscal years."""
+    if len(revs) < 4:
+        return None
+    k = min(5, len(revs) - 1)
+    base = revs[-1 - k]
+    return (revs[-1] / base) ** (1.0 / k) - 1.0 if base > 0 else None
+
+
+# Per-process cache of sector-median historical CAGR (computed from the
+# universe DB) — keyed by sector so it's derived once per sector per process.
+_SECTOR_GROWTH_CACHE: Dict[str, Optional[float]] = {}
+
+
+def _sector_market_growth(sector: Optional[str], exclude_ticker: str) -> Optional[float]:
+    """Market-growth reference = median historical revenue CAGR of same-sector
+    universe peers (our own DB). A proxy for how fast the *market* grew, so
+    organic-vs-market gives a share-gain estimate. Cached per sector."""
+    if not sector:
+        return None
+    if sector in _SECTOR_GROWTH_CACHE:
+        return _SECTOR_GROWTH_CACHE[sector]
+    median = None
+    try:
+        import statistics
+        from config.ticker_classification import get_extended_universe
+        from aletheia.data.database import InvestmentDatabase
+        peers = [t for t, c in get_extended_universe().items()
+                 if getattr(c, "sector", None) == sector and t != exclude_ticker.upper()]
+        cagrs = []
+        if peers:
+            db = InvestmentDatabase(verbose=False)
+            try:
+                for p in peers:
+                    try:
+                        df = db.get_latest(p)
+                        if df is None or "clean_Revenue" not in getattr(df, "columns", []):
+                            continue
+                        d = df
+                        if "period" in d.columns:
+                            d = d[d["period"] == "FY"]
+                        d = d.dropna(subset=["clean_Revenue"]).sort_values("fiscal_year")
+                        revs = [float(x) for x in d["clean_Revenue"].tolist()]
+                        c = _raw_cagr_from_revs(revs)
+                        if c is not None and -0.5 < c < 2.0:
+                            cagrs.append(c)
+                    except Exception:
+                        continue
+            finally:
+                db.close()
+        if len(cagrs) >= 3:
+            median = statistics.median(cagrs)
+    except Exception:
+        median = None
+    _SECTOR_GROWTH_CACHE[sector] = median
+    return median
+
+
 def build_growth_decomposition(calc) -> Dict[str, Any]:
     """Decompose historical revenue growth into organic vs M&A/regime-break.
 
@@ -52,6 +110,18 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
             ma_pp = 0.0
             break_years = []
             split = "all organic (no transformative break detected)"
+        # Market-vs-share split (Phase 5): organic growth above the sector
+        # market-growth reference is share gain; below is share loss / lagging.
+        sector = getattr(getattr(calc, "classification", None), "sector", None)
+        ticker = getattr(getattr(calc, "classification", None), "ticker", "") or ""
+        market_ref = _sector_market_growth(sector, ticker)
+        share_gain = None
+        share_label = None
+        if isinstance(organic, (int, float)) and isinstance(market_ref, (int, float)):
+            share_gain = organic - market_ref
+            share_label = ("gaining share" if share_gain > 0.01
+                           else "losing share / lagging market" if share_gain < -0.01
+                           else "tracking the market")
         out.update({
             "available": raw_cagr is not None,
             "raw_cagr": raw_cagr,
@@ -60,10 +130,12 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
             "break_years": break_years,
             "lookback_years": k,
             "split": split,
-            # Market-vs-share split deferred — needs a market-growth reference.
-            "market_growth_ref": None,
-            "share_gain_pp": None,
-            "source": "DCF organic/M&A break detection (deterministic)",
+            "market_growth_ref": market_ref,
+            "share_gain_pp": share_gain,
+            "share_label": share_label,
+            "market_ref_basis": ("same-sector universe-median historical CAGR"
+                                 if market_ref is not None else None),
+            "source": "DCF organic/M&A break detection + sector market-growth proxy",
         })
     except Exception:
         return {"available": False}
@@ -116,6 +188,8 @@ def _present(source: Optional[str], bm: Dict[str, Any], dims: Dict[str, Any],
     ab_field = _AB_FIELDS.get(dimension)
     if ab_field and ab.get(ab_field):
         return True
+    if dimension == "Market vs share":
+        return gd.get("share_gain_pp") is not None
     if not source:
         return False
     if source == "growth_decomposition":

@@ -1997,6 +1997,11 @@ def _business_analysis_panel(ba: Dict[str, Any], ag: Dict[str, Any]) -> None:
                     f"{_p(gd.get('organic_cagr'))} + M&A {_p(gd.get('ma_contribution_pp'))}"
                     + (f" (breaks FY{breaks})" if breaks else "")
                     + f" — _{gd.get('split','')}_")
+                if gd.get("share_gain_pp") is not None:
+                    st.caption(
+                        f"Market vs share: organic {_p(gd.get('organic_cagr'))} vs "
+                        f"sector market {_p(gd.get('market_growth_ref'))} → share "
+                        f"{_p(gd.get('share_gain_pp'))} ({gd.get('share_label','')})")
             ex = (ba or {}).get("extracted") or {}
             if ex:
                 prods = ex.get("product_lines") or []

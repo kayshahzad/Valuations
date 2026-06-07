@@ -545,6 +545,14 @@ class ReportGenerator:
                 f'+ M&A {pct(gd.get("ma_contribution_pp"))}'
                 + (f' (transformative breaks FY{breaks})' if breaks else '')
                 + f' — <em>{gd.get("split","")}</em></p>')
+            if gd.get("share_gain_pp") is not None:
+                gd_html += (
+                    f'<p style="margin:2px 0"><strong>Market vs share:</strong> '
+                    f'organic {pct(gd.get("organic_cagr"))} vs sector market '
+                    f'{pct(gd.get("market_growth_ref"))} → share '
+                    f'{pct(gd.get("share_gain_pp"))} (<em>{gd.get("share_label","")}</em>) '
+                    f'<span style="color:#888;font-size:11px">'
+                    f'[{gd.get("market_ref_basis","")}]</span></p>')
         # Extracted themes A+B (Phase 2 LLM), when present.
         ex = ba.get("extracted") or {}
         ex_html = ""

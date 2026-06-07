@@ -59,6 +59,20 @@ class TestGrowthDecomposition(unittest.TestCase):
         self.assertLess(gd["organic_cagr"], gd["raw_cagr"])
         self.assertGreater(gd["ma_contribution_pp"], 0)
 
+    def test_market_vs_share_split(self):
+        from aletheia.tools import business_analysis as ba_mod
+        # Seed the sector cache so the split is deterministic (no DB).
+        ba_mod._SECTOR_GROWTH_CACHE["TestSector"] = 0.04  # market grew 4%
+        cls = _Cls(sector="TestSector")
+        cls.ticker = "TST"
+        calc = _Calc([100, 106, 112, 119, 126, 134],
+                     [2018, 2019, 2020, 2021, 2022, 2023], classification=cls)
+        gd = ba_mod.build_growth_decomposition(calc)
+        self.assertAlmostEqual(gd["market_growth_ref"], 0.04, places=4)
+        # Organic ~6% vs market 4% → ~+2pp share gain.
+        self.assertGreater(gd["share_gain_pp"], 0)
+        self.assertEqual(gd["share_label"], "gaining share")
+
     def test_all_organic_when_no_break(self):
         years = [2017, 2018, 2019, 2020, 2021, 2022]
         revs = [100, 106, 112, 119, 126, 134]  # steady ~6%
