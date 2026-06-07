@@ -116,6 +116,8 @@ class ReportGenerator:
         # Quantitative detail block (added by lead.py post Stage 4).
         # Renders empty-safe when the block is missing on legacy reports.
         metrics = data.get("5_financial_metrics") or {}
+        # Current-State Awareness payload (attached by lead.py before write).
+        current_state = data.get("current_state") or {}
 
         html = f"""<!DOCTYPE html>
 <html>
@@ -133,6 +135,7 @@ class ReportGenerator:
       {self._render_valuation_card(p2, risk)}
     </div>
     {self._render_pillar_scorecard(pillar_scores)}
+    {self._render_current_state(current_state)}
     {self._render_business_snapshot(bm)}
     {self._render_scenario_triangle(p2)}
     {self._render_structured_thesis(thesis_synth, p2)}
@@ -865,6 +868,110 @@ class ReportGenerator:
         ("Margin of Safety", "p4_mos",        "Discount of price to intrinsic value"),
         ("Leadership",       "p5_leadership", "Capital allocation + management quality"),
     ]
+
+    def _render_current_state(self, cs: Dict[str, Any]) -> str:
+        """Current-State Awareness (Phase 1.5) — mirrors the on-screen panel.
+        Renders consensus reconciliation + flags + the reused/derived signals
+        (market signal, analyst sentiment, sector-relative valuation, policy/
+        regulatory context). Empty-safe: returns '' when absent."""
+        if not cs or cs.get("error"):
+            return ""
+        pct = self._fmt_pct_or_dash
+        sev = cs.get("unresolved_severity", cs.get("max_severity", "NONE"))
+        pillar = cs.get("pillar_score")
+        icon = "⛔" if sev == "HIGH" else "⚠️" if sev == "MEDIUM" else "✓"
+        pill = f" · pillar {pillar}/5" if pillar else ""
+
+        parts: List[str] = []
+
+        # Reconciliation table (engine vs signal).
+        recs = cs.get("reconciliation") or []
+        if recs:
+            tr = ""
+            for r in recs:
+                eng, sig, dl = r.get("engine"), r.get("signal"), r.get("delta")
+                tr += (
+                    f"<tr><td>{r.get('assumption','')}</td>"
+                    f"<td style='text-align:right'>{pct(eng)}</td>"
+                    f"<td style='text-align:right'>{pct(sig)} "
+                    f"<span style='color:#888'>({r.get('signal_label','')})</span></td>"
+                    f"<td style='text-align:right'>{pct(dl)}</td>"
+                    f"<td>{r.get('recommendation','')}</td></tr>")
+            parts.append(
+                "<table class='table-styled'><thead><tr><th>Assumption</th>"
+                "<th>Engine</th><th>Signal</th><th>Δ</th><th>Recommendation</th>"
+                f"</tr></thead><tbody>{tr}</tbody></table>")
+
+        # Flags.
+        flags = cs.get("flags") or []
+        if flags:
+            li = ""
+            for f in flags:
+                fsev = f.get("severity")
+                dot = "🔴" if fsev == "HIGH" else "🟠" if fsev == "MEDIUM" else "🟡"
+                if f.get("acknowledged"):
+                    dot = "✅"
+                li += f"<li>{dot} <strong>{fsev}</strong> · {f.get('message','')}</li>"
+            parts.append(f"<ul style='margin:6px 0 0 0'>{li}</ul>")
+
+        # Reused / derived signals.
+        sig_bits: List[str] = []
+        ms = cs.get("market_signal") or {}
+        if ms.get("available"):
+            extra = []
+            if ms.get("return_3m") is not None: extra.append(f"3M {pct(ms['return_3m'],0)}")
+            if ms.get("return_6m") is not None: extra.append(f"6M {pct(ms['return_6m'],0)}")
+            if ms.get("dist_ma200") is not None: extra.append(f"{pct(ms['dist_ma200'],0)} vs 200DMA")
+            sig_bits.append(f"<li><strong>📈 Market signal:</strong> {ms.get('label','')}"
+                            + (f" ({', '.join(extra)})" if extra else "") + "</li>")
+        sent = cs.get("analyst_sentiment") or {}
+        if sent.get("available"):
+            extra = []
+            if sent.get("implied_upside") is not None:
+                extra.append(f"target {pct(sent['implied_upside'],0)} vs price")
+            rt = sent.get("ratings") or {}
+            if any(rt.get(k) for k in ("buy", "hold", "sell")):
+                extra.append(f"{rt.get('buy',0)}B/{rt.get('hold',0)}H/{rt.get('sell',0)}S")
+            up, dn = sent.get("recent_upgrades", 0), sent.get("recent_downgrades", 0)
+            if up or dn: extra.append(f"{up}↑/{dn}↓ recent")
+            sig_bits.append(f"<li><strong>🗣️ Analyst sentiment:</strong> {sent.get('label','')}"
+                            + (f" ({' · '.join(extra)})" if extra else "") + "</li>")
+        sv = cs.get("sector_valuation") or {}
+        if sv.get("available"):
+            sig_bits.append(
+                f"<li><strong>🏭 Sector-relative valuation:</strong> {sv.get('label','')} — "
+                f"EV/EBITDA {self._fmt_x_or_dash(sv.get('market_ev_ebitda'))} vs "
+                f"{sv.get('sector') or 'sector'} median "
+                f"{self._fmt_x_or_dash(sv.get('sector_median_ev_ebitda'))} "
+                f"({pct(sv.get('premium_pct'),0)})</li>")
+        pr = cs.get("policy_regulatory") or {}
+        if pr.get("available"):
+            bits = []
+            if pr.get("exposure_label"):
+                sc = pr.get("exposure_score")
+                bits.append(f"10-K exposure {pr['exposure_label']}"
+                            + (f" ({sc:.0f}/7)" if isinstance(sc, (int, float)) else ""))
+            n_act = len(pr.get("recent_actions") or [])
+            if n_act:
+                bits.append(f"{n_act} recent event(s), net {pr.get('net_event_direction','none')}")
+            sig_bits.append(f"<li><strong>⚖️ Policy / regulatory:</strong> "
+                            + " · ".join(bits) + "</li>")
+        if sig_bits:
+            parts.append("<ul style='margin:6px 0 0 0'>" + "".join(sig_bits) + "</ul>")
+
+        if not parts:
+            return ""
+        body = "".join(parts)
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>🧭 Current-State Awareness {icon}{pill}</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 8px 0">
+    Reconciles the engine's historical-anchored assumptions against current
+    signals (forward consensus, market, analyst sentiment, sector valuation,
+    policy/regulatory). Deterministic / cached — no extra LLM cost.
+  </p>
+  {body}
+  </div>"""
 
     def _render_cyclicality_banner(self, industry: Dict[str, Any]) -> str:
         """Top-of-page banner when a ticker is at a cyclical peak.

@@ -253,7 +253,8 @@ def _build_freshness(latest_fy: pd.Series,
     }
 
 
-def _attach_prior_year_ttm(ticker: str, ttm_snapshot: Dict[str, Any]) -> None:
+def _attach_prior_year_ttm(ticker: str, ttm_snapshot: Dict[str, Any],
+                           fx_rate: float = 1.0) -> None:
     """Compute prior-year TTM revenue + net income from FMP quarterly
     statements and stamp on the snapshot. Used by the Multi-year
     history table to render YoY-TTM-vs-prior-TTM rev growth instead
@@ -261,7 +262,15 @@ def _attach_prior_year_ttm(ticker: str, ttm_snapshot: Dict[str, Any]) -> None:
 
     Math: latest 4 FMP quarters = current TTM (already in `ttm_snapshot`).
     Quarters [4:8] = TTM as of one year ago. Returns silently if FMP
-    data is unavailable or insufficient (<8 quarters)."""
+    data is unavailable or insufficient (<8 quarters).
+
+    Currency: FMP quarterly statements are in the filer's NATIVE currency
+    (NVO → DKK), but `ttm_snapshot["Revenue"]` was already FX-converted to
+    USD via the history frame. Comparing the two directly mixed currencies
+    and produced a spurious ~-83% TTM growth for NVO. `fx_rate`
+    (USD-per-foreign-unit; 1.0 for USD filers / no conversion) scales the
+    prior-year figures into the SAME currency as the snapshot so the growth
+    ratio is currency-consistent."""
     try:
         from aletheia.data import fmp_client
         quarters = fmp_client.fetch_income_statements(ticker, period="quarter")
@@ -279,8 +288,10 @@ def _attach_prior_year_ttm(ticker: str, ttm_snapshot: Dict[str, Any]) -> None:
         return
     if prior_revenue <= 0:
         return
-    ttm_snapshot["PriorYearRevenue"]   = prior_revenue
-    ttm_snapshot["PriorYearNetIncome"] = prior_ni
+    # Match the snapshot's currency (snapshot Revenue is USD-converted when
+    # the filer is non-USD; fx_rate == 1.0 otherwise → no-op).
+    ttm_snapshot["PriorYearRevenue"]   = prior_revenue * fx_rate
+    ttm_snapshot["PriorYearNetIncome"] = prior_ni * fx_rate
     # Period_end of prior-year TTM (the 8th-most-recent quarter's date)
     prior_period_end = (prior_window[0].get("date") or "")[:10]
     if prior_period_end:
@@ -310,6 +321,7 @@ def _build_ttm_snapshot(ttm_df: pd.DataFrame) -> Optional[Dict[str, Any]]:
         "ttm_source":          _ttm_source_from_validation(r.get("fmp_validation_json")),
         "Revenue":             _f(r.get("clean_Revenue")),
         "EBIT":                _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome")),
+        "NormEBIT":            _dcf_base_ebit(r),
         "EBITDA":              _f(r.get("derived_EBITDA")),
         "NetIncome":           _f(r.get("raw_NetIncome")),
         "TaxRate":             _f(r.get("clean_GAAP_TaxRate")),
@@ -380,6 +392,19 @@ def _drift_summary_from_validation(validation_json: Any) -> List[Dict[str, Any]]
     return drifts
 
 
+def _dcf_base_ebit(r) -> Optional[float]:
+    """Base-year EBIT exactly as the DCF engine selects it (dcf_engine.py
+    ~L1119): ex-unusual operating income (one-time impairments/restructuring
+    stripped) when present and positive, else reported `raw_OperatingIncome`,
+    else `derived_OperatingIncome`. This is the "Normalized EBIT (what DCF
+    uses)" series shown in the history table — it can differ from reported
+    EBIT in years with large one-time charges (e.g. LDOS FY2023)."""
+    exu = _f(r.get("clean_OperatingIncome_ExUnusual"))
+    if exu is not None and exu > 0:
+        return exu
+    return _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome"))
+
+
 def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
     rows: List[Dict[str, Any]] = []
     for _, r in history_df.sort_values("fiscal_year").iterrows():
@@ -388,6 +413,7 @@ def _build_fiscal_history(history_df: pd.DataFrame) -> List[Dict[str, Any]]:
             "period_end_date": str(r.get("period_end_date") or "")[:10],
             "Revenue":         _f(r.get("clean_Revenue")),
             "EBIT":            _f(r.get("raw_OperatingIncome")) or _f(r.get("derived_OperatingIncome")),
+            "NormEBIT":        _dcf_base_ebit(r),
             "EBIT_Margin_Pct": _f(r.get("derived_EBIT_Margin_Pct")),
             "EBITDA":          _f(r.get("derived_EBITDA")),
             "NetIncome":       _f(r.get("raw_NetIncome")),
@@ -584,7 +610,11 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
     # review. Using FMP quarterly statements (already cached) so
     # there's no extra API call.
     if ttm_snapshot is not None:
-        _attach_prior_year_ttm(ticker, ttm_snapshot)
+        # Pass the FX rate so the prior-year TTM (pulled from FMP in native
+        # currency) is converted to match the snapshot's USD-converted
+        # Revenue — otherwise non-USD filers (NVO/DKK) get a currency-mixed,
+        # wildly wrong TTM growth (~-83%).
+        _attach_prior_year_ttm(ticker, ttm_snapshot, fx_rate=_fx_rate)
 
     # Phase 6 Step 2b: schema-contract violations from the persistence
     # boundary. Reads schema_violations_json from the latest FY row +
@@ -682,6 +712,33 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
         from aletheia.agents.current_state import build_current_state
         from aletheia.agents.current_state_events import cached_events
         _eng_y1 = (bundle.get("assumptions") or {}).get("revenue_cagr_y1_5")
+        # Reused signals (Phase A/B) — sector-relative valuation from the
+        # MultipleDecomposition tool + policy/regulatory context from the
+        # regulatory_exposure 10-K dimension. Both deterministic / cache reads;
+        # no new LLM call. Guarded so a failure leaves current_state intact.
+        _md = None
+        try:
+            from aletheia.tools.multiple_decomposition import MultipleDecomposition
+            _mdres = MultipleDecomposition(verbose=False).run(
+                make_calc_input(ticker, df=history))
+            _md = {
+                "market_ev_ebitda":        _mdres.market_ev_ebitda,
+                "sector":                  getattr(_mdres, "sector", None),
+                "sector_median_ev_ebitda": _mdres.sector_median_ev_ebitda,
+                "vs_sector_premium":       _mdres.vs_sector_premium,
+            }
+        except Exception:
+            _md = None
+        _reg = None
+        try:
+            # `db` above is already closed (line ~559); open a fresh read.
+            _regdb = InvestmentDatabase(verbose=False)
+            try:
+                _reg = _regdb.get_latest_assessment(ticker, "regulatory_exposure")
+            finally:
+                _regdb.close()
+        except Exception:
+            _reg = None
         _cs = build_current_state(
             ticker,
             engine_y1_growth=_eng_y1,
@@ -689,6 +746,8 @@ def ticker_detail(ticker: str) -> Dict[str, Any]:
             # Cache-only read — no LLM call on page load. The grounded events
             # fetch runs on an explicit refresh (fetch_events force=True).
             events=cached_events(ticker),
+            multiple_decomposition=_md,
+            regulatory_exposure=_reg,
         ).to_dict()
         bundle["current_state"] = _annotate_flag_acks(ticker, _cs)
     except Exception as e:

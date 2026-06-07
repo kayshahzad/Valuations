@@ -161,6 +161,19 @@ class ServingReportWriter:
                 "final_assembly": {"status": "skipped", "skip_reason": "stamp_error"},
             }
 
+        # Current-State Awareness (Phase 1.5): attach the full reconciliation
+        # payload (consensus, market signal, analyst sentiment, sector-relative
+        # valuation, policy/regulatory context) so it persists in the serving
+        # JSON and renders in the HTML / Detailed-MD reports. Deterministic /
+        # cache-backed — no LLM call. Never fails the run.
+        try:
+            from aletheia.agents.current_state import compose_current_state
+            cs = compose_current_state(ticker)
+            if cs:
+                report["current_state"] = cs
+        except Exception as exc:
+            print(f"⚠ Lead: current_state compose failed: {exc}")
+
         try:
             with open(path_json, "w") as f:
                 json.dump(report, f, indent=2)

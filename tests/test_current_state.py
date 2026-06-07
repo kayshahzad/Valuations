@@ -200,5 +200,160 @@ class TestAckPersistence(unittest.TestCase):
             db.close()
 
 
+class TestSectorRelativeValuation(unittest.TestCase):
+    """Phase B: reuse MultipleDecomposition's market vs sector-median EV/EBITDA."""
+
+    def test_rich_cheap_inline(self):
+        from aletheia.agents.current_state import _sector_relative_valuation
+        rich = _sector_relative_valuation(
+            {"market_ev_ebitda": 18.0, "sector_median_ev_ebitda": 12.0,
+             "vs_sector_premium": 6.0, "sector": "Tech"})
+        self.assertTrue(rich["available"])
+        self.assertEqual(rich["label"], "rich vs sector")
+        self.assertAlmostEqual(rich["premium_pct"], 0.5, places=3)
+        cheap = _sector_relative_valuation(
+            {"market_ev_ebitda": 8.0, "sector_median_ev_ebitda": 12.0})
+        self.assertEqual(cheap["label"], "cheap vs sector")
+        inline = _sector_relative_valuation(
+            {"market_ev_ebitda": 12.5, "sector_median_ev_ebitda": 12.0})
+        self.assertEqual(inline["label"], "in line with sector")
+
+    def test_missing_or_bad_data_unavailable(self):
+        from aletheia.agents.current_state import _sector_relative_valuation
+        self.assertFalse(_sector_relative_valuation(None)["available"])
+        self.assertFalse(_sector_relative_valuation({})["available"])
+        self.assertFalse(_sector_relative_valuation(
+            {"market_ev_ebitda": 0, "sector_median_ev_ebitda": 12})["available"])
+
+
+class TestPolicyRegulatoryContext(unittest.TestCase):
+    """Phase A: reuse cached regulatory events + regulatory_exposure dimension."""
+
+    def test_filters_to_regulatory_events_only(self):
+        from aletheia.agents.current_state import _policy_regulatory_context
+        events = [
+            {"category": "pricing_regulatory", "direction": "adverse",
+             "headline": "MFN", "materiality": 5},
+            {"category": "regulatory_legal", "direction": "favorable",
+             "headline": "case dismissed", "materiality": 4},
+            {"category": "competitive", "direction": "adverse",
+             "headline": "rival launch", "materiality": 5},  # excluded
+        ]
+        pr = _policy_regulatory_context(events, None)
+        self.assertTrue(pr["available"])
+        self.assertEqual(len(pr["recent_actions"]), 2)  # competitive excluded
+        self.assertEqual(pr["net_event_direction"], "mixed")  # 1 adverse, 1 favorable
+
+    def test_exposure_dimension_reused(self):
+        from aletheia.agents.current_state import _policy_regulatory_context
+        reg = {"score": 6.0, "narrative": "Light touch.",
+               "source_payload": {"material_exposures": [
+                   {"regulator": "FTC", "area": "antitrust", "severity": "low"}]}}
+        pr = _policy_regulatory_context([], reg)
+        self.assertTrue(pr["available"])
+        self.assertEqual(pr["exposure_label"], "low exposure")  # score>=6
+        self.assertEqual(len(pr["material_exposures"]), 1)
+
+    def test_nothing_available(self):
+        from aletheia.agents.current_state import _policy_regulatory_context
+        self.assertFalse(_policy_regulatory_context([], None)["available"])
+
+    def test_display_only_no_new_flags(self):
+        # The reused signals must NOT add flags (display-only decision).
+        r = _cs(0.10, 0.099)  # aligned → no consensus flag
+        before = len(r.flags)
+        # build_current_state with md + reg should not change flag count.
+        import aletheia.agents.current_state as m
+        orig = m._consensus_forward_growth
+        m._consensus_forward_growth = lambda *a, **k: {
+            "available": True, "y1_growth": 0.099, "source": "t"}
+        m._microstructure = lambda *a, **k: {}
+        try:
+            r2 = m.build_current_state(
+                "TST", engine_y1_growth=0.10, latest_fy=2025,
+                multiple_decomposition={"market_ev_ebitda": 18.0,
+                                        "sector_median_ev_ebitda": 12.0},
+                regulatory_exposure={"score": 3.0})
+        finally:
+            m._consensus_forward_growth = orig
+        self.assertEqual(len(r2.flags), before)
+        self.assertTrue(r2.sector_valuation["available"])
+        self.assertTrue(r2.policy_regulatory["available"])
+
+
+class TestMarketSignal(unittest.TestCase):
+    """Phase C: 52-week position + momentum/MA interpretation."""
+
+    def test_near_high_priced_for_strength(self):
+        from aletheia.agents.current_state import _market_signal
+        import aletheia.agents.current_state as m
+        # No price history needed — 52w position drives the label.
+        import aletheia.data.fmp_client as fmp
+        orig = fmp.fetch_historical_prices
+        fmp.fetch_historical_prices = lambda *a, **k: []
+        try:
+            ms = _market_signal("TST", {"price": 100, "pct_below_52w_high": 0.02,
+                                        "pct_above_52w_low": 0.8})
+        finally:
+            fmp.fetch_historical_prices = orig
+        self.assertTrue(ms["available"])
+        self.assertIn("52-week high", ms["label"])
+
+    def test_unavailable_when_no_data(self):
+        from aletheia.agents.current_state import _market_signal
+        import aletheia.data.fmp_client as fmp
+        orig = fmp.fetch_historical_prices
+        fmp.fetch_historical_prices = lambda *a, **k: []
+        try:
+            ms = _market_signal("TST", {})
+        finally:
+            fmp.fetch_historical_prices = orig
+        self.assertFalse(ms["available"])
+
+
+class TestAnalystSentiment(unittest.TestCase):
+    """Phase D: price target + ratings + recent actions → blended label."""
+
+    def _stub(self, pts, gc, hist):
+        import aletheia.data.fmp_client as fmp
+        return (fmp, fmp.fetch_price_target_summary,
+                fmp.fetch_grades_consensus, fmp.fetch_grades_historical,
+                pts, gc, hist)
+
+    def test_bullish_blend(self):
+        from aletheia.agents.current_state import _analyst_sentiment
+        import aletheia.data.fmp_client as fmp
+        o1, o2, o3 = (fmp.fetch_price_target_summary,
+                      fmp.fetch_grades_consensus, fmp.fetch_grades_historical)
+        fmp.fetch_price_target_summary = lambda *a, **k: {"avgPriceTarget": 130}
+        fmp.fetch_grades_consensus = lambda *a, **k: {
+            "strongBuy": 10, "buy": 8, "hold": 3, "sell": 1, "strongSell": 0}
+        fmp.fetch_grades_historical = lambda *a, **k: [
+            {"action": "upgrade"}, {"action": "upgrade"}]
+        try:
+            s = _analyst_sentiment("TST", current_price=100)
+        finally:
+            (fmp.fetch_price_target_summary, fmp.fetch_grades_consensus,
+             fmp.fetch_grades_historical) = o1, o2, o3
+        self.assertTrue(s["available"])
+        self.assertAlmostEqual(s["implied_upside"], 0.30, places=4)
+        self.assertEqual(s["label"], "bullish")
+
+    def test_unavailable_when_no_endpoints(self):
+        from aletheia.agents.current_state import _analyst_sentiment
+        import aletheia.data.fmp_client as fmp
+        o1, o2, o3 = (fmp.fetch_price_target_summary,
+                      fmp.fetch_grades_consensus, fmp.fetch_grades_historical)
+        fmp.fetch_price_target_summary = lambda *a, **k: None
+        fmp.fetch_grades_consensus = lambda *a, **k: None
+        fmp.fetch_grades_historical = lambda *a, **k: None
+        try:
+            s = _analyst_sentiment("TST", current_price=100)
+        finally:
+            (fmp.fetch_price_target_summary, fmp.fetch_grades_consensus,
+             fmp.fetch_grades_historical) = o1, o2, o3
+        self.assertFalse(s["available"])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -311,10 +311,30 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     }
 
 
-def _current_state_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]:
+def _regulatory_exposure(ticker: str) -> Optional[Dict[str, Any]]:
+    """Latest `regulatory_exposure` qualitative assessment (LLM-extracted from
+    the 10-K), reused as policy/regulatory context. Cache/DB read only — no new
+    LLM call. Returns None when not assessed."""
+    try:
+        from aletheia.data.database import InvestmentDatabase
+        db = InvestmentDatabase(verbose=False)
+        try:
+            return db.get_latest_assessment(ticker, "regulatory_exposure")
+        finally:
+            db.close()
+    except Exception:
+        return None
+
+
+def _current_state_payload(
+    ticker: str, result: Any,
+    multiple_decomposition: Optional[Dict[str, Any]] = None,
+) -> Optional[Dict[str, Any]]:
     """Current-State Awareness (Phase 1.5) for the /dcf payload: reconcile the
-    engine's near-term growth vs forward analyst consensus + cached events.
-    Cache-only events (no LLM call on the read path). Never raises."""
+    engine's near-term growth vs forward analyst consensus + cached events, and
+    surface reused signals (sector-relative valuation from the multiple tool;
+    policy/regulatory context from cached events + the regulatory_exposure
+    qualitative dimension). All read-path — no new LLM call. Never raises."""
     try:
         from aletheia.agents.current_state import build_current_state
         from aletheia.agents.current_state_events import cached_events
@@ -325,6 +345,8 @@ def _current_state_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]
             ticker, engine_y1_growth=eng_y1,
             latest_fy=int(fy) if fy else None,
             events=cached_events(ticker),
+            multiple_decomposition=multiple_decomposition,
+            regulatory_exposure=_regulatory_exposure(ticker),
         ).to_dict()
         return _annotate_acks(ticker, cs)
     except Exception:
@@ -451,6 +473,12 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
             "value_creation":      _mdres.value_creation,
             "roic":                _mdres.roic,
             "wacc":                _mdres.wacc,
+            # Sector-relative valuation (Phase B reuse) — already computed by
+            # the tool; surfaced here so the Current-State layer can interpret
+            # market multiple vs sector median without recomputing anything.
+            "sector":                 getattr(_mdres, "sector", None),
+            "sector_median_ev_ebitda": _mdres.sector_median_ev_ebitda,
+            "vs_sector_premium":       _mdres.vs_sector_premium,
         }
     except Exception:
         multiple_decomposition = None
@@ -497,7 +525,7 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "bull":                   scenario_dict(result.bull),
         "reverse_dcf":            reverse_dcf,
         "multiple_decomposition": multiple_decomposition,
-        "current_state":          _current_state_payload(ticker, result),
+        "current_state":          _current_state_payload(ticker, result, multiple_decomposition),
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
         # twice.

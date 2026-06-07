@@ -520,6 +520,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Rev Growth":    rev_growth,
             "EBIT":          (r["EBIT"]/1e9) if r.get("EBIT") else None,
             "EBIT %":        (r["EBIT"]/rev*100) if (r.get("EBIT") and rev) else None,
+            "Norm. EBIT":    (r["NormEBIT"]/1e9) if r.get("NormEBIT") else None,
             "EBITDA":        (r["EBITDA"]/1e9) if r["EBITDA"] else None,
             "Net Income":    (r["NetIncome"]/1e9) if r["NetIncome"] else None,
             "Tax rate":      (r["TaxRate"]*100) if r.get("TaxRate") is not None else None,
@@ -557,6 +558,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Rev Growth":    ttm_growth,
             "EBIT":          (ttm["EBIT"] / 1e9) if ttm.get("EBIT") else None,
             "EBIT %":        (ttm["EBIT"] / ttm_rev * 100) if (ttm.get("EBIT") and ttm_rev) else None,
+            "Norm. EBIT":    (ttm["NormEBIT"] / 1e9) if ttm.get("NormEBIT") else None,
             "EBITDA":        (ttm["EBITDA"] / 1e9) if ttm.get("EBITDA") else None,
             "Net Income":    (ttm["NetIncome"] / 1e9) if ttm.get("NetIncome") else None,
             "Tax rate":      (ttm["TaxRate"]*100) if ttm.get("TaxRate") is not None else None,
@@ -590,6 +592,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Rev Growth": _avg("Rev Growth"),
             "EBIT":       _avg("EBIT"),
             "EBIT %":     _avg("EBIT %"),
+            "Norm. EBIT": _avg("Norm. EBIT"),
             "EBITDA":     _avg("EBITDA"),
             "Net Income": _avg("Net Income"),
             "Tax rate":   _avg("Tax rate"),
@@ -613,7 +616,7 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
     # "$390.0B", CELH reads "$36.1M". _bn expects raw dollars, so undo the
     # /1e9 scaling. Numeric columns (Rev Growth, ROIC, Quality) stay typed
     # for their NumberColumn / ProgressColumn rendering.
-    _dollar_cols = ("Revenue", "EBIT", "EBITDA", "Net Income", "CapEx", "FCF")
+    _dollar_cols = ("Revenue", "EBIT", "Norm. EBIT", "EBITDA", "Net Income", "CapEx", "FCF")
     for _c in _dollar_cols:
         if _c in df.columns:
             df[_c] = df[_c].map(
@@ -660,6 +663,17 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "EBIT %":     st.column_config.NumberColumn(
                 "EBIT %", format="%.1f%%",
                 help="EBIT (operating income) as % of revenue — the operating margin."),
+            "Norm. EBIT": st.column_config.TextColumn(
+                "Norm. EBIT", width="small",
+                help=(
+                    "Normalized EBIT — the operating income the DCF engine uses "
+                    "as its base. Ex-unusual operating income (one-time "
+                    "impairments / restructuring stripped) when available, else "
+                    "reported EBIT. Differs from the reported EBIT column in "
+                    "years with large one-time charges (e.g. a goodwill "
+                    "writedown), which is why a low reported-EBIT year can still "
+                    "anchor a healthy DCF base margin."
+                )),
             "EBITDA":     st.column_config.TextColumn("EBITDA", width="small"),
             "Net Income": st.column_config.TextColumn("Net Income", width="small"),
             "Tax rate":   st.column_config.NumberColumn(
@@ -833,6 +847,75 @@ def _fmp_status_glyph(status: Optional[str]) -> str:
 
 # ── Main entry point ───────────────────────────────────────────────────────
 
+def _render_reused_signals(cs: Dict[str, Any]) -> None:
+    """Render the reused-signal sub-sections (Phase A/B): sector-relative
+    valuation (from the MultipleDecomposition tool) and policy/regulatory
+    context (from cached regulatory events + the regulatory_exposure 10-K
+    dimension). Display-only — these don't gate conviction. No-ops when the
+    underlying data isn't available."""
+    sv = cs.get("sector_valuation") or {}
+    if sv.get("available"):
+        mkt = sv.get("market_ev_ebitda"); med = sv.get("sector_median_ev_ebitda")
+        prem = sv.get("premium_pct"); sect = sv.get("sector")
+        prem_s = f"{prem*100:+.0f}%" if isinstance(prem, (int, float)) else "—"
+        st.markdown(
+            f"**🏭 Sector-relative valuation** — {sv.get('label','')}: "
+            f"EV/EBITDA **{mkt:.1f}×** vs {sect or 'sector'} median "
+            f"**{med:.1f}×** ({prem_s}).")
+        if sv.get("note"):
+            st.caption(f"  ↳ {sv['note']}")
+
+    ms = cs.get("market_signal") or {}
+    if ms.get("available"):
+        bits = []
+        r3 = ms.get("return_3m"); r6 = ms.get("return_6m"); dm = ms.get("dist_ma200")
+        if isinstance(r3, (int, float)): bits.append(f"3M {r3*100:+.0f}%")
+        if isinstance(r6, (int, float)): bits.append(f"6M {r6*100:+.0f}%")
+        if isinstance(dm, (int, float)): bits.append(f"{dm*100:+.0f}% vs 200DMA")
+        st.markdown(f"**📈 Market signal** — {ms.get('label','')}"
+                    + (f" ({', '.join(bits)})" if bits else ""))
+
+    sent = cs.get("analyst_sentiment") or {}
+    if sent.get("available"):
+        bits = []
+        iu = sent.get("implied_upside")
+        if isinstance(iu, (int, float)):
+            bits.append(f"target {iu*100:+.0f}% vs price")
+        rt = sent.get("ratings") or {}
+        if any(rt.get(k) for k in ("buy", "hold", "sell")):
+            bits.append(f"{rt.get('buy',0)}B/{rt.get('hold',0)}H/{rt.get('sell',0)}S")
+        up, dn = sent.get("recent_upgrades", 0), sent.get("recent_downgrades", 0)
+        if up or dn:
+            bits.append(f"{up}↑/{dn}↓ recent")
+        st.markdown(f"**🗣️ Analyst sentiment** — {sent.get('label','')}"
+                    + (f" ({' · '.join(bits)})" if bits else ""))
+
+    pr = cs.get("policy_regulatory") or {}
+    if pr.get("available"):
+        bits = []
+        if pr.get("exposure_label"):
+            sc = pr.get("exposure_score")
+            bits.append(f"10-K exposure: **{pr['exposure_label']}**"
+                        + (f" ({sc:.0f}/7)" if isinstance(sc, (int, float)) else ""))
+        actions = pr.get("recent_actions") or []
+        if actions:
+            bits.append(f"{len(actions)} recent regulatory event(s) "
+                        f"(net {pr.get('net_event_direction','none')})")
+        st.markdown("**⚖️ Policy / regulatory context** — " + " · ".join(bits)
+                    if bits else "**⚖️ Policy / regulatory context**")
+        if pr.get("exposure_narrative"):
+            st.caption(f"  ↳ {str(pr['exposure_narrative'])[:300]}")
+        for mx in (pr.get("material_exposures") or [])[:4]:
+            if isinstance(mx, dict):
+                st.caption(f"  • {mx.get('regulator','')}: {mx.get('area','')} "
+                           f"_({mx.get('severity','')})_")
+        for a in actions[:4]:
+            arrow = ("🔻" if a.get("direction") == "adverse"
+                     else "🟢" if a.get("direction") == "favorable" else "•")
+            st.caption(f"  {arrow} {a.get('date','')} {a.get('headline','')} "
+                       f"_({a.get('source','')})_")
+
+
 def _render_current_state(cs: Dict[str, Any], ticker: str = "",
                           company: str = "") -> None:
     """Current-State Reconciliation panel (Phase 1.5). Surfaces conflicts
@@ -864,6 +947,10 @@ def _render_current_state(cs: Dict[str, Any], ticker: str = "",
                 fetch_events(ticker, company=company, force=True)
             st.cache_data.clear()
             st.rerun()
+
+        # Reused signals (Phase A/B) — always shown when available, even for
+        # tickers with no growth/event flags.
+        _render_reused_signals(cs)
 
         if sev not in ("HIGH", "MEDIUM") and not flags:
             st.caption(

@@ -68,6 +68,11 @@ class CurrentStateResult:
     events: List[Dict[str, Any]] = field(default_factory=list)
     flags: List[CurrentStateFlag] = field(default_factory=list)
     reconciliation: List[Dict[str, Any]] = field(default_factory=list)
+    # Reused / derived signals (display-only — do NOT feed pillar score yet).
+    sector_valuation: Dict[str, Any] = field(default_factory=dict)
+    policy_regulatory: Dict[str, Any] = field(default_factory=dict)
+    market_signal: Dict[str, Any] = field(default_factory=dict)
+    analyst_sentiment: Dict[str, Any] = field(default_factory=dict)
     pillar_score: Optional[int] = None
     pillar_reason: str = ""
 
@@ -85,6 +90,10 @@ class CurrentStateResult:
             "events": self.events,
             "flags": [f.to_dict() for f in self.flags],
             "reconciliation": self.reconciliation,
+            "sector_valuation": self.sector_valuation,
+            "policy_regulatory": self.policy_regulatory,
+            "market_signal": self.market_signal,
+            "analyst_sentiment": self.analyst_sentiment,
             "pillar_score": self.pillar_score,
             "pillar_reason": self.pillar_reason,
             "max_severity": self.max_severity,
@@ -176,6 +185,254 @@ def _microstructure(ticker: str) -> Dict[str, Any]:
     return out
 
 
+def _sector_relative_valuation(md: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Sector-relative valuation, REUSING the MultipleDecomposition tool's
+    already-computed market vs sector-median EV/EBITDA (no recompute, no fetch).
+
+    Display-only: returns a context block (premium/discount + interpretation).
+    It does NOT raise a flag or feed the pillar score in this phase."""
+    out: Dict[str, Any] = {"available": False}
+    if not md:
+        return out
+    market = md.get("market_ev_ebitda")
+    sector_med = md.get("sector_median_ev_ebitda")
+    if not isinstance(market, (int, float)) or not isinstance(sector_med, (int, float)) \
+            or market <= 0 or sector_med <= 0:
+        return out
+    premium_x = md.get("vs_sector_premium")
+    if not isinstance(premium_x, (int, float)):
+        premium_x = market - sector_med
+    premium_pct = (market / sector_med - 1.0) if sector_med else None
+    # Interpretation is descriptive only (not a buy/sell call).
+    if premium_pct is None:
+        label = "—"
+    elif premium_pct > 0.25:
+        label = "rich vs sector"
+    elif premium_pct < -0.25:
+        label = "cheap vs sector"
+    else:
+        label = "in line with sector"
+    out.update({
+        "available": True,
+        "market_ev_ebitda": float(market),
+        "sector_median_ev_ebitda": float(sector_med),
+        "sector": md.get("sector"),
+        "premium_x": float(premium_x) if isinstance(premium_x, (int, float)) else None,
+        "premium_pct": float(premium_pct) if premium_pct is not None else None,
+        "label": label,
+        "source": "MultipleDecomposition (market vs sector-median EV/EBITDA)",
+        "note": "Sector median is a static reference table, not a live peer set.",
+    })
+    return out
+
+
+def _policy_regulatory_context(
+    events: List[Dict[str, Any]],
+    regulatory_exposure: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Policy/regulatory context, REUSING signals already produced by existing
+    LLM calls — no new call:
+
+      1. Cached events tagged ``pricing_regulatory`` / ``regulatory_legal``
+         (from the grounded events agent).
+      2. The ``regulatory_exposure`` qualitative dimension (LLM-extracted from
+         the 10-K): a 1-7 score (higher = lower risk) + ``material_exposures``.
+
+    Display-only aggregation; the underlying events already raise their own
+    flags, so this adds context, not new flags."""
+    out: Dict[str, Any] = {"available": False, "recent_actions": []}
+    _REG_CATS = ("pricing_regulatory", "regulatory_legal")
+    actions = []
+    adverse = favorable = 0
+    for ev in events or []:
+        if (ev.get("category") or "").lower() not in _REG_CATS:
+            continue
+        direction = (ev.get("direction") or "").lower()
+        if direction == "adverse":
+            adverse += 1
+        elif direction == "favorable":
+            favorable += 1
+        actions.append({
+            "date": ev.get("date", ""),
+            "category": ev.get("category", ""),
+            "direction": direction or "neutral",
+            "headline": ev.get("headline", ""),
+            "materiality": ev.get("materiality"),
+            "source": ev.get("source", ""),
+        })
+    # Net tone from the recent regulatory events.
+    net = ("adverse" if adverse > favorable else
+           "favorable" if favorable > adverse else
+           "mixed" if (adverse or favorable) else "none")
+
+    exposure_score = exposure_label = exposure_narrative = None
+    material_exposures: List[Dict[str, Any]] = []
+    if regulatory_exposure:
+        sc = regulatory_exposure.get("score")
+        exposure_score = float(sc) if isinstance(sc, (int, float)) else None
+        if exposure_score is not None:
+            # 1-7, higher = lower risk.
+            exposure_label = ("low exposure" if exposure_score >= 6 else
+                              "moderate exposure" if exposure_score >= 4 else
+                              "high exposure")
+        exposure_narrative = regulatory_exposure.get("narrative")
+        sp = regulatory_exposure.get("source_payload") or {}
+        if isinstance(sp, dict):
+            mx = sp.get("material_exposures")
+            if isinstance(mx, list):
+                material_exposures = mx[:6]
+
+    if not actions and exposure_score is None:
+        return out
+    out.update({
+        "available": True,
+        "recent_actions": actions,
+        "net_event_direction": net,
+        "exposure_score": exposure_score,           # 1-7 (higher = lower risk)
+        "exposure_label": exposure_label,
+        "exposure_narrative": exposure_narrative,
+        "material_exposures": material_exposures,
+        "source": "cached regulatory events + regulatory_exposure 10-K dimension",
+    })
+    return out
+
+
+def _market_signal(ticker: str, microstructure: Dict[str, Any]) -> Dict[str, Any]:
+    """Market-signal interpretation (Phase C). Extends the 52-week range
+    position (already in microstructure) with momentum + moving-average
+    context from cached FMP EOD prices. No LLM; cache-backed REST only.
+
+    Display-only: describes what the market is pricing (derating vs priced
+    for strength) — it does NOT raise a flag or feed the pillar score."""
+    out: Dict[str, Any] = {"available": False}
+    pct_below_high = microstructure.get("pct_below_52w_high")
+    pct_above_low = microstructure.get("pct_above_52w_low")
+    last = microstructure.get("price")
+
+    ma50 = ma200 = ret_3m = ret_6m = None
+    try:
+        from aletheia.data import fmp_client
+        rows = fmp_client.fetch_historical_prices(ticker, days=400) or []
+        # Light EOD rows: {date, price}, most-recent first.
+        prices = [float(r.get("price")) for r in rows
+                  if isinstance(r.get("price"), (int, float))]
+        if prices:
+            if last is None:
+                last = prices[0]
+            if len(prices) >= 50:
+                ma50 = sum(prices[:50]) / 50
+            if len(prices) >= 200:
+                ma200 = sum(prices[:200]) / 200
+            # ~21 trading days/month.
+            if len(prices) > 63 and prices[63]:
+                ret_3m = last / prices[63] - 1.0
+            if len(prices) > 126 and prices[126]:
+                ret_6m = last / prices[126] - 1.0
+    except Exception:
+        pass
+
+    # Need at least the 52-week position to say anything.
+    if pct_below_high is None and pct_above_low is None and ma200 is None:
+        return out
+
+    dist_ma200 = (last / ma200 - 1.0) if (last and ma200) else None
+    # Descriptive interpretation (not a recommendation).
+    if pct_below_high is not None and pct_below_high <= 0.05:
+        label = "near 52-week high — priced for strength"
+    elif pct_above_low is not None and pct_above_low <= 0.10:
+        label = "near 52-week low — market pricing weakness"
+    elif dist_ma200 is not None and dist_ma200 < -0.05:
+        label = "below 200-day MA — downtrend"
+    elif dist_ma200 is not None and dist_ma200 > 0.05:
+        label = "above 200-day MA — uptrend"
+    else:
+        label = "mid-range / neutral trend"
+    out.update({
+        "available": True,
+        "price": float(last) if last else None,
+        "pct_below_52w_high": pct_below_high,
+        "pct_above_52w_low": pct_above_low,
+        "ma50": float(ma50) if ma50 else None,
+        "ma200": float(ma200) if ma200 else None,
+        "dist_ma200": float(dist_ma200) if dist_ma200 is not None else None,
+        "return_3m": float(ret_3m) if ret_3m is not None else None,
+        "return_6m": float(ret_6m) if ret_6m is not None else None,
+        "label": label,
+        "source": "yfinance 52w range + FMP EOD prices (momentum/MA)",
+    })
+    return out
+
+
+def _analyst_sentiment(ticker: str, current_price: Optional[float] = None) -> Dict[str, Any]:
+    """Analyst-sentiment tracking (Phase D). Blends price-target consensus,
+    rating distribution, and recent up/downgrade actions from FMP REST (all
+    cache-backed; no LLM). Display-only — describes sentiment, no flag.
+
+    Degrades gracefully: returns available=False if the FMP plan lacks the
+    price-target / grades endpoints."""
+    out: Dict[str, Any] = {"available": False}
+    target_avg = implied_upside = None
+    buy = hold = sell = None
+    consensus = None
+    recent_up = recent_down = 0
+    try:
+        from aletheia.data import fmp_client
+        pts = fmp_client.fetch_price_target_summary(ticker) or {}
+        # FMP keys vary; try the common ones.
+        for k in ("lastMonthAvgPriceTarget", "lastQuarterAvgPriceTarget",
+                  "avgPriceTarget", "priceTargetAverage"):
+            v = pts.get(k)
+            if isinstance(v, (int, float)) and v > 0:
+                target_avg = float(v); break
+        if target_avg and current_price:
+            implied_upside = target_avg / current_price - 1.0
+
+        gc = fmp_client.fetch_grades_consensus(ticker) or {}
+        buy = (gc.get("strongBuy") or 0) + (gc.get("buy") or 0)
+        hold = gc.get("hold") or 0
+        sell = (gc.get("sell") or 0) + (gc.get("strongSell") or 0)
+        consensus = gc.get("consensus")
+
+        hist = fmp_client.fetch_grades_historical(ticker) or []
+        # Most-recent ~6 actions: count up/downgrades by action field.
+        for h in hist[:6]:
+            act = str(h.get("action") or h.get("newGrade") or "").lower()
+            if "up" in act:
+                recent_up += 1
+            elif "down" in act:
+                recent_down += 1
+    except Exception:
+        pass
+
+    has_targets = target_avg is not None
+    has_ratings = any(isinstance(x, (int, float)) and x for x in (buy, hold, sell))
+    if not has_targets and not has_ratings:
+        return out
+
+    # Blended descriptive label.
+    score = 0
+    if implied_upside is not None:
+        score += 1 if implied_upside > 0.10 else -1 if implied_upside < -0.10 else 0
+    if has_ratings and (buy + hold + sell) > 0:
+        skew = (buy - sell) / (buy + hold + sell)
+        score += 1 if skew > 0.2 else -1 if skew < -0.2 else 0
+    score += 1 if recent_up > recent_down else -1 if recent_down > recent_up else 0
+    label = ("bullish" if score >= 2 else "bearish" if score <= -2 else "neutral")
+
+    out.update({
+        "available": True,
+        "target_avg": target_avg,
+        "implied_upside": implied_upside,
+        "ratings": {"buy": buy, "hold": hold, "sell": sell},
+        "consensus": consensus,
+        "recent_upgrades": recent_up,
+        "recent_downgrades": recent_down,
+        "label": label,
+        "source": "FMP price-target summary + analyst grades",
+    })
+    return out
+
+
 def build_current_state(
     ticker: str,
     *,
@@ -184,6 +441,8 @@ def build_current_state(
     latest_actual_rev: Optional[float] = None,
     sector: str = "",
     events: Optional[List[Dict[str, Any]]] = None,
+    multiple_decomposition: Optional[Dict[str, Any]] = None,
+    regulatory_exposure: Optional[Dict[str, Any]] = None,
 ) -> CurrentStateResult:
     """Build the current-state reconciliation for a ticker.
 
@@ -194,11 +453,21 @@ def build_current_state(
         events: material recent events (Source 2), each a dict with at least
             ``date``, ``category``, ``headline``, ``materiality`` (1-5),
             ``source``. Supplied by the events agent or manual entry.
+        multiple_decomposition: the MultipleDecomposition tool's output dict
+            (reused for sector-relative valuation — no recompute).
+        regulatory_exposure: the latest ``regulatory_exposure`` qualitative
+            assessment (reused for policy/regulatory context — no new LLM call).
     """
     res = CurrentStateResult(ticker=ticker.upper())
     res.consensus = _consensus_forward_growth(ticker, latest_fy, latest_actual_rev)
     res.microstructure = _microstructure(ticker)
     res.events = list(events or [])
+    # Reused / derived signals (display-only).
+    res.sector_valuation = _sector_relative_valuation(multiple_decomposition)
+    res.policy_regulatory = _policy_regulatory_context(res.events, regulatory_exposure)
+    res.market_signal = _market_signal(ticker, res.microstructure)
+    res.analyst_sentiment = _analyst_sentiment(
+        ticker, res.microstructure.get("price"))
 
     # ── Check 1: engine growth vs consensus (the NVO check) ─────────────
     cons_y1 = res.consensus.get("y1_growth")
@@ -316,7 +585,65 @@ def _score_pillar(res: CurrentStateResult) -> tuple:
     return 5, "Aligned with current signals; no material adverse events."
 
 
+def compose_current_state(ticker: str) -> Optional[Dict[str, Any]]:
+    """One-call composer: recompute the full current-state payload for a ticker
+    deterministically (DCF engine + multiple decomposition + cached events +
+    regulatory_exposure). No LLM call on this path. Returns the ``to_dict()``
+    payload, or ``None`` on any failure (e.g. specialized non-FCFF engines).
+
+    Single source of truth for surfaces that only have a ticker (HTML/MD report
+    generation). The API read-path uses its own already-computed DCFResult to
+    avoid a second engine run, but produces the identical shape.
+    """
+    try:
+        from aletheia.utils.calc_input_builder import make_calc_input
+        from aletheia.tools.dcf_engine import DCFEngine
+        from aletheia.tools.multiple_decomposition import MultipleDecomposition
+        from aletheia.agents.current_state_events import cached_events
+        from aletheia.data.database import InvestmentDatabase
+
+        calc = make_calc_input(ticker)
+        result = DCFEngine(verbose=False).run(calc)
+        base = getattr(result, "base", None)
+        eng_y1 = getattr(getattr(base, "assumptions", None),
+                         "revenue_cagr_y1_5", None)
+        fy = getattr(result, "fy_fiscal_year", None) or getattr(result, "fiscal_year", None)
+
+        md = None
+        try:
+            mdres = MultipleDecomposition(verbose=False).run(calc)
+            md = {
+                "market_ev_ebitda":        mdres.market_ev_ebitda,
+                "sector":                  getattr(mdres, "sector", None),
+                "sector_median_ev_ebitda": mdres.sector_median_ev_ebitda,
+                "vs_sector_premium":       mdres.vs_sector_premium,
+            }
+        except Exception:
+            md = None
+
+        reg = None
+        try:
+            db = InvestmentDatabase(verbose=False)
+            try:
+                reg = db.get_latest_assessment(ticker, "regulatory_exposure")
+            finally:
+                db.close()
+        except Exception:
+            reg = None
+
+        return build_current_state(
+            ticker, engine_y1_growth=eng_y1,
+            latest_fy=int(fy) if fy else None,
+            events=cached_events(ticker),
+            multiple_decomposition=md,
+            regulatory_exposure=reg,
+        ).to_dict()
+    except Exception:
+        return None
+
+
 __all__ = [
-    "build_current_state", "CurrentStateResult", "CurrentStateFlag",
+    "build_current_state", "compose_current_state",
+    "CurrentStateResult", "CurrentStateFlag",
     "HIGH", "MEDIUM", "LOW", "NONE",
 ]

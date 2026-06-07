@@ -335,6 +335,43 @@ def fetch_analyst_estimates(ticker: str, force_refresh: bool = False) -> Optiona
                   force_refresh=force_refresh)
 
 
+def fetch_price_target_summary(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Analyst price-target consensus (avg/high/low + # analysts). Used for
+    analyst-sentiment tracking. Returns None if the plan lacks the endpoint."""
+    raw = _fetch(ticker, "price-target-summary", "price_target_summary",
+                 params={}, force_refresh=force_refresh)
+    if isinstance(raw, list) and raw:
+        return raw[0]
+    if isinstance(raw, dict):
+        return raw
+    return None
+
+
+def fetch_grades_consensus(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[Dict[str, Any]]:
+    """Current analyst-rating distribution (strongBuy/buy/hold/sell/strongSell
+    counts + consensus). Used for analyst-sentiment tracking."""
+    raw = _fetch(ticker, "grades-consensus", "grades_consensus",
+                 params={}, force_refresh=force_refresh)
+    if isinstance(raw, list) and raw:
+        return raw[0]
+    if isinstance(raw, dict):
+        return raw
+    return None
+
+
+def fetch_grades_historical(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Recent rating actions (upgrades/downgrades) over time, most-recent
+    first. Used to read the direction of analyst sentiment."""
+    return _fetch(ticker, "grades-historical", "grades_historical",
+                  params={"limit": "30"}, force_refresh=force_refresh)
+
+
 def fetch_profile(ticker: str, force_refresh: bool = False) -> Optional[Dict[str, Any]]:
     """
     Company profile — sector, industry, country, currency, exchange, ISIN,

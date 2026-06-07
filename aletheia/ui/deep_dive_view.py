@@ -2069,6 +2069,15 @@ def render_deep_dive_view(
     # the analyst before the IV/MoS/tier. Gates a clean CONVICTION rating.
     _current_state = (dcf or {}).get("current_state") or {}
     _cs_severity = _current_state_gate(_current_state, ticker)
+    # Reused signals (Phase A/B): sector-relative valuation + policy/regulatory
+    # context. Display-only; no-ops when unavailable. Shown even when no gate.
+    if _current_state and not _current_state.get("error"):
+        _reused_keys = ("sector_valuation", "policy_regulatory",
+                        "market_signal", "analyst_sentiment")
+        if any((_current_state.get(k) or {}).get("available") for k in _reused_keys):
+            from aletheia.ui.financials_view import _render_reused_signals
+            with st.container(border=True):
+                _render_reused_signals(_current_state)
 
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})
