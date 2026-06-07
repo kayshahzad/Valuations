@@ -83,6 +83,87 @@ def _sector_market_growth(peer_group: Optional[str], exclude_ticker: str) -> Opt
     return median
 
 
+# Per-process cache of FMP-backed peer stats, keyed by ticker.
+_PEER_STATS_CACHE: Dict[str, Dict[str, Any]] = {}
+
+
+def _peers_for(ticker: str, peer_group: Optional[str]) -> list:
+    """Peer tickers for a name: curated list first (true peers, even if not in
+    our universe), else same-peer-group universe members."""
+    try:
+        from config.peer_lists import curated_peers
+        cur = curated_peers(ticker)
+        if cur:
+            return cur
+    except Exception:
+        pass
+    if not peer_group:
+        return []
+    try:
+        from config.ticker_classification import get_extended_universe
+        from config.business_analysis_templates import peer_group_for
+        return [t for t, c in get_extended_universe().items()
+                if t != (ticker or "").upper()
+                and peer_group_for(t, getattr(c, "sector", "") or "",
+                                   getattr(c, "industry", "") or "",
+                                   getattr(c, "lifecycle", "") or "",
+                                   getattr(c, "business_model", "") or "") == peer_group]
+    except Exception:
+        return []
+
+
+def peer_stats(ticker: str, peer_group: Optional[str] = None) -> Dict[str, Any]:
+    """FMP-backed peer-set statistics: median revenue CAGR (market-growth proxy),
+    median EV/EBITDA (sector-relative multiple), and median operating margin
+    (peer-margin context) across the curated/group peer set. Cached per ticker;
+    available=False when <3 peers resolve. Deterministic, FMP cache-backed."""
+    key = (ticker or "").upper()
+    if key in _PEER_STATS_CACHE:
+        return _PEER_STATS_CACHE[key]
+    out: Dict[str, Any] = {"available": False, "peers": []}
+    try:
+        import statistics
+        from aletheia.data import fmp_client
+        peers = _peers_for(key, peer_group)
+        cagrs, mults, margins, used = [], [], [], []
+        for p in peers[:8]:
+            try:
+                inc = fmp_client.fetch_income_statements(p) or []
+                revs = [float(r.get("revenue")) for r in inc
+                        if isinstance(r.get("revenue"), (int, float))]
+                # FMP income statements are most-recent first.
+                if len(revs) >= 4:
+                    k = min(5, len(revs) - 1)
+                    if revs[k] > 0:
+                        c = (revs[0] / revs[k]) ** (1.0 / k) - 1.0
+                        if -0.5 < c < 2.0:
+                            cagrs.append(c)
+                if inc and inc[0].get("revenue") and inc[0].get("operatingIncome") is not None:
+                    m = float(inc[0]["operatingIncome"]) / float(inc[0]["revenue"])
+                    if -0.5 < m < 0.8:
+                        margins.append(m)
+                km = fmp_client.fetch_key_metrics(p) or []
+                ev = km[0].get("evToEBITDA") if km else None
+                if isinstance(ev, (int, float)) and 0 < ev < 200:
+                    mults.append(float(ev))
+                used.append(p)
+            except Exception:
+                continue
+        out = {
+            "available": len(used) >= 3,
+            "peers": peers,
+            "peers_used": used,
+            "market_growth_median": statistics.median(cagrs) if len(cagrs) >= 3 else None,
+            "ev_ebitda_median": statistics.median(mults) if len(mults) >= 3 else None,
+            "op_margin_median": statistics.median(margins) if len(margins) >= 3 else None,
+            "source": "curated/group peer set via FMP (cached)",
+        }
+    except Exception:
+        out = {"available": False, "peers": []}
+    _PEER_STATS_CACHE[key] = out
+    return out
+
+
 def build_growth_decomposition(calc) -> Dict[str, Any]:
     """Decompose historical revenue growth into organic vs M&A/regime-break.
 
@@ -128,7 +209,14 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
                                 getattr(cls, "business_model", "") or "")
         except Exception:
             pg = getattr(cls, "sector", None)
-        market_ref = _sector_market_growth(pg, ticker)
+        # Prefer the curated/FMP peer-set median (true peers, e.g. BAH/SAIC/CACI
+        # for LDOS); fall back to same-peer-group universe members.
+        ps = peer_stats(ticker, pg) if ticker else {"available": False}
+        market_ref = ps.get("market_growth_median")
+        ref_src = "curated peer set (FMP)"
+        if market_ref is None:
+            market_ref = _sector_market_growth(pg, ticker)
+            ref_src = "same-peer-group universe-median"
         share_gain = None
         share_label = None
         if isinstance(organic, (int, float)) and isinstance(market_ref, (int, float)):
@@ -147,7 +235,7 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
             "market_growth_ref": market_ref,
             "share_gain_pp": share_gain,
             "share_label": share_label,
-            "market_ref_basis": (f"same-peer-group ({pg}) universe-median historical CAGR"
+            "market_ref_basis": (f"{ref_src} historical CAGR ({pg})"
                                  if market_ref is not None else None),
             "source": "DCF organic/M&A break detection + sector market-growth proxy",
         })
@@ -278,9 +366,14 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
     # Sort priority dimensions to the top so the sector's key items lead.
     coverage.sort(key=lambda c: (not c["priority"]))
 
+    # Peer-set stats (curated/FMP) — market growth, multiple, margin context.
+    pg_key = (template.get("peer_group") if template else None)
+    ps = peer_stats(ticker, pg_key)
+
     out.update({
         "available": True,
         "growth_decomposition": gd,
+        "peer_stats": ps,
         "extracted": ab or None,          # themes A+B+C+E (LLM)
         "coverage": coverage,
         "n_present": n_present,

@@ -128,6 +128,20 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
                     + (f" ({tpl.get('peer_group')})" if tpl.get('peer_group') else "")
                     + f":**  {' · '.join(tpl['emphasis'])}")
     c2.metric("Dimensions populated", f"{ba.get('n_present','?')}/{ba.get('n_total','?')}")
+
+    # Curated peer set (true peers via FMP) — drives market-vs-share & multiple.
+    ps = ba.get("peer_stats") or {}
+    if ps.get("available"):
+        peers = ", ".join(ps.get("peers") or [])
+        p1, p2, p3 = st.columns(3)
+        mg = ps.get("market_growth_median")
+        ev = ps.get("ev_ebitda_median")
+        om = ps.get("op_margin_median")
+        p1.metric("Peer rev CAGR (median)", f"{mg*100:.1f}%" if mg is not None else "—")
+        p2.metric("Peer EV/EBITDA (median)", f"{ev:.1f}×" if ev is not None else "—")
+        p3.metric("Peer op margin (median)", f"{om*100:.1f}%" if om is not None else "—")
+        st.caption(f"Peer set ({ps.get('source','')}): {peers}")
+
     if not ex:
         st.info("ℹ️ Themes A/B/C/E (product, market, unit economics, innovation) "
                 "are populated by a structured 10-K extraction that runs on a "

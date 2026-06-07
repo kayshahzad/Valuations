@@ -621,6 +621,20 @@ class ReportGenerator:
                         f'background:#f7f9fb;border-radius:6px"><strong>Sector emphasis '
                         f'({tpl.get("label","")}):</strong> {" · ".join(tpl["emphasis"])}</p>')
 
+        # Curated peer-set stats (true peers via FMP).
+        ps = ba.get("peer_stats") or {}
+        if ps.get("available"):
+            bits = []
+            if ps.get("market_growth_median") is not None:
+                bits.append(f"rev CAGR {pct(ps['market_growth_median'])}")
+            if ps.get("ev_ebitda_median") is not None:
+                bits.append(f"EV/EBITDA {self._fmt_x_or_dash(ps['ev_ebitda_median'])}")
+            if ps.get("op_margin_median") is not None:
+                bits.append(f"op margin {pct(ps['op_margin_median'])}")
+            tpl_html += (f'<p style="margin:2px 0 8px 0"><strong>Peer set</strong> '
+                         f'({", ".join(ps.get("peers") or [])}): median '
+                         f'{" · ".join(bits)}</p>')
+
         # One sub-section per theme A–F.
         sections = ""
         for letter, title, subtitle, cov_prefix in self._BA_THEMES:
@@ -1237,12 +1251,18 @@ class ReportGenerator:
             if sv.get("own_5y_ev_ebitda") is not None:
                 own = (f"; vs own 5Y avg {self._fmt_x_or_dash(sv.get('own_5y_ev_ebitda'))} "
                        f"({pct(sv.get('own_5y_premium_pct'),0)}, {sv.get('own_5y_label','')})")
+            peer = ""
+            if sv.get("peer_ev_ebitda_median") is not None:
+                pset = ", ".join(sv.get("peer_set") or [])
+                peer = (f"; vs peer median {self._fmt_x_or_dash(sv.get('peer_ev_ebitda_median'))} "
+                        f"({pct(sv.get('peer_premium_pct'),0)}, {sv.get('peer_label','')}"
+                        f"{f' — {pset}' if pset else ''})")
             bits.append(
                 f"<li><strong>🏭 Multiples:</strong> {sv.get('label','')} — "
                 f"EV/EBITDA {self._fmt_x_or_dash(sv.get('market_ev_ebitda'))} vs "
                 f"{sv.get('sector') or 'sector'} median "
                 f"{self._fmt_x_or_dash(sv.get('sector_median_ev_ebitda'))} "
-                f"({pct(sv.get('premium_pct'),0)}){own}</li>")
+                f"({pct(sv.get('premium_pct'),0)}){peer}{own}</li>")
         if (wa or {}).get("available") and wa.get("implied_wacc") is not None:
             bps = wa.get("implied_vs_base_bps")
             bits.append(f"<li><strong>📉 Implied WACC:</strong> {pct(wa.get('implied_wacc'))} "

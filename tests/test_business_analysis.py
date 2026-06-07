@@ -61,9 +61,11 @@ class TestGrowthDecomposition(unittest.TestCase):
 
     def test_market_vs_share_split(self):
         from aletheia.tools import business_analysis as ba_mod
-        # Stub the peer-group market-growth reference so the split is deterministic.
+        # Stub both references so the split is deterministic & hermetic (no FMP).
         orig = ba_mod._sector_market_growth
+        orig_ps = ba_mod.peer_stats
         ba_mod._sector_market_growth = lambda pg, ex: 0.04  # market grew 4%
+        ba_mod.peer_stats = lambda t, pg=None: {"available": False}  # force fallback
         cls = _Cls(sector="Energy")
         cls.ticker = "TST"
         calc = _Calc([100, 106, 112, 119, 126, 134],
@@ -72,6 +74,7 @@ class TestGrowthDecomposition(unittest.TestCase):
             gd = ba_mod.build_growth_decomposition(calc)
         finally:
             ba_mod._sector_market_growth = orig
+            ba_mod.peer_stats = orig_ps
         self.assertAlmostEqual(gd["market_growth_ref"], 0.04, places=4)
         # Organic ~6% vs market 4% → ~+2pp share gain.
         self.assertGreater(gd["share_gain_pp"], 0)
@@ -216,6 +219,59 @@ class TestPeerGroupResolver(unittest.TestCase):
         self.assertEqual(peer_group_for("X", "Financial Services", "Banks"), "banks")
         self.assertEqual(peer_group_for("X", "Healthcare", "Drug Manufacturers"), "pharma")
         self.assertEqual(peer_group_for("X", "Energy", "Oil & Gas E&P"), "energy")
+
+
+class TestPeerStats(unittest.TestCase):
+    """Curated peer lists + FMP-backed peer stats (refinement P1)."""
+
+    def test_curated_peers_first(self):
+        from config.peer_lists import curated_peers
+        self.assertEqual(curated_peers("LDOS"), ["BAH", "SAIC", "CACI", "LHX", "GD"])
+        self.assertEqual(curated_peers("ldos"), ["BAH", "SAIC", "CACI", "LHX", "GD"])
+        self.assertEqual(curated_peers("ZZZ"), [])
+
+    def test_peers_for_uses_curated(self):
+        from aletheia.tools import business_analysis as ba_mod
+        # Curated list wins regardless of peer_group (true peers, even if not ingested).
+        self.assertEqual(ba_mod._peers_for("LDOS", "some_group"),
+                         ["BAH", "SAIC", "CACI", "LHX", "GD"])
+
+    def test_peer_stats_medians(self):
+        from aletheia.tools import business_analysis as ba_mod
+        from aletheia.data import fmp_client
+        ba_mod._PEER_STATS_CACHE.clear()
+        # 5 fake peers: revenue grows ~10%/yr, op margin 10%, EV/EBITDA 12x.
+        revs = [{"revenue": r, "operatingIncome": r * 0.10}
+                for r in [161, 146, 133, 121, 110, 100]]  # most-recent first
+        orig_inc, orig_km = fmp_client.fetch_income_statements, fmp_client.fetch_key_metrics
+        fmp_client.fetch_income_statements = lambda p: list(revs)
+        fmp_client.fetch_key_metrics = lambda p: [{"evToEBITDA": 12.0}]
+        try:
+            ps = ba_mod.peer_stats("LDOS")
+        finally:
+            fmp_client.fetch_income_statements = orig_inc
+            fmp_client.fetch_key_metrics = orig_km
+            ba_mod._PEER_STATS_CACHE.clear()
+        self.assertTrue(ps["available"])
+        self.assertEqual(ps["peers"], ["BAH", "SAIC", "CACI", "LHX", "GD"])
+        self.assertAlmostEqual(ps["ev_ebitda_median"], 12.0, places=2)
+        self.assertAlmostEqual(ps["op_margin_median"], 0.10, places=3)
+        self.assertGreater(ps["market_growth_median"], 0.08)
+
+    def test_peer_stats_unavailable_below_three(self):
+        from aletheia.tools import business_analysis as ba_mod
+        from aletheia.data import fmp_client
+        ba_mod._PEER_STATS_CACHE.clear()
+        orig_inc, orig_km = fmp_client.fetch_income_statements, fmp_client.fetch_key_metrics
+        fmp_client.fetch_income_statements = lambda p: []
+        fmp_client.fetch_key_metrics = lambda p: []
+        try:
+            ps = ba_mod.peer_stats("ZZZ")  # no curated, no group → no peers
+        finally:
+            fmp_client.fetch_income_statements = orig_inc
+            fmp_client.fetch_key_metrics = orig_km
+            ba_mod._PEER_STATS_CACHE.clear()
+        self.assertFalse(ps["available"])
 
 
 if __name__ == "__main__":

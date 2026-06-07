@@ -244,6 +244,26 @@ def _sector_relative_valuation(
                      else "below own 5Y avg" if own_premium_pct < -0.10
                      else "near own 5Y avg")
 
+    # Curated/FMP PEER-SET multiple — the true peer median (e.g. BAH/SAIC/CACI
+    # for LDOS), which beats the coarse sector-table median where the FMP sector
+    # mislabels the peer set.
+    peer_med = peer_prem = peer_label = None
+    peer_names = None
+    if ticker:
+        try:
+            from aletheia.tools.business_analysis import peer_stats
+            ps = peer_stats(ticker)
+            if ps.get("available") and ps.get("ev_ebitda_median"):
+                peer_med = float(ps["ev_ebitda_median"])
+                peer_names = ps.get("peers")
+                peer_prem = (market / peer_med - 1.0) if peer_med > 0 else None
+                if peer_prem is not None:
+                    peer_label = ("rich vs peers" if peer_prem > 0.25
+                                  else "cheap vs peers" if peer_prem < -0.25
+                                  else "in line with peers")
+        except Exception:
+            pass
+
     out.update({
         "available": True,
         "market_ev_ebitda": float(market),
@@ -255,8 +275,14 @@ def _sector_relative_valuation(
         "own_5y_ev_ebitda": float(own_5y) if own_5y else None,
         "own_5y_premium_pct": own_premium_pct,
         "own_5y_label": own_label,
-        "source": "MultipleDecomposition (market vs sector-median) + FMP own 5Y avg",
-        "note": "Sector median is a static reference table, not a live peer set.",
+        "peer_ev_ebitda_median": peer_med,
+        "peer_premium_pct": peer_prem,
+        "peer_label": peer_label,
+        "peer_set": peer_names,
+        "source": "MultipleDecomposition + FMP own-5Y + curated peer-set median",
+        "note": ("Peer-set median is the true comparison; the sector-table "
+                 "median is a coarse fallback." if peer_med
+                 else "Sector median is a static reference table, not a live peer set."),
     })
     return out
 
