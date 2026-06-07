@@ -2111,11 +2111,18 @@ def _downside_protection_panel(dp: Dict[str, Any]) -> None:
     with st.container(border=True):
         st.markdown("#### 🛟 Downside protection")
         c1, c2, c3 = st.columns(3)
-        c1.metric("Base upside", _p(dp.get("base_upside_pct")))
-        c2.metric("Worst-case", _p(dp.get("worst_case_pct")))
-        c3.metric("Asymmetry (up÷down)",
+        c1.metric("Expected return (prob-wtd)", _p(dp.get("expected_return_pct")))
+        c2.metric("Worst-case stress", _p(dp.get("worst_case_pct")))
+        c3.metric("Asymmetry (E[up]÷E[down])",
                   f"{asym:.1f}×" if isinstance(asym, (int, float)) else "—",
                   verdict)
+        probs = dp.get("scenario_probabilities") or {}
+        if probs:
+            st.caption(
+                f"Probability-weighted EV over DCF bull/base/bear "
+                f"({probs.get('bull',0)*100:.0f}/{probs.get('base',0)*100:.0f}/"
+                f"{probs.get('bear',0)*100:.0f}); multiple-de-rating is a separate "
+                f"market-floor stress in the ladder, not in the ratio.")
         ladder = dp.get("downside_scenarios") or []
         if ladder:
             rows = [{

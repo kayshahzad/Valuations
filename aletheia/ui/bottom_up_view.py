@@ -87,11 +87,21 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
     elif letter == "D":
         if gd.get("available"):
             breaks = gd.get("break_years") or []
-            st.markdown(
-                f"**Growth source:** raw {_pct(gd.get('raw_cagr'))} = organic "
-                f"{_pct(gd.get('organic_cagr'))} + M&A {_pct(gd.get('ma_contribution_pp'))}"
-                + (f" (breaks FY{breaks})" if breaks else "")
-                + f" — _{gd.get('split','')}_")
+            if gd.get("ma_separable") is False:
+                m = gd.get("ma_spend") or {}
+                yrs = ", ".join(f"FY{x['year']}" for x in m.get("years", []))
+                st.markdown(
+                    f"**Growth source:** raw {_pct(gd.get('raw_cagr'))}; "
+                    f"**M&A spend material** (${(m.get('total_spend') or 0)/1e9:.0f}B over "
+                    f"{yrs}, {_pct(m.get('cum_pct_of_revenue'))} of revenue) — organic "
+                    f"≤ {_pct(gd.get('organic_cagr'))} _(not separable from M&A via "
+                    f"revenue trends)_")
+            else:
+                st.markdown(
+                    f"**Growth source:** raw {_pct(gd.get('raw_cagr'))} = organic "
+                    f"{_pct(gd.get('organic_cagr'))} + M&A {_pct(gd.get('ma_contribution_pp'))}"
+                    + (f" (breaks FY{breaks})" if breaks else "")
+                    + f" — _{gd.get('split','')}_")
             rendered = True
             if gd.get("share_gain_pp") is not None:
                 st.markdown(

@@ -21,6 +21,18 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional
 
 
+# Scenario probabilities (bull, base, bear) by conviction tier, for the
+# probability-weighted expected-value asymmetry. Higher conviction tilts weight
+# toward the bull/base; a 'pass' tilts toward the bear. Disclosed in the output
+# so the payoff ratio is auditable, not a black box.
+_TIER_PROBS = {
+    "high_conviction": (0.30, 0.50, 0.20),
+    "monitor":         (0.25, 0.50, 0.25),
+    "pass":            (0.15, 0.45, 0.40),
+    "_default":        (0.25, 0.50, 0.25),
+}
+
+
 def _sev_from_drawdown(pct: float) -> str:
     """Severity label from a downside % (negative = loss)."""
     if pct <= -0.50:
@@ -107,14 +119,32 @@ def build_downside_protection(
 
     worst_pct = min([e["vs_price_pct"] for e in ladder], default=bear_dn)
 
-    # ── Asymmetry ratio ─────────────────────────────────────────────────
-    # Realistic upside (base case) vs realistic downside (worst anchor).
-    asymmetry = None
-    if base_up is not None and worst_pct is not None and worst_pct < 0:
-        asymmetry = base_up / abs(worst_pct)
+    # ── Asymmetry: probability-weighted expected-value payoff ───────────
+    # Weight the three DCF scenarios by conviction-derived probabilities
+    # (disclosed), then payoff = E[upside] / E[downside]. The sector
+    # multiple-de-rating stays a market-floor STRESS in the ladder — it is
+    # NOT folded into this ratio, so numerator and denominator share one
+    # (DCF) valuation framework rather than mixing DCF upside with a
+    # multiple-based downside.
+    _tier = (conviction_tier or "").lower()
+    p_bull, p_base, p_bear = _TIER_PROBS.get(_tier, _TIER_PROBS["_default"])
+    scen = [(p, r) for p, r in
+            ((p_bull, bull_up), (p_base, base_up), (p_bear, bear_dn))
+            if isinstance(r, (int, float))]
+    asymmetry = expected_return = None
+    if scen:
+        wsum = sum(p for p, _ in scen) or 1.0
+        scen = [(p / wsum, r) for p, r in scen]          # renormalize if a leg is missing
+        expected_return = sum(p * r for p, r in scen)
+        e_up = sum(p * max(r, 0.0) for p, r in scen)
+        e_down = sum(p * max(-r, 0.0) for p, r in scen)
+        if e_down > 1e-9:
+            asymmetry = e_up / e_down
     asym_verdict = ("favorable" if (asymmetry is not None and asymmetry >= 2.0)
                     else "balanced" if (asymmetry is not None and asymmetry >= 1.0)
-                    else "unfavorable" if asymmetry is not None else "n/a")
+                    else "unfavorable" if asymmetry is not None
+                    else "favorable" if (expected_return is not None and expected_return > 0)
+                    else "n/a")
 
     # ── Required MoS by risk (lifecycle stage) ──────────────────────────
     req = _required_mos(calc)
@@ -163,9 +193,12 @@ def build_downside_protection(
         "upside_pct": bull_up,            # bull case
         "base_upside_pct": base_up,       # base case (= MoS)
         "downside_pct": bear_dn,          # engine bear
-        "worst_case_pct": worst_pct,      # worst ladder anchor
-        "asymmetry_ratio": asymmetry,
+        "worst_case_pct": worst_pct,      # worst ladder anchor (incl. de-rating stress)
+        "asymmetry_ratio": asymmetry,     # E[upside] / E[downside], DCF scenarios
         "asymmetry_verdict": asym_verdict,
+        "asymmetry_basis": "probability-weighted EV (DCF bull/base/bear)",
+        "scenario_probabilities": {"bull": p_bull, "base": p_base, "bear": p_bear},
+        "expected_return_pct": expected_return,
         "downside_scenarios": ladder,
         "required_mos": req,
         "actual_mos": actual_mos,

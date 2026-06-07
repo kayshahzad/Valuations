@@ -279,6 +279,84 @@ def tam_assessment(ticker: str, extracted: Optional[Dict[str, Any]],
     return out
 
 
+_MA_SPEND_CACHE: Dict[str, Dict[str, Any]] = {}
+
+# A fiscal year is "material M&A" when cash paid for acquisitions exceeds this
+# share of that year's revenue; the window is material overall when any single
+# year clears YEAR_PCT or the cumulative spend clears CUM_PCT.
+_MA_YEAR_PCT = 0.03
+_MA_CUM_PCT = 0.08
+
+
+def ma_spend(ticker: str, years: Optional[List[int]] = None) -> Dict[str, Any]:
+    """Detect M&A activity from the cash-flow statement (FMP ``acquisitionsNet``)
+    — the signal the revenue-spike break detector misses for bolt-ons on a large
+    base (e.g. MSFT/Activision: $69B but only ~4% of revenue, no YoY spike).
+    Flag-only: reports spend + which years, does NOT estimate the organic split.
+    ``years`` restricts the window (the CAGR lookback); None uses the last 6."""
+    key = (ticker or "").upper()
+    cache_key = f"{key}:{years[0] if years else ''}-{years[-1] if years else ''}"
+    if cache_key in _MA_SPEND_CACHE:
+        return _MA_SPEND_CACHE[cache_key]
+    out: Dict[str, Any] = {"material": False, "years": []}
+    try:
+        from aletheia.data import fmp_client
+        cf = fmp_client.fetch_cash_flows(key) or []
+        inc = fmp_client.fetch_income_statements(key) or []
+        rev_by_year = {}
+        for i in inc:
+            y = i.get("calendarYear") or str(i.get("date", ""))[:4]
+            if y and isinstance(i.get("revenue"), (int, float)):
+                rev_by_year[str(y)] = float(i["revenue"])
+        yrset = {str(y) for y in years} if years else None
+        # Aggregate by year (FMP occasionally returns duplicate rows per year —
+        # most-recent-first, so keep the first/latest value seen).
+        spend_by_year: Dict[str, float] = {}
+        for c in cf:
+            y = c.get("calendarYear") or str(c.get("date", ""))[:4]
+            if not y:
+                continue
+            y = str(y)
+            if y in spend_by_year:
+                continue
+            if yrset is not None and y not in yrset:
+                continue
+            acq = c.get("acquisitionsNet")
+            rev = rev_by_year.get(y)
+            if not isinstance(acq, (int, float)) or not rev or rev <= 0:
+                continue
+            spend_by_year[y] = abs(float(acq))
+        ma_years, total_spend, pcts = [], 0.0, []
+        for y, spend in spend_by_year.items():
+            rev = rev_by_year.get(y) or 0
+            if rev <= 0:
+                continue
+            pct = spend / rev
+            total_spend += spend
+            if pct >= _MA_YEAR_PCT:
+                ma_years.append({"year": int(y), "spend": spend, "pct_of_revenue": pct})
+            pcts.append(pct)
+        # Cumulative spend over the window vs the most recent revenue in window.
+        ref_rev = max((rev_by_year.get(str(y)) or 0) for y in years) if years and rev_by_year else (
+            max(rev_by_year.values()) if rev_by_year else 0)
+        cum_pct = (total_spend / ref_rev) if ref_rev else None
+        material = bool(ma_years) and (
+            any(m["pct_of_revenue"] >= 0.05 for m in ma_years)
+            or (cum_pct is not None and cum_pct >= _MA_CUM_PCT))
+        out = {
+            "material": material,
+            "years": sorted(ma_years, key=lambda m: -m["year"]),
+            "total_spend": total_spend,
+            "cum_pct_of_revenue": cum_pct,
+            "max_year_pct": max(pcts) if pcts else None,
+            "source": "FMP cash-flow acquisitionsNet",
+        }
+    except Exception:
+        out = {"material": False, "years": []}
+    _MA_SPEND_CACHE[cache_key] = out
+    return out
+
+
 def _latest_revenue(calc) -> Optional[float]:
     """Most-recent FY revenue from the calc frame (for implied-share math)."""
     try:
@@ -312,26 +390,45 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
             d = d[d["period"] == "FY"]
         d = d.dropna(subset=["clean_Revenue"]).sort_values("fiscal_year")
         revs = [float(x) for x in d["clean_Revenue"].tolist()]
+        fy_years = [int(x) for x in d["fiscal_year"].tolist()]
         if len(revs) < 4:
             return out
         # Raw point-to-point CAGR over the last ≤5 fiscal years.
         k = min(5, len(revs) - 1)
         base = revs[-1 - k]
         raw_cagr = (revs[-1] / base) ** (1.0 / k) - 1.0 if base > 0 else None
+        window_years = fy_years[-(k + 1):]
+
+        cls = getattr(calc, "classification", None)
+        ticker = getattr(cls, "ticker", "") or ""
 
         organic, break_years = _organic_cagr_ex_breaks(d)
+        # Cash-flow M&A detection — catches bolt-ons on a large base that never
+        # spike YoY revenue (the revenue-break method's blind spot).
+        mas = ma_spend(ticker, window_years) if ticker else {"material": False}
+        organic_is_upper_bound = False
+        ma_separable = True
         if organic is not None and break_years:
             ma_pp = (raw_cagr - organic) if raw_cagr is not None else None
             split = "organic + M&A/regime breaks"
+        elif mas.get("material"):
+            # M&A spend is material but produced no isolable revenue spike →
+            # organic is NOT cleanly separable; raw CAGR is an UPPER bound on it.
+            organic = raw_cagr
+            ma_pp = None
+            break_years = []
+            ma_separable = False
+            organic_is_upper_bound = True
+            yrs = ", ".join(f"FY{m['year']}" for m in mas.get("years", []))
+            split = (f"M&A spend material ({yrs}) but not separable from organic "
+                     f"via revenue trends — organic ≤ raw CAGR")
         else:
-            organic = raw_cagr  # no break → all organic
+            organic = raw_cagr  # no break, no material M&A spend → all organic
             ma_pp = 0.0
             break_years = []
-            split = "all organic (no transformative break detected)"
+            split = "all organic (no transformative break or material M&A spend)"
         # Market-vs-share split (Phase 5): organic growth above the peer-group
         # market-growth reference is share gain; below is share loss / lagging.
-        cls = getattr(calc, "classification", None)
-        ticker = getattr(cls, "ticker", "") or ""
         try:
             from config.business_analysis_templates import peer_group_for
             pg = peer_group_for(ticker, getattr(cls, "sector", "") or "",
@@ -363,6 +460,9 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
             "break_years": break_years,
             "lookback_years": k,
             "split": split,
+            "ma_separable": ma_separable,
+            "organic_is_upper_bound": organic_is_upper_bound,
+            "ma_spend": mas if mas.get("material") else None,
             "market_growth_ref": market_ref,
             "share_gain_pp": share_gain,
             "share_label": share_label,

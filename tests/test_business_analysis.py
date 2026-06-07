@@ -274,6 +274,78 @@ class TestPeerStats(unittest.TestCase):
         self.assertFalse(ps["available"])
 
 
+class TestMaDetection(unittest.TestCase):
+    """M&A flag-only: cash-flow acquisitionsNet catches bolt-ons that never
+    spike YoY revenue (MSFT/Activision blind spot)."""
+
+    def _stub_fmp(self, ba_mod, fmp_client, acq_by_year, rev_by_year):
+        ba_mod._MA_SPEND_CACHE.clear()
+        self._orig_cf = fmp_client.fetch_cash_flows
+        self._orig_inc = fmp_client.fetch_income_statements
+        fmp_client.fetch_cash_flows = lambda t, **k: [
+            {"calendarYear": str(y), "acquisitionsNet": -a} for y, a in acq_by_year.items()]
+        fmp_client.fetch_income_statements = lambda t, **k: [
+            {"calendarYear": str(y), "revenue": r} for y, r in rev_by_year.items()]
+
+    def _restore(self, ba_mod, fmp_client):
+        fmp_client.fetch_cash_flows = self._orig_cf
+        fmp_client.fetch_income_statements = self._orig_inc
+        ba_mod._MA_SPEND_CACHE.clear()
+
+    def test_material_ma_flagged(self):
+        from aletheia.tools import business_analysis as ba_mod
+        from aletheia.data import fmp_client
+        # 28% then 11% of revenue spent on acquisitions, no YoY revenue spike.
+        self._stub_fmp(ba_mod, fmp_client,
+                       acq_by_year={2024: 69e9, 2022: 22e9, 2023: 1e9},
+                       rev_by_year={2024: 245e9, 2023: 212e9, 2022: 198e9})
+        try:
+            m = ba_mod.ma_spend("MSFT", [2022, 2023, 2024])
+        finally:
+            self._restore(ba_mod, fmp_client)
+        self.assertTrue(m["material"])
+        flagged = {x["year"] for x in m["years"]}
+        self.assertIn(2024, flagged)
+        self.assertIn(2022, flagged)
+        self.assertNotIn(2023, flagged)  # 1/212 = 0.5% < 3% threshold
+
+    def test_immaterial_ma_not_flagged(self):
+        from aletheia.tools import business_analysis as ba_mod
+        from aletheia.data import fmp_client
+        self._stub_fmp(ba_mod, fmp_client,
+                       acq_by_year={2024: 0.5e9, 2023: 0.2e9},
+                       rev_by_year={2024: 245e9, 2023: 212e9})
+        try:
+            m = ba_mod.ma_spend("XYZ", [2023, 2024])
+        finally:
+            self._restore(ba_mod, fmp_client)
+        self.assertFalse(m["material"])
+
+    def test_growth_decomp_drops_all_organic_when_ma_material(self):
+        from aletheia.tools import business_analysis as ba_mod
+        from aletheia.data import fmp_client
+        # Steady ~10% revenue (no break) but heavy acquisition spend.
+        cls = _Cls(sector="Technology", industry="Software")
+        cls.ticker = "MSFT"
+        calc = _Calc([150e9, 168e9, 198e9, 212e9, 245e9, 270e9],
+                     [2020, 2021, 2022, 2023, 2024, 2025], classification=cls)
+        self._stub_fmp(ba_mod, fmp_client,
+                       acq_by_year={2024: 69e9, 2022: 22e9},
+                       rev_by_year={2020: 150e9, 2021: 168e9, 2022: 198e9,
+                                    2023: 212e9, 2024: 245e9, 2025: 270e9})
+        orig_ps = ba_mod.peer_stats
+        ba_mod.peer_stats = lambda t, pg=None: {"available": False}
+        try:
+            gd = ba_mod.build_growth_decomposition(calc)
+        finally:
+            ba_mod.peer_stats = orig_ps
+            self._restore(ba_mod, fmp_client)
+        self.assertFalse(gd["ma_separable"])
+        self.assertTrue(gd["organic_is_upper_bound"])
+        self.assertIsNotNone(gd["ma_spend"])
+        self.assertNotIn("all organic", gd["split"])
+
+
 class TestSegmentEconomics(unittest.TestCase):
     """P2 — FMP revenue mix overlaid with extracted segment margins."""
 

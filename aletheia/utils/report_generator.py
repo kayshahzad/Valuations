@@ -183,8 +183,8 @@ class ReportGenerator:
         self._render_downside_protection(downside_protection)
         + self._render_contrarian_block(contrarian)
         + self._render_risk_engine(risk, p2),
-        gap="asymmetry basis mismatch; contrarian↔conclusion reconciliation; "
-            "drawdown history & portfolio correlation absent")}
+        gap="contrarian↔conclusion reconciliation; drawdown history & "
+            "portfolio correlation absent")}
     {self._section(10, self._render_structured_thesis(thesis_synth, p2),
         gap="conditions use CAGR metrics, not $ price levels; no scaling ladder")}
     {self._section(11,
@@ -620,11 +620,21 @@ class ReportGenerator:
                 out = ""
                 if gd.get("available"):
                     breaks = gd.get("break_years") or []
-                    out += (f'<p style="margin:2px 0"><strong>Growth source:</strong> raw CAGR '
-                            f'{pct(gd.get("raw_cagr"))} = organic {pct(gd.get("organic_cagr"))} '
-                            f'+ M&A {pct(gd.get("ma_contribution_pp"))}'
-                            + (f' (breaks FY{breaks})' if breaks else '')
-                            + f' — <em>{gd.get("split","")}</em></p>')
+                    if gd.get("ma_separable") is False:
+                        m = gd.get("ma_spend") or {}
+                        yrs = ", ".join(f"FY{x['year']}" for x in m.get("years", []))
+                        out += (f'<p style="margin:2px 0"><strong>Growth source:</strong> raw CAGR '
+                                f'{pct(gd.get("raw_cagr"))}; <strong>M&amp;A spend material</strong> '
+                                f'({self._fmt_bn_or_dash((m.get("total_spend") or 0)/1e9)} over {yrs}, '
+                                f'{pct(m.get("cum_pct_of_revenue"))} of revenue) — organic '
+                                f'&le; {pct(gd.get("organic_cagr"))} '
+                                f'(<em>not separable from M&amp;A via revenue trends</em>)</p>')
+                    else:
+                        out += (f'<p style="margin:2px 0"><strong>Growth source:</strong> raw CAGR '
+                                f'{pct(gd.get("raw_cagr"))} = organic {pct(gd.get("organic_cagr"))} '
+                                f'+ M&A {pct(gd.get("ma_contribution_pp"))}'
+                                + (f' (breaks FY{breaks})' if breaks else '')
+                                + f' — <em>{gd.get("split","")}</em></p>')
                     if gd.get("share_gain_pp") is not None:
                         out += (f'<p style="margin:2px 0"><strong>Market vs share:</strong> '
                                 f'organic {pct(gd.get("organic_cagr"))} vs sector market '
@@ -1435,15 +1445,22 @@ class ReportGenerator:
                   "unfavorable": "#c0392b"}.get(verdict, "#888")
 
         # Headline metric row.
+        probs = dp.get("scenario_probabilities") or {}
+        prob_s = (f"bull {probs.get('bull',0)*100:.0f}/base {probs.get('base',0)*100:.0f}/"
+                  f"bear {probs.get('bear',0)*100:.0f}" if probs else "")
         head = (
             f'<div style="display:flex;gap:24px;flex-wrap:wrap;margin:6px 0 10px 0">'
-            f'<div><div style="font-size:11px;color:#888">Base upside</div>'
-            f'<div style="font-size:18px;font-weight:600">{pct(dp.get("base_upside_pct"))}</div></div>'
-            f'<div><div style="font-size:11px;color:#888">Worst-case</div>'
+            f'<div><div style="font-size:11px;color:#888">Expected return (prob-wtd)</div>'
+            f'<div style="font-size:18px;font-weight:600">{pct(dp.get("expected_return_pct"))}</div></div>'
+            f'<div><div style="font-size:11px;color:#888">Worst-case stress</div>'
             f'<div style="font-size:18px;font-weight:600;color:#c0392b">{pct(dp.get("worst_case_pct"))}</div></div>'
-            f'<div><div style="font-size:11px;color:#888">Asymmetry (up÷down)</div>'
+            f'<div><div style="font-size:11px;color:#888">Asymmetry (E[up]÷E[down])</div>'
             f'<div style="font-size:18px;font-weight:600;color:{vcolor}">{asym_s} · {verdict}</div></div>'
-            f'</div>')
+            f'</div>'
+            f'<p style="font-size:11px;color:#888;margin:-4px 0 8px 0">'
+            f'Probability-weighted EV over DCF bull/base/bear ({prob_s}); the '
+            f'multiple-de-rating is a separate market-floor stress (in the ladder), '
+            f'not in the ratio.</p>')
 
         # Downside ladder table.
         rows = ""
