@@ -688,13 +688,30 @@ def compose_current_state(ticker: str) -> Optional[Dict[str, Any]]:
         except Exception:
             reg = None
 
-        return build_current_state(
+        cs = build_current_state(
             ticker, engine_y1_growth=eng_y1,
             latest_fy=int(fy) if fy else None,
             events=cached_events(ticker),
             multiple_decomposition=md,
             regulatory_exposure=reg,
         ).to_dict()
+        # Annotate flag acknowledgments so the memo can render the audit trail.
+        try:
+            db = InvestmentDatabase(verbose=False)
+            try:
+                acks = db.get_flag_acks(ticker)
+            finally:
+                db.close()
+            for f in cs.get("flags", []):
+                ack = acks.get(f.get("key", ""))
+                f["acknowledged"] = bool(ack) and ack["decision"] != "needs_analysis"
+                f["ack"] = ({"decision": ack["decision"],
+                             "rationale": ack.get("rationale"),
+                             "decided_by": ack.get("decided_by"),
+                             "decided_at": ack.get("decided_at")} if ack else None)
+        except Exception:
+            pass
+        return cs
     except Exception:
         return None
 
