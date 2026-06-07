@@ -326,6 +326,22 @@ def _regulatory_exposure(ticker: str) -> Optional[Dict[str, Any]]:
         return None
 
 
+def _downside_protection_payload(
+    calc: Any, result: Any,
+    multiple_decomposition: Optional[Dict[str, Any]] = None,
+) -> Optional[Dict[str, Any]]:
+    """Downside-protection block (memo §8) for the /dcf payload: asymmetry
+    ratio, downside ladder, required-MoS-by-risk, position-sizing band. Reuses
+    the already-computed DCF result + multiples — deterministic, no LLM. Never
+    raises."""
+    try:
+        from aletheia.tools.downside_protection import build_downside_protection
+        return build_downside_protection(
+            calc, result, multiple_decomposition=multiple_decomposition)
+    except Exception:
+        return None
+
+
 def _current_state_payload(
     ticker: str, result: Any,
     multiple_decomposition: Optional[Dict[str, Any]] = None,
@@ -525,6 +541,7 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "bull":                   scenario_dict(result.bull),
         "reverse_dcf":            reverse_dcf,
         "multiple_decomposition": multiple_decomposition,
+        "downside_protection":    _downside_protection_payload(calc, result, multiple_decomposition),
         "current_state":          _current_state_payload(ticker, result, multiple_decomposition),
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
@@ -623,6 +640,7 @@ class DCFResponse(BaseModel):
     as_of_date: Optional[str] = None
     engine_warnings: Optional[List[str]] = None
     current_state: Optional[dict] = None
+    downside_protection: Optional[dict] = None
 
 
 class DCFOverridesRequest(BaseModel):
@@ -1281,6 +1299,7 @@ def get_ticker_dcf(ticker: str, response: Response):
         as_of_date=payload.get("as_of_date"),
         engine_warnings=payload.get("engine_warnings"),
         current_state=payload.get("current_state"),
+        downside_protection=payload.get("downside_protection"),
     )
 
 

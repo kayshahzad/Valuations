@@ -118,6 +118,8 @@ class ReportGenerator:
         metrics = data.get("5_financial_metrics") or {}
         # Current-State Awareness payload (attached by lead.py before write).
         current_state = data.get("current_state") or {}
+        # Downside-protection payload (memo §8; attached by lead.py).
+        downside_protection = data.get("downside_protection") or {}
 
         html = f"""<!DOCTYPE html>
 <html>
@@ -136,6 +138,7 @@ class ReportGenerator:
     </div>
     {self._render_pillar_scorecard(pillar_scores)}
     {self._render_current_state(current_state)}
+    {self._render_downside_protection(downside_protection)}
     {self._render_business_snapshot(bm)}
     {self._render_scenario_triangle(p2)}
     {self._render_structured_thesis(thesis_synth, p2)}
@@ -971,6 +974,74 @@ class ReportGenerator:
     policy/regulatory). Deterministic / cached — no extra LLM cost.
   </p>
   {body}
+  </div>"""
+
+    def _render_downside_protection(self, dp: Dict[str, Any]) -> str:
+        """Downside-protection card (memo §8): asymmetry ratio, downside
+        ladder, required-MoS-by-risk, position-sizing band. Empty-safe."""
+        if not dp or not dp.get("available"):
+            return ""
+        pct = self._fmt_pct_or_dash
+        asym = dp.get("asymmetry_ratio")
+        asym_s = f"{asym:.1f}×" if isinstance(asym, (int, float)) else "—"
+        verdict = (dp.get("asymmetry_verdict") or "n/a")
+        vcolor = {"favorable": "#27ae60", "balanced": "#f39c12",
+                  "unfavorable": "#c0392b"}.get(verdict, "#888")
+
+        # Headline metric row.
+        head = (
+            f'<div style="display:flex;gap:24px;flex-wrap:wrap;margin:6px 0 10px 0">'
+            f'<div><div style="font-size:11px;color:#888">Base upside</div>'
+            f'<div style="font-size:18px;font-weight:600">{pct(dp.get("base_upside_pct"))}</div></div>'
+            f'<div><div style="font-size:11px;color:#888">Worst-case</div>'
+            f'<div style="font-size:18px;font-weight:600;color:#c0392b">{pct(dp.get("worst_case_pct"))}</div></div>'
+            f'<div><div style="font-size:11px;color:#888">Asymmetry (up÷down)</div>'
+            f'<div style="font-size:18px;font-weight:600;color:{vcolor}">{asym_s} · {verdict}</div></div>'
+            f'</div>')
+
+        # Downside ladder table.
+        rows = ""
+        for e in dp.get("downside_scenarios") or []:
+            rows += (f"<tr><td>{e.get('name','')}</td>"
+                     f"<td style='text-align:right'>${e.get('value',0):,.2f}</td>"
+                     f"<td style='text-align:right;color:#c0392b'>{pct(e.get('vs_price_pct'))}</td>"
+                     f"<td>{e.get('severity','')}</td>"
+                     f"<td style='color:#666'>{e.get('basis','')}</td></tr>")
+        ladder = (f"<table class='table-styled'><thead><tr><th>Downside scenario</th>"
+                  f"<th>Value/sh</th><th>vs price</th><th>Severity</th><th>Basis</th>"
+                  f"</tr></thead><tbody>{rows}</tbody></table>") if rows else ""
+
+        # Required MoS + sizing.
+        req = dp.get("required_mos") or {}
+        mosv = (dp.get("mos_verdict") or "n/a").replace("_", " ")
+        siz = dp.get("position_sizing") or {}
+        footer = (
+            f'<p style="margin:8px 0 2px 0"><strong>Margin of safety:</strong> '
+            f'actual {pct(dp.get("actual_mos"))} vs required {pct(req.get("mos_good"))} '
+            f'(good) / {pct(req.get("mos_strong"))} (strong) for a '
+            f'<em>{req.get("stage","")}</em> business → <strong>{mosv}</strong></p>'
+            f'<p style="margin:2px 0"><strong>Suggested size:</strong> '
+            f'{siz.get("label","—")} <span style="color:#666">({siz.get("basis","")})</span></p>')
+
+        # Optional LLM extras.
+        fm = dp.get("failure_modes") or []
+        fm_html = ""
+        if fm:
+            items = "".join(f"<li>{m.get('name', m) if isinstance(m, dict) else m}</li>"
+                            for m in fm[:5])
+            fm_html = f"<p style='margin:8px 0 2px 0'><strong>Failure modes:</strong></p><ul>{items}</ul>"
+        pm = dp.get("premortem")
+        pm_html = f'<p style="margin:6px 0"><strong>Pre-mortem:</strong> {pm}</p>' if pm else ""
+
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>🛟 Downside Protection</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
+    How much can be lost vs made, what the downside looks like, whether the
+    margin of safety is adequate for the risk, and the implied position size.
+    Deterministic from the DCF scenarios + multiples + lifecycle thresholds.
+  </p>
+  {head}{ladder}{footer}{fm_html}{pm_html}
   </div>"""
 
     def _render_cyclicality_banner(self, industry: Dict[str, Any]) -> str:

@@ -1969,6 +1969,50 @@ def _render_flag_ack(ticker: str, f: Dict[str, Any]) -> None:
                     st.rerun()
 
 
+def _downside_protection_panel(dp: Dict[str, Any]) -> None:
+    """Downside-protection panel (memo §8): asymmetry, downside ladder,
+    required-MoS-by-risk, position-sizing band. No-op when unavailable."""
+    if not dp or not dp.get("available"):
+        return
+
+    def _p(v):
+        return f"{v*100:+.0f}%" if isinstance(v, (int, float)) else "—"
+
+    asym = dp.get("asymmetry_ratio")
+    verdict = dp.get("asymmetry_verdict") or "n/a"
+    with st.container(border=True):
+        st.markdown("#### 🛟 Downside protection")
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Base upside", _p(dp.get("base_upside_pct")))
+        c2.metric("Worst-case", _p(dp.get("worst_case_pct")))
+        c3.metric("Asymmetry (up÷down)",
+                  f"{asym:.1f}×" if isinstance(asym, (int, float)) else "—",
+                  verdict)
+        ladder = dp.get("downside_scenarios") or []
+        if ladder:
+            rows = [{
+                "Downside scenario": e.get("name", ""),
+                "Value/sh": f"${e.get('value', 0):,.2f}",
+                "vs price": _p(e.get("vs_price_pct")),
+                "Severity": e.get("severity", ""),
+                "Basis": e.get("basis", ""),
+            } for e in ladder]
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+        req = dp.get("required_mos") or {}
+        mosv = (dp.get("mos_verdict") or "n/a").replace("_", " ")
+        st.markdown(
+            f"**Margin of safety:** actual {_p(dp.get('actual_mos'))} vs required "
+            f"{_p(req.get('mos_good'))} (good) / {_p(req.get('mos_strong'))} (strong) "
+            f"for a _{req.get('stage','')}_ business → **{mosv}**")
+        siz = dp.get("position_sizing") or {}
+        st.markdown(f"**Suggested size:** {siz.get('label','—')}  "
+                    f"_({siz.get('basis','')})_")
+        for m in (dp.get("failure_modes") or [])[:5]:
+            st.caption(f"⚠ {m.get('name', m) if isinstance(m, dict) else m}")
+        if dp.get("premortem"):
+            st.caption(f"🔮 Pre-mortem: {dp['premortem']}")
+
+
 def _current_state_gate(cs: Dict[str, Any], ticker: str = "") -> str:
     """Render the Current-State gate above the conviction/hero and return the
     UNRESOLVED max severity ('HIGH'/'MEDIUM'/'LOW'/'NONE') — acknowledged flags
@@ -2078,6 +2122,9 @@ def render_deep_dive_view(
             from aletheia.ui.financials_view import _render_reused_signals
             with st.container(border=True):
                 _render_reused_signals(_current_state)
+
+    # ── Downside protection (memo §8) ───────────────────────────────────
+    _downside_protection_panel((dcf or {}).get("downside_protection") or {})
 
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})

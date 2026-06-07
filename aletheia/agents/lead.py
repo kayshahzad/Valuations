@@ -174,6 +174,19 @@ class ServingReportWriter:
         except Exception as exc:
             print(f"⚠ Lead: current_state compose failed: {exc}")
 
+        # Downside-protection layer (memo §8): asymmetry ratio, downside ladder,
+        # required-MoS-by-risk, position-sizing band. Deterministic — no LLM.
+        try:
+            from aletheia.tools.downside_protection import compose_downside_protection
+            _tier = (((report.get("4_valuation_synthesis") or {})
+                      .get("investment_thesis") or {})
+                     .get("pillar_scores") or {}).get("position_tier")
+            dp = compose_downside_protection(ticker, conviction_tier=_tier)
+            if dp:
+                report["downside_protection"] = dp
+        except Exception as exc:
+            print(f"⚠ Lead: downside_protection compose failed: {exc}")
+
         try:
             with open(path_json, "w") as f:
                 json.dump(report, f, indent=2)
