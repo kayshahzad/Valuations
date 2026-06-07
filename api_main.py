@@ -2631,6 +2631,86 @@ def get_report_detailed_md(ticker: str):
     return FileResponse(path, media_type="text/markdown")
 
 
+@app.post("/ticker/{ticker}/report/rebuild", tags=["Reports"])
+def rebuild_report(ticker: str):
+    """Regenerate the report's DETERMINISTIC sections + re-render HTML/MD
+    WITHOUT a Stage 4 (no LLM cost).
+
+    Refreshes ``current_state`` (consensus, market signal, analyst sentiment,
+    sector valuation, policy/regulatory) and ``downside_protection`` (asymmetry,
+    downside ladder, required-MoS, sizing) on the existing serving report, then
+    re-renders the Executive HTML + Detailed MD. All LLM-authored sections
+    (thesis, contrarian, economic reality) are preserved as-is; the contrarian's
+    failure_modes + pre-mortem (if present from the last Stage 4) are carried
+    into the downside block. Use a full Stage 4 run to refresh those LLM pieces."""
+    ticker_u = ticker.upper()
+    path_json = REPORT_DIR / f"{ticker_u}_report.json"
+    if not path_json.exists():
+        raise HTTPException(
+            404, f"No serving report for {ticker_u}; run Stage 4 first.")
+    try:
+        report = json.loads(path_json.read_text())
+    except Exception as e:
+        raise HTTPException(422, f"Cannot read report JSON: {e}")
+
+    refreshed = []
+    # Current-state (deterministic / cache-backed).
+    try:
+        from aletheia.agents.current_state import compose_current_state
+        cs = compose_current_state(ticker_u)
+        if cs:
+            report["current_state"] = cs
+            refreshed.append("current_state")
+    except Exception as e:
+        report.setdefault("_rebuild_warnings", []).append(f"current_state: {e}")
+
+    # Downside protection — carry forward the contrarian LLM extras if present.
+    try:
+        from aletheia.tools.downside_protection import compose_downside_protection
+        _synth = report.get("4_valuation_synthesis") or {}
+        _tier = ((_synth.get("investment_thesis") or {})
+                 .get("pillar_scores") or {}).get("position_tier")
+        _ca = _synth.get("contrarian_analysis") or {}
+        dp = compose_downside_protection(
+            ticker_u, conviction_tier=_tier,
+            failure_modes=_ca.get("failure_modes") or [],
+            premortem=_ca.get("premortem") or "")
+        if dp:
+            report["downside_protection"] = dp
+            refreshed.append("downside_protection")
+    except Exception as e:
+        report.setdefault("_rebuild_warnings", []).append(f"downside_protection: {e}")
+
+    try:
+        path_json.write_text(json.dumps(report, indent=2))
+    except Exception as e:
+        raise HTTPException(422, f"Cannot write report JSON: {e}")
+
+    # Re-render HTML + Detailed MD from the refreshed JSON.
+    rendered = []
+    try:
+        from aletheia.utils.report_generator import ReportGenerator
+        gen = ReportGenerator(str(REPORT_DIR))
+        gen.generate_html(ticker_u, report)
+        rendered.append("html")
+        try:
+            gen.generate_detailed_markdown(ticker_u, report)
+            rendered.append("detailed_md")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"detailed_md: {e}")
+    except Exception as e:
+        raise HTTPException(422, f"Report render failed: {e}")
+
+    return {
+        "ticker": ticker_u,
+        "refreshed_sections": refreshed,
+        "rendered": rendered,
+        "note": ("Deterministic sections refreshed without Stage 4. Failure "
+                 "modes + pre-mortem reflect the last Stage 4 run."),
+        "warnings": report.get("_rebuild_warnings", []),
+    }
+
+
 @app.get("/ticker/{ticker}/report/dcf_excel", tags=["Reports"])
 def get_report_dcf_excel(ticker: str):
     """Serve the DCF Excel model."""

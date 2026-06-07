@@ -1853,6 +1853,30 @@ def main():
         if not report_ticker:
             st.info("Select a ticker from the sidebar to begin analysis.")
         else:
+            # No-LLM refresh: recompute the deterministic sections
+            # (current-state signals + downside protection) and re-render the
+            # HTML/MD without a paid Stage 4. Failure modes + pre-mortem still
+            # need a Stage 4 (they're LLM-authored).
+            if st.button("🔄 Rebuild report (no LLM)",
+                         help="Refresh Current-State + Downside-Protection "
+                              "sections and re-render — no LLM cost. Failure "
+                              "modes / pre-mortem need a full Stage 4."):
+                try:
+                    r = httpx.post(
+                        f"{API_BASE}/ticker/{report_ticker}/report/rebuild",
+                        timeout=120)
+                    if r.status_code == 200:
+                        d = r.json()
+                        st.success(f"Rebuilt: {', '.join(d.get('refreshed_sections') or []) or 'nothing'} "
+                                   f"· rendered {', '.join(d.get('rendered') or [])}")
+                        for w in d.get("warnings") or []:
+                            st.caption(f"⚠ {w}")
+                        st.rerun()
+                    else:
+                        st.error(f"Rebuild failed: {r.text[:200]}")
+                except Exception as e:
+                    st.error(f"Rebuild failed: {e}")
+
             # Executive MD dropped — was a strict subset of Detailed MD.
             # 4 download surfaces: HTML, Detailed MD, Raw JSON, DCF Excel.
             col_dl1, col_dl2, col_dl3, col_dl4 = st.columns(4)
