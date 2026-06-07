@@ -14,15 +14,22 @@ from aletheia.tools.business_analysis import build_growth_decomposition
 from aletheia.tools.assumption_grounding import build_assumption_grounding
 
 
+class _Cls:
+    def __init__(self, sector="", industry="", lifecycle="mature",
+                 business_model="fcff_compatible"):
+        self.sector = sector
+        self.industry = industry
+        self.lifecycle = lifecycle
+        self.business_model = business_model
+
+
 class _Calc:
-    def __init__(self, revs, years):
+    def __init__(self, revs, years, classification=None):
         self.df = pd.DataFrame({
             "fiscal_year": years, "clean_Revenue": revs,
             "period": ["FY"] * len(revs),
         })
-
-    class classification:
-        lifecycle = "mature"
+        self.classification = classification or _Cls(lifecycle="mature")
 
 
 class _Assump:
@@ -142,6 +149,31 @@ class TestPhase2Merge(unittest.TestCase):
         self.assertEqual(cov["CAC / LTV / cohorts"], "present")
         self.assertEqual(cov["Margin trajectory by segment"], "present")
         self.assertEqual(cov["New product launches"], "present")
+
+
+class TestSectorTemplate(unittest.TestCase):
+    """Phase 4 — sector template tags priority dimensions + sorts them first."""
+
+    def test_defense_template(self):
+        from aletheia.tools import business_analysis as ba_mod
+        import aletheia.agents.business_extraction as bx
+        orig = bx.cached_business_ab
+        bx.cached_business_ab = lambda t: None
+        try:
+            calc = _Calc([100, 106, 112, 119, 126, 134],
+                         [2018, 2019, 2020, 2021, 2022, 2023],
+                         classification=_Cls(sector="Industrials",
+                                             industry="Aerospace & Defense"))
+            res = ba_mod.build_business_analysis({}, "TST", calc=calc)
+        finally:
+            bx.cached_business_ab = orig
+        tpl = res["sector_template"]
+        self.assertEqual(tpl["key"], "defense_govt")
+        self.assertTrue(tpl["emphasis"])
+        # Priority dimensions sorted to the top of the coverage list.
+        self.assertTrue(res["coverage"][0]["priority"])
+        prio = {c["dimension"] for c in res["coverage"] if c["priority"]}
+        self.assertIn("Major customers / contracts", prio)
 
 
 if __name__ == "__main__":

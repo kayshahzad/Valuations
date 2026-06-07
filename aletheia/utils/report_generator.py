@@ -599,13 +599,23 @@ class ReportGenerator:
                              f"<ul style='margin:2px 0 6px 0'>{lis}</ul>")
             ex_html = "".join(parts)
 
-        # Coverage map.
+        # Sector emphasis (Phase 4 template).
+        tpl = ba.get("sector_template") or {}
+        tpl_html = ""
+        if tpl.get("emphasis"):
+            tpl_html = (f'<p style="margin:4px 0"><strong>Sector emphasis '
+                        f'({tpl.get("label","")}):</strong> '
+                        f'{" · ".join(tpl["emphasis"])}</p>')
+
+        # Coverage map (sector-priority dimensions flagged ★ and sorted first).
         cov = ba.get("coverage") or []
         rows = ""
         for c in cov:
             badge = ("✅" if c.get("status") == "present" else "○")
             color = "#27ae60" if c.get("status") == "present" else "#b0b0b0"
-            rows += (f"<tr><td>{c.get('theme','')}</td><td>{c.get('dimension','')}</td>"
+            star = "★ " if c.get("priority") else ""
+            rows += (f"<tr><td>{c.get('theme','')}</td>"
+                     f"<td>{star}{c.get('dimension','')}</td>"
                      f"<td style='color:{color}'>{badge} {c.get('status','')}</td>"
                      f"<td style='color:#888;font-size:11px'>{c.get('source','')}</td></tr>")
         cov_html = (
@@ -618,7 +628,7 @@ class ReportGenerator:
     The business reality beneath the revenue line. {ba.get('n_present','?')}/{ba.get('n_total','?')}
     dimensions populated today; the rest pending structured extraction.
   </p>
-  {gd_html}{ex_html}{cov_html}
+  {gd_html}{tpl_html}{ex_html}{cov_html}
   </div>"""
 
     def _render_assumption_grounding(self, ag: Dict[str, Any]) -> str:

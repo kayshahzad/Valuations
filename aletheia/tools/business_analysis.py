@@ -160,6 +160,20 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
     except Exception:
         ab = {}
 
+    # Sector-specific emphasis template (Phase 4) — which dimensions matter most.
+    cls = getattr(calc, "classification", None)
+    template: Dict[str, Any] = {}
+    try:
+        from config.business_analysis_templates import template_for
+        template = template_for(
+            getattr(cls, "sector", "") or "",
+            getattr(cls, "industry", "") or "",
+            lifecycle or "",
+            getattr(cls, "business_model", "") or "")
+    except Exception:
+        template = {}
+    priority = set(template.get("priority_dimensions") or [])
+
     coverage = []
     n_present = 0
     for theme, dimension, source in _COVERAGE:
@@ -168,18 +182,26 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
         coverage.append({
             "theme": theme, "dimension": dimension,
             "status": "present" if present else "pending",
+            "priority": dimension in priority,   # sector-emphasized
             "source": ("business_ab extraction" if _AB_FIELDS.get(dimension) and ab.get(_AB_FIELDS[dimension])
                        else source or "needs extraction"),
         })
+    # Sort priority dimensions to the top so the sector's key items lead.
+    coverage.sort(key=lambda c: (not c["priority"]))
 
     out.update({
         "available": True,
         "growth_decomposition": gd,
-        "extracted": ab or None,          # themes A+B (Phase 2 LLM)
+        "extracted": ab or None,          # themes A+B+C+E (LLM)
         "coverage": coverage,
         "n_present": n_present,
         "n_total": len(coverage),
         "lifecycle": lifecycle,
+        "sector_template": {
+            "key": template.get("key"),
+            "label": template.get("label"),
+            "emphasis": template.get("emphasis") or [],
+        } if template else None,
     })
     return out
 

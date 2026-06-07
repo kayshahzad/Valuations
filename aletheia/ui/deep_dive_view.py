@@ -1986,6 +1986,10 @@ def _business_analysis_panel(ba: Dict[str, Any], ag: Dict[str, Any]) -> None:
     if gd.get("available") or (ag or {}).get("available"):
         with st.container(border=True):
             st.markdown("#### 🔬 Bottom-up business analysis")
+            tpl = (ba or {}).get("sector_template") or {}
+            if tpl.get("emphasis"):
+                st.caption(f"Sector emphasis ({tpl.get('label','')}): "
+                           + " · ".join(tpl["emphasis"]))
             if gd.get("available"):
                 breaks = gd.get("break_years") or []
                 st.markdown(
