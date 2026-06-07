@@ -14,10 +14,11 @@ Rows built from data we already have (no LLM, no new fetch beyond cached dims):
 
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, List, Optional
 
 
-def _row(assumption, engine, grounded, basis, source, note=""):
+def _row(assumption, engine, grounded, basis, source, note="", build_up=None):
     delta = None
     if isinstance(engine, (int, float)) and isinstance(grounded, (int, float)):
         delta = engine - grounded
@@ -29,8 +30,22 @@ def _row(assumption, engine, grounded, basis, source, note=""):
         "grounded_basis": basis,
         "source": source,
         "note": note,
+        "build_up": build_up,            # optional driver decomposition (P4)
         "status": "grounded" if grounded is not None else "pending",
     }
+
+
+def _parse_pct(text: str) -> Optional[float]:
+    """Parse the first 'X%' in free text → decimal (6.2% → 0.062)."""
+    if not isinstance(text, str):
+        return None
+    m = re.search(r"(-?[0-9]+(?:\.[0-9]+)?)\s*%", text)
+    if not m:
+        return None
+    try:
+        return float(m.group(1)) / 100.0
+    except Exception:
+        return None
 
 
 def build_assumption_grounding(
@@ -38,6 +53,7 @@ def build_assumption_grounding(
     growth_decomposition: Optional[Dict[str, Any]] = None,
     current_state: Optional[Dict[str, Any]] = None,
     wacc_analysis: Optional[Dict[str, Any]] = None,
+    segment_economics: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Build the assumption-grounding comparison. ``available=False`` when the
     base scenario is missing."""
@@ -65,11 +81,29 @@ def build_assumption_grounding(
         note.append(f"consensus {cons_cagr*100:.1f}%")
     if gd.get("break_years"):
         note.append(f"M&A breaks FY{gd['break_years']}")
+    # P4 — driver build-up: market tailwind + share gain (peer-relative) + M&A
+    # run-rate → a defensible forward band, vs the engine's single number.
+    build_up = None
+    if isinstance(organic, (int, float)):
+        mkt = gd.get("market_growth_ref")
+        share = gd.get("share_gain_pp")
+        ma_run = gd.get("ma_contribution_pp")
+        ma_run = ma_run if isinstance(ma_run, (int, float)) else 0.0
+        band_low = organic                       # organic only, no future M&A
+        band_high = organic + max(ma_run, 0.0)   # + continued M&A run-rate
+        build_up = {
+            "market_growth": mkt if isinstance(mkt, (int, float)) else None,
+            "share_gain": share if isinstance(share, (int, float)) else None,
+            "organic": organic,
+            "ma_run_rate": ma_run,
+            "band_low": band_low,
+            "band_high": band_high,
+        }
     rows.append(_row(
         "Y1-5 revenue CAGR", eng_cagr, grounded_cagr,
         "organic historical + forward consensus",
         "growth decomposition + current-state consensus",
-        " · ".join(note)))
+        " · ".join(note), build_up=build_up))
 
     # ── Terminal growth ← industry lifecycle stage ──────────────────────
     eng_tg = float(getattr(asm, "terminal_growth", 0) or 0)
@@ -87,6 +121,43 @@ def build_assumption_grounding(
         "lifecycle profile",
         "engine derives terminal growth from the same lifecycle profile; a large "
         "gap means an override moved it off the structural anchor."))
+
+    # ── Terminal EBIT margin ← current margin + segment mix (P4) ─────────
+    eng_term_margin = getattr(asm, "ebit_margin_terminal", None)
+    eng_term_margin = float(eng_term_margin) if isinstance(eng_term_margin, (int, float)) else None
+    cur_margin = getattr(asm, "ebit_margin_current", None)
+    cur_margin = float(cur_margin) if isinstance(cur_margin, (int, float)) else None
+    seg = segment_economics or {}
+    grounded_margin = cur_margin            # anchor: terminal ≈ current absent a reason
+    margin_basis = "current EBIT margin"
+    margin_note = []
+    if isinstance(cur_margin, (int, float)):
+        margin_note.append(f"current {cur_margin*100:.1f}%")
+    # If segment margins are disclosed, weight them by revenue mix for a
+    # mix-grounded reference and flag the directional drift.
+    if seg.get("available") and seg.get("has_margins"):
+        wsum = w = 0.0
+        improving = declining = 0
+        for s in seg.get("segments", []):
+            m = _parse_pct(s.get("margin") or "")
+            rp = s.get("rev_pct")
+            if m is not None and isinstance(rp, (int, float)):
+                wsum += m * rp; w += rp
+            trend = (s.get("margin_trend") or "").lower()
+            if "improv" in trend or "rising" in trend or "expand" in trend:
+                improving += 1
+            elif "declin" in trend or "falling" in trend or "compress" in trend:
+                declining += 1
+        if w > 0:
+            grounded_margin = wsum / w
+            margin_basis = "revenue-weighted segment margins"
+            margin_note.append(f"mix-weighted {grounded_margin*100:.1f}%")
+        if improving or declining:
+            margin_note.append(f"segments improving {improving} / declining {declining}")
+    rows.append(_row(
+        "Terminal EBIT margin", eng_term_margin, grounded_margin,
+        margin_basis, "segment economics (FMP mix + extraction)",
+        " · ".join(margin_note) or "no segment margins disclosed yet"))
 
     # ── Idiosyncratic WACC premium ← disruption + concentration dims ────
     dims: Dict[str, Any] = {}
@@ -150,17 +221,20 @@ def compose_assumption_grounding(ticker: str) -> Optional[Dict[str, Any]]:
     try:
         from aletheia.utils.calc_input_builder import make_calc_input
         from aletheia.tools.dcf_engine import DCFEngine
-        from aletheia.tools.business_analysis import build_growth_decomposition
+        from aletheia.tools.business_analysis import (
+            build_growth_decomposition, segment_economics as _seg_econ)
         from aletheia.tools.wacc_analysis import build_wacc_analysis
         from aletheia.agents.current_state import compose_current_state
+        from aletheia.agents.business_extraction import cached_business_ab
         calc = make_calc_input(ticker)
         result = DCFEngine(verbose=False).run(calc)
         gd = build_growth_decomposition(calc)
         wa = build_wacc_analysis(result)
         cs = compose_current_state(ticker)
+        seg = _seg_econ(ticker, (cached_business_ab(ticker) or {}).get("segment_economics"))
         return build_assumption_grounding(
             calc, result, growth_decomposition=gd,
-            current_state=cs, wacc_analysis=wa)
+            current_state=cs, wacc_analysis=wa, segment_economics=seg)
     except Exception:
         return None
 

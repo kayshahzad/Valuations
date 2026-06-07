@@ -51,6 +51,13 @@ class NewLaunch(BaseModel):
     traction: str = Field(default="", description="Early traction / contribution to growth")
 
 
+class SegmentEconomics(BaseModel):
+    segment: str = Field(description="Reporting/operating segment name AS IT APPEARS in the 10-K segment note")
+    operating_margin: str = Field(default="", description="Segment operating margin if disclosed, e.g. '6.2%' or 'low-single-digit'")
+    margin_trend: str = Field(default="", description="improving / stable / declining")
+    notes: str = Field(default="", description="Driver of the trend: mix shift, pricing, cost pressure, etc.")
+
+
 class BusinessAB(BaseModel):
     """Bottom-up extraction covering themes A (what it sells), B (market),
     C (unit economics) and E (innovation/trend) — one structured 10-K call."""
@@ -62,8 +69,9 @@ class BusinessAB(BaseModel):
     distribution_channels: List[str] = Field(default_factory=list,
         description="How customers buy: direct sales, channel/VAR, marketplace, prime/sub, etc.")
     # Theme B — market size & capture
-    tam_estimate: str = Field(default="", description="Total addressable market $ size if stated/derivable, with definition")
+    tam_estimate: str = Field(default="", description="Total addressable market $ size if stated/derivable (e.g. '$50 billion'), with definition. Leave blank if not estimable.")
     tam_methodology: str = Field(default="", description="How TAM is defined/sized and its growth rate")
+    tam_confidence: str = Field(default="", description="REQUIRED when tam_estimate is non-blank: low / medium / high (how grounded the figure is in the filing) — or 'not_estimable' if the 10-K gives no basis to size it")
     market_share: str = Field(default="", description="Current share of TAM (overall or by segment) and vs key competitors")
     whitespace_runway: str = Field(default="", description="Unaddressed segments/geographies/customers; realistic share ceiling")
     adjacent_tams: List[str] = Field(default_factory=list,
@@ -73,6 +81,8 @@ class BusinessAB(BaseModel):
     cac_ltv: str = Field(default="", description="CAC vs LTV, payback, retention/NRR, cohort behavior (often only SaaS discloses)")
     unit_cost: str = Field(default="", description="Cost per unit produced / per service delivered; key labor or input costs")
     segment_margin_trajectory: str = Field(default="", description="How unit/segment margins are evolving (leading indicator)")
+    segment_economics: List[SegmentEconomics] = Field(default_factory=list,
+        description="Per-reporting-segment operating margin + trajectory. Use the EXACT segment names from the 10-K segment footnote so they can be matched to FMP revenue-mix data.")
     operating_leverage: str = Field(default="", description="Fixed vs variable cost split; incremental margin on growth")
     # Theme E — innovation & trend positioning
     rd_pipeline: str = Field(default="", description="Active R&D projects, timeline to revenue, R&D as % of revenue, productivity")
@@ -127,8 +137,10 @@ cycle is critical).
 VAR, marketplace, prime vs subcontractor, OEM, etc.).
 
 THEME B — market size & capture:
-- tam_estimate + tam_methodology: dollar size of the addressable market with its \
-definition and growth rate, if stated or derivable.
+- tam_estimate + tam_methodology + tam_confidence: dollar size of the addressable \
+market with its definition and growth rate, if stated or derivable. ALWAYS set \
+tam_confidence (low/medium/high) when you give a number, or 'not_estimable' when \
+the filing gives no basis — never present a rough figure as if it were precise.
 - market_share: current share of that market (overall or by segment) and standing \
 vs named competitors.
 - whitespace_runway: unaddressed segments/geographies/customers and a realistic \
@@ -141,6 +153,9 @@ THEME C — unit economics (the structure beneath aggregate margins):
 cohort behavior (usually only SaaS/consumer disclose; leave blank otherwise).
 - unit_cost: cost per unit produced / per service delivered; key labor or input costs.
 - segment_margin_trajectory: how unit/segment margins are evolving (leading indicator).
+- segment_economics: for EACH reporting segment, its operating margin (if disclosed) \
+and whether it is improving/stable/declining. Use the EXACT segment names from the \
+10-K segment footnote (these get matched to revenue-mix data).
 - operating_leverage: fixed vs variable cost split; incremental margin on growth.
 
 THEME E — innovation & trend positioning:

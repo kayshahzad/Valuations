@@ -576,16 +576,46 @@ class ReportGenerator:
                                 + (f", {c.get('pct_revenue')} of rev" if c.get('pct_revenue') else ""))
                         + _kv("Distribution channels", ", ".join(ex.get("distribution_channels") or [])))
             if letter == "B":
-                return (_kv("TAM", ex.get("tam_estimate"), ex.get("tam_methodology"))
+                tam = ba.get("tam") or {}
+                tam_html = ""
+                if tam.get("tam_estimate"):
+                    extra = []
+                    if tam.get("tam_methodology"):
+                        extra.append(tam["tam_methodology"])
+                    if tam.get("tam_confidence"):
+                        extra.append(f"confidence: {tam['tam_confidence']}")
+                    if tam.get("implied_share") is not None:
+                        extra.append(f"implied share {pct(tam['implied_share'])}")
+                    meta = (f" <span style='color:#888'>({'; '.join(extra)})</span>"
+                            if extra else "")
+                    tam_html = (f"<p style='margin:2px 0'><strong>TAM:</strong> "
+                                f"{tam['tam_estimate']}{meta}</p>")
+                return (tam_html
                         + _kv("Market share", ex.get("market_share"))
                         + _kv("Whitespace runway", ex.get("whitespace_runway"))
                         + _kv("Adjacent TAMs", ", ".join(ex.get("adjacent_tams") or [])))
             if letter == "C":
-                return (_kv("Contract economics", ex.get("contract_economics"))
+                body = (_kv("Contract economics", ex.get("contract_economics"))
                         + _kv("CAC / LTV", ex.get("cac_ltv"))
                         + _kv("Unit cost", ex.get("unit_cost"))
                         + _kv("Segment margin trajectory", ex.get("segment_margin_trajectory"))
                         + _kv("Operating leverage", ex.get("operating_leverage")))
+                seg = ba.get("segment_economics") or {}
+                if seg.get("available") and seg.get("segments"):
+                    srows = ""
+                    for s in seg["segments"]:
+                        srows += (f"<tr><td>{s.get('segment','')}</td>"
+                                  f"<td style='text-align:right'>{pct(s.get('rev_pct'))}</td>"
+                                  f"<td style='text-align:right'>{pct(s.get('yoy_growth'))}</td>"
+                                  f"<td style='text-align:right'>{s.get('margin') or '—'}</td>"
+                                  f"<td style='color:#666;font-size:11px'>{s.get('margin_trend') or ''}</td></tr>")
+                    body += (f"<p style='margin:6px 0 2px 0'><strong>Segment economics</strong> "
+                             f"<span style='color:#888'>(FY{seg.get('fiscal_year','')} rev mix from FMP; "
+                             f"margins ★ on Stage-4)</span></p>"
+                             f"<table class='table-styled'><thead><tr><th>Segment</th>"
+                             f"<th>% rev</th><th>YoY</th><th>Op margin</th><th>Trend</th>"
+                             f"</tr></thead><tbody>{srows}</tbody></table>")
+                return body
             if letter == "D":
                 out = ""
                 if gd.get("available"):
@@ -639,15 +669,21 @@ class ReportGenerator:
         sections = ""
         for letter, title, subtitle, cov_prefix in self._BA_THEMES:
             body = _theme_body(letter)
-            pend = [c["dimension"] for c in cov
-                    if c.get("theme", "").startswith(cov_prefix) and c.get("status") != "present"]
-            prio = {c["dimension"] for c in cov
-                    if c.get("theme", "").startswith(cov_prefix) and c.get("priority")}
+            theme_cov = [c for c in cov if c.get("theme", "").startswith(cov_prefix)]
+            pend = [c["dimension"] for c in theme_cov if c.get("status") == "pending"]
+            na = [c for c in theme_cov if c.get("status") == "n_a"]
+            prio = {c["dimension"] for c in theme_cov if c.get("priority")}
             pend_html = ""
             if pend:
                 marked = ["★ " + d if d in prio else d for d in pend]
                 pend_html = (f'<p style="font-size:11px;color:#b0b0b0;margin:2px 0">'
                              f'Pending extraction: {", ".join(marked)}</p>')
+            if na:
+                na_txt = ", ".join(f"{c['dimension']}"
+                                   + (f" ({c['reason']})" if c.get("reason") else "")
+                                   for c in na)
+                pend_html += (f'<p style="font-size:11px;color:#b0b0b0;margin:2px 0">'
+                              f'Not applicable: {na_txt}</p>')
             if not body and not pend_html:
                 continue
             sections += (
@@ -661,7 +697,8 @@ class ReportGenerator:
   <h3>🔬 Bottom-up business analysis</h3>
   <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
     The business reality beneath the revenue line, by theme.
-    {ba.get('n_present','?')}/{ba.get('n_total','?')} dimensions populated; ★ = sector priority.
+    {ba.get('n_present','?')}/{ba.get('n_total','?')} dimensions populated
+    {f"· {ba.get('n_na')} n/a " if ba.get('n_na') else ''}; ★ = sector priority.
   </p>
   {tpl_html}{sections}
   </div>"""
@@ -677,11 +714,23 @@ class ReportGenerator:
             d = r.get("delta")
             dcolor = ("#c0392b" if isinstance(d, (int, float)) and abs(d) >= 0.02
                       else "#3f3f46")
+            note = r.get("note", "")
+            b = r.get("build_up") or {}
+            if b.get("band_low") is not None and b.get("band_high") is not None:
+                drivers = []
+                if b.get("market_growth") is not None:
+                    drivers.append(f"market {pct(b['market_growth'])}")
+                if b.get("share_gain") is not None:
+                    drivers.append(f"share {pct(b['share_gain'])}")
+                if b.get("ma_run_rate"):
+                    drivers.append(f"M&A run-rate {pct(b['ma_run_rate'])}")
+                note += (f"<br><span style='color:#888'>build-up: "
+                         f"{' + '.join(drivers)} → band {pct(b['band_low'])}–{pct(b['band_high'])}</span>")
             rows += (f"<tr><td>{r.get('assumption','')}</td>"
                      f"<td style='text-align:right'>{pct(r.get('engine_value'))}</td>"
                      f"<td style='text-align:right'>{pct(r.get('grounded_value'))}</td>"
                      f"<td style='text-align:right;color:{dcolor}'>{pct(d)}</td>"
-                     f"<td style='color:#666;font-size:11px'>{r.get('note','')}</td></tr>")
+                     f"<td style='color:#666;font-size:11px'>{note}</td></tr>")
         return f"""
   <div class="card" style="page-break-inside:avoid">
   <h3>🧲 Assumption grounding (business vs history)</h3>

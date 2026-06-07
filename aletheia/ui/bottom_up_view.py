@@ -48,12 +48,20 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
         if ex.get("distribution_channels"):
             st.markdown("**Channels:** " + ", ".join(ex["distribution_channels"])); rendered = True
     elif letter == "B":
-        for label, key in (("TAM", "tam_estimate"), ("Market share", "market_share"),
+        tam = ba.get("tam") or {}
+        if tam.get("tam_estimate"):
+            extra = []
+            if tam.get("tam_methodology"): extra.append(tam["tam_methodology"])
+            if tam.get("tam_confidence"): extra.append(f"confidence: {tam['tam_confidence']}")
+            if tam.get("implied_share") is not None:
+                extra.append(f"implied share {_pct(tam['implied_share'])}")
+            st.markdown(f"**TAM:** {tam['tam_estimate']}"
+                        + (f"  _({'; '.join(extra)})_" if extra else ""))
+            rendered = True
+        for label, key in (("Market share", "market_share"),
                            ("Whitespace runway", "whitespace_runway")):
             if ex.get(key):
-                st.markdown(f"**{label}:** {ex[key]}"
-                            + (f"  _({ex.get('tam_methodology')})_" if key == "tam_estimate" and ex.get("tam_methodology") else ""))
-                rendered = True
+                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
         if ex.get("adjacent_tams"):
             st.markdown("**Adjacent TAMs:** " + ", ".join(ex["adjacent_tams"])); rendered = True
     elif letter == "C":
@@ -63,6 +71,19 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
                            ("Operating leverage", "operating_leverage")):
             if ex.get(key):
                 st.markdown(f"**{label}:** {ex[key]}"); rendered = True
+        seg = ba.get("segment_economics") or {}
+        if seg.get("available") and seg.get("segments"):
+            st.markdown(f"**Segment economics** _(FY{seg.get('fiscal_year','')} rev mix from "
+                        f"FMP; margins fill on Stage-4)_")
+            df = pd.DataFrame([{
+                "Segment": s.get("segment", ""),
+                "% rev": _pct(s.get("rev_pct")),
+                "YoY": _pct(s.get("yoy_growth")),
+                "Op margin": s.get("margin") or "—",
+                "Trend": s.get("margin_trend") or "—",
+            } for s in seg["segments"]])
+            st.dataframe(df, hide_index=True, use_container_width=True)
+            rendered = True
     elif letter == "D":
         if gd.get("available"):
             breaks = gd.get("break_years") or []
@@ -154,14 +175,18 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
             st.markdown(f"#### {letter} · {title}")
             st.caption(subtitle)
             had = _theme_content(letter, ex, gd, ba)
-            pend = [c["dimension"] for c in cov
-                    if c.get("theme", "").startswith(cov_prefix) and c.get("status") != "present"]
-            prio = {c["dimension"] for c in cov
-                    if c.get("theme", "").startswith(cov_prefix) and c.get("priority")}
+            theme_cov = [c for c in cov if c.get("theme", "").startswith(cov_prefix)]
+            pend = [c["dimension"] for c in theme_cov if c.get("status") == "pending"]
+            na = [c for c in theme_cov if c.get("status") == "n_a"]
+            prio = {c["dimension"] for c in theme_cov if c.get("priority")}
             if pend:
                 marked = ["★ " + d if d in prio else d for d in pend]
                 st.caption("Pending extraction: " + ", ".join(marked))
-            if not had and not pend:
+            if na:
+                st.caption("Not applicable: " + ", ".join(
+                    c["dimension"] + (f" ({c['reason']})" if c.get("reason") else "")
+                    for c in na))
+            if not had and not pend and not na:
                 st.caption("—")
 
     # Assumption grounding (keystone).
@@ -170,12 +195,18 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
             st.markdown("#### 🧲 Assumption grounding — business vs history")
             st.caption("Each top-down assumption vs a business-grounded reference. "
                        "Shown for triangulation; NOT auto-applied to the IV.")
+            def _basis(r):
+                note = r.get("note", "")
+                b = r.get("build_up") or {}
+                if b.get("band_low") is not None and b.get("band_high") is not None:
+                    note += f" · band {_pct(b['band_low'])}–{_pct(b['band_high'])}"
+                return note
             rows = [{
                 "Assumption": r.get("assumption", ""),
                 "Engine": _pct(r.get("engine_value")),
                 "Grounded": _pct(r.get("grounded_value")),
                 "Δ": _pct(r.get("delta")),
-                "Basis": r.get("note", ""),
+                "Basis": _basis(r),
             } for r in (ag.get("rows") or [])]
             st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
             if ag.get("material_divergences"):

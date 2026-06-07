@@ -383,9 +383,11 @@ def _assumption_grounding_payload(
     try:
         from aletheia.tools.assumption_grounding import build_assumption_grounding
         gd = (business_analysis or {}).get("growth_decomposition")
+        seg = (business_analysis or {}).get("segment_economics")
         return build_assumption_grounding(
             calc, result, growth_decomposition=gd,
-            current_state=current_state, wacc_analysis=wacc_analysis)
+            current_state=current_state, wacc_analysis=wacc_analysis,
+            segment_economics=seg)
     except Exception:
         return None
 

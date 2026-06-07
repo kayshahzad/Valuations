@@ -404,6 +404,21 @@ def fetch_profile(ticker: str, force_refresh: bool = False) -> Optional[Dict[str
     return None
 
 
+def fetch_revenue_product_segmentation(
+    ticker: str, period: str = "annual", force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Revenue by product/service segment (bottom-up §4 / refinement P2).
+
+    FMP stable returns most-recent-first; each row carries a ``data`` dict of
+    ``{segment_name: revenue}`` for that fiscal year. Deterministic — gives the
+    segment revenue MIX without an LLM. The per-segment margin/trajectory (which
+    FMP does not provide) is filled by the 10-K extraction (BusinessAB)."""
+    p = _validate_period(period)
+    return _fetch(ticker, "revenue-product-segmentation", f"rev_product_seg_{p}",
+                  params={"period": p, "limit": "10"},
+                  force_refresh=force_refresh)
+
+
 def fetch_income_statement_as_reported(
     ticker: str, period: str = "annual", force_refresh: bool = False,
 ) -> Optional[List[Dict[str, Any]]]:

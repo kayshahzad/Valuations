@@ -16,7 +16,8 @@ CAC/LTV) is added in later phases via structured extraction.
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+import re
+from typing import Any, Dict, List, Optional
 
 
 def _raw_cagr_from_revs(revs: list) -> Optional[float]:
@@ -164,6 +165,136 @@ def peer_stats(ticker: str, peer_group: Optional[str] = None) -> Dict[str, Any]:
     return out
 
 
+_SEGMENT_CACHE: Dict[str, Dict[str, Any]] = {}
+
+
+def _match_segment_margin(name: str, extracted: Dict[str, Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Fuzzy-match an FMP segment name to an extracted segment-economics row
+    (case-insensitive substring either way)."""
+    n = (name or "").lower().strip()
+    if not n or not extracted:
+        return None
+    if n in extracted:
+        return extracted[n]
+    for k, v in extracted.items():
+        if k and (k in n or n in k):
+            return v
+    return None
+
+
+def segment_economics(ticker: str,
+                      extracted: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+    """Revenue mix by segment (deterministic, FMP) overlaid with per-segment
+    operating margin / trajectory from the 10-K extraction where available
+    (refinement P2). Drives the §4 'Margin trajectory by segment' dimension and
+    the terminal-margin grounding in P4. Cached per ticker (mix only; the overlay
+    is cheap)."""
+    key = (ticker or "").upper()
+    out: Dict[str, Any] = {"available": False, "segments": []}
+    try:
+        from aletheia.data import fmp_client
+        seg = (_SEGMENT_CACHE.get(key)
+               if key in _SEGMENT_CACHE
+               else fmp_client.fetch_revenue_product_segmentation(key))
+        if key not in _SEGMENT_CACHE:
+            _SEGMENT_CACHE[key] = seg  # cache the raw FMP rows (None-safe)
+        if not seg:
+            return out
+        latest = (seg[0] or {}).get("data") or {}
+        prior = ((seg[1] or {}).get("data") or {}) if len(seg) > 1 else {}
+        total = sum(v for v in latest.values() if isinstance(v, (int, float)) and v > 0)
+        if total <= 0:
+            return out
+        ext = {(s.get("segment") or "").lower().strip(): s for s in (extracted or [])}
+        segs: List[Dict[str, Any]] = []
+        for name, rev in sorted(latest.items(), key=lambda kv: -(kv[1] or 0)):
+            if not isinstance(rev, (int, float)) or rev <= 0:
+                continue
+            prev = prior.get(name)
+            growth = (rev / prev - 1.0) if isinstance(prev, (int, float)) and prev > 0 else None
+            em = _match_segment_margin(name, ext) or {}
+            segs.append({
+                "segment": name,
+                "revenue": float(rev),
+                "rev_pct": float(rev) / total,
+                "yoy_growth": growth,
+                "margin": em.get("operating_margin") or em.get("margin") or None,
+                "margin_trend": em.get("margin_trend") or em.get("trend") or None,
+                "margin_note": em.get("notes") or "",
+            })
+        out = {
+            "available": True,
+            "segments": segs,
+            "n_segments": len(segs),
+            "fiscal_year": (seg[0] or {}).get("fiscalYear"),
+            "has_margins": any(s.get("margin") for s in segs),
+            "source": "FMP revenue-product-segmentation (mix) + 10-K extraction (margins)",
+        }
+    except Exception:
+        return {"available": False, "segments": []}
+    return out
+
+
+# Multipliers for "$X <scale>" → absolute dollars (TAM parse, P3).
+_SCALE = {"trillion": 1e12, "tn": 1e12, "billion": 1e9, "bn": 1e9, "bil": 1e9,
+          "million": 1e6, "mn": 1e6, "mm": 1e6}
+
+
+def _parse_dollar(text: str) -> Optional[float]:
+    """Best-effort parse of the first '$X billion/trillion/million' in free text.
+    Returns absolute dollars, or None when not confidently parseable."""
+    if not text:
+        return None
+    m = re.search(r"\$?\s*([0-9]+(?:\.[0-9]+)?)\s*(trillion|billion|million|tn|bn|bil|mn|mm)",
+                  text, re.IGNORECASE)
+    if not m:
+        return None
+    try:
+        return float(m.group(1)) * _SCALE[m.group(2).lower()]
+    except Exception:
+        return None
+
+
+def tam_assessment(ticker: str, extracted: Optional[Dict[str, Any]],
+                   latest_revenue: Optional[float] = None) -> Dict[str, Any]:
+    """TAM + implied-share view (refinement P3). The $ TAM, methodology and
+    confidence come from the 10-K extraction (BusinessAB); implied share =
+    revenue ÷ TAM is computed deterministically when the TAM is parseable.
+    Always carries an explicit confidence so a rough figure never reads as fact."""
+    ab = extracted or {}
+    tam_text = ab.get("tam_estimate") or ""
+    out: Dict[str, Any] = {
+        "available": bool(tam_text),
+        "tam_estimate": tam_text or None,
+        "tam_methodology": ab.get("tam_methodology") or None,
+        "tam_confidence": (ab.get("tam_confidence") or "").lower() or None,
+        "market_share": ab.get("market_share") or None,
+        "implied_share": None,
+        "tam_usd": None,
+    }
+    tam_usd = _parse_dollar(tam_text)
+    if tam_usd and isinstance(latest_revenue, (int, float)) and latest_revenue > 0:
+        out["tam_usd"] = tam_usd
+        out["implied_share"] = latest_revenue / tam_usd
+    return out
+
+
+def _latest_revenue(calc) -> Optional[float]:
+    """Most-recent FY revenue from the calc frame (for implied-share math)."""
+    try:
+        df = getattr(calc, "df", None)
+        if df is None or "clean_Revenue" not in getattr(df, "columns", []):
+            return None
+        d = df
+        if "period" in d.columns:
+            d = d[d["period"] == "FY"]
+        d = d.dropna(subset=["clean_Revenue"]).sort_values("fiscal_year")
+        revs = [float(x) for x in d["clean_Revenue"].tolist()]
+        return revs[-1] if revs else None
+    except Exception:
+        return None
+
+
 def build_growth_decomposition(calc) -> Dict[str, Any]:
     """Decompose historical revenue growth into organic vs M&A/regime-break.
 
@@ -307,6 +438,32 @@ def _present(source: Optional[str], bm: Dict[str, Any], dims: Dict[str, Any],
     return False
 
 
+# Dimensions that are genuinely N/A for whole business types (P5): a real "not
+# applicable" should not read as "pending extraction". CAC/LTV/cohort economics
+# only exist for subscription/consumer models.
+_CAC_APPLICABLE_TEMPLATES = {"tech_saas", "consumer"}
+
+
+def _coverage_status(source, bm, dims, gd, lifecycle, ab, dimension,
+                     seg, tam, template_key):
+    """Three-state coverage label (P5): 'present', 'n_a' (structurally not
+    applicable / not disclosed), or 'pending' (extractable, not yet run).
+    Returns (status, reason)."""
+    # Present always wins (real data beats any N/A heuristic).
+    if _present(source, bm, dims, gd, lifecycle, ab, dimension):
+        return "present", ""
+    # Segment margins: present when FMP mix carries extracted margins.
+    if dimension == "Margin trajectory by segment" and (seg or {}).get("has_margins"):
+        return "present", ""
+    # TAM declared not estimable by the extraction → N/A, not pending.
+    if dimension == "TAM sizing" and (tam or {}).get("tam_confidence") == "not_estimable":
+        return "n_a", "not estimable from the filing"
+    # CAC/LTV/cohorts only apply to subscription/consumer models.
+    if dimension == "CAC / LTV / cohorts" and template_key not in _CAC_APPLICABLE_TEMPLATES:
+        return "n_a", "not a subscription / consumer model"
+    return "pending", ""
+
+
 def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
                             calc=None) -> Dict[str, Any]:
     """Assemble the bottom-up block: growth decomposition + a coverage map of the
@@ -350,15 +507,30 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
     except Exception:
         template = {}
     priority = set(template.get("priority_dimensions") or [])
+    template_key = template.get("key")
+
+    # Peer-set stats (curated/FMP) — market growth, multiple, margin context.
+    pg_key = (template.get("peer_group") if template else None)
+    ps = peer_stats(ticker, pg_key)
+
+    # Segment economics (P2): FMP revenue mix + extracted per-segment margins.
+    seg = segment_economics(ticker, (ab or {}).get("segment_economics"))
+
+    # TAM + implied share (P3): extracted TAM/confidence + deterministic share.
+    tam = tam_assessment(ticker, ab or {}, _latest_revenue(calc) if calc is not None else None)
 
     coverage = []
     n_present = 0
+    n_na = 0
     for theme, dimension, source in _COVERAGE:
-        present = _present(source, bm, dims, gd, lifecycle, ab, dimension)
-        n_present += int(present)
+        status, reason = _coverage_status(
+            source, bm, dims, gd, lifecycle, ab, dimension, seg, tam, template_key)
+        n_present += int(status == "present")
+        n_na += int(status == "n_a")
         coverage.append({
             "theme": theme, "dimension": dimension,
-            "status": "present" if present else "pending",
+            "status": status,
+            "reason": reason,
             "priority": dimension in priority,   # sector-emphasized
             "source": ("business_ab extraction" if _AB_FIELDS.get(dimension) and ab.get(_AB_FIELDS[dimension])
                        else source or "needs extraction"),
@@ -366,17 +538,16 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
     # Sort priority dimensions to the top so the sector's key items lead.
     coverage.sort(key=lambda c: (not c["priority"]))
 
-    # Peer-set stats (curated/FMP) — market growth, multiple, margin context.
-    pg_key = (template.get("peer_group") if template else None)
-    ps = peer_stats(ticker, pg_key)
-
     out.update({
         "available": True,
         "growth_decomposition": gd,
         "peer_stats": ps,
+        "segment_economics": seg,
+        "tam": tam,
         "extracted": ab or None,          # themes A+B+C+E (LLM)
         "coverage": coverage,
         "n_present": n_present,
+        "n_na": n_na,
         "n_total": len(coverage),
         "lifecycle": lifecycle,
         "sector_template": {

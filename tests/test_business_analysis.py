@@ -274,5 +274,150 @@ class TestPeerStats(unittest.TestCase):
         self.assertFalse(ps["available"])
 
 
+class TestSegmentEconomics(unittest.TestCase):
+    """P2 — FMP revenue mix overlaid with extracted segment margins."""
+
+    def _stub_seg(self):
+        return [
+            {"fiscalYear": 2025, "data": {"Big": 600, "Small": 400}},
+            {"fiscalYear": 2024, "data": {"Big": 500, "Small": 380}},
+        ]
+
+    def test_mix_and_growth(self):
+        from aletheia.tools import business_analysis as ba_mod
+        from aletheia.data import fmp_client
+        ba_mod._SEGMENT_CACHE.clear()
+        orig = fmp_client.fetch_revenue_product_segmentation
+        fmp_client.fetch_revenue_product_segmentation = lambda t, **k: self._stub_seg()
+        try:
+            seg = ba_mod.segment_economics("TST")
+        finally:
+            fmp_client.fetch_revenue_product_segmentation = orig
+            ba_mod._SEGMENT_CACHE.clear()
+        self.assertTrue(seg["available"])
+        self.assertEqual(seg["n_segments"], 2)
+        big = seg["segments"][0]  # sorted by revenue desc
+        self.assertEqual(big["segment"], "Big")
+        self.assertAlmostEqual(big["rev_pct"], 0.6, places=3)
+        self.assertAlmostEqual(big["yoy_growth"], 0.2, places=3)  # 600/500-1
+        self.assertFalse(seg["has_margins"])
+
+    def test_margin_overlay(self):
+        from aletheia.tools import business_analysis as ba_mod
+        from aletheia.data import fmp_client
+        ba_mod._SEGMENT_CACHE.clear()
+        orig = fmp_client.fetch_revenue_product_segmentation
+        fmp_client.fetch_revenue_product_segmentation = lambda t, **k: self._stub_seg()
+        extracted = [{"segment": "Big", "operating_margin": "15%", "margin_trend": "improving"}]
+        try:
+            seg = ba_mod.segment_economics("TST", extracted)
+        finally:
+            fmp_client.fetch_revenue_product_segmentation = orig
+            ba_mod._SEGMENT_CACHE.clear()
+        self.assertTrue(seg["has_margins"])
+        self.assertEqual(seg["segments"][0]["margin"], "15%")
+        self.assertEqual(seg["segments"][0]["margin_trend"], "improving")
+
+
+class TestTamAssessment(unittest.TestCase):
+    """P3 — TAM confidence + deterministic implied-share."""
+
+    def test_implied_share_parsed(self):
+        from aletheia.tools.business_analysis import tam_assessment, _parse_dollar
+        self.assertAlmostEqual(_parse_dollar("$50 billion market"), 50e9)
+        self.assertAlmostEqual(_parse_dollar("about $2.5 trillion"), 2.5e12)
+        self.assertIsNone(_parse_dollar("a large market"))
+        tam = tam_assessment("TST",
+                             {"tam_estimate": "$50 billion", "tam_confidence": "Medium"},
+                             latest_revenue=5e9)
+        self.assertTrue(tam["available"])
+        self.assertEqual(tam["tam_confidence"], "medium")
+        self.assertAlmostEqual(tam["implied_share"], 0.10, places=3)
+
+    def test_no_tam(self):
+        from aletheia.tools.business_analysis import tam_assessment
+        tam = tam_assessment("TST", {}, latest_revenue=5e9)
+        self.assertFalse(tam["available"])
+        self.assertIsNone(tam["implied_share"])
+
+
+class TestCoverageNA(unittest.TestCase):
+    """P5 — N/A labeling distinguishes structural non-applicability from pending."""
+
+    def test_cac_na_for_defense(self):
+        from aletheia.tools import business_analysis as ba_mod
+        import aletheia.agents.business_extraction as bx
+        orig = bx.cached_business_ab
+        bx.cached_business_ab = lambda t: None
+        try:
+            calc = _Calc([100, 106, 112, 119, 126, 134],
+                         [2018, 2019, 2020, 2021, 2022, 2023],
+                         classification=_Cls(sector="Industrials",
+                                             industry="Aerospace & Defense"))
+            res = ba_mod.build_business_analysis({}, "TST", calc=calc)
+        finally:
+            bx.cached_business_ab = orig
+        cov = {c["dimension"]: c for c in res["coverage"]}
+        self.assertEqual(cov["CAC / LTV / cohorts"]["status"], "n_a")
+        self.assertTrue(cov["CAC / LTV / cohorts"]["reason"])
+        self.assertGreaterEqual(res.get("n_na", 0), 1)
+
+    def test_cac_present_when_extracted(self):
+        from aletheia.tools import business_analysis as ba_mod
+        import aletheia.agents.business_extraction as bx
+        orig = bx.cached_business_ab
+        bx.cached_business_ab = lambda t: {"cac_ltv": "LTV/CAC 4x"}
+        try:
+            calc = _Calc([100, 106, 112, 119, 126, 134],
+                         [2018, 2019, 2020, 2021, 2022, 2023],
+                         classification=_Cls(sector="Industrials",
+                                             industry="Aerospace & Defense"))
+            res = ba_mod.build_business_analysis({}, "TST", calc=calc)
+        finally:
+            bx.cached_business_ab = orig
+        cov = {c["dimension"]: c["status"] for c in res["coverage"]}
+        self.assertEqual(cov["CAC / LTV / cohorts"], "present")  # data beats N/A
+
+
+class TestAssumptionGroundingP4(unittest.TestCase):
+    """P4 — Y1-5 build-up band + terminal margin from segment mix."""
+
+    class _Asm:
+        revenue_cagr_y1_5 = 0.05
+        terminal_growth = 0.025
+        ebit_margin_current = 0.20
+        ebit_margin_terminal = 0.15
+
+    class _Res:
+        ticker = "TST"
+        class base:
+            assumptions = None
+
+    def _result(self):
+        r = self._Res()
+        r.base.assumptions = self._Asm()
+        return r
+
+    def test_build_up_band(self):
+        calc = _Calc([100, 110, 130, 160, 175, 190], [2018, 2019, 2020, 2021, 2022, 2023])
+        gd = build_growth_decomposition(calc)
+        ag = build_assumption_grounding(calc, self._result(), growth_decomposition=gd)
+        cagr = next(r for r in ag["rows"] if r["assumption"] == "Y1-5 revenue CAGR")
+        b = cagr["build_up"]
+        self.assertIsNotNone(b)
+        self.assertLessEqual(b["band_low"], b["band_high"])
+
+    def test_terminal_margin_from_segments(self):
+        calc = _Calc([100, 106, 112, 119, 126, 134], [2018, 2019, 2020, 2021, 2022, 2023])
+        seg = {"available": True, "has_margins": True, "segments": [
+            {"segment": "A", "rev_pct": 0.5, "margin": "10%", "margin_trend": "declining"},
+            {"segment": "B", "rev_pct": 0.5, "margin": "20%", "margin_trend": "improving"},
+        ]}
+        ag = build_assumption_grounding(calc, self._result(), segment_economics=seg)
+        tm = next(r for r in ag["rows"] if r["assumption"] == "Terminal EBIT margin")
+        self.assertAlmostEqual(tm["grounded_value"], 0.15, places=3)  # 0.5*10%+0.5*20%
+        self.assertEqual(tm["engine_value"], 0.15)
+
+
 if __name__ == "__main__":
     unittest.main()

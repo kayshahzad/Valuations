@@ -137,3 +137,24 @@ revenue/multiple from FMP, independent of our universe).
 ## Build order
 P1 (cascades) → P2 (segment margins) → P4 (grounding uses P1+P2) → P3 (TAM) → P5.
 P1/P2/P4 are mostly deterministic/FMP; P3 is the LLM-risk item.
+
+## Status — ALL SHIPPED (P1–P5)
+
+- **P1 ✓** curated peer lists + FMP peer stats (`config/peer_lists.py`,
+  `business_analysis.peer_stats`). Fixes market-vs-share, sector-relative
+  multiple, peer-margin context.
+- **P2 ✓** segment economics — `fmp_client.fetch_revenue_product_segmentation`
+  (deterministic revenue mix + YoY) overlaid with extracted per-segment margins
+  (`BusinessAB.segment_economics`). `business_analysis.segment_economics`.
+- **P3 ✓** TAM with confidence — `BusinessAB.tam_confidence` (low/med/high/
+  not_estimable) + deterministic implied-share (`tam_assessment`, `_parse_dollar`).
+- **P4 ✓** richer grounding — Y1-5 build-up band (market + share + M&A run-rate)
+  and terminal EBIT margin from revenue-weighted segment mix
+  (`assumption_grounding`).
+- **P5 ✓** coverage labeling — 3-state status present / n_a / pending
+  (`_coverage_status`); e.g. CAC/LTV is N/A for non-subscription models.
+
+All deterministic except the new extraction FIELDS (segment margins, tam_
+confidence), which fold into the existing single Business-A/B Stage-4 call — **no
+new LLM call added**. They populate on the next Stage-4 run; everything else is
+live on the no-LLM rebuild. Rendered in report §4 + Bottom-Up tab.
