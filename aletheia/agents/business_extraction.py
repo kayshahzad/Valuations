@@ -122,9 +122,13 @@ def _write_cache(ticker: str, data: Dict[str, Any]) -> None:
 
 
 _PROMPT = """You are an equity research analyst doing BOTTOM-UP business analysis \
-of {company} (ticker {ticker}) from its 10-K. Extract ONLY what the filing \
-supports; mark inferred items and set confidence accordingly. Do not invent \
-numbers — leave a field blank rather than guess.
+of {company} (ticker {ticker}) from its 10-K. For company-specific facts \
+(products, customers, contracts, segment margins) extract ONLY what the filing \
+supports — do not invent numbers, leave a field blank rather than guess. \
+The ONE exception is market SIZING (TAM / sub-market sizes): there you SHOULD \
+apply standard equity-research triangulation using widely-reported industry \
+figures and your own market knowledge — but you MUST label every such estimate \
+with a confidence that reflects its source (see THEME B).
 
 THEME A — what the company sells:
 - product_lines: 3-8 SPECIFIC offerings (not just segment names), each with its \
@@ -137,12 +141,22 @@ cycle is critical).
 VAR, marketplace, prime vs subcontractor, OEM, etc.).
 
 THEME B — market size & capture:
-- tam_estimate + tam_methodology + tam_confidence: dollar size of the addressable \
-market with its definition and growth rate, if stated or derivable. ALWAYS set \
-tam_confidence (low/medium/high) when you give a number, or 'not_estimable' when \
-the filing gives no basis — never present a rough figure as if it were precise.
+- tam_estimate + tam_methodology + tam_confidence: the dollar size of the \
+addressable market with its definition and growth rate. DO give a number — use \
+the filing if it states one, otherwise TRIANGULATE from well-established industry \
+market-sizing and your own knowledge (this is the one place external knowledge is \
+expected). When the market splits into distinct sub-markets, size each in \
+tam_methodology (e.g. for a software company: cloud infrastructure ~$X by 20YY, \
+enterprise/productivity software ~$Y, AI services ~$Z) and give the rolled-up TAM \
+in tam_estimate. ALWAYS set tam_confidence by SOURCE quality:
+    high   = stated in the filing or a precise, citable third-party figure;
+    medium = consensus third-party market sizing (Gartner/IDC-style);
+    low    = rough triangulation (sum of sub-markets, or revenue ÷ assumed share);
+    not_estimable = ONLY when the market genuinely cannot be sized even roughly \
+(rare for large public companies). Never present triangulation as precise.
 - market_share: current share of that market (overall or by segment) and standing \
-vs named competitors.
+vs named competitors — implied share = company revenue ÷ TAM is acceptable when \
+not disclosed (label it as implied).
 - whitespace_runway: unaddressed segments/geographies/customers and a realistic \
 share ceiling.
 - adjacent_tams: markets the company could credibly expand into.

@@ -455,9 +455,9 @@ def _coverage_status(source, bm, dims, gd, lifecycle, ab, dimension,
     # Segment margins: present when FMP mix carries extracted margins.
     if dimension == "Margin trajectory by segment" and (seg or {}).get("has_margins"):
         return "present", ""
-    # TAM declared not estimable by the extraction → N/A, not pending.
+    # TAM declared genuinely not estimable by the extraction → N/A, not pending.
     if dimension == "TAM sizing" and (tam or {}).get("tam_confidence") == "not_estimable":
-        return "n_a", "not estimable from the filing"
+        return "n_a", "market not sizeable even by triangulation"
     # CAC/LTV/cohorts only apply to subscription/consumer models.
     if dimension == "CAC / LTV / cohorts" and template_key not in _CAC_APPLICABLE_TEMPLATES:
         return "n_a", "not a subscription / consumer model"
