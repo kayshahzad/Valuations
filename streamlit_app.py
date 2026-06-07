@@ -652,7 +652,7 @@ def main():
     # Dive (lead thesis, contrarian, value chain, moat, strategic context all
     # render there), and agent runs can be triggered from the Universe tab's
     # ▶ Run agents footer or the sidebar's per-ticker pipeline button.
-    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report", "⚙  Pipeline Explorer", "⚙  Pipeline Status", "📐  Calc Framework", "🧪  Stage 3 (provider)"]
+    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "🔬  Bottom-Up", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report", "⚙  Pipeline Explorer", "⚙  Pipeline Status", "📐  Calc Framework", "🧪  Stage 3 (provider)"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
     if "active_view" not in st.session_state:
@@ -1248,6 +1248,23 @@ def main():
             full_report=full or {},
             universe_row=row,
         )
+
+    # ──────────────────────────────────────────────────────────────────────────
+    # TAB — BOTTOM-UP (business analysis themes A–F + grounding)
+    # ──────────────────────────────────────────────────────────────────────────
+    elif active_view == "🔬  Bottom-Up":
+
+        selected = st.session_state.active_ticker
+        if not selected:
+            st.info("Select a ticker from the sidebar to begin analysis.")
+            return
+        dcf_data = fetch_dcf(selected)
+        if not dcf_data:
+            st.info(f"**No DCF / bottom-up available for {selected}.** The ticker "
+                    "may not be ingested or uses a non-FCFF framework.")
+            return
+        from aletheia.ui.bottom_up_view import render_bottom_up_view
+        render_bottom_up_view(selected, dcf_data)
 
     # ──────────────────────────────────────────────────────────────────────────
     # TAB 3 — FINANCIALS (deterministic detail dump from DB + DCFEngine)

@@ -1,0 +1,172 @@
+"""Bottom-up business analysis tab.
+
+A dedicated home for the §4 bottom-up layer — the six themes (A–F), the growth
+decomposition, the sector emphasis, and the assumption-grounding keystone — read
+from the live /dcf payload (`business_analysis` + `assumption_grounding`).
+Deterministic content renders immediately; the LLM-extracted A/B/C/E fields fill
+in after a Stage-4 run.
+"""
+
+from __future__ import annotations
+
+from typing import Any, Dict
+
+import pandas as pd
+import streamlit as st
+
+
+_THEMES = [
+    ("A", "What the company sells", "The product-level reality behind the revenue line", "A. What it sells"),
+    ("B", "Market size & capture", "Where the company sits in the market, room to grow", "B. Market size"),
+    ("C", "Unit economics", "The economic structure beneath the aggregate margins", "C. Unit economics"),
+    ("D", "Growth source decomposition", "Is the company growing the pie or taking share?", "D. Growth source"),
+    ("E", "Innovation & trend positioning", "Position relative to technology and demand shifts", "E. Innovation"),
+    ("F", "Industry context & dynamics", "Where the industry is in its lifecycle", "F. Industry"),
+]
+
+
+def _pct(v, dp=1):
+    return f"{v*100:.{dp}f}%" if isinstance(v, (int, float)) else "—"
+
+
+def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
+                   ba: Dict[str, Any]) -> bool:
+    """Render one theme's content. Returns True if anything was rendered."""
+    rendered = False
+    if letter == "A":
+        for p in (ex.get("product_lines") or [])[:8]:
+            st.markdown(f"- **{p.get('name','')}**"
+                        + (f" — {p.get('pricing_model')}" if p.get('pricing_model') else "")
+                        + (f"  _({p.get('segment')})_" if p.get('segment') else ""))
+            rendered = True
+        for c in (ex.get("major_customers") or [])[:8]:
+            line = f"- 🤝 **{c.get('name','')}**"
+            if c.get("relationship"): line += f" — {c['relationship']}"
+            if c.get("recompete_or_renewal"): line += f" · recompete {c['recompete_or_renewal']}"
+            if c.get("pct_revenue"): line += f" · {c['pct_revenue']} of rev"
+            st.markdown(line); rendered = True
+        if ex.get("distribution_channels"):
+            st.markdown("**Channels:** " + ", ".join(ex["distribution_channels"])); rendered = True
+    elif letter == "B":
+        for label, key in (("TAM", "tam_estimate"), ("Market share", "market_share"),
+                           ("Whitespace runway", "whitespace_runway")):
+            if ex.get(key):
+                st.markdown(f"**{label}:** {ex[key]}"
+                            + (f"  _({ex.get('tam_methodology')})_" if key == "tam_estimate" and ex.get("tam_methodology") else ""))
+                rendered = True
+        if ex.get("adjacent_tams"):
+            st.markdown("**Adjacent TAMs:** " + ", ".join(ex["adjacent_tams"])); rendered = True
+    elif letter == "C":
+        for label, key in (("Contract economics", "contract_economics"),
+                           ("CAC / LTV", "cac_ltv"), ("Unit cost", "unit_cost"),
+                           ("Segment margin trajectory", "segment_margin_trajectory"),
+                           ("Operating leverage", "operating_leverage")):
+            if ex.get(key):
+                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
+    elif letter == "D":
+        if gd.get("available"):
+            breaks = gd.get("break_years") or []
+            st.markdown(
+                f"**Growth source:** raw {_pct(gd.get('raw_cagr'))} = organic "
+                f"{_pct(gd.get('organic_cagr'))} + M&A {_pct(gd.get('ma_contribution_pp'))}"
+                + (f" (breaks FY{breaks})" if breaks else "")
+                + f" — _{gd.get('split','')}_")
+            rendered = True
+            if gd.get("share_gain_pp") is not None:
+                st.markdown(
+                    f"**Market vs share:** organic {_pct(gd.get('organic_cagr'))} vs "
+                    f"sector market {_pct(gd.get('market_growth_ref'))} → share "
+                    f"{_pct(gd.get('share_gain_pp'))} (_{gd.get('share_label','')}_)")
+                st.caption(gd.get("market_ref_basis", ""))
+            elif gd.get("market_ref_basis") is None and gd.get("available"):
+                st.caption("Market-vs-share: insufficient same-peer-group history "
+                           "in the universe to compute a market-growth reference.")
+    elif letter == "E":
+        for label, key in (("R&D pipeline", "rd_pipeline"),
+                           ("Trend positioning", "trend_positioning"),
+                           ("Disruption risk", "disruption_risk"),
+                           ("Acquisition strategy", "acquisition_strategy")):
+            if ex.get(key):
+                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
+        for l in (ex.get("new_product_launches") or [])[:6]:
+            st.markdown(f"- 🚀 **{l.get('name','')}**"
+                        + (f" ({l.get('timing')})" if l.get('timing') else "")
+                        + (f" — {l.get('traction')}" if l.get('traction') else ""))
+            rendered = True
+    elif letter == "F":
+        if ba.get("lifecycle"):
+            st.markdown(f"**Industry lifecycle stage:** {ba['lifecycle']}"); rendered = True
+    return rendered
+
+
+def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
+    """Render the bottom-up analysis tab for a ticker."""
+    if not ticker:
+        st.info("Select a ticker from the sidebar to begin analysis.")
+        return
+    ba = (dcf or {}).get("business_analysis") or {}
+    ag = (dcf or {}).get("assumption_grounding") or {}
+    if not ba.get("available"):
+        st.info(f"No bottom-up analysis available for {ticker}. Ensure the "
+                "ticker is ingested (the deterministic layer needs cleaned data).")
+        return
+
+    st.markdown(f"## {ticker} — Bottom-up business analysis")
+    st.caption("The business reality beneath the revenue line, by theme. "
+               "Deterministic content is live; ★-marked extracted fields fill in "
+               "on a Stage-4 run.")
+
+    ex = ba.get("extracted") or {}
+    gd = ba.get("growth_decomposition") or {}
+    cov = ba.get("coverage") or []
+    tpl = ba.get("sector_template") or {}
+
+    # Header: sector emphasis + coverage + extraction status.
+    c1, c2 = st.columns([3, 1])
+    if tpl.get("emphasis"):
+        c1.markdown(f"**Sector emphasis — {tpl.get('label','')}"
+                    + (f" ({tpl.get('peer_group')})" if tpl.get('peer_group') else "")
+                    + f":**  {' · '.join(tpl['emphasis'])}")
+    c2.metric("Dimensions populated", f"{ba.get('n_present','?')}/{ba.get('n_total','?')}")
+    if not ex:
+        st.info("ℹ️ Themes A/B/C/E (product, market, unit economics, innovation) "
+                "are populated by a structured 10-K extraction that runs on a "
+                "Stage-4 agent run. Deterministic themes (D growth source, F "
+                "lifecycle) and grounding are shown now.")
+
+    # The six themes A–F.
+    for letter, title, subtitle, cov_prefix in _THEMES:
+        with st.container(border=True):
+            st.markdown(f"#### {letter} · {title}")
+            st.caption(subtitle)
+            had = _theme_content(letter, ex, gd, ba)
+            pend = [c["dimension"] for c in cov
+                    if c.get("theme", "").startswith(cov_prefix) and c.get("status") != "present"]
+            prio = {c["dimension"] for c in cov
+                    if c.get("theme", "").startswith(cov_prefix) and c.get("priority")}
+            if pend:
+                marked = ["★ " + d if d in prio else d for d in pend]
+                st.caption("Pending extraction: " + ", ".join(marked))
+            if not had and not pend:
+                st.caption("—")
+
+    # Assumption grounding (keystone).
+    if ag.get("available"):
+        with st.container(border=True):
+            st.markdown("#### 🧲 Assumption grounding — business vs history")
+            st.caption("Each top-down assumption vs a business-grounded reference. "
+                       "Shown for triangulation; NOT auto-applied to the IV.")
+            rows = [{
+                "Assumption": r.get("assumption", ""),
+                "Engine": _pct(r.get("engine_value")),
+                "Grounded": _pct(r.get("grounded_value")),
+                "Δ": _pct(r.get("delta")),
+                "Basis": r.get("note", ""),
+            } for r in (ag.get("rows") or [])]
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+            if ag.get("material_divergences"):
+                st.caption(f"⚠ {ag['material_divergences']} material divergence(s) "
+                           "(≥2pp) between engine and business-grounded references.")
+
+
+__all__ = ["render_bottom_up_view"]
