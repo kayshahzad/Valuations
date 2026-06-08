@@ -392,6 +392,56 @@ class TestMaDetection(unittest.TestCase):
         self.assertNotIn("all organic", gd["split"])
 
 
+class TestOperatingLeverage(unittest.TestCase):
+    """Deterministic operating leverage: incremental EBIT margin from financials."""
+
+    def test_incremental_margin(self):
+        import pandas as pd
+        from aletheia.tools.business_analysis import operating_leverage
+
+        class _C:
+            df = pd.DataFrame({
+                "fiscal_year": [2019, 2020, 2021, 2022, 2023, 2024],
+                "clean_Revenue": [100, 120, 140, 160, 180, 200],
+                "raw_OperatingIncome": [10, 16, 24, 34, 46, 60],  # EBIT grows faster
+                "period": ["FY"] * 6,
+            })
+        ol = operating_leverage(_C())
+        self.assertTrue(ol["available"])
+        # ΔEBIT/ΔRev = (60-10)/(200-100) = 50%; current margin 60/200 = 30%.
+        self.assertAlmostEqual(ol["incremental_margin"], 0.50, places=3)
+        self.assertAlmostEqual(ol["current_margin"], 0.30, places=3)
+        self.assertIn("expanding", ol["label"])
+
+
+class TestPorterAndMarketDims(unittest.TestCase):
+    """New §4 dims: Porter forces + market dynamics flip to present on extraction."""
+
+    def test_new_dims_present_when_extracted(self):
+        from aletheia.tools import business_analysis as ba_mod
+        import aletheia.agents.business_extraction as bx
+        orig = bx.cached_business_ab
+        bx.cached_business_ab = lambda t: {
+            "market_share_trajectory": "gaining ~1pt/yr",
+            "category_creation": "defined the cloud CRM category",
+            "competitive_intensity": "high, rising on AI",
+            "customer_power": "moderate, weakening as switching costs rise",
+            "supplier_power": "low (cloud/talent)",
+            "regulatory_trajectory": "data-privacy tightening",
+        }
+        try:
+            calc = _Calc([100, 106, 112, 119, 126, 134],
+                         [2018, 2019, 2020, 2021, 2022, 2023])
+            res = ba_mod.build_business_analysis({}, "TST", calc=calc)
+        finally:
+            bx.cached_business_ab = orig
+        cov = {c["dimension"]: c["status"] for c in res["coverage"]}
+        for d in ("Share trajectory", "New market / category creation",
+                  "Competitive intensity", "Customer power (trajectory)",
+                  "Supplier power (trajectory)", "Regulatory trajectory"):
+            self.assertEqual(cov.get(d), "present", d)
+
+
 class TestSegmentEconomics(unittest.TestCase):
     """P2 — FMP revenue mix overlaid with extracted segment margins."""
 

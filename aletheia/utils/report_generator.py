@@ -606,14 +606,26 @@ class ReportGenerator:
                                      f"{tam['tam_methodology']}</p>")
                 return (tam_html
                         + _kv("Market share", ex.get("market_share"))
+                        + _kv("Share trajectory", ex.get("market_share_trajectory"))
+                        + _kv("New market / category creation", ex.get("category_creation"))
                         + _kv("Whitespace runway", ex.get("whitespace_runway"))
                         + _kv("Adjacent TAMs", ", ".join(ex.get("adjacent_tams") or [])))
             if letter == "C":
-                body = (_kv("Contract economics", ex.get("contract_economics"))
+                # Deterministic operating-leverage quant (incremental EBIT margin).
+                ol = ba.get("operating_leverage") or {}
+                ol_html = ""
+                if ol.get("available"):
+                    ol_html = (f"<p style='margin:2px 0'><strong>Operating leverage "
+                               f"(incremental margin):</strong> {pct(ol.get('incremental_margin'))} "
+                               f"vs current {pct(ol.get('current_margin'))} — "
+                               f"<em>{ol.get('label','')}</em> "
+                               f"<span style='color:#888'>({ol.get('source','')})</span></p>")
+                body = (ol_html
+                        + _kv("Contract economics", ex.get("contract_economics"))
                         + _kv("CAC / LTV", ex.get("cac_ltv"))
                         + _kv("Unit cost", ex.get("unit_cost"))
                         + _kv("Segment margin trajectory", ex.get("segment_margin_trajectory"))
-                        + _kv("Operating leverage", ex.get("operating_leverage")))
+                        + _kv("Operating leverage (qual.)", ex.get("operating_leverage")))
                 seg = ba.get("segment_economics") or {}
                 if seg.get("available") and seg.get("segments"):
                     srows = ""
@@ -665,7 +677,11 @@ class ReportGenerator:
                         + _kv("Disruption risk", ex.get("disruption_risk"))
                         + _kv("Acquisition strategy", ex.get("acquisition_strategy")))
             if letter == "F":
-                return _kv("Industry lifecycle stage", ba.get("lifecycle"))
+                return (_kv("Industry lifecycle stage", ba.get("lifecycle"))
+                        + _kv("Competitive intensity", ex.get("competitive_intensity"))
+                        + _kv("Customer power (trajectory)", ex.get("customer_power"))
+                        + _kv("Supplier power (trajectory)", ex.get("supplier_power"))
+                        + _kv("Regulatory trajectory", ex.get("regulatory_trajectory")))
             return ""
 
         # Sector emphasis header.

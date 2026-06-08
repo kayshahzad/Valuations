@@ -82,6 +82,8 @@ class BusinessAB(BaseModel):
     tam_methodology: str = Field(default="", description="How TAM is defined/sized + its growth rate; if split into sub-markets, list each with its size")
     tam_confidence: str = Field(default="", description="REQUIRED when tam_estimate is non-blank: low (rough triangulation) / medium (consensus third-party sizing) / high (filing or citable source) — or 'not_estimable' only if the market genuinely cannot be sized")
     market_share: str = Field(default="", description="Current share of TAM (overall or by segment) and vs key competitors")
+    market_share_trajectory: str = Field(default="", description="Is share GAINING / STABLE / LOSING over recent years, and why (the trend, not just the level)")
+    category_creation: str = Field(default="", description="Is the company creating a NEW market/category or expanding the TAM definition (vs competing in an existing one)? e.g. Salesforce defining cloud CRM")
     whitespace_runway: str = Field(default="", description="Unaddressed segments/geographies/customers; realistic share ceiling")
     adjacent_tams: List[str] = Field(default_factory=list,
         description="Adjacent markets the company could credibly enter")
@@ -100,6 +102,11 @@ class BusinessAB(BaseModel):
         description="Recent launches with early traction / growth contribution")
     disruption_risk: str = Field(default="", description="Technologies/models that could displace the revenue base, and the firm's response")
     acquisition_strategy: str = Field(default="", description="M&A pattern: what gets bought (capability vs scale), integration approach")
+    # Theme F — industry structure (Porter's five forces, with trajectory)
+    competitive_intensity: str = Field(default="", description="Rivalry: how many/how strong are competitors, on what basis (price/feature/lock-in), and is intensity rising or easing")
+    customer_power: str = Field(default="", description="Buyer power and its TRAJECTORY: concentration, switching costs, price sensitivity — strengthening or weakening for the company")
+    supplier_power: str = Field(default="", description="Supplier/input power and its trajectory: key inputs (talent, cloud/compute, components), concentration, pricing leverage")
+    regulatory_trajectory: str = Field(default="", description="Direction of the regulatory/policy environment (tightening/easing) and the specific exposure (antitrust, data/privacy, tariffs, drug pricing, etc.)")
     confidence: str = Field(default="", description="low/medium/high — how grounded these are in the filing vs inferred")
 
 
@@ -180,6 +187,11 @@ THEME B — market size & capture:
 - market_share: current share of that market (overall or by segment) and standing \
 vs named competitors — implied share = company revenue ÷ TAM is acceptable when \
 not disclosed (label it as implied).
+- market_share_trajectory: is share GAINING / STABLE / LOSING over recent years \
+and why — the direction, not just the level.
+- category_creation: is the company creating a NEW market/category or expanding \
+the TAM definition (e.g. Salesforce defining cloud CRM), vs competing in an \
+existing one.
 - whitespace_runway: unaddressed segments/geographies/customers and a realistic \
 share ceiling.
 - adjacent_tams: markets the company could credibly expand into.
@@ -201,6 +213,17 @@ THEME E — innovation & trend positioning:
 - new_product_launches: recent launches with early traction / growth contribution.
 - disruption_risk: technologies/models that could displace the revenue base + the response.
 - acquisition_strategy: M&A pattern — capability vs scale acquisition, integration.
+
+THEME F — industry structure (Porter's five forces, WITH trajectory — say whether \
+each force is strengthening or weakening for the company):
+- competitive_intensity: rivalry — number/strength of competitors, basis of \
+competition (price / features / lock-in), and whether intensity is rising or easing.
+- customer_power: buyer power + trajectory — customer concentration, switching \
+costs, price sensitivity; strengthening or weakening.
+- supplier_power: supplier/input power + trajectory — key inputs (talent, cloud/ \
+compute, components), concentration, pricing leverage over the company.
+- regulatory_trajectory: direction of the policy environment (tightening/easing) \
+and the specific exposure (antitrust, data/privacy, tariffs, drug pricing, etc.).
 
 Return the structured object. Use the filing's own language and figures."""
 

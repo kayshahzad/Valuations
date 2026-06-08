@@ -34,6 +34,10 @@ PEER_LISTS: Dict[str, List[str]] = {
     "AMZN":  ["MSFT", "GOOGL", "WMT", "AAPL", "BABA"],
     # Enterprise software.
     "ORCL":  ["MSFT", "CRM", "SAP", "IBM", "NOW"],
+    "CRM":   ["MSFT", "ORCL", "ADBE", "NOW", "SAP", "WDAY"],
+    "ADBE":  ["CRM", "MSFT", "INTU", "NOW", "ORCL"],
+    "NOW":   ["CRM", "WDAY", "ADBE", "MSFT", "SNOW"],
+    "INTU":  ["ADBE", "CRM", "MSFT", "NOW"],
     # IT services / consulting.
     "ACN":   ["IBM", "INFY", "CTSH", "WIT", "DXC"],
 

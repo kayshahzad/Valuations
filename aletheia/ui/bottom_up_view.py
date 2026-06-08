@@ -75,16 +75,26 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
                 st.caption(tam["tam_methodology"])
             rendered = True
         for label, key in (("Market share", "market_share"),
+                           ("Share trajectory", "market_share_trajectory"),
+                           ("New market / category creation", "category_creation"),
                            ("Whitespace runway", "whitespace_runway")):
             if ex.get(key):
                 st.markdown(f"**{label}:** {ex[key]}"); rendered = True
         if ex.get("adjacent_tams"):
             st.markdown("**Adjacent TAMs:** " + ", ".join(ex["adjacent_tams"])); rendered = True
     elif letter == "C":
+        ol = ba.get("operating_leverage") or {}
+        if ol.get("available"):
+            st.markdown(
+                f"**Operating leverage (incremental margin):** "
+                f"{_pct(ol.get('incremental_margin'))} vs current "
+                f"{_pct(ol.get('current_margin'))} — _{ol.get('label','')}_ "
+                f"({ol.get('source','')})")
+            rendered = True
         for label, key in (("Contract economics", "contract_economics"),
                            ("CAC / LTV", "cac_ltv"), ("Unit cost", "unit_cost"),
                            ("Segment margin trajectory", "segment_margin_trajectory"),
-                           ("Operating leverage", "operating_leverage")):
+                           ("Operating leverage (qual.)", "operating_leverage")):
             if ex.get(key):
                 st.markdown(f"**{label}:** {ex[key]}"); rendered = True
         seg = ba.get("segment_economics") or {}
@@ -143,6 +153,12 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
     elif letter == "F":
         if ba.get("lifecycle"):
             st.markdown(f"**Industry lifecycle stage:** {ba['lifecycle']}"); rendered = True
+        for label, key in (("Competitive intensity", "competitive_intensity"),
+                           ("Customer power (trajectory)", "customer_power"),
+                           ("Supplier power (trajectory)", "supplier_power"),
+                           ("Regulatory trajectory", "regulatory_trajectory")):
+            if ex.get(key):
+                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
     return rendered
 
 

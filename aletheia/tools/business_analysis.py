@@ -371,6 +371,64 @@ def ma_spend(ticker: str, years: Optional[List[int]] = None) -> Dict[str, Any]:
     return out
 
 
+def operating_leverage(calc) -> Dict[str, Any]:
+    """Deterministic operating leverage: the INCREMENTAL EBIT margin —
+    Δ(EBIT) / Δ(revenue) over the trailing window — i.e. how much of each new
+    revenue dollar drops through to operating profit. Quantifies what the §4
+    'operating leverage' dimension otherwise only described qualitatively.
+    Compares the incremental margin to the current EBIT margin: incremental >
+    current means margins are still expanding with scale."""
+    out: Dict[str, Any] = {"available": False}
+    try:
+        df = getattr(calc, "df", None)
+        cols = getattr(df, "columns", [])
+        if df is None or "clean_Revenue" not in cols:
+            return out
+        ebit_col = ("raw_OperatingIncome" if "raw_OperatingIncome" in cols
+                    else "derived_OperatingIncome" if "derived_OperatingIncome" in cols
+                    else None)
+        if ebit_col is None:
+            return out
+        d = df
+        if "period" in cols:
+            d = d[d["period"] == "FY"]
+        d = d.dropna(subset=["clean_Revenue"]).sort_values("fiscal_year")
+        revs = [float(x) for x in d["clean_Revenue"].tolist()]
+        ebits = [(_safe_float(x)) for x in d[ebit_col].tolist()]
+        if len(revs) < 4:
+            return out
+        k = min(5, len(revs) - 1)
+        r0, r1 = revs[-1 - k], revs[-1]
+        e0, e1 = ebits[-1 - k], ebits[-1]
+        if e0 is None or e1 is None or (r1 - r0) <= 0:
+            return out
+        incremental = (e1 - e0) / (r1 - r0)
+        current_margin = (e1 / r1) if r1 else None
+        label = None
+        if current_margin is not None:
+            label = ("expanding (incremental > current)" if incremental > current_margin + 0.01
+                     else "compressing (incremental < current)" if incremental < current_margin - 0.01
+                     else "steady")
+        out = {
+            "available": True,
+            "incremental_margin": incremental,
+            "current_margin": current_margin,
+            "window_years": k,
+            "label": label,
+            "source": f"Δ EBIT / Δ revenue over {k} FY",
+        }
+    except Exception:
+        return {"available": False}
+    return out
+
+
+def _safe_float(x):
+    try:
+        return float(x) if x is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
 def _latest_revenue(calc) -> Optional[float]:
     """Most-recent FY revenue from the calc frame (for implied-share math)."""
     try:
@@ -513,6 +571,8 @@ _COVERAGE = [
     ("A. What it sells", "Distribution channels", None),
     ("B. Market size", "TAM sizing", None),
     ("B. Market size", "Market share / position", "dim:market_position"),
+    ("B. Market size", "Share trajectory", None),
+    ("B. Market size", "New market / category creation", None),
     ("B. Market size", "Whitespace / adjacent TAMs", None),
     ("C. Unit economics", "Operating leverage", "business_model.operating_leverage_analysis"),
     ("C. Unit economics", "CAC / LTV / cohorts", None),
@@ -524,6 +584,8 @@ _COVERAGE = [
     ("E. Innovation", "New product launches", None),
     ("F. Industry", "Lifecycle stage", "classification.lifecycle"),
     ("F. Industry", "Competitive intensity", "dim:industry_concentration"),
+    ("F. Industry", "Customer power (trajectory)", None),
+    ("F. Industry", "Supplier power (trajectory)", None),
     ("F. Industry", "Regulatory trajectory", "dim:regulatory_exposure"),
 ]
 
@@ -536,12 +598,19 @@ _AB_FIELDS = {
     "Distribution channels": "distribution_channels",
     "TAM sizing": "tam_estimate",
     "Market share / position": "market_share",
+    "Share trajectory": "market_share_trajectory",
+    "New market / category creation": "category_creation",
     "Whitespace / adjacent TAMs": "whitespace_runway",
     # C + E (Phase 3)
     "Operating leverage": "operating_leverage",
     "CAC / LTV / cohorts": "cac_ltv",
     "Margin trajectory by segment": "segment_margin_trajectory",
     "New product launches": "new_product_launches",
+    # F — industry structure / Porter (bottom-up)
+    "Competitive intensity": "competitive_intensity",
+    "Customer power (trajectory)": "customer_power",
+    "Supplier power (trajectory)": "supplier_power",
+    "Regulatory trajectory": "regulatory_trajectory",
 }
 
 
@@ -584,12 +653,18 @@ _CAC_APPLICABLE_TEMPLATES = {"tech_saas", "consumer"}
 
 
 def _coverage_status(source, bm, dims, gd, lifecycle, ab, dimension,
-                     seg, tam, template_key):
+                     seg, tam, template_key, oplev=None):
     """Three-state coverage label (P5): 'present', 'n_a' (structurally not
     applicable / not disclosed), or 'pending' (extractable, not yet run).
     Returns (status, reason)."""
     # Present always wins (real data beats any N/A heuristic).
     if _present(source, bm, dims, gd, lifecycle, ab, dimension):
+        return "present", ""
+    # Operating leverage: the deterministic incremental-margin quant satisfies it.
+    if dimension == "Operating leverage" and (oplev or {}).get("available"):
+        return "present", ""
+    # Share trajectory: the deterministic market-vs-share split satisfies it.
+    if dimension == "Share trajectory" and gd.get("share_gain_pp") is not None:
         return "present", ""
     # Segment margins: present when FMP mix carries extracted margins.
     if dimension == "Margin trajectory by segment" and (seg or {}).get("has_margins"):
@@ -658,12 +733,15 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
     # TAM + implied share (P3): extracted TAM/confidence + deterministic share.
     tam = tam_assessment(ticker, ab or {}, _latest_revenue(calc) if calc is not None else None)
 
+    # Operating leverage (deterministic): incremental EBIT margin from financials.
+    oplev = operating_leverage(calc) if calc is not None else {"available": False}
+
     coverage = []
     n_present = 0
     n_na = 0
     for theme, dimension, source in _COVERAGE:
         status, reason = _coverage_status(
-            source, bm, dims, gd, lifecycle, ab, dimension, seg, tam, template_key)
+            source, bm, dims, gd, lifecycle, ab, dimension, seg, tam, template_key, oplev)
         n_present += int(status == "present")
         n_na += int(status == "n_a")
         coverage.append({
@@ -683,6 +761,7 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
         "peer_stats": ps,
         "segment_economics": seg,
         "tam": tam,
+        "operating_leverage": oplev,
         "extracted": ab or None,          # themes A+B+C+E (LLM)
         "coverage": coverage,
         "n_present": n_present,
