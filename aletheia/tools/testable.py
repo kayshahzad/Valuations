@@ -42,7 +42,7 @@ def pure_compute_justified_multiple(
     nopat: float, ebitda: float, roic: float, wacc: float, g_terminal: float
 ) -> Tuple[float, float]:
     """
-    Stable public wrapper for Liberti EV/EBITDA justified multiple math.
+    Stable public wrapper for NorthWestern EV/EBITDA justified multiple math.
     Returns: (justified_ev_ebitda, cash_conversion_ratio)
     """
     return _compute_justified_ev_ebitda(

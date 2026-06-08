@@ -26,7 +26,7 @@ NOPAT           = NormalizedEBIT × (1 − effective_tax_rate)
 
 ## Why this convention
 
-Excess-cash exclusion is the Damodaran-leaning convention. The reasoning: cash held above operating needs is not earning operating returns, so including it in the IC base understates how productively the firm is using its *operating* capital. The platform's other formulas already lean Damodaran (`FCF = OCF − CapEx`, the Liberti EV/EBITDA decomposition), so this canonicalization aligns ROIC with the rest of the framework.
+Excess-cash exclusion is the Damodaran-leaning convention. The reasoning: cash held above operating needs is not earning operating returns, so including it in the IC base understates how productively the firm is using its *operating* capital. The platform's other formulas already lean Damodaran (`FCF = OCF − CapEx`, the NorthWestern EV/EBITDA decomposition), so this canonicalization aligns ROIC with the rest of the framework.
 
 The 2%-of-revenue working-cash threshold and 5%-of-revenue IC floor are conservative defaults — see [derivation_registry.py](../../aletheia/calculations/derivation_registry.py) for the registry entry that documents the precise thresholds and their basis.
 

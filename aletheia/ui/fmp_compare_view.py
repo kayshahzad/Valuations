@@ -350,7 +350,7 @@ def _ratios_rows_fy(
     #   - FCF margin: now compared like-for-like; FMP's FCF / FMP's
     #     revenue. Drift mostly comes from CapEx classification.
     #   - ROE / ROIC: definitional — formulas legitimately differ
-    #     (ROIC especially: Liberti's Equity+LTD-Cash denominator vs
+    #     (ROIC especially: NorthWestern's Equity+LTD-Cash denominator vs
     #     FMP's TotalDebt+Equity).
     fmp_fcf_margin = (
         C.get("freeCashFlow") / I.get("revenue")
@@ -502,9 +502,9 @@ def _ttm_rows(
             our_roe_avg = ni_ttm / avg_equity
 
     # FMP-style ROIC: NOPAT / (TotalDebt + Equity), no cash adjustment.
-    # Our canonical Liberti ROIC subtracts Cash from invested capital,
+    # Our canonical NorthWestern ROIC subtracts Cash from invested capital,
     # which gives a ~10-15% higher number for cash-rich filers (NVDA's
-    # 71% Liberti vs 63% FMP-style). Both are valid; we show both rows.
+    # 71% NorthWestern vs 63% FMP-style). Both are valid; we show both rows.
     our_roic_fmp_style = None
     op_inc_ttm = _coalesce(L.get("raw_OperatingIncome"), L.get("derived_OperatingIncome"))
     ltd = L.get("raw_LongTermDebt")
@@ -527,9 +527,9 @@ def _ttm_rows(
                                                                 K.get("returnOnEquityTTM"),
                                                                                           _pct,     "definitional", 1.0),
         # Two ROIC rows by formula:
-        # - Liberti: our canonical, NOPAT / (Equity + LongTermDebt − Cash)
+        # - NorthWestern: our canonical, NOPAT / (Equity + LongTermDebt − Cash)
         # - FMP defn: NOPAT / (TotalDebt + Equity), no cash adjustment
-        ("ROIC (Liberti — our formula)", L.get("derived_ROIC"),  None,
+        ("ROIC (NorthWestern — our formula)", L.get("derived_ROIC"),  None,
                                                                                           _pct,     "sanity_only", 1.0),
         ("ROIC (FMP defn)",             our_roic_fmp_style,     K.get("returnOnInvestedCapitalTTM"),
                                                                                           _pct,     "definitional", 1.0),
@@ -654,7 +654,7 @@ def render_fmp_compare_view(ticker: str) -> None:
             "intangibles) which we don't reconstruct. "
             "ROIC drift is a real formula difference: FMP's "
             "`(NetIncome + InterestExpense×(1-tax)) / (TotalDebt + Equity)` "
-            "vs our Liberti-style `NOPAT / (Equity + LongTermDebt − Cash)` — "
+            "vs our NorthWestern-style `NOPAT / (Equity + LongTermDebt − Cash)` — "
             "both correct, different denominators."
         )
         st.markdown("##### Multiples + capital structure")

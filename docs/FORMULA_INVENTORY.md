@@ -17,7 +17,7 @@ This document is the definitive reference for what gets computed, where, and how
 5. [Validation-layer derivations (FMP adapter)](#5-validation-layer-derivations)
 6. [DCF engine — projection + valuation](#6-dcf-engine--projection--valuation)
 7. [Reverse DCF](#7-reverse-dcf)
-8. [Multiple decomposition (Liberti / SFM)](#8-multiple-decomposition)
+8. [Multiple decomposition (NorthWestern / SFM)](#8-multiple-decomposition)
 9. [Screening ratios](#9-screening-ratios)
 10. [Forensic + quality metrics](#10-forensic--quality-metrics)
 11. [Reality checks](#11-reality-checks)
@@ -103,7 +103,7 @@ All ratios return `None` when denominator is zero, negative, or missing.
 | `interest_coverage` | `EBIT / \|InterestExpense\|` | [valuation_multiples.py:130](../aletheia/calculations/formulas/valuation_multiples.py) | Interest = 0 → None (debt-free filer) |
 | `current_ratio` | `CurrentAssets / CurrentLiabilities` | [valuation_multiples.py:150](../aletheia/calculations/formulas/valuation_multiples.py) | Std safety |
 | `dividend_yield` | `DividendsPaid / MarketCap` | [valuation_multiples.py:159](../aletheia/calculations/formulas/valuation_multiples.py) | Std safety |
-| `justified_ev_ebitda` (Liberti) | `[NOPAT × (1 − g/ROIC) / EBITDA] / (WACC − g)` | [valuation_multiples.py:178](../aletheia/calculations/formulas/valuation_multiples.py) | WACC ≤ g → None. `JUSTIFIED_ROIC_FLOOR = 8%` |
+| `justified_ev_ebitda` (NorthWestern) | `[NOPAT × (1 − g/ROIC) / EBITDA] / (WACC − g)` | [valuation_multiples.py:178](../aletheia/calculations/formulas/valuation_multiples.py) | WACC ≤ g → None. `JUSTIFIED_ROIC_FLOOR = 8%` |
 | `cash_conversion_ratio` | `NOPAT × (1 − g/ROIC) / EBITDA` | [valuation_multiples.py:202](../aletheia/calculations/formulas/valuation_multiples.py) | EBITDA ≤ 0 → None |
 
 ---
@@ -189,7 +189,7 @@ All formula primitives delegate to the central package (Phase 1-4 migrations). D
 | SGA_Combined | Adds AMZN's separate MarketingExpense tag | 1639 | NO — ticker-specific |
 | TotalLiabilities synthesis | `CurrentLiab + NoncurrentLiab` or `Assets − Equity` | 1599-1611 | NO — fallback ladder |
 | EBITDA | (central) | 1722-1730 | YES — Phase 3 |
-| EBITDA_Liberti | `EBITDA + R&D` (R&D as capital) | 1734-1738 | NO — Liberti methodology variant |
+| EBITDA_Liberti | `EBITDA + R&D` (R&D as capital) | 1734-1738 | NO — NorthWestern methodology variant |
 | EBITDA_ExcludingSBC | `EBITDA + SBC` (FMP convention) | 1740-1748 | NO — convention variant |
 | FCF | (central) | — | YES — Phase 2 |
 | FCF override (AMZN) | `FCF − FinanceLeasePrincipalRepayments` | 1756-1776 | NO — issuer-specific |
@@ -280,8 +280,8 @@ Location: [dcf_engine.py:59-64](../aletheia/tools/dcf_engine.py)
 - **Formula**: `TV_Gordon = FCF_Y10 × (1 + g) / (WACC − g)`
 - **Location**: [dcf_engine.py:845](../aletheia/tools/dcf_engine.py)
 
-**Liberti reinvestment-adjusted** (preferred):
-- **Formula**: `TV_Liberti = NOPAT_Y10 × (1 − g/terminal_ROIC) / (WACC − g)`
+**NorthWestern reinvestment-adjusted** (preferred):
+- **Formula**: `TV_NorthWestern = NOPAT_Y10 × (1 − g/terminal_ROIC) / (WACC − g)`
 - **Location**: [dcf_engine.py:851](../aletheia/tools/dcf_engine.py)
 
 ### 6.8 EV → equity bridge
@@ -323,7 +323,7 @@ Solves for the implied CAGR that equates a model EV to the observed market EV �
 
 **Location**: [aletheia/tools/multiple_decomposition.py](../aletheia/tools/multiple_decomposition.py)
 
-### 8.1 Liberti EV/EBITDA decomposition
+### 8.1 NorthWestern EV/EBITDA decomposition
 - **Formula**: `EV/EBITDA = [NOPAT × (1 − g/ROIC) / EBITDA] / (WACC − g)`
 - **Function**: `_compute_justified_ev_ebitda()` at [multiple_decomposition.py:49](../aletheia/tools/multiple_decomposition.py)
 - **Delegates to central**: `justified_ev_ebitda` + `cash_conversion_ratio` (Phase 4)
@@ -375,7 +375,7 @@ P/E, P/B, EV/EBITDA, EV/EBIT, EV/FCF, ND/EBITDA, D/E, interest coverage, current
 - **Location**: [screening_ratios.py:510](../aletheia/tools/screening_ratios.py)
 - **Notes**: Simplified Earnings Power Value at 9% perpetuity. Screening-only, not formal valuation.
 
-### 9.6 Cash conversion (Liberti)
+### 9.6 Cash conversion (NorthWestern)
 - Calls centralized `cash_conversion_ratio()` (Phase 4)
 
 ---
@@ -474,7 +474,7 @@ Composite logic with thresholds and weights — not single formulas. Intentional
 | Robust CAGR estimator | `aletheia/tools/screening_ratios.py:_robust_cagr` | Polynomial-fit heuristic for sparse data; screening-specific |
 | Conviction pillar scoring (P1-P5) | `aletheia/tools/conviction_scorer.py` | Composite logic with thresholds and weights; not single formulas |
 | Operating leverage score | `aletheia/tools/forensic_metrics.py` | Single-site forensic ratio; not duplicated |
-| P/Sales SFM decomposition | `aletheia/tools/multiple_decomposition.py:156-191` | Single-site illustrative framework; Liberti EV/EBITDA (centralized) is preferred |
+| P/Sales SFM decomposition | `aletheia/tools/multiple_decomposition.py:156-191` | Single-site illustrative framework; NorthWestern EV/EBITDA (centralized) is preferred |
 | Interest-expense 4.5% proxy fallback | `aletheia/tools/screening_ratios.py:438-447` | Ticker-specific workaround (AAPL/MSFT/LLY post-FY2024 disclosure changes) |
 | EPV rough MoS | `aletheia/tools/screening_ratios.py:510` | Screening-only approximation; not formal valuation |
 | Lifecycle profiles | `config/valuation_defaults.py` | Configuration constants, not formulas |

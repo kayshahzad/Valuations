@@ -134,7 +134,7 @@ QUANTITATIVE ADVERSARIAL CHALLENGE (Phase 2 Reverse DCF):
   Reverse DCF assessment:
   {chr(10).join(f'  - {r}' for r in reverse_dcf_reasons)}
 
-MULTIPLE DECOMPOSITION CHALLENGE (Liberti Formula):
+MULTIPLE DECOMPOSITION CHALLENGE (NorthWestern Formula):
   • Market EV/EBITDA: {ev_ebitda_market:.1f}x
   • Mathematically justified EV/EBITDA (given ROIC, WACC, growth): {ev_ebitda_justified:.1f}x
   • Premium to justified multiple: {ev_ebitda_premium_pct:+.0%}

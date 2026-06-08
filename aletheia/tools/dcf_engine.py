@@ -3,7 +3,7 @@ aletheia/tools/dcf_engine.py
 
 Phase 2 — DCF Engine
 =====================
-Implements the Liberti methodology DCF directly from CleanedRecord data.
+Implements the NorthWestern methodology DCF directly from CleanedRecord data.
 
 Core formula (Cash Flow from Assets):
     CFA = Revenue - Operating Costs - Taxes + D&A - CapEx - ΔNWC
@@ -20,7 +20,7 @@ WACC is computed from live market inputs:
 
 Terminal value — both methods computed and cross-checked:
     Gordon Growth : TV = FCF_final × (1+g) / (WACC - g)
-    Reinvestment  : TV = NOPAT_final × (1 - g/ROIC) / (WACC - g)  [Liberti]
+    Reinvestment  : TV = NOPAT_final × (1 - g/ROIC) / (WACC - g)  [NorthWestern]
 
 Usage:
     from aletheia.tools.dcf_engine import DCFEngine
@@ -104,7 +104,7 @@ class ScenarioAssumptions:
     @property
     def terminal_roic(self) -> float:
         """
-        Returns the terminal ROIC used to calculate the Liberti reinvestment-rate
+        Returns the terminal ROIC used to calculate the NorthWestern reinvestment-rate
         terminal value.
 
         Methodology Choice: This framework rejects the standard academic assumption
@@ -141,7 +141,7 @@ class YearProjection:
 @dataclass
 class TerminalValue:
     gordon_tv: float                   # Gordon Growth terminal value
-    reinvestment_tv: float             # Liberti reinvestment-rate TV
+    reinvestment_tv: float             # NorthWestern reinvestment-rate TV
     tv_used: float                     # Which one we use (reinvestment preferred)
     pv_tv: float                       # Present value of terminal value
     implied_tv_ebitda_multiple: float  # TV / terminal EBITDA (sanity check)
@@ -160,7 +160,7 @@ class ScenarioResult:
     implied_ev_ebitda: float = 0.0    # EV / latest EBITDA
     implied_ev_ebit: float = 0.0
 
-    # Liberti multiple decomposition
+    # NorthWestern multiple decomposition
     # EV/EBITDA = NOPATn*(1-g/ROIC)/EBITDA / (WACC-g)
     justified_ev_ebitda: float = 0.0  # What multiple is mathematically justified
     roic_wacc_spread: float = 0.0
@@ -739,7 +739,7 @@ def _project_scenario(
     forecast_years: int = 10,
 ) -> Tuple[List[YearProjection], TerminalValue, float]:
     """
-    Project cash flows for one scenario using the Liberti CFA formula.
+    Project cash flows for one scenario using the NorthWestern CFA formula.
 
     CFA = NOPAT + D&A - CapEx - ΔNWC
 
@@ -790,7 +790,7 @@ def _project_scenario(
         tax_expense = ebit * tax
         nopat = ebit * (1 - tax)
 
-        # Reinvestment (Liberti CFA formula components)
+        # Reinvestment (NorthWestern CFA formula components)
         da = revenue * assumptions.da_pct_revenue
         
         # Gradual convergence of CapEx from current intensity to terminal intensity
@@ -856,7 +856,7 @@ def _project_scenario(
     else:
         gordon_tv = final.fcff * 20   # Fallback if wacc ≤ g
 
-    # Method 2: Liberti reinvestment-rate TV = NOPAT × (1 - g/ROIC) / (WACC - g)
+    # Method 2: NorthWestern reinvestment-rate TV = NOPAT × (1 - g/ROIC) / (WACC - g)
     # Single source of truth for the ROIC floor: assumptions.terminal_roic
     effective_roic = assumptions.terminal_roic
     if wacc > g and effective_roic > g:
@@ -864,7 +864,7 @@ def _project_scenario(
     else:
         reinvest_tv = gordon_tv
 
-    # Use reinvestment-rate TV (preferred — Liberti) if it is within 50% of Gordon
+    # Use reinvestment-rate TV (preferred — NorthWestern) if it is within 50% of Gordon
     # or if Gordon TV goes negative (fallback logic).
     if (gordon_tv > 0 and abs(reinvest_tv - gordon_tv) / gordon_tv < 0.50) or (gordon_tv < 0 and reinvest_tv > 0):
         tv_used = reinvest_tv
@@ -1544,7 +1544,7 @@ class DCFEngine:
                 forecast_years=forecast_years_applied,
             )
 
-            # Multiple decomposition (Liberti formula)
+            # Multiple decomposition (NorthWestern formula)
             # EV/EBITDA = NOPATn*(1-g/ROIC)/EBITDA / (WACC-g)
             final_nopat = projections[-1].nopat
             final_ebitda = projections[-1].ebit + projections[-1].da

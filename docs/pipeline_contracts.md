@@ -304,7 +304,7 @@ financial calculations, produce `CalculationBundle`.
 
 - `DCFEngine.run` — three-scenario FCFF DCF
 - `ReverseDCF.run` — implied-CAGR solver
-- `MultipleDecomposition.run` — Liberti EV/EBITDA + P/Sales decomp
+- `MultipleDecomposition.run` — NorthWestern EV/EBITDA + P/Sales decomp
 - `ScreeningEngine.score` — 34-metric scorecard
 - `MoatFingerprint.compute_moat_fingerprint` — 5-factor moat score
 - `cyclicality.calculate_z_score`

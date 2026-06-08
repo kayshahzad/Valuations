@@ -256,7 +256,7 @@ def validate_dcf_assumptions(
                   f"Y6-10 CAGR {_pct(y6_10)} exceeds Y1-5 {_pct(y1_5)} — "
                   "growth accelerates rather than fades. Unusual.")
 
-    # Terminal ROIC feeds the Liberti reinvestment rate (g / ROIC). It must
+    # Terminal ROIC feeds the NorthWestern reinvestment rate (g / ROIC). It must
     # exceed terminal growth, else reinvestment ≥ 100% of NOPAT (nonsensical);
     # and ROIC ≤ WACC means terminal reinvestment destroys value.
     if troic is not None and g is not None and troic <= g:

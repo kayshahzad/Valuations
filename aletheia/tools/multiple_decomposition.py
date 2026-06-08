@@ -3,7 +3,7 @@ aletheia/tools/multiple_decomposition.py
 
 Phase 2 — Multiple Decomposition
 ==================================
-Implements the Liberti formula to mathematically justify EV/EBITDA multiples.
+Implements the NorthWestern formula to mathematically justify EV/EBITDA multiples.
 
 Core formula:
     EV/EBITDA = [ NOPATn × (1 - g/ROIC) / EBITDA ] / (WACC - g)
@@ -51,7 +51,7 @@ def _compute_justified_ev_ebitda(
 ) -> Tuple[float, float]:
     """
     Compute justified EV/EBITDA and cash conversion ratio using the
-    Liberti formula. Delegates to the central
+    NorthWestern formula. Delegates to the central
     ``aletheia.calculations.formulas.valuation_multiples`` module
     (Phase 4 of the centralization refactor) so the math is shared
     with every other site that decomposes multiples.
@@ -130,12 +130,12 @@ class MultipleResult:
     profit_margin: float = 0.0
     reinvestment_rate: float = 0.0
 
-    # Liberti formula components
+    # NorthWestern formula components
     cash_conversion_ratio: float = 0.0  # NOPAT*(1-g/ROIC)/EBITDA
     roic_wacc_spread: float = 0.0
     value_creation: str = ""            # "creating", "destroying", "neutral"
 
-    # Justified multiples (from Liberti formula)
+    # Justified multiples (from NorthWestern formula)
     justified_ev_ebitda: float = 0.0
     justified_ev_ebit: float = 0.0
     justified_p_sales: float = 0.0     # P/Sales with margin driver
@@ -232,7 +232,7 @@ class MultipleResult:
 
 class MultipleDecomposition:
     """
-    Decomposes current trading multiples using the Liberti formula.
+    Decomposes current trading multiples using the NorthWestern formula.
     Reads from InvestmentDatabase and fetches live market data.
     """
 
@@ -437,7 +437,7 @@ class MultipleDecomposition:
         if result.market_p_e > 0 and g > 0:
             result.market_peg = result.market_p_e / (g * 100)
 
-        # ── Liberti formula — justified EV/EBITDA ────────────────────────────
+        # ── NorthWestern formula — justified EV/EBITDA ────────────────────────────
         # EV/EBITDA = [ NOPAT × (1 - g/ROIC) / EBITDA ] / (WACC - g)
         w = wacc
         g_terminal = self.terminal_growth   # Use terminal growth for justified multiple

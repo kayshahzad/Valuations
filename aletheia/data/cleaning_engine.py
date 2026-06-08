@@ -646,7 +646,7 @@ class CleaningEngine:
             return None
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Domain 1 — Non-recurring item stripping (Liberti)
+    # Domain 1 — Non-recurring item stripping (NorthWestern)
     # ─────────────────────────────────────────────────────────────────────────
 
     def _domain1_nonrecurring(self, record: CleanedRecord):
@@ -764,7 +764,7 @@ class CleaningEngine:
             print(f"  D1 NonRecurring: net_adj={total_charge_addback - total_income_deduct:+,.0f}")
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Domain 2 — JVA / Associate income separation (Liberti)
+    # Domain 2 — JVA / Associate income separation (NorthWestern)
     # ─────────────────────────────────────────────────────────────────────────
 
     def _domain2_jva_separation(self, record: CleanedRecord,
@@ -837,7 +837,7 @@ class CleaningEngine:
             print(f"  D2 JVA: isolated={record.clean.get('JVA_Income_Isolated', 0):,.0f}")
 
     # ─────────────────────────────────────────────────────────────────────────
-    # Domain 3 — EBIT normalization (Liberti)
+    # Domain 3 — EBIT normalization (NorthWestern)
     # ─────────────────────────────────────────────────────────────────────────
 
     def _domain3_ebit_normalization(self, record: CleanedRecord):
@@ -998,7 +998,7 @@ class CleaningEngine:
                 action="flagged",
                 reason=(
                     f"Intangible amortization of {intangible_amort:,.0f} noted. "
-                    f"Liberti: add back goodwill amortization to EBIT for multiple analysis "
+                    f"NorthWestern: add back goodwill amortization to EBIT for multiple analysis "
                     f"(non-economic charge). Included in clean_EBIT only if separately identified."
                 ),
                 confidence=0.85,
@@ -1754,7 +1754,7 @@ class CleaningEngine:
             # Also store in clean for Domain 5 to use
             r.clean["EBITDA"] = ebitda
             
-            # Liberti EBITDA = EBITDA + Expensed R&D (treats R&D as capital investment)
+            # NorthWestern EBITDA = EBITDA + Expensed R&D (treats R&D as capital investment)
             rd_expense = r.raw.get("R&D") or r.raw.get("ResearchAndDevelopmentExpense") or 0.0
             if ebitda is not None:
                 r.derived["EBITDA_Liberti"] = ebitda + rd_expense

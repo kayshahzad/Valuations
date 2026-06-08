@@ -5,7 +5,7 @@ Generates executive reports (HTML + Markdown) from the full report JSON.
 
 Fixes vs original:
   1. Gross/FCF margin double-multiplication bug in HTML (was showing 1800%)
-  2. Phase 2 valuation data (3-scenario DCF, reverse DCF, Liberti multiples)
+  2. Phase 2 valuation data (3-scenario DCF, reverse DCF, NorthWestern multiples)
      is now fully rendered in all three report formats
   3. Constitution checks rendered with pass/fail indicators
   4. Intrinsic value now reads from phase2_valuation (not null dcf_model)
@@ -306,14 +306,14 @@ class ReportGenerator:
 
         # Multiple decomposition
         lines += [
-            "## 4. 📐 Multiple Decomposition (Liberti Formula)",
+            "## 4. 📐 Multiple Decomposition (NorthWestern Formula)",
             "",
             "> EV/EBITDA = [NOPAT×(1−g/ROIC)/EBITDA] ÷ (WACC−g)",
             "",
             "| Metric | Value |",
             "| :--- | :--- |",
             f"| Market EV/EBITDA | {self._fmt_num(self._to_float(md_dec.get('market_ev_ebitda')), 1)}× |",
-            f"| Justified EV/EBITDA (Liberti) | {self._fmt_num(self._to_float(md_dec.get('justified_ev_ebitda')), 1)}× |",
+            f"| Justified EV/EBITDA (NorthWestern) | {self._fmt_num(self._to_float(md_dec.get('justified_ev_ebitda')), 1)}× |",
             f"| Premium to Justified | {self._fmt_pct(self._to_float(md_dec.get('premium_pct')))} |",
             f"| ROIC | {self._fmt_pct(self._to_float(md_dec.get('roic')))} |",
             f"| WACC | {self._fmt_pct(wacc)} |",
@@ -1115,7 +1115,7 @@ class ReportGenerator:
     {"<ul style='font-size:0.85em;padding-left:18px;margin-top:10px;color:#555'>" + reasons_html + "</ul>" if reasons_html else ""}
   </div>
   <div class="card">
-    <h4>📐 Multiple Decomposition (Liberti Formula)</h4>
+    <h4>📐 Multiple Decomposition (NorthWestern Formula)</h4>
     <div style="font-size:0.8em;color:#888;margin-bottom:8px">
       EV/EBITDA = [NOPAT×(1−g/ROIC)/EBITDA] ÷ (WACC−g)
     </div>

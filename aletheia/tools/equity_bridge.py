@@ -4,7 +4,7 @@ aletheia/tools/equity_bridge.py
 Phase 2 — Equity Bridge
 ========================
 Converts Enterprise Value (from DCFEngine) to per-share equity value
-using the full 8-item Liberti equity bridge.
+using the full 8-item NorthWestern equity bridge.
 
 Bridge items (in order):
   Enterprise Value
@@ -22,7 +22,7 @@ Bridge items (in order):
   ÷ Diluted shares outstanding
   = Intrinsic Value Per Share
 
-Cash haircuts (Liberti):
+Cash haircuts (NorthWestern):
   1. Working capital requirement: ~3% of revenue (needed to run operations)
   2. Restricted cash: contractually unavailable
   3. Overseas repatriation tax: tax cost on repatriating foreign-held cash
@@ -67,7 +67,7 @@ class BridgeItem:
 
 @dataclass
 class CashAnalysis:
-    """Detailed cash haircut analysis (Liberti standard)."""
+    """Detailed cash haircut analysis (NorthWestern standard)."""
     gross_cash: float = 0.0
     working_capital_haircut: float = 0.0    # ~3% of revenue
     restricted_cash_haircut: float = 0.0    # Contractually unavailable
@@ -161,7 +161,7 @@ class EquityBridgeResult:
 
 class EquityBridge:
     """
-    Builds the full Liberti equity bridge from EV to per-share intrinsic value.
+    Builds the full NorthWestern equity bridge from EV to per-share intrinsic value.
     Reads all bridge inputs from the InvestmentDatabase.
     """
 
@@ -243,7 +243,7 @@ class EquityBridge:
         short_term_investments = get("raw_ShortTermInvestments", 0.0)
         long_term_investments = get("raw_LongTermInvestments", 0.0)
 
-        # ── Cash haircut analysis (Liberti) ───────────────────────────────────
+        # ── Cash haircut analysis (NorthWestern) ───────────────────────────────────
         # Haircut 1: Working capital requirement
         wc_requirement = revenue * self.wc_pct
 

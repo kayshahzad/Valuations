@@ -23,7 +23,7 @@ Usage:
 
 Each entry surfaces in the Stage 3 Pipeline Explorer panel as a
 "How was this derived?" expander. When an analyst sees "FCF +108% drift
-vs FMP", the registry tells them: "we use Liberti-method FCF (post-SBC
+vs FMP", the registry tells them: "we use NorthWestern-method FCF (post-SBC
 add-back); FMP uses freeCashFlowToFirmTTM (different formula).
 Category D — methodology divergence, not a bug."
 """
@@ -157,7 +157,7 @@ DERIVATIONS: List[DerivationEntry] = [
             "non-debt for FCF purposes)."
         ),
         alternates=[
-            "Liberti FCF (post-SBC add-back) — used by cleaning engine "
+            "NorthWestern FCF (post-SBC add-back) — used by cleaning engine "
             "FCF canonical field. Adds SBC back as a non-cash item, "
             "$10-20B more for SBC-heavy filers (META, AAPL, GOOGL).",
             "FMP freeCashFlowToFirmTTM — computed against a different "
@@ -595,7 +595,7 @@ DERIVATIONS: List[DerivationEntry] = [
         formula="EnterpriseValue / FCF",
         inputs=["enterprise_value", "fcf"],
         methodology=(
-            "Uses cleaning's FCF canonical (Liberti method, post-SBC "
+            "Uses cleaning's FCF canonical (NorthWestern method, post-SBC "
             "add-back)."
         ),
         alternates=[
@@ -657,7 +657,7 @@ DERIVATIONS: List[DerivationEntry] = [
         ),
         alternates=[
             "FMP EBITDA (raw OperatingIncome + D&A)",
-            "EBITDA-excluding-SBC (Liberti adjustment)",
+            "EBITDA-excluding-SBC (NorthWestern adjustment)",
         ],
     ),
     DerivationEntry(

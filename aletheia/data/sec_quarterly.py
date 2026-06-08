@@ -500,7 +500,7 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
     if operating_income is not None and da_total is not None:
         ebitda = operating_income + da_total
 
-    # Invested Capital = Equity + LongTermDebt - Cash (Liberti-style;
+    # Invested Capital = Equity + LongTermDebt - Cash (NorthWestern-style;
     # excludes short-term debt which we don't always pull cleanly from
     # SEC instant facts).
     invested_capital = None

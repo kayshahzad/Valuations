@@ -1344,7 +1344,7 @@ def _multiple_decomposition(md: Dict[str, Any]) -> None:
     cols = st.columns(4)
     cols[0].metric("Market EV/EBITDA", f"{market:.1f}x" if market else "—",
                    help="Computed against current price.")
-    cols[1].metric("Justified (Liberti)", f"{just:.1f}x" if just else "—",
+    cols[1].metric("Justified (NorthWestern)", f"{just:.1f}x" if just else "—",
                    help="Mathematically justified multiple at the same WACC + ROIC.")
     if premium is not None:
         cols[2].metric("Premium",

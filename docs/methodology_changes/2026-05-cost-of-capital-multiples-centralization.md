@@ -15,7 +15,7 @@ Phase 4 consolidated the **cost-of-capital math** and the **valuation-multiple r
 | P/E, P/B, EV/EBITDA, EV/EBIT, EV/FCF | inline in `screening_ratios.py:485-499` | central `valuation_multiples.py` |
 | ND/EBITDA, D/E, Interest Coverage, Current Ratio, Dividend Yield | inline in `screening_ratios.py` | central `valuation_multiples.py` |
 
-The bounds and fallbacks that previously lived in DCFEngine (`DEFAULT_WACC = 0.09`, Kd cap at 15%, WACC floor at max(4%, Rf+1%), WACC ceiling at 18%, Liberti ROIC floor at 8%) now live in the formula module as documented constants. Any future caller that needs WACC will get the same guarded result without re-implementing the policy.
+The bounds and fallbacks that previously lived in DCFEngine (`DEFAULT_WACC = 0.09`, Kd cap at 15%, WACC floor at max(4%, Rf+1%), WACC ceiling at 18%, NorthWestern ROIC floor at 8%) now live in the formula module as documented constants. Any future caller that needs WACC will get the same guarded result without re-implementing the policy.
 
 ## Why this convention
 

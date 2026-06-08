@@ -16,7 +16,7 @@ incomplete.
 
 | Calc | Our value | FMP value | Drift | Hypothesised methodology divergence |
 |---|---|---|---|---|
-| DCF FCF | $46.11B | $22.13B | +108% | Cleaning's `FCF` (Liberti method, post-SBC add-back) vs FMP's `freeCashFlowToFirmTTM` (different formula) |
+| DCF FCF | $46.11B | $22.13B | +108% | Cleaning's `FCF` (NorthWestern method, post-SBC add-back) vs FMP's `freeCashFlowToFirmTTM` (different formula) |
 | DCF ROIC | 31.10% | 19.96% | +56% | Our IC = TotalEquity + LongTermDebt; FMP IC includes more |
 | MD ROIC | 31.10% | 19.96% | +56% | Same as above |
 | Market P/E | 25.97 | 22.14 | +17% | TTM EPS source — we use diluted * latest price ÷ derived NI |
@@ -61,13 +61,13 @@ For the 8 drift rows above, the Stage 3 panel should:
 2. Below the table, expander "📖 How each value was derived" lists each
    calc with its methodology
 3. Analyst clicks expander → sees that FCF $46B comes from
-   Liberti-method post-SBC, FMP's $22B is freeCashFlowToFirmTTM
+   NorthWestern-method post-SBC, FMP's $22B is freeCashFlowToFirmTTM
    computed differently → drift is a "Category D — methodology
    divergence" not a bug
 
 **Specific entries the registry MUST contain** (otherwise diagnostic
 gap remains):
-- FCF (with at least 3 alternates: Damodaran, Liberti, FMP-FCFF)
+- FCF (with at least 3 alternates: Damodaran, NorthWestern, FMP-FCFF)
 - ROIC (with at least 2 alternates: McKinsey IC vs Damodaran IC)
 - P/E (TTM-EPS source choice)
 - P/B (book value definition)

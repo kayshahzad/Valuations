@@ -11,7 +11,7 @@ or missing — the multiples are undefined in those cases. Callers that
 want a "fallback" for chart display should handle the None at the
 display layer, not by suppressing it here.
 
-The justified-multiple formula (Liberti EV/EBITDA decomposition) also
+The justified-multiple formula (NorthWestern EV/EBITDA decomposition) also
 lives here so all valuation-multiple math is co-located.
 """
 
@@ -165,7 +165,7 @@ def dividend_yield(
     return _safe_ratio(dividends_paid, market_cap)
 
 
-# ── Justified-multiple math (Liberti EV/EBITDA decomposition) ─────
+# ── Justified-multiple math (NorthWestern EV/EBITDA decomposition) ─────
 
 
 # Floor on ROIC used in the cash-conversion calculation. Below 8%
@@ -185,7 +185,7 @@ def justified_ev_ebitda(
 ) -> Optional[float]:
     """[NOPAT × (1 − g/ROIC) / EBITDA] / (WACC − g)
 
-    Liberti's mathematical justification: every multiple is implied
+    NorthWestern's mathematical justification: every multiple is implied
     by the trio (ROIC, WACC, terminal growth). When WACC ≤ g the
     formula diverges (the implicit perpetual growth exceeds the
     discount rate); returns ``None`` rather than a nonsense value.
@@ -208,7 +208,7 @@ def cash_conversion_ratio(
 ) -> Optional[float]:
     """NOPAT × (1 − g/ROIC) / EBITDA
 
-    The reinvestment-adjusted cash conversion underlying the Liberti
+    The reinvestment-adjusted cash conversion underlying the NorthWestern
     formula. Returns ``None`` when EBITDA is non-positive.
     """
     if ebitda <= 0:

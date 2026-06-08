@@ -8,10 +8,10 @@ This matrix maps every requirement from the **16-Section Investment Framework** 
 | 1.2 | The 3 Macro Regimes Detection | `universe_portfolio.py` | ✓ Implemented |
 | 1.3 | Cyclicality Haircuts | `context.py` / `strategist.py` | ✓ Implemented |
 | **Section 2: Data Cleaning** | | | |
-| 2.2 | Liberti 3-Step Cleaning (EBITDA) | `forensic.py` | ⚠ Partial (LLM-driven) |
+| 2.2 | NorthWestern 3-Step Cleaning (EBITDA) | `forensic.py` | ⚠ Partial (LLM-driven) |
 | 2.3 | Domain 7: SBC adjustment | `pro_forma.py` | ✓ Implemented |
 | **Section 3: Valuation Engine** | | | |
-| 3.1 | Liberti EV/EBITDA `NOPAT×(1-g/ROIC)/(WACC-g)` | `multiple_decomposition.py` | ✓ Implemented |
+| 3.1 | NorthWestern EV/EBITDA `NOPAT×(1-g/ROIC)/(WACC-g)` | `multiple_decomposition.py` | ✓ Implemented |
 | 3.1 | P/Sales Margin Driver | `multiple_decomposition.py` | ✓ Implemented |
 | 3.2 | Multiple Selection Matrix | `fundamentalist.py` | ✓ Implemented |
 | 3.3 | Equity Bridge (8 items) | `equity_bridge.py` | ✓ Implemented |

@@ -1186,7 +1186,7 @@ def main():
                     textposition="top center", textfont=dict(size=10),
                 )
                 fig2.add_scatter(
-                    name="Justified (Liberti)", x=tickers, y=just_vals,
+                    name="Justified (NorthWestern)", x=tickers, y=just_vals,
                     mode="markers+text",
                     marker=dict(size=10, color="#10b981", symbol="circle"),
                     text=[f"{v:.1f}×" if v else "" for v in just_vals],
@@ -1498,7 +1498,7 @@ def main():
         st.markdown("#### The 34-Metric Unified Screen")
         st.markdown(
             '<span style="font-family:DM Mono,monospace;font-size:11px;color:#71717a">'
-            "Graham + Lynch + Malkiel + Liberti · 34 metrics · "
+            "Graham + Lynch + Malkiel + NorthWestern · 34 metrics · "
             "● Pass  ● Flag  ● Fail</span>",
             unsafe_allow_html=True,
         )

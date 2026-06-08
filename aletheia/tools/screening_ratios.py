@@ -1,12 +1,12 @@
 """
 aletheia/tools/screening_ratios.py
 
-Unified Screening Framework — Graham + Lynch + Malkiel + Liberti
+Unified Screening Framework — Graham + Lynch + Malkiel + NorthWestern
 =================================================================
 Computes all 34 metrics from Section 4.1 of the framework document.
 Reads from InvestmentDatabase + live market data (yfinance).
 
-Every metric traces to a named authority (Graham / Lynch / Malkiel / Liberti)
+Every metric traces to a named authority (Graham / Lynch / Malkiel / NorthWestern)
 and is compared against the framework's defined threshold.
 
 Output: ScreeningCard — one per ticker, all 34 metrics with
@@ -59,7 +59,7 @@ NA    = "—"
 class MetricResult:
     name: str
     category: str
-    authority: str          # Graham / Lynch / Malkiel / Liberti / Framework
+    authority: str          # Graham / Lynch / Malkiel / NorthWestern / Framework
     value: Optional[float]
     threshold: str          # Human-readable threshold description
     signal: str             # PASS / FLAG / FAIL / NA
@@ -315,7 +315,7 @@ class ScreeningEngine:
         # Pulls WACC + terminal-growth (used by P/E peg-band, EV/EBITDA-justified
         # math, etc.) PLUS base-scenario margin-of-safety + implied-TV-multiple,
         # which were previously hardcoded N/A in the Margin-of-Safety [Graham]
-        # and Implied-DCF-Multiple [Liberti] screening rows. Fail-soft on any
+        # and Implied-DCF-Multiple [NorthWestern] screening rows. Fail-soft on any
         # DCF computation issue — defaults preserve the previous behavior.
         from aletheia.tools.dcf_engine import DCFEngine
         wacc = 0.09
@@ -538,7 +538,7 @@ class ScreeningEngine:
         if len(ebit_m_clean) >= 4:
             om_trend = float(ebit_m_clean.iloc[-1] - ebit_m_clean.iloc[-4])
 
-        # EBITDA cash conversion ratio (Liberti)
+        # EBITDA cash conversion ratio (NorthWestern)
         effective_roic = max(roic, 0.08) if roic else 0.08
         cash_conv = nopat * (1 - terminal_growth / effective_roic) / ebitda if (nopat and ebitda and ebitda > 0) else None
 
@@ -564,16 +564,16 @@ class ScreeningEngine:
             "≤1.5 (Graham); lower than peers",
             _signal_threshold(pb, good_below=1.5, flag_above=3.0) if pb else NA)
 
-        add("EV/EBITDA (clean)", cat, "Liberti", ev_ebitda,
+        add("EV/EBITDA (clean)", cat, "NorthWestern", ev_ebitda,
             "Justify via ROIC-WACC; sector comps",
             PASS if ev_ebitda and ev_ebitda < 20 else FLAG if ev_ebitda and ev_ebitda < 35 else FAIL if ev_ebitda else NA,
             note="Compare to justified multiple in multiple_decomposition")
 
-        add("EV/EBIT (normalized)", cat, "Liberti", ev_ebit,
+        add("EV/EBIT (normalized)", cat, "NorthWestern", ev_ebit,
             "Peer comparison; capex-intensity adjusted",
             PASS if ev_ebit and ev_ebit < 25 else FLAG if ev_ebit and ev_ebit < 40 else FAIL if ev_ebit else NA)
 
-        add("EV/FCF", cat, "Liberti/Lynch", ev_fcf,
+        add("EV/FCF", cat, "NorthWestern/Lynch", ev_fcf,
             "<25x entry for capital-light compounders",
             _signal_threshold(ev_fcf, good_below=25, flag_above=50) if ev_fcf else NA)
 
@@ -600,7 +600,7 @@ class ScreeningEngine:
                   else "→ See equity_bridge.py base scenario margin_of_safety")
 
         # Implied terminal-year EBITDA multiple — sanity check on DCF
-        # assumptions. Per Liberti: terminal multiple should compress as
+        # assumptions. Per NorthWestern: terminal multiple should compress as
         # the business matures; a TV that requires ≥20× EBITDA in
         # perpetuity is signaling growth assumptions that don't decay.
         # Bands: PASS <12×, FLAG 12-20×, FAIL >20×.
@@ -612,7 +612,7 @@ class ScreeningEngine:
             tv_signal = FLAG
         else:
             tv_signal = FAIL
-        add("Terminal EV/EBITDA (implied)", cat, "Liberti", implied_tv_ebitda,
+        add("Terminal EV/EBITDA (implied)", cat, "NorthWestern", implied_tv_ebitda,
             "TV multiple should decline as business matures (<12× ideal)",
             tv_signal,
             note=("Implied EBITDA multiple at the TERMINAL year (TV / terminal "
@@ -658,7 +658,7 @@ class ScreeningEngine:
             "≥15% sustained across full cycle",
             PASS if roe and roe > 0.15 else FLAG if roe and roe > 0.08 else FAIL if roe else NA)
 
-        add("ROIC", cat, "Liberti/Framework",
+        add("ROIC", cat, "NorthWestern/Framework",
             roic * 100 if roic else None,
             "ROIC>WACC = value creation; gap drives multiple premium",
             PASS if roic and roic > 0.12 else FLAG if roic and roic > 0.08 else FAIL if roic else NA,
@@ -675,7 +675,7 @@ class ScreeningEngine:
             PASS if om_trend and om_trend > 0 else FLAG if om_trend and om_trend > -2 else FAIL if om_trend else NA,
             note=f"4Y delta: {om_trend:+.1f}pp" if om_trend else "")
 
-        add("EBITDA Cash Conversion", cat, "Liberti",
+        add("EBITDA Cash Conversion", cat, "NorthWestern",
             cash_conv,
             "Higher = better (captures reinvestment drag on FCF)",
             PASS if cash_conv and cash_conv > 0.4 else FLAG if cash_conv and cash_conv > 0.2 else FAIL if cash_conv else NA)
@@ -703,7 +703,7 @@ class ScreeningEngine:
             "<40% of debt maturing in 12 months",
             PASS if std_pct_debt is not None and std_pct_debt < 0.40 else FLAG if std_pct_debt and std_pct_debt < 0.60 else FAIL if std_pct_debt else NA)
 
-        add("Net Debt / EBITDA", cat, "Liberti",
+        add("Net Debt / EBITDA", cat, "NorthWestern",
             nd_ebitda,
             "<2x preferred; <3x acceptable; >4x = flag",
             PASS if nd_ebitda is not None and nd_ebitda < 2 else FLAG if nd_ebitda and nd_ebitda < 3 else FAIL if nd_ebitda else NA,
@@ -749,17 +749,17 @@ class ScreeningEngine:
 
         # ── SIZE & CONTEXT ────────────────────────────────────────────────────
         cat = "Size & Context"
-        add("EV (Billions)", cat, "Liberti",
+        add("EV (Billions)", cat, "NorthWestern",
             ev / 1e9 if ev else None,
             "Context: liquidity, index inclusion, institutional ownership",
             PASS)  # informational only
 
-        add("EBITDA (Billions)", cat, "Liberti",
+        add("EBITDA (Billions)", cat, "NorthWestern",
             ebitda / 1e9 if ebitda else None,
             "Context: size for EV/EBITDA calibration",
             PASS)
 
-        add("Market Cap (Billions)", cat, "Liberti",
+        add("Market Cap (Billions)", cat, "NorthWestern",
             mktcap / 1e9 if mktcap else None,
             "Context: risk premium, liquidity, volatility profile",
             PASS)

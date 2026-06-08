@@ -1764,7 +1764,7 @@ def get_ticker_fundamentals(ticker: str, response: Response):
 def get_ticker_screening(ticker: str):
     """
     Full 34-metric unified screening scorecard for one ticker.
-    Graham + Lynch + Malkiel + Liberti with pass/flag/fail signals.
+    Graham + Lynch + Malkiel + NorthWestern with pass/flag/fail signals.
     """
     try:
         from aletheia.tools.screening_ratios import ScreeningEngine

@@ -203,7 +203,7 @@ For each of the 5 tickers, the analyst:
 | Metric | Authoritative | Platform | Δ | Category |
 |---|---|---|---|---|
 | Revenue FY2024 | $383.3B (10-K) | $383.3B | 0 | — |
-| ROIC FY2024 | 45.2% (M*) | 47.1% | +1.9pp | C (calc uses Liberti NOPAT — defensible) |
+| ROIC FY2024 | 45.2% (M*) | 47.1% | +1.9pp | C (calc uses NorthWestern NOPAT — defensible) |
 | ... |
 
 ## Findings

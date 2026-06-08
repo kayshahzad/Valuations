@@ -8,7 +8,7 @@ and margin assumptions the market is pricing in.
 
 This answers the framework question: "What is the market pricing in?"
 
-Three uses (Liberti / SFM):
+Three uses (NorthWestern / SFM):
   1. What's priced in: what CAGR does current price imply?
   2. Sensitivity: how does implied growth change with different margin assumptions?
   3. TV sanity: what terminal multiple does the implied EV represent?
@@ -156,7 +156,7 @@ class ReverseDCFResult:
     # Multiple context
     current_ev_ebitda: float = 0.0           # Market EV / DB EBITDA
     implied_tv_ebitda: float = 0.0           # Terminal value / terminal EBITDA
-    forward_ev_ebitda_justified: float = 0.0 # Liberti justified multiple
+    forward_ev_ebitda_justified: float = 0.0 # NorthWestern justified multiple
 
     # Signal
     signal: str = "neutral"   # "deep_value", "fair_value", "priced_for_growth",
@@ -646,7 +646,7 @@ class ReverseDCF:
             result.implied_tv_ebitda = result.current_ev_ebitda
         result.implied_tv_ebitda = result.current_ev_ebitda   # Rough proxy
 
-        # Liberti justified multiple — also honors the override so the
+        # NorthWestern justified multiple — also honors the override so the
         # forward EV/EBITDA computation stays consistent with the
         # base-case terminal growth.
         g = terminal_growth_used
