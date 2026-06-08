@@ -621,7 +621,7 @@ def _strategic_context_block(sc: Dict[str, Any]) -> None:
     # "YES/NO + glyph" which reads contradictorily ("✓ NO" looks like
     # an affirmative when it actually means "no risk found").
     rows = [
-        {"Field": "Revenue at risk", "Value": f"{rev_at_risk*100:.1f}%" if rev_at_risk is not None else "—"},
+        {"Field": "Revenue at risk", "Value": f"{rev_at_risk:.1f}%" if rev_at_risk is not None else "—"},
         {"Field": "Quality of growth",
          "Value": "⚠ Concern flagged" if sc.get("quality_of_growth_risk") else "✓ Clean"},
         {"Field": "Terminal haircut",

@@ -193,6 +193,7 @@ class DCFResult:
     risk_free_rate: float = 0.0
     beta: float = 1.0
     wacc_base: float = 0.0
+    wacc_total_debt: float = 0.0   # debt figure used in the WACC weights
 
     # Base financials (from DB)
     revenue: float = 0.0
@@ -1420,16 +1421,22 @@ class DCFEngine:
         # Interest expense proxy — kd from net debt and a spread
         interest_expense = long_term_debt * 0.04   # Rough proxy
 
+        wacc_total_debt = max(net_debt + get("raw_Cash", 0.0), long_term_debt)
         wacc_base, ke, kd, beta = compute_wacc(
             ticker=ticker,
             total_equity=market_cap,
-            total_debt=max(net_debt + get("raw_Cash", 0.0), long_term_debt),
+            total_debt=wacc_total_debt,
             interest_expense=interest_expense,
             tax_rate=tax_rate,
             risk_free_rate=rf,
             beta=beta,
             mrp=self.mrp,
         )
+        # Expose the EXACT debt figure used in the WACC weights so the §7
+        # discount-detail and the cost-of-capital build display the same
+        # capital structure the engine actually used (not net-debt vs LTD+STD
+        # re-derivations that disagree, e.g. 86/14 vs 91.8/8.2).
+        result.wacc_total_debt = float(wacc_total_debt)
         
         result.risk_free_rate = rf
         result.beta = beta

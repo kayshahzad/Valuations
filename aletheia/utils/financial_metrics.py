@@ -123,19 +123,48 @@ def _historical_rows(df) -> List[Dict[str, Any]]:
     return rows
 
 
+def _engine_base_row(df):
+    """The SAME base row the DCF engine consumes: a TTM-row merged over the
+    latest FY (TTM wins on flow/ratio fields, FY fills structural gaps) when a
+    TTM record exists, else the latest FY row. Mirrors
+    ``dcf_engine._merge_ttm_with_fy_fallback`` so the Comprehensive Ratios
+    (ROIC, EV/EBITDA, Net Debt/EBITDA) reconcile with the engine, conviction
+    pillars, and multiple-decomposition instead of reading a stale FY-only row.
+    """
+    if df is None or df.empty:
+        return None
+    if "period" in df.columns:
+        fy = df[df["period"] == "FY"].sort_values("fiscal_year")
+        ttm = df[df["period"] == "TTM"]
+    else:
+        fy, ttm = df.sort_values("fiscal_year"), df.iloc[0:0]
+    if fy.empty:
+        return None
+    latest_fy = fy.iloc[-1]
+    if not ttm.empty:
+        try:
+            from aletheia.tools.dcf_engine import _merge_ttm_with_fy_fallback
+            return _merge_ttm_with_fy_fallback(ttm.iloc[-1], latest_fy)
+        except Exception:
+            return latest_fy
+    return latest_fy
+
+
 def _compute_ratios(
     df, market_cap: Optional[float],
     current_price: Optional[float],
 ) -> Dict[str, Dict[str, Optional[float]]]:
-    """Comprehensive ratios for the latest FY row. Reuses the central
-    formula library where possible; falls back to plain division
-    when a ratio doesn't have a dedicated formula yet."""
+    """Comprehensive ratios for the engine's base row (TTM-merged when
+    available). Reuses the central formula library where possible; falls back
+    to plain division when a ratio doesn't have a dedicated formula yet."""
     if df is None or df.empty:
         return {}
-    fy = df[df.get("period", "FY") == "FY"].sort_values("fiscal_year")
-    if fy.empty:
+    # Snapshot ratios read the engine's base row (TTM-merged); multi-year
+    # CAGR/trend calcs below stay on the FY-only frame.
+    latest = _engine_base_row(df)
+    if latest is None:
         return {}
-    latest = fy.iloc[-1]
+    fy = df[df.get("period", "FY") == "FY"].sort_values("fiscal_year")
 
     # Two-tier field lookup: top-level DB column first, then clean_json
     # blob. The FMP/hybrid path doesn't always materialize every field
@@ -413,10 +442,16 @@ def _wacc_build_from_result(
             kd_pretax = max(kd_pretax_raw, kd_floor)
             kd_aftertax = kd_pretax * (1.0 - tax_rate_used)
 
-        if market_cap and total_debt > 0:
-            ev_total = market_cap + total_debt
+        # Capital-structure WEIGHTS use the engine's exact WACC debt figure
+        # (wacc_total_debt) so this build and the §7 discount detail agree on the
+        # same weights; the Kd above keeps the book LTD+STD basis.
+        weight_debt_basis = getattr(dcf_result, "wacc_total_debt", None)
+        if not isinstance(weight_debt_basis, (int, float)) or weight_debt_basis <= 0:
+            weight_debt_basis = total_debt
+        if market_cap and weight_debt_basis and weight_debt_basis > 0:
+            ev_total = market_cap + weight_debt_basis
             weight_equity = market_cap / ev_total
-            weight_debt = total_debt / ev_total
+            weight_debt = weight_debt_basis / ev_total
 
     return {
         "risk_free_rate":      rf,

@@ -110,7 +110,12 @@ def calculate_z_score(calc_input: 'CalculationInput') -> Tuple[float, bool, bool
             "fcf_margin_pct": _g("derived_FCF_Margin_Pct"),
             "reinvestment_rate": _g("derived_ReinvestmentRate"),
             "roic": _g("derived_ROIC"),
-            "wacc": _g("derived_WACC") or 0.09,
+            # NO hardcoded fallback: `derived_WACC` is not computed by the
+            # cleaning engine, so `or 0.09` injected a phantom 9% WACC into the
+            # strategic-context narrative that contradicted the live engine WACC
+            # (~6%). Leave None; the live engine WACC is overlaid downstream
+            # (qualitative_synthesis) from phase2_valuation.
+            "wacc": _g("derived_WACC"),
             "deferred_revenue": deferred_rev,
             "deferred_rev_growth": deferred_rev_growth,
             "d8_revenue_score": d8_score,

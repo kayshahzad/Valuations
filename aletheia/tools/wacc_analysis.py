@@ -151,9 +151,13 @@ def build_wacc_analysis(
     mktcap = float(getattr(result, "market_cap", 0) or 0)
     net_debt = float(getattr(result, "net_debt", 0) or 0)
 
-    # Capital-structure weights (current; no target modeling).
+    # Capital-structure weights — use the EXACT debt figure the engine used in
+    # the WACC (exposed as wacc_total_debt) so the discount-detail weights match
+    # the cost-of-capital build instead of re-deriving from net debt.
     equity = mktcap if mktcap > 0 else None
-    debt = max(net_debt, 0.0)
+    debt = getattr(result, "wacc_total_debt", None)
+    if not isinstance(debt, (int, float)) or debt <= 0:
+        debt = max(net_debt, 0.0)
     wE = wD = None
     if equity:
         tot = equity + debt

@@ -2800,6 +2800,54 @@ def rebuild_report(ticker: str):
     except Exception as e:
         report.setdefault("_rebuild_warnings", []).append(f"market_context: {e}")
 
+    # Refresh the HEADLINE three-scenario IVs from the SAME live engine the §7
+    # discount detail uses, so the headline base IV and the WACC-sensitivity base
+    # row don't diverge (the no-LLM rebuild previously left phase2_valuation
+    # stale while recomputing §7 live). Only the IV/MoS/EV/wacc the headline
+    # renders are touched; other phase2 fields are left intact.
+    try:
+        from aletheia.utils.calc_input_builder import make_calc_input as _mci
+        from aletheia.tools.dcf_engine import DCFEngine as _Eng
+        _res = _Eng(verbose=False).run(_mci(ticker_u))
+        _p2 = (report.get("4_valuation_synthesis") or {}).get("phase2_valuation")
+        if _p2 is not None and getattr(_res, "base", None):
+            _price = _res.current_price
+            _tsd = _p2.setdefault("three_scenario_dcf", {})
+            for _name in ("bear", "base", "bull"):
+                _sc = getattr(_res, _name, None)
+                if _sc is None:
+                    continue
+                _ev = float(_sc.enterprise_value)
+                _ips = _res.intrinsic_per_share(_ev, _res.net_debt)
+                _tsd[_name] = {
+                    "intrinsic_per_share": float(_ips) if _ips is not None else None,
+                    "margin_of_safety": ((_ips / _price - 1.0)
+                                         if (_ips and _price) else None),
+                    "ev": _ev,
+                }
+            if _res.wacc_base:
+                _p2["wacc"] = float(_res.wacc_base)
+            refreshed.append("phase2_headline_iv")
+        # Refresh the Comprehensive Ratios + WACC build (§ metrics) from the
+        # same fresh result, so ROIC / EV-EBITDA / Net-Debt-EBITDA / capital
+        # weights reconcile with the engine instead of showing a stale FY-only
+        # snapshot.
+        try:
+            from aletheia.utils.financial_metrics import build_financial_metrics
+            from aletheia.data.database import InvestmentDatabase as _DB
+            _db = _DB(verbose=False)
+            try:
+                _fm = build_financial_metrics(ticker_u, _db, dcf_result=_res, p2=_p2 or {})
+            finally:
+                _db.close()
+            if _fm:
+                report["5_financial_metrics"] = _fm
+                refreshed.append("financial_metrics")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"financial_metrics: {e}")
+    except Exception as e:
+        report.setdefault("_rebuild_warnings", []).append(f"phase2_headline_iv: {e}")
+
     try:
         path_json.write_text(json.dumps(report, indent=2))
     except Exception as e:

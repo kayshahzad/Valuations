@@ -1995,8 +1995,10 @@ class ReportGenerator:
         """Strategic context — revenue at risk, terminal haircut, narrative."""
         if not sc:
             return ""
+        # revenue_at_risk_percent is already in percent units (e.g. 5.0 = 5%;
+        # the terminal_haircut flag compares it to 20, not 0.20) — do NOT ×100.
         rar = self._to_float(sc.get("revenue_at_risk_percent"))
-        rar_str = f"{rar*100:.1f}%" if rar is not None else "—"
+        rar_str = f"{rar:.1f}%" if rar is not None else "—"
         rows = [
             ("Revenue at risk",   rar_str),
             # Descriptive labels avoid "✓ NO" ambiguity — readers see

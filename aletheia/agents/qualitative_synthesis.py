@@ -465,6 +465,13 @@ def qualitative_synthesis_agent(state: Dict[str, Any]) -> Dict[str, Any]:
         if gm_trend:
             db_context_str += f"\n  Gross Margin 3Y trend: {gm_trend}"
     if cyc_db_context:
+        # Overlay the LIVE engine WACC (from phase2_valuation, written by
+        # calc_node before Stage 3) so the strategic-context narrative cites the
+        # same WACC the DCF uses — not a phantom default. Avoids the flat
+        # contradiction where prose said 9% while the engine used ~6%.
+        live_wacc = (state.get("phase2_valuation") or {}).get("wacc")
+        if isinstance(live_wacc, (int, float)) and live_wacc > 0:
+            cyc_db_context = {**cyc_db_context, "wacc": float(live_wacc)}
         db_context_str += "\n\n" + _context_db_str(
             z_score, is_peak, applies_haircut, avg_3yr or 0.0, cyc_db_context,
         )
