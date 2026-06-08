@@ -360,6 +360,16 @@ def _wacc_analysis_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]
         return None
 
 
+def _market_context_payload(ticker: str) -> Optional[Dict[str, Any]]:
+    """Market context (memo §8): earnings surprises, sell-side ratings, ESG
+    placeholder, recent news. Deterministic, FMP-backed; no LLM. Never raises."""
+    try:
+        from aletheia.tools.market_context import compose_market_context
+        return compose_market_context(ticker)
+    except Exception:
+        return None
+
+
 def _business_analysis_payload(ticker: str, calc: Any) -> Optional[Dict[str, Any]]:
     """Bottom-up business analysis (memo §4): growth decomposition (organic/M&A)
     + coverage map. Deterministic; no LLM. The /dcf path has no agent report, so
@@ -604,6 +614,7 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "current_state":          _cs_payload,
         "business_analysis":      _ba_payload,
         "assumption_grounding":   _ag_payload,
+        "market_context":         _market_context_payload(ticker),
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
         # twice.
@@ -2778,6 +2789,14 @@ def rebuild_report(ticker: str):
             refreshed.append("assumption_grounding")
     except Exception as e:
         report.setdefault("_rebuild_warnings", []).append(f"assumption_grounding: {e}")
+    try:
+        from aletheia.tools.market_context import compose_market_context
+        mc = compose_market_context(ticker_u)
+        if mc:
+            report["market_context"] = mc
+            refreshed.append("market_context")
+    except Exception as e:
+        report.setdefault("_rebuild_warnings", []).append(f"market_context: {e}")
 
     try:
         path_json.write_text(json.dumps(report, indent=2))

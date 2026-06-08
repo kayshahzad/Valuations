@@ -104,6 +104,7 @@ class BusinessAB(BaseModel):
     acquisition_strategy: str = Field(default="", description="M&A pattern: what gets bought (capability vs scale), integration approach")
     # Theme F — industry structure (Porter's five forces, with trajectory)
     competitive_intensity: str = Field(default="", description="Rivalry: how many/how strong are competitors, on what basis (price/feature/lock-in), and is intensity rising or easing")
+    competitive_positioning: str = Field(default="", description="HEAD-TO-HEAD positioning of the company's KEY PRODUCTS vs named competitor products (e.g. Abbott FreeStyle Libre vs Dexcom G7; share, accuracy/feature differentiation, price, win/loss momentum). Be specific and product-level, not generic.")
     customer_power: str = Field(default="", description="Buyer power and its TRAJECTORY: concentration, switching costs, price sensitivity — strengthening or weakening for the company")
     supplier_power: str = Field(default="", description="Supplier/input power and its trajectory: key inputs (talent, cloud/compute, components), concentration, pricing leverage")
     regulatory_trajectory: str = Field(default="", description="Direction of the regulatory/policy environment (tightening/easing) and the specific exposure (antitrust, data/privacy, tariffs, drug pricing, etc.)")
@@ -220,6 +221,10 @@ THEME F — industry structure (Porter's five forces, WITH trajectory — say wh
 each force is strengthening or weakening for the company):
 - competitive_intensity: rivalry — number/strength of competitors, basis of \
 competition (price / features / lock-in), and whether intensity is rising or easing.
+- competitive_positioning: a PRODUCT-LEVEL head-to-head for the company's key \
+products vs named rival products (e.g. Abbott FreeStyle Libre vs Dexcom G7 in CGM: \
+relative share, accuracy/feature differentiation, price, and momentum). Be \
+specific — name the products and where each wins; avoid generic statements.
 - customer_power: buyer power + trajectory — customer concentration, switching \
 costs, price sensitivity; strengthening or weakening.
 - supplier_power: supplier/input power + trajectory — key inputs (talent, cloud/ \

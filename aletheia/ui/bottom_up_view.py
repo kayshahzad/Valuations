@@ -154,6 +154,7 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
         if ba.get("lifecycle"):
             st.markdown(f"**Industry lifecycle stage:** {ba['lifecycle']}"); rendered = True
         for label, key in (("Competitive intensity", "competitive_intensity"),
+                           ("Key-product competitive positioning", "competitive_positioning"),
                            ("Customer power (trajectory)", "customer_power"),
                            ("Supplier power (trajectory)", "supplier_power"),
                            ("Regulatory trajectory", "regulatory_trajectory")):

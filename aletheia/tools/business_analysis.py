@@ -584,6 +584,7 @@ _COVERAGE = [
     ("E. Innovation", "New product launches", None),
     ("F. Industry", "Lifecycle stage", "classification.lifecycle"),
     ("F. Industry", "Competitive intensity", "dim:industry_concentration"),
+    ("F. Industry", "Key-product competitive positioning", None),
     ("F. Industry", "Customer power (trajectory)", None),
     ("F. Industry", "Supplier power (trajectory)", None),
     ("F. Industry", "Regulatory trajectory", "dim:regulatory_exposure"),
@@ -608,6 +609,7 @@ _AB_FIELDS = {
     "New product launches": "new_product_launches",
     # F — industry structure / Porter (bottom-up)
     "Competitive intensity": "competitive_intensity",
+    "Key-product competitive positioning": "competitive_positioning",
     "Customer power (trajectory)": "customer_power",
     "Supplier power (trajectory)": "supplier_power",
     "Regulatory trajectory": "regulatory_trajectory",

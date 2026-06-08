@@ -125,6 +125,8 @@ class ReportGenerator:
         # Bottom-up business analysis (§4) + assumption grounding (keystone).
         business_analysis = data.get("business_analysis") or {}
         assumption_grounding = data.get("assumption_grounding") or {}
+        # Market context (memo §8): earnings surprises, ratings, ESG, recent news.
+        market_context = data.get("market_context") or {}
 
         html = f"""<!DOCTYPE html>
 <html>
@@ -177,7 +179,9 @@ class ReportGenerator:
         self._render_wacc_analysis(wacc_analysis)
         + self._render_wacc_build(metrics),
         gap="premia shown but not applied; bear WACC not full-risk-adjusted")}
-    {self._section(8, self._render_sector_market(current_state),
+    {self._section(8,
+        self._render_sector_market(current_state)
+        + self._render_market_context(market_context),
         gap="cross-signal synthesis (integrating the four signals) not built")}
     {self._section(9,
         self._render_downside_protection(downside_protection)
@@ -679,6 +683,7 @@ class ReportGenerator:
             if letter == "F":
                 return (_kv("Industry lifecycle stage", ba.get("lifecycle"))
                         + _kv("Competitive intensity", ex.get("competitive_intensity"))
+                        + _kv("Key-product competitive positioning", ex.get("competitive_positioning"))
                         + _kv("Customer power (trajectory)", ex.get("customer_power"))
                         + _kv("Supplier power (trajectory)", ex.get("supplier_power"))
                         + _kv("Regulatory trajectory", ex.get("regulatory_trajectory")))
@@ -1395,6 +1400,95 @@ class ReportGenerator:
             return ""
         return (f'<div class="card"><h3>🔀 Cross-source triangulation</h3>'
                 f"<ul style='margin:4px 0 0 0'>{''.join(bits)}</ul></div>")
+
+    def _render_market_context(self, mc: Dict[str, Any]) -> str:
+        """§8 Market context — earnings-surprise history, sell-side ratings,
+        ESG (placeholder), and recent material news. Empty-safe."""
+        if not mc:
+            return ""
+        pct = self._fmt_pct_or_dash
+        cur = self._fmt_cur
+        cards: List[str] = []
+
+        # Earnings-surprise history.
+        es = mc.get("earnings_surprises") or {}
+        if es.get("available"):
+            rows = ""
+            for q in (es.get("quarters") or [])[:6]:
+                col = {"beat": "#27ae60", "miss": "#c0392b"}.get(q.get("label"), "#666")
+                rows += (f"<tr><td>{q.get('date','')}</td>"
+                         f"<td style='text-align:right'>{cur(q.get('eps_actual'),2)}</td>"
+                         f"<td style='text-align:right'>{cur(q.get('eps_estimated'),2)}</td>"
+                         f"<td style='text-align:right;color:{col}'>{pct(q.get('surprise_pct'))}</td>"
+                         f"<td style='color:{col}'>{q.get('label','')}</td></tr>")
+            streak = es.get("beat_streak") or 0
+            head = (f"{es.get('n_beat')}/{es.get('n_reported')} beats, avg surprise "
+                    f"{pct(es.get('avg_surprise_pct'))}"
+                    + (f", {streak}-qtr beat streak" if streak >= 2 else ""))
+            cards.append(
+                f"<h4 style='margin:6px 0 2px 0'>📈 Earnings surprises</h4>"
+                f"<p style='font-size:12px;color:#666;margin:0 0 4px 0'>{head} "
+                f"<span style='color:#888'>({es.get('source','')})</span></p>"
+                f"<table class='table-styled'><thead><tr><th>Quarter</th><th>EPS act</th>"
+                f"<th>EPS est</th><th>Surprise</th><th></th></tr></thead>"
+                f"<tbody>{rows}</tbody></table>")
+
+        # Sell-side ratings consolidation.
+        r = mc.get("ratings") or {}
+        if r.get("available"):
+            dist = r.get("distribution") or {}
+            dist_s = " / ".join(f"{k} {v}" for k, v in dist.items() if v)
+            pt = r.get("price_target") or {}
+            pt_s = ""
+            if pt.get("avg"):
+                pt_s = (f" · PT avg {cur(pt.get('avg'))}"
+                        + (f" (range {cur(pt.get('low'))}–{cur(pt.get('high'))})"
+                           if pt.get("low") and pt.get("high") else "")
+                        + (f", {pt.get('n_analysts')} analysts" if pt.get("n_analysts") else ""))
+            actions = " · ".join(
+                f"{a.get('firm')}: {a.get('grade')}"
+                + (f" ({a.get('action')})" if a.get("action") and a.get("action") != "maintain" else "")
+                for a in (r.get("recent_actions") or [])[:6])
+            cards.append(
+                f"<h4 style='margin:10px 0 2px 0'>🏦 Sell-side ratings</h4>"
+                f"<p style='margin:2px 0'><strong>Consensus: {r.get('consensus','—')}</strong> "
+                f"({dist_s}){pt_s}; {r.get('recent_upgrades_30',0)}↑ / "
+                f"{r.get('recent_downgrades_30',0)}↓ last 30 actions</p>"
+                f"<p style='font-size:11px;color:#888;margin:2px 0'>Recent: {actions}</p>"
+                f"<p style='font-size:11px;color:#b0b0b0;margin:2px 0'>"
+                f"Independent-research ratings (CFRA/Morningstar/Argus/Market Edge) "
+                f"require a licensed feed not currently connected.</p>")
+
+        # ESG (placeholder until a feed is connected).
+        esg = mc.get("esg") or {}
+        if esg.get("available"):
+            cards.append(
+                f"<h4 style='margin:10px 0 2px 0'>🌱 ESG</h4>"
+                f"<p style='margin:2px 0'>MSCI {esg.get('msci_rating','—')} · "
+                f"Sustainalytics risk {esg.get('sustainalytics_risk','—')}</p>")
+        elif esg:
+            cards.append(
+                f"<h4 style='margin:10px 0 2px 0'>🌱 ESG</h4>"
+                f"<p style='font-size:11px;color:#b0b0b0;margin:2px 0'>{esg.get('note','')}</p>")
+
+        # Recent material news.
+        news = mc.get("news") or {}
+        if news.get("available"):
+            items = ""
+            for it in (news.get("items") or [])[:5]:
+                title = it.get("title", "")
+                if it.get("url"):
+                    title = f"<a href='{it['url']}'>{title}</a>"
+                items += (f"<li><span style='color:#888'>{it.get('date','')}</span> "
+                          f"{title} <span style='color:#888'>— {it.get('publisher','')}</span></li>")
+            cards.append(
+                f"<h4 style='margin:10px 0 2px 0'>📰 Recent material news "
+                f"<span style='font-size:11px;color:#888'>(last {news.get('window_days',90)}d)</span></h4>"
+                f"<ul style='margin:2px 0 0 0;font-size:13px'>{items}</ul>")
+
+        if not cards:
+            return ""
+        return f'<div class="card"><h3>🗞️ Market context</h3>{"".join(cards)}</div>'
 
     def _render_sector_market(self, cs: Dict[str, Any]) -> str:
         """§8 Sector & market context — market signal + policy/regulatory

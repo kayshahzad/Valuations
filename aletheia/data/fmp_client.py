@@ -386,6 +386,50 @@ def fetch_grades_historical(
                   params={"limit": "30"}, force_refresh=force_refresh)
 
 
+def fetch_grades(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Individual analyst-firm rating actions (gradingCompany, previousGrade,
+    newGrade, action), most-recent first. Used to consolidate the sell-side
+    rating panel (memo: multi-source ratings)."""
+    return _fetch(ticker, "grades", "grades",
+                  params={"limit": "60"}, force_refresh=force_refresh)
+
+
+def fetch_earnings(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Quarterly earnings calendar with epsActual/epsEstimated and
+    revenueActual/revenueEstimated (most-recent first). Powers the
+    earnings-surprise history. Daily-ish cadence near reporting → tighter TTL."""
+    return _fetch(ticker, "earnings", "earnings",
+                  params={"limit": "16"}, force_refresh=force_refresh,
+                  max_age_hours=24.0)
+
+
+def fetch_stock_news(
+    ticker: str, limit: int = 30, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Recent company news headlines (title, publisher, publishedDate, url),
+    most-recent first. Powers the 'recent material news' memo section. The
+    stable endpoint takes ``symbols`` (plural), so this overrides the default
+    ``symbol`` param. Short TTL — news is time-sensitive."""
+    key = _api_key()
+    if not key:
+        return _load_cache(ticker, "stock_news", allow_stale=True)
+    if not force_refresh:
+        cached = _load_cache(ticker, "stock_news", max_age_hours=12.0)
+        if cached is not None:
+            return cached
+    url = (f"{_BASE_STABLE}/news/stock?symbols={ticker.upper()}"
+           f"&limit={int(limit)}&apikey={key}")
+    data = _http_get(url)
+    if not isinstance(data, list):
+        return _load_cache(ticker, "stock_news", allow_stale=True)
+    _save_cache(ticker, "stock_news", data)
+    return data
+
+
 def fetch_profile(ticker: str, force_refresh: bool = False) -> Optional[Dict[str, Any]]:
     """
     Company profile — sector, industry, country, currency, exchange, ISIN,

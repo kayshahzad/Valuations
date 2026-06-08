@@ -217,6 +217,13 @@ class ServingReportWriter:
                 report["assumption_grounding"] = ag
         except Exception as exc:
             print(f"⚠ Lead: assumption_grounding compose failed: {exc}")
+        try:
+            from aletheia.tools.market_context import compose_market_context
+            mc = compose_market_context(ticker)
+            if mc:
+                report["market_context"] = mc
+        except Exception as exc:
+            print(f"⚠ Lead: market_context compose failed: {exc}")
 
         try:
             with open(path_json, "w") as f:
