@@ -175,6 +175,28 @@ class TestPhase2Merge(unittest.TestCase):
         self.assertEqual(cov["TAM sizing"], "present")
         self.assertEqual(cov["Market share / position"], "present")
 
+    def test_diversified_customer_base_satisfies_dimension(self):
+        # A diversified vendor (e.g. CRM) names no customers in its 10-K, but the
+        # "Major customers / contracts" dimension is satisfied by verticals /
+        # concentration / retention / public references — not just named accounts.
+        from aletheia.tools import business_analysis as ba_mod
+        import aletheia.agents.business_extraction as bx
+        orig = bx.cached_business_ab
+        bx.cached_business_ab = lambda t: {
+            "major_customers": [],
+            "notable_customers": ["AWS", "Toyota"],
+            "industry_verticals": ["financial services", "healthcare"],
+            "net_retention": "~92% dollar retention",
+        }
+        try:
+            calc = _Calc([100, 106, 112, 119, 126, 134],
+                         [2018, 2019, 2020, 2021, 2022, 2023])
+            res = ba_mod.build_business_analysis({}, "CRM", calc=calc)
+        finally:
+            bx.cached_business_ab = orig
+        cov = {c["dimension"]: c["status"] for c in res["coverage"]}
+        self.assertEqual(cov["Major customers / contracts"], "present")
+
     def test_phase3_ce_coverage(self):
         from aletheia.tools import business_analysis as ba_mod
         import aletheia.agents.business_extraction as bx

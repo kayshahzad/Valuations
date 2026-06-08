@@ -45,6 +45,14 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
             if c.get("recompete_or_renewal"): line += f" · recompete {c['recompete_or_renewal']}"
             if c.get("pct_revenue"): line += f" · {c['pct_revenue']} of rev"
             st.markdown(line); rendered = True
+        if ex.get("notable_customers"):
+            st.markdown("**Notable customers:** " + ", ".join(ex["notable_customers"])); rendered = True
+        if ex.get("industry_verticals"):
+            st.markdown("**Industry verticals:** " + ", ".join(ex["industry_verticals"])); rendered = True
+        for label, key in (("Customer concentration", "customer_concentration"),
+                           ("Net retention", "net_retention")):
+            if ex.get(key):
+                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
         if ex.get("distribution_channels"):
             st.markdown("**Channels:** " + ", ".join(ex["distribution_channels"])); rendered = True
     elif letter == "B":

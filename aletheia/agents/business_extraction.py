@@ -65,7 +65,13 @@ class BusinessAB(BaseModel):
     product_lines: List[ProductLine] = Field(default_factory=list,
         description="3-8 specific offerings with pricing/contract structure")
     major_customers: List[CustomerContract] = Field(default_factory=list,
-        description="Named major customers/contracts with durations & recompete timing")
+        description="Named major customers/contracts with durations & recompete timing (govt/concentrated vendors)")
+    notable_customers: List[str] = Field(default_factory=list,
+        description="Well-known reference customers — from the filing OR widely-public references for DIVERSIFIED vendors whose 10-K names none (e.g. for Salesforce: AWS, Toyota, Adidas, Spotify). Use only firmly-established public relationships; reflect provenance in `confidence`.")
+    industry_verticals: List[str] = Field(default_factory=list,
+        description="Industry verticals served (financial services, healthcare, public sector, retail, manufacturing, etc.)")
+    customer_concentration: str = Field(default="", description="Concentration: largest customer / top-10 % of revenue, or 'no single customer >10% of revenue' when the filing states a diversified base")
+    net_retention: str = Field(default="", description="Net revenue / dollar retention, gross retention, or attrition rate if disclosed (a key durability metric for subscription vendors)")
     distribution_channels: List[str] = Field(default_factory=list,
         description="How customers buy: direct sales, channel/VAR, marketplace, prime/sub, etc.")
     # Theme B — market size & capture
@@ -137,9 +143,16 @@ THEME A — what the company sells:
 - product_lines: 3-8 SPECIFIC offerings (not just segment names), each with its \
 pricing/contract model (fixed-price, cost-plus, time-&-materials, subscription, \
 usage, perpetual license, etc.).
-- major_customers: named customers/contracts with duration and recompete/renewal \
-timing and % of revenue WHERE DISCLOSED (e.g. for govt contractors, the recompete \
-cycle is critical).
+- CUSTOMER BASE. Concentrated / govt vendors: list major_customers (named \
+contracts, duration, recompete/renewal timing, % of revenue) — the recompete \
+cycle is critical for govt contractors. DIVERSIFIED vendors whose 10-K names no \
+customers (e.g. Salesforce): instead capture (a) notable_customers — firmly- \
+established, widely-public reference accounts (e.g. AWS, Toyota, Adidas, Spotify) \
+— do NOT invent relationships; (b) industry_verticals served (financial services, \
+healthcare, public sector, …); (c) customer_concentration (largest/top-10 share, \
+or 'no single customer >10% of revenue' if the filing says so); (d) net_retention \
+(net/dollar revenue retention or attrition rate — usually disclosed in the 10-K \
+or earnings). At least ONE of these should be populated for any large company.
 - distribution_channels: how customers actually buy (direct sales force, channel/\
 VAR, marketplace, prime vs subcontractor, OEM, etc.).
 

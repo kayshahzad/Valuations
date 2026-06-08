@@ -548,6 +548,14 @@ _AB_FIELDS = {
 def _present(source: Optional[str], bm: Dict[str, Any], dims: Dict[str, Any],
              gd: Dict[str, Any], lifecycle: Optional[str],
              ab: Dict[str, Any], dimension: str = "") -> bool:
+    # "Major customers / contracts" is satisfied by ANY customer-base disclosure:
+    # named accounts (concentrated/govt vendors) OR the diversified-vendor pattern
+    # (public references, verticals, concentration statement, retention rate).
+    if dimension == "Major customers / contracts":
+        if any(ab.get(f) for f in ("major_customers", "notable_customers",
+                                   "industry_verticals", "customer_concentration",
+                                   "net_retention")):
+            return True
     # Phase-2 extraction fills several A/B dimensions directly.
     ab_field = _AB_FIELDS.get(dimension)
     if ab_field and ab.get(ab_field):

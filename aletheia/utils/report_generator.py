@@ -574,6 +574,10 @@ class ReportGenerator:
                                 + (f" — {c.get('relationship')}" if c.get('relationship') else "")
                                 + (f", recompete {c.get('recompete_or_renewal')}" if c.get('recompete_or_renewal') else "")
                                 + (f", {c.get('pct_revenue')} of rev" if c.get('pct_revenue') else ""))
+                        + _kv("Notable customers", ", ".join(ex.get("notable_customers") or []))
+                        + _kv("Industry verticals", ", ".join(ex.get("industry_verticals") or []))
+                        + _kv("Customer concentration", ex.get("customer_concentration"))
+                        + _kv("Net retention", ex.get("net_retention"))
                         + _kv("Distribution channels", ", ".join(ex.get("distribution_channels") or [])))
             if letter == "B":
                 tam = ba.get("tam") or {}
