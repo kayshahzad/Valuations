@@ -2214,6 +2214,80 @@ def _current_state_gate(cs: Dict[str, Any], ticker: str = "") -> str:
     return eff_sev
 
 
+def _market_context_panel(mc: Dict[str, Any]) -> None:
+    """Market context (memo §8): earnings surprises, sell-side ratings, ESG,
+    recent news. No-op when nothing is available."""
+    if not mc:
+        return
+    es = mc.get("earnings_surprises") or {}
+    r = mc.get("ratings") or {}
+    esg = mc.get("esg") or {}
+    news = mc.get("news") or {}
+    if not (es.get("available") or r.get("available") or news.get("available") or esg):
+        return
+
+    def _p(v):
+        return f"{v*100:+.1f}%" if isinstance(v, (int, float)) else "—"
+
+    with st.container(border=True):
+        st.markdown("#### 🗞️ Market context")
+
+        # Earnings surprises.
+        if es.get("available"):
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Beat rate", f"{es.get('n_beat')}/{es.get('n_reported')}")
+            c2.metric("Avg surprise", _p(es.get("avg_surprise_pct")))
+            c3.metric("Beat streak", f"{es.get('beat_streak',0)} qtr")
+            df = pd.DataFrame([{
+                "Quarter": q.get("date"),
+                "EPS act": q.get("eps_actual"),
+                "EPS est": q.get("eps_estimated"),
+                "Surprise": _p(q.get("surprise_pct")),
+                "": q.get("label", ""),
+            } for q in (es.get("quarters") or [])[:6]])
+            st.dataframe(df, hide_index=True, use_container_width=True)
+
+        # Sell-side ratings.
+        if r.get("available"):
+            dist = r.get("distribution") or {}
+            dist_s = " / ".join(f"{k} {v}" for k, v in dist.items() if v)
+            pt = r.get("price_target") or {}
+            pt_s = ""
+            if pt.get("avg"):
+                pt_s = f" · PT avg ${pt['avg']:.0f}"
+                if pt.get("low") and pt.get("high"):
+                    pt_s += f" (${pt['low']:.0f}–${pt['high']:.0f})"
+            st.markdown(f"**Sell-side: {r.get('consensus','—')}** ({dist_s}){pt_s} · "
+                        f"{r.get('recent_upgrades_30',0)}↑ / {r.get('recent_downgrades_30',0)}↓ "
+                        f"last 30 actions")
+            acts = r.get("recent_actions") or []
+            if acts:
+                st.caption("Recent: " + " · ".join(
+                    f"{a.get('firm')} {a.get('grade')}"
+                    + (f" ({a.get('action')})" if a.get("action") not in (None, "maintain") else "")
+                    for a in acts[:6]))
+            st.caption("Independent-research ratings (CFRA/Morningstar/Argus/Market "
+                       "Edge) require a licensed feed not currently connected.")
+
+        # ESG.
+        if esg.get("available"):
+            st.markdown(f"**ESG:** MSCI {esg.get('msci_rating','—')} · "
+                        f"Sustainalytics risk {esg.get('sustainalytics_risk','—')}")
+        elif esg:
+            st.caption(f"🌱 ESG: {esg.get('note','')}")
+
+        # Recent news.
+        if news.get("available"):
+            st.markdown(f"**📰 Recent material news** (last {news.get('window_days',90)}d)")
+            for it in (news.get("items") or [])[:5]:
+                title = it.get("title", "")
+                if it.get("url"):
+                    title = f"[{title}]({it['url']})"
+                st.markdown(f"- _{it.get('date','')}_ — {title} "
+                            f"<span style='color:#888'>({it.get('publisher','')})</span>",
+                            unsafe_allow_html=True)
+
+
 # ── Main render ───────────────────────────────────────────────────────────
 
 def render_deep_dive_view(
@@ -2278,6 +2352,9 @@ def render_deep_dive_view(
     # ── Bottom-up business analysis + assumption grounding (§4 keystone) ─
     _business_analysis_panel((dcf or {}).get("business_analysis") or {},
                              (dcf or {}).get("assumption_grounding") or {})
+
+    # ── Market context (memo §8): surprises, ratings, ESG, news ──────────
+    _market_context_panel((dcf or {}).get("market_context") or {})
 
     # ── FMP validation banner (Gates A/B/D) ─────────────────────────────
     _fmp_validation_banner((full_report or {}).get("_validation") or {})

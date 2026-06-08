@@ -716,6 +716,7 @@ class DCFResponse(BaseModel):
     wacc_analysis: Optional[dict] = None
     business_analysis: Optional[dict] = None
     assumption_grounding: Optional[dict] = None
+    market_context: Optional[dict] = None
 
 
 class DCFOverridesRequest(BaseModel):
@@ -1379,6 +1380,7 @@ def get_ticker_dcf(ticker: str, response: Response):
         wacc_analysis=payload.get("wacc_analysis"),
         business_analysis=payload.get("business_analysis"),
         assumption_grounding=payload.get("assumption_grounding"),
+        market_context=payload.get("market_context"),
     )
 
 
