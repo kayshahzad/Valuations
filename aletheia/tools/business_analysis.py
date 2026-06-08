@@ -388,14 +388,22 @@ def _latest_revenue(calc) -> Optional[float]:
 
 
 def build_growth_decomposition(calc) -> Dict[str, Any]:
-    """Decompose historical revenue growth into organic vs M&A/regime-break.
+    """Decompose recent revenue growth into organic vs M&A.
 
-    Reuses ``dcf_engine._organic_cagr_ex_breaks``. Returns ``available=False``
-    when there's too little history. ``ma_contribution_pp`` is the percentage
-    points of raw CAGR attributable to break years (raw − organic)."""
+    M&A is detected from cash-flow acquisition spend (``ma_spend``) over a
+    consistent window — NOT from revenue spikes. The old revenue-spike
+    heuristic mis-flagged early-stage organic hypergrowth as "M&A" (e.g. CRM
+    FY2004-2007) and compared ``raw_cagr`` (recent window) against an organic
+    geomean computed over a DIFFERENT span, yielding nonsensical negative M&A
+    contributions. Flag-only: we know cash spent, not acquired revenue, so we
+    don't fabricate an organic/inorganic split — ``raw_cagr`` is an upper bound
+    on organic when M&A lands in the window. Returns ``available=False`` when
+    there's too little history.
+
+    Caveat: cash-flow detection cannot see ALL-STOCK acquisitions (e.g. CRM's
+    Tableau, FY2020) — they leave no cash-flow footprint."""
     out: Dict[str, Any] = {"available": False}
     try:
-        from aletheia.tools.dcf_engine import _organic_cagr_ex_breaks
         df = getattr(calc, "df", None)
         if df is None or "clean_Revenue" not in getattr(df, "columns", []):
             return out
@@ -416,31 +424,40 @@ def build_growth_decomposition(calc) -> Dict[str, Any]:
         cls = getattr(calc, "classification", None)
         ticker = getattr(cls, "ticker", "") or ""
 
-        organic, break_years = _organic_cagr_ex_breaks(d)
-        # Cash-flow M&A detection — catches bolt-ons on a large base that never
-        # spike YoY revenue (the revenue-break method's blind spot).
-        mas = ma_spend(ticker, window_years) if ticker else {"material": False}
+        # M&A detection via cash-flow acquisition spend (the reliable signal).
+        # Wide lookback lists the real deals; the subset inside the CAGR window
+        # drives separability of recent growth.
+        wide_years = fy_years[-min(10, len(revs)):]
+        mas = ma_spend(ticker, wide_years) if ticker else {"material": False}
+        win_set = set(window_years)
+        ma_in_window = sorted(m["year"] for m in mas.get("years", [])
+                              if m["year"] in win_set)
         organic_is_upper_bound = False
         ma_separable = True
-        if organic is not None and break_years:
-            ma_pp = (raw_cagr - organic) if raw_cagr is not None else None
-            split = "organic + M&A/regime breaks"
-        elif mas.get("material"):
-            # M&A spend is material but produced no isolable revenue spike →
-            # organic is NOT cleanly separable; raw CAGR is an UPPER bound on it.
+        if ma_in_window:
+            # Material M&A inside the recent CAGR window. We know cash spent,
+            # not acquired revenue, so we do NOT fabricate an organic/inorganic
+            # split — raw CAGR is an upper bound on organic.
             organic = raw_cagr
             ma_pp = None
-            break_years = []
             ma_separable = False
             organic_is_upper_bound = True
-            yrs = ", ".join(f"FY{m['year']}" for m in mas.get("years", []))
-            split = (f"M&A spend material ({yrs}) but not separable from organic "
-                     f"via revenue trends — organic ≤ raw CAGR")
-        else:
-            organic = raw_cagr  # no break, no material M&A spend → all organic
+            break_years = ma_in_window
+            yrs = ", ".join(f"FY{y}" for y in ma_in_window)
+            split = (f"M&A material in window ({yrs}) — cash spend known but "
+                     f"acquired revenue not disclosed; organic ≤ raw CAGR")
+        elif mas.get("material"):
+            # Material M&A only in earlier years (outside the recent window) →
+            # the recent CAGR is effectively organic.
+            organic = raw_cagr
             ma_pp = 0.0
             break_years = []
-            split = "all organic (no transformative break or material M&A spend)"
+            split = "all organic in window (material M&A only in earlier years)"
+        else:
+            organic = raw_cagr  # no material M&A spend → all organic
+            ma_pp = 0.0
+            break_years = []
+            split = "all organic (no material M&A spend)"
         # Market-vs-share split (Phase 5): organic growth above the peer-group
         # market-growth reference is share gain; below is share loss / lagging.
         try:

@@ -48,16 +48,40 @@ class _Result:
 
 class TestGrowthDecomposition(unittest.TestCase):
 
-    def test_detects_ma_break(self):
-        # Steady ~5%/yr then a +50% jump (M&A) in FY2021.
+    def test_revenue_spike_alone_is_not_an_ma_break(self):
+        # A +50% revenue jump with NO cash-flow acquisition spend is organic
+        # hypergrowth, NOT M&A — the old revenue-spike heuristic wrongly flagged
+        # it (and flagged early-stage growth like CRM FY2004-2007). With no
+        # ticker, ma_spend is unavailable → no false break.
         years = [2017, 2018, 2019, 2020, 2021, 2022, 2023]
         revs = [100, 105, 110, 116, 174, 183, 192]  # 2021 = +50%
         gd = build_growth_decomposition(_Calc(revs, years))
         self.assertTrue(gd["available"])
-        self.assertIn(2021, gd["break_years"])
-        # Organic should be well below the raw CAGR (which the M&A inflated).
-        self.assertLess(gd["organic_cagr"], gd["raw_cagr"])
-        self.assertGreater(gd["ma_contribution_pp"], 0)
+        self.assertEqual(gd["break_years"], [])
+        self.assertEqual(gd["ma_contribution_pp"], 0.0)
+
+    def test_cashflow_ma_in_window_flags_break_not_separable(self):
+        # M&A is detected from cash-flow spend, not revenue spikes. A material
+        # acquisition year inside the window flags a break + marks organic as an
+        # upper bound (flag-only — acquired revenue isn't disclosed).
+        from aletheia.tools import business_analysis as ba_mod
+        cls = _Cls(sector="Technology", industry="Software")
+        cls.ticker = "TST"
+        calc = _Calc([100, 110, 121, 133, 146, 161],
+                     [2018, 2019, 2020, 2021, 2022, 2023], classification=cls)
+        orig = ba_mod.ma_spend
+        ba_mod.ma_spend = lambda t, years=None: {
+            "material": True,
+            "years": [{"year": 2022, "spend": 5e9, "pct_of_revenue": 0.30}],
+        }
+        try:
+            gd = ba_mod.build_growth_decomposition(calc)
+        finally:
+            ba_mod.ma_spend = orig
+        self.assertIn(2022, gd["break_years"])
+        self.assertFalse(gd["ma_separable"])
+        self.assertTrue(gd["organic_is_upper_bound"])
+        self.assertIsNone(gd["ma_contribution_pp"])
 
     def test_market_vs_share_split(self):
         from aletheia.tools import business_analysis as ba_mod

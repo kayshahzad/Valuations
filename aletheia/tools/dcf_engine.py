@@ -904,7 +904,7 @@ def _project_scenario(
     return projections, terminal, enterprise_value
 
 
-def _organic_cagr_ex_breaks(df_fy):
+def _organic_cagr_ex_breaks(df_fy, lookback_years: int = 8):
     """Detect outlier YoY revenue jumps (transformative M&A / regime breaks)
     and return ``(organic_cagr, [break_fiscal_years])``.
 
@@ -915,6 +915,13 @@ def _organic_cagr_ex_breaks(df_fy):
     deal. The organic CAGR is the geometric mean of the remaining (non-break)
     YoY factors. Returns ``(None, [])`` when there's too little history or no
     break is detected, so the caller keeps its existing CAGR.
+
+    Scoped to the last ``lookback_years`` fiscal years: the purpose is to clean
+    the FORWARD growth reference, so only forecast-relevant recent history
+    matters. Without this scope, a company's early-stage organic hypergrowth
+    (e.g. CRM growing 50-80%/yr in FY2004-2007) is wrongly flagged as "M&A",
+    and the geomean of the remaining (still-high early-growth) years is adopted
+    as the forward CAGR — CRM was forecast at 26% vs ~14% actual recent growth.
     """
     if df_fy is None or "clean_Revenue" not in getattr(df_fy, "columns", []):
         return None, []
@@ -923,6 +930,11 @@ def _organic_cagr_ex_breaks(df_fy):
     years = [int(x) for x in d["fiscal_year"].tolist()]
     if len(revs) < 4:
         return None, []
+    # Restrict to the recent, forecast-relevant window (keep one extra year so
+    # the first YoY in the window has a base).
+    if lookback_years and len(revs) > lookback_years + 1:
+        revs = revs[-(lookback_years + 1):]
+        years = years[-(lookback_years + 1):]
     yoy = [
         (years[i], revs[i] / revs[i - 1] - 1.0)
         for i in range(1, len(revs)) if revs[i - 1] > 0
