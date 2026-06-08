@@ -712,12 +712,16 @@ class ReportGenerator:
             theme_cov = [c for c in cov if c.get("theme", "").startswith(cov_prefix)]
             pend = [c["dimension"] for c in theme_cov if c.get("status") == "pending"]
             na = [c for c in theme_cov if c.get("status") == "n_a"]
+            nd = [c["dimension"] for c in theme_cov if c.get("status") == "not_disclosed"]
             prio = {c["dimension"] for c in theme_cov if c.get("priority")}
             pend_html = ""
             if pend:
                 marked = ["★ " + d if d in prio else d for d in pend]
                 pend_html = (f'<p style="font-size:11px;color:#b0b0b0;margin:2px 0">'
                              f'Pending extraction: {", ".join(marked)}</p>')
+            if nd:
+                pend_html += (f'<p style="font-size:11px;color:#b0b0b0;margin:2px 0">'
+                              f'Not disclosed in filing: {", ".join(nd)}</p>')
             if na:
                 na_txt = ", ".join(f"{c['dimension']}"
                                    + (f" ({c['reason']})" if c.get("reason") else "")
@@ -738,6 +742,7 @@ class ReportGenerator:
   <p style="font-size:12px;color:#666;margin:2px 0 6px 0">
     The business reality beneath the revenue line, by theme.
     {ba.get('n_present','?')}/{ba.get('n_total','?')} dimensions populated
+    {f"· {ba.get('n_not_disclosed')} not disclosed " if ba.get('n_not_disclosed') else ''}
     {f"· {ba.get('n_na')} n/a " if ba.get('n_na') else ''}; ★ = sector priority.
   </p>
   {tpl_html}{sections}

@@ -71,7 +71,7 @@ class BusinessAB(BaseModel):
     industry_verticals: List[str] = Field(default_factory=list,
         description="Industry verticals served (financial services, healthcare, public sector, retail, manufacturing, etc.)")
     customer_concentration: str = Field(default="", description="Concentration: largest customer / top-10 % of revenue, or 'no single customer >10% of revenue' when the filing states a diversified base")
-    net_retention: str = Field(default="", description="Net revenue / dollar retention, gross retention, or attrition rate if disclosed (a key durability metric for subscription vendors)")
+    net_retention: str = Field(default="", description="Net/dollar revenue retention, gross retention, or attrition RATE if disclosed; else the qualitative characterization ('strong retention', 'low attrition') or 'no specific rate disclosed'. Key durability metric for subscription vendors.")
     distribution_channels: List[str] = Field(default_factory=list,
         description="How customers buy: direct sales, channel/VAR, marketplace, prime/sub, etc.")
     # Theme B — market size & capture
@@ -158,8 +158,10 @@ established, widely-public reference accounts (e.g. AWS, Toyota, Adidas, Spotify
 — do NOT invent relationships; (b) industry_verticals served (financial services, \
 healthcare, public sector, …); (c) customer_concentration (largest/top-10 share, \
 or 'no single customer >10% of revenue' if the filing says so); (d) net_retention \
-(net/dollar revenue retention or attrition rate — usually disclosed in the 10-K \
-or earnings). At least ONE of these should be populated for any large company.
+— the net/dollar revenue retention or attrition RATE if disclosed; if no specific \
+number is given, the qualitative characterization the filing uses ('strong \
+dollar-based retention', 'low attrition'), or 'no specific rate disclosed' when \
+the filing is silent. At least ONE of these should be populated for any large company.
 - distribution_channels: how customers actually buy (direct sales force, channel/\
 VAR, marketplace, prime vs subcontractor, OEM, etc.).
 

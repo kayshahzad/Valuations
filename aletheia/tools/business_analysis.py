@@ -654,9 +654,9 @@ _CAC_APPLICABLE_TEMPLATES = {"tech_saas", "consumer"}
 
 def _coverage_status(source, bm, dims, gd, lifecycle, ab, dimension,
                      seg, tam, template_key, oplev=None):
-    """Three-state coverage label (P5): 'present', 'n_a' (structurally not
-    applicable / not disclosed), or 'pending' (extractable, not yet run).
-    Returns (status, reason)."""
+    """Four-state coverage label: 'present', 'n_a' (structurally not applicable),
+    'not_disclosed' (extraction RAN but the filing doesn't disclose it), or
+    'pending' (extractable, extraction not yet run). Returns (status, reason)."""
     # Present always wins (real data beats any N/A heuristic).
     if _present(source, bm, dims, gd, lifecycle, ab, dimension):
         return "present", ""
@@ -675,6 +675,13 @@ def _coverage_status(source, bm, dims, gd, lifecycle, ab, dimension,
     # CAC/LTV/cohorts only apply to subscription/consumer models.
     if dimension == "CAC / LTV / cohorts" and template_key not in _CAC_APPLICABLE_TEMPLATES:
         return "n_a", "not a subscription / consumer model"
+    # Distinguish "filing doesn't disclose it" from "extraction not yet run":
+    # if the extraction HAS run (ab populated) and an extraction-satisfiable
+    # dimension is still empty, the filing genuinely doesn't disclose it.
+    extraction_ran = bool(ab)
+    ext_dim = dimension in _AB_FIELDS or dimension == "Major customers / contracts"
+    if extraction_ran and ext_dim:
+        return "not_disclosed", "extraction ran; not disclosed in the filing"
     return "pending", ""
 
 
@@ -739,11 +746,13 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
     coverage = []
     n_present = 0
     n_na = 0
+    n_not_disclosed = 0
     for theme, dimension, source in _COVERAGE:
         status, reason = _coverage_status(
             source, bm, dims, gd, lifecycle, ab, dimension, seg, tam, template_key, oplev)
         n_present += int(status == "present")
         n_na += int(status == "n_a")
+        n_not_disclosed += int(status == "not_disclosed")
         coverage.append({
             "theme": theme, "dimension": dimension,
             "status": status,
@@ -766,6 +775,7 @@ def build_business_analysis(report: Optional[Dict[str, Any]], ticker: str,
         "coverage": coverage,
         "n_present": n_present,
         "n_na": n_na,
+        "n_not_disclosed": n_not_disclosed,
         "n_total": len(coverage),
         "lifecycle": lifecycle,
         "sector_template": {

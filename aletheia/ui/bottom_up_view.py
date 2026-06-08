@@ -220,15 +220,18 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
             theme_cov = [c for c in cov if c.get("theme", "").startswith(cov_prefix)]
             pend = [c["dimension"] for c in theme_cov if c.get("status") == "pending"]
             na = [c for c in theme_cov if c.get("status") == "n_a"]
+            nd = [c["dimension"] for c in theme_cov if c.get("status") == "not_disclosed"]
             prio = {c["dimension"] for c in theme_cov if c.get("priority")}
             if pend:
                 marked = ["★ " + d if d in prio else d for d in pend]
                 st.caption("Pending extraction: " + ", ".join(marked))
+            if nd:
+                st.caption("Not disclosed in filing: " + ", ".join(nd))
             if na:
                 st.caption("Not applicable: " + ", ".join(
                     c["dimension"] + (f" ({c['reason']})" if c.get("reason") else "")
                     for c in na))
-            if not had and not pend and not na:
+            if not had and not pend and not na and not nd:
                 st.caption("—")
 
     # Assumption grounding — the bottom-up → top-down bridge (keystone).
