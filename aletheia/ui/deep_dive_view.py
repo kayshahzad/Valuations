@@ -2214,6 +2214,61 @@ def _current_state_gate(cs: Dict[str, Any], ticker: str = "") -> str:
     return eff_sev
 
 
+_SPECIALIZED_VAL_LABELS = {
+    "reit": ("Two-stage AFFO valuation", "AFFO/sh",
+             "REIT analog of a DCF — equity valued as a two-stage AFFO/share "
+             "growth stream (AFFO is the REIT's distributable cash), not FCFF."),
+    "ddm":  ("Two-stage dividend discount", "DPS",
+             "Equity valued as a two-stage dividend-per-share growth stream."),
+}
+
+
+def render_specialized_valuation_panel(dcf: Dict[str, Any]) -> None:
+    """Two-stage per-share decomposition for specialized engines (REIT AFFO /
+    DDM dividends). Renders only for those engines; no-op for FCFF. Shared by
+    the Deep Dive and the Financials tab."""
+    engine = (dcf or {}).get("engine")
+    meta = _SPECIALIZED_VAL_LABELS.get(engine)
+    if not meta:
+        return
+    dec = (dcf or {}).get("valuation_decomposition") or {}
+    yearly = dec.get("yearly") or []
+    if not yearly:
+        return
+    title, cf_label, blurb = meta
+    inp = (dcf or {}).get("specialized_inputs") or {}
+
+    def _c(v, dp=2):
+        return f"${v:,.{dp}f}" if isinstance(v, (int, float)) else "—"
+
+    def _p(v):
+        return f"{v*100:.1f}%" if isinstance(v, (int, float)) else "—"
+
+    ke = inp.get("cost_of_equity"); gx = inp.get("explicit_growth")
+    tg = inp.get("terminal_growth")
+    cf0 = inp.get("current_affo_per_share") or inp.get("current_dps_annualized")
+    with st.container(border=True):
+        st.markdown(f"#### 📐 {title}")
+        st.caption(blurb)
+        st.caption(f"**Inputs:** {cf_label} {_c(cf0)} · grow {_p(gx)} for "
+                   f"{inp.get('explicit_years','?')}y → terminal {_p(tg)} · Ke {_p(ke)}")
+        df = pd.DataFrame([{
+            "Year": f"Y{y.get('year')}",
+            cf_label: _c(y.get("dps")),
+            "PV": _c(y.get("pv")),
+        } for y in yearly])
+        st.dataframe(df, hide_index=True, use_container_width=True)
+        iv = dec.get("intrinsic_per_share")
+        tv_share = dec.get("tv_share")
+        implied = (iv / cf0) if (isinstance(iv, (int, float)) and isinstance(cf0, (int, float)) and cf0) else None
+        c1, c2, c3 = st.columns(3)
+        c1.metric("PV explicit", _c(dec.get("pv_explicit"), 0))
+        c2.metric("PV terminal", _c(dec.get("pv_terminal"), 0),
+                  f"{tv_share*100:.0f}% of IV" if isinstance(tv_share, (int, float)) else None)
+        c3.metric("Intrinsic value", _c(iv, 0),
+                  f"{implied:.1f}× {cf_label}" if implied else None)
+
+
 def _market_context_panel(mc: Dict[str, Any]) -> None:
     """Market context (memo §8): earnings surprises, sell-side ratings, ESG,
     recent news. No-op when nothing is available."""
@@ -2352,6 +2407,9 @@ def render_deep_dive_view(
     # ── Bottom-up business analysis + assumption grounding (§4 keystone) ─
     _business_analysis_panel((dcf or {}).get("business_analysis") or {},
                              (dcf or {}).get("assumption_grounding") or {})
+
+    # ── Two-stage AFFO/DDM decomposition (specialized engines only) ──────
+    render_specialized_valuation_panel(dcf or {})
 
     # ── Market context (memo §8): surprises, ratings, ESG, news ──────────
     _market_context_panel((dcf or {}).get("market_context") or {})

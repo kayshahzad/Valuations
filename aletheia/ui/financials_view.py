@@ -1275,6 +1275,15 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
     # ── DCF section preserved (delegated to existing block) ──────────────
     if bundle.get("dcf_inputs"):
         _render_dcf_section(ticker, bundle)
+    else:
+        # Specialized engines (REIT → AFFO, DDM → dividends) have no FCFF
+        # dcf_inputs — render the two-stage per-share decomposition instead.
+        _live, _ = _dcf_api("GET", f"/ticker/{ticker}/dcf")
+        if _live and _live.get("engine") in ("reit", "ddm"):
+            st.markdown("---")
+            st.markdown("#### Valuation")
+            from aletheia.ui.deep_dive_view import render_specialized_valuation_panel
+            render_specialized_valuation_panel(_live)
 
 
 def _render_dcf_section(ticker: str, bundle: Dict[str, Any]) -> None:

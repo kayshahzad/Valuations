@@ -168,6 +168,7 @@ class ReportGenerator:
         gap="current-state pillar exists but is not in the scored 25-pt total")}
     {self._section(6,
         self._render_assumption_grounding(assumption_grounding)
+        + self._render_specialized_valuation(p2)
         + self._render_scenario_triangle(p2)
         + self._render_phase2_section(p2)
         + self._render_reverse_dcf_detail(p2)
@@ -1836,6 +1837,75 @@ class ReportGenerator:
   {cust_html}
   {narrative_html}
 </div>""".strip()
+
+    # Specialized two-stage engines (REIT → AFFO, DDM → dividends) carry their
+    # own per-share cash-flow decomposition instead of the FCFF scenario triangle.
+    _SPECIALIZED_VAL = {
+        "reit": ("Two-stage AFFO valuation", "AFFO/sh",
+                 "REIT analog of a DCF: the equity is valued as a two-stage "
+                 "AFFO-per-share growth stream (AFFO is the REIT's distributable "
+                 "cash). Shown, not FCFF — GAAP earnings understate a REIT."),
+        "ddm":  ("Two-stage dividend discount", "DPS",
+                 "Equity valued as a two-stage dividend-per-share growth stream."),
+    }
+
+    def _render_specialized_valuation(self, p2: Dict[str, Any]) -> str:
+        """Two-stage per-share decomposition for specialized engines (REIT AFFO /
+        DDM dividends). Renders only for those engines; empty for FCFF."""
+        engine = (p2 or {}).get("engine")
+        meta = self._SPECIALIZED_VAL.get(engine)
+        if not meta:
+            return ""
+        dec = p2.get("valuation_decomposition") or {}
+        yearly = dec.get("yearly") or []
+        if not yearly:
+            return ""
+        title, cf_label, blurb = meta
+        cur = self._fmt_cur
+        pct = self._fmt_pct
+        inp = p2.get("specialized_inputs") or {}
+        ke = inp.get("cost_of_equity")
+        gx = inp.get("explicit_growth")
+        tg = inp.get("terminal_growth")
+        cf0 = (inp.get("current_affo_per_share")
+               or inp.get("current_dps_annualized"))
+
+        rows = ""
+        for y in yearly:
+            rows += (f"<tr><td>Y{y.get('year')}</td>"
+                     f"<td style='text-align:right'>{cur(self._to_float(y.get('dps')), 2)}</td>"
+                     f"<td style='text-align:right'>{cur(self._to_float(y.get('pv')), 2)}</td></tr>")
+        iv = self._to_float(dec.get("intrinsic_per_share"))
+        tv_share = self._to_float(dec.get("tv_share"))
+        affo_ps = self._to_float(cf0)
+        implied_mult = (iv / affo_ps) if (iv and affo_ps) else None
+
+        inputs_line = (
+            f"{cf_label} {cur(affo_ps, 2)} · grow {pct(gx)} for "
+            f"{inp.get('explicit_years','?')}y → terminal {pct(tg)} · "
+            f"Ke {pct(ke)}")
+        summary = (
+            f"<tr><td><strong>PV of explicit ({len(yearly)}y)</strong></td>"
+            f"<td></td><td style='text-align:right'><strong>{cur(self._to_float(dec.get('pv_explicit')), 2)}</strong></td></tr>"
+            f"<tr><td>Terminal value (Gordon)</td><td></td>"
+            f"<td style='text-align:right'>{cur(self._to_float(dec.get('terminal_value')), 2)}</td></tr>"
+            f"<tr><td>PV of terminal</td><td></td>"
+            f"<td style='text-align:right'>{cur(self._to_float(dec.get('pv_terminal')), 2)}"
+            + (f" <span style='color:#888'>({pct(tv_share)} of IV)</span>" if tv_share is not None else "")
+            + "</td></tr>"
+            f"<tr style='border-top:2px solid #333'><td><strong>Intrinsic value / share</strong></td>"
+            f"<td></td><td style='text-align:right'><strong>{cur(iv, 2)}</strong>"
+            + (f" <span style='color:#888'>({implied_mult:.1f}× {cf_label})</span>" if implied_mult else "")
+            + "</td></tr>")
+
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>📐 {title}</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">{blurb}</p>
+  <p style="font-size:12px;color:#444;margin:2px 0 6px 0"><strong>Inputs:</strong> {inputs_line}</p>
+  <table class='table-styled'><thead><tr><th>Year</th><th>{cf_label}</th><th>PV</th></tr></thead>
+  <tbody>{rows}{summary}</tbody></table>
+  </div>"""
 
     def _render_scenario_triangle(self, p2: Dict[str, Any]) -> str:
         """Bull/Base/Bear IV horizontal-bar chart. Pure HTML/CSS — no JS dep."""

@@ -301,6 +301,7 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         # Specialized-engine extras (surface to DCFResponse for the Deep Dive).
         "engine":                 vresult.engine,
         "valuation_decomposition": decomposition,
+        "specialized_inputs":     snap,
         "source_citation":        snap.get("source"),
         "as_of_date":             snap.get("as_of_date"),
         "engine_warnings":        list(vresult.warnings or []),
@@ -717,6 +718,7 @@ class DCFResponse(BaseModel):
     business_analysis: Optional[dict] = None
     assumption_grounding: Optional[dict] = None
     market_context: Optional[dict] = None
+    specialized_inputs: Optional[dict] = None
 
 
 class DCFOverridesRequest(BaseModel):
@@ -1372,6 +1374,7 @@ def get_ticker_dcf(ticker: str, response: Response):
         multiple_decomposition=payload["multiple_decomposition"],
         engine=payload.get("engine"),
         valuation_decomposition=payload.get("valuation_decomposition"),
+        specialized_inputs=payload.get("specialized_inputs"),
         source_citation=payload.get("source_citation"),
         as_of_date=payload.get("as_of_date"),
         engine_warnings=payload.get("engine_warnings"),
@@ -2846,6 +2849,12 @@ def rebuild_report(ticker: str):
                 "ev": _spec.equity_value,
             }
             _p2["engine"] = _spec.engine
+            # Store the engine's valuation decomposition (e.g. the two-stage
+            # AFFO table for REITs) + the inputs snapshot so the memo can render
+            # the math.
+            _es = _spec.engine_specific or {}
+            _p2["valuation_decomposition"] = _es.get("decomposition")
+            _p2["specialized_inputs"] = _spec.inputs_snapshot
             refreshed.append("phase2_headline_iv")
         # Refresh the Comprehensive Ratios + WACC build (§ metrics) from the
         # same fresh result, so ROIC / EV-EBITDA / Net-Debt-EBITDA / capital

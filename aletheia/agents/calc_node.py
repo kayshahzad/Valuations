@@ -151,6 +151,12 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
         # Phase A.4: surface which engine ran. Used by Deep Dive UI
         # provenance pill + serving-report engine field.
         phase2["engine"] = valuation_result.engine
+        # Surface the engine's valuation decomposition (e.g. the two-stage AFFO
+        # table for REITs / the DDM dividend ladder) so the memo + UI can render
+        # the math. Top-level key mirrors the no-LLM rebuild path.
+        phase2["valuation_decomposition"] = (
+            (valuation_result.engine_specific or {}).get("decomposition"))
+        phase2["specialized_inputs"] = valuation_result.inputs_snapshot
         if dcf_result is not None and dcf_result.errors:
             errors.extend(dcf_result.errors)
         if valuation_result.warnings:
