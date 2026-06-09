@@ -41,6 +41,7 @@ _SPECIALIZED_MODELS = frozenset({
     "routing_required",
     "ddm_required",
     "embedded_value_required",
+    "reit_required",
 })
 
 
@@ -111,6 +112,7 @@ def test_config_model_matches_classification():
         "rate_base":      "routing_required",
         "ddm":            "ddm_required",
         "embedded_value": "embedded_value_required",
+        "reit":           "reit_required",
     }
     universe = get_extended_universe()
     mismatches = []
@@ -154,7 +156,7 @@ def test_every_config_entry_has_source_citation():
 def test_routing_required_config_model_must_be_one_of_known():
     """Every config entry's ``model`` field must be a known
     string. Prevents typo-introduced engine bypasses."""
-    known_models = {"rate_base", "ddm", "embedded_value"}
+    known_models = {"rate_base", "ddm", "embedded_value", "reit"}
     bad_models = []
     for ticker in get_all_specialized_tickers():
         inputs = load_specialized_inputs(ticker)

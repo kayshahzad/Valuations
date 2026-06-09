@@ -13,7 +13,7 @@ class TickerClassification:
                        "growth_compounder_consumer",
                        "growth_compounder_pharma",
                        "mature", "cyclical_industrial"]
-    business_model: Literal["fcff_compatible", "ddm_required", "embedded_value_required", "routing_required"]
+    business_model: Literal["fcff_compatible", "ddm_required", "embedded_value_required", "routing_required", "reit_required"]
     notes: str
     last_reviewed: date
 
@@ -90,6 +90,9 @@ UNIVERSE: Dict[str, TickerClassification] = {
 
     # --- Utilities ---
     "NEE": TickerClassification("NEE", "Utilities", "Utilities", "mature", "routing_required", "Regulated utility. CapEx non-standard mapping", date.today()),
+
+    # --- Real Estate (REITs — valued on AFFO, not FCFF) ---
+    "EQIX": TickerClassification("EQIX", "Real Estate", "Data Center REIT", "growth_compounder", "reit_required", "Data-center REIT. GAAP NI depressed by RE depreciation; value on two-stage AFFO growth, not FCFF.", date.today()),
 }
 
 

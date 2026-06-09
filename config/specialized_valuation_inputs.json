@@ -1,6 +1,6 @@
 {
   "$schema_version": 1,
-  "$readme": "Manual analyst inputs for non-FCFF filer classes (utilities, banks, insurance, managed care). Each entry's `source` field must cite the regulatory order / 10-K page / CCAR disclosure the values came from. `as_of_date` should be ≤ 18 months old; the architecture-lock test flags stale entries. Add to this file via PR review — values directly drive intrinsic value for the listed ticker.",
+  "$readme": "Manual analyst inputs for non-FCFF filer classes (utilities, banks, insurance, managed care). Each entry's `source` field must cite the regulatory order / 10-K page / CCAR disclosure the values came from. `as_of_date` should be \u2264 18 months old; the architecture-lock test flags stale entries. Add to this file via PR review \u2014 values directly drive intrinsic value for the listed ticker.",
   "tickers": {
     "NEE": {
       "model": "rate_base",
@@ -14,13 +14,13 @@
       },
       "as_of_date": "2025-11-20",
       "next_review_date": "2029-12-31",
-      "source": "Florida PSC settlement approved 2025-11-20 (effective 2026-01-01 through 2029-12-31). Rate base $75.1B per FPL rate case filing for FY2026 projected test year (Feb 2025 filing). Rate-base growth derived from FY26→FY27 trajectory ($75.1B → $80.8B = 7.6%) corroborated by $21.7B 4-year capex plan. Allowed ROE 10.95% (band 9.95-11.95%) and 59.6% equity ratio are settlement-approved terms.",
+      "source": "Florida PSC settlement approved 2025-11-20 (effective 2026-01-01 through 2029-12-31). Rate base $75.1B per FPL rate case filing for FY2026 projected test year (Feb 2025 filing). Rate-base growth derived from FY26\u2192FY27 trajectory ($75.1B \u2192 $80.8B = 7.6%) corroborated by $21.7B 4-year capex plan. Allowed ROE 10.95% (band 9.95-11.95%) and 59.6% equity ratio are settlement-approved terms.",
       "analyst_notes": "FPL-only regulated rate base. NEE consolidated equity value excludes NextEra Energy Resources (NEER, competitive renewables) which contributes ~30% of consolidated earnings. MVP IV understates NEE total equity value by the NEER portion. Sum-of-parts framework (Phase A.8) will add NEER multiple-based valuation. Two-stage model: 4-year explicit period uses the FPSC-approved 7.5% rate-base growth; terminal year onwards reverts to GDP-level 2.5% as rate-base growth normalizes post-2029 capex spike."
     },
     "JPM": {
       "model": "ddm",
       "params": {
-        "current_dps_annualized": 6.00,
+        "current_dps_annualized": 6.0,
         "explicit_growth_pct": 7.0,
         "explicit_years": 5,
         "terminal_growth_pct": 4.0,
@@ -35,7 +35,7 @@
     "AXP": {
       "model": "ddm",
       "params": {
-        "current_dps_annualized": 3.80,
+        "current_dps_annualized": 3.8,
         "explicit_growth_pct": 12.0,
         "explicit_years": 5,
         "terminal_growth_pct": 4.0,
@@ -45,7 +45,7 @@
       "as_of_date": "2026-05-08",
       "next_review_date": "2027-05-08",
       "source": "Q2 2026 declared quarterly dividend $0.95 ($3.80 annualized; 16% increase from $0.82). 20.9% payout ratio. 5 consecutive years of increases. FY2026 EPS guidance $17.30-$17.90 supports double-digit growth.",
-      "analyst_notes": "Closed-loop card issuer + consumer lending book. Low payout (20.9%) leaves substantial room for continued dividend growth. Higher beta than JPM (consumer-spending cycle exposure) handled via CAPM directly — no override."
+      "analyst_notes": "Closed-loop card issuer + consumer lending book. Low payout (20.9%) leaves substantial room for continued dividend growth. Higher beta than JPM (consumer-spending cycle exposure) handled via CAPM directly \u2014 no override."
     },
     "UNH": {
       "model": "ddm",
@@ -65,7 +65,7 @@
     "CNC": {
       "model": "ddm",
       "params": {
-        "current_dps_annualized": 0.00,
+        "current_dps_annualized": 0.0,
         "explicit_growth_pct": null,
         "explicit_years": null,
         "terminal_growth_pct": null
@@ -87,8 +87,22 @@
       },
       "as_of_date": "2026-03-31",
       "next_review_date": "2027-03-31",
-      "source": "Q1 2026 10-Q: BVPS $337.15 (Mar 31 2026). Insurance float $176.9B. Operating earnings Q1 2026 $9.6B. Historical 10-yr consolidated ROE ~10-12% (Buffett 2024 letter cites 11.4% average). Target P/B 1.4× reflects 10-year median market-implied premium-to-book (1.3-1.5× band). Ke override to 9% (vs pure CAPM ~7.5% from β 0.85) reflects insurance + sum-of-parts risk premium analysts apply.",
-      "analyst_notes": "Simplified embedded-value framework: BVPS compounding × target P/B. Captures consolidated economics across insurance + BNSF + BHE + operating subsidiaries + ~$280B equity portfolio. Doesn't separately model float earnings (already embedded in ROE). Doesn't account for Apple position concentration risk (~25% of equity portfolio). For more granular sum-of-parts, Phase A.8 could decompose into: (a) insurance ANW, (b) operating subs DCF, (c) marketable equities at market."
+      "source": "Q1 2026 10-Q: BVPS $337.15 (Mar 31 2026). Insurance float $176.9B. Operating earnings Q1 2026 $9.6B. Historical 10-yr consolidated ROE ~10-12% (Buffett 2024 letter cites 11.4% average). Target P/B 1.4\u00d7 reflects 10-year median market-implied premium-to-book (1.3-1.5\u00d7 band). Ke override to 9% (vs pure CAPM ~7.5% from \u03b2 0.85) reflects insurance + sum-of-parts risk premium analysts apply.",
+      "analyst_notes": "Simplified embedded-value framework: BVPS compounding \u00d7 target P/B. Captures consolidated economics across insurance + BNSF + BHE + operating subsidiaries + ~$280B equity portfolio. Doesn't separately model float earnings (already embedded in ROE). Doesn't account for Apple position concentration risk (~25% of equity portfolio). For more granular sum-of-parts, Phase A.8 could decompose into: (a) insurance ANW, (b) operating subs DCF, (c) marketable equities at market."
+    },
+    "EQIX": {
+      "model": "reit",
+      "params": {
+        "current_affo_per_share": 38.34,
+        "explicit_growth_pct": 8.0,
+        "explicit_years": 5,
+        "terminal_growth_pct": 3.0,
+        "cost_of_equity_override_pct": null
+      },
+      "as_of_date": "2026-02-15",
+      "next_review_date": "2027-03-31",
+      "source": "Equinix FY2025 10-K (period ended 2025-12-31): AFFO $3,761M / 98.1M diluted shares = $38.34/sh. Explicit AFFO/share growth 8% (low end of EQIX's stated 8-10% long-term AFFO/share growth algorithm); terminal growth 3% (data-center secular demand sustainably above ~2.5% nominal GDP). Ke via CAPM (no override).",
+      "analyst_notes": "Data-center equity REIT valued on a two-stage AFFO-growth model (the REIT analog of a DCF on free cash flow). AFFO is the REIT distributable-cash measure; FY2025 FFO was ~$2.78B and GAAP net income $1,350M \u2014 the FCFF engine is inappropriate here because RE depreciation depresses GAAP NI and the firm distributes most of its cash. Review AFFO/share + growth on the next 10-K."
     }
   }
 }
