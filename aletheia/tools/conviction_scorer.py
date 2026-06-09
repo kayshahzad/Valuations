@@ -426,6 +426,25 @@ class ConvictionScorer:
 
     def score_from_state(self, ticker: str, state: dict, calc_input: 'CalculationInput' = None) -> ConvictionResult:
         """Score from LangGraph agent state dict."""
+        # Specialized (non-FCFF) engines — REIT / rate-base / DDM / embedded-
+        # value. The 5-pillar rubric is FCFF-shaped (ROIC−WACC value creation,
+        # EV/EBITDA premium, reverse-DCF implied vs historical CAGR) and would
+        # MIS-score these filers (e.g. penalising a quality REIT for lacking an
+        # ROIC). Return a clean 'not scored' result — honest about the gap —
+        # until an engine-specific conviction rubric exists, rather than a
+        # misleading FCFF number.
+        _bm = getattr(getattr(calc_input, "classification", None),
+                      "business_model", None)
+        if _bm and _bm != "fcff_compatible":
+            r = ConvictionResult(ticker=ticker)
+            r.position_tier = "not_scored"
+            r.cap_reason = (
+                f"Specialized engine ({_bm}) — the FCFF 5-pillar conviction "
+                "rubric (ROIC−WACC, EV/EBITDA premium, reverse-DCF) does not "
+                "apply; needs an engine-specific rubric."
+            )
+            return r
+
         forensic    = state.get("forensic_report", {}) or {}
         vc          = state.get("value_chain_report", {}) or {}
         context     = state.get("strategic_context_report", {}) or {}
@@ -460,9 +479,12 @@ class ConvictionScorer:
                                       or rdcf.get("historical_cagr"))
         rdcf_signal      = rdcf.get("signal")
 
-        # From DB for FCF margin, net debt, revenue CAGR
-        df = calc_input.df
-        if not df.empty:
+        # From DB for FCF margin, net debt, revenue CAGR. ``calc_input`` can be
+        # None on the lead fallback path (e.g. specialized non-FCFF tickers
+        # whose calc_node conviction was skipped) — degrade to the state-derived
+        # inputs instead of crashing on ``None.df``.
+        df = getattr(calc_input, "df", None) if calc_input is not None else None
+        if df is not None and not df.empty:
             import numpy as np
             row = df[df["fiscal_year"] == df["fiscal_year"].max()].iloc[0]
             def g(col):
@@ -479,8 +501,9 @@ class ConvictionScorer:
         else:
             fcf_margin = ebitda_bn = net_debt_bn = data_quality = rev_cagr = None
 
-        # Sector from universe config
-        sector = calc_input.classification.sector if calc_input.classification else ""
+        # Sector from universe config (calc_input may be None on the fallback).
+        sector = (calc_input.classification.sector
+                  if (calc_input is not None and calc_input.classification) else "")
         
         fin = state.get("financial_translation", {}) or {}
         ratios = fin.get("ratios", {}) or {}

@@ -587,8 +587,18 @@ def lead_agent(state):
     if not conviction_data:
         try:
             from aletheia.tools.conviction_scorer import ConvictionScorer
-            _scorer = ConvictionScorer()
-            conviction_data = _scorer.score_from_state(ticker, state).to_dict()
+            # Pass calc_input so the scorer reads real lifecycle thresholds +
+            # DB-derived inputs (the no-calc_input degraded path is incomplete).
+            # For specialized non-FCFF tickers (REIT/utility/bank) calc_node
+            # skips conviction — this fallback produces a partial score from the
+            # available signals rather than crashing.
+            from aletheia.utils.calc_input_builder import make_calc_input
+            try:
+                _ci = make_calc_input(ticker)
+            except Exception:
+                _ci = None
+            conviction_data = ConvictionScorer().score_from_state(
+                ticker, state, calc_input=_ci).to_dict()
         except Exception as _e:
             print(f"⚠ Conviction scorer fallback: {_e}")
             conviction_data = {}
