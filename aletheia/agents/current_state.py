@@ -686,11 +686,29 @@ def compose_current_state(ticker: str) -> Optional[Dict[str, Any]]:
         from aletheia.data.database import InvestmentDatabase
 
         calc = make_calc_input(ticker)
-        result = DCFEngine(verbose=False).run(calc)
-        base = getattr(result, "base", None)
+        # Specialized (non-FCFF) engines — REIT / rate-base / DDM / embedded-
+        # value — raise NotImplementedError from DCFEngine. Those tickers have
+        # no FCFF Y1-5 growth to reconcile against consensus, but the rest of
+        # the current-state layer (events, analyst sentiment, market signal,
+        # sector multiple) doesn't need the DCF — so degrade, don't bail.
+        result = None
+        try:
+            result = DCFEngine(verbose=False).run(calc)
+        except NotImplementedError:
+            result = None
+        base = getattr(result, "base", None) if result else None
         eng_y1 = getattr(getattr(base, "assumptions", None),
-                         "revenue_cagr_y1_5", None)
-        fy = getattr(result, "fy_fiscal_year", None) or getattr(result, "fiscal_year", None)
+                         "revenue_cagr_y1_5", None) if base else None
+        fy = ((getattr(result, "fy_fiscal_year", None)
+               or getattr(result, "fiscal_year", None)) if result else None)
+        if fy is None:
+            try:
+                d = calc.df
+                if "period" in getattr(d, "columns", []):
+                    d = d[d["period"] == "FY"]
+                fy = int(d["fiscal_year"].max())
+            except Exception:
+                fy = None
 
         md = None
         try:

@@ -2808,9 +2808,18 @@ def rebuild_report(ticker: str):
     try:
         from aletheia.utils.calc_input_builder import make_calc_input as _mci
         from aletheia.tools.dcf_engine import DCFEngine as _Eng
-        _res = _Eng(verbose=False).run(_mci(ticker_u))
+        _calc = _mci(ticker_u)
+        _res = None         # FCFF DCFResult
+        _spec = None        # specialized router ValuationResult
+        try:
+            _res = _Eng(verbose=False).run(_calc)
+        except NotImplementedError:
+            # Specialized (REIT / rate-base / DDM / embedded-value) — route via
+            # the ValuationRouter so the headline IV reflects the right engine.
+            from aletheia.tools.valuation_router import ValuationRouter as _VR
+            _spec = _VR().execute(_calc)
         _p2 = (report.get("4_valuation_synthesis") or {}).get("phase2_valuation")
-        if _p2 is not None and getattr(_res, "base", None):
+        if _p2 is not None and _res is not None and getattr(_res, "base", None):
             _price = _res.current_price
             _tsd = _p2.setdefault("three_scenario_dcf", {})
             for _name in ("bear", "base", "bull"):
@@ -2827,6 +2836,16 @@ def rebuild_report(ticker: str):
                 }
             if _res.wacc_base:
                 _p2["wacc"] = float(_res.wacc_base)
+            refreshed.append("phase2_headline_iv")
+        elif _p2 is not None and _spec is not None and _spec.intrinsic_per_share is not None:
+            # Specialized engine: a single IV (no bull/bear scenario triangle).
+            _tsd = _p2.setdefault("three_scenario_dcf", {})
+            _tsd["base"] = {
+                "intrinsic_per_share": float(_spec.intrinsic_per_share),
+                "margin_of_safety": _spec.margin_of_safety,
+                "ev": _spec.equity_value,
+            }
+            _p2["engine"] = _spec.engine
             refreshed.append("phase2_headline_iv")
         # Refresh the Comprehensive Ratios + WACC build (§ metrics) from the
         # same fresh result, so ROIC / EV-EBITDA / Net-Debt-EBITDA / capital
