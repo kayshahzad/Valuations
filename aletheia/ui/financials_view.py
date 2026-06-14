@@ -1041,9 +1041,11 @@ def _render_current_state(cs: Dict[str, Any], ticker: str = "",
                        "Run the events agent for trial/regulatory/competitive coverage.")
 
 
-def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
+def render_financials_view(ticker: str, bundle: Dict[str, Any],
+                           phase2: Dict[str, Any] = None) -> None:
     """Render the redesigned Financials tab for `ticker`. `bundle` is the
-    payload returned by `/ticker/<ticker>/financials`."""
+    payload returned by `/ticker/<ticker>/financials`; `phase2` is the
+    phase2_valuation block (for the valuation-engines & signals overlays)."""
     if not ticker or not bundle or bundle.get("error"):
         st.error(bundle.get("error") if bundle else "No financials available.")
         return
@@ -1284,6 +1286,67 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any]) -> None:
             st.markdown("#### Valuation")
             from aletheia.ui.deep_dive_view import render_specialized_valuation_panel
             render_specialized_valuation_panel(_live)
+
+    # ── Valuation engines & signals overlays (VSD / SaaS / CADS / cap-structure
+    #    flag / four-method convergence) — same data the memo & deep-dive use. ─
+    _render_valuation_engines(phase2 or {})
+
+
+def _render_valuation_engines(p2: Dict[str, Any]) -> None:
+    """Surface the new deterministic overlays on the Financials tab so they live
+    next to the statements they're computed from. Each panel self-gates on
+    availability, so non-applicable tickers show only what's relevant."""
+    if not p2:
+        return
+    have = any(p2.get(k, {}).get("available") for k in
+               ("value_source_decomposition", "saas_metrics", "cads",
+                "capital_structure_flag", "valuation_methods"))
+    if not have:
+        return
+    st.markdown("---")
+    st.markdown("#### Valuation engines & signals")
+
+    from aletheia.ui.deep_dive_view import _value_source_panel, _saas_panel
+    _value_source_panel(p2)
+    _saas_panel(p2)
+
+    # Capital-structure stability flag → discount-rate family.
+    csf = p2.get("capital_structure_flag") or {}
+    if csf.get("available"):
+        nd = csf.get("net_debt_to_ebitda") or {}
+        st.markdown(
+            f"**Capital-structure flag:** `{csf.get('klass')}` → discount-rate "
+            f"**Family {csf.get('rate_family')}** "
+            f"(net-debt/EBITDA {nd.get('first',0):.2f}→{nd.get('last',0):.2f})")
+        for n in csf.get("notes") or []:
+            st.caption(n)
+
+    # Four-method convergence.
+    vm = p2.get("valuation_methods") or {}
+    if vm.get("available"):
+        ev = vm.get("ev") or {}
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("WACC-FCF EV", _bn(ev.get("wacc_fcf")))
+        c2.metric("CCF/r_A EV", _bn(ev.get("ccf")))
+        c3.metric("APV EV", _bn(ev.get("apv")))
+        c4.metric("ECF→EV", _bn(ev.get("from_ecf")))
+        sp = vm.get("ev_trio_spread")
+        st.caption(f"Four-method convergence — EV trio spread "
+                   f"{(sp*100):.1f}% ({'converged' if vm.get('converged_trio') else 'wide'}); "
+                   f"family {vm.get('rate_family')}. Additive diagnostic, not the headline IV.")
+
+    # CADS credit floor (Phase 2).
+    cads = p2.get("cads") or {}
+    if cads.get("available"):
+        latest = cads.get("latest") or {}
+        cov = cads.get("coverage")
+        cov_s = f"{cov:.2f}×" if cov is not None else "n/a"
+        line = (f"**CADS** (EBITDA − CapEx, FY{latest.get('year','')}): "
+                f"{_bn(latest.get('cads'))} · debt-service coverage {cov_s}")
+        if cads.get("trigger"):
+            st.error("⚠ " + line + " — " + (cads.get("trigger_reason") or ""))
+        else:
+            st.markdown(line + " — adequate.")
 
 
 def _render_dcf_section(ticker: str, bundle: Dict[str, Any]) -> None:

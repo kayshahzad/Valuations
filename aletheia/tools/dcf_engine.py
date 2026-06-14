@@ -194,6 +194,13 @@ class DCFResult:
     beta: float = 1.0
     wacc_base: float = 0.0
     wacc_total_debt: float = 0.0   # debt figure used in the WACC weights
+    # β-reference diagnostic (Build 1 / spec §7). β here is the ^GSPC β that
+    # drives WACC; these expose the marginal-investor (sector) β + R² so the
+    # discount-rate section can flag a mis-referenced β. Diagnostic only.
+    beta_r2: Optional[float] = None
+    beta_sector: Optional[float] = None
+    beta_sector_r2: Optional[float] = None
+    beta_benchmark: Optional[str] = None
 
     # Base financials (from DB)
     revenue: float = 0.0
@@ -461,6 +468,17 @@ def _sector_beta_floor(ticker: str) -> float:
         return 0.6
 
 
+def _sector_of(ticker: str) -> Optional[str]:
+    """Resolve a ticker's sector from the classification universe (for the
+    β-reference benchmark map). Returns None when unknown."""
+    try:
+        from config.ticker_classification import get_extended_universe
+        cls = get_extended_universe().get(ticker.upper())
+        return getattr(cls, "sector", None) if cls else None
+    except Exception:
+        return None
+
+
 def _compute_beta(ticker: str, period: str = BETA_PERIOD,
                   interval: str = BETA_INTERVAL) -> float:
     """Compute 5-year weekly beta from market_data, then apply the
@@ -523,6 +541,24 @@ def compute_wacc(
     )
 
     return float(wacc_val), float(ke or 0.0), float(kd or 0.0), float(b)
+
+
+def wacc_at_beta(result: "DCFResult", beta: float) -> float:
+    """Recompute the headline WACC at an alternate β WITHOUT mutating the
+    result (Build 1 / R1). β enters WACC only through the equity leg
+    (ke = rf + β·mrp), so the marginal effect is exact and linear:
+
+        ΔWACC = w_E · Δβ · mrp
+
+    where w_E is the equity weight from the same capital structure the engine
+    used. ``wacc_at_beta(result, result.beta) == result.wacc_base`` by
+    construction. Build 4 uses this to price the justified multiple at both
+    the ^GSPC β and the sector β (the mult_contrib β-band)."""
+    mcap = result.market_cap or 0.0
+    debt = result.wacc_total_debt or 0.0
+    denom = mcap + debt
+    w_e = (mcap / denom) if denom > 0 else 1.0
+    return float(result.wacc_base + w_e * (beta - result.beta) * MARKET_RISK_PREMIUM)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -1440,6 +1476,18 @@ class DCFEngine:
         
         result.risk_free_rate = rf
         result.beta = beta
+        # β-reference diagnostic (Build 1): β + R² vs ^GSPC and the sector
+        # benchmark. Does not touch the WACC the engine just computed.
+        try:
+            from aletheia.data.market_data import get_beta_diagnostics
+            _sector = _sector_of(ticker)
+            _bd = get_beta_diagnostics(ticker, sector=_sector)
+            result.beta_r2 = _bd.get("r2_gspc")
+            result.beta_sector = _bd.get("beta_sector")
+            result.beta_sector_r2 = _bd.get("r2_sector")
+            result.beta_benchmark = _bd.get("sector_benchmark")
+        except Exception:
+            pass
         # Honor the analyst WACC override at the headline level too. The
         # per-scenario WACC is overridden inside _build_assumptions, but the
         # top-level wacc_base (reported as `wacc` in the /dcf payload and the

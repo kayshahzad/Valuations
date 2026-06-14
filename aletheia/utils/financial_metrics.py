@@ -88,6 +88,26 @@ def _cagr(start: Optional[float], end: Optional[float], years: int) -> Optional[
         return None
 
 
+def _trailing_cagr(series, years: int) -> Optional[float]:
+    """Year-aware trailing CAGR over (up to) ``years`` calendar years.
+
+    ``series`` is ``[(value, fiscal_year), ...]`` ascending. We anchor on the
+    latest point and pick the start point closest to ``latest_year - years``,
+    then divide by the *actual* year span. This avoids the mislabeled
+    "since-inception" CAGR that results from anchoring on the oldest row
+    (e.g. EQIX's 1999 startup revenue would otherwise make a "5y" CAGR 61%).
+    Gaps/duplicate years are tolerated because we match on year, not position.
+    """
+    if not series or len(series) < 2:
+        return None
+    end_v, end_y = series[-1]
+    target = end_y - years
+    start_v, start_y = min(series, key=lambda t: abs(t[1] - target))
+    if start_y >= end_y:
+        return None
+    return _cagr(start_v, end_v, end_y - start_y)
+
+
 def _historical_rows(df) -> List[Dict[str, Any]]:
     """Build 5 most-recent FY rows. Each row carries the absolutes the
     HTML table renders + a few margin ratios for color-coding."""
@@ -297,37 +317,18 @@ def _compute_ratios(
             _cagr(revs_by_yr[-2][0], revs_by_yr[-1][0], 1)
             if len(revs_by_yr) >= 2 else None
         ),
-        "revenue_cagr_3y": (
-            _cagr(revs_by_yr[-4][0], revs_by_yr[-1][0], 3)
-            if len(revs_by_yr) >= 4 else None
-        ),
-        "revenue_cagr_5y": (
-            _cagr(revs_by_yr[0][0], revs_by_yr[-1][0],
-                  revs_by_yr[-1][1] - revs_by_yr[0][1])
-            if len(revs_by_yr) >= 2 else None
-        ),
+        "revenue_cagr_3y": _trailing_cagr(revs_by_yr, 3),
+        "revenue_cagr_5y": _trailing_cagr(revs_by_yr, 5),
     }
     ebitda_series = [(_f(r.get("derived_EBITDA")), int(r["fiscal_year"]))
                      for _, r in fy.iterrows()]
     ebitda_series = [(v, y) for v, y in ebitda_series if v is not None and v > 0]
-    if len(ebitda_series) >= 2:
-        growth["ebitda_cagr_5y"] = _cagr(
-            ebitda_series[0][0], ebitda_series[-1][0],
-            ebitda_series[-1][1] - ebitda_series[0][1],
-        )
-    else:
-        growth["ebitda_cagr_5y"] = None
+    growth["ebitda_cagr_5y"] = _trailing_cagr(ebitda_series, 5)
 
     fcf_series = [(_f(r.get("derived_FCF")), int(r["fiscal_year"]))
                   for _, r in fy.iterrows()]
     fcf_series = [(v, y) for v, y in fcf_series if v is not None and v > 0]
-    if len(fcf_series) >= 2:
-        growth["fcf_cagr_5y"] = _cagr(
-            fcf_series[0][0], fcf_series[-1][0],
-            fcf_series[-1][1] - fcf_series[0][1],
-        )
-    else:
-        growth["fcf_cagr_5y"] = None
+    growth["fcf_cagr_5y"] = _trailing_cagr(fcf_series, 5)
 
     eps_series = [(_f(r.get("clean_EPS_Diluted")), int(r["fiscal_year"]))
                   for _, r in fy.iterrows()]

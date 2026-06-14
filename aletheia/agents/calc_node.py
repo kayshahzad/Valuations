@@ -354,6 +354,80 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
         errors.append(f"MoatFingerprint failed: {e}")
         print(f"  ✗ MoatFP failed: {e}")
 
+    # ── Step 6b: Value source decomposition (deterministic, spec §3 / Build 4)
+    # Re-attributes existing signals into Operating/Financial/Multiple shares +
+    # a governance modifier so the conviction gate can scale by return
+    # durability. Computed for both FCFF (dcf_result) and specialized engines
+    # (REIT/DDM via p2 specialized_inputs). Stored in phase2 BEFORE conviction
+    # so the value-source cap (Build 5) can read it.
+    try:
+        from aletheia.tools.value_source_decomposition import (
+            build_value_source_decomposition,
+        )
+        if dcf_result is not None or phase2.get("specialized_inputs"):
+            vsd = build_value_source_decomposition(
+                calc_input, dcf_result, p2=phase2, state=state,
+            )
+            phase2["value_source_decomposition"] = vsd
+            if vsd.get("available"):
+                print(f"  ✓ Value-source: op {vsd['operating_share']:.0%} / "
+                      f"fin {vsd['financial_share']:.0%} / "
+                      f"mult {vsd['multiple_share']:.0%} (gov {vsd['gov_modifier']:+d})")
+    except Exception as e:
+        errors.append(f"ValueSourceDecomposition failed: {e}")
+        print(f"  ✗ Value-source decomposition failed: {e}")
+
+    # ── Step 6c: SaaS analysis overlay (deterministic, gated, Build B) ──────
+    # Subscription-economics KPIs (owner's-earnings FCF, magic number, gross-
+    # margin trend, drawdown, cyclicality reconciliation). Computes ONLY for
+    # SaaS names (is_saas_company); non-SaaS get available=False. No conviction
+    # impact — purely diagnostic context for the memo/deep-dive.
+    try:
+        from aletheia.tools.saas_metrics import build_saas_metrics
+        _mcap = getattr(dcf_result, "market_cap", None) if dcf_result is not None else None
+        _sm = build_saas_metrics(calc_input, market_cap=_mcap)
+        if _sm.get("available"):
+            phase2["saas_metrics"] = _sm
+            print("  ✓ SaaS overlay: owner's-earnings + magic# + cyclicality flag")
+    except Exception as e:
+        errors.append(f"SaaSMetrics failed: {e}")
+
+    # ── Step 6d: CADS coverage (deterministic, §9 credit floor, Phase 2) ────
+    # Cash available for debt service (EBITDA − CapEx). Catches the case where
+    # the valuation looks fine but operations can't self-fund debt (EQIX
+    # capex-sinkhole). CF-R5 trigger fires deterministically into the risk view.
+    try:
+        from aletheia.tools.cads_coverage import build_cads_coverage
+        _cads = build_cads_coverage(calc_input)
+        if _cads.get("available"):
+            phase2["cads"] = _cads
+            if _cads.get("trigger"):
+                print(f"  ⚠ CADS trigger: {_cads.get('trigger_reason')}")
+    except Exception as e:
+        errors.append(f"CADS failed: {e}")
+
+    # ── Step 6e: Capital-structure flag + four-method convergence (Phase 0/1/3)
+    # The stability flag selects the discount-rate family; the convergent set
+    # values the firm four ways as a correctness diagnostic (additive, not the
+    # headline IV).
+    try:
+        from aletheia.tools.capital_structure_flag import build_capital_structure_flag
+        _mcap = getattr(dcf_result, "market_cap", None) if dcf_result is not None else None
+        _csf = build_capital_structure_flag(calc_input, market_cap=_mcap)
+        if _csf.get("available"):
+            phase2["capital_structure_flag"] = _csf
+    except Exception as e:
+        errors.append(f"CapStructFlag failed: {e}")
+    try:
+        from aletheia.tools.valuation_methods import build_valuation_methods
+        _vm = build_valuation_methods(calc_input, dcf_result, phase2)
+        if _vm.get("available"):
+            phase2["valuation_methods"] = _vm
+            print(f"  ✓ Four-method convergence: family {_vm.get('rate_family')} "
+                  f"trio spread {(_vm.get('ev_trio_spread') or 0)*100:.1f}%")
+    except Exception as e:
+        errors.append(f"ValuationMethods failed: {e}")
+
     # ── Step 7: Conviction score (deterministic, no agent reads) ────────────
     # Pull every input from calc-layer state. Agent narrative does NOT
     # influence this score — that's the architecture invariant the determinism
@@ -414,6 +488,7 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
                 implied_cagr=implied_cagr,
                 calc_input=calc_input,
                 roe=None,
+                state={"phase2_valuation": phase2},   # exposes value_source_decomposition (Build 5/6)
             )
             conviction = res.to_dict()
             print(f"  ✓ Conviction: {res.conviction_score:+d}/±10 "

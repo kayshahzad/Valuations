@@ -273,6 +273,41 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     ke = snap.get("cost_of_equity")
     decomposition = (vresult.engine_specific or {}).get("decomposition")
 
+    # Value source decomposition (spec §3 / Build 4) for specialized engines —
+    # REIT uses AFFO/share growth + growth-normalized P/AFFO. Feed the engine
+    # inputs the REIT branch needs via a p2-shaped dict.
+    _vsd_payload = None
+    try:
+        from aletheia.tools.value_source_decomposition import (
+            build_value_source_decomposition as _bvsd,
+        )
+        _vsd_payload = _bvsd(calc, None, p2={
+            "current_price": price,
+            "market_cap": market_cap,
+            "engine": vresult.engine,
+            "specialized_inputs": snap,
+        })
+    except Exception:
+        _vsd_payload = None
+
+    # CADS + capital-structure flag are engine-agnostic (computed off the frame),
+    # so they apply to specialized engines too — EQIX's capex-sinkhole is exactly
+    # the case CADS exists for. valuation_methods stays FCFF-only (None here).
+    _cads_payload = None
+    _csf_payload = None
+    try:
+        from aletheia.tools.cads_coverage import build_cads_coverage as _bcc
+        _cc = _bcc(calc)
+        _cads_payload = _cc if _cc.get("available") else None
+    except Exception:
+        _cads_payload = None
+    try:
+        from aletheia.tools.capital_structure_flag import build_capital_structure_flag as _bcf
+        _cf = _bcf(calc, market_cap=market_cap)
+        _csf_payload = _cf if _cf.get("available") else None
+    except Exception:
+        _csf_payload = None
+
     return {
         "ticker":                 vresult.ticker.upper(),
         "wacc":                   float(ke) if ke is not None else None,
@@ -301,6 +336,10 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         # Specialized-engine extras (surface to DCFResponse for the Deep Dive).
         "engine":                 vresult.engine,
         "valuation_decomposition": decomposition,
+        "value_source_decomposition": _vsd_payload,
+        "cads":                   _cads_payload,
+        "capital_structure_flag": _csf_payload,
+        "valuation_methods":      None,   # FCFF-only; REIT/DDM value ECF directly
         "specialized_inputs":     snap,
         "source_citation":        snap.get("source"),
         "as_of_date":             snap.get("as_of_date"),
@@ -590,6 +629,51 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
     _ag_payload = _assumption_grounding_payload(
         calc, result, _ba_payload, _cs_payload, _wa_payload)
 
+    # Value source decomposition (spec §3 / Build 4) — same tool the report
+    # uses, so the live deep-dive shows the identical attribution.
+    _vsd_payload = None
+    try:
+        from aletheia.tools.value_source_decomposition import (
+            build_value_source_decomposition as _bvsd,
+        )
+        _vsd_payload = _bvsd(calc, result, p2=None)
+    except Exception:
+        _vsd_payload = None
+
+    # SaaS analysis overlay (Build B) — gated to SaaS names; None otherwise.
+    _saas_payload = None
+    try:
+        from aletheia.tools.saas_metrics import build_saas_metrics as _bsm
+        _sm = _bsm(calc, market_cap=(float(result.market_cap) if result.market_cap else None))
+        _saas_payload = _sm if _sm.get("available") else None
+    except Exception:
+        _saas_payload = None
+
+    # CADS coverage (Phase 2) — credit floor / §9 trigger.
+    _cads_payload = None
+    try:
+        from aletheia.tools.cads_coverage import build_cads_coverage as _bcc
+        _cc = _bcc(calc)
+        _cads_payload = _cc if _cc.get("available") else None
+    except Exception:
+        _cads_payload = None
+
+    # Capital-structure flag + four-method convergence (Phase 0/1/3).
+    _csf_payload = None
+    _vm_payload = None
+    try:
+        from aletheia.tools.capital_structure_flag import build_capital_structure_flag as _bcf
+        _cf = _bcf(calc, market_cap=(float(result.market_cap) if result.market_cap else None))
+        _csf_payload = _cf if _cf.get("available") else None
+    except Exception:
+        _csf_payload = None
+    try:
+        from aletheia.tools.valuation_methods import build_valuation_methods as _bvm
+        _vm = _bvm(calc, result, None)
+        _vm_payload = _vm if _vm.get("available") else None
+    except Exception:
+        _vm_payload = None
+
     return {
         "ticker":                 ticker.upper(),
         "wacc":                   float(result.wacc_base) if result.wacc_base else None,
@@ -616,6 +700,11 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "business_analysis":      _ba_payload,
         "assumption_grounding":   _ag_payload,
         "market_context":         _market_context_payload(ticker),
+        "value_source_decomposition": _vsd_payload,
+        "saas_metrics":           _saas_payload,
+        "cads":                   _cads_payload,
+        "capital_structure_flag": _csf_payload,
+        "valuation_methods":      _vm_payload,
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
         # twice.
@@ -1246,6 +1335,11 @@ def _build_full_report(ticker: str) -> Optional[Dict[str, Any]]:
             "wacc":                   dcf_payload.get("wacc"),
             "beta":                   dcf_payload.get("beta"),
             "risk_free_rate":         dcf_payload.get("risk_free_rate"),
+            "value_source_decomposition": dcf_payload.get("value_source_decomposition"),
+            "saas_metrics":           dcf_payload.get("saas_metrics"),
+            "cads":                   dcf_payload.get("cads"),
+            "capital_structure_flag": dcf_payload.get("capital_structure_flag"),
+            "valuation_methods":      dcf_payload.get("valuation_methods"),
         }
     except HTTPException:
         # Engine refused or no data — section stays empty. UI tolerates.
@@ -2856,6 +2950,58 @@ def rebuild_report(ticker: str):
             _p2["valuation_decomposition"] = _es.get("decomposition")
             _p2["specialized_inputs"] = _spec.inputs_snapshot
             refreshed.append("phase2_headline_iv")
+        # Recompute the value-source decomposition (Build 4/6) so the engine
+        # attribution + conviction durability read refresh with any overrides
+        # (the EQIX stale-phase2 lesson). Works for FCFF (_res) and specialized
+        # (_res None, p2 specialized_inputs) alike.
+        try:
+            from aletheia.tools.value_source_decomposition import (
+                build_value_source_decomposition as _bvsd,
+            )
+            if _p2 is not None and (_res is not None or _p2.get("specialized_inputs")):
+                _p2["value_source_decomposition"] = _bvsd(_calc, _res, p2=_p2)
+                refreshed.append("value_source_decomposition")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(
+                f"value_source_decomposition: {e}")
+        # SaaS overlay (Build B) — gated; refresh so the panel reflects any edits.
+        try:
+            from aletheia.tools.saas_metrics import build_saas_metrics as _bsm
+            if _p2 is not None:
+                _mc = float(_res.market_cap) if (_res is not None and _res.market_cap) else None
+                _sm = _bsm(_calc, market_cap=_mc)
+                if _sm.get("available"):
+                    _p2["saas_metrics"] = _sm
+                    refreshed.append("saas_metrics")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"saas_metrics: {e}")
+        # CADS coverage (Phase 2) — refresh the §9 credit floor.
+        try:
+            from aletheia.tools.cads_coverage import build_cads_coverage as _bcc
+            if _p2 is not None:
+                _cc = _bcc(_calc)
+                if _cc.get("available"):
+                    _p2["cads"] = _cc
+                    refreshed.append("cads")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"cads: {e}")
+        # Capital-structure flag + four-method convergence (Phase 0/1/3).
+        try:
+            from aletheia.tools.capital_structure_flag import build_capital_structure_flag as _bcf
+            from aletheia.tools.valuation_methods import build_valuation_methods as _bvm
+            if _p2 is not None:
+                _mc = float(_res.market_cap) if (_res is not None and _res.market_cap) else None
+                _cf = _bcf(_calc, market_cap=_mc)
+                if _cf.get("available"):
+                    _p2["capital_structure_flag"] = _cf
+                    refreshed.append("capital_structure_flag")
+                if _res is not None:
+                    _vm = _bvm(_calc, _res, _p2)
+                    if _vm.get("available"):
+                        _p2["valuation_methods"] = _vm
+                        refreshed.append("valuation_methods")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"valuation_methods: {e}")
         # Refresh the Comprehensive Ratios + WACC build (§ metrics) from the
         # same fresh result, so ROIC / EV-EBITDA / Net-Debt-EBITDA / capital
         # weights reconcile with the engine instead of showing a stale FY-only

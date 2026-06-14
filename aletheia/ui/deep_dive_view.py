@@ -452,6 +452,98 @@ def _pillar_section(pillar_scores: Dict[str, Any], cs_severity: str = "NONE") ->
 
 # ── 3-scenario DCF triangle ───────────────────────────────────────────────
 
+def _saas_panel(p2v: Dict[str, Any]) -> None:
+    """SaaS unit-economics & forward-signals panel (plan Build D). Gated on
+    availability so non-SaaS names render nothing."""
+    sm = (p2v or {}).get("saas_metrics") or {}
+    if not sm.get("available"):
+        return
+    st.markdown("---")
+    st.markdown("##### SaaS unit economics & forward signals")
+
+    oe = sm.get("owners_earnings") or {}
+    if oe.get("owners_earnings_fcf") is not None:
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Owner's-earnings FCF", _money(oe.get("owners_earnings_fcf")),
+                  help=oe.get("label"))
+        if oe.get("owners_earnings_yield") is not None:
+            c2.metric("Owner's-earnings yield",
+                      f"{oe['owners_earnings_yield']*100:.1f}%",
+                      delta=f"{(oe['owners_earnings_yield']-oe.get('fcf_yield',0))*100:.1f}pp vs FCF yield",
+                      delta_color="off")
+        if oe.get("sbc_pct_fcf") is not None:
+            c3.metric("SBC % of FCF", f"{oe['sbc_pct_fcf']:.0f}%")
+
+    bits = []
+    mn = sm.get("magic_number") or {}
+    if mn.get("value") is not None:
+        bits.append(f"**Magic number** {mn['value']:.2f} (Δrev/S&M; <0.75 = inefficient)")
+    elif mn.get("reason"):
+        bits.append(f"**Magic number** N/A — {mn['reason']}")
+    cp = sm.get("cac_payback") or {}
+    if cp.get("months") is not None:
+        bits.append(f"**CAC payback** ~{cp['months']:.0f} mo (proxy)")
+    gm = sm.get("gross_margin_trend") or {}
+    if gm.get("latest") is not None:
+        bits.append(f"**Gross margin** {gm['latest']:.1f}% ({gm.get('delta_5y_pp',0):+.1f}pp 5Y)")
+    dd = sm.get("drawdown") or {}
+    if dd.get("max_drawdown") is not None:
+        bits.append(f"**Max drawdown** {dd['max_drawdown']*100:.0f}% · corr {dd.get('benchmark','SPY')} {dd.get('corr_benchmark') or float('nan'):.2f}")
+    if bits:
+        st.markdown(" · ".join(bits))
+
+    for fl in sm.get("flags") or []:
+        if fl.get("kind") == "cyclicality_reconciliation":
+            st.success("✓ " + fl.get("message", ""))
+    gaps = sm.get("data_gaps") or []
+    if gaps:
+        st.caption("Disclosure gaps (NRR/RPO/billings need MD&A extraction): " + "; ".join(gaps))
+
+
+def _value_source_panel(p2v: Dict[str, Any]) -> None:
+    """Value Source Decomposition (spec §3): 100%-stacked Operating/Financial/
+    Multiple attribution + governance modifier + durability verdict. Gated on
+    availability so FCFF names with no decomposition render nothing."""
+    vsd = (p2v or {}).get("value_source_decomposition") or {}
+    if not vsd.get("available"):
+        return
+    op = float(vsd.get("operating_share") or 0.0)
+    fin = float(vsd.get("financial_share") or 0.0)
+    mult = float(vsd.get("multiple_share") or 0.0)
+    gov = vsd.get("gov_modifier")
+
+    if mult > 0.40:
+        verdict, vcolor = "Return depends on re-rating — PASS / watch only", _RED
+    elif op >= 0.60 and mult <= 0.25:
+        verdict, vcolor = "Durable operating-led return — CONVICTION eligible", _GREEN
+    else:
+        verdict, vcolor = "Mixed durability — MONITOR max", _AMBER
+    gov_str = {1: "+1", 0: "0", -1: "−1"}.get(gov, "—")
+    if gov == -1:
+        verdict += " · governance −1"
+
+    st.markdown("---")
+    st.markdown("##### Value source decomposition — return durability")
+    st.markdown(
+        "<div style='display:flex;height:24px;border-radius:4px;overflow:hidden;"
+        "font-size:11px;color:#fff;text-align:center;line-height:24px'>"
+        f"<div style='width:{op*100:.0f}%;background:{_GREEN}'>Op {op*100:.0f}%</div>"
+        f"<div style='width:{fin*100:.0f}%;background:#3b82f6'>Fin {fin*100:.0f}%</div>"
+        f"<div style='width:{mult*100:.0f}%;background:{_RED}'>Mult {mult*100:.0f}%</div>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
+    cur_mult = vsd.get("current_multiple") or "—"
+    st.markdown(
+        f"<div style='font-size:13px;margin-top:6px'>"
+        f"<span style='color:{vcolor};font-weight:700'>{verdict}</span><br>"
+        f"<span style='color:#888'>Current multiple: {cur_mult} · governance {gov_str} · "
+        f"buyback funding: {vsd.get('buyback_funding','—')}</span></div>",
+        unsafe_allow_html=True,
+    )
+    st.caption(vsd.get("honest_flag", ""))
+
+
 def _scenario_triangle(dcf: Dict[str, Any]) -> None:
     scenarios = [
         ("BEAR", dcf.get("bear") or {}, _RED),
@@ -469,16 +561,25 @@ def _scenario_triangle(dcf: Dict[str, Any]) -> None:
             "_color":   color,
         })
 
+    # Drop scenarios with no IV rather than plotting a fake $0 bar — single
+    # point-estimate engines (REIT AFFO, DDM) legitimately produce only a
+    # base case, and a $0 "bear" reads as a fake existential zero.
+    rows = [r for r in rows if r["IV/share"] is not None]
     df = pd.DataFrame(rows)
-    if df["IV/share"].isnull().all():
+    if df.empty or df["IV/share"].isnull().all():
         st.caption("_no DCF scenarios available_")
         return
+    if len(rows) == 1:
+        st.caption(
+            "_single point-estimate engine — compound bull/bear scenarios "
+            "not applicable_"
+        )
 
     fig = go.Figure()
     fig.add_bar(
         y=df["Scenario"], x=df["IV/share"], orientation="h",
         marker_color=[r["_color"] for r in rows],
-        text=[f"${(v or 0):,.0f}" for v in df["IV/share"]],
+        text=[f"${v:,.0f}" for v in df["IV/share"]],
         textposition="outside",
         textfont=dict(size=11),
         hovertemplate="%{y}: $%{x:,.2f}/share<extra></extra>",
@@ -2452,6 +2553,8 @@ def render_deep_dive_view(
         st.markdown("<br>", unsafe_allow_html=True)
         _multiple_decomposition(md)
     _signal_reconciliation(rdcf, md)
+    _value_source_panel(p2v)
+    _saas_panel(p2v)
 
     # ── Two-column body ──────────────────────────────────────────────────
     st.markdown("---")

@@ -154,6 +154,7 @@ class ReportGenerator:
             "event→assumption link not yet built")}
     {self._section(4,
         self._render_business_snapshot(bm)
+        + self._render_saas_metrics(p2)
         + self._render_business_analysis(business_analysis)
         + self._render_historical_fundamentals(metrics)
         + self._render_economic_engine(econ)
@@ -167,7 +168,8 @@ class ReportGenerator:
         + self._render_strategic_context_detail(sc),
         gap="current-state pillar exists but is not in the scored 25-pt total")}
     {self._section(6,
-        self._render_assumption_grounding(assumption_grounding)
+        self._render_value_source_decomposition(p2)
+        + self._render_assumption_grounding(assumption_grounding)
         + self._render_specialized_valuation(p2)
         + self._render_scenario_triangle(p2)
         + self._render_phase2_section(p2)
@@ -186,6 +188,7 @@ class ReportGenerator:
         gap="cross-signal synthesis (integrating the four signals) not built")}
     {self._section(9,
         self._render_downside_protection(downside_protection)
+        + self._render_cads_flag(p2)
         + self._render_contrarian_block(contrarian)
         + self._render_risk_engine(risk, p2),
         gap="contrarian↔conclusion reconciliation; drawdown history & "
@@ -1587,6 +1590,31 @@ class ReportGenerator:
   {comp}{prem}{impl}{table}{qual}
   </div>"""
 
+    def _render_cads_flag(self, p2: Dict[str, Any]) -> str:
+        """CADS credit floor (Phase 2 / CF-R5) — a deterministic §9 coverage
+        signal. Renders for any ticker with CADS computed; loud when the
+        coverage trigger fires (negative CADS / sub-1.0× the capex-sinkhole)."""
+        cads = (p2 or {}).get("cads") or {}
+        if not cads.get("available"):
+            return ""
+        cur = self._fmt_cur
+        latest = cads.get("latest") or {}
+        cads_v = self._to_float(latest.get("cads"))
+        cov = self._to_float(cads.get("coverage"))
+        cov_s = (f"{cov:.2f}×" if cov is not None else "n/a")
+        line = (f"CADS (EBITDA − CapEx, FY{latest.get('year','')}): "
+                f"{cur(cads_v / 1e6 if cads_v is not None else None, 0)}M · "
+                f"debt-service coverage {cov_s}")
+        if cads.get("trigger"):
+            return (f'<div class="card" style="border-left:4px solid #ef4444">'
+                    f'<h3>⚠ CADS coverage — credit floor breached (CF-R5)</h3>'
+                    f'<p>{line}</p>'
+                    f'<p style="color:#b91c1c">{cads.get("trigger_reason","")}</p>'
+                    f'<p style="font-size:11px;color:#999">'
+                    f'{"; ".join(cads.get("notes") or [])}</p></div>')
+        return (f'<div class="card"><h3>CADS coverage (credit floor)</h3>'
+                f'<p>{line} — adequate.</p></div>')
+
     def _render_downside_protection(self, dp: Dict[str, Any]) -> str:
         """Downside-protection card (memo §8): asymmetry ratio, downside
         ladder, required-MoS-by-risk, position-sizing band. Empty-safe."""
@@ -1848,6 +1876,140 @@ class ReportGenerator:
         "ddm":  ("Two-stage dividend discount", "DPS",
                  "Equity valued as a two-stage dividend-per-share growth stream."),
     }
+
+    def _render_saas_metrics(self, p2: Dict[str, Any]) -> str:
+        """SaaS unit economics & forward signals (plan Build D). Renders only
+        for SaaS names (gated upstream — `saas_metrics` is only attached when
+        is_saas_company); empty otherwise."""
+        sm = (p2 or {}).get("saas_metrics") or {}
+        if not sm.get("available"):
+            return ""
+        cur = self._fmt_cur
+        pct = self._fmt_pct
+        num = self._fmt_num
+        parts: List[str] = ["<h3>SaaS unit economics & forward signals</h3>"]
+
+        oe = sm.get("owners_earnings") or {}
+        if oe.get("owners_earnings_fcf") is not None:
+            row = (f"<strong>Owner's-earnings FCF</strong>: "
+                   f"{cur(self._to_float(oe.get('owners_earnings_fcf')) / 1e9 if oe.get('owners_earnings_fcf') else None, 2)}B "
+                   f"= FCF {cur(self._to_float(oe.get('fcf')) / 1e9 if oe.get('fcf') else None, 2)}B "
+                   f"− SBC {cur(self._to_float(oe.get('sbc')) / 1e9 if oe.get('sbc') else None, 2)}B")
+            if oe.get("fcf_yield") is not None:
+                row += (f" · yield {pct(oe.get('fcf_yield'))} → "
+                        f"<strong>{pct(oe.get('owners_earnings_yield'))}</strong> net of dilution")
+            parts.append(f"<p>{row}<br><span style='font-size:11px;color:#888'>"
+                         f"{oe.get('label','')}</span></p>")
+
+        mn = sm.get("magic_number") or {}
+        if mn.get("value") is not None:
+            parts.append(f"<p><strong>Magic number</strong> (Δrev/S&M): "
+                         f"{num(self._to_float(mn.get('value')), 2)} "
+                         f"<span style='font-size:11px;color:#888'>"
+                         f"(&lt;0.75 = inefficient sales motion)</span></p>")
+        elif mn.get("reason"):
+            parts.append(f"<p><strong>Magic number</strong>: N/A — "
+                         f"<span style='font-size:11px;color:#888'>{mn['reason']}</span></p>")
+
+        cp = sm.get("cac_payback") or {}
+        if cp.get("months") is not None:
+            parts.append(f"<p><strong>CAC payback</strong> (proxy): "
+                         f"{num(self._to_float(cp.get('months')), 0)} months</p>")
+
+        gm = sm.get("gross_margin_trend") or {}
+        if gm.get("latest") is not None:
+            parts.append(f"<p><strong>Gross margin</strong>: "
+                         f"{num(self._to_float(gm.get('latest')), 1)}% "
+                         f"({'+' if (gm.get('delta_5y_pp') or 0) >= 0 else ''}"
+                         f"{num(self._to_float(gm.get('delta_5y_pp')), 1)}pp 5Y)</p>")
+
+        dd = sm.get("drawdown") or {}
+        if dd.get("max_drawdown") is not None:
+            parts.append(f"<p><strong>Max drawdown</strong>: {pct(dd.get('max_drawdown'))} · "
+                         f"corr vs {dd.get('benchmark','SPY')} "
+                         f"{num(self._to_float(dd.get('corr_benchmark')), 2)}</p>")
+
+        bl = sm.get("billings")
+        if isinstance(bl, dict) and bl.get("billings") is not None:
+            parts.append(f"<p><strong>Billings</strong>: "
+                         f"{cur(self._to_float(bl.get('billings')) / 1e9, 2)}B</p>")
+        elif isinstance(bl, dict) and bl.get("reason"):
+            parts.append(f"<p><strong>Billings</strong>: "
+                         f"<span style='font-size:11px;color:#888'>{bl['reason']}</span></p>")
+
+        for fl in sm.get("flags") or []:
+            if fl.get("kind") == "cyclicality_reconciliation":
+                parts.append(f"<p style='color:#10b981;font-size:12px'>"
+                             f"✓ {fl.get('message','')}</p>")
+
+        gaps = sm.get("data_gaps") or []
+        if gaps:
+            parts.append("<p style='font-size:11px;color:#999;font-style:italic'>"
+                         "Disclosure gaps (NRR/RPO/billings need MD&A extraction): "
+                         + "; ".join(gaps) + "</p>")
+        return "".join(parts)
+
+    def _render_value_source_decomposition(self, p2: Dict[str, Any]) -> str:
+        """Value Source Decomposition (spec §3): attribute expected return across
+        Operating / Financial / Multiple engines + a Governance modifier, so the
+        reader sees how DURABLE the return source is. Empty when unavailable."""
+        vsd = (p2 or {}).get("value_source_decomposition") or {}
+        if not vsd.get("available"):
+            return ""
+        pct = self._fmt_pct
+        op = self._to_float(vsd.get("operating_share")) or 0.0
+        fin = self._to_float(vsd.get("financial_share")) or 0.0
+        mult = self._to_float(vsd.get("multiple_share")) or 0.0
+        gov = vsd.get("gov_modifier")
+        gov_str = {1: "+1 (aligned / disciplined)", 0: "0 (neutral)",
+                   -1: "−1 (transfer risk)"}.get(gov, "—")
+
+        # Verdict from the §4 conviction table (durability gate).
+        if mult > 0.40:
+            verdict, vcolor = "PASS / watch only — return depends on re-rating", "#ef4444"
+        elif op >= 0.60 and mult <= 0.25:
+            verdict, vcolor = "CONVICTION eligible — durable operating-led return", "#10b981"
+        else:
+            verdict, vcolor = "MONITOR max — mixed durability", "#f59e0b"
+        if gov == -1:
+            verdict += " · governance −1 (downgrade one tier)"
+
+        bar = (
+            "<div style='display:flex;height:22px;border-radius:4px;overflow:hidden;"
+            "font-size:11px;color:#fff;text-align:center;line-height:22px'>"
+            f"<div style='width:{op*100:.0f}%;background:#10b981' title='Operating'>{op*100:.0f}%</div>"
+            f"<div style='width:{fin*100:.0f}%;background:#3b82f6' title='Financial'>{fin*100:.0f}%</div>"
+            f"<div style='width:{mult*100:.0f}%;background:#ef4444' title='Multiple'>{mult*100:.0f}%</div>"
+            "</div>")
+
+        cands = vsd.get("mult_contrib_candidates") or {}
+        reads = " · ".join(f"{k}: {pct(v)}/yr" for k, v in cands.items()) or "—"
+        cur_mult = vsd.get("current_multiple") or "—"
+        funding = vsd.get("buyback_funding") or "—"
+
+        rows = (
+            f"<tr><td>Operating (organic growth × leverage)</td>"
+            f"<td style='text-align:right'>{pct(op)}</td></tr>"
+            f"<tr><td>Financial (dividend + net buyback)</td>"
+            f"<td style='text-align:right'>{pct(fin)}</td></tr>"
+            f"<tr><td>Multiple (re-rating vs target)</td>"
+            f"<td style='text-align:right'>{pct(mult)}</td></tr>"
+            f"<tr><td>Governance modifier</td>"
+            f"<td style='text-align:right'>{gov_str}</td></tr>")
+
+        return (
+            "<h3>Value Source Decomposition</h3>"
+            "<p style='font-size:13px;color:#666'>Of the expected total return, "
+            "what share comes from each engine — and how durable is it? "
+            "Operating compounds; Multiple mean-reverts.</p>"
+            f"{bar}"
+            "<table style='width:100%;border-collapse:collapse;margin-top:8px'>"
+            f"{rows}</table>"
+            f"<p style='margin-top:8px'><strong style='color:{vcolor}'>{verdict}</strong></p>"
+            f"<p style='font-size:12px;color:#666'>Current multiple: {cur_mult} · "
+            f"re-rating reads — {reads} · buyback funding: {funding}</p>"
+            f"<p style='font-size:11px;color:#999;font-style:italic'>{vsd.get('honest_flag','')}</p>"
+        )
 
     def _render_specialized_valuation(self, p2: Dict[str, Any]) -> str:
         """Two-stage per-share decomposition for specialized engines (REIT AFFO /

@@ -200,12 +200,37 @@ def build_wacc_analysis(
         "weights_known": wE is not None,
     }
     score = sum(1 for v in checks.values() if v)
+
+    # β-reference diagnostic (Build 1 / spec §7). β + R² vs ^GSPC and the
+    # sector benchmark. We FLAG (not change) when the sector β fits materially
+    # better (R²_sector − R²_gspc > 0.10) AND moves β by ≥0.10 — the
+    # marginal-investor-mis-reference case (Nokia/JSE). Headline WACC unchanged.
+    beta_r2 = getattr(result, "beta_r2", None)
+    beta_sector = getattr(result, "beta_sector", None)
+    beta_sector_r2 = getattr(result, "beta_sector_r2", None)
+    beta_benchmark = getattr(result, "beta_benchmark", None)
+    beta_reference_flag = None
+    if (beta_r2 is not None and beta_sector_r2 is not None
+            and beta_sector is not None
+            and beta_sector_r2 - beta_r2 > 0.10
+            and abs(beta_sector - beta) >= 0.10):
+        beta_reference_flag = (
+            f"β {beta:.2f} (R²={beta_r2:.2f}) vs sector {beta_benchmark} "
+            f"{beta_sector:.2f} (R²={beta_sector_r2:.2f}) — marginal-investor "
+            f"β fits better; headline WACC uses ^GSPC β, but multiple_share is "
+            f"computed across both (Build 4)."
+        )
+
     quality = {
         "score": score, "max": len(checks), "checks": checks,
-        "beta_r2": None,                  # not currently computed
+        "beta_r2": beta_r2,
+        "beta_sector": beta_sector,
+        "beta_sector_r2": beta_sector_r2,
+        "beta_benchmark": beta_benchmark,
+        "beta_reference_flag": beta_reference_flag,
         "erp_method": "Damodaran flat consensus (4.75%)",
-        "notes": "Beta R² not tracked; country premium is domicile-based "
-                 "(not geo-revenue-weighted).",
+        "notes": "β diagnostic: R² + sector-β tracked (Build 1); country "
+                 "premium is domicile-based (not geo-revenue-weighted).",
     }
 
     out.update({

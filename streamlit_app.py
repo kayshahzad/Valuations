@@ -1290,7 +1290,9 @@ def main():
             return
 
         from aletheia.ui.financials_view import render_financials_view
-        render_financials_view(selected, bundle)
+        _full = fetch_ticker(selected) or {}
+        _p2 = (_full.get("4_valuation_synthesis") or {}).get("phase2_valuation") or {}
+        render_financials_view(selected, bundle, phase2=_p2)
 
     # ──────────────────────────────────────────────────────────────────────────
     # TAB — FMP COMPARE (every line item: ours vs FMP, side-by-side)

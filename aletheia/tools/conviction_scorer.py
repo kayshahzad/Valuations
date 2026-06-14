@@ -168,7 +168,8 @@ def _p2_score(roic, wacc, fcf_margin, net_debt_bn, ebitda_bn, data_quality,
 # Revenue CAGR + sector classification
 # Higher weight to recent CAGR but bounded by sector context
 def _p3_score(rev_cagr, hist_cagr, sector="", cyclicality_z=None, is_peak=False,
-              implied_cagr=None, cagr_strong=0.20, cagr_good=0.12, cagr_moderate=0.07, cagr_slow=0.03, stage=""):
+              implied_cagr=None, cagr_strong=0.20, cagr_good=0.12, cagr_moderate=0.07, cagr_slow=0.03, stage="",
+              is_saas=False):
     reasons = []
 
     # Use robust historical CAGR as primary signal
@@ -188,8 +189,22 @@ def _p3_score(rev_cagr, hist_cagr, sector="", cyclicality_z=None, is_peak=False,
         base = 1; r = f"Revenue CAGR {cagr:.1%} — stagnant or declining"
     reasons.append(r)
 
-    # Cyclicality penalty
-    if is_peak:
+    # Cyclicality penalty.
+    # SaaS exemption (plan Build F): for recurring-revenue software names the
+    # revenue z-score is driven by secular growth, not a cycle — the DCF already
+    # treats Technology as non-cyclical (applies_cyclical_haircut=False), so the
+    # base case is NOT haircut and the IV is unaffected. Penalizing P3 for a
+    # false-positive "peak" contradicts the live valuation. We skip the WHOLE
+    # block (both the is_peak branch AND the z>1.5 elif — ADBE's z=2.39 would
+    # otherwise fall through to the elif and still dock −1). Strictly gated:
+    # non-SaaS scoring is byte-for-byte unchanged.
+    if is_saas and (is_peak or (cyclicality_z and cyclicality_z > 1.5)):
+        reasons.append(
+            "Cyclicality z-score elevated by secular growth, not a cycle — "
+            "recurring-revenue model, base case NOT haircut (IV/MoS unaffected); "
+            "no P3 penalty applied"
+        )
+    elif is_peak:
         base = max(1, base - 1)
         reasons.append("⚠ Cyclicality peak detected — base revenue likely inflated")
     elif cyclicality_z and cyclicality_z > 1.5:
@@ -342,6 +357,15 @@ class ConvictionResult:
     multiple_premium: Optional[float] = None
     implied_hist_ratio: Optional[float] = None
 
+    # Value-source decomposition gate (VSD Build 5 / spec §4). The tier is
+    # capped by return durability: high operating share is durable, high
+    # multiple share is fragile. Only ever LOWERS the tier (decision #1).
+    value_source_cap: bool = False
+    value_source_tier_ceiling: Optional[int] = None
+    operating_share: Optional[float] = None
+    multiple_share: Optional[float] = None
+    gov_modifier: Optional[int] = None
+
     # Lifecycle Context
     lifecycle_stage: Optional[int] = None
     lifecycle_label: Optional[str] = None
@@ -400,6 +424,11 @@ class ConvictionResult:
             "conviction_score": self.conviction_score,
             "reflexivity_flags": self.reflexivity_flags,
             "reflexivity_cap": self.reflexivity_cap,
+            "value_source_cap": self.value_source_cap,
+            "value_source_tier_ceiling": self.value_source_tier_ceiling,
+            "operating_share": self.operating_share,
+            "multiple_share": self.multiple_share,
+            "gov_modifier": self.gov_modifier,
             "p1_reasons": self.p1_moat.reasons if self.p1_moat else [],
             "p2_reasons": self.p2_health.reasons if self.p2_health else [],
             "p3_reasons": self.p3_tailwind.reasons if self.p3_tailwind else [],
@@ -676,6 +705,14 @@ class ConvictionScorer:
         result.p2_health = PillarScore("Fundamental Health", p2_score, 0.25, p2_reasons)
 
         # ── Pillar 3: Secular Tailwind ────────────────────────────────────────
+        # SaaS exemption gate (Build F) — recurring-revenue software names are
+        # exempt from the cyclicality peak penalty. Strictly gated: non-SaaS
+        # scoring is unchanged.
+        try:
+            from config.ticker_classification import is_saas_company
+            _is_saas = is_saas_company(getattr(calc_input, "classification", None))
+        except Exception:
+            _is_saas = False
         p3_score, p3_reasons = _p3_score(
             rev_cagr, hist_cagr, sector, cyclicality_z, is_peak,
             implied_cagr=implied_cagr,
@@ -684,6 +721,7 @@ class ConvictionScorer:
             cagr_moderate=thresholds.cagr_moderate,
             cagr_slow=thresholds.cagr_slow,
             stage=thresholds.stage.value,
+            is_saas=_is_saas,
         )
         result.p3_tailwind = PillarScore("Secular Tailwind", p3_score, 0.20, p3_reasons)
 
@@ -765,6 +803,66 @@ class ConvictionScorer:
                     f"Multiple-justified cap: {multiple_premium:+.0%} EV/EBITDA premium "
                     f"AND implied CAGR {result.implied_hist_ratio:.1f}× historical"
                 )
+
+        # ── Value-source decomposition gate (spec §4 / Build 5) ───────────────
+        # Cap the tier by return DURABILITY. Every cap is a numeric score
+        # ceiling; we take the minimum so an override can never RAISE a ceiling
+        # (R13 — guarantees decision #1, "only ever caps"). Reads the
+        # decomposition stored in state by calc_node (Build 6); absent → no cap.
+        vsd = {}
+        if isinstance(state, dict):
+            vsd = ((state.get("phase2_valuation") or {})
+                   .get("value_source_decomposition") or {})
+        if vsd.get("available"):
+            op_s = float(vsd.get("operating_share") or 0.0)
+            mult_s = float(vsd.get("multiple_share") or 0.0)
+            gov = int(vsd.get("gov_modifier") or 0)
+            debt_funded_share = float(vsd.get("debt_funded_share") or 0.0)
+            contrarian_bias = vsd.get("contrarian_bias")
+            result.operating_share = op_s
+            result.multiple_share = mult_s
+            result.gov_modifier = gov
+
+            # share ceiling (spec §4 table)
+            if mult_s > 0.40:
+                share_ceiling = 14          # PASS — return depends on re-rating
+            elif op_s >= 0.60 and mult_s <= 0.25:
+                share_ceiling = 25          # CONVICTION eligible (no cap)
+            else:
+                share_ceiling = 19          # MONITOR max (40-60% op or 25-40% mult)
+
+            # governance: −1 downgrades one tier below the share allowance
+            _down = {25: 19, 19: 14}
+            gov_ceiling = _down.get(share_ceiling, 14) if gov == -1 else 25
+
+            # value-transfer overrides (R3 debt-funding primary; R4 narrative
+            # keyed to the bias flag, not the share — non-circular)
+            override_ceiling = 25
+            override_reason = None
+            if debt_funded_share > 0.5:
+                override_ceiling = 19
+                override_reason = f"debt-funded buybacks ({debt_funded_share:.0%})"
+            if contrarian_bias in ("narrative_premium", "growth_extrapolation", "fomo"):
+                override_ceiling = min(override_ceiling, 19)
+                override_reason = (override_reason + "; " if override_reason else "") + \
+                    f"narrative-multiple bias ({contrarian_bias})"
+
+            # most-restrictive of all caps (R13)
+            final_ceiling = min(share_ceiling, gov_ceiling, override_ceiling,
+                                result.capped_total)
+            if final_ceiling < result.capped_total:
+                bits = [f"value-source gate: operating {op_s:.0%}, multiple {mult_s:.0%}"]
+                if gov == -1:
+                    bits.append("governance −1")
+                if override_reason:
+                    bits.append(override_reason)
+                result.capped_total = final_ceiling
+                result.cap_applied = True
+                result.value_source_cap = True
+                result.value_source_tier_ceiling = final_ceiling
+                extra = "; ".join(bits)
+                result.cap_reason = (result.cap_reason + " | " + extra
+                                     if result.cap_reason else extra)
 
         # ── Reflexivity flags (Section 10.6) ──────────────────────────────────
         if sbc_pct_fcf is not None and sbc_pct_fcf > 10:

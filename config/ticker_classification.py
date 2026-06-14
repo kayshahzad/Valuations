@@ -24,6 +24,38 @@ class TickerClassification:
     # when the filer's primary taxonomy is IFRS.
     is_ifrs_filer: bool = False
 
+
+def is_saas_company(cls) -> bool:
+    """SaaS analysis-overlay gate (single source of truth).
+
+    True for software names that keep standard FCFF valuation but warrant
+    subscription-economics analysis. Resolves through the SAME
+    ``peer_group_for(...) == "tech_saas"`` logic the bottom-up emphasis
+    template uses, so the overlay gate and the template can never drift.
+    Accepts either a ``TickerClassification`` or a plain dict (runtime
+    classifications are stored as dicts). Returns False for anything else.
+
+    This is an *analysis* gate, NOT a valuation-routing flag — SaaS still
+    values via FCFF, so it deliberately does not touch ``business_model``.
+    """
+    if cls is None:
+        return False
+
+    def _g(attr: str) -> str:
+        if isinstance(cls, dict):
+            return cls.get(attr, "") or ""
+        return getattr(cls, attr, "") or ""
+
+    try:
+        from config.business_analysis_templates import peer_group_for
+        return peer_group_for(
+            _g("ticker"), _g("sector"), _g("industry"),
+            _g("lifecycle"), _g("business_model"),
+        ) == "tech_saas"
+    except Exception:
+        return False
+
+
 UNIVERSE: Dict[str, TickerClassification] = {
     # --- Technology / Software / Hardware ---
     "MSFT": TickerClassification("MSFT", "Technology", "Software", "growth_compounder_software", "fcff_compatible", "Cloud/AI tailwind, services-mix expanding margins", date.today()),

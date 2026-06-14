@@ -71,7 +71,13 @@ class BusinessAB(BaseModel):
     industry_verticals: List[str] = Field(default_factory=list,
         description="Industry verticals served (financial services, healthcare, public sector, retail, manufacturing, etc.)")
     customer_concentration: str = Field(default="", description="Concentration: largest customer / top-10 % of revenue, or 'no single customer >10% of revenue' when the filing states a diversified base")
-    net_retention: str = Field(default="", description="Net/dollar revenue retention, gross retention, or attrition RATE if disclosed; else the qualitative characterization ('strong retention', 'low attrition') or 'no specific rate disclosed'. Key durability metric for subscription vendors.")
+    net_retention: str = Field(default="", description="Net/dollar revenue retention, gross retention, or attrition RATE if disclosed; else the qualitative characterization ('strong retention', 'low attrition'). If no explicit NRR %, extract the disclosed FORWARD PROXIES instead of giving up: net-new ARR (e.g. Digital Media net-new ARR), remaining performance obligations (RPO), billings/deferred-revenue language. Only return 'not disclosed' when none of these appear.")
+    disclosure_quality: str = Field(default="", description="Tag the retention disclosure: 'rate_disclosed' (explicit NRR/GRR %), 'proxy_only' (no rate but net-new ARR/RPO/billings given), or 'not_disclosed' (nothing).")
+    rpo: str = Field(default="", description="Remaining performance obligations (RPO) / total contracted-but-unrecognized revenue, with current vs noncurrent split if given. The forward-cash signal for SaaS. From MD&A/revenue footnote.")
+    billings_disclosure: str = Field(default="", description="Billings or calculated billings if the filer discloses it, or net-new ARR / bookings language. The leading indicator vs ratably-recognized revenue.")
+    subscription_revenue_pct: str = Field(default="", description="Share of revenue that is recurring/subscription vs perpetual/transactional/services, if disclosed (e.g. 'subscription 94% of revenue'). Needed to validate the billings = revenue + Δdeferred identity.")
+    gross_retention: str = Field(default="", description="Gross revenue/logo retention (churn floor) if disclosed; distinct from net retention which includes expansion.")
+    organic_growth_disclosed: str = Field(default="", description="The 10-K's stated ORGANIC revenue growth (ex-acquisitions, ex-FX) if disclosed, to back out true organic from headline growth for acquisitive names.")
     distribution_channels: List[str] = Field(default_factory=list,
         description="How customers buy: direct sales, channel/VAR, marketplace, prime/sub, etc.")
     # Theme B — market size & capture
@@ -160,9 +166,14 @@ established, widely-public reference accounts (e.g. AWS, Toyota, Adidas, Spotify
 healthcare, public sector, …); (c) customer_concentration (largest/top-10 share, \
 or 'no single customer >10% of revenue' if the filing says so); (d) net_retention \
 — the net/dollar revenue retention or attrition RATE if disclosed; if no specific \
-number is given, the qualitative characterization the filing uses ('strong \
-dollar-based retention', 'low attrition'), or 'no specific rate disclosed' when \
-the filing is silent. At least ONE of these should be populated for any large company.
+number is given, DO NOT just say 'not disclosed' — extract the disclosed FORWARD \
+PROXIES instead: net-new ARR (e.g. Digital Media net-new ARR), remaining \
+performance obligations (RPO), billings/deferred-revenue language. Set \
+disclosure_quality to 'rate_disclosed', 'proxy_only', or 'not_disclosed' \
+accordingly, and populate rpo / billings_disclosure / subscription_revenue_pct / \
+gross_retention / organic_growth_disclosed whenever the filing gives them. At \
+least ONE retention signal (rate OR proxy) should be populated for any large \
+subscription company.
 - distribution_channels: how customers actually buy (direct sales force, channel/\
 VAR, marketplace, prime vs subcontractor, OEM, etc.).
 

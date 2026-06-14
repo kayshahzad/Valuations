@@ -445,6 +445,115 @@ def _latest_revenue(calc) -> Optional[float]:
         return None
 
 
+def net_debt_series(calc) -> List[Dict[str, Any]]:
+    """Shared per-FY net-debt / EBITDA / long-term-debt loader (VSD plan point
+    #3). EXTRACTED so ``build_buyback_funding`` and ``capital_structure_flag``
+    read the trajectory identically and cannot drift. Ascending by FY; missing
+    columns yield None entries, missing frame yields []."""
+    df = getattr(calc, "df", None)
+    cols = getattr(df, "columns", [])
+    if df is None or "derived_NetDebt" not in cols:
+        return []
+    d = df
+    if "period" in cols:
+        d = d[d["period"] == "FY"]
+    d = d.dropna(subset=["fiscal_year"]).sort_values("fiscal_year")
+    return [{
+        "year": int(r["fiscal_year"]),
+        "net_debt": _safe_float(r.get("derived_NetDebt")),
+        "ebitda": _safe_float(r.get("derived_EBITDA")),
+        "ltd": _safe_float(r.get("raw_LongTermDebt")),
+    } for _, r in d.iterrows()]
+
+
+def build_buyback_funding(calc, market_cap: Optional[float] = None) -> Dict[str, Any]:
+    """Classify capital-return *funding source* (VSD plan Build 3 / gap G5).
+
+    The value engines distinguish FCF-funded buybacks (creation-adjacent) from
+    debt-funded ones (a transfer across time). For each FY with a positive net
+    buyback we mark it debt-funded when the buyback exceeds that year's FCF AND
+    net debt rose — i.e. the return was at least partly borrowed. Output drives
+    the governance modifier and the value-transfer override (R3 primary,
+    independent of M&A break detection).
+
+    ``net_buyback_yield`` uses ``clean_NetBuyback_AfterSBC`` (already net of
+    SBC dilution) over market cap, so it is the honest shareholder yield from
+    repurchases and is *negative for net issuers* (e.g. REITs) — Build 4 adds
+    it directly without a separate dilution term (no double-count, per R9).
+    """
+    out: Dict[str, Any] = {"available": False, "funding": None,
+                           "debt_funded_share": None, "net_buyback_yield": None}
+    try:
+        df = getattr(calc, "df", None)
+        cols = getattr(df, "columns", [])
+        if df is None or "clean_NetBuyback_AfterSBC" not in cols:
+            return out
+        d = df
+        if "period" in cols:
+            d = d[d["period"] == "FY"]
+        d = d.dropna(subset=["fiscal_year"]).sort_values("fiscal_year").tail(6)
+        rows = [r for _, r in d.iterrows()]
+        if len(rows) < 3:
+            return out
+
+        # Net debt sourced from the shared loader (net_debt_series) so this and
+        # capital_structure_flag read the trajectory identically (point #3).
+        _nd_by_year = {x["year"]: x["net_debt"] for x in net_debt_series(calc)}
+        years, nb, fcf, nd = [], [], [], []
+        for r in rows:
+            _y = int(r["fiscal_year"])
+            years.append(_y)
+            nb.append(_safe_float(r.get("clean_NetBuyback_AfterSBC")))
+            fcf.append(_safe_float(r.get("derived_FCF")))
+            nd.append(_nd_by_year.get(_y))
+
+        total_pos = 0.0
+        debt_funded = 0.0
+        pos_years = 0
+        for i in range(1, len(rows)):
+            b = nb[i]
+            if b is None or b <= 0:
+                continue
+            pos_years += 1
+            total_pos += b
+            f = fcf[i] if fcf[i] is not None else 0.0
+            d_nd = (nd[i] - nd[i - 1]) if (nd[i] is not None and nd[i - 1] is not None) else None
+            # Debt-funded: buyback exceeds FCF AND net debt rose that year.
+            if d_nd is not None and d_nd > 0 and b > max(f, 0.0):
+                debt_funded += b
+
+        debt_funded_share = (debt_funded / total_pos) if total_pos > 0 else 0.0
+        if pos_years == 0:
+            funding = "net_issuer"          # negative net buybacks (e.g. REIT)
+        elif debt_funded_share > 0.5:
+            funding = "debt_funded"
+        elif debt_funded_share < 0.2:
+            funding = "fcf_funded"
+        else:
+            funding = "mixed"
+
+        # Honest shareholder yield from repurchases (AfterSBC) over market cap.
+        nb_yield = None
+        if market_cap and market_cap > 0:
+            recent = [v for v in nb[-3:] if v is not None]
+            if recent:
+                nb_yield = (sum(recent) / len(recent)) / market_cap
+
+        out = {
+            "available": True,
+            "funding": funding,
+            "debt_funded_share": round(debt_funded_share, 3),
+            "net_buyback_yield": nb_yield,
+            "positive_buyback_years": pos_years,
+            "years_used": years,
+            "source": "Δ net debt vs FCF vs net buyback (AfterSBC), trailing FY",
+        }
+    except Exception:
+        return {"available": False, "funding": None,
+                "debt_funded_share": None, "net_buyback_yield": None}
+    return out
+
+
 def build_growth_decomposition(calc) -> Dict[str, Any]:
     """Decompose recent revenue growth into organic vs M&A.
 
