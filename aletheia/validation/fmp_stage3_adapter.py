@@ -175,15 +175,28 @@ def _normalize_signs(rec: Dict[str, Any]) -> None:
 
 # XBRL specialty tags the hybrid provider injects when available. Sum
 # of any non-None values = the ex-impairment add-back for OpInc/EBITDA.
-# Order doesn't matter; we just sum magnitudes. Adding new tags here
-# (e.g., AssetWritedown, ImpairmentOfLongLivedAssetsHeldForUse) expands
-# coverage without touching the derivation logic.
-_IMPAIRMENT_TAGS = (
-    "AssetImpairmentCharges",
+# Impairment tags form a HIERARCHY, so they cannot be naively summed.
+# ``AssetImpairmentCharges`` is the aggregate "asset writedown" line that
+# typically SUBSUMES its goodwill / intangible / long-lived children (a filer
+# often tags the same impairment at both the umbrella and the component level).
+# Summing all of them double-counts: CNC FY2025 tagged a single ~$7B impairment
+# at both levels and the naive sum inflated the add-back to ~$14B, producing a
+# fantasy ex-unusual operating income. So: take the asset-impairment bucket as
+# MAX(umbrella, Σ children) — robust to either tagging style without double-
+# counting — and add restructuring (a genuinely separate charge) on top.
+_ASSET_IMPAIRMENT_UMBRELLA = "AssetImpairmentCharges"
+_ASSET_IMPAIRMENT_CHILDREN = (
     "GoodwillImpairmentLoss",
     "IntangibleAssetImpairmentCharge",
     "ImpairmentOfLongLivedAssetsHeldForUse",
-    "RestructuringCharges",
+)
+_RESTRUCTURING_TAG = "RestructuringCharges"
+
+# Back-compat alias (a few call sites / tests enumerate the full tag set).
+_IMPAIRMENT_TAGS = (
+    (_ASSET_IMPAIRMENT_UMBRELLA,)
+    + _ASSET_IMPAIRMENT_CHILDREN
+    + (_RESTRUCTURING_TAG,)
 )
 
 # Provenance codes — ValidatedCleanedRecord.clean is typed
@@ -200,6 +213,36 @@ SOURCE_LABELS: Dict[float, str] = {v: k for k, v in _SOURCE_CODES.items()}
 _FMP_FALLBACK_MAX_PCT_OF_REVENUE = 0.05
 
 
+def _asset_impairment_addback(rec: Dict[str, Any]):
+    """Deduped impairment + restructuring add-back from explicit XBRL tags.
+
+    The asset-impairment bucket is ``MAX(umbrella, Σ children)`` — never their
+    sum — because ``AssetImpairmentCharges`` is the aggregate line that usually
+    subsumes the goodwill / intangible / long-lived components; summing both
+    levels double-counts (the CNC FY2025 ~$7B → ~$14B inflation). ``MAX`` is
+    robust either way: umbrella-only filers, child-only filers, and both-tagged
+    filers all resolve to the true charge. Restructuring is a separate, additive
+    charge. Returns the total (≥ 0) or ``None`` when no impairment tag is present.
+    """
+    umbrella = rec.get(_ASSET_IMPAIRMENT_UMBRELLA)
+    children = [abs(rec[k]) for k in _ASSET_IMPAIRMENT_CHILDREN
+                if rec.get(k) is not None]
+
+    candidates = []
+    if umbrella is not None:
+        candidates.append(abs(umbrella))
+    if children:
+        candidates.append(sum(children))
+    asset_impairment = max(candidates) if candidates else None
+
+    restructuring = rec.get(_RESTRUCTURING_TAG)
+    restructuring = abs(restructuring) if restructuring is not None else None
+
+    if asset_impairment is None and restructuring is None:
+        return None
+    return (asset_impairment or 0.0) + (restructuring or 0.0)
+
+
 def _ex_impairment_addback(rec: Dict[str, Any]):
     """Decide how much to ADD BACK to OperatingIncome / EBITDA to
     strip one-time impairment / restructuring. Returns
@@ -207,9 +250,10 @@ def _ex_impairment_addback(rec: Dict[str, Any]):
     available.
 
     Preference order:
-      1. ``xbrl_discrete_tags`` — sum of explicit XBRL impairment tags
-         supplied by the hybrid provider. Most precise; aligns with
-         Capital IQ's "Asset Writedown" line.
+      1. ``xbrl_discrete_tags`` — explicit XBRL impairment tags supplied by the
+         hybrid provider, DEDUPED across the umbrella/child hierarchy (see
+         ``_asset_impairment_addback``). Most precise; aligns with Capital IQ's
+         "Asset Writedown" line.
       2. ``fmp_other_expenses_bucket`` — FMP's ``otherExpenses`` field,
          gated by a materiality threshold (default 5% of revenue).
          FMP's ``otherExpenses`` is a kitchen sink: for retail filers
@@ -223,12 +267,9 @@ def _ex_impairment_addback(rec: Dict[str, Any]):
          (net credits) also fail the test.
       3. None — leave OperatingIncome / EBITDA as reported.
     """
-    discrete = [
-        abs(rec[k]) for k in _IMPAIRMENT_TAGS
-        if rec.get(k) is not None
-    ]
-    if discrete:
-        return sum(discrete), "xbrl_discrete_tags"
+    discrete = _asset_impairment_addback(rec)
+    if discrete is not None:
+        return discrete, "xbrl_discrete_tags"
     other = rec.get("OtherOperatingItems")
     revenue = rec.get("Revenue")
     if (other is not None and revenue and revenue > 0
@@ -487,9 +528,10 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     #   1. Discrete XBRL impairment tags (preferred): hybrid provider
     #      enriches the record with AssetImpairmentCharges,
     #      GoodwillImpairmentLoss, IntangibleAssetImpairmentCharge,
-    #      RestructuringCharges. When present, sum them — that's the
-    #      precise Capital-IQ "Asset Writedown" add-back. Source:
-    #      "xbrl_discrete_tags".
+    #      RestructuringCharges. DEDUPED across the umbrella/child
+    #      hierarchy (MAX(umbrella, Σ children) + restructuring) — NOT
+    #      summed, which would double-count (see _asset_impairment_addback).
+    #      Source: "xbrl_discrete_tags".
     #   2. FMP's catch-all ``otherExpenses`` (fallback): bundles the
     #      same items into a single kitchen-sink line, sometimes with
     #      offsetting credits. Works for Macy's FY2023 (pure $957M
