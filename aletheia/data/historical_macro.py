@@ -8,7 +8,7 @@ signals use 2025 macro conditions, which systematically distorts the
 WACC and inflates the apparent IV gap.
 
 Three functions:
-- get_risk_free_rate(as_of_date): yfinance ^IRX history, cached
+- get_risk_free_rate(as_of_date): yfinance ^TNX (10-year) history, cached
 - get_equity_risk_premium(as_of_date): Damodaran annual implied ERP, interpolated
 - compute_historical_beta(ticker, as_of_date): 5y weekly returns vs ^GSPC,
   filtered to dates <= as_of_date
@@ -36,7 +36,7 @@ _RETURNS_CACHE: Dict[str, pd.Series] = {}  # ticker -> weekly returns series
 _MARKET_RETURNS: Optional[pd.Series] = None  # ^GSPC weekly returns
 
 _MACRO_DIR = Path("valuation_data/macro")
-_RF_CACHE_PATH = _MACRO_DIR / "risk_free_rate_history.parquet"
+_RF_CACHE_PATH = _MACRO_DIR / "risk_free_rate_10y_history.parquet"
 _ERP_CSV_PATH = _MACRO_DIR / "damodaran_implied_erp.csv"
 _INDUSTRY_BETA_CSV_PATH = _MACRO_DIR / "damodaran_industry_betas.csv"
 _INDUSTRY_BETAS: Optional[Dict[str, float]] = None
@@ -50,7 +50,9 @@ _ERP_FALLBACK = 0.0475
 # ─────────────────────────────────────────────────────────────────────────
 
 def _load_rf_history() -> pd.Series:
-    """Load ^IRX history. Reads cached parquet if present; else fetches once."""
+    """Load 10-year Treasury (^TNX) history. Reads cached parquet if present;
+    else fetches once. Switched from ^IRX (13-week) so the backtest's point-in-
+    time rf matches the live engine, which discounts at the 10-year."""
     global _RF_HISTORY
     if _RF_HISTORY is not None:
         return _RF_HISTORY
@@ -59,13 +61,13 @@ def _load_rf_history() -> pd.Series:
         return _RF_HISTORY
     # First call — fetch and cache
     _MACRO_DIR.mkdir(parents=True, exist_ok=True)
-    hist = yf.Ticker("^IRX").history(period="max", auto_adjust=False)
+    hist = yf.Ticker("^TNX").history(period="max", auto_adjust=False)
     if hist is None or hist.empty:
         _RF_HISTORY = pd.Series(dtype=float)
         return _RF_HISTORY
     if hist.index.tz is not None:
         hist.index = hist.index.tz_localize(None)
-    series = hist["Close"].dropna() / 100.0  # ^IRX is in percent points
+    series = hist["Close"].dropna() / 100.0  # ^TNX is in percent points
     series.to_frame().to_parquet(_RF_CACHE_PATH)
     _RF_HISTORY = series
     return _RF_HISTORY
@@ -73,8 +75,9 @@ def _load_rf_history() -> pd.Series:
 
 def get_risk_free_rate(as_of_date: date) -> float:
     """
-    13-week T-bill yield (^IRX) as of `as_of_date` (or nearest prior trading
-    day). Returns rate as decimal (0.036 = 3.6%). Floored at 0.001.
+    10-year Treasury yield (^TNX) as of `as_of_date` (or nearest prior trading
+    day). Returns rate as decimal (0.045 = 4.5%). Floored at 0.001. The 10-year
+    matches the perpetuity-DCF horizon and the live engine's rf.
     """
     series = _load_rf_history()
     if series.empty:
@@ -100,7 +103,7 @@ def get_risk_free_rate_normalized(
     window_years: int = 5,
 ) -> float:
     """
-    Smoothed historical Rf: rolling-mean of ^IRX over `window_years` ending
+    Smoothed historical Rf: rolling-mean of ^TNX over `window_years` ending
     at as_of_date. Dampens regime extremes (COVID 0.1%, 2023 5.2%) so the
     DCF terminal-value math doesn't whip around from the discount-rate side.
 
