@@ -463,10 +463,15 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
     for i, h in enumerate(headers):
         out[h] = [vals[i] for _, vals in rows]
 
+    # Size the height to the row count so every line is visible — no internal
+    # scrollbar. Streamlit renders ~35px rows + a ~38px header.
+    _table_height = 38 + len(out) * 35 + 3
+
     st.dataframe(
         out,
         use_container_width=True,
         hide_index=True,
+        height=_table_height,
         column_config={
             "metric": st.column_config.TextColumn("Metric", width="medium"),
         },
