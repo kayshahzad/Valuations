@@ -308,6 +308,21 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     except Exception:
         _csf_payload = None
 
+    # Bank convergent set (residual income / justified P/B / Gordon DDM) — the
+    # financial-sector analog of the FCFF four-method convergence. Gated on the
+    # business model; this is the path DDM/embedded-value filers take.
+    _bvm_payload = None
+    try:
+        from aletheia.tools.bank_valuation_methods import build_bank_valuation_methods as _bbvm
+        _bm = _bbvm(calc, vresult, p2={
+            "engine": vresult.engine,
+            "wacc": float(ke) if ke is not None else None,
+            "dcf": {"base_intrinsic_per_share": ips},
+        })
+        _bvm_payload = _bm if _bm.get("available") else None
+    except Exception:
+        _bvm_payload = None
+
     return {
         "ticker":                 vresult.ticker.upper(),
         "wacc":                   float(ke) if ke is not None else None,
@@ -340,6 +355,7 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         "cads":                   _cads_payload,
         "capital_structure_flag": _csf_payload,
         "valuation_methods":      None,   # FCFF-only; REIT/DDM value ECF directly
+        "bank_valuation_methods": _bvm_payload,
         "specialized_inputs":     snap,
         "source_citation":        snap.get("source"),
         "as_of_date":             snap.get("as_of_date"),
@@ -705,6 +721,7 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "cads":                   _cads_payload,
         "capital_structure_flag": _csf_payload,
         "valuation_methods":      _vm_payload,
+        "bank_valuation_methods": None,   # financial-sector only; FCFF uses the four-method set
         # Carry-along fields for `_calc_only_summary` consumers (not in
         # DCFResponse schema). Kept on the dict so we don't run the engine
         # twice.
@@ -1340,6 +1357,7 @@ def _build_full_report(ticker: str) -> Optional[Dict[str, Any]]:
             "cads":                   dcf_payload.get("cads"),
             "capital_structure_flag": dcf_payload.get("capital_structure_flag"),
             "valuation_methods":      dcf_payload.get("valuation_methods"),
+            "bank_valuation_methods": dcf_payload.get("bank_valuation_methods"),
         }
     except HTTPException:
         # Engine refused or no data — section stays empty. UI tolerates.
@@ -2933,6 +2951,47 @@ def rebuild_report(ticker: str):
                 }
             if _res.wacc_base:
                 _p2["wacc"] = float(_res.wacc_base)
+            # Propagate the LIVE price so every price-dependent module agrees.
+            # Without this, phase2.current_price stayed frozen at the last full
+            # run while the scenario MoS used the fresh price — the torn-price
+            # bug (e.g. ADBE $251.44 stale vs $204 live).
+            if _price:
+                _p2["current_price"] = float(_price)
+            # Recompute the price-dependent deterministic modules off the live
+            # price (reverse-DCF + multiple decomposition), matching the shapes
+            # _compute_dcf_live produces.
+            try:
+                from aletheia.tools.multiple_decomposition import MultipleDecomposition as _MD
+                _mdr = _MD(verbose=False).run(_calc)
+                _p2["multiple_decomposition"] = {
+                    "market_ev_ebitda": _mdr.market_ev_ebitda,
+                    "justified_ev_ebitda": _mdr.justified_ev_ebitda,
+                    "premium_pct": _mdr.ev_ebitda_premium_pct,
+                    "signal": _mdr.signal,
+                    "roic_wacc_spread": _mdr.roic_wacc_spread,
+                    "value_creation": _mdr.value_creation,
+                    "roic": _mdr.roic, "wacc": _mdr.wacc,
+                    "sector": getattr(_mdr, "sector", None),
+                    "sector_median_ev_ebitda": _mdr.sector_median_ev_ebitda,
+                    "vs_sector_premium": _mdr.vs_sector_premium,
+                }
+                refreshed.append("multiple_decomposition")
+            except Exception as e:
+                report.setdefault("_rebuild_warnings", []).append(f"multiple_decomposition: {e}")
+            try:
+                from aletheia.tools.reverse_dcf import ReverseDCF as _RD
+                _rk = {}
+                _bsm = getattr(_res.base, "assumptions", None)
+                if _bsm is not None:
+                    _rk = {"wacc_override": float(_bsm.wacc),
+                           "margin_override": float(_bsm.ebit_margin_terminal),
+                           "terminal_growth_override": float(_bsm.terminal_growth)}
+                _rdr = _RD(verbose=False).run(_calc, **_rk)
+                _p2["reverse_dcf"] = _rdr.to_dict()
+                _p2["reverse_dcf"]["reasons"] = list(getattr(_rdr, "signal_reasons", []) or [])
+                refreshed.append("reverse_dcf")
+            except Exception as e:
+                report.setdefault("_rebuild_warnings", []).append(f"reverse_dcf: {e}")
             refreshed.append("phase2_headline_iv")
         elif _p2 is not None and _spec is not None and _spec.intrinsic_per_share is not None:
             # Specialized engine: a single IV (no bull/bear scenario triangle).
@@ -2949,6 +3008,8 @@ def rebuild_report(ticker: str):
             _es = _spec.engine_specific or {}
             _p2["valuation_decomposition"] = _es.get("decomposition")
             _p2["specialized_inputs"] = _spec.inputs_snapshot
+            if _spec.current_price:
+                _p2["current_price"] = float(_spec.current_price)
             refreshed.append("phase2_headline_iv")
         # Recompute the value-source decomposition (Build 4/6) so the engine
         # attribution + conviction durability read refresh with any overrides
@@ -3002,6 +3063,18 @@ def rebuild_report(ticker: str):
                         refreshed.append("valuation_methods")
         except Exception as e:
             report.setdefault("_rebuild_warnings", []).append(f"valuation_methods: {e}")
+        # Bank convergent set (residual income / justified P/B / Gordon DDM) —
+        # financial-sector analog; reconciles vs the headline DDM. Uses the
+        # specialized router result (_spec), since banks have no FCFF _res.
+        try:
+            from aletheia.tools.bank_valuation_methods import build_bank_valuation_methods as _bbvm
+            if _p2 is not None and _spec is not None:
+                _bm = _bbvm(_calc, _spec, _p2)
+                if _bm.get("available"):
+                    _p2["bank_valuation_methods"] = _bm
+                    refreshed.append("bank_valuation_methods")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"bank_valuation_methods: {e}")
         # Refresh the Comprehensive Ratios + WACC build (§ metrics) from the
         # same fresh result, so ROIC / EV-EBITDA / Net-Debt-EBITDA / capital
         # weights reconcile with the engine instead of showing a stale FY-only

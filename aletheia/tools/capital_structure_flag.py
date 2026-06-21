@@ -51,12 +51,34 @@ def build_capital_structure_flag(calc, market_cap: Optional[float] = None) -> Di
     consumed atomically by ``discount_rates.resolve_family`` (CF-R8).
     """
     out: Dict[str, Any] = {"available": False, "forward_signal": None}
+
+    # Financials guard (fail-safe): for banks/insurers EBITDA is not a
+    # meaningful leverage denominator, so net-debt/EBITDA is garbage (JPM
+    # computed −30×). Refuse rather than emit a number that would render on the
+    # report and could silently mis-route a Family selection. REITs
+    # (reit_required) are NOT financials — they keep a meaningful flag.
+    cls = getattr(calc, "classification", None)
+    sector = (getattr(cls, "sector", "") or "")
+    business_model = (getattr(cls, "business_model", "") or "")
+    if sector == "Financials" or business_model in ("ddm_required", "embedded_value_required"):
+        out["notes"] = ("N/A — financials: EBITDA is not a meaningful leverage "
+                        "denominator for banks/insurers; net-debt/EBITDA refused")
+        return out
+
     series = net_debt_series(calc)
     ndte = [(x["year"], x["net_debt"] / x["ebitda"])
             for x in series
             if x["net_debt"] is not None and x["ebitda"] and x["ebitda"] > 0]
     if len(ndte) < 3:
         out["notes"] = "insufficient net-debt/EBITDA history (<3 FY)"
+        return out
+
+    # Sanity backstop (sector-agnostic): an implausibly large |net-debt/EBITDA|
+    # means EBITDA isn't a meaningful denominator (financial-like balance sheet
+    # that slipped the sector check) — refuse rather than classify off garbage.
+    if abs(ndte[-1][1]) > 8.0:
+        out["notes"] = (f"N/A — |net-debt/EBITDA| {ndte[-1][1]:.1f}× implausible; "
+                        f"EBITDA not a meaningful leverage denominator")
         return out
 
     gross = [(x["year"], x["ltd"] / x["ebitda"])

@@ -1300,14 +1300,18 @@ def _render_valuation_engines(p2: Dict[str, Any]) -> None:
         return
     have = any(p2.get(k, {}).get("available") for k in
                ("value_source_decomposition", "saas_metrics", "cads",
-                "capital_structure_flag", "valuation_methods"))
+                "capital_structure_flag", "valuation_methods",
+                "bank_valuation_methods"))
     if not have:
         return
     st.markdown("---")
     st.markdown("#### Valuation engines & signals")
 
-    from aletheia.ui.deep_dive_view import _value_source_panel, _saas_panel
+    from aletheia.ui.deep_dive_view import (
+        _value_source_panel, _saas_panel, _bank_valuation_panel,
+    )
     _value_source_panel(p2)
+    _bank_valuation_panel(p2)
     _saas_panel(p2)
 
     # Capital-structure stability flag → discount-rate family.

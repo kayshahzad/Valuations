@@ -165,10 +165,12 @@ class ReportGenerator:
         self._render_pillar_scorecard(pillar_scores)
         + self._render_moat_detail(moat)
         + self._render_value_chain_detail(vc)
-        + self._render_strategic_context_detail(sc),
+        + self._render_strategic_context_detail(sc, business_analysis),
         gap="current-state pillar exists but is not in the scored 25-pt total")}
     {self._section(6,
         self._render_value_source_decomposition(p2)
+        + self._render_valuation_methods(p2)
+        + self._render_bank_valuation_methods(p2)
         + self._render_assumption_grounding(assumption_grounding)
         + self._render_specialized_valuation(p2)
         + self._render_scenario_triangle(p2)
@@ -297,7 +299,7 @@ class ReportGenerator:
 
         # Reverse DCF
         impl = self._to_float(rdcf.get("implied_cagr_10y"))
-        hist = self._to_float(rdcf.get("historical_cagr"))
+        hist = self._to_float(rdcf.get("historical_cagr") or rdcf.get("historical_cagr_5y"))
         lines += [
             "## 3. 🔍 Reverse DCF — Market Implied Growth",
             "",
@@ -647,7 +649,9 @@ class ReportGenerator:
                              f"<span style='color:#888'>(FY{seg.get('fiscal_year','')} rev mix from FMP; "
                              f"margins ★ on Stage-4)</span></p>"
                              f"<table class='table-styled'><thead><tr><th>Segment</th>"
-                             f"<th>% rev</th><th>YoY</th><th>Op margin</th><th>Trend</th>"
+                             f"<th style='text-align:right'>% rev</th>"
+                             f"<th style='text-align:right'>YoY</th>"
+                             f"<th style='text-align:right'>Op margin</th><th>Trend</th>"
                              f"</tr></thead><tbody>{srows}</tbody></table>")
                 return body
             if letter == "D":
@@ -800,8 +804,8 @@ class ReportGenerator:
     field + value an analyst can push in the app (validated before it changes
     the IV). Shown for triangulation — not auto-applied.
   </p>
-  <table class='table-styled'><thead><tr><th>Assumption</th><th>Engine</th>
-  <th>Grounded</th><th>Δ</th><th>Computation</th><th>Basis</th>
+  <table class='table-styled'><thead><tr><th>Assumption</th><th style='text-align:right'>Engine</th>
+  <th style='text-align:right'>Grounded</th><th style='text-align:right'>Δ</th><th>Computation</th><th>Basis</th>
   <th>Apply&nbsp;to</th></tr></thead><tbody>{rows}</tbody></table>
   {self._render_margin_capex_reconciliation(ag.get('reconciliation'))}
   </div>"""
@@ -1055,7 +1059,7 @@ class ReportGenerator:
                self._to_float(self._get(risk, ["capital_stack", "wacc"]))
         rdcf = p2.get("reverse_dcf") or {}
         impl = self._to_float(rdcf.get("implied_cagr_10y"))
-        hist = self._to_float(rdcf.get("historical_cagr"))
+        hist = self._to_float(rdcf.get("historical_cagr") or rdcf.get("historical_cagr_5y"))
 
         mos_color = "green" if base_mos and base_mos > 0 else "red"
 
@@ -1093,7 +1097,7 @@ class ReportGenerator:
         md_dec = p2.get("multiple_decomposition") or {}
 
         impl   = self._to_float(rdcf.get("implied_cagr_10y"))
-        hist   = self._to_float(rdcf.get("historical_cagr"))
+        hist   = self._to_float(rdcf.get("historical_cagr") or rdcf.get("historical_cagr_5y"))
         signal = (rdcf.get("signal") or "").upper()
 
         ev_market = self._to_float(md_dec.get("market_ev_ebitda"))
@@ -1342,7 +1346,9 @@ class ReportGenerator:
                     f"<td>{r.get('recommendation','')}</td></tr>")
             parts.append(
                 "<table class='table-styled'><thead><tr><th>Assumption</th>"
-                "<th>Engine</th><th>Signal</th><th>Δ</th><th>Recommendation</th>"
+                "<th style='text-align:right'>Engine</th>"
+                "<th style='text-align:right'>Signal</th>"
+                "<th style='text-align:right'>Δ</th><th>Recommendation</th>"
                 f"</tr></thead><tbody>{tr}</tbody></table>")
         flags = cs.get("flags") or []
         if flags:
@@ -1433,8 +1439,8 @@ class ReportGenerator:
                 f"<h4 style='margin:6px 0 2px 0'>📈 Earnings surprises</h4>"
                 f"<p style='font-size:12px;color:#666;margin:0 0 4px 0'>{head} "
                 f"<span style='color:#888'>({es.get('source','')})</span></p>"
-                f"<table class='table-styled'><thead><tr><th>Quarter</th><th>EPS act</th>"
-                f"<th>EPS est</th><th>Surprise</th><th></th></tr></thead>"
+                f"<table class='table-styled'><thead><tr><th>Quarter</th><th style='text-align:right'>EPS act</th>"
+                f"<th style='text-align:right'>EPS est</th><th style='text-align:right'>Surprise</th><th></th></tr></thead>"
                 f"<tbody>{rows}</tbody></table>")
 
         # Sell-side ratings consolidation.
@@ -1573,8 +1579,10 @@ class ReportGenerator:
                      f"<td style='text-align:right'>{pct(s.get('wacc'))}</td>"
                      f"<td style='text-align:right'>{self._fmt_num_or_dash(s.get('iv'))}</td>"
                      f"<td style='text-align:right'>{pct(s.get('vs_price_pct'),0)}</td></tr>")
-        table = (f"<table class='table-styled'><thead><tr><th>WACC Δ</th><th>WACC</th>"
-                 f"<th>IV/sh</th><th>vs price</th></tr></thead><tbody>{rows}</tbody></table>")
+        table = (f"<table class='table-styled'><thead><tr>"
+                 f"<th style='text-align:right'>WACC Δ</th><th style='text-align:right'>WACC</th>"
+                 f"<th style='text-align:right'>IV/sh</th><th style='text-align:right'>vs price</th>"
+                 f"</tr></thead><tbody>{rows}</tbody></table>")
 
         qual = (f'<p style="font-size:12px;color:#666;margin:4px 0 0 0">'
                 f'Discount-rate quality {q.get("score","—")}/{q.get("max","—")} · '
@@ -1654,7 +1662,7 @@ class ReportGenerator:
                      f"<td>{e.get('severity','')}</td>"
                      f"<td style='color:#666'>{e.get('basis','')}</td></tr>")
         ladder = (f"<table class='table-styled'><thead><tr><th>Downside scenario</th>"
-                  f"<th>Value/sh</th><th>vs price</th><th>Severity</th><th>Basis</th>"
+                  f"<th style='text-align:right'>Value/sh</th><th style='text-align:right'>vs price</th><th>Severity</th><th>Basis</th>"
                   f"</tr></thead><tbody>{rows}</tbody></table>") if rows else ""
 
         # Required MoS + sizing.
@@ -1949,6 +1957,132 @@ class ReportGenerator:
                          + "; ".join(gaps) + "</p>")
         return "".join(parts)
 
+    def _render_valuation_methods(self, p2: Dict[str, Any]) -> str:
+        """Capital-structure stability flag → discount-rate family + the four-
+        method convergence (FCF/WACC, CCF, APV, ECF). Empty when unavailable."""
+        out = []
+        csf = (p2 or {}).get("capital_structure_flag") or {}
+        if csf.get("available"):
+            nd = csf.get("net_debt_to_ebitda") or {}
+            out.append(
+                f"<h3>Capital-structure stability flag</h3>"
+                f"<p><strong>{csf.get('klass')}</strong> → discount-rate "
+                f"<strong>Family {csf.get('rate_family')}</strong> "
+                f"(net-debt/EBITDA {nd.get('first',0):.2f}→{nd.get('last',0):.2f})</p>"
+                f"<p style='font-size:12px;color:#666'>"
+                f"{'; '.join(csf.get('notes') or [])}</p>")
+        vm = (p2 or {}).get("valuation_methods") or {}
+        if vm.get("available"):
+            ev = vm.get("ev") or {}
+            bn = self._fmt_bn
+            sp = vm.get("ev_trio_spread")
+            ecf_gap = vm.get("ecf_gap_vs_trio")
+            out.append(
+                "<h3>Four-method convergence (Liberti)</h3>"
+                "<table style='width:100%;border-collapse:collapse'>"
+                "<tr><td>FCF / WACC</td><td style='text-align:right'>"
+                f"{bn(self._to_float(ev.get('wacc_fcf')) / 1e9 if ev.get('wacc_fcf') else None)}</td></tr>"
+                "<tr><td>CCF / r_A</td><td style='text-align:right'>"
+                f"{bn(self._to_float(ev.get('ccf')) / 1e9 if ev.get('ccf') else None)}</td></tr>"
+                "<tr><td>APV (V_U + PV tax shield)</td><td style='text-align:right'>"
+                f"{bn(self._to_float(ev.get('apv')) / 1e9 if ev.get('apv') else None)}</td></tr>"
+                "<tr><td>ECF / r_E → EV</td><td style='text-align:right'>"
+                f"{bn(self._to_float(ev.get('from_ecf')) / 1e9 if ev.get('from_ecf') else None)}</td></tr>"
+                "</table>"
+                f"<p style='font-size:12px;color:#666'>EV-trio spread "
+                f"{(sp*100):.1f}% ({'converged' if vm.get('converged_trio') else 'wide'}); "
+                f"ECF residual {(ecf_gap*100):+.1f}% — {vm.get('ecf_residual_attribution','')}. "
+                f"Additive diagnostic, not the headline IV.</p>")
+        if not out:
+            return ""
+        return "".join(out)
+
+    def _render_bank_valuation_methods(self, p2: Dict[str, Any]) -> str:
+        """Bank convergent set — residual income / justified P/B / Gordon DDM,
+        the financial-sector analog of the four-method FCFF convergence.
+        Reconciles vs the headline DDM and flags the low-payout understatement.
+        Empty for non-financial filers."""
+        bvm = (p2 or {}).get("bank_valuation_methods") or {}
+        if not bvm.get("available"):
+            return ""
+        m = bvm.get("methods") or {}
+        ri = m.get("residual_income") or {}
+        jpb = m.get("justified_pb") or {}
+        gor = m.get("gordon_ddm") or {}
+        rec = bvm.get("reconciliation") or {}
+        inp = bvm.get("inputs") or {}
+
+        def _usd(v):
+            return f"${self._to_float(v):,.0f}" if v is not None else "—"
+
+        ddm_iv = (bvm.get("headline_ddm") or {}).get("iv")
+        gordon_cell = (_usd(gor.get("iv")) if gor.get("valid")
+                       else "<span style='color:#b45309'>undefined (g≥Ke)</span>")
+        jpb_mult = self._to_float(jpb.get("multiple"))
+        jpb_lbl = (f"Justified P/B ({jpb_mult:.2f}× book, steady-state)"
+                   if jpb_mult is not None else "Justified P/B (steady-state)")
+
+        rows = (
+            f"<tr><td>Residual income (two-stage)</td>"
+            f"<td style='text-align:right'>{_usd(ri.get('iv'))}</td>"
+            f"<td style='text-align:right;color:#666'>"
+            f"{self._to_float(ri.get('implied_pb')):.2f}× book</td></tr>"
+            f"<tr><td>{jpb_lbl}</td>"
+            f"<td style='text-align:right'>{_usd(jpb.get('iv_steady_state'))}</td>"
+            f"<td style='text-align:right;color:#666'>floor</td></tr>"
+            f"<tr><td>Gordon DDM (normalized)</td>"
+            f"<td style='text-align:right'>{gordon_cell}</td>"
+            f"<td style='text-align:right;color:#666'>cash only</td></tr>"
+            f"<tr><td>Headline DDM (config two-stage)</td>"
+            f"<td style='text-align:right'>{_usd(ddm_iv)}</td>"
+            f"<td style='text-align:right;color:#666'>routed IV</td></tr>")
+
+        band = rec.get("fair_value_band") or []
+        band_str = (f"${band[0]:,.0f}–${band[1]:,.0f}"
+                    if len(band) == 2 else "—")
+
+        understated = rec.get("low_payout_understatement")
+        warn = ""
+        if understated:
+            dvr = self._to_float(rec.get("ddm_vs_residual_income_pct"))
+            warn = (f"<p style='font-size:12px;color:#b45309'>⚠ The routed DDM sits "
+                    f"{abs(dvr):.0%} below residual income — it captures only the "
+                    f"{self._to_float(inp.get('payout')):.0%} payout, not the "
+                    f"{(self._to_float(inp.get('roe_normalized'))-self._to_float(inp.get('ke'))):.1%} "
+                    f"ROE-spread compounding on retained book. Read residual income "
+                    f"as the fuller equity value; DDM is the cash-distribution floor.</p>")
+
+        ge = ""
+        if bvm.get("convergence", {}).get("near_term_excess_growth"):
+            ge = (f"<p style='font-size:12px;color:#666'>Near-term g = ROE·retention "
+                  f"= {self._to_float(inp.get('near_term_growth')):.1%} ≥ Ke "
+                  f"{self._to_float(inp.get('ke')):.1%}: single-stage justified P/B / "
+                  f"Gordon are undefined; the two-stage residual income is the only "
+                  f"well-posed form (super-growth bank).</p>")
+
+        prov = (f"<p style='font-size:11px;color:#999'>Deterministic: BVPS "
+                f"${self._to_float(inp.get('bvps0')):,.2f}, ROE "
+                f"{self._to_float(inp.get('roe_normalized')):.1%} (norm), payout "
+                f"{self._to_float(inp.get('payout')):.0%} [{inp.get('payout_source')}], "
+                f"Ke {self._to_float(inp.get('ke')):.1%} [{inp.get('ke_source')}], "
+                f"terminal g {self._to_float(inp.get('terminal_growth')):.1%}. "
+                f"Additive diagnostic, not the headline IV.</p>")
+
+        return (
+            "<h3>Bank valuation — convergent set (residual income)</h3>"
+            "<p style='font-size:13px;color:#666'>Banks have no unlevered FCF, so "
+            "the four-method engine doesn't apply. Equity is valued off book + ROE "
+            "three ways; in steady state (constant ROE, g&lt;Ke) they are identical "
+            "— the bank analog of the four-method convergence.</p>"
+            "<table style='width:100%;border-collapse:collapse'>"
+            "<tr><th style='text-align:left'>Method</th>"
+            "<th style='text-align:right'>Intrinsic / share</th>"
+            "<th style='text-align:right'>Read</th></tr>"
+            f"{rows}</table>"
+            f"<p style='margin-top:8px'><strong>Fair-value band {band_str}</strong> "
+            "(justified-P/B floor → two-stage residual income).</p>"
+            f"{warn}{ge}{prov}")
+
     def _render_value_source_decomposition(self, p2: Dict[str, Any]) -> str:
         """Value Source Decomposition (spec §3): attribute expected return across
         Operating / Financial / Multiple engines + a Governance modifier, so the
@@ -1987,15 +2121,33 @@ class ReportGenerator:
         cur_mult = vsd.get("current_multiple") or "—"
         funding = vsd.get("buyback_funding") or "—"
 
+        # R17 — signed direction so the multiple SHARE isn't misread as a
+        # positive return when the contribution is a de-rating.
+        direction = vsd.get("mult_direction") or "—"
+        gate = self._to_float(vsd.get("mult_contrib_gate"))
+        gate_s = f"{direction} {pct(gate)}/yr" if gate is not None else direction
+        dir_color = "#ef4444" if direction == "de-rating" else "#666"
+
         rows = (
             f"<tr><td>Operating (organic growth × leverage)</td>"
             f"<td style='text-align:right'>{pct(op)}</td></tr>"
             f"<tr><td>Financial (dividend + net buyback)</td>"
             f"<td style='text-align:right'>{pct(fin)}</td></tr>"
-            f"<tr><td>Multiple (re-rating vs target)</td>"
+            f"<tr><td>Multiple — <span style='color:{dir_color}'>{gate_s}</span></td>"
             f"<td style='text-align:right'>{pct(mult)}</td></tr>"
             f"<tr><td>Governance modifier</td>"
             f"<td style='text-align:right'>{gov_str}</td></tr>")
+
+        # R17 — anchor-divergence note when the re-rating anchors disagree.
+        div = vsd.get("mult_anchor_divergence") or {}
+        div_html = ""
+        if div.get("wide"):
+            why = ("disagree on SIGN" if div.get("sign_disagreement")
+                   else f"span {div.get('spread_pp',0)*100:.0f}pp/yr")
+            div_html = (f"<p style='font-size:12px;color:#b45309'>⚠ Multiple "
+                        f"anchors {why} — using the conservative "
+                        f"({pct(self._to_float(div.get('selected_conservative')))}/yr); "
+                        f"read the multiple band as uncertain, not a point.</p>")
 
         return (
             "<h3>Value Source Decomposition</h3>"
@@ -2006,6 +2158,7 @@ class ReportGenerator:
             "<table style='width:100%;border-collapse:collapse;margin-top:8px'>"
             f"{rows}</table>"
             f"<p style='margin-top:8px'><strong style='color:{vcolor}'>{verdict}</strong></p>"
+            f"{div_html}"
             f"<p style='font-size:12px;color:#666'>Current multiple: {cur_mult} · "
             f"re-rating reads — {reads} · buyback funding: {funding}</p>"
             f"<p style='font-size:11px;color:#999;font-style:italic'>{vsd.get('honest_flag','')}</p>"
@@ -2065,7 +2218,7 @@ class ReportGenerator:
   <h3>📐 {title}</h3>
   <p style="font-size:12px;color:#666;margin:2px 0 6px 0">{blurb}</p>
   <p style="font-size:12px;color:#444;margin:2px 0 6px 0"><strong>Inputs:</strong> {inputs_line}</p>
-  <table class='table-styled'><thead><tr><th>Year</th><th>{cf_label}</th><th>PV</th></tr></thead>
+  <table class='table-styled'><thead><tr><th>Year</th><th style='text-align:right'>{cf_label}</th><th style='text-align:right'>PV</th></tr></thead>
   <tbody>{rows}{summary}</tbody></table>
   </div>"""
 
@@ -2223,13 +2376,22 @@ class ReportGenerator:
   {narrative}
 </div>""".strip()
 
-    def _render_strategic_context_detail(self, sc: Dict[str, Any]) -> str:
+    def _render_strategic_context_detail(self, sc: Dict[str, Any],
+                                         business_analysis: Dict[str, Any] = None) -> str:
         """Strategic context — revenue at risk, terminal haircut, narrative."""
         if not sc:
             return ""
-        # revenue_at_risk_percent is already in percent units (e.g. 5.0 = 5%;
-        # the terminal_haircut flag compares it to 20, not 0.20) — do NOT ×100.
+        # revenue_at_risk_percent is in percent units (e.g. 5.0 = 5%) — no ×100.
+        # Prefer the DETERMINISTIC value (% of revenue in declining segments)
+        # over the LLM field, which defaulted to 0.0 for every ticker.
         rar = self._to_float(sc.get("revenue_at_risk_percent"))
+        try:
+            from aletheia.tools.business_analysis import revenue_at_risk_from_segments
+            det = revenue_at_risk_from_segments(business_analysis)
+            if det is not None:
+                rar = det
+        except Exception:
+            pass
         rar_str = f"{rar:.1f}%" if rar is not None else "—"
         rows = [
             ("Revenue at risk",   rar_str),
@@ -2268,7 +2430,7 @@ class ReportGenerator:
         if not rdcf:
             return ""
         impl = self._to_float(rdcf.get("implied_cagr_10y"))
-        hist = self._to_float(rdcf.get("historical_cagr"))
+        hist = self._to_float(rdcf.get("historical_cagr") or rdcf.get("historical_cagr_5y"))
         if impl is None and hist is None:
             return ""
 
@@ -2760,7 +2922,7 @@ class ReportGenerator:
     def _fmt_ratio(self, rdcf: Dict[str, Any]) -> str:
         """Format implied/historical CAGR ratio."""
         impl = self._to_float(rdcf.get("implied_cagr_10y"))
-        hist = self._to_float(rdcf.get("historical_cagr"))
+        hist = self._to_float(rdcf.get("historical_cagr") or rdcf.get("historical_cagr_5y"))
         if impl is not None and hist and hist > 0:
             return f"{impl/hist:.1f}×"
         return "N/A"

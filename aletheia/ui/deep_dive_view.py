@@ -534,14 +534,87 @@ def _value_source_panel(p2v: Dict[str, Any]) -> None:
         unsafe_allow_html=True,
     )
     cur_mult = vsd.get("current_multiple") or "—"
+    # R17 — signed direction so the multiple SHARE isn't misread as a positive
+    # return when the contribution is a de-rating.
+    direction = vsd.get("mult_direction") or "—"
+    gate = vsd.get("mult_contrib_gate")
+    mult_lbl = (f"Multiple {mult*100:.0f}% — {direction} {gate*100:+.0f}%/yr"
+                if gate is not None else f"Multiple {mult*100:.0f}%")
     st.markdown(
         f"<div style='font-size:13px;margin-top:6px'>"
         f"<span style='color:{vcolor};font-weight:700'>{verdict}</span><br>"
-        f"<span style='color:#888'>Current multiple: {cur_mult} · governance {gov_str} · "
-        f"buyback funding: {vsd.get('buyback_funding','—')}</span></div>",
+        f"<span style='color:#888'>{mult_lbl} · current multiple: {cur_mult} · "
+        f"governance {gov_str} · buyback funding: {vsd.get('buyback_funding','—')}</span></div>",
         unsafe_allow_html=True,
     )
+    div = vsd.get("mult_anchor_divergence") or {}
+    if div.get("wide"):
+        why = ("disagree on SIGN" if div.get("sign_disagreement")
+               else f"span {div.get('spread_pp',0)*100:.0f}pp/yr")
+        st.warning(f"Multiple anchors {why} — using the conservative "
+                   f"({(div.get('selected_conservative') or 0)*100:+.0f}%/yr); "
+                   f"read the multiple band as uncertain, not a point.")
     st.caption(vsd.get("honest_flag", ""))
+
+
+def _bank_valuation_panel(p2v: Dict[str, Any]) -> None:
+    """Bank convergent set — residual income / justified P/B / Gordon DDM, the
+    financial-sector analog of the four-method FCFF convergence. Reconciles vs
+    the routed headline DDM and flags the low-payout understatement. Gated —
+    non-financial filers render nothing."""
+    bvm = (p2v or {}).get("bank_valuation_methods") or {}
+    if not bvm.get("available"):
+        return
+    m = bvm.get("methods") or {}
+    ri = m.get("residual_income") or {}
+    jpb = m.get("justified_pb") or {}
+    gor = m.get("gordon_ddm") or {}
+    rec = bvm.get("reconciliation") or {}
+    inp = bvm.get("inputs") or {}
+
+    def _usd(v):
+        return f"${float(v):,.0f}" if v is not None else "—"
+
+    st.markdown("---")
+    st.markdown("##### Bank valuation — convergent set (residual income)")
+    st.caption("Banks have no unlevered FCF; equity is valued off book + ROE "
+               "three ways. In steady state (constant ROE, g<Ke) they're identical "
+               "— the bank analog of the four-method convergence. Additive "
+               "diagnostic, not the headline IV.")
+
+    ddm_iv = (bvm.get("headline_ddm") or {}).get("iv")
+    jpb_mult = jpb.get("multiple")
+    c1, c2, c3, c4 = st.columns(4)
+    c1.metric("Residual income", _usd(ri.get("iv")),
+              f"{float(ri.get('implied_pb')):.2f}× book" if ri.get("implied_pb") else None)
+    c2.metric("Justified P/B (floor)", _usd(jpb.get("iv_steady_state")),
+              f"{float(jpb_mult):.2f}×" if jpb_mult is not None else None)
+    c3.metric("Gordon DDM", _usd(gor.get("iv")) if gor.get("valid") else "undefined",
+              None if gor.get("valid") else "g≥Ke")
+    c4.metric("Headline DDM", _usd(ddm_iv), "routed IV", delta_color="off")
+
+    band = rec.get("fair_value_band") or []
+    if len(band) == 2:
+        st.markdown(f"**Fair-value band ${band[0]:,.0f}–${band[1]:,.0f}** "
+                    "(justified-P/B floor → two-stage residual income).")
+
+    if rec.get("low_payout_understatement"):
+        dvr = rec.get("ddm_vs_residual_income_pct") or 0.0
+        st.warning(
+            f"Routed DDM sits {abs(dvr):.0%} below residual income — it captures "
+            f"only the {float(inp.get('payout',0)):.0%} payout, not the "
+            f"{(float(inp.get('roe_normalized',0))-float(inp.get('ke',0))):.1%} "
+            "ROE-spread compounding on retained book. Residual income is the "
+            "fuller equity value; DDM is the cash-distribution floor.")
+    if bvm.get("convergence", {}).get("near_term_excess_growth"):
+        st.caption(f"Near-term g = ROE·retention = "
+                   f"{float(inp.get('near_term_growth',0)):.1%} ≥ Ke "
+                   f"{float(inp.get('ke',0)):.1%}: single-stage justified P/B / "
+                   "Gordon undefined; two-stage RI is the only well-posed form.")
+    st.caption(f"Deterministic: BVPS ${float(inp.get('bvps0',0)):,.2f}, ROE "
+               f"{float(inp.get('roe_normalized',0)):.1%} (norm), payout "
+               f"{float(inp.get('payout',0)):.0%} [{inp.get('payout_source')}], "
+               f"Ke {float(inp.get('ke',0)):.1%} [{inp.get('ke_source')}].")
 
 
 def _scenario_triangle(dcf: Dict[str, Any]) -> None:
@@ -713,11 +786,20 @@ def _value_chain_block(vc: Dict[str, Any]) -> None:
 
 # ── Strategic context block ───────────────────────────────────────────────
 
-def _strategic_context_block(sc: Dict[str, Any]) -> None:
+def _strategic_context_block(sc: Dict[str, Any], business_analysis: Dict[str, Any] = None) -> None:
     if not sc:
         return
     st.markdown("##### Strategic Context")
     rev_at_risk = sc.get("revenue_at_risk_percent")
+    # Deterministic override: % of revenue in declining segments (the LLM field
+    # defaulted to 0.0 for every ticker).
+    try:
+        from aletheia.tools.business_analysis import revenue_at_risk_from_segments
+        _det = revenue_at_risk_from_segments(business_analysis)
+        if _det is not None:
+            rev_at_risk = _det
+    except Exception:
+        pass
     # Use descriptive labels for the boolean risk flags instead of
     # "YES/NO + glyph" which reads contradictorily ("✓ NO" looks like
     # an affirmative when it actually means "no risk found").
@@ -2554,6 +2636,7 @@ def render_deep_dive_view(
         _multiple_decomposition(md)
     _signal_reconciliation(rdcf, md)
     _value_source_panel(p2v)
+    _bank_valuation_panel(p2v)
     _saas_panel(p2v)
 
     # ── Two-column body ──────────────────────────────────────────────────
@@ -2565,7 +2648,7 @@ def render_deep_dive_view(
         st.markdown("<br>", unsafe_allow_html=True)
         _value_chain_block(vc)
         st.markdown("<br>", unsafe_allow_html=True)
-        _strategic_context_block(sc)
+        _strategic_context_block(sc, (dcf or {}).get("business_analysis"))
 
     with right:
         _fundamentals_row(ticker, fund)

@@ -118,3 +118,27 @@ def test_fin_contrib_is_yield_only():
     # fin_contrib must equal dividend_yield + net_buyback_yield (no extra term)
     expected = (d.get("dividend_yield") or 0.0) + (d.get("net_buyback_yield") or 0.0)
     assert abs(d["fin_contrib"] - expected) < 1e-9
+
+
+# ── R17: multiple-anchor divergence + signed direction ───────────────────────
+def test_r17_mult_direction_matches_gate_sign():
+    """The signed direction must match the gate sign — so a large multiple SHARE
+    on a de-rating contribution is never misread as a positive return (TSM)."""
+    from aletheia.tools.dcf_engine import DCFEngine
+    ci = make_calc_input("TSM")
+    try:
+        res = DCFEngine(verbose=False).run(ci)
+    except Exception:
+        pytest.skip("engine/market data unavailable")
+    d = build_value_source_decomposition(ci, res, p2=None)
+    if not d.get("available"):
+        pytest.skip("no decomposition")
+    gate = d["mult_contrib_gate"]
+    expected = "de-rating" if gate < 0 else "re-rating" if gate > 0 else "flat"
+    assert d["mult_direction"] == expected
+    # TSM: all three anchors say compress → de-rating, dominant multiple share
+    assert d["mult_direction"] == "de-rating"
+    div = d.get("mult_anchor_divergence") or {}
+    assert div and "anchors" in div
+    # the gate is the conservative (min-signed) end, never the friendliest
+    assert abs(div["selected_conservative"] - min(div["anchors"].values())) < 1e-3

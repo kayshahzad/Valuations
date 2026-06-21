@@ -107,7 +107,14 @@ def build_valuation_methods(calc, dcf_result=None, p2=None) -> dict:
         g = float(base.assumptions.terminal_growth)
 
         flag = build_capital_structure_flag(calc, market_cap=E)
-        fam = flag.get("rate_family", "A")
+        # Refuse rather than default: if the flag couldn't classify the
+        # structure (financials guard / implausible leverage), we have no
+        # basis to pick a rate family — do NOT silently assume Family A.
+        if not flag.get("available") or flag.get("rate_family") not in ("A", "B"):
+            out["notes"] = ("capital-structure flag unavailable (%s) — refusing "
+                            "to default a rate family" % (flag.get("notes") or "n/a"))
+            return out
+        fam = flag["rate_family"]
         ticker = getattr(getattr(calc, "classification", None), "ticker", "") or ""
         beta_A = unlever_beta(_compute_beta(ticker), D=D, E=E, tau=tau, family=fam)
         rate = resolve_family(fam, r_D=r_D, D=D, E=E, tau=tau, beta_A=beta_A,
@@ -117,7 +124,19 @@ def build_valuation_methods(calc, dcf_result=None, p2=None) -> dict:
         conv = value_perpetuity_all(fcf1=term.fcff * (1 + g), interest1=r_D * D,
                                     rate=rate, tau=tau, g=g, D=D, tol=0.05)
         ev_trio = [conv.ev_wacc_fcf, conv.ev_ccf, conv.ev_apv]
+        trio_mean = sum(ev_trio) / 3.0
         trio_spread = (max(ev_trio) - min(ev_trio)) / min(ev_trio) if min(ev_trio) else None
+
+        # Attribute the ECF→EV residual (reviewer ask): it is NOT the CF-R4
+        # option-floor — that guard is not in this convergence path, and it
+        # cannot bite a no-default name. With D entering the equity↔EV bridge
+        # as GROSS debt (the correct, better-converging form), any residual is
+        # the kd/τ-proxy + small-lever equity-discounting band (caveat #5), the
+        # same class as the trio's own WACC-vs-CCF gap. Labelled, not hidden.
+        ecf_gap = (conv.ev_from_ecf / trio_mean - 1.0) if trio_mean else None
+        ecf_attr = ("kd/τ-proxy + lever residual (caveat #5); not CF-R4 "
+                    "option-floor (not in path) and not a net-vs-gross bridge "
+                    "error (gross bridge used)")
 
         out.update({
             "available": True,
@@ -130,6 +149,8 @@ def build_valuation_methods(calc, dcf_result=None, p2=None) -> dict:
             "equity_ecf": conv.equity_ecf,
             "ev_trio_spread": trio_spread,
             "converged_trio": (trio_spread is not None and trio_spread < 0.05),
+            "ecf_gap_vs_trio": ecf_gap,
+            "ecf_residual_attribution": ecf_attr,
             "notes": ["four-method convergence on the terminal/steady-state; "
                       "additive diagnostic, not the headline IV. kd & tau are "
                       "proxies (caveat #5) so real-data legs spread within a band."],

@@ -445,6 +445,30 @@ def _latest_revenue(calc) -> Optional[float]:
         return None
 
 
+def revenue_at_risk_from_segments(business_analysis) -> Optional[float]:
+    """Deterministic revenue-at-risk: % of revenue in DECLINING segments
+    (negative YoY) from the segment-economics mix. Returns PERCENT units
+    (e.g. 1.1 = 1.1%) to match strategic_context.revenue_at_risk_percent, or
+    None when no segment data is available (caller falls back).
+
+    Replaces the LLM-estimated field that defaulted to 0.0 for every ticker;
+    e.g. ADBE's Print & Publishing (1.1% of revenue, −6.9% YoY) → 1.1%."""
+    seg = (business_analysis or {}).get("segment_economics") or {}
+    if not seg.get("available"):
+        return None
+    at_risk = 0.0
+    saw_segment = False
+    for s in seg.get("segments") or []:
+        yoy = s.get("yoy_growth")
+        rp = s.get("rev_pct")
+        if rp is None:
+            continue
+        saw_segment = True
+        if yoy is not None and yoy < 0:
+            at_risk += rp
+    return (at_risk * 100.0) if saw_segment else None
+
+
 def net_debt_series(calc) -> List[Dict[str, Any]]:
     """Shared per-FY net-debt / EBITDA / long-term-debt loader (VSD plan point
     #3). EXTRACTED so ``build_buyback_funding`` and ``capital_structure_flag``

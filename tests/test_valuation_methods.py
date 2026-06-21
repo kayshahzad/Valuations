@@ -142,3 +142,29 @@ def test_t4b_jpm_rE_direct_not_relevered():
     assert res.engine == "ddm"                            # not FCFF
     # the FCFF four-method orchestrator declines to relever a bank → unavailable
     assert build_valuation_methods(make_calc_input("JPM"), None, None)["available"] is False
+
+
+# ── Bank-safety guards: refuse, never silently produce a number ──────────────
+def test_resolve_family_fails_loud_on_null():
+    """An unresolved flag must RAISE, not default to Family A (T1c silent-
+    failure class — a bank that converges on garbage)."""
+    from aletheia.tools.discount_rates import resolve_family
+    with pytest.raises(ValueError):
+        resolve_family(None, r_D=0.05, D=0.4, E=0.6, tau=0.21,
+                       beta_A=1.0, rf=0.10, mrp=0.08)
+    # explicit 'A'/'B' still resolve
+    assert resolve_family("A", r_D=0.05, D=0.4, E=0.6, tau=0.21,
+                          beta_A=1.0, rf=0.10, mrp=0.08).family == "A"
+
+
+def test_capital_structure_flag_refuses_financials():
+    """JPM (bank) must get NO numeric net-debt/EBITDA trajectory — EBITDA is not
+    a meaningful leverage denominator. Refuse, don't classify off garbage."""
+    from dotenv import load_dotenv
+    load_dotenv()
+    from aletheia.utils.calc_input_builder import make_calc_input
+    from aletheia.tools.capital_structure_flag import build_capital_structure_flag
+    f = build_capital_structure_flag(make_calc_input("JPM"), market_cap=7e11)
+    assert f["available"] is False
+    assert f.get("rate_family") is None
+    assert "financials" in (f.get("notes") or "").lower()

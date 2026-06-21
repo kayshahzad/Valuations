@@ -89,8 +89,16 @@ def resolve_family(flag, **inputs) -> RateFamily:
     """Atomic family resolution (CF-R8). ``flag`` is a rate-family string
     ('A'/'B') or any object exposing ``.rate_family``. Returns ALL rate forms
     of the selected family together — never a per-form lookup."""
-    fam = flag if isinstance(flag, str) else getattr(flag, "rate_family", "A")
-    fam = (fam or "A").upper()[:1]
+    fam = flag if isinstance(flag, str) else getattr(flag, "rate_family", None)
+    fam = (fam or "").upper()[:1]
+    # Fail-loud, not silent-default: an unresolved flag (None / 'N/A' — e.g. a
+    # financials ticker whose net-debt/EBITDA is undefined) must NOT default to
+    # Family A. Refusing here prevents a converged-on-garbage valuation that the
+    # convergence test wouldn't catch (the T1c silent-failure class).
+    if fam not in ("A", "B"):
+        raise ValueError(
+            f"resolve_family: unresolved rate family {flag!r} — refusing to "
+            f"default to Family A (financials/undefined-flag guard)")
     return _family_b(**inputs) if fam == "B" else _family_a(**inputs)
 
 

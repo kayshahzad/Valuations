@@ -204,6 +204,31 @@ def build_value_source_decomposition(calc_input, dcf_result, p2: Optional[dict] 
     # de-rating risk). Cheap names → small |mult|; premium names → large |mult|.
     gate_mult = min(candidates.values()) if candidates else 0.0
 
+    # R17 — multiple-anchor divergence. The 2-3 re-rating anchors (justified@gspc,
+    # justified@sector, historical) can disagree on magnitude or sign. We use the
+    # conservative min-signed end (above), but we SURFACE the spread + a signed
+    # direction so a large multiple_share on a *de-rating* contribution is not
+    # misread as a positive return (the TSM case: all anchors say compress, gate
+    # −28%/yr, yet the 51% share read as "+51%" to a fast eye). Same class as the
+    # CF-R10 disambiguator — a rule for what to surface when inputs disagree.
+    _cands = list(candidates.values())
+    mult_direction = ("de-rating" if gate_mult < 0
+                      else "re-rating" if gate_mult > 0 else "flat")
+    mult_anchor_divergence = None
+    if len(_cands) >= 2:
+        _spread = max(_cands) - min(_cands)
+        _sign_disagree = (max(_cands) > 0 and min(_cands) < 0)
+        mult_anchor_divergence = {
+            "anchors": {k: round(v, 4) for k, v in candidates.items()},
+            "spread_pp": round(_spread, 4),
+            "sign_disagreement": _sign_disagree,
+            "selected_conservative": round(gate_mult, 4),
+            "direction": mult_direction,
+            # "wide" when anchors disagree on sign or span >10pp/yr — the band
+            # should be read as uncertain, not a point estimate.
+            "wide": bool(_sign_disagree or _spread > 0.10),
+        }
+
     # ── gov_modifier (R3 primary debt-funding; R14 secondary M&A) ────────────
     debt_funded_share = _f(bbf.get("debt_funded_share")) or 0.0
     value_destructive_ma = False
@@ -243,6 +268,8 @@ def build_value_source_decomposition(calc_input, dcf_result, p2: Optional[dict] 
         "fin_contrib": fin_contrib,
         "mult_contrib_gate": gate_mult,
         "mult_contrib_candidates": {k: round(v, 4) for k, v in candidates.items()},
+        "mult_direction": mult_direction,                 # R17: signed direction
+        "mult_anchor_divergence": mult_anchor_divergence,  # R17: anchor spread
         "lev_factor": lev_factor,
         "share_gain_pp_note": share_gain_pp,            # R11: NOT summed
         "dividend_yield": div_yield,

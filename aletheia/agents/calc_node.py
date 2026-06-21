@@ -428,6 +428,22 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as e:
         errors.append(f"ValuationMethods failed: {e}")
 
+    # ── Step 6f: Bank convergent set (residual income / justified P/B / DDM) ──
+    # The financial-sector analog of the four-method FCFF convergence. Banks have
+    # no FCFF kernel, so the four-method engine refuses them; this values equity
+    # off book + ROE three ways and reconciles vs the headline DDM (catching the
+    # low-payout understatement). Gated on the business model — non-banks no-op.
+    try:
+        from aletheia.tools.bank_valuation_methods import build_bank_valuation_methods
+        _bvm = build_bank_valuation_methods(calc_input, valuation_result, phase2)
+        if _bvm.get("available"):
+            phase2["bank_valuation_methods"] = _bvm
+            _ri = (_bvm.get("methods") or {}).get("residual_income", {}).get("iv")
+            print(f"  ✓ Bank convergent set: residual income IV "
+                  f"${_ri:,.0f}" if _ri else "  ✓ Bank convergent set computed")
+    except Exception as e:
+        errors.append(f"BankValuationMethods failed: {e}")
+
     # ── Step 7: Conviction score (deterministic, no agent reads) ────────────
     # Pull every input from calc-layer state. Agent narrative does NOT
     # influence this score — that's the architecture invariant the determinism

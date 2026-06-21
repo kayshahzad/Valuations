@@ -238,6 +238,13 @@ def _compute_ratios(
     shares = (_f(latest.get("clean_SharesDiluted") or latest.get("raw_SharesDiluted"))
               or _f(cj.get("SharesDiluted")))
 
+    # EPS fallback: IFRS/ADR filers (e.g. TSM) often lack a clean per-share EPS
+    # in the frame, leaving P/E blank. Derive it from net income / diluted
+    # shares — both on the SAME USD/ADR-equivalent basis as price and
+    # market_cap, so the ratio is consistent (no currency/basis mismatch).
+    if eps is None and ni is not None and shares and shares > 0:
+        eps = ni / shares
+
     # EV
     ev = (market_cap + (net_debt or 0)) if market_cap else None
 
@@ -478,7 +485,18 @@ def build_financial_metrics(
     arithmetic — no LLM, no network. Designed to be called once during
     Stage 4 report assembly (lead.py) and the result stamped onto the
     serving JSON."""
-    df = db.get_latest(ticker)
+    # Use the CURRENCY-CONVERTED frame (TWD/EUR/DKK → USD) so the valuation
+    # ratios — which divide a USD market_cap/price by these denominators —
+    # are on ONE currency basis. ``db.get_latest`` returns the raw filing
+    # currency (TSM in TWD, ASML in EUR), which silently deflated every
+    # multiple by the FX rate (~31× for TWD) and inverted EV negative.
+    # Margins/growth are currency-invariant, so this is safe for USD filers
+    # (no conversion applied) and corrects foreign filers.
+    try:
+        from aletheia.utils.calc_input_builder import make_calc_input
+        df = make_calc_input(ticker, apply_overrides=False).df
+    except Exception:
+        df = db.get_latest(ticker)   # fallback: raw frame (prior behavior)
     p2 = p2 or {}
     market_cap = _f(p2.get("market_cap"))
     current_price = _f(p2.get("current_price"))
