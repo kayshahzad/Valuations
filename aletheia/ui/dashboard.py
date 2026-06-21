@@ -294,15 +294,6 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
         ]
     sorted_df = sorted_all.tail(5).copy().reset_index(drop=True)
 
-    # Year-over-year revenue growth
-    rev_yoy: List[Optional[float]] = []
-    revs = sorted_df["clean_Revenue"].tolist()
-    for i, r in enumerate(revs):
-        if i == 0 or revs[i - 1] in (None, 0) or pd.isna(revs[i - 1]) or pd.isna(r):
-            rev_yoy.append(None)
-        else:
-            rev_yoy.append(float(r) / float(revs[i - 1]) - 1)
-
     # FY column headers: include period-end date so the 12-month window
     # is unambiguous on non-calendar filers.
     def _fmt_period_end(v: Any) -> str:
@@ -318,35 +309,69 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
         end = _fmt_period_end(r.get("period_end_date"))
         headers.append(f"FY{fy}\n{end}" if end else f"FY{fy}")
 
-    # Status-dot prefix on each metric row, sourced from validation_badge.
+    # Status-dot prefix on key metric rows, sourced from validation_badge.
     rev_dot   = _status_dot_for(ticker, "Revenue")
     ebit_dot  = _status_dot_for(ticker, "EBIT Margin")
-    roic_dot  = _status_dot_for(ticker, "ROIC")
-    from aletheia.ui.validation_badge import convention_flag
-    _roic_flag = convention_flag("ROIC")
 
-    out = pd.DataFrame({
-        "metric": [
-            f"{rev_dot}  Revenue ($B)",
-            f"      Revenue YoY",
-            f"{ebit_dot}  EBIT Margin",
-            f"      FCF Margin",
-            f"{roic_dot}  ROIC{_roic_flag}",
-            f"      Net Debt ($B)",
-        ],
-    })
+    # Income-statement → FCF waterfall, in $B. Every line is a directly-cleaned
+    # field except Interest (net) and Δ Net working capital, which are derived
+    # from accounting identities (raw interest expense and the working-capital
+    # roll-forward aren't cleaned columns):
+    #   Interest (net) = NOPAT − Net income  (the levered-vs-unlevered earnings gap)
+    #   Δ NWC          = NOPAT + D&A − CapEx − FCFF  (the FCFF identity)
+    n = len(sorted_df)
+
+    def _ser(col: str) -> List[Optional[float]]:
+        if col not in sorted_df.columns:
+            return [None] * n
+        return [sorted_df[col].iloc[i] for i in range(n)]
+
+    def _v(x: Any) -> Optional[float]:
+        try:
+            return float(x) if (x is not None and pd.notna(x)) else None
+        except (TypeError, ValueError):
+            return None
+
+    rev    = _ser("clean_Revenue")
+    cogs   = _ser("raw_COGS")
+    sga    = _ser("clean_SGA_Combined")
+    ebitda = _ser("derived_EBITDA")
+    da     = _ser("derived_Depreciation_Total")
+    ebit   = _ser("derived_OperatingIncome")
+    ni     = _ser("raw_NetIncome")
+    capex  = _ser("derived_CapEx")
+    fcf    = _ser("derived_FCF")
+    fcff   = _ser("derived_FCFF")
+    nopat  = _ser("clean_NOPAT")
+
+    intr = [(_v(nopat[i]) - _v(ni[i]))
+            if (_v(nopat[i]) is not None and _v(ni[i]) is not None) else None
+            for i in range(n)]
+    dnwc = [(_v(nopat[i]) + _v(da[i]) - _v(capex[i]) - _v(fcff[i]))
+            if all(_v(v) is not None for v in (nopat[i], da[i], capex[i], fcff[i]))
+            else None for i in range(n)]
+
+    def _b1(x: Any) -> str:
+        v = _v(x)
+        return f"{v / 1e9:,.1f}" if v is not None else "—"
+
+    rows = [
+        (f"{rev_dot}  Revenue",          rev),
+        (f"      COGS",                  cogs),
+        (f"      SG&A",                  sga),
+        (f"      EBITDA",                ebitda),
+        (f"      D&A",                   da),
+        (f"{ebit_dot}  EBIT",            ebit),
+        (f"      Interest, net †",       intr),
+        (f"      Net income",            ni),
+        (f"      CapEx",                 capex),
+        (f"      Δ Net working capital †", dnwc),
+        (f"      FCF",                   fcf),
+    ]
+
+    out = pd.DataFrame({"metric": [r[0] for r in rows]})
     for i, h in enumerate(headers):
-        out[h] = [
-            _bn(sorted_df["clean_Revenue"].iloc[i] if i < len(sorted_df) else None).replace("$", "").replace("B", ""),
-            _pct(rev_yoy[i]) if i < len(rev_yoy) else "—",
-            _pct_unsigned((sorted_df["derived_EBIT_Margin_Pct"].iloc[i] or 0) / 100)
-                if pd.notna(sorted_df["derived_EBIT_Margin_Pct"].iloc[i]) else "—",
-            _pct_unsigned((sorted_df["derived_FCF_Margin_Pct"].iloc[i] or 0) / 100)
-                if pd.notna(sorted_df["derived_FCF_Margin_Pct"].iloc[i]) else "—",
-            _pct_unsigned(sorted_df["derived_ROIC"].iloc[i])
-                if pd.notna(sorted_df["derived_ROIC"].iloc[i]) else "—",
-            _bn(sorted_df["derived_NetDebt"].iloc[i] if i < len(sorted_df) else None).replace("$", "").replace("B", ""),
-        ]
+        out[h] = [_b1(series[i]) if i < len(series) else "—" for _, series in rows]
 
     st.dataframe(
         out,
@@ -357,8 +382,10 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
         },
     )
     st.caption(
-        "🟢 validated SEC/FMP within 1% · 🟡 within 5% · "
-        "🔴 >5% drift · ⚪ field absent on validator side · · not yet validated"
+        "All values $B (reported GAAP). † derived: Interest, net = NOPAT − NI; "
+        "Δ NWC = NOPAT + D&A − CapEx − FCFF. "
+        "🟢 validated SEC/FMP within 1% · 🟡 within 5% · 🔴 >5% drift · "
+        "⚪ field absent on validator side · · not yet validated"
     )
 
 
