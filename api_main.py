@@ -323,6 +323,16 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     except Exception:
         _bvm_payload = None
 
+    # Bottom-up business analysis (deterministic layer) — engine-agnostic, built
+    # off the cleaned frame, so it applies to specialized-engine tickers too (the
+    # FCFF path builds it; this path previously omitted it, leaving CNC/NEE/ET/etc.
+    # with an empty "no bottom-up analysis available" tab despite having clean data).
+    _ba_payload = None
+    try:
+        _ba_payload = _business_analysis_payload(ticker, calc)
+    except Exception:
+        _ba_payload = None
+
     # Bull/bear sensitivity band (single-driver flex) — specialized engines
     # attach this to engine_specific so the three-scenario panel shows a real
     # range instead of one bar. Drop the legs into the bear/bull slots.
@@ -367,6 +377,7 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         "engine":                 vresult.engine,
         "valuation_decomposition": decomposition,
         "value_source_decomposition": _vsd_payload,
+        "business_analysis":      _ba_payload,
         "cads":                   _cads_payload,
         "capital_structure_flag": _csf_payload,
         "valuation_methods":      None,   # FCFF-only; REIT/DDM value ECF directly
