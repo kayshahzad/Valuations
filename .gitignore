@@ -4,7 +4,14 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
-valuation_data/
+# Ignore the data tree, but TRACK the hand-curated Damodaran reference tables
+# (the live engines depend on them — a fresh clone must not silently fall back).
+# Git can only re-include a file if its parent dirs are re-included first.
+valuation_data/*
+!valuation_data/macro/
+valuation_data/macro/*
+!valuation_data/macro/damodaran_implied_erp.csv
+!valuation_data/macro/damodaran_industry_betas.csv
 
 *.txt
 !requirements.txt
