@@ -79,17 +79,18 @@
       "analyst_notes": "High payout (66.5%) caps near-term DPS growth at roughly Medicaid/Medicare reimbursement growth + buybacks. Float-based business; FCFF DCF doesn't apply because reserves + medical-cost trends distort operating cash flow. DOJ investigation (announced 2025) is a discount factor not captured here."
     },
     "CNC": {
-      "model": "ddm",
+      "model": "residual_income",
       "params": {
-        "current_dps_annualized": 0.0,
-        "explicit_growth_pct": null,
-        "explicit_years": null,
-        "terminal_growth_pct": null
+        "normalized_roe_pct": 11.0,
+        "payout_ratio_pct": 30.0,
+        "terminal_growth_pct": 2.5,
+        "explicit_years": 5,
+        "cost_of_equity_override_pct": 10.0
       },
-      "as_of_date": "2026-04-29",
+      "as_of_date": "2026-06-21",
       "next_review_date": "2027-04-29",
-      "source": "Centene does not pay a dividend and has not indicated near-term plans to initiate. FY2026 adjusted EPS guidance raised to >$3.40 (April 2026).",
-      "analyst_notes": "DDM is undefined for non-dividend payers. Engine will return empty-state with a clear warning. Future: residual-income or normalized-earnings perpetuity model. Centene's countercyclical Medicaid franchise generates earnings but they're reinvested into network expansion rather than distributed."
+      "source": "Two-stage residual income on normalized ROE. Normalized ROE 11% — through-cycle managed-care return between the depressed FY2026 (adj. EPS ~$3.40 ≈ 8% on current book) and the recovered FY2023-24 (10.5-12.5%); FY2025 GAAP ROE (−30%) is distorted by a large, non-recurring goodwill/intangible impairment and is NOT used. Ke 10% override — CNC's CAPM beta (~0.6) is stale (pre-collapse) and gives an implausible 6.2% Ke; 10% reflects the elevated risk of a distressed managed-care name (same rationale as the JPM bank override). Payout 30% proxies capital returned via buybacks (no dividend). Terminal growth 2.5% (GDP-level).",
+      "analyst_notes": "CNC pays no dividend (DDM undefined) and FCFF overvalues ~7x (thin margin on ~$195B pass-through revenue + low WACC). Residual income on book + normalized ROE is the float-business frame. normalized_roe_pct is the key analyst lever — recalibrate vs through-cycle managed-care returns and cross-check the FY2025 impairment magnitude vs the 10-K. Book anchor is the post-impairment equity (the writedown is already reflected)."
     },
     "BRK-B": {
       "model": "embedded_value",

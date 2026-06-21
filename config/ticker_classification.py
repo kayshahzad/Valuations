@@ -13,7 +13,7 @@ class TickerClassification:
                        "growth_compounder_consumer",
                        "growth_compounder_pharma",
                        "mature", "cyclical_industrial"]
-    business_model: Literal["fcff_compatible", "ddm_required", "embedded_value_required", "routing_required", "reit_required", "mlp_required"]
+    business_model: Literal["fcff_compatible", "ddm_required", "embedded_value_required", "routing_required", "reit_required", "mlp_required", "residual_income_required"]
     notes: str
     last_reviewed: date
 
@@ -79,7 +79,7 @@ UNIVERSE: Dict[str, TickerClassification] = {
 
     # --- Healthcare ---
     "UNH": TickerClassification("UNH", "Healthcare", "Managed Care", "mature", "ddm_required", "Float-based business; FCFF DCF inappropriate", date.today()),
-    "CNC": TickerClassification("CNC", "Healthcare Plans", "Managed Care", "mature", "ddm_required", "Float-based business; FCFF DCF inappropriate", date.today()),
+    "CNC": TickerClassification("CNC", "Healthcare Plans", "Managed Care", "mature", "residual_income_required", "Float-based managed care; pays no dividend (DDM undefined) and FCFF mis-frames it (overvalues ~7x — thin margin on ~$195B pass-through revenue + low WACC explodes the terminal value). Valued on two-stage residual income on a NORMALIZED, ex-impairment ROE (FY2025 carried a large real goodwill impairment that distorts GAAP ROE to −30%).", date.today()),
     "LLY": TickerClassification("LLY", "Healthcare", "Pharmaceuticals", "growth_compounder_pharma", "fcff_compatible", "Structural GLP-1 growth, sticky margins", date.today()),
     "ABT": TickerClassification("ABT", "Healthcare", "Medical Devices", "growth_compounder_pharma", "fcff_compatible", "Diversified healthcare; pharma-style margins", date.today()),
 

@@ -86,6 +86,11 @@ def _mlp_factory() -> ValuationEngine:
     return MlpEngine()
 
 
+def _residual_income_factory() -> ValuationEngine:
+    from aletheia.tools.valuation_engines.residual_income_engine import ResidualIncomeEngine
+    return ResidualIncomeEngine()
+
+
 _DISPATCH_TABLE: Dict[str, Optional[Callable[[], ValuationEngine]]] = {
     "fcff_compatible":         _fcff_factory,         # Phase A.1
     "routing_required":        _rate_base_factory,    # Phase A.3 — RateBaseEngine
@@ -93,6 +98,7 @@ _DISPATCH_TABLE: Dict[str, Optional[Callable[[], ValuationEngine]]] = {
     "embedded_value_required": _embedded_value_factory,  # Phase A.7 — EmbeddedValueEngine
     "reit_required":           _reit_factory,         # Phase A.9 — ReitEngine (AFFO)
     "mlp_required":            _mlp_factory,          # Phase A.10 — MlpEngine (EV/EBITDA)
+    "residual_income_required": _residual_income_factory,  # Phase A.11 — ResidualIncomeEngine
 }
 
 

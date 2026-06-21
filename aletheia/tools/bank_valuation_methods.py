@@ -52,79 +52,15 @@ _DEFAULT_EXPLICIT_YEARS = 10
 
 
 # ─────────────────────────── core formulas ────────────────────────────────
-
-def justified_pb(*, roe: float, ke: float, growth: float) -> Optional[float]:
-    """Steady-state justified price-to-book = (ROE − g)/(Ke − g).
-
-    Returns None when g ≥ Ke (the multiple is undefined — a firm cannot grow
-    book faster than its cost of equity in perpetuity)."""
-    if ke is None or roe is None or growth is None:
-        return None
-    if ke - growth <= 0:
-        return None
-    return (roe - growth) / (ke - growth)
-
-
-def gordon_ddm_value(*, bvps0: float, roe: float, ke: float,
-                     payout: float) -> Optional[float]:
-    """Single-stage Gordon DDM off the steady-state book/ROE: P₀ = DPS₁/(Ke−g),
-    DPS₁ = payout·ROE·BVPS₀, g = ROE·(1−payout). Undefined when g ≥ Ke."""
-    if None in (bvps0, roe, ke, payout):
-        return None
-    g = roe * (1.0 - payout)
-    if ke - g <= 0:
-        return None
-    dps1 = payout * roe * bvps0
-    return dps1 / (ke - g)
-
-
-def residual_income_value(*, bvps0: float, roe: float, ke: float,
-                          retention: float, explicit_years: int,
-                          terminal_roe: float,
-                          terminal_growth: float) -> dict:
-    """Two-stage residual income per share.
-
-    Stage 1 (explicit): book compounds at g₁ = ROE·retention (may exceed Ke —
-    that is fine over a finite sum). Each year RIₜ = (ROE − Ke)·BVPSₜ₋₁, PV'd @ Ke.
-    Stage 2 (terminal): residual income on the terminal book, with ROE persisting
-    at ``terminal_roe`` and growing at ``terminal_growth`` (< Ke), as a Gordon
-    continuing value.
-
-    Identity check (used by the golden test): with terminal_roe == roe and
-    terminal_growth == g₁ < Ke, this telescopes EXACTLY to the closed form
-    BVPS₀·(ROE − g)/(Ke − g)."""
-    g1 = roe * retention
-    bv = bvps0
-    pv_explicit = 0.0
-    schedule = []
-    for t in range(1, explicit_years + 1):
-        ri = (roe - ke) * bv
-        pv = ri / (1.0 + ke) ** t
-        pv_explicit += pv
-        schedule.append({"year": t, "bvps_begin": bv, "ri": ri, "pv": pv})
-        bv = bv * (1.0 + g1)
-    bvps_terminal = bv                      # book at start of the terminal year
-
-    pv_terminal = None
-    if ke - terminal_growth > 0:
-        ri_next = (terminal_roe - ke) * bvps_terminal
-        cv = ri_next / (ke - terminal_growth)
-        pv_terminal = cv / (1.0 + ke) ** explicit_years
-
-    iv = bvps0 + pv_explicit + (pv_terminal or 0.0)
-    return {
-        "iv": iv,
-        "implied_pb": (iv / bvps0) if bvps0 else None,
-        "near_term_growth": g1,
-        "decomposition": {
-            "bvps0": bvps0,
-            "pv_explicit_ri": pv_explicit,
-            "pv_terminal_ri": pv_terminal,
-            "bvps_terminal": bvps_terminal,
-            "explicit_years": explicit_years,
-            "schedule": schedule,
-        },
-    }
+# The residual-income / justified-P/B / Gordon math now lives in
+# aletheia.calculations.formulas.residual_income (shared with ResidualIncomeEngine).
+# Re-exported here so existing call sites and tests that import them from this
+# module keep working.
+from aletheia.calculations.formulas import (          # noqa: E402
+    gordon_ddm_value,
+    justified_pb,
+    residual_income_value,
+)
 
 
 @dataclass(frozen=True)

@@ -251,6 +251,7 @@ _ENGINE_LABEL = {
     "ddm":            "📐 Dividend Discount Model",
     "embedded_value": "📐 Embedded Value (sum-of-parts)",
     "mlp":            "📐 MLP valuation (EV/EBITDA)",
+    "residual_income": "📐 Residual income (normalized ROE)",
 }
 
 _ENGINE_DESCRIPTION = {
@@ -276,6 +277,12 @@ _ENGINE_DESCRIPTION = {
         "Midstream MLP: equity = EV/EBITDA on stable fee-based EBITDA, "
         "net of debt, per unit. FCFF mis-frames the growth capex and "
         "hides the leverage. Distribution-discount leg is the income cross-check."
+    ),
+    "residual_income": (
+        "Two-stage residual income (book + PV of returns above Ke) on a "
+        "normalized, ex-impairment ROE. For no-dividend float/managed-care "
+        "names where DDM is undefined and FCFF mis-frames the thin-margin "
+        "pass-through revenue. Justified-P/B is the steady-state cross-check."
     ),
 }
 
@@ -2542,6 +2549,43 @@ def _mlp_valuation_panel(dcf: Dict[str, Any]) -> None:
                    "midstream peers (EPD/KMI/WMB/OKE).")
 
 
+def _residual_income_panel(dcf: Dict[str, Any]) -> None:
+    """Residual-income valuation: book + PV of returns above Ke on a normalized
+    ROE, with the justified-P/B steady-state cross-check. No-op for other engines."""
+    if (dcf or {}).get("engine") != "residual_income":
+        return
+    dec = (dcf or {}).get("valuation_decomposition") or {}
+    inp = (dcf or {}).get("specialized_inputs") or {}
+
+    def _c(v, dp=2):
+        return f"${v:,.{dp}f}" if isinstance(v, (int, float)) else "—"
+
+    def _p(v):
+        return f"{v*100:.1f}%" if isinstance(v, (int, float)) else "—"
+
+    bvps = dec.get("bvps0")
+    iv = dec.get("iv_residual_income")
+    jpb_iv = dec.get("iv_justified_pb_steady")
+    with st.container(border=True):
+        st.markdown("#### 📐 Residual income — normalized ROE")
+        st.caption("Equity = book + the PV of returns earned ABOVE the cost of "
+                   "equity, on a normalized (ex-impairment) ROE. The right frame "
+                   "for a no-dividend float business: DDM is undefined and FCFF "
+                   "mis-frames thin-margin pass-through revenue.")
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Book value / share", _c(bvps))
+        c2.metric("Residual income IV", _c(iv),
+                  f"{dec.get('implied_pb'):.2f}× book" if isinstance(dec.get("implied_pb"), (int, float)) else None)
+        c3.metric("Justified-P/B (cross-check)", _c(jpb_iv),
+                  f"{dec.get('justified_pb_multiple'):.2f}×" if isinstance(dec.get("justified_pb_multiple"), (int, float)) else None)
+        st.caption(f"Normalized ROE {_p(dec.get('roe_normalized'))} "
+                   f"[{inp.get('roe_source','—')}] · Ke {_p(dec.get('ke'))}"
+                   f"{' (override)' if inp.get('ke_override_used') else ''} · "
+                   f"near-term g {_p(dec.get('near_term_growth'))} → terminal "
+                   f"{_p(dec.get('terminal_growth'))}. Normalized ROE & Ke are the "
+                   "key analyst levers — recalibrate vs through-cycle returns.")
+
+
 def _market_context_panel(mc: Dict[str, Any]) -> None:
     """Market context (memo §8): earnings surprises, sell-side ratings, ESG,
     recent news. No-op when nothing is available."""
@@ -2685,6 +2729,7 @@ def render_deep_dive_view(
     render_specialized_valuation_panel(dcf or {})
     _rate_base_sotp_panel(dcf or {})
     _mlp_valuation_panel(dcf or {})
+    _residual_income_panel(dcf or {})
 
     # ── Market context (memo §8): surprises, ratings, ESG, news ──────────
     _market_context_panel((dcf or {}).get("market_context") or {})

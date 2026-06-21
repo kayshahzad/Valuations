@@ -120,6 +120,7 @@ _BUSINESS_MODELS_NON_FCFF = frozenset({
     "embedded_value_required", # life insurance (none in current universe)
     "routing_required",        # AXP, JPM, BRK-B
     "mlp_required",            # ET (midstream MLP — EV/EBITDA, not the industrial schema)
+    "residual_income_required",  # CNC (no-dividend float/managed-care — residual income)
 })
 
 

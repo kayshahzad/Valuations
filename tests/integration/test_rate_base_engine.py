@@ -346,9 +346,9 @@ def test_router_still_handles_fcff_tickers():
 
 def test_router_dispatches_ddm_required_to_ddm_engine_post_a7():
     """Phase A.7 closed the architectural seam: every classification
-    value now has its own engine. UNH/CNC (ddm_required) route to
-    DdmEngine; CNC returns empty-state because it pays no dividend
-    but the engine itself is wired."""
+    value has its own engine. UNH (ddm_required, pays a dividend) routes
+    to DdmEngine with a real IV. (CNC was reclassified residual_income_required
+    in Phase A.11 — it no longer empties on DDM; see test_residual_income_engine.)"""
     from aletheia.tools.valuation_router import ValuationRouter
     from aletheia.utils.calc_input_builder import make_calc_input
 
@@ -356,12 +356,6 @@ def test_router_dispatches_ddm_required_to_ddm_engine_post_a7():
     unh = ValuationRouter().execute(make_calc_input("UNH"))
     assert unh.engine == "ddm"
     assert unh.intrinsic_per_share is not None
-
-    # CNC doesn't pay a dividend → empty-state with warning
-    cnc = ValuationRouter().execute(make_calc_input("CNC"))
-    assert cnc.engine == "ddm"
-    assert cnc.intrinsic_per_share is None
-    assert cnc.warnings
 
 
 def test_post_a7_reclassified_tickers_route_correctly():

@@ -198,21 +198,16 @@ def test_router_dispatches_unh_to_ddm_engine():
     assert result.intrinsic_per_share is not None
 
 
-def test_router_cnc_returns_empty_state_no_dividend():
-    """CNC pays no dividend → DDM engine returns empty-state
-    ValuationResult with informative warning, not an exception."""
+def test_router_cnc_routes_to_residual_income_post_a11():
+    """CNC pays no dividend so DDM is undefined; Phase A.11 reclassified it
+    residual_income_required (FCFF mis-frames its thin-margin float). It now
+    produces a real, book-anchored IV via the ResidualIncomeEngine — no longer
+    an empty-state. (Full coverage in test_residual_income_engine.)"""
     from aletheia.tools.valuation_router import ValuationRouter
     from aletheia.utils.calc_input_builder import make_calc_input
     result = ValuationRouter().execute(make_calc_input("CNC"))
-    assert result.engine == "ddm"
-    assert result.intrinsic_per_share is None
-    assert result.warnings
-    # Either "no dividend" or "incomplete inputs" wording is acceptable
-    assert any(
-        ("no dividend" in w.lower() or "incomplete" in w.lower()
-         or "missing" in w.lower())
-        for w in result.warnings
-    )
+    assert result.engine == "residual_income"
+    assert result.intrinsic_per_share is not None
 
 
 def test_router_dispatches_brkb_to_embedded_value_engine():

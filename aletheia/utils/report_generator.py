@@ -175,6 +175,7 @@ class ReportGenerator:
         + self._render_specialized_valuation(p2)
         + self._render_rate_base_sotp(p2)
         + self._render_mlp_valuation(p2)
+        + self._render_residual_income(p2)
         + self._render_scenario_triangle(p2)
         + self._render_phase2_section(p2)
         + self._render_reverse_dcf_detail(p2)
@@ -2351,6 +2352,58 @@ class ReportGenerator:
   {dist_html}
   <p style="font-size:11px;color:#999">EV/EBITDA multiple is the key analyst lever
   — recalibrate vs midstream peers (EPD/KMI/WMB/OKE).</p>
+  </div>"""
+
+    def _render_residual_income(self, p2: Dict[str, Any]) -> str:
+        """Residual income on a normalized ROE: book + PV of returns above Ke,
+        with the justified-P/B steady-state cross-check. Empty for other engines."""
+        if (p2 or {}).get("engine") != "residual_income":
+            return ""
+        dec = p2.get("valuation_decomposition") or {}
+        if not dec:
+            return ""
+        inp = p2.get("specialized_inputs") or {}
+        cur = self._fmt_cur
+        pct = self._fmt_pct
+        bvps = self._to_float(dec.get("bvps0"))
+        pvx = self._to_float(dec.get("pv_explicit_ri"))
+        pvt = self._to_float(dec.get("pv_terminal_ri"))
+        iv = self._to_float(dec.get("iv_residual_income"))
+        implied_pb = self._to_float(dec.get("implied_pb"))
+        jpb_iv = self._to_float(dec.get("iv_justified_pb_steady"))
+        jpb_mult = self._to_float(dec.get("justified_pb_multiple"))
+
+        cross = ""
+        if jpb_iv is not None:
+            cross = (f"<tr><td>Justified-P/B cross-check "
+                     f"({jpb_mult:.2f}× book, steady-state)</td>"
+                     f"<td style='text-align:right'>{cur(jpb_iv, 2)}</td></tr>")
+
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>📐 Residual income — normalized ROE</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">Equity = book + the PV
+  of returns earned ABOVE the cost of equity, on a normalized (ex-impairment) ROE.
+  The frame for a no-dividend float business: DDM is undefined and FCFF mis-frames
+  thin-margin pass-through revenue.</p>
+  <table class='table-styled'><thead><tr><th>Component</th>
+  <th style='text-align:right'>Per share</th></tr></thead><tbody>
+  <tr><td>Book value per share</td>
+  <td style='text-align:right'>{cur(bvps, 2)}</td></tr>
+  <tr><td>+ PV of excess returns (explicit)</td>
+  <td style='text-align:right'>{cur(pvx, 2)}</td></tr>
+  <tr><td>+ PV of terminal residual income</td>
+  <td style='text-align:right'>{cur(pvt, 2)}</td></tr>
+  <tr style='border-top:2px solid #333'><td><strong>Residual-income intrinsic value</strong></td>
+  <td style='text-align:right'><strong>{cur(iv, 2)}</strong>"""+ (
+      f" <span style='color:#888'>({implied_pb:.2f}× book)</span>" if implied_pb else "") + f"""</td></tr>
+  {cross}
+  </tbody></table>
+  <p style="font-size:11px;color:#999">Normalized ROE {pct(self._to_float(dec.get('roe_normalized')))}
+  [{inp.get('roe_source','—')}] · Ke {pct(self._to_float(dec.get('ke')))}{' (override)' if inp.get('ke_override_used') else ''}
+  · near-term g {pct(self._to_float(dec.get('near_term_growth')))} → terminal
+  {pct(self._to_float(dec.get('terminal_growth')))}. Normalized ROE & Ke are the
+  key analyst levers.</p>
   </div>"""
 
     def _render_scenario_triangle(self, p2: Dict[str, Any]) -> str:

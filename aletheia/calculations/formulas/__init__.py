@@ -65,6 +65,11 @@ from aletheia.calculations.formulas.rate_base import (
     rate_base_equity_value,
     segment_multiple_value,
 )
+from aletheia.calculations.formulas.residual_income import (
+    gordon_ddm_value,
+    justified_pb,
+    residual_income_value,
+)
 from aletheia.calculations.formulas.ratios import (
     roe,
     roic,
@@ -114,6 +119,9 @@ __all__ = [
     "rate_base_equity_value",
     "rate_base_decomposition",
     "segment_multiple_value",
+    "residual_income_value",
+    "justified_pb",
+    "gordon_ddm_value",
     # Dividend discount (banks, managed care, payment networks)
     "ddm_intrinsic_value",
     "ddm_decomposition",

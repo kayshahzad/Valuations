@@ -38,10 +38,11 @@ from aletheia.tools.valuation_engines.embedded_value_engine import (
 from aletheia.tools.valuation_engines.fcff_engine import FcffEngine
 from aletheia.tools.valuation_engines.mlp_engine import MlpEngine
 from aletheia.tools.valuation_engines.rate_base_engine import RateBaseEngine
+from aletheia.tools.valuation_engines.residual_income_engine import ResidualIncomeEngine
 
 
 __all__ = [
     "ValuationEngine", "ValuationResult",
     "FcffEngine", "RateBaseEngine", "DdmEngine", "EmbeddedValueEngine",
-    "MlpEngine",
+    "MlpEngine", "ResidualIncomeEngine",
 ]
