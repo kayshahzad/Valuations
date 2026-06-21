@@ -38,6 +38,8 @@ _MARKET_RETURNS: Optional[pd.Series] = None  # ^GSPC weekly returns
 _MACRO_DIR = Path("valuation_data/macro")
 _RF_CACHE_PATH = _MACRO_DIR / "risk_free_rate_history.parquet"
 _ERP_CSV_PATH = _MACRO_DIR / "damodaran_implied_erp.csv"
+_INDUSTRY_BETA_CSV_PATH = _MACRO_DIR / "damodaran_industry_betas.csv"
+_INDUSTRY_BETAS: Optional[Dict[str, float]] = None
 
 _RF_FLOOR = 0.001  # COVID-era yields hit ~0; floor at 10bp to avoid div-by-zero
 _ERP_FALLBACK = 0.0475
@@ -167,6 +169,28 @@ def get_equity_risk_premium(as_of_date: date) -> float:
         return float(after["erp_decimal"])
     weight = (target - before["year_end_date"]).days / span
     return float(before["erp_decimal"] + weight * (after["erp_decimal"] - before["erp_decimal"]))
+
+
+def get_industry_beta(industry: Optional[str]) -> Optional[float]:
+    """Damodaran industry-average (peer-group) LEVERED beta for ``industry``,
+    from valuation_data/macro/damodaran_industry_betas.csv. This is the average
+    beta of firms in the industry vs the market — a DIFFERENT construct from a
+    single stock's regression beta vs a sector ETF. Returns None when the
+    industry isn't in the table (seed it from Damodaran's annual 'Betas by
+    Sector' to extend coverage)."""
+    global _INDUSTRY_BETAS
+    if not industry:
+        return None
+    if _INDUSTRY_BETAS is None:
+        try:
+            df = pd.read_csv(_INDUSTRY_BETA_CSV_PATH)
+            _INDUSTRY_BETAS = {
+                str(r["industry"]).strip().lower(): float(r["levered_beta"])
+                for _, r in df.iterrows()
+            }
+        except Exception:
+            _INDUSTRY_BETAS = {}
+    return _INDUSTRY_BETAS.get(industry.strip().lower())
 
 
 # ─────────────────────────────────────────────────────────────────────────

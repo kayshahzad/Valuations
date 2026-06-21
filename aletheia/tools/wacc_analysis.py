@@ -132,6 +132,7 @@ def _implied_wacc(result, price: float, g: float) -> Optional[float]:
 def build_wacc_analysis(
     result, *, country: Optional[str] = None,
     tax_rate: Optional[float] = None,
+    industry: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Discount-rate detail from the DCF result. Returns ``{"available": False}``
     when the base scenario isn't usable."""
@@ -221,6 +222,41 @@ def build_wacc_analysis(
             f"computed across both (Build 4)."
         )
 
+    # Industry-β reference scenario (DIAGNOSTIC, not the headline). Shows what
+    # WACC and IV would be at Damodaran's industry-AVERAGE (peer-group) levered
+    # β — a different construct from the headline's single-stock regression β vs
+    # ^GSPC. A reference point in the "numbers, not verdicts" class (like the
+    # library scenarios), so the reader can size the lever when a name's market β
+    # sits away from its peers (TSM: 1.25 vs semis 1.52). Headline stays on the
+    # ^GSPC β by design (decision #3). Only shows when the gap is material
+    # (|Δβ| ≥ 0.10) and the industry is in the Damodaran table. Reuses
+    # _iv_at_wacc, which reproduces the engine exactly at base WACC → the sector
+    # IV is computed on the SAME path as the headline (no drift).
+    sector_beta_scenario = None
+    try:
+        from aletheia.data.historical_macro import get_industry_beta
+        ind_beta = get_industry_beta(industry)
+        if (ind_beta is not None and beta is not None
+                and abs(ind_beta - beta) >= 0.10 and iv_base is not None):
+            from aletheia.tools.dcf_engine import wacc_at_beta
+            sec_wacc = wacc_at_beta(result, ind_beta)
+            sec_iv = _iv_at_wacc(result, sec_wacc)
+            if sec_iv is not None:
+                sector_beta_scenario = {
+                    "is_diagnostic": True,
+                    "industry": industry,
+                    "benchmark": f"Damodaran {industry} (peer avg)",
+                    "headline_beta": float(beta),
+                    "sector_beta": float(ind_beta),
+                    "headline_wacc": float(wacc_base),
+                    "sector_wacc": float(sec_wacc),
+                    "headline_iv": float(iv_base),
+                    "sector_iv": float(sec_iv),
+                    "iv_delta_pct": (float(sec_iv) / float(iv_base) - 1.0),
+                }
+    except Exception:
+        sector_beta_scenario = None
+
     quality = {
         "score": score, "max": len(checks), "checks": checks,
         "beta_r2": beta_r2,
@@ -248,6 +284,7 @@ def build_wacc_analysis(
             "country_used": country,
         },
         "adjusted_wacc": adjusted_wacc,
+        "sector_beta_scenario": sector_beta_scenario,
         "iv_base": float(iv_base) if iv_base is not None else None,
         "iv_at_adjusted_wacc": float(iv_adjusted) if iv_adjusted is not None else None,
         "sensitivity": sensitivity,

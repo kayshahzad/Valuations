@@ -1564,6 +1564,23 @@ class ReportGenerator:
                f'{", ".join(pr.get("idiosyncratic_reasons") or []) or "none"} · '
                f'premia shown for triangulation; not auto-applied to the headline IV</p>'))
 
+        # Industry-β reference (diagnostic, not a competing IV — headline keeps
+        # the market β by design). Numbers, not verdicts; shows the lever + swing.
+        sb = wa.get("sector_beta_scenario")
+        sect = ""
+        if sb:
+            d = sb.get("iv_delta_pct") or 0.0
+            sect = (
+                f'<p style="margin:6px 0"><strong>Industry-β reference</strong> '
+                f'<span style="color:#888">(diagnostic, not a competing IV)</span>: '
+                f'β {sb["headline_beta"]:.2f} → {sb["benchmark"]} {sb["sector_beta"]:.2f} · '
+                f'WACC {pct(sb["headline_wacc"])} → {pct(sb["sector_wacc"])} · '
+                f'IV ${sb["headline_iv"]:,.0f} → ${sb["sector_iv"]:,.0f} '
+                f'<strong>({d:+.0%})</strong></p>'
+                f'<p style="font-size:12px;color:#888;margin:0 0 4px 0">What the WACC '
+                f'and IV would be if priced at the industry-average β rather than this '
+                f'name\'s market β — the swing sizes the lever; headline unchanged.</p>')
+
         # Implied WACC.
         iw = wa.get("implied_wacc")
         impl = ""
@@ -1598,7 +1615,7 @@ class ReportGenerator:
     WACC drives ~15-25% of IV per 100 bps. Build-up, risk premia, the IV
     sensitivity to the rate, and the discount rate the market price implies.
   </p>
-  {comp}{prem}{impl}{table}{qual}
+  {comp}{prem}{sect}{impl}{table}{qual}
   </div>"""
 
     def _render_cads_flag(self, p2: Dict[str, Any]) -> str:

@@ -2284,6 +2284,25 @@ def _wacc_analysis_panel(wa: Dict[str, Any]) -> None:
                        f"idiosyncratic {_p(pr.get('idiosyncratic'))} "
                        f"[{', '.join(pr.get('idiosyncratic_reasons') or []) or 'none'}] "
                        f"· shown for triangulation, not auto-applied")
+        # Industry-β reference (diagnostic, not a competing IV). Same class as
+        # the library scenarios — numbers, not verdicts. Shows the lever and its
+        # magnitude when the headline (market-β) sits away from the peer average.
+        sb = wa.get("sector_beta_scenario")
+        if sb:
+            d = sb.get("iv_delta_pct") or 0.0
+            dcol = "🔻" if d < 0 else "🔺"
+            st.markdown(
+                f"**Industry-β reference** — *diagnostic, not a competing IV "
+                f"(headline keeps the market β by design)*:  "
+                f"β {sb['headline_beta']:.2f} → {sb['benchmark']} "
+                f"{sb['sector_beta']:.2f}  ·  WACC {_p(sb['headline_wacc'])} → "
+                f"{_p(sb['sector_wacc'])}  ·  IV ${sb['headline_iv']:,.0f} → "
+                f"${sb['sector_iv']:,.0f}  ({dcol} {d:+.0%})")
+            st.caption("If this name's marginal investor prices it like its "
+                       "industry peers rather than the broad market, this is the "
+                       "WACC and IV — the size of the swing tells you whether the "
+                       "β gap is a rounding detail or the thesis.")
+
         sens = wa.get("sensitivity") or []
         if sens:
             rows = [{

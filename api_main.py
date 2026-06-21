@@ -437,7 +437,16 @@ def _wacc_analysis_payload(ticker: str, result: Any) -> Optional[Dict[str, Any]]
             country = (fmp_client.fetch_profile(ticker) or {}).get("country")
         except Exception:
             country = None
-        return build_wacc_analysis(result, country=country)
+        # Inject the classification industry (calc layer can't import config) so
+        # the sector-β diagnostic can look up Damodaran's industry-average beta.
+        industry = None
+        try:
+            from config.ticker_classification import get_extended_universe
+            _cls = get_extended_universe().get(ticker.upper())
+            industry = getattr(_cls, "industry", None)
+        except Exception:
+            industry = None
+        return build_wacc_analysis(result, country=country, industry=industry)
     except Exception:
         return None
 
