@@ -323,6 +323,20 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     except Exception:
         _bvm_payload = None
 
+    # Bull/bear sensitivity band (single-driver flex) — specialized engines
+    # attach this to engine_specific so the three-scenario panel shows a real
+    # range instead of one bar. Drop the legs into the bear/bull slots.
+    _band = (vresult.engine_specific or {}).get("scenario_band") or {}
+    _bear = _band.get("bear")
+    _bull = _band.get("bull")
+
+    def _scn_leg(leg):
+        if not leg:
+            return None
+        return {"intrinsic_per_share": leg.get("intrinsic_per_share"),
+                "margin_of_safety": leg.get("margin_of_safety"),
+                "ev": None}
+
     return {
         "ticker":                 vresult.ticker.upper(),
         "wacc":                   float(ke) if ke is not None else None,
@@ -338,14 +352,15 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         "base_period":            "FY",
         "base_period_end_date":   None,
         "fy_fiscal_year":         int(vresult.fiscal_year) or None,
-        "bear":                   None,
+        "bear":                   _scn_leg(_bear),
         "base":                   {
             "intrinsic_per_share": ips,
             "margin_of_safety":    mos,
             "ev":                  (float(vresult.equity_value)
                                     if vresult.equity_value is not None else None),
         },
-        "bull":                   None,
+        "bull":                   _scn_leg(_bull),
+        "scenario_band":          (_band or None),
         "reverse_dcf":            None,
         "multiple_decomposition": None,
         # Specialized-engine extras (surface to DCFResponse for the Deep Dive).
@@ -810,6 +825,9 @@ class DCFResponse(BaseModel):
     bull: Optional[DCFScenario]
     reverse_dcf: Optional[dict]
     multiple_decomposition: Optional[dict]
+    # Single-driver sensitivity band for specialized engines (bull/bear flexed
+    # off one key driver). Lets the three-scenario panel label the band.
+    scenario_band: Optional[dict] = None
     # Specialized-engine identity + decomposition (NEE rate-base, JPM/AXP/UNH
     # DDM, BRK-B embedded value). For FCFF tickers these stay None — the
     # standard bull/base/bear + reverse_dcf carry the full picture.
@@ -1484,6 +1502,7 @@ def get_ticker_dcf(ticker: str, response: Response):
         bull=DCFScenario(**payload["bull"]) if payload["bull"] else None,
         reverse_dcf=payload["reverse_dcf"],
         multiple_decomposition=payload["multiple_decomposition"],
+        scenario_band=payload.get("scenario_band"),
         engine=payload.get("engine"),
         valuation_decomposition=payload.get("valuation_decomposition"),
         specialized_inputs=payload.get("specialized_inputs"),

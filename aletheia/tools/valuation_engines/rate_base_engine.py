@@ -41,7 +41,7 @@ from aletheia.calculations.specialized_inputs import (
     SpecializedInputs,
 )
 from aletheia.contracts.interfaces import CalculationInput
-from aletheia.tools.valuation_engines.base import ValuationResult
+from aletheia.tools.valuation_engines.base import ValuationResult, scenario_band
 
 
 # Damodaran-aligned MRP. Same constant the DCFEngine uses (kept in
@@ -176,6 +176,7 @@ class RateBaseEngine:
         # at an analyst-supplied contracted-generation P/E. Only runs when the
         # config carries a multiple — pure regulated utilities skip it.
         segment = None
+        consolidated_ni = None
         neer_multiple = inputs.params.get("neer_earnings_multiple")
         if neer_multiple is not None:
             consolidated_ni = _latest_net_income(calc_input)
@@ -238,6 +239,33 @@ class RateBaseEngine:
         if inputs.analyst_notes:
             warnings.append(f"Analyst note: {inputs.analyst_notes[:200]}")
 
+        # Bull/bear band — flex the allowed ROE by the regulatory band (default
+        # ±1pp), recomputing the full SOTP (regulated leg + NEER residual).
+        roe_spread = float(inputs.params.get("scenario_allowed_roe_spread_pct", 1.0)) / 100.0
+
+        def _ips_at(aroe):
+            if not shares:
+                return None
+            reg = _rate_base_equity_value(
+                rate_base=rate_base, allowed_roe=aroe, cost_of_equity=ke,
+                explicit_growth=explicit_growth, explicit_years=explicit_years,
+                terminal_growth=terminal_growth, equity_ratio=equity_ratio)
+            if reg is None:
+                return None
+            seg_val = 0.0
+            if neer_multiple is not None and consolidated_ni is not None:
+                seg = _segment_multiple_value(
+                    consolidated_net_income=consolidated_ni,
+                    regulated_equity_earnings=rate_base * equity_ratio * aroe,
+                    multiple=float(neer_multiple))
+                seg_val = seg["segment_value"] if seg else 0.0
+            return (reg + seg_val) / shares
+
+        band = scenario_band(
+            recompute=_ips_at, bear_value=allowed_roe - roe_spread,
+            bull_value=allowed_roe + roe_spread, current_price=current_price,
+            driver="allowed ROE", driver_unit="pp")
+
         return ValuationResult(
             ticker=ticker,
             fiscal_year=fy,
@@ -277,6 +305,7 @@ class RateBaseEngine:
             warnings=warnings,
             engine_specific={
                 "decomposition":     breakdown,
+                "scenario_band":     band,
                 "analyst_notes":     inputs.analyst_notes,
                 "config_source":     inputs.source,
                 "next_review_date":  inputs.next_review_date,

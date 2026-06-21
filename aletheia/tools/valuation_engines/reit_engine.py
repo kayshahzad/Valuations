@@ -37,7 +37,7 @@ from aletheia.calculations.formulas import (
 )
 from aletheia.calculations.specialized_inputs import load_specialized_inputs
 from aletheia.contracts.interfaces import CalculationInput
-from aletheia.tools.valuation_engines.base import ValuationResult
+from aletheia.tools.valuation_engines.base import ValuationResult, scenario_band
 
 
 # Same MRP constant the other engines + DCFEngine use.
@@ -163,6 +163,19 @@ class ReitEngine:
         if inputs.analyst_notes:
             warnings.append(f"Analyst note: {inputs.analyst_notes[:200]}")
 
+        # Bull/bear band — flex the explicit AFFO growth (default ±2pp).
+        g_spread = float(inputs.params.get("scenario_growth_spread_pct", 2.0)) / 100.0
+
+        def _ips_at(g):
+            return _two_stage_value(
+                current_dps=affo_ps, cost_of_equity=ke, explicit_growth=g,
+                explicit_years=explicit_years, terminal_growth=terminal_growth)
+
+        band = scenario_band(
+            recompute=_ips_at, bear_value=explicit_growth - g_spread,
+            bull_value=explicit_growth + g_spread, current_price=current_price,
+            driver="AFFO growth", driver_unit="pp")
+
         shares = market.get("shares_diluted")
         equity_value = ips * shares if (ips and shares) else None
         implied_p_affo = (ips / affo_ps) if affo_ps else None
@@ -198,6 +211,7 @@ class ReitEngine:
                 "affo_per_share":     affo_ps,
                 "implied_p_affo":     implied_p_affo,
                 "decomposition":      breakdown,
+                "scenario_band":      band,
                 "analyst_notes":      inputs.analyst_notes,
                 "config_source":      inputs.source,
                 "next_review_date":   inputs.next_review_date,

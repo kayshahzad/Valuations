@@ -35,7 +35,7 @@ from aletheia.calculations.formulas import (
 )
 from aletheia.calculations.specialized_inputs import load_specialized_inputs
 from aletheia.contracts.interfaces import CalculationInput
-from aletheia.tools.valuation_engines.base import ValuationResult
+from aletheia.tools.valuation_engines.base import ValuationResult, scenario_band
 
 
 _DEFAULT_MRP: float = 0.0475
@@ -165,6 +165,20 @@ class MlpEngine:
         mos = ((ips - current_price) / current_price
                if (ips and current_price and current_price > 0) else None)
 
+        # Bull/bear band — flex the EV/EBITDA multiple (default ±1.0×), the
+        # dominant valuation lever for a midstream name (peer-multiple dispersion).
+        mult_spread = float(inputs.params.get("scenario_ev_ebitda_spread", 1.0))
+
+        def _ips_at(mult):
+            eq = _ev_ebitda_equity_value(
+                ebitda=ebitda, ev_ebitda_multiple=mult, net_debt=net_debt)
+            return (eq / units) if (eq is not None and units) else None
+
+        band = scenario_band(
+            recompute=_ips_at, bear_value=target_mult - mult_spread,
+            bull_value=target_mult + mult_spread, current_price=current_price,
+            driver="EV/EBITDA multiple", driver_unit="×")
+
         if inputs.analyst_notes:
             warnings.append(f"Analyst note: {inputs.analyst_notes[:200]}")
 
@@ -200,6 +214,7 @@ class MlpEngine:
             engine_specific={
                 "decomposition":     decomposition,
                 "distribution_leg":  distribution_leg,
+                "scenario_band":     band,
                 "analyst_notes":     inputs.analyst_notes,
                 "config_source":     inputs.source,
                 "next_review_date":  inputs.next_review_date,

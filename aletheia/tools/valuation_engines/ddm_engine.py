@@ -32,7 +32,7 @@ from aletheia.calculations.formulas import (
 )
 from aletheia.calculations.specialized_inputs import load_specialized_inputs
 from aletheia.contracts.interfaces import CalculationInput
-from aletheia.tools.valuation_engines.base import ValuationResult
+from aletheia.tools.valuation_engines.base import ValuationResult, scenario_band
 
 
 # Same MRP constant the rate-base engine + DCFEngine use.
@@ -190,6 +190,20 @@ class DdmEngine:
         shares = market.get("shares_diluted")
         equity_value = ips * shares if (ips and shares) else None
 
+        # Bull/bear band — flex the explicit dividend growth (default ±2pp), the
+        # dominant DDM lever.
+        g_spread = float(inputs.params.get("scenario_growth_spread_pct", 2.0)) / 100.0
+
+        def _ips_at(g):
+            return _ddm_intrinsic_value(
+                current_dps=current_dps, cost_of_equity=ke, explicit_growth=g,
+                explicit_years=explicit_years, terminal_growth=terminal_growth)
+
+        band = scenario_band(
+            recompute=_ips_at, bear_value=explicit_growth - g_spread,
+            bull_value=explicit_growth + g_spread, current_price=current_price,
+            driver="dividend growth", driver_unit="pp")
+
         return ValuationResult(
             ticker=ticker,
             fiscal_year=fy,
@@ -219,6 +233,7 @@ class DdmEngine:
             warnings=warnings,
             engine_specific={
                 "decomposition":     breakdown,
+                "scenario_band":     band,
                 "analyst_notes":     inputs.analyst_notes,
                 "config_source":     inputs.source,
                 "next_review_date":  inputs.next_review_date,

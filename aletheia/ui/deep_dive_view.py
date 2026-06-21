@@ -660,6 +660,11 @@ def _scenario_triangle(dcf: Dict[str, Any]) -> None:
             "_single point-estimate engine — compound bull/bear scenarios "
             "not applicable_"
         )
+    else:
+        _sb = (dcf or {}).get("scenario_band") or {}
+        if _sb.get("driver"):
+            st.caption(f"_bull/bear = {_sb['driver']} flexed ± a single-driver "
+                       "sensitivity band (not a full multi-assumption DCF)_")
 
     fig = go.Figure()
     fig.add_bar(

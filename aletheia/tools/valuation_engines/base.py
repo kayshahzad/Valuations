@@ -64,6 +64,37 @@ class ValuationResult:
     engine_specific: Dict[str, Any] = field(default_factory=dict)
 
 
+def scenario_band(*, recompute, bear_value, bull_value, current_price,
+                  driver: str, driver_unit: str = "") -> Optional[Dict[str, Any]]:
+    """Build a bull/bear sensitivity band for a single-point specialized engine
+    by flexing ONE key driver. ``recompute(driver_value) -> intrinsic_per_share``
+    (or None) re-runs the engine's core valuation at the flexed driver value.
+
+    Returns a dict the serving path drops into the bear/bull scenario slots so
+    the three-scenario panel renders a real range instead of one bar. This is a
+    deterministic single-driver sensitivity, NOT a multi-assumption DCF triangle
+    — the caption labels it as such. Returns None if neither leg is computable.
+    """
+    def _leg(val):
+        try:
+            ips = recompute(val)
+        except Exception:
+            return None
+        if ips is None:
+            return None
+        mos = ((ips - current_price) / current_price
+               if (current_price and current_price > 0) else None)
+        return {"intrinsic_per_share": float(ips), "margin_of_safety": mos,
+                "driver_value": val}
+
+    bear = _leg(bear_value)
+    bull = _leg(bull_value)
+    if bear is None and bull is None:
+        return None
+    return {"driver": driver, "driver_unit": driver_unit,
+            "bear": bear, "bull": bull}
+
+
 @runtime_checkable
 class ValuationEngine(Protocol):
     """Engine interface — one method, ``compute_intrinsic_value``.
@@ -79,4 +110,4 @@ class ValuationEngine(Protocol):
     def compute_intrinsic_value(self, calc_input: CalculationInput) -> ValuationResult: ...
 
 
-__all__ = ["ValuationEngine", "ValuationResult"]
+__all__ = ["ValuationEngine", "ValuationResult", "scenario_band"]

@@ -35,7 +35,7 @@ from aletheia.calculations.formulas import (
 )
 from aletheia.calculations.specialized_inputs import load_specialized_inputs
 from aletheia.contracts.interfaces import CalculationInput
-from aletheia.tools.valuation_engines.base import ValuationResult
+from aletheia.tools.valuation_engines.base import ValuationResult, scenario_band
 
 
 _DEFAULT_MRP: float = 0.0475
@@ -147,6 +147,23 @@ class ResidualIncomeEngine:
             "terminal_growth": terminal_growth,
         })
 
+        # Bull/bear band — flex the dominant driver (normalized ROE) by a
+        # configurable spread (default ±2pp), Ke fixed. ROE is the uncertain
+        # operating lever; CNC's whole case turns on whether ROE clears Ke.
+        roe_spread = float(params.get("scenario_roe_spread_pct", 2.0)) / 100.0
+
+        def _ri_at(roe_val):
+            r = _residual_income_value(
+                bvps0=bvps0, roe=roe_val, ke=ke, retention=retention,
+                explicit_years=explicit_years, terminal_roe=roe_val,
+                terminal_growth=terminal_growth)
+            return r["iv"]
+
+        band = scenario_band(
+            recompute=_ri_at, bear_value=roe_norm - roe_spread,
+            bull_value=roe_norm + roe_spread, current_price=current_price,
+            driver="normalized ROE", driver_unit="pp")
+
         return ValuationResult(
             ticker=ticker,
             fiscal_year=fy,
@@ -182,6 +199,7 @@ class ResidualIncomeEngine:
             warnings=warnings,
             engine_specific={
                 "decomposition":    decomposition,
+                "scenario_band":    band,
                 "analyst_notes":    getattr(inputs, "analyst_notes", None),
                 "config_source":    getattr(inputs, "source", None),
                 "next_review_date": getattr(inputs, "next_review_date", None),

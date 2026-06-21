@@ -21,7 +21,7 @@ from aletheia.calculations.formulas import (
 )
 from aletheia.calculations.specialized_inputs import load_specialized_inputs
 from aletheia.contracts.interfaces import CalculationInput
-from aletheia.tools.valuation_engines.base import ValuationResult
+from aletheia.tools.valuation_engines.base import ValuationResult, scenario_band
 
 
 _DEFAULT_MRP: float = 0.0475
@@ -149,6 +149,21 @@ class EmbeddedValueEngine:
         if inputs.analyst_notes:
             warnings.append(f"Analyst note: {inputs.analyst_notes[:200]}")
 
+        # Bull/bear band — flex the expected ROE (default ±2pp), the dominant
+        # book-compounding lever.
+        roe_spread = float(inputs.params.get("scenario_roe_spread_pct", 2.0)) / 100.0
+
+        def _ips_at(roe_val):
+            return _bvc_intrinsic(
+                book_value_per_share=bvps, expected_roe=roe_val, cost_of_equity=ke,
+                target_pb=target_pb, horizon_years=horizon_years,
+                payout_ratio=payout_ratio)
+
+        band = scenario_band(
+            recompute=_ips_at, bear_value=expected_roe - roe_spread,
+            bull_value=expected_roe + roe_spread, current_price=current_price,
+            driver="expected ROE", driver_unit="pp")
+
         return ValuationResult(
             ticker=ticker,
             fiscal_year=fy,
@@ -181,6 +196,7 @@ class EmbeddedValueEngine:
             warnings=warnings,
             engine_specific={
                 "decomposition":     breakdown,
+                "scenario_band":     band,
                 "analyst_notes":     inputs.analyst_notes,
                 "config_source":     inputs.source,
                 "next_review_date":  inputs.next_review_date,
