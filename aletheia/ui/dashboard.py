@@ -368,28 +368,100 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
             if all(_v(v) is not None for v in (nopat[i], da[i], capex[i], fcff[i]))
             else None for i in range(n)]
 
+    # Per-row formatters ($B / $-per-share / %).
     def _b1(x: Any) -> str:
         v = _v(x)
         return f"{v / 1e9:,.1f}" if v is not None else "—"
 
-    rows = [
-        (f"{rev_dot}  Revenue",          rev),
-        (f"      COGS",                  cogs),
-        (f"      SG&A",                  sga),
-        (f"      EBITDA",                ebitda),
-        (f"      D&A",                   da),
-        (f"{ebit_dot}  EBIT",            ebit),
-        (f"      Interest & non-op, net †", intr),
-        (f"      Tax †",                 tax),
-        (f"      Net income",            ni),
-        (f"      CapEx",                 capex),
-        (f"      Δ Net working capital †", dnwc),
-        (f"      FCF",                   fcf),
-    ]
+    def _usd(x: Any) -> str:
+        v = _v(x)
+        return f"{v:,.2f}" if v is not None else "—"
+
+    def _pct1(x: Any) -> str:
+        v = _v(x)
+        return f"{v * 100:,.1f}%" if v is not None else "—"
+
+    def _row(series: List[Optional[float]], f=_b1):
+        return [f(series[i]) if i < len(series) else "—" for i in range(n)]
+
+    # Banks (ddm/embedded-value + Financials) get a thin P&L + returns/capital
+    # set — the industrial waterfall is meaningless for them (gross interest
+    # revenue, interest expense as "COGS", no real EBITDA/CapEx/FCF). NIM /
+    # efficiency / provisions / CET1 / tangible book need bank XBRL extraction
+    # (deferred), so they're not faked here.
+    _cls = None
+    try:
+        from config.ticker_classification import get_extended_universe
+        _cls = get_extended_universe().get((ticker or "").upper()) if ticker else None
+    except Exception:
+        _cls = None
+    _is_bank = bool(
+        _cls and getattr(_cls, "sector", "") == "Financials"
+        and getattr(_cls, "business_model", "") in ("ddm_required", "embedded_value_required"))
+
+    if _is_bank:
+        shares = _ser("raw_SharesDiluted")
+        if all(v is None for v in shares):
+            shares = _ser("clean_SharesDiluted")
+        equity = _ser("raw_TotalEquity")
+        assets = _ser("raw_TotalAssets")
+        roe = _ser("derived_ROE")
+        dps = _ser("clean_DividendsPerShare")
+        net_rev = [(_v(rev[i]) - _v(cogs[i]))
+                   if (_v(rev[i]) is not None and _v(cogs[i]) is not None) else None
+                   for i in range(n)]
+        pretax = [(_v(ni[i]) + _v(tax[i]))
+                  if (_v(ni[i]) is not None and _v(tax[i]) is not None) else None
+                  for i in range(n)]
+        eps = [(_v(ni[i]) / _v(shares[i]))
+               if (_v(ni[i]) is not None and _v(shares[i])) else None for i in range(n)]
+        roa = [(_v(ni[i]) / _v(assets[i]))
+               if (_v(ni[i]) is not None and _v(assets[i])) else None for i in range(n)]
+        bvps = [(_v(equity[i]) / _v(shares[i]))
+                if (_v(equity[i]) is not None and _v(shares[i])) else None for i in range(n)]
+        rows = [
+            (f"{rev_dot}  Total revenue (gross, $B)", _row(rev)),
+            ("      Net revenue (post interest exp., $B)", _row(net_rev)),
+            ("      Pre-tax income ($B)",        _row(pretax)),
+            ("      Tax † ($B)",                 _row(tax)),
+            ("      Net income ($B)",            _row(ni)),
+            ("      EPS ($)",                    _row(eps, _usd)),
+            ("      ROE",                        _row(roe, _pct1)),
+            ("      ROA",                        _row(roa, _pct1)),
+            ("      Book value / share ($)",     _row(bvps, _usd)),
+            ("      Dividend / share ($)",       _row(dps, _usd)),
+        ]
+        caption = (
+            "Bank view (financial-sector). 'Net revenue' = total revenue − "
+            "interest expense (FMP maps interest expense to COGS). † Tax derived = "
+            "Pretax − NI. Net interest income / fee split, provisions, NIM, "
+            "efficiency ratio, CET1 and tangible book need bank XBRL extraction "
+            "(deferred). 🟢/🟡/🔴 validation vs SEC/FMP.")
+    else:
+        rows = [
+            (f"{rev_dot}  Revenue",          _row(rev)),
+            ("      COGS",                   _row(cogs)),
+            ("      SG&A",                   _row(sga)),
+            ("      EBITDA",                 _row(ebitda)),
+            ("      D&A",                    _row(da)),
+            (f"{ebit_dot}  EBIT",            _row(ebit)),
+            ("      Interest & non-op, net †", _row(intr)),
+            ("      Tax †",                  _row(tax)),
+            ("      Net income",             _row(ni)),
+            ("      CapEx",                  _row(capex)),
+            ("      Δ Net working capital †", _row(dnwc)),
+            ("      FCF",                    _row(fcf)),
+        ]
+        caption = (
+            "All values $B (reported GAAP). † derived (raw interest/tax not cleaned "
+            "fields): Pretax = NI/(1−tax rate); Tax = Pretax − NI; Interest & non-op "
+            "= EBIT − Pretax; Δ NWC = NOPAT + D&A − CapEx − FCFF. "
+            "🟢 validated SEC/FMP within 1% · 🟡 within 5% · 🔴 >5% drift · "
+            "⚪ field absent · · not yet validated")
 
     out = pd.DataFrame({"metric": [r[0] for r in rows]})
     for i, h in enumerate(headers):
-        out[h] = [_b1(series[i]) if i < len(series) else "—" for _, series in rows]
+        out[h] = [vals[i] for _, vals in rows]
 
     st.dataframe(
         out,
@@ -399,13 +471,7 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
             "metric": st.column_config.TextColumn("Metric", width="medium"),
         },
     )
-    st.caption(
-        "All values $B (reported GAAP). † derived (raw interest/tax not cleaned "
-        "fields): Pretax = NI/(1−tax rate); Tax = Pretax − NI; Interest & non-op = "
-        "EBIT − Pretax; Δ NWC = NOPAT + D&A − CapEx − FCFF. "
-        "🟢 validated SEC/FMP within 1% · 🟡 within 5% · 🔴 >5% drift · "
-        "⚪ field absent · · not yet validated"
-    )
+    st.caption(caption)
 
 
 # ────────────────────────────────────────────────────────────────────────
