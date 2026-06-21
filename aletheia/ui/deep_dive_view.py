@@ -2452,6 +2452,46 @@ def render_specialized_valuation_panel(dcf: Dict[str, Any]) -> None:
                   f"{implied:.1f}× {cf_label}" if implied else None)
 
 
+def _rate_base_sotp_panel(dcf: Dict[str, Any]) -> None:
+    """Regulated-utility sum-of-parts: FPL regulated rate-base leg + non-regulated
+    NEER leg (residual earnings × multiple). No-op for non-rate-base engines."""
+    if (dcf or {}).get("engine") != "rate_base":
+        return
+    dec = (dcf or {}).get("valuation_decomposition") or {}
+    sop = dec.get("sum_of_parts")
+    inp = (dcf or {}).get("specialized_inputs") or {}
+
+    def _c(v, dp=2):
+        return f"${v:,.{dp}f}" if isinstance(v, (int, float)) else "—"
+
+    def _b(v):
+        return f"${v/1e9:,.1f}B" if isinstance(v, (int, float)) else "—"
+
+    def _p(v):
+        return f"{v*100:.1f}%" if isinstance(v, (int, float)) else "—"
+
+    with st.container(border=True):
+        st.markdown("#### 📐 Sum-of-parts (regulated + non-regulated)")
+        st.caption(f"Rate base {_b(inp.get('rate_base'))} · equity ratio "
+                   f"{_p(inp.get('equity_ratio'))} · allowed ROE "
+                   f"{_p(inp.get('allowed_roe'))} · Ke {_p(inp.get('cost_of_equity'))}")
+        if not sop:
+            st.metric("Regulated equity value", _b(dec.get("equity_value")))
+            return
+        rps = sop.get("regulated_per_share"); sps = sop.get("segment_per_share")
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Regulated (FPL)", _c(rps), _b(sop.get("regulated_value")))
+        c2.metric(f"Non-reg (NEER) ×{sop.get('segment_multiple'):.0f}", _c(sps),
+                  _b(sop.get("segment_value")))
+        c3.metric("Sum-of-parts IV",
+                  _c(rps + sps) if isinstance(rps, (int, float)) and isinstance(sps, (int, float)) else "—")
+        st.caption(f"NEER residual = consolidated NI "
+                   f"{_b(sop.get('consolidated_net_income'))} − regulated allowed "
+                   f"equity earnings {_b(sop.get('regulated_equity_earnings'))} = "
+                   f"{_b(sop.get('segment_residual_earnings'))}. Multiple is the key "
+                   "analyst lever — recalibrate vs renewables peer comps.")
+
+
 def _market_context_panel(mc: Dict[str, Any]) -> None:
     """Market context (memo §8): earnings surprises, sell-side ratings, ESG,
     recent news. No-op when nothing is available."""
@@ -2593,6 +2633,7 @@ def render_deep_dive_view(
 
     # ── Two-stage AFFO/DDM decomposition (specialized engines only) ──────
     render_specialized_valuation_panel(dcf or {})
+    _rate_base_sotp_panel(dcf or {})
 
     # ── Market context (memo §8): surprises, ratings, ESG, news ──────────
     _market_context_panel((dcf or {}).get("market_context") or {})

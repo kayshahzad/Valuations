@@ -241,6 +241,82 @@ def test_rate_base_engine_decomposition_in_engine_specific():
     assert decomp["pv_explicit"] > 0
 
 
+# ── Equity-ratio correction (the FPL overstatement bug) ────────────
+
+
+def test_equity_ratio_scales_value_linearly():
+    """Allowed ROE is earned on the equity-funded portion only, so the equity
+    value scales linearly with equity_ratio (every earnings term is × ratio)."""
+    full = rate_base_equity_value(
+        rate_base=75.1e9, allowed_roe=0.1095, cost_of_equity=0.063,
+        explicit_growth=0.075, explicit_years=4, terminal_growth=0.025,
+        equity_ratio=1.0)
+    partial = rate_base_equity_value(
+        rate_base=75.1e9, allowed_roe=0.1095, cost_of_equity=0.063,
+        explicit_growth=0.075, explicit_years=4, terminal_growth=0.025,
+        equity_ratio=0.596)
+    assert partial == pytest.approx(full * 0.596, rel=1e-9)
+
+
+def test_equity_ratio_defaults_to_legacy_behavior():
+    """Omitting equity_ratio reproduces the pre-fix (100%-equity) value, so
+    configs without an equity ratio are unchanged."""
+    with_default = rate_base_equity_value(
+        rate_base=50e9, allowed_roe=0.10, cost_of_equity=0.07,
+        explicit_growth=0.05, explicit_years=4, terminal_growth=0.025)
+    explicit_one = rate_base_equity_value(
+        rate_base=50e9, allowed_roe=0.10, cost_of_equity=0.07,
+        explicit_growth=0.05, explicit_years=4, terminal_growth=0.025,
+        equity_ratio=1.0)
+    assert with_default == explicit_one
+
+
+# ── Sum-of-parts segment formula + engine wiring ───────────────────
+
+
+def test_segment_multiple_value_residual_and_bridge():
+    from aletheia.calculations.formulas import segment_multiple_value
+    seg = segment_multiple_value(
+        consolidated_net_income=8.18e9,
+        regulated_equity_earnings=4.90e9,
+        multiple=18.0)
+    assert seg["residual_earnings"] == pytest.approx(3.28e9, rel=1e-6)
+    assert seg["segment_value"] == pytest.approx(3.28e9 * 18.0, rel=1e-6)
+
+
+def test_segment_multiple_value_negative_residual_reported_honestly():
+    from aletheia.calculations.formulas import segment_multiple_value
+    seg = segment_multiple_value(
+        consolidated_net_income=3.0e9,
+        regulated_equity_earnings=5.0e9, multiple=18.0)
+    assert seg["residual_earnings"] < 0          # holdco drag exceeds segment
+    assert seg["segment_value"] < 0              # reduces SOTP, not floored
+
+
+def test_nee_sum_of_parts_is_coherent():
+    """NEE through the engine is now a sum-of-parts: regulated FPL leg +
+    non-regulated NEER leg. The FPL leg alone must sit BELOW the whole-company
+    price (the pre-fix bug had FPL-only > price), and the total = the two legs."""
+    from aletheia.tools.valuation_engines import RateBaseEngine
+    from aletheia.utils.calc_input_builder import make_calc_input
+
+    result = RateBaseEngine().compute_intrinsic_value(make_calc_input("NEE"))
+    sop = result.engine_specific["decomposition"]["sum_of_parts"]
+
+    # equity-ratio applied
+    assert result.inputs_snapshot["equity_ratio"] == pytest.approx(0.596)
+    # FPL-only per-share is below the whole-company price (coherence)
+    assert sop["regulated_per_share"] < result.current_price
+    # total = regulated + segment
+    assert sop["total_equity_value"] == pytest.approx(
+        sop["regulated_value"] + sop["segment_value"], rel=1e-9)
+    assert result.equity_value == pytest.approx(sop["total_equity_value"], rel=1e-9)
+    # NEER adds value (positive residual) → total IV > FPL-only
+    assert result.intrinsic_per_share > sop["regulated_per_share"]
+    assert sop["segment_multiple"] == 18.0
+    assert "sum-of-parts" in result.inputs_snapshot["valuation_basis"]
+
+
 # ── ValuationRouter dispatch ─────────────────────────────────────
 
 

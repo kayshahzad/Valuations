@@ -34,6 +34,7 @@ from aletheia.calculations.formulas import (
     cost_of_equity as _cost_of_equity,
     rate_base_decomposition as _decompose,
     rate_base_equity_value as _rate_base_equity_value,
+    segment_multiple_value as _segment_multiple_value,
 )
 from aletheia.calculations.specialized_inputs import (
     load_specialized_inputs,
@@ -108,6 +109,13 @@ class RateBaseEngine:
         explicit_years = int(inputs.params["explicit_years"])
         terminal_growth = float(inputs.params["terminal_growth_pct"]) / 100.0
 
+        # Equity-funded share of the rate base — the allowed ROE is earned only
+        # on this portion (the debt portion is a customer pass-through). Default
+        # 1.0 reproduces legacy behavior, but missing it for a real utility
+        # overstates equity earnings by ~1.7×.
+        equity_ratio_pct = inputs.params.get("equity_ratio_pct")
+        equity_ratio = float(equity_ratio_pct) / 100.0 if equity_ratio_pct is not None else 1.0
+
         # ── Market context (Rf, β, current price, shares) ────────
         market = _extract_market_context(calc_input)
         rf = market.get("risk_free_rate")
@@ -132,16 +140,17 @@ class RateBaseEngine:
                 },
             )
 
-        # ── Central rate-base formula ────────────────────────────
-        equity_value = _rate_base_equity_value(
+        # ── Central rate-base formula (regulated leg, e.g. FPL) ──
+        regulated_equity_value = _rate_base_equity_value(
             rate_base=rate_base,
             allowed_roe=allowed_roe,
             cost_of_equity=ke,
             explicit_growth=explicit_growth,
             explicit_years=explicit_years,
             terminal_growth=terminal_growth,
+            equity_ratio=equity_ratio,
         )
-        if equity_value is None:
+        if regulated_equity_value is None:
             return _empty_result(
                 ticker, fy,
                 warning=(
@@ -156,6 +165,39 @@ class RateBaseEngine:
                     "rf": rf, "beta": beta, "mrp": _DEFAULT_MRP,
                 },
             )
+
+        warnings = []
+
+        # ── Sum-of-parts: non-regulated segment (e.g. NEER) ──────
+        # A utility holdco's competitive arm (NextEra Energy Resources) is NOT
+        # in the regulated rate base, so the rate-base leg alone understates the
+        # consolidated equity. Value it as the residual earnings (consolidated
+        # NI − regulated allowed equity earnings, which also nets holdco drag)
+        # at an analyst-supplied contracted-generation P/E. Only runs when the
+        # config carries a multiple — pure regulated utilities skip it.
+        segment = None
+        neer_multiple = inputs.params.get("neer_earnings_multiple")
+        if neer_multiple is not None:
+            consolidated_ni = _latest_net_income(calc_input)
+            if consolidated_ni is None:
+                warnings.append(
+                    "SOTP skipped: no consolidated net income in frame; "
+                    "reporting regulated rate-base leg only (understates total).")
+            else:
+                regulated_equity_earnings = rate_base * equity_ratio * allowed_roe
+                segment = _segment_multiple_value(
+                    consolidated_net_income=consolidated_ni,
+                    regulated_equity_earnings=regulated_equity_earnings,
+                    multiple=float(neer_multiple),
+                )
+                if segment and segment["residual_earnings"] < 0:
+                    warnings.append(
+                        f"Non-regulated residual earnings negative "
+                        f"(${segment['residual_earnings']/1e9:.2f}B) — holdco drag "
+                        "exceeds segment profit; SOTP leg reduces total.")
+
+        segment_value = segment["segment_value"] if segment else 0.0
+        equity_value = regulated_equity_value + segment_value
 
         # ── Per-share IV + MoS ───────────────────────────────────
         ips: Optional[float] = None
@@ -174,9 +216,25 @@ class RateBaseEngine:
             explicit_growth=explicit_growth,
             explicit_years=explicit_years,
             terminal_growth=terminal_growth,
+            equity_ratio=equity_ratio,
         )
+        if breakdown is not None:
+            breakdown["equity_ratio"] = equity_ratio
+            breakdown["regulated_equity_value"] = regulated_equity_value
+            if segment is not None:
+                breakdown["sum_of_parts"] = {
+                    "regulated_value": regulated_equity_value,
+                    "regulated_per_share": (regulated_equity_value / shares
+                                            if shares else None),
+                    "segment_value": segment_value,
+                    "segment_per_share": (segment_value / shares if shares else None),
+                    "segment_residual_earnings": segment["residual_earnings"],
+                    "segment_multiple": segment["multiple"],
+                    "consolidated_net_income": segment["consolidated_net_income"],
+                    "regulated_equity_earnings": segment["regulated_equity_earnings"],
+                    "total_equity_value": equity_value,
+                }
 
-        warnings = []
         if inputs.analyst_notes:
             warnings.append(f"Analyst note: {inputs.analyst_notes[:200]}")
 
@@ -191,6 +249,7 @@ class RateBaseEngine:
             inputs_snapshot={
                 "rate_base":         rate_base,
                 "allowed_roe":       allowed_roe,
+                "equity_ratio":      equity_ratio,
                 "explicit_growth":   explicit_growth,
                 "explicit_years":    explicit_years,
                 "terminal_growth":   terminal_growth,
@@ -199,13 +258,21 @@ class RateBaseEngine:
                 "beta":              beta,
                 "mrp":               _DEFAULT_MRP,
                 "shares_diluted":    shares,
+                "neer_earnings_multiple": (float(neer_multiple)
+                                           if neer_multiple is not None else None),
+                "valuation_basis":   ("sum-of-parts (regulated rate base + "
+                                      "non-regulated segment)" if segment
+                                      else "regulated rate base only"),
                 "as_of_date":        inputs.as_of_date,
                 "source":            inputs.source,
             },
             notes=(
-                "Two-stage rate-base DCF: explicit period uses "
-                "analyst-supplied rate-plan growth; terminal period "
-                "reverts to GDP-level perpetuity."
+                "Two-stage rate-base DCF on the equity-funded rate base; "
+                "allowed ROE earned on the equity portion only. "
+                + ("Sum-of-parts: regulated leg + non-regulated segment "
+                   "(residual earnings × contracted-generation multiple)."
+                   if segment else
+                   "Regulated leg only (no non-regulated segment configured).")
             ),
             warnings=warnings,
             engine_specific={
@@ -223,6 +290,23 @@ class RateBaseEngine:
         if df is not None and "fiscal_year" in df.columns and not df.empty:
             return int(df["fiscal_year"].max())
         return 0
+
+
+def _latest_net_income(calc_input: CalculationInput) -> Optional[float]:
+    """Latest-FY consolidated net income from the cleaned frame (raw_NetIncome),
+    for the sum-of-parts residual. Returns None when absent."""
+    import math
+    df = getattr(calc_input, "df", None)
+    if df is None or "raw_NetIncome" not in getattr(df, "columns", []):
+        return None
+    s = df.sort_values("fiscal_year") if "fiscal_year" in df.columns else df
+    for v in reversed(list(s["raw_NetIncome"])):
+        try:
+            if v is not None and not math.isnan(float(v)):
+                return float(v)
+        except (TypeError, ValueError):
+            continue
+    return None
 
 
 def _extract_market_context(calc_input: CalculationInput) -> dict:

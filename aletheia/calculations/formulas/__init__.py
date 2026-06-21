@@ -59,6 +59,7 @@ from aletheia.calculations.formulas.margins import (
 from aletheia.calculations.formulas.rate_base import (
     rate_base_decomposition,
     rate_base_equity_value,
+    segment_multiple_value,
 )
 from aletheia.calculations.formulas.ratios import (
     roe,
@@ -106,6 +107,7 @@ __all__ = [
     # Rate-base (regulated utilities)
     "rate_base_equity_value",
     "rate_base_decomposition",
+    "segment_multiple_value",
     # Dividend discount (banks, managed care, payment networks)
     "ddm_intrinsic_value",
     "ddm_decomposition",

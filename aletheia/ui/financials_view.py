@@ -1281,11 +1281,14 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any],
         # Specialized engines (REIT → AFFO, DDM → dividends) have no FCFF
         # dcf_inputs — render the two-stage per-share decomposition instead.
         _live, _ = _dcf_api("GET", f"/ticker/{ticker}/dcf")
-        if _live and _live.get("engine") in ("reit", "ddm"):
+        if _live and _live.get("engine") in ("reit", "ddm", "rate_base"):
             st.markdown("---")
             st.markdown("#### Valuation")
-            from aletheia.ui.deep_dive_view import render_specialized_valuation_panel
+            from aletheia.ui.deep_dive_view import (
+                render_specialized_valuation_panel, _rate_base_sotp_panel,
+            )
             render_specialized_valuation_panel(_live)
+            _rate_base_sotp_panel(_live)
 
     # ── Valuation engines & signals overlays (VSD / SaaS / CADS / cap-structure
     #    flag / four-method convergence) — same data the memo & deep-dive use. ─

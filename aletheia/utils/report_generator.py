@@ -173,6 +173,7 @@ class ReportGenerator:
         + self._render_bank_valuation_methods(p2)
         + self._render_assumption_grounding(assumption_grounding)
         + self._render_specialized_valuation(p2)
+        + self._render_rate_base_sotp(p2)
         + self._render_scenario_triangle(p2)
         + self._render_phase2_section(p2)
         + self._render_reverse_dcf_detail(p2)
@@ -2220,6 +2221,79 @@ class ReportGenerator:
   <p style="font-size:12px;color:#444;margin:2px 0 6px 0"><strong>Inputs:</strong> {inputs_line}</p>
   <table class='table-styled'><thead><tr><th>Year</th><th style='text-align:right'>{cf_label}</th><th style='text-align:right'>PV</th></tr></thead>
   <tbody>{rows}{summary}</tbody></table>
+  </div>"""
+
+    def _render_rate_base_sotp(self, p2: Dict[str, Any]) -> str:
+        """Regulated-utility sum-of-parts (rate-base engine): the FPL regulated
+        leg (allowed ROE on the equity-funded rate base) + the non-regulated
+        NEER leg (residual earnings × contracted-generation multiple). Empty for
+        non-rate-base engines."""
+        if (p2 or {}).get("engine") != "rate_base":
+            return ""
+        dec = p2.get("valuation_decomposition") or {}
+        sop = dec.get("sum_of_parts")
+        inp = p2.get("specialized_inputs") or {}
+        cur = self._fmt_cur
+        pct = self._fmt_pct
+        bn = self._fmt_bn
+
+        def _bn(v):
+            f = self._to_float(v)
+            return bn(f / 1e9) if f is not None else "—"
+
+        eqr = self._to_float(inp.get("equity_ratio"))
+        inputs_line = (
+            f"Rate base {_bn(inp.get('rate_base'))} · equity ratio "
+            f"{pct(eqr)} · allowed ROE {pct(inp.get('allowed_roe'))} · "
+            f"grow {pct(inp.get('explicit_growth'))} for "
+            f"{inp.get('explicit_years','?')}y → terminal "
+            f"{pct(inp.get('terminal_growth'))} · Ke {pct(inp.get('cost_of_equity'))}")
+
+        if not sop:
+            # Regulated-only utility (no non-regulated segment configured).
+            iv = self._to_float(dec.get("equity_value"))
+            return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>📐 Rate-base DCF (regulated utility)</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">Allowed ROE earned on
+  the equity-funded portion of the rate base; two-stage with a GDP-level terminal.</p>
+  <p style="font-size:12px;color:#444">{inputs_line}</p>
+  <p><strong>Regulated equity value {_bn(iv)}</strong></p>
+  </div>"""
+
+        rps = self._to_float(sop.get("regulated_per_share"))
+        sps = self._to_float(sop.get("segment_per_share"))
+        iv = rps + sps if (rps is not None and sps is not None) else None
+        resid = self._to_float(sop.get("segment_residual_earnings"))
+        mult = self._to_float(sop.get("segment_multiple"))
+        cni = self._to_float(sop.get("consolidated_net_income"))
+        ree = self._to_float(sop.get("regulated_equity_earnings"))
+
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>📐 Sum-of-parts valuation (regulated + non-regulated)</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">A utility holdco's
+  competitive arm isn't in the regulated rate base, so the rate-base leg alone
+  understates the equity. The non-regulated leg is the residual earnings
+  (consolidated NI − regulated allowed equity earnings, which also nets holdco
+  drag) at a contracted-generation multiple.</p>
+  <p style="font-size:12px;color:#444"><strong>Regulated inputs:</strong> {inputs_line}</p>
+  <table class='table-styled'><thead><tr><th>Leg</th>
+  <th style='text-align:right'>Equity value</th>
+  <th style='text-align:right'>Per share</th></tr></thead><tbody>
+  <tr><td>Regulated rate base (FPL)</td>
+  <td style='text-align:right'>{_bn(sop.get('regulated_value'))}</td>
+  <td style='text-align:right'>{cur(rps, 2)}</td></tr>
+  <tr><td>Non-regulated (NEER): residual {_bn(resid)} × {mult:.0f}×</td>
+  <td style='text-align:right'>{_bn(sop.get('segment_value'))}</td>
+  <td style='text-align:right'>{cur(sps, 2)}</td></tr>
+  <tr style='border-top:2px solid #333'><td><strong>Sum-of-parts intrinsic value</strong></td>
+  <td style='text-align:right'><strong>{_bn(sop.get('total_equity_value'))}</strong></td>
+  <td style='text-align:right'><strong>{cur(iv, 2)}</strong></td></tr>
+  </tbody></table>
+  <p style="font-size:11px;color:#999">Residual = consolidated NI {_bn(cni)} −
+  regulated allowed equity earnings {_bn(ree)}. The multiple is the key analyst
+  lever — recalibrate vs renewables peer comps.</p>
   </div>"""
 
     def _render_scenario_triangle(self, p2: Dict[str, Any]) -> str:

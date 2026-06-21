@@ -44,8 +44,17 @@ def rate_base_equity_value(
     explicit_growth: float,            # decimal, near-term rate-base growth
     explicit_years: int,               # rate-plan horizon (typically 4-5)
     terminal_growth: float = 0.025,    # decimal, GDP-level perpetuity
+    equity_ratio: float = 1.0,         # equity-funded share of the rate base
 ) -> Optional[float]:
     """Two-stage rate-base perpetuity equity value.
+
+    The allowed ROE is earned ONLY on the equity-funded portion of the rate
+    base (utilities are capitalized ~55-60% equity / 40-45% debt; the debt
+    portion earns the cost of debt, a customer pass-through, not the equity
+    return). ``equity_ratio`` is that equity share — e.g. 0.596 for FPL.
+    Defaulting to 1.0 reproduces the legacy behavior, but a real utility MUST
+    pass its regulatory equity ratio or the equity earnings are overstated by
+    1/equity_ratio (~1.7×).
 
     Returns ``None`` when:
       - ``cost_of_equity <= terminal_growth`` (Gordon divergence in
@@ -69,22 +78,57 @@ def rate_base_equity_value(
     if cost_of_equity <= terminal_growth:
         return None
 
-    # Explicit period — compound rate base, capitalize each year's
-    # allowed earnings, discount to PV
+    equity_rate_base = rate_base * equity_ratio
+
+    # Explicit period — compound equity rate base, capitalize each year's
+    # allowed equity earnings, discount to PV
     pv_explicit = 0.0
     for t in range(1, explicit_years + 1):
-        rb_t = rate_base * (1.0 + explicit_growth) ** t
+        rb_t = equity_rate_base * (1.0 + explicit_growth) ** t
         earnings_t = rb_t * allowed_roe
         pv_explicit += earnings_t / (1.0 + cost_of_equity) ** t
 
     # Terminal value at end of year N (using Gordon on year N+1
     # earnings under terminal_growth)
-    rb_n = rate_base * (1.0 + explicit_growth) ** explicit_years
+    rb_n = equity_rate_base * (1.0 + explicit_growth) ** explicit_years
     earnings_n_plus_1 = rb_n * (1.0 + terminal_growth) * allowed_roe
     terminal_value = earnings_n_plus_1 / (cost_of_equity - terminal_growth)
     pv_terminal = terminal_value / (1.0 + cost_of_equity) ** explicit_years
 
     return pv_explicit + pv_terminal
+
+
+def segment_multiple_value(
+    *,
+    consolidated_net_income: float,    # $ total company net income (latest FY)
+    regulated_equity_earnings: float,  # $ allowed equity earnings of the rate-base segment
+    multiple: float,                   # P/E applied to the non-regulated residual
+) -> Optional[dict]:
+    """Value a utility's NON-regulated segment (e.g. NextEra Energy Resources,
+    the competitive renewables arm) as a sum-of-parts leg.
+
+    The non-regulated earnings are the RESIDUAL: consolidated net income minus
+    the regulated segment's allowed equity earnings (rate_base × equity_ratio ×
+    allowed_roe). This residual also absorbs corporate/holdco items (interest
+    drag), so it is the right basis for an equity multiple. Valued at a
+    contracted-generation P/E (analyst-supplied, peer-comp sourced).
+
+    Returns ``None`` if inputs are missing. ``residual_earnings`` may be
+    negative (holdco drag exceeds segment profit) — the caller decides whether
+    to floor the contribution at zero; here it is reported honestly so the
+    bridge stays transparent.
+    """
+    if (consolidated_net_income is None or regulated_equity_earnings is None
+            or multiple is None):
+        return None
+    residual = consolidated_net_income - regulated_equity_earnings
+    return {
+        "residual_earnings": residual,
+        "multiple": multiple,
+        "segment_value": residual * multiple,
+        "regulated_equity_earnings": regulated_equity_earnings,
+        "consolidated_net_income": consolidated_net_income,
+    }
 
 
 def rate_base_decomposition(
@@ -95,10 +139,13 @@ def rate_base_decomposition(
     explicit_growth: float,
     explicit_years: int,
     terminal_growth: float = 0.025,
+    equity_ratio: float = 1.0,
 ) -> Optional[dict]:
     """Same calculation as ``rate_base_equity_value`` but returns
     the year-by-year breakdown for audit / display. Used by the
     UI to render the explicit-period earnings trajectory + TV split.
+    Earnings are on the equity-funded rate base (see ``equity_ratio``
+    in ``rate_base_equity_value``).
 
     Returns ``None`` when the underlying formula is degenerate (see
     ``rate_base_equity_value``).
@@ -110,16 +157,17 @@ def rate_base_decomposition(
     if explicit_years <= 0:
         return None
 
+    equity_rate_base = rate_base * equity_ratio
     yearly: List[Tuple[int, float, float, float]] = []   # (t, RB_t, earnings_t, pv_t)
     pv_explicit = 0.0
     for t in range(1, explicit_years + 1):
-        rb_t = rate_base * (1.0 + explicit_growth) ** t
+        rb_t = equity_rate_base * (1.0 + explicit_growth) ** t
         earnings_t = rb_t * allowed_roe
         pv_t = earnings_t / (1.0 + cost_of_equity) ** t
         pv_explicit += pv_t
         yearly.append((t, rb_t, earnings_t, pv_t))
 
-    rb_n = rate_base * (1.0 + explicit_growth) ** explicit_years
+    rb_n = equity_rate_base * (1.0 + explicit_growth) ** explicit_years
     earnings_n_plus_1 = rb_n * (1.0 + terminal_growth) * allowed_roe
     tv = earnings_n_plus_1 / (cost_of_equity - terminal_growth)
     pv_tv = tv / (1.0 + cost_of_equity) ** explicit_years
@@ -138,4 +186,5 @@ def rate_base_decomposition(
     }
 
 
-__all__ = ["rate_base_equity_value", "rate_base_decomposition"]
+__all__ = ["rate_base_equity_value", "rate_base_decomposition",
+           "segment_multiple_value"]
