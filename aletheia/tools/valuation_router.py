@@ -81,12 +81,18 @@ def _reit_factory() -> ValuationEngine:
     return ReitEngine()
 
 
+def _mlp_factory() -> ValuationEngine:
+    from aletheia.tools.valuation_engines.mlp_engine import MlpEngine
+    return MlpEngine()
+
+
 _DISPATCH_TABLE: Dict[str, Optional[Callable[[], ValuationEngine]]] = {
     "fcff_compatible":         _fcff_factory,         # Phase A.1
     "routing_required":        _rate_base_factory,    # Phase A.3 — RateBaseEngine
     "ddm_required":            _ddm_factory,          # Phase A.7 — DdmEngine
     "embedded_value_required": _embedded_value_factory,  # Phase A.7 — EmbeddedValueEngine
     "reit_required":           _reit_factory,         # Phase A.9 — ReitEngine (AFFO)
+    "mlp_required":            _mlp_factory,          # Phase A.10 — MlpEngine (EV/EBITDA)
 }
 
 

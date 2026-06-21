@@ -18,6 +18,21 @@
       "source": "Florida PSC settlement approved 2025-11-20 (effective 2026-01-01 through 2029-12-31). Rate base $75.1B per FPL rate case filing for FY2026 projected test year (Feb 2025 filing). Rate-base growth derived from FY26\u2192FY27 trajectory ($75.1B \u2192 $80.8B = 7.6%) corroborated by $21.7B 4-year capex plan. Allowed ROE 10.95% (band 9.95-11.95%) and 59.6% equity ratio are settlement-approved terms. NEER valued at 18x residual earnings (between yieldco ~13x and high-growth renewables developer ~22x; NEER is high-growth contracted generation).",
       "analyst_notes": "Sum-of-parts (Phase A.8): regulated FPL rate base + non-regulated NEER. FPL leg earns the 10.95% allowed ROE on the 59.6% equity-funded portion of the $75.1B rate base (NOT the full base). NEER leg = residual earnings (consolidated NI \u2212 FPL allowed equity earnings, which also nets holdco interest drag) \u00d7 18x. Two-stage FPL model: 4-year explicit period uses the FPSC-approved 7.5% rate-base growth; terminal reverts to GDP-level 2.5% as rate-base growth normalizes post-2029 capex spike. NEER ~30-40% of consolidated earnings; multiple is the key analyst lever \u2014 recalibrate vs renewables peer comps."
     },
+    "ET": {
+      "model": "mlp",
+      "params": {
+        "target_ev_ebitda": 9.5,
+        "current_dpu": 1.30,
+        "distribution_growth_pct": 3.5,
+        "explicit_years": 5,
+        "terminal_growth_pct": 2.5,
+        "cost_of_equity_override_pct": null
+      },
+      "as_of_date": "2026-06-21",
+      "next_review_date": "2027-06-30",
+      "source": "Midstream MLP valuation. Headline: target EV/EBITDA 9.5x on stable fee-based EBITDA (peer set EPD ~10x, KMI ~9.5x, WMB ~10.5x, OKE ~10x; ET carries a modest complexity/governance discount). Distribution cross-check: ~$1.30/unit annualized distribution (2025 run-rate), ~3.5% target growth. Net debt ~$65B per latest balance sheet drives the EV->equity bridge.",
+      "analyst_notes": "FCFF mis-frames ET: ~$7B growth capex reads as value destruction and the ~$65B net debt is invisible until the EV->equity bridge. Headline is EV/EBITDA (equity = EBITDA x multiple - net debt, per unit); the EV/EBITDA multiple is the key analyst lever - recalibrate vs midstream peers. Distribution-discount leg (two-stage on DPU) is the income cross-check; DPU is an analyst input (distributions are not in the cleaned frame). Distribution-coverage check (DCF/distributions) deferred until the maintenance/growth capex split is extracted."
+    },
     "JPM": {
       "model": "ddm",
       "params": {

@@ -56,6 +56,10 @@ from aletheia.calculations.formulas.margins import (
     fcf_margin_pct,
     gross_margin_pct,
 )
+from aletheia.calculations.formulas.mlp import (
+    ev_ebitda_decomposition,
+    ev_ebitda_equity_value,
+)
 from aletheia.calculations.formulas.rate_base import (
     rate_base_decomposition,
     rate_base_equity_value,
@@ -105,6 +109,8 @@ __all__ = [
     "fcf_margin_pct",
     "gross_margin_pct",
     # Rate-base (regulated utilities)
+    "ev_ebitda_equity_value",
+    "ev_ebitda_decomposition",
     "rate_base_equity_value",
     "rate_base_decomposition",
     "segment_multiple_value",

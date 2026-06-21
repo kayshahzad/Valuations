@@ -250,6 +250,7 @@ _ENGINE_LABEL = {
     "rate_base":      "📐 Rate-base DCF (regulated utility)",
     "ddm":            "📐 Dividend Discount Model",
     "embedded_value": "📐 Embedded Value (sum-of-parts)",
+    "mlp":            "📐 MLP valuation (EV/EBITDA)",
 }
 
 _ENGINE_DESCRIPTION = {
@@ -270,6 +271,11 @@ _ENGINE_DESCRIPTION = {
     ),
     "embedded_value": (
         "Embedded-value framework for insurance conglomerates."
+    ),
+    "mlp": (
+        "Midstream MLP: equity = EV/EBITDA on stable fee-based EBITDA, "
+        "net of debt, per unit. FCFF mis-frames the growth capex and "
+        "hides the leverage. Distribution-discount leg is the income cross-check."
     ),
 }
 
@@ -2492,6 +2498,50 @@ def _rate_base_sotp_panel(dcf: Dict[str, Any]) -> None:
                    "analyst lever — recalibrate vs renewables peer comps.")
 
 
+def _mlp_valuation_panel(dcf: Dict[str, Any]) -> None:
+    """Midstream MLP valuation: EV/EBITDA → equity-per-unit bridge + leverage
+    read + distribution-discount cross-check. No-op for non-MLP engines."""
+    if (dcf or {}).get("engine") != "mlp":
+        return
+    dec = (dcf or {}).get("valuation_decomposition") or {}
+    dl = dec.get("distribution_leg")
+
+    def _c(v, dp=2):
+        return f"${v:,.{dp}f}" if isinstance(v, (int, float)) else "—"
+
+    def _b(v):
+        return f"${v/1e9:,.1f}B" if isinstance(v, (int, float)) else "—"
+
+    with st.container(border=True):
+        st.markdown("#### 📐 MLP valuation — EV/EBITDA")
+        st.caption("Midstream is a fee-based toll-road: value the stable EBITDA on "
+                   "a peer multiple, then net the (large) debt to get equity per "
+                   "unit. FCFF mis-frames the growth capex and hides the leverage.")
+        c1, c2, c3 = st.columns(3)
+        c1.metric(f"EV @ {dec.get('ev_ebitda_multiple','?')}×",
+                  _b(dec.get("enterprise_value")),
+                  f"EBITDA {_b(dec.get('ebitda'))}")
+        c2.metric("− Net debt", _b(dec.get("net_debt")),
+                  f"{dec.get('net_debt_to_ebitda',0):.1f}× EBITDA",
+                  delta_color="off")
+        c3.metric("Equity / unit", _c(dec.get("per_unit")),
+                  _b(dec.get("equity_value")))
+        if dl and dl.get("intrinsic_per_unit") is not None:
+            vs = dl.get("vs_headline_pct")
+            line = (f"Distribution cross-check: {_c(dl['intrinsic_per_unit'])}/unit "
+                    f"(DPU {_c(dl.get('current_dpu'))}, yield "
+                    f"{(dl.get('distribution_yield') or 0)*100:.1f}%)")
+            if vs is not None and vs > 0.25:
+                st.warning(line + f" — sits {vs*100:.0f}% above the EV/EBITDA "
+                           "headline; the income view takes the payout at face "
+                           "value, but for a levered MLP the asset-based anchor is "
+                           "the conservative read.")
+            else:
+                st.caption(line)
+        st.caption("EV/EBITDA multiple is the key analyst lever — recalibrate vs "
+                   "midstream peers (EPD/KMI/WMB/OKE).")
+
+
 def _market_context_panel(mc: Dict[str, Any]) -> None:
     """Market context (memo §8): earnings surprises, sell-side ratings, ESG,
     recent news. No-op when nothing is available."""
@@ -2634,6 +2684,7 @@ def render_deep_dive_view(
     # ── Two-stage AFFO/DDM decomposition (specialized engines only) ──────
     render_specialized_valuation_panel(dcf or {})
     _rate_base_sotp_panel(dcf or {})
+    _mlp_valuation_panel(dcf or {})
 
     # ── Market context (memo §8): surprises, ratings, ESG, news ──────────
     _market_context_panel((dcf or {}).get("market_context") or {})

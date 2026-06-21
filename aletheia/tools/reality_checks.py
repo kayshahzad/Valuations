@@ -98,6 +98,8 @@ def _business_model_label(ticker: str) -> str:
             return f"life-insurance ({sector})"
         if bm == "routing_required":
             return f"bank/utility/conglomerate ({sector})"
+        if bm == "mlp_required":
+            return f"midstream MLP ({sector})"
         return sector
     except Exception:
         return "this filer"

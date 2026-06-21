@@ -174,6 +174,7 @@ class ReportGenerator:
         + self._render_assumption_grounding(assumption_grounding)
         + self._render_specialized_valuation(p2)
         + self._render_rate_base_sotp(p2)
+        + self._render_mlp_valuation(p2)
         + self._render_scenario_triangle(p2)
         + self._render_phase2_section(p2)
         + self._render_reverse_dcf_detail(p2)
@@ -2294,6 +2295,62 @@ class ReportGenerator:
   <p style="font-size:11px;color:#999">Residual = consolidated NI {_bn(cni)} −
   regulated allowed equity earnings {_bn(ree)}. The multiple is the key analyst
   lever — recalibrate vs renewables peer comps.</p>
+  </div>"""
+
+    def _render_mlp_valuation(self, p2: Dict[str, Any]) -> str:
+        """Midstream MLP: EV/EBITDA → equity-per-unit bridge + leverage read +
+        distribution-discount cross-check. Empty for non-MLP engines."""
+        if (p2 or {}).get("engine") != "mlp":
+            return ""
+        dec = p2.get("valuation_decomposition") or {}
+        if not dec:
+            return ""
+        cur = self._fmt_cur
+        ndte = self._to_float(dec.get("net_debt_to_ebitda"))
+        mult = self._to_float(dec.get("ev_ebitda_multiple"))
+
+        def _bn(v):
+            f = self._to_float(v)
+            return self._fmt_bn(f / 1e9) if f is not None else "—"
+
+        dl = dec.get("distribution_leg") or {}
+        dist_html = ""
+        if dl.get("intrinsic_per_unit") is not None:
+            vs = self._to_float(dl.get("vs_headline_pct"))
+            yld = self._to_float(dl.get("distribution_yield"))
+            base = (f"Distribution cross-check: "
+                    f"{cur(self._to_float(dl.get('intrinsic_per_unit')), 2)}/unit "
+                    f"(DPU {cur(self._to_float(dl.get('current_dpu')), 2)}, yield "
+                    f"{yld*100:.1f}%)" if yld is not None else "")
+            if vs is not None and vs > 0.25:
+                dist_html = (f"<p style='font-size:12px;color:#b45309'>⚠ {base} — "
+                             f"sits {vs*100:.0f}% above the EV/EBITDA headline; the "
+                             "income view takes the payout at face value, but for a "
+                             "levered MLP the asset-based anchor is the conservative "
+                             "read.</p>")
+            else:
+                dist_html = f"<p style='font-size:12px;color:#666'>{base}</p>"
+
+        return f"""
+  <div class="card" style="page-break-inside:avoid">
+  <h3>📐 MLP valuation — EV/EBITDA</h3>
+  <p style="font-size:12px;color:#666;margin:2px 0 6px 0">Midstream is a fee-based
+  toll-road: value the stable EBITDA on a peer multiple, then net the (large) debt
+  to get equity per unit. FCFF mis-frames the growth capex and hides the leverage.</p>
+  <table class='table-styled'><thead><tr><th>Step</th>
+  <th style='text-align:right'>Value</th></tr></thead><tbody>
+  <tr><td>EBITDA × {mult:.1f}× → enterprise value</td>
+  <td style='text-align:right'>{_bn(dec.get('enterprise_value'))}</td></tr>
+  <tr><td>− Net debt ({ndte:.1f}× EBITDA)</td>
+  <td style='text-align:right'>({_bn(dec.get('net_debt'))})</td></tr>
+  <tr><td>Equity value</td>
+  <td style='text-align:right'>{_bn(dec.get('equity_value'))}</td></tr>
+  <tr style='border-top:2px solid #333'><td><strong>Intrinsic value / unit</strong></td>
+  <td style='text-align:right'><strong>{cur(self._to_float(dec.get('per_unit')), 2)}</strong></td></tr>
+  </tbody></table>
+  {dist_html}
+  <p style="font-size:11px;color:#999">EV/EBITDA multiple is the key analyst lever
+  — recalibrate vs midstream peers (EPD/KMI/WMB/OKE).</p>
   </div>"""
 
     def _render_scenario_triangle(self, p2: Dict[str, Any]) -> str:

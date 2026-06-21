@@ -1059,7 +1059,7 @@ class DCFEngine:
         lifecycle = meta.lifecycle
         profile = calc_input.valuation_profile
         
-        if meta and meta.business_model in ["ddm_required", "embedded_value_required", "routing_required", "reit_required"]:
+        if meta and meta.business_model in ["ddm_required", "embedded_value_required", "routing_required", "reit_required", "mlp_required"]:
             raise NotImplementedError(f"DCFEngine: ticker {ticker} requires specialized model ({meta.business_model}) — see KNOWN_ISSUES")
 
         # Honor `bypass` workarounds from KNOWN_ISSUES — declared data gaps that
