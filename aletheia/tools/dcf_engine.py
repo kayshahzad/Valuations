@@ -56,7 +56,11 @@ warnings.filterwarnings("ignore")
 # Constants
 # ─────────────────────────────────────────────────────────────────────────────
 
-MARKET_RISK_PREMIUM = 0.0475      # Damodaran current-consensus ERP (was 0.055)
+from aletheia.calculations.macro import market_risk_premium as _mrp
+# Damodaran implied ERP, sourced from valuation_data/macro/damodaran_implied_erp.csv
+# (single source shared with every specialized engine + the backtest); 4.75%
+# fallback. Resolved at import — servers restart on deploy and the ERP moves ~annually.
+MARKET_RISK_PREMIUM = _mrp()
 DEFAULT_WACC        = 0.09        # Fallback if WACC computation fails
 DEFAULT_TERMINAL_G  = 0.025       # 2.5% long-run nominal GDP growth
 MAX_TERMINAL_G      = 0.04        # Hard cap — requires megatrend justification

@@ -404,7 +404,8 @@ def _wacc_build_from_result(
 
     rf = _f(getattr(dcf_result, "risk_free_rate", None) or p2.get("risk_free_rate"))
     beta = _f(getattr(dcf_result, "beta", None) or p2.get("beta"))
-    erp = _f(p2.get("equity_risk_premium") or 0.0475)
+    from aletheia.calculations.macro import market_risk_premium as _mrp
+    erp = _f(p2.get("equity_risk_premium") or _mrp())
     ke = (rf or 0) + (beta or 0) * (erp or 0) if (rf is not None and beta is not None) else None
     wacc = _f(getattr(dcf_result, "wacc_base", None) or p2.get("wacc"))
 

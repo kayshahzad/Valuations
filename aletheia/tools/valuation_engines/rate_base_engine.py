@@ -42,13 +42,14 @@ from aletheia.calculations.specialized_inputs import (
 )
 from aletheia.contracts.interfaces import CalculationInput
 from aletheia.tools.valuation_engines.base import ValuationResult, scenario_band
+from aletheia.calculations.macro import market_risk_premium as _mrp
 
 
 # Damodaran-aligned MRP. Same constant the DCFEngine uses (kept in
 # ``aletheia.tools.dcf_engine.MARKET_RISK_PREMIUM``). Refactored
 # upstream constants can replace this when the rate-base engine
 # starts reading from a shared source.
-_DEFAULT_MRP: float = 0.0475
+_DEFAULT_MRP: float = _mrp()      # Damodaran implied ERP (single source); 4.75% fallback
 
 
 # Required param keys per model — engine refuses to run if any
