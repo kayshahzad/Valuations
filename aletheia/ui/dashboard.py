@@ -344,9 +344,26 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
     fcff   = _ser("derived_FCFF")
     nopat  = _ser("clean_NOPAT")
 
-    intr = [(_v(nopat[i]) - _v(ni[i]))
-            if (_v(nopat[i]) is not None and _v(ni[i]) is not None) else None
-            for i in range(n)]
+    # Post-EBIT bridge: EBIT − Interest&non-op − Tax = Net income. Raw interest
+    # and tax expense aren't cleaned columns, so derive a consistent bridge off
+    # the effective tax rate: Pretax = NI/(1−t); Tax = Pretax − NI; Interest&
+    # non-op = EBIT − Pretax.
+    taxr = _ser("clean_GAAP_TaxRate")
+
+    def _t(x: Any) -> float:
+        v = _v(x)
+        return 0.21 if v is None else max(-0.5, min(0.6, v))
+
+    intr: List[Optional[float]] = []
+    tax: List[Optional[float]] = []
+    for i in range(n):
+        ni_i, ebit_i, t = _v(ni[i]), _v(ebit[i]), _t(taxr[i])
+        if ni_i is None or (1.0 - t) == 0:
+            intr.append(None); tax.append(None); continue
+        pretax = ni_i / (1.0 - t)
+        tax.append(pretax - ni_i)
+        intr.append((ebit_i - pretax) if ebit_i is not None else None)
+
     dnwc = [(_v(nopat[i]) + _v(da[i]) - _v(capex[i]) - _v(fcff[i]))
             if all(_v(v) is not None for v in (nopat[i], da[i], capex[i], fcff[i]))
             else None for i in range(n)]
@@ -362,7 +379,8 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
         (f"      EBITDA",                ebitda),
         (f"      D&A",                   da),
         (f"{ebit_dot}  EBIT",            ebit),
-        (f"      Interest, net †",       intr),
+        (f"      Interest & non-op, net †", intr),
+        (f"      Tax †",                 tax),
         (f"      Net income",            ni),
         (f"      CapEx",                 capex),
         (f"      Δ Net working capital †", dnwc),
@@ -382,10 +400,11 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
         },
     )
     st.caption(
-        "All values $B (reported GAAP). † derived: Interest, net = NOPAT − NI; "
-        "Δ NWC = NOPAT + D&A − CapEx − FCFF. "
+        "All values $B (reported GAAP). † derived (raw interest/tax not cleaned "
+        "fields): Pretax = NI/(1−tax rate); Tax = Pretax − NI; Interest & non-op = "
+        "EBIT − Pretax; Δ NWC = NOPAT + D&A − CapEx − FCFF. "
         "🟢 validated SEC/FMP within 1% · 🟡 within 5% · 🔴 >5% drift · "
-        "⚪ field absent on validator side · · not yet validated"
+        "⚪ field absent · · not yet validated"
     )
 
 
