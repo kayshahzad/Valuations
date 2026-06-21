@@ -87,9 +87,13 @@ def get_risk_free_rate() -> float:
     if _RISK_FREE_RATE is not None:
         return _RISK_FREE_RATE
         
+    # 10-year Treasury (^TNX), not the 13-week bill (^IRX): the risk-free rate
+    # should match the horizon of a perpetuity DCF, and it keeps CAPM consistent
+    # with Damodaran's implied ERP (computed against the 10-year). The 4.5%
+    # fallback was already 10-year-ish.
     try:
-        t = yf.Ticker("^IRX")
-        hist = t.history(period="1d")
+        t = yf.Ticker("^TNX")
+        hist = t.history(period="5d")
         if not hist.empty:
             val = hist["Close"].iloc[-1] / 100.0
             _RISK_FREE_RATE = val
