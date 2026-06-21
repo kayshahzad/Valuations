@@ -207,13 +207,17 @@ def cached_library_scenario(ticker: str, scenario_name: str) -> Optional[Dict[st
 
 @st.cache_data(ttl=_TTL_SEC, show_spinner=False)
 def cached_macro_context() -> Dict[str, float]:
-    """Current Rf, ERP — used for the dashboard header context strip."""
-    from aletheia.data.historical_macro import (
-        get_risk_free_rate, get_equity_risk_premium,
-    )
+    """Current Rf, ERP — the dashboard header context strip. Must match what the
+    valuation engines use, NOT the historical parquet: rf comes from the live
+    10-year (market_data.get_risk_free_rate, ^TNX); erp from the Damodaran
+    implied-ERP series (same source as macro.market_risk_premium). The
+    historical_macro.get_risk_free_rate(date) path is ^IRX (13-week) + a parquet
+    that lags — correct for point-in-time backtests, wrong for a 'current' strip."""
+    from aletheia.data.market_data import get_risk_free_rate as _live_rf
+    from aletheia.data.historical_macro import get_equity_risk_premium
     today = date.today()
     return {
-        "rf":  get_risk_free_rate(today),
+        "rf":  _live_rf(),
         "erp": get_equity_risk_premium(today),
     }
 
