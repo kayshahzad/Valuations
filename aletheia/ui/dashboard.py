@@ -395,9 +395,9 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
         _cls = get_extended_universe().get((ticker or "").upper()) if ticker else None
     except Exception:
         _cls = None
-    _is_bank = bool(
-        _cls and getattr(_cls, "sector", "") == "Financials"
-        and getattr(_cls, "business_model", "") in ("ddm_required", "embedded_value_required"))
+    from aletheia.calculations.sector_classification import is_bank_for_display
+    _is_bank = bool(_cls and is_bank_for_display(
+        getattr(_cls, "sector", ""), getattr(_cls, "business_model", "")))
 
     if _is_bank:
         shares = _ser("raw_SharesDiluted")

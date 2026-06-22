@@ -52,17 +52,25 @@ def build_capital_structure_flag(calc, market_cap: Optional[float] = None) -> Di
     """
     out: Dict[str, Any] = {"available": False, "forward_signal": None}
 
-    # Financials guard (fail-safe): for banks/insurers EBITDA is not a
-    # meaningful leverage denominator, so net-debt/EBITDA is garbage (JPM
+    # Financials guard (fail-safe, CF-R18): for banks/insurers/lenders EBITDA is
+    # not a meaningful leverage denominator, so net-debt/EBITDA is garbage (JPM
     # computed −30×). Refuse rather than emit a number that would render on the
     # report and could silently mis-route a Family selection. REITs
     # (reit_required) are NOT financials — they keep a meaningful flag.
+    #
+    # CF-R18: key on the deposit-taking/financial REALITY, not the GICS label.
+    # The old `sector == "Financials"` exact match let a fintech-bank slip through
+    # (SOFI is tagged "Financial Services" → it had been computing FCFF
+    # working-capital off multi-billion deposit flows). is_financial_filer also
+    # catches the specialized financial models + bank/lending industry keywords.
     cls = getattr(calc, "classification", None)
     sector = (getattr(cls, "sector", "") or "")
+    industry = (getattr(cls, "industry", "") or "")
     business_model = (getattr(cls, "business_model", "") or "")
-    if sector == "Financials" or business_model in ("ddm_required", "embedded_value_required"):
+    from aletheia.calculations.sector_classification import is_financial_filer
+    if is_financial_filer(sector, industry, business_model):
         out["notes"] = ("N/A — financials: EBITDA is not a meaningful leverage "
-                        "denominator for banks/insurers; net-debt/EBITDA refused")
+                        "denominator for banks/insurers/lenders; net-debt/EBITDA refused")
         return out
 
     series = net_debt_series(calc)
