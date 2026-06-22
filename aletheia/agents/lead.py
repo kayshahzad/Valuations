@@ -692,6 +692,20 @@ def lead_agent(state):
                 "market_cap":       p2.get("dcf", {}).get("market_cap"),
                 "shares_diluted":   p2.get("dcf", {}).get("shares_diluted"),
                 "run_date":         p2.get("dcf", {}).get("run_date"),
+                # Deterministic overlays calc_node already computed — thread them
+                # through so the PERSISTED report (and the exported HTML) match the
+                # live deep-dive. Without these the report dropped bank_metrics /
+                # bank_valuation_methods / value_source_decomposition: they showed in
+                # the deep-dive (which reads the live /ticker API) but rendered empty
+                # in the regenerated HTML, which reads this persisted block.
+                "value_source_decomposition": p2.get("value_source_decomposition"),
+                "saas_metrics":               p2.get("saas_metrics"),
+                "cads":                       p2.get("cads"),
+                "capital_structure_flag":     p2.get("capital_structure_flag"),
+                "valuation_methods":          p2.get("valuation_methods"),
+                "bank_valuation_methods":     p2.get("bank_valuation_methods"),
+                "bank_metrics":               p2.get("bank_metrics"),
+                "headline_override":          p2.get("headline_override"),
             },
             # FIX 6: contrarian_analysis was completely absent
             "contrarian_analysis": {

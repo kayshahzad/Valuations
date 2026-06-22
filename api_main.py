@@ -3157,6 +3157,40 @@ def rebuild_report(ticker: str):
                     refreshed.append("bank_valuation_methods")
         except Exception as e:
             report.setdefault("_rebuild_warnings", []).append(f"bank_valuation_methods: {e}")
+        # Bank operating metrics (NII / efficiency / NIM / deposits / tangible book)
+        # from SEC XBRL — was omitted from rebuild, so a rebuilt report dropped the
+        # panel the deep-dive shows.
+        try:
+            from aletheia.tools.bank_metrics import build_bank_metrics as _bbm
+            _shares = ((_spec.inputs_snapshot or {}).get("shares_diluted")
+                       if _spec is not None else None)
+            if _p2 is not None and _shares:
+                _bkm = _bbm(_calc, shares=_shares)
+                if _bkm.get("available"):
+                    _p2["bank_metrics"] = _bkm
+                    refreshed.append("bank_metrics")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"bank_metrics: {e}")
+        # Method-appropriate headline (CF-R19): swap the structurally-low DDM base
+        # IV/MoS for the convergent-set residual income when understatement is
+        # flagged, so the rebuilt three_scenario_dcf.base matches the LLM-run path
+        # and the deep-dive (otherwise the rebuilt headline reverts to DDM $118).
+        try:
+            from aletheia.tools.bank_valuation_methods import bank_headline_override
+            if _p2 is not None and _spec is not None:
+                _tsd_base = (_p2.get("three_scenario_dcf") or {}).get("base") or {}
+                _ho = bank_headline_override(
+                    ddm_ips=_tsd_base.get("intrinsic_per_share"),
+                    price=(float(_spec.current_price) if _spec.current_price else None),
+                    bvm=_p2.get("bank_valuation_methods"))
+                if _ho:
+                    _tsd_base["intrinsic_per_share"] = _ho["intrinsic_per_share"]
+                    _tsd_base["margin_of_safety"] = _ho["margin_of_safety"]
+                    _p2.setdefault("three_scenario_dcf", {})["base"] = _tsd_base
+                    _p2["headline_override"] = _ho
+                    refreshed.append("headline_override")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"headline_override: {e}")
         # Refresh the Comprehensive Ratios + WACC build (§ metrics) from the
         # same fresh result, so ROIC / EV-EBITDA / Net-Debt-EBITDA / capital
         # weights reconcile with the engine instead of showing a stale FY-only
