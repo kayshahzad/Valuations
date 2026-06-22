@@ -190,6 +190,10 @@ def test_t3c_sofi_residual_income_bank_in_convergent_set():
     # No dividend → Gordon undefined, not $0.
     assert out["methods"]["gordon_ddm"]["valid"] is False
     assert "no dividend" in out["methods"]["gordon_ddm"]["note"]
+    # Non-payer must NOT be mislabelled super-growth: SOFI's g (ROE·1.0 ≈ 8%) is
+    # BELOW Ke (~10.5%), so near_term_excess_growth must be False — the "g≥Ke"
+    # reason is distinct from the no-dividend reason (regression: they were conflated).
+    assert out["convergence"]["near_term_excess_growth"] is False
     # SOFI grows assets far faster than it earns → capital-deficit signal.
     assert out["reconciliation"]["capital_deficit"] is True
     assert out["methods"]["fcfe_bank"]["capital_deficit"] is True

@@ -328,10 +328,14 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
         jpb_mult = justified_pb(roe=terminal_roe, ke=ke, growth=terminal_growth)
         iv_jpb_steady = (jpb_mult * bvps0) if jpb_mult is not None else None
 
-        # Gordon DDM is meaningless for a non-dividend payer (DPS=0 → $0, not a
-        # value) — SOFI retains 100%. Mark it undefined rather than showing $0.
+        # Two DISTINCT reasons single-stage Gordon/justified-P/B can be ill-posed,
+        # kept separate so the flags don't conflate them:
+        #   excess_growth — near-term g = ROE·retention ≥ Ke (JPM super-growth);
+        #                   the closed forms have a negative denominator.
+        #   pays_dividend — a non-payer (SOFI, 100% retention) makes Gordon $0.
+        excess_growth = (ke - near_term_g) <= 0
         pays_dividend = payout > 1e-6
-        single_stage_ok = (ke - near_term_g) > 0 and pays_dividend
+        single_stage_ok = (not excess_growth) and pays_dividend
         gordon = gordon_ddm_value(bvps0=bvps0, roe=roe_norm, ke=ke,
                                   payout=payout) if single_stage_ok else None
 
@@ -407,7 +411,7 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
             notes.append(
                 "Gordon DDM is undefined — the bank pays no dividend (100% retention); "
                 "residual income / justified P/B / FCFE carry the valuation.")
-        elif not single_stage_ok:
+        elif excess_growth:
             notes.append(
                 f"near-term g = ROE·retention = {near_term_g:.1%} ≥ Ke {ke:.1%}: "
                 "single-stage justified P/B / Gordon are undefined; the two-stage "
@@ -511,7 +515,7 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
             "convergence": {
                 "steady_state_identity": "constant ROE with g<Ke → RI ≡ "
                                          "justified-P/B·BVPS ≡ Gordon ≡ FCFE (golden test)",
-                "near_term_excess_growth": not single_stage_ok,
+                "near_term_excess_growth": excess_growth,
                 "four_way_spread_pct": spread_4way,
             },
             "notes": notes,
