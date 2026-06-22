@@ -1452,6 +1452,20 @@ def _build_full_report(ticker: str) -> Optional[Dict[str, Any]]:
             "risk_free_rate": phase2.get("risk_free_rate"),
         })
 
+    # Reconcile the persisted agent thesis's NUMERIC margin of safety / IV with the
+    # LIVE deterministic recompute. The investment_thesis block is an agent_runs
+    # snapshot — its MoS is frozen at synthesis time, so any later valuation change
+    # (here: the CF-R19 bank headline override, DDM $118 → RI $315) leaves a stale
+    # −64% on the report header while three_scenario_dcf.base already reads −5%.
+    # Narrative stays from the agent; the headline number follows the live engine.
+    _thesis = dict((llm or {}).get("investment_thesis") or
+                   ((legacy or {}).get("4_valuation_synthesis") or {}).get("investment_thesis") or {})
+    _live_base = ((phase2.get("three_scenario_dcf") or {}).get("base") or {})
+    if _live_base.get("margin_of_safety") is not None:
+        _thesis["margin_of_safety"] = _live_base.get("margin_of_safety")
+    if _live_base.get("intrinsic_per_share") is not None:
+        _thesis["intrinsic_per_share"] = _live_base.get("intrinsic_per_share")
+
     return {
         "ticker":       ticker_u,
         "generated_at": (llm or {}).get("generated_at") or (legacy or {}).get("generated_at"),
@@ -1467,8 +1481,7 @@ def _build_full_report(ticker: str) -> Optional[Dict[str, Any]]:
             "phase2_valuation":     phase2,
             "contrarian_analysis":  (llm or {}).get("contrarian_analysis") or
                                     ((legacy or {}).get("4_valuation_synthesis") or {}).get("contrarian_analysis") or {},
-            "investment_thesis":    (llm or {}).get("investment_thesis") or
-                                    ((legacy or {}).get("4_valuation_synthesis") or {}).get("investment_thesis") or {},
+            "investment_thesis":    _thesis,
             # Structured thesis from thesis_synthesizer (added in week-5
             # consolidation). Sourced from the legacy JSON for now since
             # agent_runs persists only the four canonical LLM blocks; a
