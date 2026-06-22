@@ -162,6 +162,54 @@ def test_t3b_deutsche_bank_low_roe_below_book_convergence():
     assert (max(legs) / min(legs) - 1.0) < 0.15
 
 
+# ───── T3c: SOFI — RI-headline bank gets the convergent set, consistently ───
+
+def test_t3c_sofi_residual_income_bank_in_convergent_set():
+    """SOFI is a residual_income_required filer that OWNS SoFi Bank N.A. — the
+    convergent set must apply to it (gated on bank reality, not the model), and
+    its RI leg must MATCH the routed headline (same engine, same inputs), not a
+    differently-recomputed number. Edge cases: no dividend → Gordon undefined;
+    asset growth outpaces ROE → capital-deficit flag."""
+    pytest.importorskip("pandas")
+    from aletheia.utils.calc_input_builder import make_calc_input
+    from aletheia.tools.valuation_router import ValuationRouter
+    try:
+        calc = make_calc_input("SOFI")
+        v = ValuationRouter().execute(calc)
+    except Exception as e:
+        pytest.skip(f"SOFI not available: {e}")
+    if getattr(v, "engine", "") != "residual_income":
+        pytest.skip("SOFI not routed to residual_income")
+
+    out = build_bank_valuation_methods(calc, v, p2={"engine": "residual_income"})
+    assert out["available"], out.get("notes")
+    # RI leg reproduces the headline (consistency, not a second number).
+    assert out["methods"]["residual_income"]["iv"] == pytest.approx(
+        float(v.intrinsic_per_share), rel=1e-3)
+    assert out["inputs"]["payout_source"] == "routed RI engine snapshot"
+    # No dividend → Gordon undefined, not $0.
+    assert out["methods"]["gordon_ddm"]["valid"] is False
+    assert "no dividend" in out["methods"]["gordon_ddm"]["note"]
+    # SOFI grows assets far faster than it earns → capital-deficit signal.
+    assert out["reconciliation"]["capital_deficit"] is True
+    assert out["methods"]["fcfe_bank"]["capital_deficit"] is True
+
+
+def test_t3c_cnc_healthcare_ri_excluded_from_bank_set():
+    """CNC is ALSO residual_income_required but a Healthcare filer — it must NOT
+    get the bank convergent set (gate is bank reality, not the model)."""
+    pytest.importorskip("pandas")
+    from aletheia.utils.calc_input_builder import make_calc_input
+    from aletheia.tools.valuation_router import ValuationRouter
+    try:
+        calc = make_calc_input("CNC")
+        v = ValuationRouter().execute(calc)
+    except Exception as e:
+        pytest.skip(f"CNC not available: {e}")
+    out = build_bank_valuation_methods(calc, v)
+    assert out["available"] is False
+
+
 # ─────────────────── T4: isolation (non-financials get nothing) ────────────
 
 def test_t4_non_financial_returns_unavailable():

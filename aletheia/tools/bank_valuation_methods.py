@@ -41,8 +41,9 @@ import math
 from dataclasses import dataclass
 from typing import Optional
 
-# Sectors whose equity is valued off book + ROE rather than FCFF.
-_FINANCIAL_MODELS = ("ddm_required", "embedded_value_required")
+# The bank-filer gate now lives in `is_bank_for_display` (sector_classification) —
+# financial sector + specialized model, which admits SOFI (residual_income) and
+# excludes CNC (Healthcare residual_income). Imported below.
 
 # Terminal growth must sit a safe margin below Ke or the Gordon denominator
 # explodes. Long-run nominal GDP-ish default, matching the DDM config terminals.
@@ -61,6 +62,7 @@ from aletheia.calculations.formulas import (          # noqa: E402
     justified_pb,
     residual_income_value,
 )
+from aletheia.calculations.sector_classification import is_bank_for_display  # noqa: E402
 
 
 @dataclass(frozen=True)
@@ -234,8 +236,13 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
     out = {"available": False}
     cls = getattr(calc, "classification", None)
     model = getattr(cls, "business_model", None)
-    if model not in _FINANCIAL_MODELS:
-        out["notes"] = "not a financial-sector engine (FCFF uses the four-method set)"
+    sector = getattr(cls, "sector", "") or ""
+    # Gate on BANK REALITY (financial sector + specialized model), not the model
+    # alone: this admits SOFI (residual_income_required, owns SoFi Bank N.A.) while
+    # still excluding CNC/UNH (residual_income_required but Healthcare). Same
+    # predicate the bank P&L table uses, so the diagnostic and the table agree.
+    if not is_bank_for_display(sector, model):
+        out["notes"] = "not a bank filer (FCFF / non-financial uses the four-method set)"
         return out
 
     df = getattr(calc, "df", None)
@@ -258,11 +265,32 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
             return out
 
         roe_norm, roe_latest = _normalized_roe(df)
+
+        # CONSISTENCY: when the routed engine IS residual income (SOFI), the RI leg
+        # of this set is the HEADLINE itself — so adopt the engine's own normalized
+        # inputs (BVPS / ROE / payout from its snapshot) rather than recomputing
+        # them differently. Otherwise the panel would show one RI number and the
+        # headline another for the same ticker. For DDM/embedded-value headlines
+        # (JPM/BRK-B) there is no such snapshot, so the derived inputs stand and the
+        # set remains the independent correction to the understating DDM.
+        ri_snap = {}
+        if getattr(valuation_result, "engine", "") == "residual_income":
+            ri_snap = getattr(valuation_result, "inputs_snapshot", None) or {}
+        snap_bvps = ri_snap.get("book_value_per_share")
+        snap_roe = ri_snap.get("roe_normalized")
+        snap_payout = ri_snap.get("payout")
+        if snap_bvps:
+            bvps0 = float(snap_bvps)
+        if snap_roe is not None:
+            roe_norm = float(snap_roe)
         if roe_norm is None:
             out["notes"] = "no derived_ROE in frame"
             return out
 
-        payout, payout_src = _resolve_payout(df, calc, ticker)
+        if snap_payout is not None:
+            payout, payout_src = float(snap_payout), "routed RI engine snapshot"
+        else:
+            payout, payout_src = _resolve_payout(df, calc, ticker)
         if payout is None:
             out["notes"] = "could not resolve payout ratio (no clean/derived/config source)"
             return out
@@ -300,7 +328,10 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
         jpb_mult = justified_pb(roe=terminal_roe, ke=ke, growth=terminal_growth)
         iv_jpb_steady = (jpb_mult * bvps0) if jpb_mult is not None else None
 
-        single_stage_ok = (ke - near_term_g) > 0
+        # Gordon DDM is meaningless for a non-dividend payer (DPS=0 → $0, not a
+        # value) — SOFI retains 100%. Mark it undefined rather than showing $0.
+        pays_dividend = payout > 1e-6
+        single_stage_ok = (ke - near_term_g) > 0 and pays_dividend
         gordon = gordon_ddm_value(bvps0=bvps0, roe=roe_norm, ke=ke,
                                   payout=payout) if single_stage_ok else None
 
@@ -311,6 +342,13 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
         # distributable gap (over/under-distribution, the SoFi signal).
         asset_growth = _normalized_asset_growth(df)
         fcfe = None
+        # Capital-deficit signal: when normalized asset growth OUTPACES ROE, the
+        # bank cannot fund its balance-sheet growth from retained earnings alone —
+        # it depends on EXTERNAL capital (SOFI grew assets ~30%/yr while earning
+        # ~6–8% ROE, raising equity). FCFE caps reinvestment at 100% of earnings,
+        # so the leg understates the capital drain; we flag it explicitly instead.
+        capital_deficit = (asset_growth is not None and roe_norm is not None
+                           and asset_growth > roe_norm + 0.005)
         if asset_growth is not None:
             fcfe_tg = max(0.0, min(terminal_growth, ke - _MIN_KE_MINUS_G))
             fcfe = fcfe_bank_value(
@@ -365,7 +403,11 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
             "deterministic bank convergent set (residual income / justified P/B / "
             "Gordon DDM) — additive diagnostic, not the headline IV.",
         ]
-        if not single_stage_ok:
+        if not pays_dividend:
+            notes.append(
+                "Gordon DDM is undefined — the bank pays no dividend (100% retention); "
+                "residual income / justified P/B / FCFE carry the valuation.")
+        elif not single_stage_ok:
             notes.append(
                 f"near-term g = ROE·retention = {near_term_g:.1%} ≥ Ke {ke:.1%}: "
                 "single-stage justified P/B / Gordon are undefined; the two-stage "
@@ -382,7 +424,14 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                 f"${fcfe['iv']:,.0f}/sh off {fcfe['asset_growth']:.1%} normalized asset "
                 f"growth (capital reinvestment {fcfe['equity_reinvestment_rate']:.0%}); "
                 "the 4th convergent leg — capital-driven growth, no payout assumption.")
-        if payout_gap and payout_gap["signal"] != "consistent":
+        if capital_deficit:
+            notes.append(
+                f"capital deficit: normalized asset growth {asset_growth:.0%} "
+                f"OUTPACES ROE {roe_norm:.0%} — the bank cannot fund balance-sheet "
+                "growth from earnings and depends on EXTERNAL capital (equity raises). "
+                "The FCFE leg caps reinvestment at 100% of earnings, so it understates "
+                "the capital drain; the equity value is the more cautious read.")
+        elif payout_gap and payout_gap["signal"] != "consistent":
             verb = ("retains more than its asset growth needs — idle/excess capital"
                     if payout_gap["signal"] == "under_distributing" else
                     "pays out more than it can sustainably distribute — capital drag")
@@ -426,7 +475,8 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                     "valid": gordon is not None,
                     "note": ("single-stage Gordon off normalized ROE/payout"
                              if single_stage_ok else
-                             "undefined: near-term g ≥ Ke (use two-stage RI)"),
+                             "undefined: no dividend (100% retention)" if not pays_dividend
+                             else "undefined: near-term g ≥ Ke (use two-stage RI)"),
                 },
                 "fcfe_bank": ({
                     "iv": fcfe["iv"],
@@ -435,8 +485,12 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                     "equity_reinvestment_rate": fcfe["equity_reinvestment_rate"],
                     "decomposition": fcfe["decomposition"],
                     "valid": True,
-                    "note": "two-stage FCFE = NI − ΔRegulatory capital; growth is "
-                            "capital-driven (normalized asset growth), not payout-driven",
+                    "capital_deficit": capital_deficit,
+                    "note": ("growth outpaces ROE — external-capital-dependent; FCFE "
+                             "caps reinvestment at 100% and understates the drain"
+                             if capital_deficit else
+                             "two-stage FCFE = NI − ΔRegulatory capital; growth is "
+                             "capital-driven (normalized asset growth), not payout-driven"),
                 } if fcfe else {
                     "iv": None, "valid": False,
                     "note": "no TotalAssets history → asset growth unavailable",
@@ -452,6 +506,7 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                 "fair_value_band": fair_band,
                 "payout_vs_distributable": payout_gap,
                 "four_way_spread_pct": spread_4way,
+                "capital_deficit": capital_deficit,
             },
             "convergence": {
                 "steady_state_identity": "constant ROE with g<Ke → RI ≡ "

@@ -2081,8 +2081,10 @@ class ReportGenerator:
             return f"${self._to_float(v):,.0f}" if v is not None else "—"
 
         ddm_iv = (bvm.get("headline_ddm") or {}).get("iv")
+        _greason = ("no dividend" if "no dividend" in (gor.get("note") or "")
+                    else "g≥Ke")
         gordon_cell = (_usd(gor.get("iv")) if gor.get("valid")
-                       else "<span style='color:#b45309'>undefined (g≥Ke)</span>")
+                       else f"<span style='color:#b45309'>undefined ({_greason})</span>")
         jpb_mult = self._to_float(jpb.get("multiple"))
         jpb_lbl = (f"Justified P/B ({jpb_mult:.2f}× book, steady-state)"
                    if jpb_mult is not None else "Justified P/B (steady-state)")
@@ -2107,10 +2109,11 @@ class ReportGenerator:
                 f"<td style='text-align:right;color:#666'>"
                 f"{ag:.1%} asset g</td></tr>")
 
-        rows += (
-            f"<tr><td>Headline DDM (config two-stage)</td>"
-            f"<td style='text-align:right'>{_usd(ddm_iv)}</td>"
-            f"<td style='text-align:right;color:#666'>routed IV</td></tr>")
+        if ddm_iv is not None:
+            rows += (
+                f"<tr><td>Headline DDM (config two-stage)</td>"
+                f"<td style='text-align:right'>{_usd(ddm_iv)}</td>"
+                f"<td style='text-align:right;color:#666'>routed IV</td></tr>")
 
         band = rec.get("fair_value_band") or []
         band_str = (f"${band[0]:,.0f}–${band[1]:,.0f}"
@@ -2135,9 +2138,20 @@ class ReportGenerator:
                   f"Gordon are undefined; the two-stage residual income is the only "
                   f"well-posed form (super-growth bank).</p>")
 
+        cd_note = ""
+        if rec.get("capital_deficit"):
+            ag = self._to_float(fcfe.get("asset_growth")) or 0.0
+            cd_note = (f"<p style='font-size:12px;color:#b45309'>⚠ Capital deficit: "
+                       f"normalized asset growth {ag:.0%} outpaces ROE "
+                       f"{self._to_float(inp.get('roe_normalized')):.0%} — the bank can't "
+                       "fund balance-sheet growth from earnings and depends on external "
+                       "capital (equity raises). The FCFE leg caps reinvestment at 100% of "
+                       "earnings, so it understates the drain; the equity value is the more "
+                       "cautious read.</p>")
+
         pg_note = ""
         pg = rec.get("payout_vs_distributable") or {}
-        if pg and pg.get("signal") and pg.get("signal") != "consistent":
+        if not rec.get("capital_deficit") and pg and pg.get("signal") and pg.get("signal") != "consistent":
             ar = self._to_float(pg.get("actual_retention"))
             cr = self._to_float(pg.get("capital_required_retention"))
             verb = ("retains more than its asset growth needs — excess/idle capital "
@@ -2167,8 +2181,9 @@ class ReportGenerator:
             "<h3>Bank valuation — convergent set (residual income)</h3>"
             "<p style='font-size:13px;color:#666'>Banks have no unlevered FCF, so "
             "the four-method engine doesn't apply. Equity is valued off book + ROE "
-            "three ways; in steady state (constant ROE, g&lt;Ke) they are identical "
-            "— the bank analog of the four-method convergence.</p>"
+            "four ways (residual income / justified P/B / Gordon DDM / FCFE = NI − "
+            "ΔRegulatory capital); in steady state (constant ROE, g&lt;Ke) they are "
+            "identical — the bank analog of the four-method convergence.</p>"
             "<table style='width:100%;border-collapse:collapse'>"
             "<tr><th style='text-align:left'>Method</th>"
             "<th style='text-align:right'>Intrinsic / share</th>"
@@ -2176,7 +2191,7 @@ class ReportGenerator:
             f"{rows}</table>"
             f"<p style='margin-top:8px'><strong>Fair-value band {band_str}</strong> "
             "(justified-P/B floor → two-stage residual income).</p>"
-            f"{warn}{ge}{pg_note}{sp_note}{prov}")
+            f"{warn}{ge}{cd_note}{pg_note}{sp_note}{prov}")
 
     def _render_value_source_decomposition(self, p2: Dict[str, Any]) -> str:
         """Value Source Decomposition (spec §3): attribute expected return across

@@ -598,20 +598,29 @@ def _bank_valuation_panel(p2v: Dict[str, Any]) -> None:
 
     ddm_iv = (bvm.get("headline_ddm") or {}).get("iv")
     jpb_mult = jpb.get("multiple")
-    has_fcfe = fcfe.get("valid")
-    cols = st.columns(5 if has_fcfe else 4)
-    cols[0].metric("Residual income", _usd(ri.get("iv")),
-                   f"{float(ri.get('implied_pb')):.2f}× book" if ri.get("implied_pb") else None)
-    cols[1].metric("Justified P/B (floor)", _usd(jpb.get("iv_steady_state")),
-                   f"{float(jpb_mult):.2f}×" if jpb_mult is not None else None)
-    cols[2].metric("Gordon DDM", _usd(gor.get("iv")) if gor.get("valid") else "undefined",
-                   None if gor.get("valid") else "g≥Ke")
-    if has_fcfe:
+    # Build the metric set dynamically — Gordon collapses to "undefined" for
+    # non-payers / super-growth, and the Headline-DDM column only appears for a
+    # DDM-routed bank (SOFI's headline IS the residual income leg).
+    metrics = [
+        ("Residual income", _usd(ri.get("iv")),
+         f"{float(ri.get('implied_pb')):.2f}× book" if ri.get("implied_pb") else None, None),
+        ("Justified P/B (floor)", _usd(jpb.get("iv_steady_state")),
+         f"{float(jpb_mult):.2f}×" if jpb_mult is not None else None, None),
+    ]
+    if gor.get("valid"):
+        metrics.append(("Gordon DDM", _usd(gor.get("iv")), None, None))
+    else:
+        gnote = "no dividend" if "no dividend" in (gor.get("note") or "") else "g≥Ke"
+        metrics.append(("Gordon DDM", "undefined", gnote, None))
+    if fcfe.get("valid"):
         ag = fcfe.get("asset_growth")
-        cols[3].metric("FCFE (NI−ΔRegCap)", _usd(fcfe.get("iv")),
-                       f"{float(ag):.1%} asset g" if ag is not None else None,
-                       delta_color="off")
-    cols[-1].metric("Headline DDM", _usd(ddm_iv), "routed IV", delta_color="off")
+        metrics.append(("FCFE (NI−ΔRegCap)", _usd(fcfe.get("iv")),
+                        f"{float(ag):.1%} asset g" if ag is not None else None, "off"))
+    if ddm_iv is not None:
+        metrics.append(("Headline DDM", _usd(ddm_iv), "routed IV", "off"))
+    cols = st.columns(len(metrics))
+    for col, (label, val, delta, dc) in zip(cols, metrics):
+        col.metric(label, val, delta, delta_color=(dc or "normal"))
 
     band = rec.get("fair_value_band") or []
     if len(band) == 2:
@@ -631,8 +640,16 @@ def _bank_valuation_panel(p2v: Dict[str, Any]) -> None:
                    f"{float(inp.get('near_term_growth',0)):.1%} ≥ Ke "
                    f"{float(inp.get('ke',0)):.1%}: single-stage justified P/B / "
                    "Gordon undefined; two-stage RI is the only well-posed form.")
+    if rec.get("capital_deficit"):
+        ag = (fcfe.get("asset_growth") or 0.0)
+        st.warning(
+            f"Capital deficit: normalized asset growth {float(ag):.0%} outpaces ROE "
+            f"{float(inp.get('roe_normalized',0)):.0%} — the bank can't fund balance-"
+            "sheet growth from earnings and leans on EXTERNAL capital (equity raises). "
+            "The FCFE leg caps reinvestment at 100% of earnings, so it understates the "
+            "drain; treat the equity value as the more cautious read.")
     pg = rec.get("payout_vs_distributable") or {}
-    if pg.get("signal") and pg["signal"] != "consistent":
+    if not rec.get("capital_deficit") and pg.get("signal") and pg["signal"] != "consistent":
         verb = ("retains more than its asset growth needs — excess/idle capital "
                 "(buyback-funded distributions or a building cushion)"
                 if pg["signal"] == "under_distributing" else
