@@ -189,15 +189,22 @@ def classify_from_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
     Map an FMP /profile response → classification fields.
 
     Rules (most-specific first):
-      - industry contains "Banks" or "Capital Markets" → routing_required
-        (asset/liability mismatch; standard FCFF DCF doesn't apply)
-      - industry contains "Insurance - Diversified" → routing_required
-        (BRK-B-style conglomerate insurance — not pure float)
+      - industry contains "Banks" or "Capital Markets" → residual_income_required
+        (no unlevered FCF; equity valued off book + ROE → bank convergent set)
+      - industry contains "Insurance - Diversified" → residual_income_required
+        (BRK-B-style conglomerate insurance — book + ROE, not a rate base)
       - industry contains "Insurance" or "Healthcare Plans" or "Managed
         Care" → ddm_required (float-based, dividend-discount appropriate)
       - sector == "Utilities" or industry contains "Regulated" →
         routing_required (rate-base + allowed-ROE model needed)
+      - "Credit Services" WITH consumer-lending signals (card issuers / digital
+        banks) → residual_income_required; without (pure networks) → fcff_compatible
       - everything else → fcff_compatible (standard DCF)
+
+    Banks formerly mapped to routing_required (the utility RateBaseEngine), which
+    is wrong — a bank has no rate base. residual_income_required is the general
+    bank model and routes to the convergent set; curated names (JPM/AXP ddm,
+    BRK-B embedded value) override on collision.
 
     Foreign filer detection: country != "US" → is_ifrs_filer = True.
     Non-USD currency on a non-US filer reinforces this.
@@ -215,9 +222,18 @@ def classify_from_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
 
     # Business model — order matters; check most-specific patterns first.
     if "banks" in i_lower or "capital markets" in i_lower:
-        business_model = "routing_required"
+        # Banks / brokers / capital-markets filers value equity off book + ROE
+        # (residual income), NOT a rate base. residual_income_required is the
+        # GENERAL bank model — it works for dividend-payers and non-payers alike,
+        # routes to ResidualIncomeEngine, and lands in the bank convergent set
+        # (is_bank_for_display). (Was routing_required → the utility RateBaseEngine,
+        # which is wrong: a bank has no rate base. This is the SOFI mis-route bug
+        # generalized.) Curated names (JPM/AXP = ddm_required) override on collision.
+        business_model = "residual_income_required"
     elif "insurance - diversified" in i_lower or "insurance—diversified" in i_lower:
-        business_model = "routing_required"
+        # BRK-B-style conglomerate insurance — book + ROE, not a rate base.
+        # Curated BRK-B overrides to embedded_value_required.
+        business_model = "residual_income_required"
     elif "insurance" in i_lower or "healthcare plans" in i_lower or "managed care" in i_lower:
         business_model = "ddm_required"
     elif s_lower == "utilities" or "regulated" in i_lower:
@@ -254,7 +270,10 @@ def classify_from_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
             "charge and credit payment card",   # AXP-specific phrasing
         )
         if any(sig in desc for sig in lending_signals):
-            business_model = "routing_required"
+            # Card issuers / digital banks (AXP, COF, DFS, SYF, SOFI) carry a
+            # consumer-lending book and file bank-style income statements — value
+            # off book + ROE via residual income, not the utility rate-base engine.
+            business_model = "residual_income_required"
         else:
             # Default for "Credit Services" without lending signals
             # (V, MA, PYPL pure networks) — standard FCFF DCF works.

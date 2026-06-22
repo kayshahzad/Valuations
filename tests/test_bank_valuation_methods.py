@@ -214,6 +214,44 @@ def test_t3c_cnc_healthcare_ri_excluded_from_bank_set():
     assert out["available"] is False
 
 
+# ───── T3d: new banks auto-route to the bank model (classifier → set) ───────
+
+def test_t3d_new_banks_classify_into_the_bank_set():
+    """A bank added via the runtime profile classifier must land on a bank model
+    (residual_income_required) and hit the convergent set — NOT routing_required
+    (the utility RateBaseEngine), the SOFI mis-route bug generalized."""
+    from config.ticker_classification import classify_from_profile
+    from aletheia.calculations.sector_classification import is_bank_for_display
+    bank_cases = [
+        ("Financial Services", "Banks - Diversified", "bank holding, deposits and loans"),
+        ("Financial Services", "Capital Markets", "investment bank and broker-dealer"),
+        ("Financial Services", "Insurance - Diversified", "property-casualty insurer"),
+        ("Financial Services", "Credit Services", "consumer lending and card issuer"),
+    ]
+    for sector, industry, desc in bank_cases:
+        c = classify_from_profile({"sector": sector, "industry": industry,
+                                   "country": "US", "description": desc})
+        assert c["business_model"] == "residual_income_required", (industry, c)
+        assert is_bank_for_display(sector, c["business_model"]) is True, industry
+
+
+def test_t3d_non_banks_unaffected_by_the_routing_fix():
+    """Utilities still route to the rate-base engine; pure payment networks and
+    industrials stay FCFF — the bank fix must not capture them."""
+    from config.ticker_classification import classify_from_profile
+    assert classify_from_profile({"sector": "Utilities",
+        "industry": "Utilities - Regulated Electric", "country": "US",
+        "description": "regulated electric utility"})["business_model"] == "routing_required"
+    # pure payment network (no lending signals) stays FCFF
+    assert classify_from_profile({"sector": "Financial Services",
+        "industry": "Credit Services", "country": "US",
+        "description": "payments technology network, transaction processing"})[
+        "business_model"] == "fcff_compatible"
+    assert classify_from_profile({"sector": "Technology",
+        "industry": "Consumer Electronics", "country": "US",
+        "description": "designs devices"})["business_model"] == "fcff_compatible"
+
+
 # ─────────────────── T4: isolation (non-financials get nothing) ────────────
 
 def test_t4_non_financial_returns_unavailable():
