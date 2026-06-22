@@ -38,3 +38,27 @@ def test_calc_node_stores_cads():
     cads = (st.get("phase2_valuation") or {}).get("cads") or {}
     assert cads.get("available")
     assert cads.get("trigger") is True
+
+
+def test_cads_refuses_financials():
+    """CF-R18: CADS = EBITDA−CapEx with a gross-LTD debt-service proxy is a bogus
+    credit measure for a bank/insurer/lender — refuse rather than leak an
+    industrial credit-floor number onto JPM/SOFI/AXP/BRK-B."""
+    for t in ("JPM", "SOFI", "AXP", "BRK-B"):
+        try:
+            c = build_cads_coverage(make_calc_input(t))
+        except Exception:
+            continue
+        assert c.get("available") is not True, f"{t} should be refused by CADS"
+        assert "financials" in (c.get("notes") or "").lower()
+
+
+def test_cads_keeps_industrials_and_utilities():
+    """The financials guard must not capture industrials (AAPL) or utilities (NEE),
+    which have a meaningful EBITDA / capex / debt-service profile."""
+    for t in ("AAPL", "NEE"):
+        try:
+            c = build_cads_coverage(make_calc_input(t))
+        except Exception:
+            continue
+        assert c.get("available") is True, f"{t} should keep CADS"

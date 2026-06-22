@@ -933,23 +933,23 @@ def _render_specialized_engine_dashboard(
         if engine_desc:
             _panel(engine_desc, accent_color=_MUTED_TEXT)
 
-    # Corrective banner: the routed DDM materially understates low-payout banks
-    # (JPM/AXP), so the prominent headline IV/MoS reads "overvalued" when the bank
-    # is roughly fair. Surface the convergent-set fair band right next to it.
-    _bvm = valuation.get("bank_valuation_methods") or {}
-    _rec = _bvm.get("reconciliation") or {}
-    if _bvm.get("available") and _rec.get("low_payout_understatement"):
-        band = _rec.get("fair_value_band") or []
-        dvr = _rec.get("ddm_vs_residual_income_pct")
+    # Headline-method note: for a low-payout bank the displayed IV is the
+    # residual-income fair value, NOT the structurally-low DDM (which is displaced
+    # because it ignores the ROE-spread compounding on retained book). Tell the
+    # reader the headline was swapped and show the band.
+    _ho = valuation.get("headline_override") or {}
+    if _ho:
+        band = _ho.get("fair_band") or []
         band_txt = (f"\\${band[0]:,.0f}–\\${band[1]:,.0f}"
                     if len(band) == 2 else "see below")
-        st.warning(
-            f"⚠ The **{engine_label}** headline (\\${ips:,.0f}) understates this "
-            f"low-payout bank — it captures only the dividend, not the ROE-spread "
-            f"compounding on retained book. The convergent set's fair value is "
-            f"**{band_txt}** (residual income / FCFE), "
-            f"{f'{abs(dvr):.0%} above the headline. ' if dvr else ''}"
-            f"Read the band as the truer equity value — full breakdown below."
+        ddm = _ho.get("displaced_ddm")
+        st.info(
+            f"Headline = **residual income** (\\${ips:,.0f}), the method-appropriate "
+            f"read for a low-payout bank. The routed DDM"
+            f"{f' (\\${ddm:,.0f})' if ddm is not None else ''} is displaced — it sees "
+            f"only the dividend, not the ROE-spread compounding on retained book, so it "
+            f"structurally understates fair value. Convergent-set band **{band_txt}** "
+            f"(justified-P/B floor → residual income; FCFE mid-band) — full breakdown below."
         )
 
     # Source citation

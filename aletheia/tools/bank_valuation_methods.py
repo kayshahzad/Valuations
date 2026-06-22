@@ -526,11 +526,45 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
     return out
 
 
+def bank_headline_override(*, ddm_ips, price, bvm) -> Optional[dict]:
+    """Method-appropriate headline for a low-payout bank.
+
+    The routed DdmEngine STRUCTURALLY understates a low-payout, high-ROE bank
+    (JPM: DDM $118 vs RI $315 — it sees only the ~29% paid out, not the ROE-spread
+    compounding on retained book). Presenting that DDM as the headline IV makes the
+    bank read "60%+ overvalued" when it's roughly fair, and that wrong margin of
+    safety then poisons every downstream consumer (report headline, conviction
+    score, thesis). So when the convergent set flags the understatement, the
+    PRESENTED headline becomes the residual-income fair value (the fuller equity
+    read); the DDM is retained as a sub-component / convergent-set leg, not erased.
+
+    Returns ``{intrinsic_per_share, margin_of_safety, displaced_ddm, fair_band,
+    method}`` when an override applies, else ``None`` (caller keeps the engine's
+    own IV/MoS — non-banks and well-behaved banks are untouched).
+    """
+    rec = (bvm or {}).get("reconciliation") or {}
+    if not (bvm or {}).get("available") or not rec.get("low_payout_understatement"):
+        return None
+    ri = (((bvm.get("methods") or {}).get("residual_income") or {}).get("iv"))
+    if ri is None:
+        return None
+    ri = float(ri)
+    mos = (ri / price - 1.0) if price else None
+    return {
+        "intrinsic_per_share": ri,
+        "margin_of_safety": mos,
+        "displaced_ddm": (float(ddm_ips) if ddm_ips is not None else None),
+        "fair_band": rec.get("fair_value_band"),
+        "method": "residual_income",
+    }
+
+
 __all__ = [
     "justified_pb",
     "gordon_ddm_value",
     "residual_income_value",
     "value_bank_steady_state",
     "build_bank_valuation_methods",
+    "bank_headline_override",
     "BankConvergence",
 ]

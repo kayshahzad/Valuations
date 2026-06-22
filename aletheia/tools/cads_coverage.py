@@ -44,6 +44,23 @@ def build_cads_coverage(calc) -> Dict[str, Any]:
     CF-R5 deterministic flag (coverage < 1.0 or CADS < 0) destined for §9.
     """
     out: Dict[str, Any] = {"available": False}
+
+    # Financials guard (CF-R18, same as capital_structure_flag): CADS = EBITDA −
+    # CapEx with a gross-LTD debt-service proxy is meaningless for a bank/insurer/
+    # lender — "EBITDA" isn't a bank concept, there's no industrial capex base, and
+    # deposits/borrowings aren't serviced like corporate debt (JPM would screen as a
+    # bogus credit risk). Refuse rather than leak an industrial credit-floor number
+    # onto a bank's report. Keys on the deposit-taking REALITY, not the GICS label.
+    cls = getattr(calc, "classification", None)
+    sector = (getattr(cls, "sector", "") or "")
+    industry = (getattr(cls, "industry", "") or "")
+    business_model = (getattr(cls, "business_model", "") or "")
+    from aletheia.calculations.sector_classification import is_financial_filer
+    if is_financial_filer(sector, industry, business_model):
+        out["notes"] = ("N/A — financials: EBITDA−CapEx coverage is not a meaningful "
+                        "credit measure for banks/insurers/lenders; CADS refused")
+        return out
+
     df = getattr(calc, "df", None)
     cols = getattr(df, "columns", [])
     if df is None or "derived_EBITDA" not in cols:

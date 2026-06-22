@@ -434,13 +434,33 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     # off book + ROE three ways and reconciles vs the headline DDM (catching the
     # low-payout understatement). Gated on the business model — non-banks no-op.
     try:
-        from aletheia.tools.bank_valuation_methods import build_bank_valuation_methods
+        from aletheia.tools.bank_valuation_methods import (
+            build_bank_valuation_methods, bank_headline_override,
+        )
         _bvm = build_bank_valuation_methods(calc_input, valuation_result, phase2)
         if _bvm.get("available"):
             phase2["bank_valuation_methods"] = _bvm
             _ri = (_bvm.get("methods") or {}).get("residual_income", {}).get("iv")
             print(f"  ✓ Bank convergent set: residual income IV "
                   f"${_ri:,.0f}" if _ri else "  ✓ Bank convergent set computed")
+
+            # Method-appropriate headline (CF-R19): the DDM structurally understates
+            # a low-payout bank, and base_upside (its MoS) feeds conviction + thesis
+            # downstream — so a −64% DDM MoS would poison "all other analysis". Swap
+            # the base IV/MoS to the residual-income fair value; the DDM survives as
+            # a convergent-set leg + headline_override.displaced_ddm for transparency.
+            _dcf = phase2.get("dcf") or {}
+            _ho = bank_headline_override(
+                ddm_ips=_dcf.get("base_intrinsic_per_share"),
+                price=valuation_result.current_price, bvm=_bvm)
+            if _ho:
+                _dcf["base_intrinsic_per_share"] = _ho["intrinsic_per_share"]
+                _dcf["base_upside"] = _ho["margin_of_safety"]
+                phase2["dcf"] = _dcf
+                phase2["headline_override"] = _ho
+                print(f"  ✓ Bank headline → residual income ${_ho['intrinsic_per_share']:,.0f} "
+                      f"(DDM ${_ho['displaced_ddm']:,.0f} displaced; MoS now "
+                      f"{(_ho['margin_of_safety'] or 0)*100:+.0f}%)")
     except Exception as e:
         errors.append(f"BankValuationMethods failed: {e}")
 

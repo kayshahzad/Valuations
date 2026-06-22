@@ -323,6 +323,22 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     except Exception:
         _bvm_payload = None
 
+    # Method-appropriate headline (CF-R19): the DDM structurally understates a
+    # low-payout bank and that wrong MoS poisons the report headline / conviction /
+    # thesis. When the convergent set flags it, swap the PRESENTED IV/MoS to the
+    # residual-income fair value (DDM retained as a convergent-set leg). Banks that
+    # aren't understated and all non-banks pass through untouched.
+    _headline_override = None
+    try:
+        from aletheia.tools.bank_valuation_methods import bank_headline_override
+        _headline_override = bank_headline_override(
+            ddm_ips=ips, price=price, bvm=_bvm_payload)
+    except Exception:
+        _headline_override = None
+    if _headline_override:
+        ips = _headline_override["intrinsic_per_share"]
+        mos = _headline_override["margin_of_safety"]
+
     # Bottom-up business analysis (deterministic layer) — engine-agnostic, built
     # off the cleaned frame, so it applies to specialized-engine tickers too (the
     # FCFF path builds it; this path previously omitted it, leaving CNC/NEE/ET/etc.
@@ -394,6 +410,7 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         "capital_structure_flag": _csf_payload,
         "valuation_methods":      None,   # FCFF-only; REIT/DDM value ECF directly
         "bank_valuation_methods": _bvm_payload,
+        "headline_override":      _headline_override,
         "specialized_inputs":     snap,
         "source_citation":        snap.get("source"),
         "as_of_date":             snap.get("as_of_date"),

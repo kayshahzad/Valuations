@@ -147,25 +147,43 @@ def cached_valuation(ticker: str) -> Optional[Dict[str, Any]]:
     # dashboard can show ALL the methods, not just the routed headline — gated on
     # bank reality, so non-banks get available=False and nothing renders.
     bank_methods = None
+    headline_override = None
     try:
-        from aletheia.tools.bank_valuation_methods import build_bank_valuation_methods
+        from aletheia.tools.bank_valuation_methods import (
+            build_bank_valuation_methods, bank_headline_override,
+        )
         _bm = build_bank_valuation_methods(calc, result, p2={"engine": result.engine})
         bank_methods = _bm if _bm.get("available") else None
+        # Method-appropriate headline (CF-R19): swap the structurally-low DDM IV/MoS
+        # for the convergent-set residual-income fair value when understatement is
+        # flagged, so the dashboard headline matches the convergent set.
+        headline_override = bank_headline_override(
+            ddm_ips=(float(result.intrinsic_per_share)
+                     if result.intrinsic_per_share is not None else None),
+            price=(float(result.current_price) if result.current_price else None),
+            bvm=bank_methods)
     except Exception:
         bank_methods = None
+
+    _ips = (float(result.intrinsic_per_share)
+            if result.intrinsic_per_share is not None else None)
+    _mos = (float(result.margin_of_safety)
+            if result.margin_of_safety is not None else None)
+    if headline_override:
+        _ips = headline_override["intrinsic_per_share"]
+        _mos = headline_override["margin_of_safety"]
 
     return {
         "ticker":              result.ticker,
         "fiscal_year":         int(result.fiscal_year),
         "engine":              result.engine,
-        "intrinsic_per_share": (float(result.intrinsic_per_share)
-                                if result.intrinsic_per_share is not None else None),
+        "intrinsic_per_share": _ips,
         "equity_value":        (float(result.equity_value)
                                 if result.equity_value is not None else None),
         "current_price":       (float(result.current_price)
                                 if result.current_price is not None else None),
-        "margin_of_safety":    (float(result.margin_of_safety)
-                                if result.margin_of_safety is not None else None),
+        "margin_of_safety":    _mos,
+        "headline_override":   headline_override,
         "cost_of_equity":      snap.get("cost_of_equity"),
         "risk_free_rate":      snap.get("risk_free_rate"),
         "beta":                snap.get("beta"),

@@ -252,6 +252,34 @@ def test_t3d_non_banks_unaffected_by_the_routing_fix():
         "description": "designs devices"})["business_model"] == "fcff_compatible"
 
 
+# ───── T3e: method-appropriate headline (CF-R19, DDM understatement swap) ───
+
+def test_t3e_headline_override_swaps_ddm_for_residual_income():
+    """A low-payout bank flagged with the DDM understatement must headline the
+    residual-income fair value (so MoS reads roughly fair, not −60%), with the DDM
+    preserved as displaced_ddm. Banks not understated / non-banks → None."""
+    from aletheia.tools.bank_valuation_methods import bank_headline_override
+    # Understated bank: DDM $118 « RI $315, price $329.
+    bvm = {
+        "available": True,
+        "methods": {"residual_income": {"iv": 315.0}},
+        "reconciliation": {"low_payout_understatement": True,
+                           "fair_value_band": [267.0, 315.0]},
+    }
+    out = bank_headline_override(ddm_ips=118.0, price=329.0, bvm=bvm)
+    assert out is not None
+    assert out["intrinsic_per_share"] == pytest.approx(315.0)
+    assert out["displaced_ddm"] == pytest.approx(118.0)
+    assert out["margin_of_safety"] == pytest.approx(315.0 / 329.0 - 1.0)  # ≈ −4%, fair
+    assert out["method"] == "residual_income"
+    # Not understated → no override (caller keeps the engine IV).
+    bvm2 = {"available": True, "methods": {"residual_income": {"iv": 315.0}},
+            "reconciliation": {"low_payout_understatement": False}}
+    assert bank_headline_override(ddm_ips=300.0, price=329.0, bvm=bvm2) is None
+    # No convergent set (non-bank) → no override.
+    assert bank_headline_override(ddm_ips=100.0, price=120.0, bvm=None) is None
+
+
 # ─────────────────── T4: isolation (non-financials get nothing) ────────────
 
 def test_t4_non_financial_returns_unavailable():
