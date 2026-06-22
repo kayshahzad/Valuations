@@ -173,6 +173,7 @@ def _engine_base_row(df):
 def _compute_ratios(
     df, market_cap: Optional[float],
     current_price: Optional[float],
+    is_financial: bool = False,
 ) -> Dict[str, Dict[str, Optional[float]]]:
     """Comprehensive ratios for the engine's base row (TTM-merged when
     available). Reuses the central formula library where possible; falls back
@@ -347,7 +348,25 @@ def _compute_ratios(
     else:
         growth["eps_growth_ttm"] = None
 
-    return {
+    # Financials guard (CF-R21): null the metrics that are MEANINGLESS on a
+    # deposit-funded balance sheet so the Comprehensive Ratios card stops printing
+    # conclusion-inverting garbage (JPM: ROIC 4.6% "weak", EV/EBITDA −17.8×, Net-
+    # Debt/EBITDA −28× from deposits-as-net-cash, interest coverage 0.8×, FCF
+    # margin 49.4% from balance-sheet flows). Keep the bank-valid ones: P/E, P/B,
+    # P/S, net margin, ROE, ROA, dividend yield, debt/equity, payout.
+    if is_financial:
+        for k in ("roic", "fcf_margin"):
+            profitability[k] = None
+        for k in ("current_ratio", "quick_ratio", "cash_ratio"):
+            liquidity[k] = None
+        for k in ("debt_to_ebitda", "net_debt_to_ebitda", "interest_coverage"):
+            leverage[k] = None
+        for k in ("ev_sales", "ev_ebitda", "fcf_yield"):
+            valuation[k] = None
+        for k in ("ebitda_cagr_5y", "fcf_cagr_5y"):
+            growth[k] = None
+
+    out = {
         "profitability": profitability,
         "liquidity":     liquidity,
         "leverage":      leverage,
@@ -355,6 +374,13 @@ def _compute_ratios(
         "quality":       quality,
         "growth":        growth,
     }
+    if is_financial:
+        out["financials_na_note"] = (
+            "EV multiples, EBITDA-leverage, ROIC, and FCF ratios are omitted — "
+            "they are not meaningful for a bank/insurer/lender (deposits are not "
+            "debt; there is no unlevered FCF or invested-capital base). Read P/E, "
+            "P/B, ROE, ROA and the bank operating metrics instead.")
+    return out
 
 
 def _dcf_assumptions_from_result(dcf_result) -> Dict[str, Dict[str, Optional[float]]]:
@@ -493,9 +519,16 @@ def build_financial_metrics(
     # multiple by the FX rate (~31× for TWD) and inverted EV negative.
     # Margins/growth are currency-invariant, so this is safe for USD filers
     # (no conversion applied) and corrects foreign filers.
+    is_financial = False
     try:
         from aletheia.utils.calc_input_builder import make_calc_input
-        df = make_calc_input(ticker, apply_overrides=False).df
+        _ci = make_calc_input(ticker, apply_overrides=False)
+        df = _ci.df
+        from aletheia.calculations.sector_classification import is_financial_filer
+        _cls = getattr(_ci, "classification", None)
+        is_financial = is_financial_filer(
+            getattr(_cls, "sector", "") or "", getattr(_cls, "industry", "") or "",
+            getattr(_cls, "business_model", "") or "")
     except Exception:
         df = db.get_latest(ticker)   # fallback: raw frame (prior behavior)
     p2 = p2 or {}
@@ -511,7 +544,7 @@ def build_financial_metrics(
 
     return {
         "historical":      _historical_rows(df),
-        "ratios":          _compute_ratios(df, market_cap, current_price),
+        "ratios":          _compute_ratios(df, market_cap, current_price, is_financial),
         "dcf_assumptions": _dcf_assumptions_from_result(dcf_result),
         "wacc_build":      _wacc_build_from_result(dcf_result, p2, latest_fy_row),
     }

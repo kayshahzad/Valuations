@@ -161,6 +161,7 @@ class MultipleResult:
     signal: str = "neutral"
     signal_reasons: List[str] = field(default_factory=list)
     warnings: List[str] = field(default_factory=list)
+    applicable: bool = True             # False for financials (EV/ROIC meaningless)
 
     tax_rate_source: str = "statutory"  # cash | gaap | company_fy | statutory
 
@@ -227,6 +228,8 @@ class MultipleResult:
             "cash_conversion_ratio": self.cash_conversion_ratio,
             "growth_rate": self.growth_rate,
             "signal": self.signal,
+            "applicable": self.applicable,
+            "warnings": list(self.warnings),
         }
 
 
@@ -267,6 +270,28 @@ class MultipleDecomposition:
         """
         ticker = calc_input.classification.ticker if calc_input.classification else "UNKNOWN"
         result = MultipleResult(ticker=ticker, fiscal_year=fiscal_year or 0)
+
+        # Financials guard (CF-R21): EV/EBITDA and the ROIC−WACC value-creation
+        # verdict are meaningless for a bank/insurer/lender — EV is nonsense
+        # (deposits read as net cash → negative EV → EV/EBITDA −17.8× for JPM) and
+        # ROIC can't be computed on a loans/deposits balance sheet (4.6% < WACC →
+        # "value destroying / weak", inverting the thesis). Refuse rather than emit
+        # a conclusion-inverting number; the bank convergent set carries valuation.
+        _cls = calc_input.classification
+        try:
+            from aletheia.calculations.sector_classification import is_financial_filer
+            if is_financial_filer(getattr(_cls, "sector", "") or "",
+                                  getattr(_cls, "industry", "") or "",
+                                  getattr(_cls, "business_model", "") or ""):
+                result.applicable = False
+                result.signal = "not_applicable"
+                result.warnings.append(
+                    "N/A — financials: EV/EBITDA and ROIC−WACC value-creation are not "
+                    "meaningful for a bank/insurer/lender (deposits aren't debt; no "
+                    "invested-capital base). See the bank convergent set + ROE.")
+                return result
+        except Exception:
+            pass
 
         # ── Load data ─────────────────────────────────────────────────────────
         df = calc_input.df

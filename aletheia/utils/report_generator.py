@@ -318,24 +318,35 @@ class ReportGenerator:
             lines.append(f"\n> {reason}")
         lines.append("\n---\n")
 
-        # Multiple decomposition
-        lines += [
-            "## 4. 📐 Multiple Decomposition (NorthWestern Formula)",
-            "",
-            "> EV/EBITDA = [NOPAT×(1−g/ROIC)/EBITDA] ÷ (WACC−g)",
-            "",
-            "| Metric | Value |",
-            "| :--- | :--- |",
-            f"| Market EV/EBITDA | {self._fmt_num(self._to_float(md_dec.get('market_ev_ebitda')), 1)}× |",
-            f"| Justified EV/EBITDA (NorthWestern) | {self._fmt_num(self._to_float(md_dec.get('justified_ev_ebitda')), 1)}× |",
-            f"| Premium to Justified | {self._fmt_pct(self._to_float(md_dec.get('premium_pct')))} |",
-            f"| ROIC | {self._fmt_pct(self._to_float(md_dec.get('roic')))} |",
-            f"| WACC | {self._fmt_pct(wacc)} |",
-            f"| ROIC−WACC Spread | {self._fmt_pct(self._to_float(md_dec.get('roic_wacc_spread')))} |",
-            f"| Value Creation | {(md_dec.get('value_creation') or 'N/A').upper()} |",
-            f"| Signal | {(md_dec.get('signal') or 'N/A').upper()} |",
-            "\n---\n",
-        ]
+        # Multiple decomposition — refused for financials (EV/ROIC meaningless).
+        if md_dec.get("applicable") is False or md_dec.get("signal") == "not_applicable":
+            _na = (md_dec.get("warnings") or [
+                "Not applicable for financials — EV/EBITDA and ROIC−WACC are not "
+                "meaningful for a bank/insurer/lender."])[0]
+            lines += [
+                "## 4. 📐 Multiple Decomposition (NorthWestern Formula)",
+                "",
+                f"> {_na} See §6 the bank convergent set + ROE for the valuation.",
+                "\n---\n",
+            ]
+        else:
+            lines += [
+                "## 4. 📐 Multiple Decomposition (NorthWestern Formula)",
+                "",
+                "> EV/EBITDA = [NOPAT×(1−g/ROIC)/EBITDA] ÷ (WACC−g)",
+                "",
+                "| Metric | Value |",
+                "| :--- | :--- |",
+                f"| Market EV/EBITDA | {self._fmt_num(self._to_float(md_dec.get('market_ev_ebitda')), 1)}× |",
+                f"| Justified EV/EBITDA (NorthWestern) | {self._fmt_num(self._to_float(md_dec.get('justified_ev_ebitda')), 1)}× |",
+                f"| Premium to Justified | {self._fmt_pct(self._to_float(md_dec.get('premium_pct')))} |",
+                f"| ROIC | {self._fmt_pct(self._to_float(md_dec.get('roic')))} |",
+                f"| WACC | {self._fmt_pct(wacc)} |",
+                f"| ROIC−WACC Spread | {self._fmt_pct(self._to_float(md_dec.get('roic_wacc_spread')))} |",
+                f"| Value Creation | {(md_dec.get('value_creation') or 'N/A').upper()} |",
+                f"| Signal | {(md_dec.get('signal') or 'N/A').upper()} |",
+                "\n---\n",
+            ]
 
         # Constitution
         lines += [
@@ -1113,6 +1124,32 @@ class ReportGenerator:
         spread_color = "#27ae60" if spread and spread > 0 else "#c0392b"
         prem_color   = "#c0392b" if premium and premium > 0 else "#27ae60"
 
+        # Multiple decomposition card — refused for financials (EV/EBITDA and
+        # ROIC−WACC are meaningless on a deposit-funded balance sheet). Treat an
+        # empty md_dec on a bank (the convergent set is present) the same way, so
+        # the card shows N/A rather than a blank EV table.
+        _is_bank = bool((p2.get("bank_valuation_methods") or {}).get("available"))
+        if (md_dec.get("applicable") is False
+                or md_dec.get("signal") == "not_applicable"
+                or (_is_bank and not md_dec.get("market_ev_ebitda"))):
+            _na = (md_dec.get("warnings") or [
+                "Not meaningful for a bank/insurer/lender — EV/EBITDA and ROIC−WACC "
+                "don't apply to a deposit-funded balance sheet."])[0]
+            md_card = (
+                f"<div style='font-size:0.85em;color:#7f8c8d;line-height:1.5'>{_na} "
+                "The bank convergent set (§6) + ROE carry the valuation.</div>")
+        else:
+            md_card = f"""<div style="font-size:0.8em;color:#888;margin-bottom:8px">
+      EV/EBITDA = [NOPAT×(1−g/ROIC)/EBITDA] ÷ (WACC−g)
+    </div>
+    <table class="table-styled">
+      <tr><td>Market EV/EBITDA</td><td style="font-weight:bold">{self._fmt_num(ev_market, 1)}×</td></tr>
+      <tr><td>Justified EV/EBITDA</td><td style="color:#27ae60">{self._fmt_num(ev_just, 1)}×</td></tr>
+      <tr><td>Premium to Justified</td><td style="color:{prem_color}">{self._fmt_pct(premium)}</td></tr>
+      <tr><td>ROIC−WACC Spread</td><td style="color:{spread_color}">{self._fmt_pct(spread)}</td></tr>
+      <tr><td>Signal</td><td><b>{vc_signal}</b></td></tr>
+    </table>"""
+
         reasons_html = "".join(
             f"<li style='margin-bottom:6px'>{r}</li>"
             for r in (rdcf.get("reasons") or [])
@@ -1133,16 +1170,7 @@ class ReportGenerator:
   </div>
   <div class="card">
     <h4>📐 Multiple Decomposition (NorthWestern Formula)</h4>
-    <div style="font-size:0.8em;color:#888;margin-bottom:8px">
-      EV/EBITDA = [NOPAT×(1−g/ROIC)/EBITDA] ÷ (WACC−g)
-    </div>
-    <table class="table-styled">
-      <tr><td>Market EV/EBITDA</td><td style="font-weight:bold">{self._fmt_num(ev_market, 1)}×</td></tr>
-      <tr><td>Justified EV/EBITDA</td><td style="color:#27ae60">{self._fmt_num(ev_just, 1)}×</td></tr>
-      <tr><td>Premium to Justified</td><td style="color:{prem_color}">{self._fmt_pct(premium)}</td></tr>
-      <tr><td>ROIC−WACC Spread</td><td style="color:{spread_color}">{self._fmt_pct(spread)}</td></tr>
-      <tr><td>Signal</td><td><b>{vc_signal}</b></td></tr>
-    </table>
+    {md_card}
   </div>
 </div>""".strip()
 
@@ -2932,8 +2960,14 @@ class ReportGenerator:
             ("EPS growth (1Y)",  self._fmt_pct_or_dash(grw.get("eps_growth_ttm"))),
         ]
 
+        na_note = ratios.get("financials_na_note")
+        na_html = (
+            f"<div style='font-size:0.8em;color:#7f8c8d;margin:4px 0 10px;"
+            f"line-height:1.5'>⚠ {na_note}</div>" if na_note else "")
+
         return f"""
 <h2>📐 Comprehensive Ratios</h2>
+{na_html}
 <div class="grid-2">
   {_table("💰 Profitability", prof_rows)}
   {_table("💧 Liquidity",     liq_rows)}
