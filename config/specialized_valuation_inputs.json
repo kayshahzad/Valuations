@@ -95,7 +95,7 @@
     "SOFI": {
       "model": "residual_income",
       "params": {
-        "normalized_roe_pct": 10.0,
+        "normalized_roe_pct": 8.0,
         "payout_ratio_pct": 0.0,
         "terminal_growth_pct": 3.0,
         "explicit_years": 5,
@@ -103,8 +103,8 @@
       },
       "as_of_date": "2026-06-21",
       "next_review_date": "2027-06-30",
-      "source": "PROVISIONAL — pending third-party validation. Two-stage residual income on a normalized ROE. normalized ROE 10% is a FORWARD/scaling assumption (current ~5%, FY2026; SOFI is ramping toward management's low-teens target) — NOT yet validated; this is the primary lever. No dividend (payout 0). Terminal growth 3% (growth fintech). Ke is CAPM with the live beta (~2.0 → ~13%); that beta is likely inflated by retail/meme volatility vs a ~1.3-1.5 fundamental, so the Ke is a SECOND lever to validate (a cost_of_equity_override_pct can dampen it).",
-      "analyst_notes": "SOFI digital bank/lender: DDM undefined (no dividend), FCFF wrong (negative FCF is loan-book growth, not distress). Residual income on book + normalized ROE. CAVEAT: residual income only adds value above book when ROE > Ke; at the current ~5% ROE vs ~13% CAPM Ke the IV is well below book. The result hinges entirely on (1) normalized_roe_pct and (2) the beta-driven Ke. Validate both vs third-party data (consensus ROE trajectory, a fundamental/peer beta) before trusting the IV."
+      "source": "Two-stage residual income on a normalized ROE. Third-party (Capital IQ) validation 2026-06: bank income statement (NII − interest expense, provisions) → residual income confirmed as the frame. ACTUAL ROE: GAAP 5.3% TTM, normalized 3.7% (tax-adjusted, ex-unusual) — the 2024 GAAP profit was flattered by a one-time +$265M DTA release and an 8.5% effective tax rate that normalizes up. Normalized NI is scaling fast (146 → 329 → 404 $M, 2024→2025→TTM). normalized_roe_pct = 8% is a CONSERVATIVE through-cycle forward (above the current ~4-5%, below management's low-teens target) — the primary lever. Ke is CAPM with the live beta (~2.06 → ~13%), likely meme-inflated vs a ~1.3-1.5 fundamental; a cost_of_equity_override_pct can dampen it (second lever, NOT addressed by the earnings data).",
+      "analyst_notes": "SOFI digital bank/lender: DDM undefined (no dividend), FCFF wrong (negative FCF = loan-book growth). Residual income adds value above book only when ROE > Ke. MARKET-IMPLIED ROE: the ~$18 price (~2.1x book) requires ROE ~18% at CAPM Ke 13% or ~15% at a peer Ke 10.5% — far above the current ~4-5%, so the price is a pure bet on reaching the low-teens target. At the conservative 8% through-cycle the model lands well below book (SOFI doesn't yet earn its cost of capital). Set normalized_roe_pct and the Ke override to your conviction; the IV swing across ROE 5-18% is the thesis."
     },
     "BRK-B": {
       "model": "embedded_value",
