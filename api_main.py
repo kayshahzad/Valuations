@@ -333,6 +333,17 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     except Exception:
         _ba_payload = None
 
+    # Bank operating metrics (NII / efficiency / NIM / provisions / tangible book),
+    # read from SEC XBRL companyfacts — gated to bank/specialized-financial filers
+    # (JPM/AXP/BRK-B/SOFI). CET1/RWA flagged gated, not faked.
+    _bank_metrics_payload = None
+    try:
+        from aletheia.tools.bank_metrics import build_bank_metrics as _bbm
+        _bm = _bbm(calc, shares=shares)
+        _bank_metrics_payload = _bm if _bm.get("available") else None
+    except Exception:
+        _bank_metrics_payload = None
+
     # Bull/bear sensitivity band (single-driver flex) — specialized engines
     # attach this to engine_specific so the three-scenario panel shows a real
     # range instead of one bar. Drop the legs into the bear/bull slots.
@@ -378,6 +389,7 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         "valuation_decomposition": decomposition,
         "value_source_decomposition": _vsd_payload,
         "business_analysis":      _ba_payload,
+        "bank_metrics":           _bank_metrics_payload,
         "cads":                   _cads_payload,
         "capital_structure_flag": _csf_payload,
         "valuation_methods":      None,   # FCFF-only; REIT/DDM value ECF directly
@@ -1396,6 +1408,7 @@ def _build_full_report(ticker: str) -> Optional[Dict[str, Any]]:
             "capital_structure_flag": dcf_payload.get("capital_structure_flag"),
             "valuation_methods":      dcf_payload.get("valuation_methods"),
             "bank_valuation_methods": dcf_payload.get("bank_valuation_methods"),
+            "bank_metrics":           dcf_payload.get("bank_metrics"),
         }
     except HTTPException:
         # Engine refused or no data — section stays empty. UI tolerates.

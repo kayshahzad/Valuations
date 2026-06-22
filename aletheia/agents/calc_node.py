@@ -444,6 +444,20 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as e:
         errors.append(f"BankValuationMethods failed: {e}")
 
+    # ── Step 6g: Bank operating metrics (NII/efficiency/NIM/ROA/tangible book)
+    # from SEC XBRL companyfacts — gated to bank filers; CET1/RWA flagged gated.
+    try:
+        from aletheia.tools.bank_metrics import build_bank_metrics
+        _shares = getattr(dcf_result, "shares_diluted", None) if dcf_result is not None else None
+        if _shares is None:
+            _shares = (valuation_result.inputs_snapshot or {}).get("shares_diluted") if valuation_result else None
+        _bm = build_bank_metrics(calc_input, shares=_shares)
+        if _bm.get("available"):
+            phase2["bank_metrics"] = _bm
+            print("  ✓ Bank operating metrics (NII/efficiency/ROA/tangible book)")
+    except Exception as e:
+        errors.append(f"BankMetrics failed: {e}")
+
     # ── Step 7: Conviction score (deterministic, no agent reads) ────────────
     # Pull every input from calc-layer state. Agent narrative does NOT
     # influence this score — that's the architecture invariant the determinism

@@ -171,6 +171,7 @@ class ReportGenerator:
         self._render_value_source_decomposition(p2)
         + self._render_valuation_methods(p2)
         + self._render_bank_valuation_methods(p2)
+        + self._render_bank_metrics(p2)
         + self._render_assumption_grounding(assumption_grounding)
         + self._render_specialized_valuation(p2)
         + self._render_rate_base_sotp(p2)
@@ -2016,6 +2017,49 @@ class ReportGenerator:
         if not out:
             return ""
         return "".join(out)
+
+    def _render_bank_metrics(self, p2: Dict[str, Any]) -> str:
+        """Bank operating metrics (NII / efficiency / NIM / provisions / ROA /
+        tangible book) from SEC XBRL. Empty for non-banks; CET1/RWA gated."""
+        bm = (p2 or {}).get("bank_metrics") or {}
+        if not bm.get("available"):
+            return ""
+        k = bm.get("kpis") or {}
+        pct = self._fmt_pct
+
+        def _b(v):
+            f = self._to_float(v)
+            return self._fmt_bn(f / 1e9) if f is not None else "—"
+
+        def _u(v):
+            f = self._to_float(v)
+            return f"${f:,.2f}" if f is not None else "—"
+
+        pnl = ""
+        if k.get("net_interest_income"):
+            pnl = (f"<tr><td>Net interest income</td><td style='text-align:right'>{_b(k.get('net_interest_income'))}</td></tr>"
+                   f"<tr><td>+ Non-interest income</td><td style='text-align:right'>{_b(k.get('noninterest_income'))}</td></tr>"
+                   f"<tr><td>− Non-interest expense</td><td style='text-align:right'>{_b(k.get('noninterest_expense'))}</td></tr>"
+                   f"<tr><td>− Provisions</td><td style='text-align:right'>{_b(k.get('provisions'))}</td></tr>"
+                   f"<tr style='border-top:1px solid #ccc'><td>Net revenue</td><td style='text-align:right'>{_b(k.get('net_revenue'))}</td></tr>")
+        gap = bm.get("capital_adequacy_gap") or {}
+        return (
+            f"<h3>🏦 Bank operating metrics (FY{bm.get('fiscal_year','')})</h3>"
+            "<p style='font-size:12px;color:#666'>The bank income statement + KPIs, "
+            "read from SEC XBRL companyfacts (not in the industrial frame).</p>"
+            "<table style='width:100%;border-collapse:collapse'>"
+            f"{pnl}"
+            f"<tr><td>NIM (on assets)</td><td style='text-align:right'>{pct(k.get('nim_on_assets'))}</td></tr>"
+            f"<tr><td>Efficiency ratio</td><td style='text-align:right'>{pct(k.get('efficiency_ratio'))}</td></tr>"
+            f"<tr><td>Provision rate</td><td style='text-align:right'>{pct(k.get('provision_rate'))}</td></tr>"
+            f"<tr><td>ROA</td><td style='text-align:right'>{pct(k.get('roa'))}</td></tr>"
+            f"<tr><td>Tangible book / share</td><td style='text-align:right'>{_u(k.get('tangible_bvps'))}</td></tr>"
+            f"<tr><td>Loan/deposit · deposit gr. · loan gr.</td>"
+            f"<td style='text-align:right'>{pct(k.get('loan_to_deposit'))} · {pct(k.get('deposit_growth'))} · {pct(k.get('loan_growth'))}</td></tr>"
+            "</table>"
+            + (f"<p style='font-size:11px;color:#b45309'>⚠ Not shown (not in structured "
+               f"XBRL — needs MD&A/third-party): {', '.join(gap.get('missing') or [])}. "
+               f"{gap.get('reason','')}</p>" if gap.get("missing") else ""))
 
     def _render_bank_valuation_methods(self, p2: Dict[str, Any]) -> str:
         """Bank convergent set — residual income / justified P/B / Gordon DDM,

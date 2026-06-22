@@ -2610,6 +2610,50 @@ def _residual_income_panel(dcf: Dict[str, Any]) -> None:
                    "key analyst levers — recalibrate vs through-cycle returns.")
 
 
+def _bank_metrics_panel(p2v: Dict[str, Any]) -> None:
+    """Bank operating metrics from SEC XBRL — the bank income statement + KPIs
+    (NIM, efficiency, provisions, ROA, tangible book, deposit/loan growth). No-op
+    for non-banks. CET1/RWA shown as a gated gap, not faked."""
+    bm = (p2v or {}).get("bank_metrics") or {}
+    if not bm.get("available"):
+        return
+    k = bm.get("kpis") or {}
+
+    def _b(v):
+        return f"${v/1e9:,.1f}B" if isinstance(v, (int, float)) else "—"
+
+    def _p(v):
+        return f"{v*100:.2f}%" if isinstance(v, (int, float)) else "—"
+
+    def _u(v):
+        return f"${v:,.2f}" if isinstance(v, (int, float)) else "—"
+
+    with st.container(border=True):
+        st.markdown(f"#### 🏦 Bank operating metrics (FY{bm.get('fiscal_year','')})")
+        st.caption("The bank income statement + KPIs, read from SEC XBRL "
+                   "companyfacts (not in the industrial frame).")
+        if k.get("net_interest_income"):
+            c1, c2, c3, c4 = st.columns(4)
+            c1.metric("Net interest income", _b(k.get("net_interest_income")))
+            c2.metric("+ Non-interest income", _b(k.get("noninterest_income")))
+            c3.metric("Net revenue", _b(k.get("net_revenue")))
+            c4.metric("Provisions", _b(k.get("provisions")))
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("NIM (on assets)", _p(k.get("nim_on_assets")))
+        c2.metric("Efficiency ratio", _p(k.get("efficiency_ratio")))
+        c3.metric("Provision rate", _p(k.get("provision_rate")))
+        c4.metric("ROA", _p(k.get("roa")))
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("Tangible BVPS", _u(k.get("tangible_bvps")))
+        c2.metric("Loan/deposit", _p(k.get("loan_to_deposit")))
+        c3.metric("Deposit growth", _p(k.get("deposit_growth")))
+        c4.metric("Loan growth", _p(k.get("loan_growth")))
+        gap = bm.get("capital_adequacy_gap") or {}
+        if gap.get("missing"):
+            st.caption(f"⚠ Not shown (needs MD&A/third-party extraction, not in XBRL): "
+                       f"{', '.join(gap['missing'])}. {gap.get('reason','')}")
+
+
 def _market_context_panel(mc: Dict[str, Any]) -> None:
     """Market context (memo §8): earnings surprises, sell-side ratings, ESG,
     recent news. No-op when nothing is available."""
@@ -2798,6 +2842,7 @@ def render_deep_dive_view(
     _signal_reconciliation(rdcf, md)
     _value_source_panel(p2v)
     _bank_valuation_panel(p2v)
+    _bank_metrics_panel(p2v)
     _saas_panel(p2v)
 
     # ── Two-column body ──────────────────────────────────────────────────

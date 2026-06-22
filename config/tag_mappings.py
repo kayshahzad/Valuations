@@ -948,6 +948,39 @@ FIELD_MAPPINGS = {
         "default": [
             "ProvisionForLoanLeaseAndOtherLosses",
             "ProvisionForLoanAndLeaseLosses",
+            "ProvisionForLoanLossesExpensed",
+        ],
+    },
+
+    "NoninterestIncome": {
+        "default": [
+            "NoninterestIncome",
+            "NoninterestIncomeOther",
+            "FeesAndCommissions",
+        ],
+    },
+
+    "NoninterestExpense": {
+        "default": [
+            "NoninterestExpense",
+            "NoninterestExpenseOther",
+        ],
+    },
+
+    "Deposits": {
+        "default": [
+            "Deposits",
+            "InterestBearingDepositLiabilities",
+            "DepositsLiabilities",
+        ],
+    },
+
+    "LoansReceivableNet": {
+        "default": [
+            "LoansAndLeasesReceivableNetReportedAmount",
+            "NotesReceivableNet",
+            "FinancingReceivableExcludingAccruedInterestAfterAllowanceForCreditLoss",
+            "LoansAndLeasesReceivableNetOfDeferredIncome",
         ],
     },
 }
