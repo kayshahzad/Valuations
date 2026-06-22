@@ -2073,6 +2073,7 @@ class ReportGenerator:
         ri = m.get("residual_income") or {}
         jpb = m.get("justified_pb") or {}
         gor = m.get("gordon_ddm") or {}
+        fcfe = m.get("fcfe_bank") or {}
         rec = bvm.get("reconciliation") or {}
         inp = bvm.get("inputs") or {}
 
@@ -2096,7 +2097,17 @@ class ReportGenerator:
             f"<td style='text-align:right;color:#666'>floor</td></tr>"
             f"<tr><td>Gordon DDM (normalized)</td>"
             f"<td style='text-align:right'>{gordon_cell}</td>"
-            f"<td style='text-align:right;color:#666'>cash only</td></tr>"
+            f"<td style='text-align:right;color:#666'>cash only</td></tr>")
+
+        if fcfe.get("valid"):
+            ag = self._to_float(fcfe.get("asset_growth"))
+            rows += (
+                f"<tr><td>FCFE — NI − ΔRegulatory capital (two-stage)</td>"
+                f"<td style='text-align:right'>{_usd(fcfe.get('iv'))}</td>"
+                f"<td style='text-align:right;color:#666'>"
+                f"{ag:.1%} asset g</td></tr>")
+
+        rows += (
             f"<tr><td>Headline DDM (config two-stage)</td>"
             f"<td style='text-align:right'>{_usd(ddm_iv)}</td>"
             f"<td style='text-align:right;color:#666'>routed IV</td></tr>")
@@ -2124,6 +2135,26 @@ class ReportGenerator:
                   f"Gordon are undefined; the two-stage residual income is the only "
                   f"well-posed form (super-growth bank).</p>")
 
+        pg_note = ""
+        pg = rec.get("payout_vs_distributable") or {}
+        if pg and pg.get("signal") and pg.get("signal") != "consistent":
+            ar = self._to_float(pg.get("actual_retention"))
+            cr = self._to_float(pg.get("capital_required_retention"))
+            verb = ("retains more than its asset growth needs — excess/idle capital "
+                    "(buyback-funded distributions or a building cushion)"
+                    if pg["signal"] == "under_distributing" else
+                    "pays out more than it can sustainably distribute — capital drag")
+            pg_note = (f"<p style='font-size:12px;color:#666'>Payout vs distributable: "
+                       f"actual retention {ar:.0%} vs the {cr:.0%} needed to fund "
+                       f"normalized asset growth → the bank {verb}.</p>")
+
+        sp = self._to_float(rec.get("four_way_spread_pct"))
+        sp_note = ""
+        if sp is not None:
+            sp_note = (f"<p style='font-size:11px;color:#999'>4-way spread across the "
+                       f"well-posed legs: {sp:.0%} (RI / justified-P/B / Gordon / FCFE; "
+                       f"tighter = the convergent set agrees the equity value).</p>")
+
         prov = (f"<p style='font-size:11px;color:#999'>Deterministic: BVPS "
                 f"${self._to_float(inp.get('bvps0')):,.2f}, ROE "
                 f"{self._to_float(inp.get('roe_normalized')):.1%} (norm), payout "
@@ -2145,7 +2176,7 @@ class ReportGenerator:
             f"{rows}</table>"
             f"<p style='margin-top:8px'><strong>Fair-value band {band_str}</strong> "
             "(justified-P/B floor → two-stage residual income).</p>"
-            f"{warn}{ge}{prov}")
+            f"{warn}{ge}{pg_note}{sp_note}{prov}")
 
     def _render_value_source_decomposition(self, p2: Dict[str, Any]) -> str:
         """Value Source Decomposition (spec §3): attribute expected return across

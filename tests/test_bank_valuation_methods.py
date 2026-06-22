@@ -16,6 +16,7 @@ import pytest
 
 from aletheia.tools.bank_valuation_methods import (
     build_bank_valuation_methods,
+    fcfe_bank_value,
     gordon_ddm_value,
     justified_pb,
     residual_income_value,
@@ -60,6 +61,21 @@ def test_t1b_two_stage_telescopes_to_closed_form():
         bvps0=bvps, roe=roe, ke=ke, retention=retention,
         explicit_years=80, terminal_roe=roe, terminal_growth=g)
     assert ri["iv"] == pytest.approx(closed, rel=1e-4)
+
+
+def test_t1c_fcfe_telescopes_to_justified_pb():
+    # FCFE(bank) = NI − ΔRegCap. Under consistent growth (asset_growth = the
+    # retention-implied g = ROE·retention), per-share FCFEₜ = BVPSₜ₋₁·(ROE−g),
+    # so the two-stage FCFE must equal justified-P/B·BVPS = BVPS·(ROE−g)/(Ke−g).
+    # This is the 4th leg of the golden identity: RI ≡ jPB ≡ Gordon ≡ FCFE.
+    roe, ke, payout, bvps = 0.13, 0.10, 0.55, 60.0
+    g = roe * (1 - payout)
+    closed = bvps * (roe - g) / (ke - g)
+    fcfe = fcfe_bank_value(
+        bvps0=bvps, roe=roe, ke=ke, asset_growth=g,
+        explicit_years=80, terminal_growth=g)
+    assert fcfe["iv"] == pytest.approx(closed, rel=1e-4)
+    assert fcfe["equity_reinvestment_rate"] == pytest.approx(g / roe, rel=1e-9)
 
 
 # ─────────────────── T2: single-stage guards (g ≥ Ke) ──────────────────────
@@ -112,6 +128,38 @@ def test_t3_jpm_residual_income_exceeds_ddm_headline():
     # BVPS derived, not hand-fed.
     assert out["inputs"]["bvps0"] == pytest.approx(130.31, abs=2.0)
     assert "derived" in out["basis"]
+
+
+# ─────── T3b: Deutsche Bank — real low-ROE (ROE<Ke) convergence fixture ─────
+
+def test_t3b_deutsche_bank_low_roe_below_book_convergence():
+    """Deutsche Bank (FY2025, EUR) is the LOW-ROE contrast pole to JPM: ROE 8.8%
+    < Ke 10%, so the bank doesn't earn its cost of capital and the convergent set
+    must price equity BELOW book (justified P/B < 1) — without forcing P/B=1.
+
+    Real inputs (SEC XBRL ifrs-full CIK0001159508 ≡ FMP, both EUR): common equity
+    €78.641B, net income €6.931B, 1.9545B shares, total assets €1.391T→€1.440T.
+    The convergent set is FX-agnostic (ROE/payout/Ke unitless), so the golden
+    identity holds in EUR; this is a clean steady-state case (ROE<Ke ⇒ single-stage
+    well-posed, no super-growth), so RI ≡ jPB ≡ Gordon converge EXACTLY, and the
+    FCFE leg at the real 3.5% asset growth lands a tight 4th value."""
+    bvps0 = 78.641e9 / 1.9545e9          # €40.24
+    roe = 6.931e9 / 78.641e9             # 8.81%
+    ke, payout = 0.10, 0.50
+    asset_growth = 1440e9 / 1391e9 - 1.0  # 3.52%
+
+    conv = value_bank_steady_state(bvps0=bvps0, roe=roe, payout=payout, ke=ke)
+    assert conv.converged and conv.max_spread_pct < 0.005
+    assert conv.iv_justified_pb / bvps0 < 1.0          # BELOW book (ROE < Ke)
+    assert conv.iv_residual_income < bvps0
+    assert conv.iv_justified_pb == pytest.approx(31.70, abs=0.5)
+
+    fcfe = fcfe_bank_value(bvps0=bvps0, roe=roe, ke=ke, asset_growth=asset_growth,
+                           explicit_years=5, terminal_growth=0.02)
+    assert fcfe["implied_pb"] < 1.0                    # 4th leg also below book
+    # all four legs within a sane band — the real-bank 4-way spread
+    legs = [conv.iv_residual_income, conv.iv_justified_pb, conv.iv_gordon_ddm, fcfe["iv"]]
+    assert (max(legs) / min(legs) - 1.0) < 0.15
 
 
 # ─────────────────── T4: isolation (non-financials get nothing) ────────────

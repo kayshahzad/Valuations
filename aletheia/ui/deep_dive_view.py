@@ -582,6 +582,7 @@ def _bank_valuation_panel(p2v: Dict[str, Any]) -> None:
     ri = m.get("residual_income") or {}
     jpb = m.get("justified_pb") or {}
     gor = m.get("gordon_ddm") or {}
+    fcfe = m.get("fcfe_bank") or {}
     rec = bvm.get("reconciliation") or {}
     inp = bvm.get("inputs") or {}
 
@@ -597,14 +598,20 @@ def _bank_valuation_panel(p2v: Dict[str, Any]) -> None:
 
     ddm_iv = (bvm.get("headline_ddm") or {}).get("iv")
     jpb_mult = jpb.get("multiple")
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Residual income", _usd(ri.get("iv")),
-              f"{float(ri.get('implied_pb')):.2f}× book" if ri.get("implied_pb") else None)
-    c2.metric("Justified P/B (floor)", _usd(jpb.get("iv_steady_state")),
-              f"{float(jpb_mult):.2f}×" if jpb_mult is not None else None)
-    c3.metric("Gordon DDM", _usd(gor.get("iv")) if gor.get("valid") else "undefined",
-              None if gor.get("valid") else "g≥Ke")
-    c4.metric("Headline DDM", _usd(ddm_iv), "routed IV", delta_color="off")
+    has_fcfe = fcfe.get("valid")
+    cols = st.columns(5 if has_fcfe else 4)
+    cols[0].metric("Residual income", _usd(ri.get("iv")),
+                   f"{float(ri.get('implied_pb')):.2f}× book" if ri.get("implied_pb") else None)
+    cols[1].metric("Justified P/B (floor)", _usd(jpb.get("iv_steady_state")),
+                   f"{float(jpb_mult):.2f}×" if jpb_mult is not None else None)
+    cols[2].metric("Gordon DDM", _usd(gor.get("iv")) if gor.get("valid") else "undefined",
+                   None if gor.get("valid") else "g≥Ke")
+    if has_fcfe:
+        ag = fcfe.get("asset_growth")
+        cols[3].metric("FCFE (NI−ΔRegCap)", _usd(fcfe.get("iv")),
+                       f"{float(ag):.1%} asset g" if ag is not None else None,
+                       delta_color="off")
+    cols[-1].metric("Headline DDM", _usd(ddm_iv), "routed IV", delta_color="off")
 
     band = rec.get("fair_value_band") or []
     if len(band) == 2:
@@ -624,6 +631,20 @@ def _bank_valuation_panel(p2v: Dict[str, Any]) -> None:
                    f"{float(inp.get('near_term_growth',0)):.1%} ≥ Ke "
                    f"{float(inp.get('ke',0)):.1%}: single-stage justified P/B / "
                    "Gordon undefined; two-stage RI is the only well-posed form.")
+    pg = rec.get("payout_vs_distributable") or {}
+    if pg.get("signal") and pg["signal"] != "consistent":
+        verb = ("retains more than its asset growth needs — excess/idle capital "
+                "(buyback-funded distributions or a building cushion)"
+                if pg["signal"] == "under_distributing" else
+                "pays out more than it can sustainably distribute — capital drag")
+        st.caption(f"Payout vs distributable: actual retention "
+                   f"{float(pg.get('actual_retention',0)):.0%} vs the "
+                   f"{float(pg.get('capital_required_retention',0)):.0%} needed to fund "
+                   f"normalized asset growth → the bank {verb}.")
+    sp = rec.get("four_way_spread_pct")
+    if sp is not None:
+        st.caption(f"4-way spread across the well-posed legs: {float(sp):.0%} "
+                   "(RI / justified-P/B / Gordon / FCFE — tighter = the set agrees).")
     st.caption(f"Deterministic: BVPS ${float(inp.get('bvps0',0)):,.2f}, ROE "
                f"{float(inp.get('roe_normalized',0)):.1%} (norm), payout "
                f"{float(inp.get('payout',0)):.0%} [{inp.get('payout_source')}], "

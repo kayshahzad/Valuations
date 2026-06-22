@@ -172,6 +172,61 @@ def _resolve_ke(valuation_result, p2) -> tuple[Optional[float], str]:
     return None, "unavailable"
 
 
+def _normalized_asset_growth(df, n: int = 4) -> Optional[float]:
+    """Normalized growth of the balance sheet (raw_TotalAssets CAGR over the last
+    ``n`` intervals). Single-year asset growth is volatile for a bank (JPM swung
+    19→61% reinvestment) — the FCFE leg needs a SUSTAINABLE rate, since asset/RWA
+    growth is what drives the regulatory-capital reinvestment. Clamped to a sane
+    band."""
+    if "raw_TotalAssets" not in df.columns:
+        return None
+    vals = [float(x) for x in df.sort_values("fiscal_year")["raw_TotalAssets"]
+            if x is not None and not (isinstance(x, float) and math.isnan(x)) and x > 0]
+    if len(vals) < 2:
+        return None
+    window = vals[-(n + 1):]
+    periods = len(window) - 1
+    cagr = (window[-1] / window[0]) ** (1.0 / periods) - 1.0
+    return max(0.0, min(0.15, cagr))      # floor 0, cap 15% (no perpetual hyper-growth)
+
+
+def fcfe_bank_value(*, bvps0: float, roe: float, ke: float, asset_growth: float,
+                    explicit_years: int, terminal_growth: float) -> dict:
+    """Two-stage bank FCFE (Damodaran): FCFE = Net income − Δ Regulatory Capital.
+
+    Under the leverage-ratio proxy, to hold equity/assets constant as the balance
+    sheet grows at ``asset_growth`` the bank must retain ΔRegCap = equity·asset_growth,
+    so per share FCFEₜ = BVPSₜ₋₁·(ROE − g) with g = asset growth (= the book growth
+    that funds it). Book compounds at g₁ = asset_growth (explicit) then terminal g.
+    The equity-reinvestment rate = g/ROE; growth is DERIVED from capital needs, not
+    a free input. Returns the per-share value + the reinvestment diagnostic."""
+    g1 = max(0.0, min(asset_growth, roe))      # can't retain more than you earn
+    bv = bvps0
+    pv = 0.0
+    schedule = []
+    for t in range(1, explicit_years + 1):
+        fcfe = (roe - g1) * bv                  # NI − ΔRegCap, per share
+        pvt = fcfe / (1.0 + ke) ** t
+        pv += pvt
+        schedule.append({"year": t, "bvps_begin": bv, "fcfe": fcfe, "pv": pvt})
+        bv = bv * (1.0 + g1)
+    bvps_terminal = bv
+    pv_terminal = None
+    if ke - terminal_growth > 0:
+        fcfe_next = (roe - terminal_growth) * bvps_terminal
+        cv = fcfe_next / (ke - terminal_growth)
+        pv_terminal = cv / (1.0 + ke) ** explicit_years
+    iv = pv + (pv_terminal or 0.0)
+    return {
+        "iv": iv,
+        "implied_pb": (iv / bvps0) if bvps0 else None,
+        "asset_growth": g1,
+        "equity_reinvestment_rate": (g1 / roe) if roe else None,
+        "decomposition": {"bvps0": bvps0, "pv_explicit_fcfe": pv,
+                          "pv_terminal_fcfe": pv_terminal, "schedule": schedule},
+    }
+
+
 def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
     """Deterministic bank convergent set (Phase 0/1), ADDITIVE to the headline
     DDM. Gated on financial-sector business models; non-banks get available=False
@@ -249,6 +304,19 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
         gordon = gordon_ddm_value(bvps0=bvps0, roe=roe_norm, ke=ke,
                                   payout=payout) if single_stage_ok else None
 
+        # ── FCFE(bank) leg — Damodaran: FCFE = NI − Δ Regulatory Capital ──────
+        # Growth is CAPITAL-driven (normalized asset growth) not payout-driven, so
+        # this leg uses a different g than RI/DDM. Convergence ⇒ the bank's payout
+        # is consistent with its capital needs; divergence ⇒ the payout-vs-
+        # distributable gap (over/under-distribution, the SoFi signal).
+        asset_growth = _normalized_asset_growth(df)
+        fcfe = None
+        if asset_growth is not None:
+            fcfe_tg = max(0.0, min(terminal_growth, ke - _MIN_KE_MINUS_G))
+            fcfe = fcfe_bank_value(
+                bvps0=bvps0, roe=roe_norm, ke=ke, asset_growth=asset_growth,
+                explicit_years=explicit_years, terminal_growth=fcfe_tg)
+
         # ── reconciliation vs the routed headline DDM ─────────────────────
         ddm_iv = None
         if valuation_result is not None and getattr(valuation_result, "engine", "") == "ddm":
@@ -259,6 +327,33 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
 
         ddm_vs_ri = ((ddm_iv / ri["iv"] - 1.0) if (ddm_iv and ri["iv"]) else None)
         understatement = (ddm_vs_ri is not None and ddm_vs_ri < -0.15)
+
+        # ── payout-vs-distributable gap (the DDM-vs-FCFE flag) ────────────────
+        # FCFE's implied retention = g/ROE = the capital the bank MUST retain to
+        # fund asset growth. Actual retention = 1−payout. If the bank pays out MORE
+        # than it can sustainably distribute (actual retention < FCFE-implied), it's
+        # over-distributing (eroding capital / leaning on buyback-funding); if it
+        # retains MORE than capital needs, it's under-distributing (idle capital —
+        # the SoFi/high-growth-bank signal). Gap = actual − required retention.
+        payout_gap = None
+        if fcfe is not None and roe_norm:
+            required_retention = fcfe["equity_reinvestment_rate"]    # asset_growth/ROE
+            if required_retention is not None:
+                gap = retention - required_retention
+                payout_gap = {
+                    "actual_retention": retention,
+                    "capital_required_retention": required_retention,
+                    "gap": gap,
+                    # +: retains more than it needs (under-distributing / idle capital)
+                    # −: pays out more than sustainable (over-distributing)
+                    "signal": ("under_distributing" if gap > 0.10 else
+                               "over_distributing" if gap < -0.10 else "consistent"),
+                }
+        # 4-way spread: max pairwise divergence across the well-posed legs.
+        leg_ivs = [v for v in (ri["iv"], iv_jpb_steady, gordon,
+                               (fcfe["iv"] if fcfe else None)) if v]
+        spread_4way = ((max(leg_ivs) / min(leg_ivs) - 1.0)
+                       if len(leg_ivs) >= 2 and min(leg_ivs) > 0 else None)
 
         # Fair-value band: the steady-state floor (justified P/B on today's book)
         # to the fuller two-stage residual income. DDM is the cash-distribution
@@ -281,6 +376,20 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                 f"residual income (${ri['iv']:,.0f}): the config two-stage sees only "
                 f"the {payout:.0%} payout, missing the {(roe_norm-ke):.1%} ROE-spread "
                 "compounding on retained book. Residual income is the fuller read.")
+        if fcfe is not None:
+            notes.append(
+                f"FCFE(bank) = NI − ΔRegulatory capital values equity at "
+                f"${fcfe['iv']:,.0f}/sh off {fcfe['asset_growth']:.1%} normalized asset "
+                f"growth (capital reinvestment {fcfe['equity_reinvestment_rate']:.0%}); "
+                "the 4th convergent leg — capital-driven growth, no payout assumption.")
+        if payout_gap and payout_gap["signal"] != "consistent":
+            verb = ("retains more than its asset growth needs — idle/excess capital"
+                    if payout_gap["signal"] == "under_distributing" else
+                    "pays out more than it can sustainably distribute — capital drag")
+            notes.append(
+                f"payout-vs-distributable gap: actual retention "
+                f"{payout_gap['actual_retention']:.0%} vs capital-required "
+                f"{payout_gap['capital_required_retention']:.0%} → the bank {verb}.")
 
         out.update({
             "available": True,
@@ -319,6 +428,19 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                              if single_stage_ok else
                              "undefined: near-term g ≥ Ke (use two-stage RI)"),
                 },
+                "fcfe_bank": ({
+                    "iv": fcfe["iv"],
+                    "implied_pb": fcfe["implied_pb"],
+                    "asset_growth": fcfe["asset_growth"],
+                    "equity_reinvestment_rate": fcfe["equity_reinvestment_rate"],
+                    "decomposition": fcfe["decomposition"],
+                    "valid": True,
+                    "note": "two-stage FCFE = NI − ΔRegulatory capital; growth is "
+                            "capital-driven (normalized asset growth), not payout-driven",
+                } if fcfe else {
+                    "iv": None, "valid": False,
+                    "note": "no TotalAssets history → asset growth unavailable",
+                }),
             },
             "headline_ddm": {
                 "iv": ddm_iv,
@@ -328,11 +450,14 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                 "ddm_vs_residual_income_pct": ddm_vs_ri,
                 "low_payout_understatement": understatement,
                 "fair_value_band": fair_band,
+                "payout_vs_distributable": payout_gap,
+                "four_way_spread_pct": spread_4way,
             },
             "convergence": {
                 "steady_state_identity": "constant ROE with g<Ke → RI ≡ "
-                                         "justified-P/B·BVPS ≡ Gordon (golden test)",
+                                         "justified-P/B·BVPS ≡ Gordon ≡ FCFE (golden test)",
                 "near_term_excess_growth": not single_stage_ok,
+                "four_way_spread_pct": spread_4way,
             },
             "notes": notes,
         })
