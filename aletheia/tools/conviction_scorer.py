@@ -61,13 +61,15 @@ MOAT_THRESHOLDS = [
 def _p2_score(roic, wacc, fcf_margin, net_debt_bn, ebitda_bn, data_quality,
               roic_weight=0.40, fcf_weight=0.35, debt_weight=0.25,
               roic_applicable=True, fcf_applicable=True, stage="",
-              sector="", roe=None):
+              sector="", roe=None, is_financial=False):
 
-    # Financial sector override — use ROE instead of ROIC
-    # Banks: ROE > 15% excellent, > 10% good, > 7% adequate
-    # Skip FCF margin and Net Debt (deposits are not debt)
+    # Financial-filer override — score health off ROE, NOT ROIC−WACC / FCF margin /
+    # net-debg/EBITDA (all meaningless for a deposit-funded balance sheet). Keys on
+    # `is_financial` (is_financial_filer — catches "Financial Services" fintech-banks
+    # like SOFI/AXP that the narrow GICS set misses), with the legacy sector set as
+    # a fallback. Banks: ROE > 15% excellent, > 12% strong, > 8% adequate.
     FINANCIAL_SECTORS = {'Financials', 'Banking', 'Insurance'}
-    if sector in FINANCIAL_SECTORS and roe is not None:
+    if (is_financial or sector in FINANCIAL_SECTORS) and roe is not None:
         reasons = []
         if roe > 0.15:
             score = 5; reasons.append(f"ROE {roe:.1%} — exceptional for financial sector")
@@ -462,9 +464,20 @@ class ConvictionScorer:
         # ROIC). Return a clean 'not scored' result — honest about the gap —
         # until an engine-specific conviction rubric exists, rather than a
         # misleading FCFF number.
-        _bm = getattr(getattr(calc_input, "classification", None),
-                      "business_model", None)
-        if _bm and _bm != "fcff_compatible":
+        _cls = getattr(calc_input, "classification", None)
+        _bm = getattr(_cls, "business_model", None)
+        from aletheia.calculations.sector_classification import is_financial_filer
+        _is_financial = is_financial_filer(
+            getattr(_cls, "sector", "") or "", getattr(_cls, "industry", "") or "",
+            _bm or "")
+        # Specialized non-financial engines (REIT / rate-base / MLP) still lack a
+        # bank-style pillar rubric, so a clean not_scored is honest. But FINANCIALS
+        # (banks/insurers/lenders) DO have the inputs to score the 5 pillars on
+        # bank-appropriate metrics — moat off the moat engine, health off ROE (not
+        # ROIC−WACC / FCF margin), MoS off the bank RI band, leadership off
+        # management quality. Score them rather than zeroing the whole scorecard
+        # (which made JPM read NOT_SCORED / 0/25 — contradicting its own prose).
+        if _bm and _bm != "fcff_compatible" and not _is_financial:
             r = ConvictionResult(ticker=ticker)
             r.position_tier = "not_scored"
             r.cap_reason = (
@@ -527,16 +540,24 @@ class ConvictionScorer:
             # Revenue CAGR from multi-period median
             rev_series = df.sort_values("fiscal_year")["clean_Revenue"].dropna()
             rev_cagr = self._robust_cagr(rev_series)
+            _df_roe = g("derived_ROE")          # bank P2 health fallback
         else:
             fcf_margin = ebitda_bn = net_debt_bn = data_quality = rev_cagr = None
+            _df_roe = None
 
         # Sector from universe config (calc_input may be None on the fallback).
         sector = (calc_input.classification.sector
                   if (calc_input is not None and calc_input.classification) else "")
-        
+
         fin = state.get("financial_translation", {}) or {}
         ratios = fin.get("ratios", {}) or {}
+        # ROE drives the financial-filer health pillar. Read the translated ratio
+        # first, but FALL BACK to the frame's derived_ROE — the bank P2 branch must
+        # not silently default to the industrial FCF path just because the
+        # financial_translation state key isn't populated on this code path.
         roe = self._safe(ratios.get("roe"))
+        if roe is None:
+            roe = _df_roe
 
         return self._compute(
             ticker=ticker,
@@ -650,6 +671,19 @@ class ConvictionScorer:
 
         result = ConvictionResult(ticker=ticker)
 
+        # Financial filer? Banks/insurers/lenders score health off ROE and must
+        # skip the industrial caps (EV/EBITDA premium, ROIC−WACC) that are garbage
+        # on a deposit-funded balance sheet.
+        _cls = getattr(calc_input, "classification", None)
+        try:
+            from aletheia.calculations.sector_classification import is_financial_filer
+            is_financial = is_financial_filer(
+                sector or getattr(_cls, "sector", "") or "",
+                getattr(_cls, "industry", "") or "",
+                getattr(_cls, "business_model", "") or "")
+        except Exception:
+            is_financial = False
+
         if calc_input and calc_input.lifecycle_thresholds:
             thresholds = calc_input.lifecycle_thresholds
         else:
@@ -701,6 +735,7 @@ class ConvictionScorer:
             stage=thresholds.stage.value,
             sector=sector,
             roe=roe,
+            is_financial=is_financial,
         )
         result.p2_health = PillarScore("Fundamental Health", p2_score, 0.25, p2_reasons)
 
@@ -793,8 +828,12 @@ class ConvictionScorer:
         result.capped_total = result.raw_total
 
         # ── Section 5.2 — Multiple-justified cap ──────────────────────────────
-        # Cap at 18 if: premium > 100% AND implied CAGR > 2× historical
-        if (multiple_premium is not None and multiple_premium > 1.0
+        # Cap at 18 if: premium > 100% AND implied CAGR > 2× historical.
+        # Skip for financials — the EV/EBITDA premium and reverse-DCF implied CAGR
+        # are garbage on a bank (negative net debt from deposits → nonsense EV), so
+        # the cap would fire on noise.
+        if (not is_financial
+                and multiple_premium is not None and multiple_premium > 1.0
                 and result.implied_hist_ratio is not None and result.implied_hist_ratio > 2.0):
             if result.raw_total > 18:
                 result.capped_total = 18
