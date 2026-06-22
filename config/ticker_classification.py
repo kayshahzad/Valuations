@@ -87,6 +87,7 @@ UNIVERSE: Dict[str, TickerClassification] = {
     "V": TickerClassification("V", "Financials", "Payments", "growth_compounder", "fcff_compatible", "Payments toll-bridge", date.today()),
     "JPM": TickerClassification("JPM", "Financials", "Banks", "mature", "ddm_required", "Universal bank — capital is the product; DDM via sustainable EPS growth + payout ratio", date.today()),
     "BRK-B": TickerClassification("BRK-B", "Financials", "Diversified", "mature", "embedded_value_required", "Insurance conglomerate / sum-of-parts; book-value compounding + target P/B framework", date.today()),
+    "SOFI": TickerClassification("SOFI", "Financial Services", "Financial - Credit Services", "growth_compounder", "residual_income_required", "Digital bank / lender; pays no dividend (DDM undefined) and FCFF mis-frames a lending book (FCF negative from loan growth). Valued on residual income (book + ROE-over-Ke spread) on a NORMALIZED ROE. Current ROE ~5% < CAPM Ke ~13% (β~2.0, likely meme-inflated) → IV below book until ROE scales; normalized ROE and the beta/Ke are the analyst levers.", date.today()),
 
     # --- Consumer Defensive / Retail ---
     "COST": TickerClassification("COST", "Consumer Defensive", "Retail", "growth_compounder_consumer", "fcff_compatible", "Consumer-defensive compounder, modest margin improvement", date.today()),
