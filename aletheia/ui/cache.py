@@ -142,6 +142,18 @@ def cached_valuation(ticker: str) -> Optional[Dict[str, Any]]:
 
     snap = result.inputs_snapshot or {}
     decomposition = (result.engine_specific or {}).get("decomposition")
+
+    # Bank convergent set (residual income / justified P/B / Gordon / FCFE) so the
+    # dashboard can show ALL the methods, not just the routed headline — gated on
+    # bank reality, so non-banks get available=False and nothing renders.
+    bank_methods = None
+    try:
+        from aletheia.tools.bank_valuation_methods import build_bank_valuation_methods
+        _bm = build_bank_valuation_methods(calc, result, p2={"engine": result.engine})
+        bank_methods = _bm if _bm.get("available") else None
+    except Exception:
+        bank_methods = None
+
     return {
         "ticker":              result.ticker,
         "fiscal_year":         int(result.fiscal_year),
@@ -163,6 +175,7 @@ def cached_valuation(ticker: str) -> Optional[Dict[str, Any]]:
         "inputs_snapshot":     {k: v for k, v in snap.items()
                                 if isinstance(v, (int, float, str, bool, type(None)))},
         "decomposition":       decomposition,
+        "bank_valuation_methods": bank_methods,
         "notes":               result.notes,
         "warnings":            list(result.warnings or []),
     }

@@ -933,6 +933,25 @@ def _render_specialized_engine_dashboard(
         if engine_desc:
             _panel(engine_desc, accent_color=_MUTED_TEXT)
 
+    # Corrective banner: the routed DDM materially understates low-payout banks
+    # (JPM/AXP), so the prominent headline IV/MoS reads "overvalued" when the bank
+    # is roughly fair. Surface the convergent-set fair band right next to it.
+    _bvm = valuation.get("bank_valuation_methods") or {}
+    _rec = _bvm.get("reconciliation") or {}
+    if _bvm.get("available") and _rec.get("low_payout_understatement"):
+        band = _rec.get("fair_value_band") or []
+        dvr = _rec.get("ddm_vs_residual_income_pct")
+        band_txt = (f"\\${band[0]:,.0f}–\\${band[1]:,.0f}"
+                    if len(band) == 2 else "see below")
+        st.warning(
+            f"⚠ The **{engine_label}** headline (\\${ips:,.0f}) understates this "
+            f"low-payout bank — it captures only the dividend, not the ROE-spread "
+            f"compounding on retained book. The convergent set's fair value is "
+            f"**{band_txt}** (residual income / FCFE), "
+            f"{f'{abs(dvr):.0%} above the headline. ' if dvr else ''}"
+            f"Read the band as the truer equity value — full breakdown below."
+        )
+
     # Source citation
     source = valuation.get("source")
     as_of = valuation.get("as_of_date")
@@ -946,6 +965,15 @@ def _render_specialized_engine_dashboard(
     if decomposition:
         st.markdown("---")
         _render_engine_decomposition(engine, decomposition)
+
+    # All bank valuations — the convergent set (RI / justified P/B / Gordon / FCFE)
+    # alongside the routed headline, so the dashboard shows every method (and flags
+    # the low-payout DDM understatement that makes the headline misleading for
+    # JPM/AXP). Self-gates: non-banks carry no bank_valuation_methods and skip.
+    bvm = valuation.get("bank_valuation_methods")
+    if bvm and bvm.get("available"):
+        from aletheia.ui.deep_dive_view import _bank_valuation_panel
+        _bank_valuation_panel({"bank_valuation_methods": bvm})
 
     # Analyst warnings (decomposition pre-flight notes)
     warnings = valuation.get("warnings") or []
