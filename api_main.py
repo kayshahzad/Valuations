@@ -329,10 +329,16 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     # residual-income fair value (DDM retained as a convergent-set leg). Banks that
     # aren't understated and all non-banks pass through untouched.
     _headline_override = None
+    _bank_band = None
     try:
-        from aletheia.tools.bank_valuation_methods import bank_headline_override
+        from aletheia.tools.bank_valuation_methods import (
+            bank_headline_override, bank_scenario_band,
+        )
         _headline_override = bank_headline_override(
             ddm_ips=ips, price=price, bvm=_bvm_payload)
+        # Bank bear/bull (CF-R22): RI at flexed ROE (cyclical reversion / NIM
+        # compression / Basel III) — a real downside vs the fake $0.00 bear.
+        _bank_band = bank_scenario_band(bvm=_bvm_payload, price=price)
     except Exception:
         _headline_override = None
     if _headline_override:
@@ -364,8 +370,10 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
     # attach this to engine_specific so the three-scenario panel shows a real
     # range instead of one bar. Drop the legs into the bear/bull slots.
     _band = (vresult.engine_specific or {}).get("scenario_band") or {}
-    _bear = _band.get("bear")
-    _bull = _band.get("bull")
+    # Prefer the bank RI band (flexed ROE) over the engine's DDM-growth band so the
+    # three-scenario panel is coherent with the RI base headline.
+    _bear = (_bank_band or {}).get("bear") or _band.get("bear")
+    _bull = (_bank_band or {}).get("bull") or _band.get("bull")
 
     def _scn_leg(leg):
         if not leg:
@@ -411,6 +419,7 @@ def _compute_specialized_live(ticker: str, calc) -> Dict[str, Any]:
         "valuation_methods":      None,   # FCFF-only; REIT/DDM value ECF directly
         "bank_valuation_methods": _bvm_payload,
         "headline_override":      _headline_override,
+        "bank_scenario_band":     _bank_band,
         "specialized_inputs":     snap,
         "source_citation":        snap.get("source"),
         "as_of_date":             snap.get("as_of_date"),
@@ -3176,19 +3185,30 @@ def rebuild_report(ticker: str):
         # flagged, so the rebuilt three_scenario_dcf.base matches the LLM-run path
         # and the deep-dive (otherwise the rebuilt headline reverts to DDM $118).
         try:
-            from aletheia.tools.bank_valuation_methods import bank_headline_override
+            from aletheia.tools.bank_valuation_methods import (
+                bank_headline_override, bank_scenario_band,
+            )
             if _p2 is not None and _spec is not None:
+                _price = float(_spec.current_price) if _spec.current_price else None
                 _tsd_base = (_p2.get("three_scenario_dcf") or {}).get("base") or {}
                 _ho = bank_headline_override(
                     ddm_ips=_tsd_base.get("intrinsic_per_share"),
-                    price=(float(_spec.current_price) if _spec.current_price else None),
-                    bvm=_p2.get("bank_valuation_methods"))
+                    price=_price, bvm=_p2.get("bank_valuation_methods"))
                 if _ho:
                     _tsd_base["intrinsic_per_share"] = _ho["intrinsic_per_share"]
                     _tsd_base["margin_of_safety"] = _ho["margin_of_safety"]
                     _p2.setdefault("three_scenario_dcf", {})["base"] = _tsd_base
                     _p2["headline_override"] = _ho
                     refreshed.append("headline_override")
+                # Bank bear/bull (CF-R22): real RI band vs the fake $0.00 bear.
+                _bd = bank_scenario_band(bvm=_p2.get("bank_valuation_methods"),
+                                         price=_price)
+                if _bd:
+                    _tsd = _p2.setdefault("three_scenario_dcf", {})
+                    _tsd["bear"] = _bd["bear"]
+                    _tsd["bull"] = _bd["bull"]
+                    _p2["bank_scenario_band"] = _bd
+                    refreshed.append("bank_scenario_band")
         except Exception as e:
             report.setdefault("_rebuild_warnings", []).append(f"headline_override: {e}")
         # Refresh the Comprehensive Ratios + WACC build (§ metrics) from the

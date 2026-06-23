@@ -295,3 +295,24 @@ def test_t4_non_financial_returns_unavailable():
     out = build_bank_valuation_methods(_Calc(), None, None)
     assert out["available"] is False
     assert "four-method" in out["notes"]   # points FCFF names back to the right set
+
+
+def test_bank_scenario_band_real_bear_not_zero():
+    """Bank bear/bull flex normalized ROE (cyclical reversion) — a real RI downside
+    ordered bear < base < bull, NOT the fake $0.00 'structural error' bear."""
+    from aletheia.tools.bank_valuation_methods import bank_scenario_band
+    bvm = {
+        "available": True,
+        "methods": {"residual_income": {"iv": 315.0}},
+        "inputs": {"bvps0": 130.0, "roe_normalized": 0.163, "ke": 0.10,
+                   "retention": 0.71, "explicit_years": 10, "terminal_growth": 0.04},
+    }
+    band = bank_scenario_band(bvm=bvm, price=330.0)
+    assert band is not None
+    bear = band["bear"]["intrinsic_per_share"]
+    bull = band["bull"]["intrinsic_per_share"]
+    assert bear > 0                                  # not the fake $0.00 bear
+    assert bear < 315.0 < bull                       # coherent with the RI base
+    assert band["bear_roe"] < 0.163 < band["bull_roe"]
+    # non-bank / unavailable → None
+    assert bank_scenario_band(bvm=None, price=330.0) is None

@@ -706,6 +706,7 @@ def lead_agent(state):
                 "bank_valuation_methods":     p2.get("bank_valuation_methods"),
                 "bank_metrics":               p2.get("bank_metrics"),
                 "headline_override":          p2.get("headline_override"),
+                "bank_scenario_band":         p2.get("bank_scenario_band"),
             },
             # FIX 6: contrarian_analysis was completely absent
             "contrarian_analysis": {

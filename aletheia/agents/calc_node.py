@@ -435,7 +435,7 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     # low-payout understatement). Gated on the business model — non-banks no-op.
     try:
         from aletheia.tools.bank_valuation_methods import (
-            build_bank_valuation_methods, bank_headline_override,
+            build_bank_valuation_methods, bank_headline_override, bank_scenario_band,
         )
         _bvm = build_bank_valuation_methods(calc_input, valuation_result, phase2)
         if _bvm.get("available"):
@@ -450,17 +450,32 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
             # the base IV/MoS to the residual-income fair value; the DDM survives as
             # a convergent-set leg + headline_override.displaced_ddm for transparency.
             _dcf = phase2.get("dcf") or {}
+            _price = valuation_result.current_price
             _ho = bank_headline_override(
                 ddm_ips=_dcf.get("base_intrinsic_per_share"),
-                price=valuation_result.current_price, bvm=_bvm)
+                price=_price, bvm=_bvm)
             if _ho:
                 _dcf["base_intrinsic_per_share"] = _ho["intrinsic_per_share"]
                 _dcf["base_upside"] = _ho["margin_of_safety"]
-                phase2["dcf"] = _dcf
                 phase2["headline_override"] = _ho
                 print(f"  ✓ Bank headline → residual income ${_ho['intrinsic_per_share']:,.0f} "
                       f"(DDM ${_ho['displaced_ddm']:,.0f} displaced; MoS now "
                       f"{(_ho['margin_of_safety'] or 0)*100:+.0f}%)")
+            # Bank bear/bull (CF-R22): flex normalized ROE (cyclical reversion / NIM
+            # compression / Basel III) instead of leaving bear/bull None — replaces
+            # the fake $0.00 "structural error" bear with a real RI downside, coherent
+            # with the RI base. Feeds three_scenario_dcf via lead.
+            _bd = bank_scenario_band(bvm=_bvm, price=_price)
+            if _bd:
+                _dcf["bear_intrinsic_per_share"] = _bd["bear"]["intrinsic_per_share"]
+                _dcf["bear_upside"] = _bd["bear"]["margin_of_safety"]
+                _dcf["bull_intrinsic_per_share"] = _bd["bull"]["intrinsic_per_share"]
+                _dcf["bull_upside"] = _bd["bull"]["margin_of_safety"]
+                phase2["bank_scenario_band"] = _bd
+                print(f"  ✓ Bank bear/bull: ${_bd['bear']['intrinsic_per_share']:,.0f} "
+                      f"(ROE {_bd['bear_roe']:.1%}) / ${_bd['bull']['intrinsic_per_share']:,.0f} "
+                      f"(ROE {_bd['bull_roe']:.1%})")
+            phase2["dcf"] = _dcf
     except Exception as e:
         errors.append(f"BankValuationMethods failed: {e}")
 

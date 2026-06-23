@@ -559,6 +559,61 @@ def bank_headline_override(*, ddm_ips, price, bvm) -> Optional[dict]:
     }
 
 
+def bank_scenario_band(*, bvm, price, bear_roe_mult=0.70, bull_roe_mult=1.10) -> Optional[dict]:
+    """Bear / bull for a bank by flexing NORMALIZED ROE — the dominant lever.
+
+    The industrial scenario machinery doesn't apply to a bank (no revenue/margin
+    levers, no unlevered FCF), so specialized engines leave bear/bull = None and
+    the three-scenario panel shows a fake $0.00 "structural error" bear. Instead,
+    model the real bank downside: ROE mean-reverts off a cyclical peak (NIM
+    compression as rates fall, normalized provisions through the cycle, a Basel III
+    endgame haircut to terminal ROE). Bear = residual income at a haircut ROE
+    (~−30%: JPM 16.3% → ~11.4%, still above Ke so above book — a moderate
+    cyclical-reversion bear, not a GFC); bull = sustained-franchise ROE (+10%).
+
+    Computed on the SAME convergent-set inputs as the RI base headline, so the band
+    is internally coherent (bear < base < bull, all residual income). Returns
+    ``{bear, bull, bear_roe, bull_roe, driver}`` or None.
+    """
+    if not bvm or not bvm.get("available"):
+        return None
+    inp = bvm.get("inputs") or {}
+    bvps0 = inp.get("bvps0")
+    roe = inp.get("roe_normalized")
+    ke = inp.get("ke")
+    retention = inp.get("retention")
+    if bvps0 is None or roe is None or ke is None or retention is None:
+        return None
+    explicit_years = int(inp.get("explicit_years") or _DEFAULT_EXPLICIT_YEARS)
+    terminal_growth = inp.get("terminal_growth")
+    if terminal_growth is None:
+        terminal_growth = _DEFAULT_TERMINAL_GROWTH
+
+    def _ri(r):
+        # Terminal growth must clear the (stressed) Ke; cap below Ke−floor.
+        tg = max(0.0, min(terminal_growth, ke - _MIN_KE_MINUS_G))
+        return residual_income_value(
+            bvps0=bvps0, roe=r, ke=ke, retention=retention,
+            explicit_years=explicit_years, terminal_roe=r, terminal_growth=tg)["iv"]
+
+    bear_roe = roe * bear_roe_mult
+    bull_roe = roe * bull_roe_mult
+
+    def _leg(iv):
+        return {"intrinsic_per_share": iv,
+                "margin_of_safety": (iv / price - 1.0) if price else None,
+                "ev": None}
+
+    return {
+        "bear": _leg(_ri(bear_roe)),
+        "bull": _leg(_ri(bull_roe)),
+        "bear_roe": bear_roe,
+        "bull_roe": bull_roe,
+        "driver": ("normalized ROE — bear: cyclical reversion / NIM compression / "
+                   "Basel III endgame haircut; bull: sustained franchise returns"),
+    }
+
+
 __all__ = [
     "justified_pb",
     "gordon_ddm_value",
@@ -566,5 +621,6 @@ __all__ = [
     "value_bank_steady_state",
     "build_bank_valuation_methods",
     "bank_headline_override",
+    "bank_scenario_band",
     "BankConvergence",
 ]
