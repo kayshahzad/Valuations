@@ -617,7 +617,7 @@ def _bank_valuation_panel(p2v: Dict[str, Any]) -> None:
         metrics.append(("FCFE (NI−ΔRegCap)", _usd(fcfe.get("iv")),
                         f"{float(ag):.1%} asset g" if ag is not None else None, "off"))
     if ddm_iv is not None:
-        metrics.append(("Headline DDM", _usd(ddm_iv), "routed IV", "off"))
+        metrics.append(("DDM (displaced)", _usd(ddm_iv), "understates — sub-leg", "off"))
     cols = st.columns(len(metrics))
     for col, (label, val, delta, dc) in zip(cols, metrics):
         col.metric(label, val, delta, delta_color=(dc or "normal"))

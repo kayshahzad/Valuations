@@ -888,6 +888,11 @@ def _render_specialized_engine_dashboard(
     engine = valuation.get("engine") or "specialized"
     engine_label = _ENGINE_LABEL.get(engine, engine)
     engine_desc = _ENGINE_DESCRIPTION.get(engine, "")
+    # #4 method-appropriate headline: when the DDM was displaced for a low-payout
+    # bank, the PRESENTED method is residual income (the headline IV is $315, not
+    # the DDM $118), so lead with that label — the DDM is a displaced sub-leg.
+    if valuation.get("headline_override"):
+        engine_label = "Residual income — bank convergent set (DDM displaced)"
 
     cls = cached_classification(ticker)
     ips = valuation.get("intrinsic_per_share")

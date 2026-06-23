@@ -2138,10 +2138,12 @@ class ReportGenerator:
                 f"{ag:.1%} asset g</td></tr>")
 
         if ddm_iv is not None:
+            # #4: the DDM is DISPLACED — residual income is the headline. Demote it
+            # to a greyed sub-leg so the panel leads with RI, not the structurally-low DDM.
             rows += (
-                f"<tr><td>Headline DDM (config two-stage)</td>"
+                f"<tr style='color:#999'><td>DDM (displaced — understates)</td>"
                 f"<td style='text-align:right'>{_usd(ddm_iv)}</td>"
-                f"<td style='text-align:right;color:#666'>routed IV</td></tr>")
+                f"<td style='text-align:right;color:#999'>sub-leg, not headline</td></tr>")
 
         band = rec.get("fair_value_band") or []
         band_str = (f"${band[0]:,.0f}–${band[1]:,.0f}"
@@ -2203,10 +2205,26 @@ class ReportGenerator:
                 f"{self._to_float(inp.get('payout')):.0%} [{inp.get('payout_source')}], "
                 f"Ke {self._to_float(inp.get('ke')):.1%} [{inp.get('ke_source')}], "
                 f"terminal g {self._to_float(inp.get('terminal_growth')):.1%}. "
-                f"Additive diagnostic, not the headline IV.</p>")
+                + ("Residual income is the headline IV; the DDM is displaced."
+                   if ((p2 or {}).get('headline_override') or {}).get('method') == 'residual_income'
+                   else "Additive diagnostic, not the headline IV.") + "</p>")
+
+        # #4 method-appropriate headline: when the DDM is displaced, lead the panel
+        # with the residual-income headline so the reader sees RI as THE number.
+        ho = (p2 or {}).get("headline_override") or {}
+        headline_line = ""
+        if ho.get("method") == "residual_income" and ri.get("iv") is not None:
+            headline_line = (
+                f"<p style='font-size:14px;margin:0 0 6px'><strong>Headline intrinsic "
+                f"value = residual income {_usd(ri.get('iv'))}/share</strong> — the "
+                f"method-appropriate read for a low-payout bank"
+                + (f"; the DDM ({_usd(ddm_iv)}) is displaced because it ignores the "
+                   "ROE-spread compounding on retained book." if ddm_iv is not None
+                   else ".") + "</p>")
 
         return (
             "<h3>Bank valuation — convergent set (residual income)</h3>"
+            f"{headline_line}"
             "<p style='font-size:13px;color:#666'>Banks have no unlevered FCF, so "
             "the four-method engine doesn't apply. Equity is valued off book + ROE "
             "four ways (residual income / justified P/B / Gordon DDM / FCFE = NI − "
