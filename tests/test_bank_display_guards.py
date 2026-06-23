@@ -48,9 +48,13 @@ def test_comprehensive_ratios_suppress_industrial_metrics_for_financials():
     except Exception as e:
         pytest.skip(f"JPM unavailable: {e}")
     r = _compute_ratios(df, market_cap=9e11, current_price=329.0, is_financial=True)
-    # meaningless → nulled
+    # meaningless → nulled (incl. the industrial margins — gross/EBIT/EBITDA are
+    # frame artifacts for a bank; the efficiency ratio is the bank-correct "margin")
     assert r["profitability"]["roic"] is None
     assert r["profitability"]["fcf_margin"] is None
+    assert r["profitability"]["gross_margin"] is None
+    assert r["profitability"]["ebit_margin"] is None
+    assert r["profitability"]["ebitda_margin"] is None
     assert r["leverage"]["net_debt_to_ebitda"] is None
     assert r["leverage"]["interest_coverage"] is None
     assert r["valuation"]["ev_ebitda"] is None
@@ -59,6 +63,8 @@ def test_comprehensive_ratios_suppress_industrial_metrics_for_financials():
     assert r["valuation"]["pe"] is not None
     assert r["valuation"]["pb"] is not None
     assert r["profitability"]["roe"] is not None
+    assert r["profitability"]["roa"] is not None
+    assert r["profitability"]["net_margin"] is not None
     assert "financials_na_note" in r
 
     # industrials (is_financial=False) keep everything

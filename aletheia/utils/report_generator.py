@@ -2659,14 +2659,35 @@ class ReportGenerator:
                 f'text-align:right;font-weight:600;">{mos_str} MoS</div></div>'
             )
 
+        # Bank framing: the bear/bull are residual income at flexed NORMALIZED ROE
+        # (CF-R22), not industrial lever-tilts — so retitle the panel and describe
+        # the bank levers (cyclical reversion / NIM compression / Basel III), never
+        # capex/terminal-margin/tax which don't apply to a bank.
+        bsb = (p2 or {}).get("bank_scenario_band") or {}
+        if bsb:
+            bear_roe = self._to_float(bsb.get("bear_roe"))
+            bull_roe = self._to_float(bsb.get("bull_roe"))
+            roe_txt = (f" (bear ROE {bear_roe:.1%} → bull ROE {bull_roe:.1%})"
+                       if bear_roe is not None and bull_roe is not None else "")
+            title = "📊 Three-scenario bank valuation — residual income / share"
+            desc = (
+                f"Scenarios flex NORMALIZED ROE{roe_txt}, the dominant bank lever — "
+                "bear: cyclical reversion / NIM compression as rates fall / Basel III "
+                "endgame ROE haircut; bull: sustained franchise returns. Each leg is "
+                "residual income on the bank convergent-set inputs (NOT industrial "
+                "revenue/margin/capex/tax tilts), so it's consistent with the RI base.")
+        else:
+            title = "📊 Three-scenario DCF — intrinsic value per share"
+            desc = ("Each scenario tilts all assumption levers (revenue growth, "
+                    "terminal margin, WACC, capex %, tax rate) in one direction. "
+                    "Engine floor/ceiling bound the analytically defensible range.")
+
         return f"""
 <div class="card" style="page-break-inside:avoid">
-  <h3>📊 Three-scenario DCF — intrinsic value per share</h3>
+  <h3>{title}</h3>
   {"".join(bars)}
   <div style="font-size:11.5px;color:#71717a;margin-top:10px;line-height:1.5">
-    Each scenario tilts all assumption levers (revenue growth, terminal margin,
-    WACC, capex %, tax rate) in one direction. Engine floor/ceiling bound the
-    analytically defensible range.
+    {desc}
   </div>
 </div>""".strip()
 

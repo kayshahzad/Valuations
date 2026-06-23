@@ -285,6 +285,14 @@ YOUR TASKS — narrative + boolean judgments + 0-3 scenarios
       ecosystem lock-in: switching costs across iCloud, App Store
       purchases, AppleCare, and Watch/AirPods integration make
       single-product price-comparison economically irrelevant."
+      ── BANKS / INSURERS / LENDERS: do NOT cite gross margin, FCF
+      margin, EBIT/EBITDA margin or ROIC — those are industrial-frame
+      artifacts that are meaningless for a deposit-funded balance sheet
+      (and are omitted from this memo's tables). The bank-correct pricing
+      evidence is: net interest margin (NIM), low deposit beta / funding
+      cost advantage, efficiency ratio, fee pricing power, and ROE/ROA.
+      Use those instead. Never write "cash conversion / FCF margins
+      exceeding EBIT margins" for a bank.
       pass_through_capability: True if 10% price increase wouldn't
       lose customers.
 
@@ -331,6 +339,14 @@ YOUR TASKS — narrative + boolean judgments + 0-3 scenarios
                       (working-capital leak)  OR  deferred-revenue declining
                       sharply vs revenue
         - uncertain = revenue history too short or D8 unavailable
+      ── BANKS / INSURERS / LENDERS: the FCF-vs-EBIT-margin "cash conversion"
+      test does NOT apply (no unlevered FCF; FCF/gross/EBIT margins are
+      omitted from this memo as meaningless for a deposit-funded balance
+      sheet). Do NOT write "cash conversion remains robust / FCF margins
+      exceeding EBIT margins" for a bank. Anchor growth quality on
+      bank-native signals instead: deposit & loan growth, net interest
+      income trajectory, fee-income mix/durability, provisioning trend,
+      and ROE stability through the cycle.
 
   3b. INTANGIBLE DECAY (patent / contract expirations)
       intangible_risk_assessment (MINIMUM 180 CHARS):

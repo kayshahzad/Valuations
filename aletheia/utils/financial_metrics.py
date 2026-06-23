@@ -355,7 +355,11 @@ def _compute_ratios(
     # margin 49.4% from balance-sheet flows). Keep the bank-valid ones: P/E, P/B,
     # P/S, net margin, ROE, ROA, dividend yield, debt/equity, payout.
     if is_financial:
-        for k in ("roic", "fcf_margin"):
+        # gross/EBIT/EBITDA margin are industrial-frame artifacts for a bank
+        # ("COGS" = interest expense; there's no gross profit). The bank-correct
+        # "margin" is the efficiency ratio (in the operating-metrics panel). Keep
+        # net margin / ROE / ROA.
+        for k in ("roic", "fcf_margin", "gross_margin", "ebit_margin", "ebitda_margin"):
             profitability[k] = None
         for k in ("current_ratio", "quick_ratio", "cash_ratio"):
             liquidity[k] = None
