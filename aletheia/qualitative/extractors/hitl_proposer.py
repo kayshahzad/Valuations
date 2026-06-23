@@ -34,7 +34,13 @@ import uuid
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
 from langchain_google_genai import ChatGoogleGenerativeAI
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+# Quote length cap. 10-K sentences routinely run 200-300 chars, so a hard 200 cap
+# rejected legitimate single-sentence quotes (JPM's brand quote was ~200). We trim
+# rather than reject (see EvidenceQuote validator) so an over-long quote NEVER
+# fails validation — defense-in-depth alongside the retry path.
+_QUOTE_MAX = 300
 
 from aletheia.qualitative.extractors._llm_invoke import (
     fingerprint_source_text as _fingerprint,
@@ -56,12 +62,23 @@ class EvidenceQuote(BaseModel):
         description="ID of the sub-question this quote supports."
     )
     quote: str = Field(
-        description="Direct quote from the 10-K (≤ 200 chars). No paraphrasing.",
-        max_length=200,
+        description="Direct quote from the 10-K (≤ 300 chars). No paraphrasing.",
+        max_length=_QUOTE_MAX,
     )
     source: str = Field(
         description="Document section: e.g. '10-K Item 1', '10-K Item 1A', '10-K Item 7'."
     )
+
+    @field_validator("quote", mode="before")
+    @classmethod
+    def _truncate_long_quote(cls, v: Any) -> Any:
+        # Trim an over-long quote to the cap (at a word boundary, with an ellipsis)
+        # rather than failing the whole bundle — one verbose quote shouldn't sink
+        # nine dimensions of extraction.
+        if isinstance(v, str) and len(v) > _QUOTE_MAX:
+            cut = v[: _QUOTE_MAX - 1].rsplit(" ", 1)[0].rstrip()
+            return (cut or v[: _QUOTE_MAX - 1]) + "…"
+        return v
 
 
 class HitlDimProposal(BaseModel):
@@ -140,7 +157,7 @@ Critical rules:
 2. Use the 1/4/7 anchors as the calibration scale — interpolate for 2/3/5/6.
 3. Never inflate scores when the filing is silent on a dimension. Use
    confidence="low" instead. The analyst will adjust.
-4. Quote directly from the filing (≤200 chars per quote). No paraphrasing.
+4. Quote directly from the filing (≤300 chars per quote). No paraphrasing.
 5. Output ALL 9 HITL dimensions even if confidence is low.
 
 Catalog (9 HITL dimensions, ~38 sub-questions total):

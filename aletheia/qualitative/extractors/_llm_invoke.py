@@ -85,10 +85,17 @@ def invoke_with_retry(
         except (ValidationError, Exception) as exc:  # noqa: BLE001 boundary
             last_error = exc
             err_str = str(exc)[:1000]
-            # Prepend error to prompt for the model to self-correct
+            # The error string embeds the failed JSON completion, which is full of
+            # `{` / `}`. ChatPromptTemplate.from_template parses its input as an
+            # f-string template, so those raw braces blow up with "unmatched '{' in
+            # format spec" — turning a RECOVERABLE validation error into a hard
+            # crash that kills the whole extraction. Escape braces in the embedded
+            # error so they're treated as literals; the real placeholders
+            # ({ticker}/{source_text}) live only in prompt_template, untouched.
+            safe_err = err_str.replace("{", "{{").replace("}", "}}")
             retry_prompt = ChatPromptTemplate.from_template(
                 "The previous attempt failed validation with:\n"
-                f"{err_str}\n\nProduce a valid response.\n\n"
+                f"{safe_err}\n\nProduce a valid response.\n\n"
                 + prompt_template
             )
             chain = retry_prompt | structured_llm
