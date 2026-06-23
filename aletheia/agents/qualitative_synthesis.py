@@ -313,12 +313,20 @@ YOUR TASKS — narrative + boolean judgments + 0-3 scenarios
         - weak      = ROIC ≤ WACC  OR  substitution_pressure=high  OR
                       upstream_value_leak=True
         - uncertain = data insufficient (use sparingly)
+      ── BANKS / INSURERS / LENDERS: ROIC and gross margin do NOT apply
+      (no invested-capital base; "COGS" = interest expense) — ROIC will
+      read artificially below WACC and must NOT be used to call the bank
+      "weak", in strategic_position OR analysis_summary. Do NOT write
+      "ROIC metrics flag as weak" or similar. Judge market position on
+      bank-native evidence: ROE/ROA, scale & deposit-franchise moat,
+      market share, efficiency ratio, and funding-cost advantage.
 
       analysis_summary (MINIMUM 400 CHARS — usually 5-6 sentences):
       One paragraph synthesizing supplier power, buyer power,
       substitution, rivalry, AND overall position. Each Porter force
       must get at least one sentence with a specific claim. Generic
-      "well-positioned" summaries fail the floor.
+      "well-positioned" summaries fail the floor. (Banks: see the ROIC/
+      gross-margin caveat above — never cite ROIC as a weakness.)
 
 ═══ SECTION 3: STRATEGIC CONTEXT (output as `strategic_context`) ═══
 
