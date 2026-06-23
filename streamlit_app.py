@@ -14,6 +14,16 @@ Run (after starting the API):
 import math
 from typing import Any, Dict, List, Optional
 
+# Load .env so the GOOGLE_API_KEY is in os.environ BEFORE any in-process Stage-4
+# run. `run_add_ticker_pipeline` executes the LLM agents (qualitative_synthesis,
+# contrarian, thesis) IN THE STREAMLIT PROCESS via the Orchestrator — and
+# qualitative_synthesis short-circuits to "Mock — no API key or LLM failure" when
+# GOOGLE_API_KEY is absent. Without this, a web-app "run with Stage 4" silently
+# produced mock qualitative sections (the SoFi memo). api_main loads .env too; the
+# Streamlit process did not.
+from dotenv import load_dotenv
+load_dotenv()
+
 import httpx
 import streamlit as st
 import plotly.graph_objects as go
