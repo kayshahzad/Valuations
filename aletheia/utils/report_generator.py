@@ -158,7 +158,7 @@ class ReportGenerator:
         + self._render_business_analysis(business_analysis)
         + self._render_historical_fundamentals(metrics)
         + self._render_economic_engine(econ)
-        + self._render_financial_engine(fin),
+        + self._render_financial_engine(fin, bool(metrics.get("is_financial"))),
         gap="market share, TAM, contracts, unit economics pending structured "
             "extraction (bottom-up Phases 2-3)")}
     {self._section(5,
@@ -356,8 +356,33 @@ class ReportGenerator:
             "\n---\n",
         ]
 
-        # Fundamentals
-        lines += [
+        # Fundamentals. Financials guard (CF-R21): EBITDA/FCF/NOPAT/Net-Debt/ROIC/
+        # industrial margins are meaningless for a bank — show only the lines that
+        # translate. Bank signal = the convergent set is present in phase2.
+        _is_fin = bool((p2.get("bank_valuation_methods") or {}).get("available"))
+        if _is_fin:
+            lines += [
+                "## 6. 💹 Financial Analysis (Phase 1 Cleaned)",
+                "### Core P&L (TTM)",
+                "| Line Item | Value |",
+                "| :--- | :--- |",
+                f"| Total revenue | {self._fmt_bn(cf.get('revenue_bn'))} |",
+                f"| Net income | {self._fmt_bn(cf.get('net_income_bn') or cf.get('ni_bn'))} |",
+                f"| SBC | {self._fmt_bn(cf.get('sbc_bn'))} |",
+                "",
+                "### Returns",
+                "| Ratio | Value |",
+                "| :--- | :--- |",
+                f"| ROE | {self._fmt_pct(self._to_float(ratios.get('roe')))} |",
+                "",
+                "> EBITDA, FCF, NOPAT, Net Debt, Invested Capital, ROIC and industrial "
+                "margins are omitted — not meaningful for a bank (deposits aren't debt; "
+                "no unlevered FCF or invested-capital base). See the bank "
+                "operating-metrics panel (NII / net revenue / NIM / efficiency / ROA).",
+                "\n---\n",
+            ]
+        else:
+            lines += [
             "## 6. 💹 Financial Analysis (Phase 1 Cleaned)",
             "### Core P&L (TTM)",
             "| Line Item | Value |",
@@ -1253,9 +1278,46 @@ class ReportGenerator:
   </div>
 </div>""".strip()
 
-    def _render_financial_engine(self, fin: Dict[str, Any]) -> str:
+    def _render_financial_engine(self, fin: Dict[str, Any],
+                                 is_financial: bool = False) -> str:
         cf     = (fin.get("clean_financials") or {})
         ratios = fin.get("ratios") or {}
+
+        # Financials guard (CF-R21): EBITDA / FCF / NOPAT / Net Debt / Invested
+        # Capital / industrial margins / ROIC are all meaningless on a deposit-funded
+        # balance sheet (Net Debt is negative from deposits; FCF/ROIC are garbage).
+        # For a bank, show only the lines that translate — revenue, net income, SBC,
+        # ROE — and point to the bank operating-metrics panel for the rest.
+        if is_financial:
+            return f"""
+<h3>💹 Financial Translation (Phase 1 Cleaned)</h3>
+<div class="card">
+  <div class="grid-3">
+    <div>
+      <h4>Core P&L (TTM)</h4>
+      <table class="table-styled">
+        <tr><td>Total revenue</td><td>{self._fmt_bn(cf.get('revenue_bn'))}</td></tr>
+        <tr><td>Net income</td><td>{self._fmt_bn(cf.get('net_income_bn') or cf.get('ni_bn'))}</td></tr>
+        <tr><td>SBC</td><td>{self._fmt_bn(cf.get('sbc_bn'))}</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Returns</h4>
+      <table class="table-styled">
+        <tr><td>ROE</td><td>{self._fmt_pct(self._to_float(ratios.get('roe')))}</td></tr>
+      </table>
+    </div>
+    <div>
+      <h4>Not applicable (bank)</h4>
+      <div style="font-size:11.5px;color:#71717a;line-height:1.5">
+        EBITDA, FCF, NOPAT, Net Debt, Invested Capital, ROIC and industrial
+        margins are omitted — deposits aren't debt and there is no unlevered FCF
+        or invested-capital base. See the bank operating-metrics panel
+        (NII / net revenue / NIM / efficiency / ROA).
+      </div>
+    </div>
+  </div>
+</div>""".strip()
 
         # FIX: gross_margin_pct is stored as % (e.g. 18.0), not decimal.
         # _fmt_ratio_pct handles this correctly — divides by 100 before formatting.
@@ -2880,19 +2942,37 @@ class ReportGenerator:
             cells = "".join(f"<td>{fmt(r.get(key))}</td>" for r in rows)
             return f"<tr><td><b>{label}</b></td>{cells}</tr>"
 
+        # Financials guard (CF-R21): EBITDA, FCF and the industrial margins are
+        # meaningless on a deposit-funded balance sheet — the FCF row literally
+        # prints balance-sheet flows swinging to −$42B, contradicting §6 ("banks
+        # have no FCF"). Suppress those rows for a bank; keep revenue / net income /
+        # EPS / shares, and point to the bank operating-metrics panel (NII / net
+        # revenue / NIM / efficiency / ROA) for the bank-appropriate history.
+        is_financial = bool((metrics or {}).get("is_financial"))
+
         body = []
         body.append(line("Revenue",        "revenue_bn",     lambda v: self._fmt_bn_or_dash(v)))
-        body.append(line("EBITDA",         "ebitda_bn",      lambda v: self._fmt_bn_or_dash(v)))
-        body.append(line("Operating Inc.", "op_income_bn",   lambda v: self._fmt_bn_or_dash(v)))
-        body.append(line("FCF",            "fcf_bn",         lambda v: self._fmt_bn_or_dash(v)))
+        if not is_financial:
+            body.append(line("EBITDA",         "ebitda_bn",      lambda v: self._fmt_bn_or_dash(v)))
+            body.append(line("Operating Inc.", "op_income_bn",   lambda v: self._fmt_bn_or_dash(v)))
+            body.append(line("FCF",            "fcf_bn",         lambda v: self._fmt_bn_or_dash(v)))
         body.append(line("Net Income",     "net_income_bn",  lambda v: self._fmt_bn_or_dash(v)))
         body.append(line("Diluted EPS",    "eps_diluted",    lambda v: f"${self._fmt_num_or_dash(v, 2)}" if v else "—"))
         body.append(line("Diluted Shares (M)", "shares_diluted_m",
                          lambda v: self._fmt_num_or_dash(v, 0)))
-        body.append(line("Gross Margin",   "gross_margin",   lambda v: self._fmt_pct_or_dash(v)))
-        body.append(line("EBIT Margin",    "ebit_margin",    lambda v: self._fmt_pct_or_dash(v)))
-        body.append(line("EBITDA Margin",  "ebitda_margin",  lambda v: self._fmt_pct_or_dash(v)))
-        body.append(line("FCF Margin",     "fcf_margin",     lambda v: self._fmt_pct_or_dash(v)))
+        if not is_financial:
+            body.append(line("Gross Margin",   "gross_margin",   lambda v: self._fmt_pct_or_dash(v)))
+            body.append(line("EBIT Margin",    "ebit_margin",    lambda v: self._fmt_pct_or_dash(v)))
+            body.append(line("EBITDA Margin",  "ebitda_margin",  lambda v: self._fmt_pct_or_dash(v)))
+            body.append(line("FCF Margin",     "fcf_margin",     lambda v: self._fmt_pct_or_dash(v)))
+
+        na_note = (
+            "EBITDA, FCF and industrial margins are omitted — not meaningful for a "
+            "bank (deposits aren't debt; there is no unlevered FCF). See the bank "
+            "operating-metrics panel for NII / net revenue / NIM / efficiency / ROA."
+            if is_financial else
+            "Pulled from cleaned FY rows in DuckDB at report-generation time. Margins "
+            "are computed from the same rows (no separate ratios cache).")
 
         return f"""
 <div class="card" style="page-break-inside:avoid">
@@ -2902,8 +2982,7 @@ class ReportGenerator:
     <tbody>{"".join(body)}</tbody>
   </table>
   <div style="font-size:11.5px;color:#71717a;margin-top:8px;line-height:1.5">
-    Pulled from cleaned FY rows in DuckDB at report-generation time. Margins
-    are computed from the same rows (no separate ratios cache).
+    {na_note}
   </div>
 </div>""".strip()
 

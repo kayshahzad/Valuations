@@ -81,10 +81,13 @@ def _p2_score(roic, wacc, fcf_margin, net_debt_bn, ebitda_bn, data_quality,
             score = 2; reasons.append(f"ROE {roe:.1%} — below-average financial returns")
         else:
             score = 1; reasons.append(f"ROE {roe:.1%} — weak financial returns")
-        # Data quality adjustment
-        if data_quality is not None and data_quality < 0.80:
-            score = max(1, score - 1)
-            reasons.append(f"⚠ Data quality {data_quality:.2f} — score reduced")
+        # NO industrial data-quality haircut for financials. overall_quality_score
+        # measures INDUSTRIAL-field completeness (NormalizedEBIT/NOPAT/FCF + cleaning
+        # warnings about absent industrial lines) — a bank legitimately lacks those,
+        # so the score reads ~0.00 and would spuriously dock Health by 1 even when
+        # the bank's core data (NI, equity → ROE) is complete and correct. The
+        # presence of a sensible ROE IS the quality signal here. (CET1/RWA gaps are
+        # surfaced separately in bank_metrics, not via this score.)
         return max(1, min(5, score)), reasons
 
     score = 0.0

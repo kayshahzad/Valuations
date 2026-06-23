@@ -543,6 +543,7 @@ def build_financial_metrics(
             latest_fy_row = fy.iloc[-1]
 
     return {
+        "is_financial":    is_financial,
         "historical":      _historical_rows(df),
         "ratios":          _compute_ratios(df, market_cap, current_price, is_financial),
         "dcf_assumptions": _dcf_assumptions_from_result(dcf_result),

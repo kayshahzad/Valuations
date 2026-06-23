@@ -33,8 +33,11 @@ def test_jpm_scores_on_bank_pillars_not_zeroed():
     assert res.raw_total >= 12, res.raw_total
     # P1 reads the moat engine; P2 reads ROE (financial branch), NOT FCF margin.
     assert res.p1_moat.score == 5                      # moat 9.0 → top
-    assert res.p2_health.score >= 3
+    # ROE 16.2% → exceptional (5); the industrial overall_quality_score≈0.0 must NOT
+    # spuriously haircut Health for a bank whose core data (ROE) is complete.
+    assert res.p2_health.score == 5
     assert "ROE" in (res.p2_health.reasons or [""])[0]  # ROE branch, not FCF/ROIC
+    assert not any("Data quality" in r for r in (res.p2_health.reasons or []))
 
 
 def test_sofi_financial_services_label_still_scores():
