@@ -1368,6 +1368,23 @@ class ReportGenerator:
         cap_wacc = self._to_float(cap.get('wacc'))
         wacc_display = p2_wacc if p2_wacc else cap_wacc
 
+        # Cost of Equity must reconcile with the valuation (CF-R27). For an
+        # equity-funded SPECIALIZED engine (bank/DDM/REIT…) the operative rate is
+        # the engine Ke (= phase2.wacc), which may carry an analyst override —
+        # cap.cost_of_equity here is the raw CAPM and would contradict §7 + the IV
+        # (e.g. SoFi capital-stack 13.4% vs operative 10.5%). Lead with operative.
+        _engine = ((p2 or {}).get("engine") or "").lower()
+        _capm_ke = self._to_float(cap.get('cost_of_equity'))
+        if _engine and _engine != "fcff" and p2_wacc is not None:
+            _op_ke = p2_wacc
+            _ke_cell = (
+                f"{self._fmt_pct(_op_ke)}"
+                + (f" <span style='color:#71717a;font-size:11px'>(operative; "
+                   f"CAPM {self._fmt_pct(_capm_ke)})</span>"
+                   if _capm_ke is not None and abs(_op_ke - _capm_ke) > 0.0025 else ""))
+        else:
+            _ke_cell = self._fmt_pct(_capm_ke)
+
         return f"""
 <h3>🛡️ Capital Structure & Risk</h3>
 <div class="grid-2">
@@ -1375,7 +1392,7 @@ class ReportGenerator:
     <h4>💰 Capital Stack</h4>
     <table class="table-styled">
       <tr><td>WACC</td><td>{self._fmt_pct(wacc_display)}</td></tr>
-      <tr><td>Cost of Equity</td><td>{self._fmt_pct(self._to_float(cap.get('cost_of_equity')))}</td></tr>
+      <tr><td>Cost of Equity</td><td>{_ke_cell}</td></tr>
       <tr><td>Beta</td><td>{self._fmt_num(self._to_float(cap.get('beta')), 2)}</td></tr>
     </table>
     <h4 style="margin-top:12px">⚠️ Liquidity</h4>
@@ -3164,19 +3181,42 @@ class ReportGenerator:
         rf  = wb.get("risk_free_rate")
         beta = wb.get("beta")
         erp  = wb.get("equity_risk_premium")
-        ke   = wb.get("cost_of_equity")
+        ke   = wb.get("cost_of_equity")            # OPERATIVE Ke (used by the IV)
+        capm_ke = wb.get("capm_cost_of_equity")
+        override_applied = bool(wb.get("cost_of_equity_override_applied"))
         wacc = wb.get("wacc")
         kd_at = wb.get("cost_of_debt_aftertax")
         we    = wb.get("weight_equity")
         wd    = wb.get("weight_debt")
 
-        ke_formula = (
-            f'Ke = Rf <b>{self._fmt_pct_or_dash(rf, 2)}</b> '
-            f'+ β <b>{self._fmt_num_or_dash(beta, 2)}</b> '
-            f'× ERP <b>{self._fmt_pct_or_dash(erp, 2)}</b> '
-            f'= <span style="color:#27ae60;font-weight:700">'
-            f'{self._fmt_pct_or_dash(ke, 2)}</span>'
-        )
+        if override_applied and capm_ke is not None:
+            # §7 must reconcile with the valuation: the CAPM β·ERP walk lands at the
+            # raw CAPM rate, then an explicit analyst override sets the OPERATIVE Ke
+            # the IV discounts at. Showing only the CAPM (the old behaviour) made the
+            # section contradict the valuation (e.g. SoFi CAPM 13.4% vs IV Ke 10.5%).
+            ke_formula = (
+                f'CAPM = Rf <b>{self._fmt_pct_or_dash(rf, 2)}</b> '
+                f'+ β <b>{self._fmt_num_or_dash(beta, 2)}</b> '
+                f'× ERP <b>{self._fmt_pct_or_dash(erp, 2)}</b> '
+                f'= <b>{self._fmt_pct_or_dash(capm_ke, 2)}</b>'
+                f'<div style="margin-top:6px;">→ analyst override → '
+                f'<b>operative Ke</b> = <span style="color:#27ae60;font-weight:700">'
+                f'{self._fmt_pct_or_dash(ke, 2)}</span>'
+                f'<span style="color:#b45309;"> (the rate the valuation uses)</span></div>'
+                f'<div style="margin-top:4px;font-family:inherit;font-size:11.5px;'
+                f'color:#71717a;line-height:1.5;">CAPM β {self._fmt_num_or_dash(beta,2)} '
+                f'is not applied directly — see the discount-rate rationale (analyst '
+                f'floor / beta de-meaning) in the engine inputs; §7 reports the '
+                f'operative Ke so it reconciles with the intrinsic value.</div>'
+            )
+        else:
+            ke_formula = (
+                f'Ke = Rf <b>{self._fmt_pct_or_dash(rf, 2)}</b> '
+                f'+ β <b>{self._fmt_num_or_dash(beta, 2)}</b> '
+                f'× ERP <b>{self._fmt_pct_or_dash(erp, 2)}</b> '
+                f'= <span style="color:#27ae60;font-weight:700">'
+                f'{self._fmt_pct_or_dash(ke, 2)}</span>'
+            )
 
         wacc_block = (
             f'<div style="margin-top:12px;font-size:13px;line-height:1.7;">'

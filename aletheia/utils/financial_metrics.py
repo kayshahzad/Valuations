@@ -492,11 +492,37 @@ def _wacc_build_from_result(
             weight_equity = market_cap / ev_total
             weight_debt = weight_debt_basis / ev_total
 
+    # ── Operative Ke reconciliation (CF-R27) ─────────────────────────────────
+    # `ke` above is the raw CAPM (rf + β·ERP). For an equity-funded SPECIALIZED
+    # engine (bank/DDM/REIT…) the rate the valuation ACTUALLY discounts at is the
+    # engine's cost of equity, which can carry a deliberate analyst OVERRIDE
+    # (JPM 10% floor; SoFi 10.5% de-meaning the meme β 2.10). Showing the raw CAPM
+    # here made §7 contradict itself (Ke 13.39% but WACC 10.5%) AND contradict the
+    # valuation. Lead with the OPERATIVE rate; keep CAPM as the labelled derivation.
+    engine = (p2.get("engine") or "").lower()
+    snap = p2.get("specialized_inputs") or {}
+    capm_ke = ke
+    operative_ke = capm_ke
+    override_applied = False
+    if engine and engine != "fcff":
+        eng_ke = (_f(snap.get("cost_of_equity"))
+                  or _f(((p2.get("bank_valuation_methods") or {}).get("inputs") or {}).get("ke"))
+                  or wacc)
+        if eng_ke is not None:
+            operative_ke = eng_ke
+            override_applied = bool(snap.get("ke_override_used")) or (
+                capm_ke is not None and abs(operative_ke - capm_ke) > 0.0025)
+
     return {
         "risk_free_rate":      rf,
         "beta":                beta,
         "equity_risk_premium": erp,
-        "cost_of_equity":      ke,
+        # Operative cost of equity — the rate the valuation discounts at, so §7
+        # reconciles with the IV. Equals CAPM unless an analyst override is in force.
+        "cost_of_equity":      operative_ke,
+        "capm_cost_of_equity": capm_ke,
+        "cost_of_equity_override_applied": override_applied,
+        "cost_of_equity_basis": ("analyst override" if override_applied else "CAPM"),
         "wacc":                wacc,
         "cost_of_debt_pretax":   kd_pretax,
         "cost_of_debt_aftertax": kd_aftertax,
