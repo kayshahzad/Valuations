@@ -2301,6 +2301,40 @@ class ReportGenerator:
                    "ROE-spread compounding on retained book." if ddm_iv is not None
                    else ".") + "</p>")
 
+        # Ke band diagnostic (CF-R28) — the 3-point Ke spread (pure-sector /
+        # floored-own / raw-own) so the analyst sees how much of the valuation is
+        # hostage to the beta assumption. Operative Ke unchanged; this is a band.
+        kb = bvm.get("ke_band") or {}
+        kb_block = ""
+        if kb and kb.get("ke_floored") is not None:
+            binds = ("⚠ cap binds — own β capped to the band"
+                     if kb.get("cap_binds") else
+                     "floor binds — own β raised to sector"
+                     if kb.get("floor_binds") else "neither binds (own β inside band)")
+            op = self._to_float(kb.get("operative_ke"))
+            kb_block = (
+                "<div style='margin-top:10px;font-size:12px;color:#444;"
+                "background:#f8f8f8;border-left:3px solid #cbd5e1;padding:8px 10px;"
+                "line-height:1.55'>"
+                "<strong>Cost-of-equity band</strong> (diagnostic — operative Ke "
+                "unchanged): own β "
+                f"{self._to_float(kb.get('raw_beta')):.2f} vs "
+                f"{kb.get('sector_name','sector')} β "
+                f"{self._to_float(kb.get('sector_beta')):.2f}; floor-and-cap band "
+                f"[β {self._to_float(kb.get('floor')):.2f}–"
+                f"{self._to_float(kb.get('cap')):.2f}], cap "
+                f"{self._to_float(kb.get('cap_multiple')):.2f}× sector → {binds}.<br>"
+                "<span style='color:#666'>Ke spread:</span> pure-sector "
+                f"<b>{self._to_float(kb.get('ke_sector'))*100:.1f}%</b> "
+                "<span style='color:#999'>(own β all noise)</span> · floored-band "
+                f"<b style='color:#0f766e'>{self._to_float(kb.get('ke_floored'))*100:.1f}%</b>"
+                " · raw-own "
+                f"<b>{self._to_float(kb.get('ke_raw'))*100:.1f}%</b> "
+                "<span style='color:#999'>(own β all real)</span>"
+                + (f" · operative <b>{op*100:.1f}%</b>" if op else "")
+                + ". The wider this spread, the more the IV is hostage to the beta "
+                "assumption.</div>")
+
         return (
             "<h3>Bank valuation — convergent set (residual income)</h3>"
             f"{headline_line}"
@@ -2316,7 +2350,7 @@ class ReportGenerator:
             f"{rows}</table>"
             f"<p style='margin-top:8px'><strong>Fair-value band {band_str}</strong> "
             "(justified-P/B floor → two-stage residual income).</p>"
-            f"{warn}{ge}{cd_note}{pg_note}{sp_note}{prov}")
+            f"{warn}{ge}{cd_note}{pg_note}{sp_note}{kb_block}{prov}")
 
     def _render_value_source_decomposition(self, p2: Dict[str, Any]) -> str:
         """Value Source Decomposition (spec §3): attribute expected return across

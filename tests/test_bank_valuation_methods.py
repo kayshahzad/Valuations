@@ -316,3 +316,31 @@ def test_bank_scenario_band_real_bear_not_zero():
     assert band["bear_roe"] < 0.163 < band["bull_roe"]
     # non-bank / unavailable → None
     assert bank_scenario_band(bvm=None, price=330.0) is None
+
+
+def test_bank_ke_band_floor_cap_and_three_points():
+    """CF-R28 Ke band: floor=sector β, cap=1.75×sector β; three Ke points; the cap
+    binds on a meme beta, the floor binds on a too-low beta, neither in between."""
+    from aletheia.tools.bank_valuation_methods import bank_ke_band
+    rf, erp, sec = 0.045, 0.0423, 0.85
+    # meme beta → cap binds
+    hi = bank_ke_band(rf=rf, erp=erp, raw_beta=2.10, sector_beta=sec, operative_ke=0.105)
+    assert hi["cap_binds"] and not hi["floor_binds"]
+    assert hi["beta_floored"] == pytest.approx(1.75 * sec)          # capped
+    assert hi["ke_sector"] < hi["ke_floored"] < hi["ke_raw"]        # 3-point spread ordered
+    # too-low beta → floor binds (raised to sector)
+    lo = bank_ke_band(rf=rf, erp=erp, raw_beta=0.62, sector_beta=sec)
+    assert lo["floor_binds"] and lo["beta_floored"] == pytest.approx(sec)
+    assert lo["ke_floored"] == pytest.approx(lo["ke_sector"])       # floored == sector
+    # in-band beta → neither binds, floored == raw
+    mid = bank_ke_band(rf=rf, erp=erp, raw_beta=1.23, sector_beta=sec)
+    assert not mid["cap_binds"] and not mid["floor_binds"]
+    assert mid["ke_floored"] == pytest.approx(mid["ke_raw"])
+
+
+def test_bank_sector_beta_maps_industry_to_damodaran():
+    from aletheia.tools.bank_valuation_methods import bank_sector_beta
+    b_jpm, n_jpm = bank_sector_beta("Financials", "Banks")
+    assert n_jpm == "Bank (Money Center)" and b_jpm == pytest.approx(0.76)
+    b_sofi, n_sofi = bank_sector_beta("Financial Services", "Financial - Credit Services")
+    assert "Non-bank" in n_sofi and b_sofi == pytest.approx(0.85)

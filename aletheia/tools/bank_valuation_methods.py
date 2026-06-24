@@ -301,6 +301,23 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
             out["notes"] = "no cost of equity available (engine Ke / phase2 wacc both absent)"
             return out
 
+        # ── Ke band diagnostic (CF-R28) — floor-and-cap the own beta to a Damodaran
+        # sector band; show the 3-point Ke spread. Does NOT change the operative Ke.
+        ke_band = None
+        try:
+            _snap = getattr(valuation_result, "inputs_snapshot", None) or {}
+            _raw_beta = _snap.get("beta")
+            _rf = _snap.get("risk_free_rate")
+            _erp = _snap.get("mrp")
+            _sector_beta, _sector_name = bank_sector_beta(sector,
+                                                          getattr(cls, "industry", "") or "")
+            ke_band = bank_ke_band(rf=_rf, erp=_erp, raw_beta=_raw_beta,
+                                   sector_beta=_sector_beta, operative_ke=ke)
+            if ke_band is not None:
+                ke_band["sector_name"] = _sector_name
+        except Exception:
+            ke_band = None
+
         # Deterministic terminal assumptions (overridable via config later).
         explicit_years = _DEFAULT_EXPLICIT_YEARS
         terminal_growth = _DEFAULT_TERMINAL_GROWTH
@@ -447,6 +464,7 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
         out.update({
             "available": True,
             "basis": "deterministic (ROE/BVPS/payout/Ke derived from financials)",
+            "ke_band": ke_band,
             "inputs": {
                 "bvps0": bvps0,
                 "roe_normalized": roe_norm,
@@ -559,6 +577,74 @@ def bank_headline_override(*, ddm_ips, price, bvm) -> Optional[dict]:
     }
 
 
+def bank_sector_beta(sector: str = "", industry: str = "") -> tuple[Optional[float], Optional[str]]:
+    """Map a financial filer's industry → Damodaran financial-SECTOR levered beta
+    (+ the sector label), by keyword. The ticker industry strings ("Banks",
+    "Financial - Credit Services", "Payments & Cards", "Insurance - Diversified")
+    don't match Damodaran's sector names, so we route by keyword to the right row
+    in damodaran_industry_betas.csv. Returns (beta, sector_name) or (None, name)."""
+    from aletheia.data.historical_macro import get_industry_beta
+    i = (industry or "").lower()
+    if "regional" in i:
+        name = "Banks (Regional)"
+    elif "brokerage" in i or "capital market" in i or "investment bank" in i:
+        name = "Brokerage & Investment Banking"
+    elif "asset management" in i or "asset mgmt" in i:
+        name = "Investments & Asset Management"
+    elif "insurance" in i and ("diversif" in i or "reinsur" in i):
+        name = "Insurance (Diversified)"
+    elif "insurance" in i:
+        name = "Insurance (General)"
+    elif "bank" in i:
+        name = "Bank (Money Center)"        # default deposit-taker
+    elif any(k in i for k in ("credit", "consumer financ", "lending", "payment", "mortgage")):
+        name = "Financial Svcs. (Non-bank & Insurance)"   # consumer-finance / fintech lender
+    else:
+        name = "Financial Svcs. (Non-bank & Insurance)"   # broad financial fallback
+    return get_industry_beta(name), name
+
+
+def bank_ke_band(*, rf, erp, raw_beta, sector_beta, operative_ke=None,
+                 cap_multiple=1.75) -> Optional[dict]:
+    """Floor-and-cap Ke band — a DIAGNOSTIC (CF-R28), does NOT change the operative Ke.
+
+    A bank's own regression beta can be a volatility/regime artifact (SoFi's 2.10),
+    so bound it to a Damodaran sector band: floor = sector_beta, cap =
+    cap_multiple × sector_beta. Report THREE Ke points — numbers, not a verdict — so
+    the analyst sees how much of the valuation is hostage to the beta assumption:
+
+      ke_sector  = rf + sector_beta·ERP                 (own beta entirely noise)
+      ke_floored = rf + clamp(raw, floor, cap)·ERP       (the band's pick)
+      ke_raw     = rf + raw_beta·ERP                     (own beta entirely real)
+
+    For SoFi: ~8% / ~10.5% / 13.4%. The headline still uses the configured operative
+    Ke; this just shows the band + whether the floor or cap binds.
+    """
+    if rf is None or erp is None or raw_beta is None or sector_beta is None:
+        return None
+    floor = sector_beta
+    cap = cap_multiple * sector_beta
+    beta_floored = max(floor, min(raw_beta, cap))
+
+    def _ke(b):
+        return rf + b * erp
+
+    return {
+        "raw_beta": raw_beta,
+        "sector_beta": sector_beta,
+        "cap_multiple": cap_multiple,
+        "floor": floor,
+        "cap": cap,
+        "beta_floored": beta_floored,
+        "floor_binds": raw_beta < floor,
+        "cap_binds": raw_beta > cap,
+        "ke_sector": _ke(sector_beta),     # pure sector beta — "if 2.10 is all noise"
+        "ke_floored": _ke(beta_floored),   # floored-and-capped own beta — the band
+        "ke_raw": _ke(raw_beta),           # raw own beta — "if 2.10 is all real"
+        "operative_ke": (float(operative_ke) if operative_ke is not None else None),
+    }
+
+
 def bank_scenario_band(*, bvm, price, bear_roe_mult=0.70, bull_roe_mult=1.10) -> Optional[dict]:
     """Bear / bull for a bank by flexing NORMALIZED ROE — the dominant lever.
 
@@ -622,5 +708,7 @@ __all__ = [
     "build_bank_valuation_methods",
     "bank_headline_override",
     "bank_scenario_band",
+    "bank_sector_beta",
+    "bank_ke_band",
     "BankConvergence",
 ]
