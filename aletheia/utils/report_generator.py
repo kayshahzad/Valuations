@@ -150,8 +150,11 @@ class ReportGenerator:
         + self._render_cross_source(current_state, wacc_analysis),
         gap="peer set is the coarse sector table (e.g. LDOS→'Technology')")}
     {self._section(3, self._render_current_state(current_state),
-        gap="only Y1 growth reconciled; margin/capex, pattern detection, "
-            "event→assumption link not yet built")}
+        gap=("ROE / asset-growth / Ke-vs-sector-CoC reconciled; consensus loan & "
+             "deposit-growth feeds and event→assumption link not yet built"
+             if metrics.get("is_financial") else
+             "only Y1 growth reconciled; margin/capex, pattern detection, "
+             "event→assumption link not yet built"))}
     {self._section(4,
         self._render_business_snapshot(bm)
         + self._render_saas_metrics(p2)

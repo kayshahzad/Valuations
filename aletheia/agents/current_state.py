@@ -516,10 +516,93 @@ def _analyst_sentiment(ticker: str, current_price: Optional[float] = None) -> Di
     return out
 
 
+def _bank_reconciliation(bvm: Optional[Dict[str, Any]]) -> tuple:
+    """Bank-native current-state reconciliation (CF-R29). The residual-income engine
+    has no revenue-growth assumption, so reconcile the actual bank LEVERS against a
+    business-grounded reference: normalized ROE vs trailing ROE, assumed asset growth
+    vs internally-fundable growth (ROE×retention), and the operative Ke vs the
+    sector cost-of-capital band. Returns (rows, flags) in the same shape the FCFF
+    path produces, so the §3 renderer works unchanged."""
+    rows: List[Dict[str, Any]] = []
+    flags: List[CurrentStateFlag] = []
+    if not bvm or not bvm.get("available"):
+        return rows, flags
+    inp = bvm.get("inputs") or {}
+    roe_n = inp.get("roe_normalized")
+    roe_t = inp.get("roe_latest")
+    ke = inp.get("ke")
+    retention = inp.get("retention")
+    kb = bvm.get("ke_band") or {}
+    fcfe = (bvm.get("methods") or {}).get("fcfe_bank") or {}
+
+    # 1. Normalized ROE vs latest trailing ROE — dangerous when the engine assumes
+    #    a return level the bank has NOT yet earned (the SoFi 8%-vs-~5% case).
+    if isinstance(roe_n, (int, float)) and isinstance(roe_t, (int, float)):
+        d = roe_n - roe_t
+        rec = {"assumption": "Normalized ROE", "engine": roe_n, "signal": roe_t,
+               "signal_label": "latest derived ROE", "delta": d}
+        ad = abs(d)
+        if d > 0:
+            sev = HIGH if ad > 0.04 else MEDIUM if ad > 0.02 else NONE
+            if sev != NONE:
+                rec["recommendation"] = (
+                    f"Verify path to {roe_n*100:.1f}% (trailing only {roe_t*100:.1f}%)")
+                flags.append(CurrentStateFlag(
+                    sev, "roe_vs_trailing",
+                    f"Normalized ROE ({roe_n*100:.1f}%) exceeds latest trailing ROE "
+                    f"({roe_t*100:.1f}%) by {ad*100:.1f}pp — the valuation assumes a "
+                    "return the bank has not yet earned.",
+                    recommendation=rec.get("recommendation", ""), key="roe_vs_trailing"))
+        rows.append(rec)
+
+    # 2. Assumed asset growth vs internally-fundable (ROE×retention) — the capital-
+    #    deficit check: growth above fundable ⇒ external-capital dependent. Use the
+    #    RAW normalized asset growth (pre-FCFE clamp), so the deficit isn't hidden.
+    recn = bvm.get("reconciliation") or {}
+    ag = recn.get("normalized_asset_growth")
+    if ag is None:
+        ag = fcfe.get("asset_growth")
+    if isinstance(ag, (int, float)) and isinstance(roe_n, (int, float)) and isinstance(retention, (int, float)):
+        fundable = roe_n * retention
+        d = ag - fundable
+        rec = {"assumption": "Asset growth", "engine": ag, "signal": fundable,
+               "signal_label": "ROE-fundable (ROE×retention)", "delta": d}
+        if d > 0.005:
+            sev = HIGH if d > 0.05 else MEDIUM
+            rec["recommendation"] = "External capital required (growth > retained earnings)"
+            flags.append(CurrentStateFlag(
+                sev, "capital_deficit",
+                f"Assumed asset growth ({ag*100:.0f}%) outpaces what {roe_n*100:.0f}% ROE "
+                f"funds ({fundable*100:.0f}%) — external-capital dependent.",
+                recommendation=rec["recommendation"], key="capital_deficit"))
+        rows.append(rec)
+
+    # 3. Operative Ke vs sector cost-of-capital band — dangerous when Ke is BELOW the
+    #    sector CoC (the bank is discounted cheaper than its sector can finance).
+    coc = kb.get("sector_cost_of_capital")
+    if isinstance(ke, (int, float)) and isinstance(coc, (int, float)):
+        d = ke - coc
+        rec = {"assumption": "Cost of equity (Ke)", "engine": ke, "signal": coc,
+               "signal_label": f"sector cost of capital [{kb.get('sector_name','')}]".rstrip(" []"),
+               "delta": d}
+        if d < -0.0025:
+            ad = abs(d)
+            sev = MEDIUM if ad > 0.01 else LOW
+            rec["recommendation"] = f"Ke below sector CoC {coc*100:.1f}% — floor would lift it"
+            flags.append(CurrentStateFlag(
+                sev, "ke_below_sector_coc",
+                f"Operative Ke ({ke*100:.1f}%) is below the sector cost of capital "
+                f"({coc*100:.1f}%) — discounted cheaper than the sector can finance.",
+                recommendation=rec["recommendation"], key="ke_below_sector_coc"))
+        rows.append(rec)
+    return rows, flags
+
+
 def build_current_state(
     ticker: str,
     *,
     engine_y1_growth: Optional[float],
+    bank_valuation_methods: Optional[Dict[str, Any]] = None,
     latest_fy: Optional[int] = None,
     latest_actual_rev: Optional[float] = None,
     sector: str = "",
@@ -589,6 +672,15 @@ def build_current_state(
                 key="growth_vs_consensus",
             ))
         res.reconciliation.append(rec)
+
+    # ── Bank-native reconciliation (CF-R29) ─────────────────────────────
+    # Specialized bank engines have no Y1 revenue-growth assumption, so the FCFF
+    # check above produces nothing. Reconcile the actual bank levers (ROE, asset
+    # growth, Ke vs sector-CoC band) instead, so §3 is meaningful rather than empty.
+    if not res.reconciliation and bank_valuation_methods is not None:
+        _bank_rows, _bank_flags = _bank_reconciliation(bank_valuation_methods)
+        res.reconciliation.extend(_bank_rows)
+        res.flags.extend(_bank_flags)
 
     # ── Event-driven flags (Source 2) ───────────────────────────────────
     # Only ADVERSE material events raise risk flags (the dangerous direction).
@@ -699,6 +791,21 @@ def compose_current_state(ticker: str) -> Optional[Dict[str, Any]]:
         base = getattr(result, "base", None) if result else None
         eng_y1 = getattr(getattr(base, "assumptions", None),
                          "revenue_cagr_y1_5", None) if base else None
+
+        # Bank-native reconciliation (CF-R29): for a specialized engine (no FCFF
+        # eng_y1) run the router + convergent set so §3 reconciles the bank levers.
+        bvm = None
+        if eng_y1 is None:
+            try:
+                from aletheia.tools.valuation_router import ValuationRouter
+                from aletheia.tools.bank_valuation_methods import (
+                    build_bank_valuation_methods,
+                )
+                _v = ValuationRouter().execute(calc)
+                _bm = build_bank_valuation_methods(calc, _v, {"engine": _v.engine})
+                bvm = _bm if _bm.get("available") else None
+            except Exception:
+                bvm = None
         fy = ((getattr(result, "fy_fiscal_year", None)
                or getattr(result, "fiscal_year", None)) if result else None)
         if fy is None:
@@ -734,6 +841,7 @@ def compose_current_state(ticker: str) -> Optional[Dict[str, Any]]:
 
         cs = build_current_state(
             ticker, engine_y1_growth=eng_y1,
+            bank_valuation_methods=bvm,
             latest_fy=int(fy) if fy else None,
             events=cached_events(ticker),
             multiple_decomposition=md,

@@ -357,3 +357,45 @@ class TestAnalystSentiment(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestBankReconciliation:
+    """CF-R29: bank-native §3 reconciliation (the RI engine has no revenue-growth
+    assumption, so reconcile ROE / asset growth / Ke-vs-sector-CoC instead)."""
+
+    def _bvm(self, *, roe_n=0.08, roe_t=0.053, ke=0.105, retention=1.0,
+             asset_g=0.15, coc=0.105, sector="Financial Svcs. (Non-bank & Insurance)"):
+        return {
+            "available": True,
+            "inputs": {"roe_normalized": roe_n, "roe_latest": roe_t, "ke": ke,
+                       "retention": retention},
+            "methods": {"fcfe_bank": {"asset_growth": min(asset_g, roe_n)}},
+            "reconciliation": {"normalized_asset_growth": asset_g, "capital_deficit": asset_g > roe_n},
+            "ke_band": {"sector_cost_of_capital": coc, "sector_name": sector},
+        }
+
+    def test_sofi_like_flags_roe_and_capital_deficit(self):
+        from aletheia.agents.current_state import _bank_reconciliation
+        rows, flags = _bank_reconciliation(self._bvm())
+        assert [r["assumption"] for r in rows] == [
+            "Normalized ROE", "Asset growth", "Cost of equity (Ke)"]
+        # ROE 8% > trailing 5.3% → MEDIUM; asset growth 15% > fundable 8% → HIGH
+        cats = {f.category: f.severity for f in flags}
+        assert cats.get("roe_vs_trailing") == "MEDIUM"
+        assert cats.get("capital_deficit") == "HIGH"
+        # asset-growth row uses the RAW normalized growth, not the FCFE clamp
+        ag_row = next(r for r in rows if r["assumption"] == "Asset growth")
+        assert ag_row["engine"] == 0.15
+
+    def test_aligned_bank_no_flags(self):
+        from aletheia.agents.current_state import _bank_reconciliation
+        # ROE ≈ trailing, asset growth self-funded, Ke ≥ sector CoC → no flags
+        rows, flags = _bank_reconciliation(
+            self._bvm(roe_n=0.163, roe_t=0.162, ke=0.105, retention=0.71,
+                      asset_g=0.075, coc=0.105))
+        assert len(rows) == 3 and not flags
+
+    def test_non_bank_bvm_yields_nothing(self):
+        from aletheia.agents.current_state import _bank_reconciliation
+        assert _bank_reconciliation(None) == ([], [])
+        assert _bank_reconciliation({"available": False}) == ([], [])

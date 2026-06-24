@@ -548,6 +548,7 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
                 "payout_vs_distributable": payout_gap,
                 "four_way_spread_pct": spread_4way,
                 "capital_deficit": capital_deficit,
+                "normalized_asset_growth": asset_growth,   # RAW (pre-FCFE clamp)
             },
             "convergence": {
                 "steady_state_identity": "constant ROE with g<Ke → RI ≡ "
