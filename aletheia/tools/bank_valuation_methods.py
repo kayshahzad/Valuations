@@ -306,13 +306,13 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
         ke_band = None
         try:
             _snap = getattr(valuation_result, "inputs_snapshot", None) or {}
-            _raw_beta = _snap.get("beta")
-            _rf = _snap.get("risk_free_rate")
-            _erp = _snap.get("mrp")
-            _sector_beta, _sector_name = bank_sector_beta(sector,
-                                                          getattr(cls, "industry", "") or "")
-            ke_band = bank_ke_band(rf=_rf, erp=_erp, raw_beta=_raw_beta,
-                                   sector_beta=_sector_beta, operative_ke=ke)
+            _industry = getattr(cls, "industry", "") or ""
+            _sector_beta, _sector_name = bank_sector_beta(sector, _industry, model)
+            _sector_coc, _ = bank_sector_cost_of_capital(sector, _industry, model)
+            ke_band = bank_ke_band(
+                rf=_snap.get("risk_free_rate"), erp=_snap.get("mrp"),
+                raw_beta=_snap.get("beta"), sector_beta=_sector_beta,
+                sector_coc=_sector_coc, operative_ke=ke)
             if ke_band is not None:
                 ke_band["sector_name"] = _sector_name
         except Exception:
@@ -341,6 +341,25 @@ def build_bank_valuation_methods(calc, valuation_result=None, p2=None) -> dict:
             explicit_years=explicit_years, terminal_roe=terminal_roe,
             terminal_growth=terminal_growth)
         near_term_g = ri["near_term_growth"]
+
+        # ΔIV audit (CF-R28 gate 2): what the HEADLINE RI would be at the proposed
+        # operative Ke (max(band, sector CoC)) vs the current operative Ke — so the
+        # first systematic run is auditable per bank ("which term won + ΔIV") before
+        # it goes live. Diagnostic only; the headline still uses `ke`.
+        if ke_band is not None and ke_band.get("proposed_ke") is not None:
+            try:
+                _pke = float(ke_band["proposed_ke"])
+                _ptg = max(0.0, min(terminal_growth, _pke - _MIN_KE_MINUS_G))
+                _ri_proposed = residual_income_value(
+                    bvps0=bvps0, roe=roe_norm, ke=_pke, retention=retention,
+                    explicit_years=explicit_years, terminal_roe=terminal_roe,
+                    terminal_growth=_ptg)["iv"]
+                ke_band["iv_at_operative_ke"] = ri["iv"]
+                ke_band["iv_at_proposed_ke"] = _ri_proposed
+                ke_band["iv_delta_pct"] = (
+                    (_ri_proposed / ri["iv"] - 1.0) if ri["iv"] else None)
+            except Exception:
+                pass
 
         jpb_mult = justified_pb(roe=terminal_roe, ke=ke, growth=terminal_growth)
         iv_jpb_steady = (jpb_mult * bvps0) if jpb_mult is not None else None
@@ -577,35 +596,58 @@ def bank_headline_override(*, ddm_ips, price, bvm) -> Optional[dict]:
     }
 
 
-def bank_sector_beta(sector: str = "", industry: str = "") -> tuple[Optional[float], Optional[str]]:
-    """Map a financial filer's industry → Damodaran financial-SECTOR levered beta
-    (+ the sector label), by keyword. The ticker industry strings ("Banks",
-    "Financial - Credit Services", "Payments & Cards", "Insurance - Diversified")
-    don't match Damodaran's sector names, so we route by keyword to the right row
-    in damodaran_industry_betas.csv. Returns (beta, sector_name) or (None, name)."""
-    from aletheia.data.historical_macro import get_industry_beta
+def _financial_sector_name(sector: str = "", industry: str = "",
+                           business_model: str = "") -> str:
+    """Route a financial filer → its Damodaran sector NAME, by (model, industry)
+    keyword. The business_model is the most reliable signal — embedded_value_required
+    IS the insurer/float engine (BRK-B is a 'Diversified' conglomerate whose industry
+    string carries no 'insurance' keyword, so it would otherwise mis-route to the
+    bank/non-bank-financial fallback and get flooded to a BANK reference)."""
     i = (industry or "").lower()
+    bm = (business_model or "").lower()
+    # Model-first: the embedded-value engine is insurance/float (BRK-B, MET-style).
+    if bm == "embedded_value_required":
+        return "Insurance (Diversified)"
+    if "insurance" in i and ("diversif" in i or "reinsur" in i):
+        return "Insurance (Diversified)"
+    if "insurance" in i:
+        return "Insurance (General)"
     if "regional" in i:
-        name = "Banks (Regional)"
-    elif "brokerage" in i or "capital market" in i or "investment bank" in i:
-        name = "Brokerage & Investment Banking"
-    elif "asset management" in i or "asset mgmt" in i:
-        name = "Investments & Asset Management"
-    elif "insurance" in i and ("diversif" in i or "reinsur" in i):
-        name = "Insurance (Diversified)"
-    elif "insurance" in i:
-        name = "Insurance (General)"
-    elif "bank" in i:
-        name = "Bank (Money Center)"        # default deposit-taker
-    elif any(k in i for k in ("credit", "consumer financ", "lending", "payment", "mortgage")):
-        name = "Financial Svcs. (Non-bank & Insurance)"   # consumer-finance / fintech lender
-    else:
-        name = "Financial Svcs. (Non-bank & Insurance)"   # broad financial fallback
+        return "Banks (Regional)"
+    if "brokerage" in i or "capital market" in i or "investment bank" in i:
+        return "Brokerage & Investment Banking"
+    if "asset management" in i or "asset mgmt" in i:
+        return "Investments & Asset Management"
+    if "bank" in i:
+        return "Bank (Money Center)"        # default deposit-taker
+    if any(k in i for k in ("credit", "consumer financ", "lending", "payment", "mortgage")):
+        return "Financial Svcs. (Non-bank & Insurance)"   # consumer-finance / fintech lender
+    return "Financial Svcs. (Non-bank & Insurance)"       # broad financial fallback
+
+
+def bank_sector_beta(sector: str = "", industry: str = "",
+                     business_model: str = "") -> tuple[Optional[float], Optional[str]]:
+    """Damodaran financial-SECTOR levered beta (+ label) for a filer, routed by
+    (model, industry) keyword via _financial_sector_name."""
+    from aletheia.data.historical_macro import get_industry_beta
+    name = _financial_sector_name(sector, industry, business_model)
     return get_industry_beta(name), name
 
 
+def bank_sector_cost_of_capital(sector: str = "", industry: str = "",
+                                business_model: str = "") -> tuple[Optional[float], Optional[str]]:
+    """Damodaran sector COST OF CAPITAL (+ label) for a financial filer — the
+    economic floor for the operative Ke ('no name should be valued as cheaper to
+    finance than its sector's real cost of capital'). Reference-derived + self-
+    updating with the annual Damodaran refresh; routes to the correct subtype so
+    an insurer/conglomerate (BRK-B) floors to the insurer CoC, not the bank CoC."""
+    from aletheia.data.historical_macro import get_sector_cost_of_capital
+    name = _financial_sector_name(sector, industry, business_model)
+    return get_sector_cost_of_capital(name), name
+
+
 def bank_ke_band(*, rf, erp, raw_beta, sector_beta, operative_ke=None,
-                 cap_multiple=1.75) -> Optional[dict]:
+                 sector_coc=None, cap_multiple=1.75) -> Optional[dict]:
     """Floor-and-cap Ke band — a DIAGNOSTIC (CF-R28), does NOT change the operative Ke.
 
     A bank's own regression beta can be a volatility/regime artifact (SoFi's 2.10),
@@ -629,6 +671,19 @@ def bank_ke_band(*, rf, erp, raw_beta, sector_beta, operative_ke=None,
     def _ke(b):
         return rf + b * erp
 
+    ke_floored = _ke(beta_floored)
+
+    # Two-term proposed operative Ke (the promotion rule, shown here as a DIAGNOSTIC):
+    #   proposed = max( floored-band Ke ,  sector cost of capital )
+    # Both reference-derived. The band caps meme betas (SoFi); the sector-CoC floor
+    # stops a low-β high-quality name (JPM/BRK-B) being valued cheaper to finance
+    # than its sector actually is. "which term won" is the audit signal.
+    proposed_ke = ke_floored
+    winning_term = "band"
+    if sector_coc is not None and sector_coc > ke_floored:
+        proposed_ke = sector_coc
+        winning_term = "sector_cost_of_capital"
+
     return {
         "raw_beta": raw_beta,
         "sector_beta": sector_beta,
@@ -639,8 +694,11 @@ def bank_ke_band(*, rf, erp, raw_beta, sector_beta, operative_ke=None,
         "floor_binds": raw_beta < floor,
         "cap_binds": raw_beta > cap,
         "ke_sector": _ke(sector_beta),     # pure sector beta — "if 2.10 is all noise"
-        "ke_floored": _ke(beta_floored),   # floored-and-capped own beta — the band
+        "ke_floored": ke_floored,          # floored-and-capped own beta — the band
         "ke_raw": _ke(raw_beta),           # raw own beta — "if 2.10 is all real"
+        "sector_cost_of_capital": (float(sector_coc) if sector_coc is not None else None),
+        "proposed_ke": proposed_ke,        # max(band, sector CoC) — the promotion rule
+        "winning_term": winning_term,      # "band" or "sector_cost_of_capital"
         "operative_ke": (float(operative_ke) if operative_ke is not None else None),
     }
 

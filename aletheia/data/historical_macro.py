@@ -196,6 +196,30 @@ def get_industry_beta(industry: Optional[str]) -> Optional[float]:
     return _INDUSTRY_BETAS.get(industry.strip().lower())
 
 
+_SECTOR_COC_CSV_PATH = _MACRO_DIR / "damodaran_sector_cost_of_capital.csv"
+_SECTOR_COC: Optional[dict] = None
+
+
+def get_sector_cost_of_capital(sector_name: Optional[str]) -> Optional[float]:
+    """Damodaran sector COST OF CAPITAL for ``sector_name`` (exact Damodaran sector
+    label, e.g. 'Bank (Money Center)'), from
+    valuation_data/macro/damodaran_sector_cost_of_capital.csv. Used as the economic
+    FLOOR on a financial filer's operative Ke. Returns None when absent."""
+    global _SECTOR_COC
+    if not sector_name:
+        return None
+    if _SECTOR_COC is None:
+        try:
+            df = pd.read_csv(_SECTOR_COC_CSV_PATH)
+            _SECTOR_COC = {
+                str(r["sector"]).strip().lower(): float(r["cost_of_capital"])
+                for _, r in df.iterrows()
+            }
+        except Exception:
+            _SECTOR_COC = {}
+    return _SECTOR_COC.get(sector_name.strip().lower())
+
+
 # ─────────────────────────────────────────────────────────────────────────
 # Historical beta
 # ─────────────────────────────────────────────────────────────────────────

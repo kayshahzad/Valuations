@@ -2333,7 +2333,18 @@ class ReportGenerator:
                 "<span style='color:#999'>(own β all real)</span>"
                 + (f" · operative <b>{op*100:.1f}%</b>" if op else "")
                 + ". The wider this spread, the more the IV is hostage to the beta "
-                "assumption.</div>")
+                "assumption."
+                + (
+                    "<br><span style='color:#666'>Proposed rule "
+                    "max(band, sector CoC):</span> sector cost of capital "
+                    f"<b>{self._to_float(kb.get('sector_cost_of_capital'))*100:.1f}%</b>"
+                    f" → <b>{kb.get('winning_term','band').replace('_',' ')}</b> wins → "
+                    f"proposed Ke <b>{self._to_float(kb.get('proposed_ke'))*100:.1f}%</b>"
+                    + (f" → headline IV <b>{self._to_float(kb.get('iv_delta_pct'))*100:+.1f}%</b> "
+                       "vs current (diagnostic — not yet applied)"
+                       if kb.get("iv_delta_pct") is not None else "")
+                    if kb.get("sector_cost_of_capital") is not None else "")
+                + "</div>")
 
         return (
             "<h3>Bank valuation — convergent set (residual income)</h3>"

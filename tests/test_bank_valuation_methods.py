@@ -338,6 +338,39 @@ def test_bank_ke_band_floor_cap_and_three_points():
     assert mid["ke_floored"] == pytest.approx(mid["ke_raw"])
 
 
+def test_bank_ke_band_two_term_max_proposed_ke():
+    """Proposed operative Ke = max(floored-band, sector cost of capital). The band
+    wins for a meme name (cap > CoC); the sector-CoC floor wins for a low-β quality
+    name (own-CAPM below the sector's real cost of capital)."""
+    from aletheia.tools.bank_valuation_methods import bank_ke_band
+    rf, erp = 0.045, 0.0423
+    # low-β quality bank: floored Ke (≈8.8%) below sector CoC 10.5% → floor wins
+    jpm = bank_ke_band(rf=rf, erp=erp, raw_beta=1.03, sector_beta=0.76,
+                       sector_coc=0.105)
+    assert jpm["winning_term"] == "sector_cost_of_capital"
+    assert jpm["proposed_ke"] == pytest.approx(0.105)
+    # meme bank: capped band (≈10.8%) above sector CoC 10.5% → band wins
+    sofi = bank_ke_band(rf=rf, erp=erp, raw_beta=2.10, sector_beta=0.85,
+                        sector_coc=0.105)
+    assert sofi["winning_term"] == "band"
+    assert sofi["proposed_ke"] == pytest.approx(sofi["ke_floored"])
+    assert sofi["proposed_ke"] > 0.105
+
+
+def test_embedded_value_routes_to_insurer_not_bank_sector():
+    """BRK-B (embedded_value_required, industry 'Diversified') must map to the
+    INSURER reference, not a bank/non-bank-financial one — else its low β gets
+    flooded to a bank beta and it contaminates the bank floor calibration."""
+    from aletheia.tools.bank_valuation_methods import (
+        bank_sector_beta, bank_sector_cost_of_capital,
+    )
+    b, name = bank_sector_beta("Financials", "Diversified", "embedded_value_required")
+    assert name == "Insurance (Diversified)"
+    coc, _ = bank_sector_cost_of_capital("Financials", "Diversified",
+                                         "embedded_value_required")
+    assert coc is not None and coc < 0.105     # insurer CoC below the bank CoC
+
+
 def test_bank_sector_beta_maps_industry_to_damodaran():
     from aletheia.tools.bank_valuation_methods import bank_sector_beta
     b_jpm, n_jpm = bank_sector_beta("Financials", "Banks")
