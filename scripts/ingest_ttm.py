@@ -30,11 +30,24 @@ from aletheia.data import fmp_client
 from aletheia.data.database import InvestmentDatabase
 from aletheia.data.fmp_validation import validate_ttm_record
 from aletheia.data.sec_quarterly import derive_ttm_from_sec
-from aletheia.data.ttm_derivation import derive_ttm_from_fmp
+from aletheia.data.ttm_derivation import (
+    backfill_ebit_ebitda_from_fmp,
+    derive_ttm_from_fmp,
+)
 from config.ticker_classification import get_extended_universe
 
 
-_DDM_MODELS = {"ddm_required", "embedded_value_required", "routing_required"}
+# Financial-sector business models that are valued on sector-native
+# metrics (residual income / DDM / embedded value / rate base), NOT on
+# an industrial FCF/CapEx TTM. Excluded from TTM derivation: the SEC
+# Revenue tag under-captures bank net-interest income (SOFI resolved to
+# $0.6B vs ~$2.6B), and CapEx/FCF are not meaningful for these filers.
+_DDM_MODELS = {
+    "ddm_required",
+    "embedded_value_required",
+    "routing_required",
+    "residual_income_required",
+}
 
 
 def _select_tickers(
@@ -149,6 +162,16 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
             "blocking":    "",
         }
 
+    # Backfill EBIT/EBITDA from the FMP-derived TTM when the primary
+    # (SEC) record couldn't resolve them — some filers (IBM, ACN, KO,
+    # MCO) don't tag OperatingIncomeLoss in XBRL, which otherwise leaves
+    # the Multi-year-history EBIT/Norm-EBIT/EBITDA columns blank on the
+    # TTM row. Only grafts when period-ends align; never overwrites SEC
+    # data. No-op when FMP is already the primary source.
+    ebit_ebitda_backfilled = backfill_ebit_ebitda_from_fmp(
+        record, fmp_result.record
+    )
+
     # ── Cross-check FMP TTM blobs (always fetched, regardless of source) ─
     # Fetch failures on any single lane degrade that lane to 'n_a' in
     # the gate result; Gate A.TTM still runs on the primary lane.
@@ -198,6 +221,11 @@ def _process_one(ticker: str, db: InvestmentDatabase) -> Dict[str, str]:
     # overwriting fmp_validation with `gate` keeps the source-primacy
     # swap observable.
     record.fmp_validation = gate
+    # Re-stamp EBIT/EBITDA backfill provenance (the gate overwrite above
+    # would otherwise drop it).
+    if ebit_ebitda_backfilled:
+        gate["ebit_ebitda_source"] = "fmp_backfill"
+        gate["ebit_ebitda_backfilled"] = ebit_ebitda_backfilled
 
     if gate["status"] == "blocking_drift":
         return {

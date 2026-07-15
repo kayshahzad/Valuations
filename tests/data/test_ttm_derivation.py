@@ -261,7 +261,11 @@ def test_skip_when_required_flow_missing():
     finally:
         _stop_patches(patches)
     assert r.record is None
-    assert "missing_required_flows" in r.skip_reason
+    # With no quarter reporting real revenue, the quarter-selection guard
+    # (which drops placeholder/zero-revenue quarters) short-circuits before
+    # the required-flow check — a more precise skip reason for the same
+    # "revenue flow missing" condition.
+    assert "insufficient_real_quarters" in r.skip_reason
 
 
 # ── Gate A.TTM cross-check ────────────────────────────────────────────
@@ -610,3 +614,162 @@ def test_gate_a_ttm_as_reported_n_a_when_endpoint_missing():
     )
     assert gate["fields"]["revenue_latest_quarter_as_reported"]["status"] == "n_a"
     assert gate["fields"]["net_income_latest_quarter_as_reported"]["status"] == "n_a"
+
+
+# ── Regression: IBM-class TTM assembly bugs (2026-07) ─────────────────
+# Two real FMP data hazards, both reproduced on IBM's 2026-03-31 TTM:
+#   1. FMP pre-seeds a placeholder row for the current, not-yet-reported
+#      quarter (revenue=0). Blindly taking income[:4] includes it and
+#      drops a real quarter → every flow understated by ~one quarter.
+#   2. FMP flips the sign on quarterly capitalExpenditure across quarters;
+#      abs(sum) lets them cancel (IBM: +391 −391 −908 +605 → 303M), so
+#      capex must be summed as sum(abs) per quarter.
+
+def _income_row(date, fy, period, revenue, ni):
+    return {"date": date, "fiscalYear": str(fy), "period": period,
+            "revenue": revenue, "netIncome": ni,
+            "operatingIncome": 30e9, "ebitda": 35e9,
+            "costOfRevenue": 60e9, "researchAndDevelopmentExpenses": 8e9,
+            "interestExpense": 1e9, "weightedAverageShsOutDil": 15e9,
+            "reportedCurrency": "USD"}
+
+
+def _cf_row(date, capex, ocf=28e9, fcf=22e9):
+    return {"date": date, "operatingCashFlow": ocf, "freeCashFlow": fcf,
+            "capitalExpenditure": capex, "stockBasedCompensation": 2e9}
+
+
+def test_drops_placeholder_future_quarter():
+    """A revenue=0 placeholder at the array head is skipped; the TTM sums
+    the 4 most-recent REAL quarters and aligns cash-flow to them."""
+    income = [
+        _income_row("2026-06-30", 2026, "Q2", 0.0, 0.0),      # phantom
+        _income_row("2026-03-31", 2026, "Q1", 100e9, 25e9),
+        _income_row("2025-12-31", 2025, "Q4", 100e9, 25e9),
+        _income_row("2025-09-30", 2025, "Q3", 100e9, 25e9),
+        _income_row("2025-06-30", 2025, "Q2", 100e9, 25e9),
+    ]
+    cashflow = [
+        _cf_row("2026-06-30", -6e9),   # phantom cash-flow carries data
+        _cf_row("2026-03-31", -6e9),
+        _cf_row("2025-12-31", -6e9),
+        _cf_row("2025-09-30", -6e9),
+        _cf_row("2025-06-30", -6e9),
+    ]
+    balance = [{"date": "2026-03-31", "totalAssets": 400e9,
+                "totalLiabilities": 250e9, "totalStockholdersEquity": 150e9,
+                "cashAndCashEquivalents": 30e9, "longTermDebt": 80e9,
+                "shortTermDebt": 10e9, "commonStockSharesOutstanding": 15e9}]
+    patches = _patch_fmp(income, balance, cashflow)
+    _start_patches(patches)
+    try:
+        r = derive_ttm_from_fmp("IBM")
+    finally:
+        _stop_patches(patches)
+    assert r.record is not None
+    # 4 real quarters, NOT 3 real + 1 zero.
+    assert r.record.raw["Revenue"] == 400e9
+    assert r.record.raw["NetIncome"] == 100e9
+    assert r.record.period_end_date == "2026-03-31"
+    assert r.record.fmp_validation["ttm_quarters"] == [
+        "2026-03-31", "2025-12-31", "2025-09-30", "2025-06-30"]
+
+
+def test_capex_sign_flips_do_not_cancel():
+    """Mixed-sign quarterly capex must sum by magnitude (sum(abs)), not
+    abs(sum) — otherwise IBM's +391/−391/−908/+605 collapses to ~0."""
+    income = [
+        _income_row("2026-03-31", 2026, "Q1", 100e9, 25e9),
+        _income_row("2025-12-31", 2025, "Q4", 100e9, 25e9),
+        _income_row("2025-09-30", 2025, "Q3", 100e9, 25e9),
+        _income_row("2025-06-30", 2025, "Q2", 100e9, 25e9),
+    ]
+    # Signs alternate; abs(sum) = 0, sum(abs) = 24e9. FMP's freeCashFlow
+    # field (22e9/q → 88e9) is deliberately inconsistent with OCF−CapEx
+    # (120e9 − 24e9 = 96e9) so the test proves FCF is RECOMPUTED, not the
+    # FMP field passed through.
+    cashflow = [
+        _cf_row("2026-03-31", -6e9, ocf=30e9),
+        _cf_row("2025-12-31", +6e9, ocf=30e9),
+        _cf_row("2025-09-30", -6e9, ocf=30e9),
+        _cf_row("2025-06-30", +6e9, ocf=30e9),
+    ]
+    balance = [{"date": "2026-03-31", "totalAssets": 400e9,
+                "totalLiabilities": 250e9, "totalStockholdersEquity": 150e9,
+                "cashAndCashEquivalents": 30e9, "longTermDebt": 80e9,
+                "shortTermDebt": 10e9, "commonStockSharesOutstanding": 15e9}]
+    patches = _patch_fmp(income, balance, cashflow)
+    _start_patches(patches)
+    try:
+        r = derive_ttm_from_fmp("IBM")
+    finally:
+        _stop_patches(patches)
+    assert r.record is not None
+    assert r.record.derived["CapEx"] == 24e9            # sum(abs), not abs(sum)=0
+    # FCF recomputed as OCF − CapEx (120e9 − 24e9), NOT FMP's field sum (88e9).
+    assert r.record.derived["FCF"] == 96e9
+    recon = r.record.fmp_validation["fcf_reconciliation"]
+    assert recon["fcf_computed_ocf_minus_capex"] == 96e9
+    assert recon["fmp_fcf_field_sum"] == 88e9           # 4×22e9 — the wrong value we rejected
+    assert recon["divergence_pct"] is not None          # mismatch surfaced on the receipt
+
+
+# ── EBIT/EBITDA backfill from FMP (filer-quirk completeness) ──────────
+# Filers like IBM/ACN/KO/MCO don't tag OperatingIncomeLoss in XBRL, so
+# the SEC-derived TTM has OperatingIncome=None → EBITDA=None → blank
+# EBIT/Norm-EBIT/EBITDA columns. backfill_ebit_ebitda_from_fmp grafts
+# those two fields from the (period-aligned) FMP-derived TTM.
+
+from aletheia.data.ttm_derivation import backfill_ebit_ebitda_from_fmp
+from aletheia.data.cleaning_engine import CleanedRecord
+
+
+def _sec_like_record(pe="2026-03-31", revenue=68.9e9, op_inc=None, ebitda=None):
+    r = CleanedRecord(ticker="IBM", fiscal_year=2026, period="TTM",
+                      period_end_date=pe)
+    r.raw = {"Revenue": revenue, "OperatingIncome": op_inc}
+    r.clean = {"Revenue": revenue, "EBITDA": ebitda}
+    r.derived = {"OperatingIncome": op_inc, "EBITDA": ebitda}
+    return r
+
+
+def _fmp_like_record(pe="2026-03-31", op_inc=12.13e9, ebitda=17.63e9):
+    r = CleanedRecord(ticker="IBM", fiscal_year=2026, period="TTM",
+                      period_end_date=pe)
+    r.raw = {"Revenue": 68.9e9, "OperatingIncome": op_inc}
+    r.clean = {"EBITDA": ebitda}
+    r.derived = {"OperatingIncome": op_inc, "EBITDA": ebitda}
+    return r
+
+
+def test_backfill_grafts_ebit_ebitda_when_sec_missing():
+    sec = _sec_like_record(op_inc=None, ebitda=None)
+    filled = backfill_ebit_ebitda_from_fmp(sec, _fmp_like_record())
+    assert set(filled) == {"OperatingIncome", "EBITDA"}
+    assert sec.raw["OperatingIncome"] == 12.13e9
+    assert sec.derived["OperatingIncome"] == 12.13e9
+    assert sec.clean["EBITDA"] == 17.63e9
+    assert sec.derived["EBITDA"] == 17.63e9
+    # margins recomputed on the PRIMARY record's own revenue
+    assert abs(sec.derived["EBIT_Margin_Pct"] - (12.13e9 / 68.9e9 * 100)) < 1e-6
+    assert abs(sec.derived["EBITDA_Margin_Pct"] - (17.63e9 / 68.9e9 * 100)) < 1e-6
+
+
+def test_backfill_skips_on_period_mismatch():
+    sec = _sec_like_record(pe="2026-06-30", op_inc=None, ebitda=None)
+    filled = backfill_ebit_ebitda_from_fmp(sec, _fmp_like_record(pe="2026-03-31"))
+    assert filled == []
+    assert sec.raw["OperatingIncome"] is None
+
+
+def test_backfill_never_overwrites_existing_sec_values():
+    sec = _sec_like_record(op_inc=11.0e9, ebitda=16.0e9)
+    filled = backfill_ebit_ebitda_from_fmp(sec, _fmp_like_record())
+    assert filled == []
+    assert sec.raw["OperatingIncome"] == 11.0e9   # untouched
+    assert sec.clean["EBITDA"] == 16.0e9
+
+
+def test_backfill_noop_without_fmp_record():
+    sec = _sec_like_record(op_inc=None, ebitda=None)
+    assert backfill_ebit_ebitda_from_fmp(sec, None) == []

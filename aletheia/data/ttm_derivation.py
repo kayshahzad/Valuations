@@ -48,6 +48,27 @@ def _sum_or_none(records: List[Dict[str, Any]], key: str) -> Optional[float]:
     return sum(vals) if vals else None
 
 
+def _sum_abs_or_none(records: List[Dict[str, Any]], key: str) -> Optional[float]:
+    """Sum the MAGNITUDE of `key` across records (abs per quarter, then
+    sum). FMP reports some flow items — notably ``capitalExpenditure`` —
+    with an inconsistent sign across quarters for the same filer (e.g.
+    IBM: +391M, −391M, −908M, +605M). Summing raw and then abs() lets the
+    signs cancel (→ 303M instead of ~2.3B). Taking abs() per quarter first
+    is the correct aggregation for a magnitude-convention field."""
+    vals: List[float] = []
+    for r in records:
+        v = _f(r.get(key))
+        if v is None:
+            return None
+        vals.append(abs(v))
+    return sum(vals) if vals else None
+
+
+def _q_date(record: Dict[str, Any]) -> str:
+    """Period-end date (YYYY-MM-DD) for a quarterly FMP statement row."""
+    return (record.get("date") or "")[:10]
+
+
 @dataclass
 class TTMDerivationResult:
     """Wrapper around the produced CleanedRecord plus the FMP TTM blobs
@@ -97,10 +118,36 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
             f"insufficient_quarters:income={len(income_q)},cashflow={len(cashflow_q)}",
         )
 
-    # FMP returns most-recent first; take the latest 4 quarters
-    income_last4   = income_q[:4]
-    cashflow_last4 = cashflow_q[:4]
-    balance_latest = balance_q[0]
+    # ── Select the 4 most-recent COMPLETE quarters ──────────────────────
+    # FMP returns most-recent first, but pre-seeds a row for the current,
+    # not-yet-reported quarter with revenue=0 / netIncome=0 (e.g. IBM on
+    # 2026-07-14 carries an empty 2026-06-30 Q2 row). Blindly taking
+    # ``[:4]`` includes that placeholder and drops a real quarter — the
+    # TTM then sums 3 real quarters + 1 zero, understating every flow by
+    # ~one quarter. Filter to quarters that report real revenue, then
+    # align income / cash-flow / balance to that SAME set of period-end
+    # dates so every line item covers identical quarters.
+    real_income = [r for r in income_q if (_f(r.get("revenue")) or 0.0) > 0.0]
+    if len(real_income) < 4:
+        return TTMDerivationResult(
+            None, km_ttm, ratios_ttm,
+            f"insufficient_real_quarters:income_with_revenue={len(real_income)}",
+        )
+    income_last4 = real_income[:4]
+    target_dates = [_q_date(r) for r in income_last4]
+
+    cashflow_by_date = {_q_date(r): r for r in cashflow_q}
+    cashflow_last4 = [cashflow_by_date[d] for d in target_dates if d in cashflow_by_date]
+    if len(cashflow_last4) < 4:
+        return TTMDerivationResult(
+            None, km_ttm, ratios_ttm,
+            f"cashflow_misaligned:matched={len(cashflow_last4)}/4 for {target_dates}",
+        )
+
+    # Balance sheet: the latest quarter aligned to the TTM's end date
+    # (target_dates[0]), not FMP's array head, which may be the phantom.
+    balance_by_date = {_q_date(r): r for r in balance_q}
+    balance_latest = balance_by_date.get(target_dates[0], balance_q[0])
 
     # Currency conversion — foreign-reporting filers (ASML EUR, TSM TWD,
     # etc.) get every monetary value multiplied by the FY-average FX
@@ -128,13 +175,21 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
     rnd              = _fx(_sum_or_none(income_last4,   "researchAndDevelopmentExpenses"))
     interest_expense = _fx(_sum_or_none(income_last4,   "interestExpense"))
     operating_cf     = _fx(_sum_or_none(cashflow_last4, "operatingCashFlow"))
-    fcf              = _fx(_sum_or_none(cashflow_last4, "freeCashFlow"))
-    # FMP reports capitalExpenditure as a negative cash outflow. Schema
-    # convention stores it POSITIVE (magnitude); FY cleaning engine
-    # applies abs() at cleaning_engine.py:1381 / :1672. Mirror here.
-    capex            = _fx(_sum_or_none(cashflow_last4, "capitalExpenditure"))
-    if capex is not None:
-        capex = abs(capex)
+    # FMP reports capitalExpenditure as a (nominally negative) cash
+    # outflow but flips the sign inconsistently across quarters. Schema
+    # convention stores it POSITIVE (magnitude). Sum abs() PER QUARTER so
+    # sign flips can't cancel (see _sum_abs_or_none). FY cleaning engine
+    # applies abs() at cleaning_engine.py:1381 / :1672.
+    capex            = _fx(_sum_abs_or_none(cashflow_last4, "capitalExpenditure"))
+    # FCF: recompute as OCF − CapEx rather than trusting FMP's summed
+    # ``freeCashFlow`` field, which inherits the same sign/placeholder
+    # inconsistencies (and would put FCF > EBITDA). Keep FMP's sum for a
+    # reconciliation flag; fall back to it only if OCF or CapEx is absent.
+    fmp_fcf_field    = _fx(_sum_or_none(cashflow_last4, "freeCashFlow"))
+    if operating_cf is not None and capex is not None:
+        fcf = operating_cf - capex
+    else:
+        fcf = fmp_fcf_field
     sbc              = _fx(_sum_or_none(cashflow_last4, "stockBasedCompensation"))
     # D&A is required by the DCF engine. Sum across quarters; some FMP
     # responses only expose it on the income statement.
@@ -271,11 +326,26 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
     # Gate D receipt and forensics. Real Gate A.TTM cross-check happens
     # in `validate_ttm_against_fmp` (called separately so the validator
     # can decide blocking vs informational).
+    # FCF reconciliation: computed (OCF−CapEx) vs FMP's summed field.
+    # A large divergence usually means FMP's freeCashFlow field carried a
+    # sign flip or a phantom quarter — worth surfacing on the receipt.
+    fcf_divergence_pct = None
+    if fcf and fmp_fcf_field is not None:
+        fcf_divergence_pct = round((fmp_fcf_field - fcf) / abs(fcf) * 100.0, 1)
+
     record.fmp_validation = {
         "status":      "validated",  # provisional; tightened by Gate A.TTM
         "ttm_source":  "fmp_derived_quarters",
         "reported_currency": fmp_ccy or "USD",
         "fx_converted":      bool(fmp_ccy and fmp_ccy != "USD"),
+        # Forensics: exactly which 4 quarter-end dates fed this TTM, so a
+        # dropped/placeholder quarter is auditable from the receipt.
+        "ttm_quarters":      target_dates,
+        "fcf_reconciliation": {
+            "fcf_computed_ocf_minus_capex": fcf,
+            "fmp_fcf_field_sum":            fmp_fcf_field,
+            "divergence_pct":               fcf_divergence_pct,
+        },
         "fields":      {},
     }
 
@@ -295,3 +365,66 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
         latest_quarter_income=latest_quarter_income,
         latest_quarter_period_end=latest_quarter_period_end,
     )
+
+
+def backfill_ebit_ebitda_from_fmp(
+    primary: Optional[CleanedRecord],
+    fmp_record: Optional[CleanedRecord],
+) -> List[str]:
+    """Graft OperatingIncome (EBIT) + EBITDA from the FMP-derived TTM onto
+    a primary (SEC-derived) record that couldn't resolve them.
+
+    Motivation: some filers don't tag ``OperatingIncomeLoss`` in XBRL
+    (IBM, ACN, KO, MCO), so the SEC path returns ``OperatingIncome=None``
+    → ``EBITDA=None`` → the Multi-year-history EBIT / Norm-EBIT / EBITDA
+    columns render blank on the TTM row. Rather than reconstruct EBIT from
+    pretax+interest and EBITDA from cash-flow D&A — which understates EBITDA
+    for filers with large intangible amortization (IBM: ~$14.8B vs the
+    correct ~$17.6B) — reuse FMP's own operatingIncome / ebitda summed over
+    the same quarters.
+
+    Guards:
+      - only fills fields the primary is MISSING (never overwrites SEC data);
+      - only when both records cover the SAME period-end (else the TTM
+        windows differ and the graft would be inconsistent);
+      - margins are recomputed on the PRIMARY record's own revenue.
+
+    Mutates ``primary`` in place. Returns the list of fields backfilled
+    (empty when nothing was grafted) so the caller can stamp provenance
+    after Gate A.TTM overwrites ``fmp_validation``.
+    """
+    if primary is None or fmp_record is None:
+        return []
+    if (primary.period_end_date or "") != (fmp_record.period_end_date or ""):
+        return []
+
+    rev = _f(primary.raw.get("Revenue")) or _f(primary.clean.get("Revenue"))
+    filled: List[str] = []
+
+    have_ebit = (
+        primary.raw.get("OperatingIncome") is not None
+        or primary.derived.get("OperatingIncome") is not None
+    )
+    fmp_ebit = _f(fmp_record.raw.get("OperatingIncome"))
+    if not have_ebit and fmp_ebit is not None:
+        primary.raw["OperatingIncome"] = fmp_ebit
+        primary.derived["OperatingIncome"] = fmp_ebit
+        if rev:
+            primary.derived["EBIT_Margin_Pct"] = fmp_ebit / rev * 100.0
+        filled.append("OperatingIncome")
+
+    have_ebitda = (
+        primary.derived.get("EBITDA") is not None
+        or primary.clean.get("EBITDA") is not None
+    )
+    fmp_ebitda = _f(fmp_record.clean.get("EBITDA"))
+    if fmp_ebitda is None:
+        fmp_ebitda = _f(fmp_record.derived.get("EBITDA"))
+    if not have_ebitda and fmp_ebitda is not None:
+        primary.derived["EBITDA"] = fmp_ebitda
+        primary.clean["EBITDA"] = fmp_ebitda
+        if rev:
+            primary.derived["EBITDA_Margin_Pct"] = fmp_ebitda / rev * 100.0
+        filled.append("EBITDA")
+
+    return filled
