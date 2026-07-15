@@ -773,3 +773,51 @@ def test_backfill_never_overwrites_existing_sec_values():
 def test_backfill_noop_without_fmp_record():
     sec = _sec_like_record(op_inc=None, ebitda=None)
     assert backfill_ebit_ebitda_from_fmp(sec, None) == []
+
+
+# ── A=L+E reconciliation: NCI attribution (FMP parent-only equity) ────
+# FMP's totalStockholdersEquity excludes noncontrolling interest, so
+# A = L + E misses by the NCI amount for filers like WMT (~2.3%) / MDT
+# (~0.7%). The derivation attributes a small positive residual to
+# MinorityInterest so the A=L+E schema contract's NCI form holds.
+
+def _balance(a, l, e):
+    return [{"date": "2026-03-31", "totalAssets": a, "totalLiabilities": l,
+             "totalStockholdersEquity": e, "cashAndCashEquivalents": 10e9,
+             "longTermDebt": 20e9, "shortTermDebt": 5e9,
+             "commonStockSharesOutstanding": 15e9}]
+
+
+def _derive_with_balance(balance):
+    patches = _patch_fmp(_quarterly_income(), balance, _quarterly_cashflow())
+    _start_patches(patches)
+    try:
+        return derive_ttm_from_fmp("WMT")
+    finally:
+        _stop_patches(patches)
+
+
+def test_nci_residual_attributed_to_minority_interest():
+    # A=100, L=70, E=27 → residual 3 (3%) → NCI, contract's NCI form holds
+    r = _derive_with_balance(_balance(100e9, 70e9, 27e9)).record
+    assert r.raw["MinorityInterest"] == 3e9
+    # L and E stay as-reported (NCI not folded into liabilities)
+    assert r.raw["TotalLiabilities"] == 70e9
+    assert r.raw["TotalEquity"] == 27e9
+
+
+def test_no_nci_when_balance_reconciles():
+    r = _derive_with_balance(_balance(100e9, 70e9, 30e9)).record
+    assert r.raw["MinorityInterest"] is None
+
+
+def test_large_residual_not_attributed_to_nci():
+    # 10% gap is a real data error, not NCI — left for the contract to catch
+    r = _derive_with_balance(_balance(100e9, 60e9, 30e9)).record
+    assert r.raw["MinorityInterest"] is None
+
+
+def test_negative_residual_not_attributed_to_nci():
+    # A < L+E can't be NCI (which is positive) — left alone
+    r = _derive_with_balance(_balance(100e9, 80e9, 30e9)).record
+    assert r.raw["MinorityInterest"] is None

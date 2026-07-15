@@ -214,6 +214,22 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
     shares_diluted     = _f(income_last4[0].get("weightedAverageShsOutDil"))
     shares_outstanding = _f(balance_latest.get("commonStockSharesOutstanding"))
 
+    # Accounting-identity residual → noncontrolling interest. FMP's
+    # ``totalStockholdersEquity`` is PARENT-ONLY (excludes NCI), so
+    # A = L + E can miss by the NCI amount for filers with material
+    # minority interests (WMT ~2.3% ≈ $6.6B, MDT ~0.7% ≈ $0.6B). Attribute
+    # a small positive residual to MinorityInterest so the record
+    # satisfies the A=L+E schema contract via its NCI form — rather than
+    # folding NCI into liabilities, which would overstate them. Large
+    # residuals (>5%) are a real data gap, not NCI, and are left alone so
+    # the contract still catches them.
+    minority_interest = None
+    if (total_assets is not None and total_liabilities is not None
+            and total_equity is not None):
+        resid = total_assets - (total_liabilities + total_equity)
+        if 0 < resid <= 0.05 * abs(total_assets):
+            minority_interest = resid
+
     # NetDebt: enterprise-value definition (gross debt minus cash)
     if long_term_debt is not None or short_term_debt is not None:
         net_debt = (long_term_debt or 0.0) + (short_term_debt or 0.0) - (cash or 0.0)
@@ -284,6 +300,9 @@ def derive_ttm_from_fmp(ticker: str) -> TTMDerivationResult:
         "TotalAssets":         total_assets,
         "TotalLiabilities":    total_liabilities,
         "TotalEquity":         total_equity,
+        # NCI attribution so the A=L+E schema contract's NCI form holds
+        # (FMP equity is parent-only). None when the balance reconciles.
+        "MinorityInterest":    minority_interest,
         "Cash":                cash,
         "LongTermDebt":        long_term_debt,
         "ShortTermDebt":       short_term_debt,

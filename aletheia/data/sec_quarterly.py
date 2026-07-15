@@ -481,6 +481,24 @@ def derive_ttm_from_sec(ticker: str) -> SECTTMResult:
     cash               = _instant_value(facts, "Cash")
     long_term_debt     = _instant_value(facts, "LongTermDebt")
 
+    # TotalLiabilities: SEC filers vary in how they tag it. Some (WMT)
+    # don't tag a clean `Liabilities` total at all (only current /
+    # noncurrent components); some (CELH) tag it partially. That leaves
+    # the record failing the A=L+E schema contract at upsert, which
+    # refuses to persist the TTM row. Mirror the FY cleaning engine and
+    # derive from the accounting identity — but ONLY when the tag is
+    # missing or GROSSLY off (>2% of assets). The 2% floor stays well
+    # clear of the ~0.3-0.6% minority-interest rounding gaps on
+    # multinational filers (APH/ACN/KO/JNJ), which the contract closes
+    # via its NCI forms — we must not fold NCI into liabilities there.
+    if total_assets is not None and total_equity is not None:
+        if total_liabilities is None:
+            total_liabilities = total_assets - total_equity
+        else:
+            gap = abs(total_assets - (total_liabilities + total_equity))
+            if gap > 0.02 * abs(total_assets):
+                total_liabilities = total_assets - total_equity
+
     # FCF = OpCF - CapEx (CapEx stored positive per schema convention)
     fcf = (
         (operating_cf - capex)
