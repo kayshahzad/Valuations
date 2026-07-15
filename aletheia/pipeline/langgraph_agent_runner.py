@@ -58,8 +58,14 @@ def langgraph_agent_runner(
     # Import inside the function so importing this module is cheap and
     # doesn't trigger the LangGraph DeprecationWarning at module load.
     from aletheia.workflow.graph import create_workflow
+    from aletheia.eval.tracing import init_langsmith, trace_config
 
     ticker = calculation_bundle.ticker
+
+    # Turn on LangSmith tracing if a key is configured (no-op otherwise).
+    # Every LangChain agent inside the graph is then auto-instrumented;
+    # trace_config labels the run so it's filterable by ticker.
+    init_langsmith()
 
     initial_state: Dict[str, Any] = {
         "ticker":             ticker,
@@ -72,7 +78,7 @@ def langgraph_agent_runner(
     }
 
     app = create_workflow()
-    final_state = app.invoke(initial_state)
+    final_state = app.invoke(initial_state, config=trace_config(ticker))
 
     # The qualitative_synthesis agent writes three legacy state keys
     # (forensic / value_chain / strategic_context) so existing
