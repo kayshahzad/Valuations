@@ -32,27 +32,47 @@ def _pct(v, dp=1):
 def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
                    ba: Dict[str, Any]) -> bool:
     """Render one theme's content. Returns True if anything was rendered."""
+    from aletheia.agents.business_extraction import (
+        claim_is_sourced, evidence_claim_keys, is_grounded_extraction,
+    )
+    # Evidence grounding — on a grounded extraction, factual claims that
+    # lack a supporting 10-K quote are flagged so an inferred/unsourced
+    # claim never reads as a filing-confirmed fact. Legacy extractions
+    # (no evidence layer) render as authored — nothing to check against.
+    _grounded = is_grounded_extraction(ex)
+    _keys = evidence_claim_keys(ex)
+
+    def _tag(field: str, item: str = None) -> str:
+        if _grounded and not claim_is_sourced(_keys, field, item):
+            return "  :red[⚠ unsourced]"
+        return ""
+
     rendered = False
     if letter == "A":
         for p in (ex.get("product_lines") or [])[:8]:
             st.markdown(f"- **{p.get('name','')}**"
                         + (f" — {p.get('pricing_model')}" if p.get('pricing_model') else "")
-                        + (f"  _({p.get('segment')})_" if p.get('segment') else ""))
+                        + (f"  _({p.get('segment')})_" if p.get('segment') else "")
+                        + _tag("product_lines", p.get("name")))
             rendered = True
         for c in (ex.get("major_customers") or [])[:8]:
             line = f"- 🤝 **{c.get('name','')}**"
             if c.get("relationship"): line += f" — {c['relationship']}"
             if c.get("recompete_or_renewal"): line += f" · recompete {c['recompete_or_renewal']}"
             if c.get("pct_revenue"): line += f" · {c['pct_revenue']} of rev"
-            st.markdown(line); rendered = True
+            st.markdown(line + _tag("major_customers", c.get("name"))); rendered = True
         if ex.get("notable_customers"):
-            st.markdown("**Notable customers:** " + ", ".join(ex["notable_customers"])); rendered = True
+            # Widely-public references, not filing-sourced — labelled as such.
+            st.markdown("**Notable customers:** " + ", ".join(ex["notable_customers"])
+                        + ("  _(reference — not filing-sourced)_" if _grounded else "")); rendered = True
         if ex.get("industry_verticals"):
             st.markdown("**Industry verticals:** " + ", ".join(ex["industry_verticals"])); rendered = True
         for label, key in (("Customer concentration", "customer_concentration"),
                            ("Net retention", "net_retention")):
             if ex.get(key):
-                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
+                # net_retention is exempt (proxy/inference); concentration is factual.
+                tag = _tag(key) if key == "customer_concentration" else ""
+                st.markdown(f"**{label}:** {ex[key]}" + tag); rendered = True
         if ex.get("distribution_channels"):
             st.markdown("**Channels:** " + ", ".join(ex["distribution_channels"])); rendered = True
     elif letter == "B":
@@ -96,7 +116,8 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
                            ("Segment margin trajectory", "segment_margin_trajectory"),
                            ("Operating leverage (qual.)", "operating_leverage")):
             if ex.get(key):
-                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
+                tag = _tag(key) if key in ("contract_economics", "unit_cost") else ""
+                st.markdown(f"**{label}:** {ex[key]}" + tag); rendered = True
         seg = ba.get("segment_economics") or {}
         if seg.get("available") and seg.get("segments"):
             st.markdown(f"**Segment economics** _(FY{seg.get('fiscal_year','')} rev mix from "
@@ -144,7 +165,8 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
                            ("Disruption risk", "disruption_risk"),
                            ("Acquisition strategy", "acquisition_strategy")):
             if ex.get(key):
-                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
+                tag = _tag(key) if key == "rd_pipeline" else ""
+                st.markdown(f"**{label}:** {ex[key]}" + tag); rendered = True
         for l in (ex.get("new_product_launches") or [])[:6]:
             st.markdown(f"- 🚀 **{l.get('name','')}**"
                         + (f" ({l.get('timing')})" if l.get('timing') else "")
@@ -159,8 +181,36 @@ def _theme_content(letter: str, ex: Dict[str, Any], gd: Dict[str, Any],
                            ("Supplier power (trajectory)", "supplier_power"),
                            ("Regulatory trajectory", "regulatory_trajectory")):
             if ex.get(key):
-                st.markdown(f"**{label}:** {ex[key]}"); rendered = True
+                tag = _tag(key) if key == "competitive_positioning" else ""
+                st.markdown(f"**{label}:** {ex[key]}" + tag); rendered = True
     return rendered
+
+
+def _render_evidence_panel(ex: Dict[str, Any]) -> None:
+    """Panel-level evidence trail: the verbatim 10-K quotes grounding the
+    bottom-up factual claims, plus a coverage summary. Renders only for a
+    grounded extraction (legacy caches have no evidence layer)."""
+    from aletheia.agents.business_extraction import (
+        is_grounded_extraction, verify_business_evidence,
+    )
+    if not is_grounded_extraction(ex):
+        return
+    quotes = ex.get("evidence_quotes") or []
+    cov = verify_business_evidence(ex)
+    n_src, n_uns = len(cov["sourced"]), len(cov["unsourced"])
+    header = f"📎 Evidence — {len(quotes)} quote(s), {n_src} claim(s) sourced"
+    if n_uns:
+        header += f", :red[{n_uns} unsourced]"
+    with st.expander(header, expanded=False):
+        if n_uns:
+            st.markdown(":red[**Unsourced factual claims** (shown flagged above; "
+                        "no supporting 10-K quote):] " + ", ".join(f"`{k}`" for k in cov["unsourced"]))
+        for q in quotes:
+            claim = q.get("claim", "—"); src = q.get("source", "")
+            st.markdown(f"- **`{claim}`**" + (f"  _({src})_" if src else ""))
+            st.caption(f"“{q.get('quote','')}”")
+        if not quotes:
+            st.caption("No evidence quotes were captured on this extraction.")
 
 
 def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
@@ -234,6 +284,9 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
                     for c in na))
             if not had and not pend and not na and not nd:
                 st.caption("—")
+
+    # Evidence trail — verbatim 10-K quotes grounding the factual claims.
+    _render_evidence_panel(ex)
 
     # Assumption grounding — the bottom-up → top-down bridge (keystone).
     if ag.get("available"):

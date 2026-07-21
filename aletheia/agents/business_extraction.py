@@ -22,10 +22,17 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 _CACHE_DIR = Path("valuation_data/macro/business_ab")
 _TTL_SECONDS = 370 * 24 * 3600  # ~1 year (10-K cadence)
+
+# Evidence-grounding schema version. Extractions produced with the
+# evidence-quote requirement stamp this so the read/render path can tell
+# a grounded extraction (enforce sourcing) from a legacy one (render as
+# authored, no back-filled evidence to check against).
+_EVIDENCE_SCHEMA_VERSION = 1
+_QUOTE_MAX = 300  # max chars per verbatim quote (mirrors hitl_proposer)
 
 
 # ── Structured schema (themes A + B) ────────────────────────────────────────
@@ -56,6 +63,44 @@ class SegmentEconomics(BaseModel):
     operating_margin: str = Field(default="", description="Segment operating margin if disclosed, e.g. '6.2%' or 'low-single-digit'")
     margin_trend: str = Field(default="", description="improving / stable / declining")
     notes: str = Field(default="", description="Driver of the trend: mix shift, pricing, cost pressure, etc.")
+
+
+class BusinessEvidence(BaseModel):
+    """One verbatim 10-K quote grounding a bottom-up factual claim.
+
+    The `claim` string ties the quote to what it supports, using a
+    ``field`` or ``field:item`` key so the render/verify path can check
+    coverage — e.g. ``"product_lines:Fusion Middleware"``,
+    ``"segment_economics:Cloud"``, ``"customer_concentration"``,
+    ``"competitive_positioning"``. Inference-by-design fields (the TAM
+    band, notable_customers) are exempt — they carry a confidence label
+    instead of a filing quote.
+    """
+    claim: str = Field(
+        description=(
+            "Which claim this quote supports: a field name, or "
+            "'field:item' for a list item (e.g. 'product_lines:AWS', "
+            "'segment_economics:Cloud', 'customer_concentration')."
+        )
+    )
+    quote: str = Field(
+        description="Verbatim quote from the 10-K (≤ 300 chars). No paraphrasing.",
+        max_length=_QUOTE_MAX,
+    )
+    source: str = Field(
+        default="",
+        description="Filing section: '10-K Item 1', 'Item 1A', 'Item 7 (MD&A)', 'segment note', etc.",
+    )
+
+    @field_validator("quote", mode="before")
+    @classmethod
+    def _truncate_long_quote(cls, v: Any) -> Any:
+        # Trim over-long quotes to the cap at a word boundary rather than
+        # failing the whole extraction (mirrors hitl_proposer.EvidenceQuote).
+        if isinstance(v, str) and len(v) > _QUOTE_MAX:
+            cut = v[: _QUOTE_MAX - 1].rsplit(" ", 1)[0].rstrip()
+            return (cut or v[: _QUOTE_MAX - 1]) + "…"
+        return v
 
 
 class BusinessAB(BaseModel):
@@ -115,6 +160,85 @@ class BusinessAB(BaseModel):
     supplier_power: str = Field(default="", description="Supplier/input power and its trajectory: key inputs (talent, cloud/compute, components), concentration, pricing leverage")
     regulatory_trajectory: str = Field(default="", description="Direction of the regulatory/policy environment (tightening/easing) and the specific exposure (antitrust, data/privacy, tariffs, drug pricing, etc.)")
     confidence: str = Field(default="", description="low/medium/high — how grounded these are in the filing vs inferred")
+    # Evidence grounding — one verbatim 10-K quote per filing-specific
+    # factual claim (products, named customers, segment margins, contract
+    # economics, competitive positioning). The read/verify path checks
+    # coverage per field. TAM (inference-by-design, carries confidence)
+    # and notable_customers (widely-public references) are exempt.
+    evidence_quotes: List[BusinessEvidence] = Field(default_factory=list,
+        description="Verbatim 10-K quotes grounding the factual claims above, tagged by claim (field or field:item). REQUIRED for every filing-specific factual claim; omit any claim you cannot support with a quote.")
+
+
+# ── Evidence coverage (read/verify path) ────────────────────────────────────
+
+# Scalar fields that assert a filing-specific fact and therefore require a
+# supporting evidence quote on a grounded extraction.
+_EVIDENCE_REQUIRED_SCALAR = (
+    "customer_concentration", "contract_economics", "unit_cost",
+    "competitive_positioning", "rd_pipeline",
+)
+# List fields that require per-item evidence, keyed by the item's name field.
+_EVIDENCE_REQUIRED_LIST = {
+    "product_lines":     "name",
+    "major_customers":   "name",
+    "segment_economics": "segment",
+}
+
+
+def is_grounded_extraction(data: Optional[Dict[str, Any]]) -> bool:
+    """True when the extraction was produced with the evidence-quote
+    requirement (so unsourced factual claims can be flagged). Legacy
+    caches predate it and are rendered as authored."""
+    return bool((data or {}).get("evidence_schema_version"))
+
+
+def evidence_claim_keys(data: Optional[Dict[str, Any]]) -> set:
+    """Normalized set of claim-keys covered by an evidence quote."""
+    keys = set()
+    for q in (data or {}).get("evidence_quotes") or []:
+        c = (q.get("claim") or "").strip().lower()
+        if c:
+            keys.add(c)
+    return keys
+
+
+def claim_is_sourced(
+    evidence_keys: set, field: str, item: Optional[str] = None,
+) -> bool:
+    """Whether `field` (or `field:item`) has a supporting quote. A bare
+    field-level quote also covers its list items (lenient)."""
+    f = field.strip().lower()
+    if f in evidence_keys:
+        return True
+    if item:
+        return f"{f}:{str(item).strip().lower()}" in evidence_keys
+    return False
+
+
+def verify_business_evidence(data: Optional[Dict[str, Any]]) -> Dict[str, Any]:
+    """Map each required factual claim to whether it is sourced.
+
+    Returns ``{"grounded": bool, "sourced": [...], "unsourced": [...]}``.
+    For legacy (non-grounded) extractions returns ``grounded=False`` and
+    flags nothing — there is no evidence layer to check against, so those
+    render as authored rather than being retroactively marked unsourced.
+    """
+    if not is_grounded_extraction(data):
+        return {"grounded": False, "sourced": [], "unsourced": []}
+    keys = evidence_claim_keys(data)
+    sourced, unsourced = [], []
+    for field in _EVIDENCE_REQUIRED_SCALAR:
+        if not str((data or {}).get(field) or "").strip():
+            continue  # blank field asserts nothing
+        (sourced if claim_is_sourced(keys, field) else unsourced).append(field)
+    for field, name_key in _EVIDENCE_REQUIRED_LIST.items():
+        for item in (data or {}).get(field) or []:
+            name = (item or {}).get(name_key) or ""
+            if not name:
+                continue
+            key = f"{field}:{name}"
+            (sourced if claim_is_sourced(keys, field, name) else unsourced).append(key)
+    return {"grounded": True, "sourced": sourced, "unsourced": unsourced}
 
 
 def _cache_path(ticker: str) -> Path:
@@ -243,6 +367,20 @@ compute, components), concentration, pricing leverage over the company.
 - regulatory_trajectory: direction of the policy environment (tightening/easing) \
 and the specific exposure (antitrust, data/privacy, tariffs, drug pricing, etc.).
 
+EVIDENCE — REQUIRED. For every FILING-SPECIFIC FACTUAL claim above (each \
+product_line, each named major_customer, each segment_economics entry, plus \
+customer_concentration, contract_economics, unit_cost, competitive_positioning, \
+rd_pipeline, and any margin/share figure you state), add an entry to \
+evidence_quotes with a VERBATIM quote from the 10-K (≤300 chars, no paraphrase) \
+and tag it via `claim` using the field name or 'field:item' (e.g. \
+'product_lines:Fusion Middleware', 'segment_economics:Cloud', \
+'customer_concentration'). If you CANNOT support a factual claim with a verbatim \
+quote, OMIT that claim — do not state it. \
+EXEMPT (do NOT force a quote): the TAM band (tam_estimate/low/high — these are \
+triangulated inference, and are governed by tam_confidence instead) and \
+notable_customers (widely-public references, not filing-sourced). Everything \
+else that asserts a company-specific fact needs a quote.
+
 Return the structured object. Use the filing's own language and figures."""
 
 
@@ -279,6 +417,10 @@ def extract_business_ab(
             "text": text[:120000],
         })
         data = result.model_dump()
+        # Stamp the evidence-schema version so the read/render path can
+        # distinguish a grounded extraction (enforce sourcing) from a
+        # legacy cache that predates evidence_quotes.
+        data["evidence_schema_version"] = _EVIDENCE_SCHEMA_VERSION
         _write_cache(ticker, data)
         return data
     except Exception as exc:
@@ -287,4 +429,8 @@ def extract_business_ab(
         return None
 
 
-__all__ = ["extract_business_ab", "cached_business_ab", "BusinessAB"]
+__all__ = [
+    "extract_business_ab", "cached_business_ab", "BusinessAB",
+    "BusinessEvidence", "verify_business_evidence", "evidence_claim_keys",
+    "claim_is_sourced", "is_grounded_extraction",
+]
