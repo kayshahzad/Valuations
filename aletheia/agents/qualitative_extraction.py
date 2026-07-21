@@ -177,6 +177,26 @@ def qualitative_extraction_node(state: Dict[str, Any]) -> Dict[str, Any]:
             results.append({"dimension_id": "business_ab", "status": "error",
                             "reason": f"{type(exc).__name__}: {str(exc)[:200]}"})
 
+    # ── Management roster (Qualitative §management, reference layer) ─
+    # One structured call over the DEF 14A (+ 10-K Part I when captured)
+    # → the exec team + board with evidence-grounded bios. Display-only
+    # reference, cached to disk. Never fails the node. Foreign filers
+    # with no proxy simply produce no roster.
+    if raw_def14a.strip():
+        try:
+            from aletheia.agents.management_extraction import extract_management_roster
+            company = state.get("company") or state.get("company_name") or ""
+            roster = extract_management_roster(
+                ticker, company, def14a_text=raw_def14a,
+                tenk_part1_text=state.get("raw_10k_part1_text") or "",
+                force=True)
+            results.append({"dimension_id": "management_roster",
+                            "status": "ok" if roster else "no_data"})
+        except Exception as exc:
+            print(f"  ⚠ management_roster extraction failed for {ticker}: {exc}")
+            results.append({"dimension_id": "management_roster", "status": "error",
+                            "reason": f"{type(exc).__name__}: {str(exc)[:200]}"})
+
     # ── HITL proposer (Phase 1 of HITL auto-fill) ──────────────────
     # Reuses the 10-K text from the bundle above. One LLM call
     # proposes scores for all 9 HITL dimensions. Analyst-overridden

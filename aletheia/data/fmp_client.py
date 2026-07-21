@@ -448,6 +448,20 @@ def fetch_profile(ticker: str, force_refresh: bool = False) -> Optional[Dict[str
     return None
 
 
+def fetch_key_executives(
+    ticker: str, force_refresh: bool = False,
+) -> Optional[List[Dict[str, Any]]]:
+    """Key executives — a structured name/title roster (no bios).
+
+    Each row: ``title``, ``name``, ``pay``, ``currencyPay``, ``gender``,
+    ``yearBorn``, ``titleSince``. Used as a CROSS-CHECK against the
+    LLM-extracted management roster: a person named in the bio extraction
+    who does NOT appear here (fuzzy name match) is a hallucination signal.
+    Not a bio source — FMP exposes no career history."""
+    return _fetch(ticker, "key-executives", "key_executives",
+                  params={}, force_refresh=force_refresh)
+
+
 def fetch_revenue_product_segmentation(
     ticker: str, period: str = "annual", force_refresh: bool = False,
 ) -> Optional[List[Dict[str, Any]]]:

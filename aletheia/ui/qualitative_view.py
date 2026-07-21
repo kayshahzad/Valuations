@@ -652,6 +652,88 @@ def _render_dimension_detail(d: Dict[str, Any]) -> None:
 # Top-level render
 # ─────────────────────────────────────────────────────────────────────────────
 
+def _render_management_roster(ticker: str) -> None:
+    """Reference panel: the executive team + board with evidence-grounded
+    bios. Display-only (not scored). Reads the disk cache — populated on a
+    Stage-4 run. Unsourced bios are flagged and their prose suppressed;
+    executive names FMP doesn't recognize are surfaced for review."""
+    from aletheia.agents.management_extraction import (
+        cached_management_roster, verify_roster_evidence, member_bio_is_sourced,
+        is_grounded_extraction, _evidence_keys,
+    )
+    data = cached_management_roster(ticker)
+    if not data:
+        st.caption("👥 Management roster — fills on a Stage-4 agent run "
+                   "(from the DEF 14A proxy + 10-K). Foreign filers (20-F, "
+                   "no proxy) show a name/title skeleton only.")
+        return
+
+    members = data.get("members") or []
+    if not members:
+        st.caption("👥 Management roster — no roster extracted (no DEF 14A / "
+                   "foreign filer).")
+        return
+
+    grounded = is_grounded_extraction(data)
+    keys = _evidence_keys(data)
+    xc = data.get("fmp_crosscheck") or {}
+    unverified = set(xc.get("unverified_execs") or [])
+
+    with st.expander(f"👥 Management team & board ({len(members)})", expanded=False):
+        if data.get("as_of"):
+            st.caption(f"As of {data['as_of']} · source: {data.get('source_form','—')} "
+                       "· reference only (not scored)")
+        if unverified:
+            st.warning("⚠ Executive name(s) not found in the FMP executive list "
+                       "(verify): " + ", ".join(sorted(unverified)))
+
+        execs = [m for m in members if "director" not in str(m.get("member_type","")).lower()
+                 or "both" in str(m.get("member_type","")).lower()]
+        board = [m for m in members if "director" in str(m.get("member_type","")).lower()]
+
+        def _member(m):
+            name = m.get("name", "")
+            head = f"**{name}** — {m.get('role','')}"
+            meta = []
+            if m.get("age"): meta.append(f"age {m['age']}")
+            if m.get("since_year"): meta.append(f"since {m['since_year']}")
+            elif m.get("tenure_years"): meta.append(f"{m['tenure_years']}y tenure")
+            if name in unverified:
+                head += "  :red[⚠ unverified]"
+            st.markdown(head + (f"  _({'; '.join(meta)})_" if meta else ""))
+            bio = str(m.get("bio_summary") or "").strip()
+            if bio:
+                if grounded and not member_bio_is_sourced(keys, name):
+                    # Unsourced bio: suppress the prose, flag it — never
+                    # render an ungrounded claim about a real person.
+                    st.caption(":red[⚠ bio unsourced — suppressed (no filing quote)]")
+                else:
+                    st.caption(bio)
+            if m.get("prior_roles"):
+                st.caption("Prior: " + "; ".join(m["prior_roles"]))
+            if m.get("committees"):
+                st.caption("Committees: " + ", ".join(m["committees"]))
+            if m.get("other_public_boards"):
+                st.caption("Other boards: " + ", ".join(m["other_public_boards"]))
+
+        if execs:
+            st.markdown("###### Executive officers")
+            for m in execs:
+                _member(m)
+        if board:
+            st.markdown("###### Board of directors")
+            for m in board:
+                _member(m)
+
+        quotes = data.get("evidence_quotes") or []
+        if quotes:
+            with st.expander(f"📎 Evidence — {len(quotes)} filing quote(s)", expanded=False):
+                for q in quotes:
+                    st.markdown(f"- **`{q.get('claim','—')}`**"
+                                + (f"  _({q.get('source')})_" if q.get('source') else ""))
+                    st.caption(f"“{q.get('quote','')}”")
+
+
 def render_qualitative_view(
     ticker: str,
     qual_data: Optional[Dict[str, Any]],
@@ -754,5 +836,10 @@ def render_qualitative_view(
         for d in members:
             _render_dimension_card(d, on_assess=_request_assess)
             st.write("")  # space between cards
+
+        # Management category: append the reference roster (names, bios,
+        # tenure) below the scored management dimensions.
+        if cat_id == "management":
+            _render_management_roster(ticker)
 
         st.write("")  # space between categories
