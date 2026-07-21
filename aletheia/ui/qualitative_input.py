@@ -110,9 +110,9 @@ def _render_llm_proposal_banner(
         f'padding:10px 14px;margin-bottom:12px;font-size:13px;color:inherit;'
         f'line-height:1.5;">'
         f'<div style="font-weight:600;color:{_VIOLET};margin-bottom:4px;">'
-        f'🤖 Reviewing LLM proposal</div>'
+        f'🤖 Reviewing Agent Proposal</div>'
         f'<div style="font-size:12px;color:{_MUTED};margin-bottom:6px;">'
-        f'Sliders pre-populated with the LLM’s scores. Adjust where '
+        f'Sliders pre-populated with the agent’s scores. Adjust where '
         f'you disagree; submit to confirm or override. '
         f'<span style="color:{conf_color};font-weight:600">'
         f'{conf_label}</span>'
@@ -122,7 +122,7 @@ def _render_llm_proposal_banner(
 
     quotes = proposal.get("evidence_quotes") or []
     if quotes:
-        with st.expander(f"Evidence cited by LLM ({len(quotes)} quotes)", expanded=False):
+        with st.expander(f"Evidence cited by agent ({len(quotes)} quotes)", expanded=False):
             for q in quotes:
                 qid = q.get("question_id", "—")
                 txt = q.get("quote", "")

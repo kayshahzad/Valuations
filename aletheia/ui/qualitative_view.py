@@ -31,7 +31,7 @@ _RED   = "#ef4444"
 _SOURCE_LABEL = {
     "deterministic":  "Computed",
     "hitl":           "Analyst",
-    "llm_augmented":  "LLM",
+    "llm_augmented":  "Agent",
     "pending_data":   "Data pending",
 }
 
@@ -123,7 +123,7 @@ def _provenance_pill(d: Dict[str, Any]) -> Optional[tuple]:
       - DETERMINISTIC → ``📊 Computer (formula_v1)`` blue
       - HITL → ``👤 Analyst`` violet
       - LLM_AUGMENTED → ``🤖 Gemini`` orange (provider from
-        source_payload — defaults to "LLM" when older rows
+        source_payload — defaults to "Agent" when older rows
         predate Phase B's provenance trail)
 
     Returns ``None`` for ``pending_data`` and ``not_assessed`` —
@@ -151,7 +151,7 @@ def _provenance_pill(d: Dict[str, Any]) -> Optional[tuple]:
         prov = d.get("provenance")
         if prov == "llm_proposed":
             confidence = d.get("confidence") or ""
-            label = "🤖 LLM proposed"
+            label = "🤖 Agent proposed"
             if confidence:
                 label += f" · {confidence}"
             return label, "orange"
@@ -164,7 +164,7 @@ def _provenance_pill(d: Dict[str, Any]) -> Optional[tuple]:
         return "👤 Analyst", "violet"
 
     if src == "llm_augmented":
-        provider = (payload.get("llm_provider") or "LLM").capitalize()
+        provider = (payload.get("llm_provider") or "Agent").capitalize()
         return f"🤖 {provider}", "orange"
 
     return None
@@ -269,11 +269,11 @@ def _render_dimension_card(d: Dict[str, Any], on_assess: Optional[Callable] = No
             if drift:
                 n_changed, biggest_q, direction, delta = drift
                 st.warning(
-                    f"⚡ **LLM drift detected** — re-run after a new filing "
+                    f"⚡ **Agent drift detected** — re-run after a new filing "
                     f"now rates {biggest_q} **{abs(delta):.0f} points "
                     f"{direction}** than you did "
                     f"({n_changed} sub-score{'s' if n_changed != 1 else ''} "
-                    f"differ by ≥1). Review the LLM proposal to decide if "
+                    f"differ by ≥1). Review the agent proposal to decide if "
                     f"the new disclosure changes the analysis."
                 )
 
@@ -285,7 +285,7 @@ def _render_dimension_card(d: Dict[str, Any], on_assess: Optional[Callable] = No
                 prov = d.get("provenance")
                 review_state = d.get("review_state")
                 if prov == "llm_proposed" and review_state == "unreviewed":
-                    label = "🔍 Review LLM proposal"
+                    label = "🔍 Review Agent Proposal"
                     btn_type = "primary"
                 elif status in ("assessed", "stale"):
                     label = "Re-assess"
@@ -587,12 +587,12 @@ def _render_dimension_detail(d: Dict[str, Any]) -> None:
             prov = d.get("provenance") or "—"
             conf = proposal.get("confidence") or d.get("confidence") or "—"
             st.markdown(
-                f"**LLM proposal**  ·  provenance: `{prov}`  ·  "
+                f"**Agent proposal**  ·  provenance: `{prov}`  ·  "
                 f"confidence: `{conf}`"
             )
             llm_narr = proposal.get("narrative")
             if llm_narr:
-                st.markdown(f"_LLM narrative:_  {llm_narr}")
+                st.markdown(f"_Agent narrative:_  {llm_narr}")
             quotes = proposal.get("evidence_quotes") or []
             if quotes:
                 st.markdown("_Evidence quotes:_")
@@ -614,7 +614,7 @@ def _render_dimension_detail(d: Dict[str, Any]) -> None:
             failure_reason = sp.get("reason") if sp else None
             st.markdown(
                 "**Awaiting extraction.** This dimension is populated by "
-                "an LLM agent reading the 10-K (Item 1 + Item 1A) or "
+                "an agent reading the 10-K (Item 1 + Item 1A) or "
                 "DEF 14A proxy statement. Run **Stage 4 Agents** from the "
                 "sidebar to extract it."
             )
