@@ -16,8 +16,8 @@ narrative blocks. This redesign:
       1. Snapshot & valuation — Fundamentals row, Reverse DCF, adjustments
       2. Moat & pricing power (full width; pricing power stated once)
       3. Value chain & strategic context (full width)
-      4. Thesis vs bear case — lead/structured thesis | contrarian, the one
-         place two columns earn their keep (bull vs bear side by side)
+      4. Thesis & bear case — full width, stacked: lead + structured thesis,
+         then the detailed contrarian bear case last (full width)
   • Validation status visible everywhere a number is shown.
 
 Validation badges come from `aletheia.ui.validation_badge`. Status dots
@@ -2982,20 +2982,19 @@ def render_deep_dive_view(
     st.markdown("<br>", unsafe_allow_html=True)
     _strategic_context_block(sc, (dcf or {}).get("business_analysis"))
 
-    # § Thesis vs bear case — the one place two columns earn their keep:
-    # the bull thesis and the contrarian bear read side by side.
+    # § Thesis & bear case — full width, sequential. The thesis (lead +
+    # structured, which already carries its own bull/base/bear) reads first;
+    # the detailed contrarian bear case reads LAST at full width. Stacking
+    # beats a side-by-side column whose unequal length wasted whitespace.
     st.markdown("---")
-    st.markdown("#### Thesis vs. bear case")
-    tcol, ccol = st.columns(2)
-    with tcol:
-        _thesis_narrative(investment_thesis.get("narrative") or "")
-        # Structured thesis from thesis_synthesizer — renders nothing for
-        # tickers without a populated thesis_synthesis block.
-        if thesis_synth.get("thesis_statement"):
-            st.markdown("<br>", unsafe_allow_html=True)
-            _structured_thesis_section(thesis_synth, dcf, p2v)
-    with ccol:
-        _contrarian_block(contrarian, dcf)
+    _thesis_narrative(investment_thesis.get("narrative") or "")
+    # Structured thesis from thesis_synthesizer — renders nothing for tickers
+    # without a populated thesis_synthesis block.
+    if thesis_synth.get("thesis_statement"):
+        st.markdown("<br>", unsafe_allow_html=True)
+        _structured_thesis_section(thesis_synth, dcf, p2v)
+    st.markdown("<br>", unsafe_allow_html=True)
+    _contrarian_block(contrarian, dcf)
 
     # ── Reality Checks (new — Feature 1: GDP comparison) ─────────────────
     # Pulls the actual base-case CAGR + base revenue from the financials
