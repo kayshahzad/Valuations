@@ -384,6 +384,34 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
     def _row(series: List[Optional[float]], f=_b1):
         return [f(series[i]) if i < len(series) else "—" for i in range(n)]
 
+    # $-billions with the unit inline ($27.0B), YoY growth, and % margins —
+    # so the trend is legible without mental unit-tracking.
+    def _bd(x: Any) -> str:
+        v = _v(x)
+        if v is None:
+            return "—"
+        return f"{'-' if v < 0 else ''}${abs(v) / 1e9:,.1f}B"
+
+    def _yoy(series: List[Optional[float]]) -> List[Optional[float]]:
+        out = [None]
+        for i in range(1, n):
+            a, b = _v(series[i - 1]), _v(series[i])
+            out.append((b / a - 1.0) if (a and b is not None and a != 0) else None)
+        return out
+
+    def _marg(series: List[Optional[float]]) -> List[Optional[float]]:
+        return [(_v(series[i]) / _v(rev[i]))
+                if (_v(series[i]) is not None and _v(rev[i])) else None
+                for i in range(n)]
+
+    def _gpct(x: Any) -> str:          # signed growth: +126%
+        v = _v(x)
+        return f"{v * 100:+,.0f}%" if v is not None else "—"
+
+    def _mpct(x: Any) -> str:          # margin: 58.5%
+        v = _v(x)
+        return f"{v * 100:,.1f}%" if v is not None else "—"
+
     # Banks (ddm/embedded-value + Financials) get a thin P&L + returns/capital
     # set — the industrial waterfall is meaningless for them (gross interest
     # revenue, interest expense as "COGS", no real EBITDA/CapEx/FCF). NIM /
@@ -439,21 +467,28 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
             "(deferred). 🟢/🟡/🔴 validation vs SEC/FMP.")
     else:
         rows = [
-            (f"{rev_dot}  Revenue",          _row(rev)),
-            ("      COGS",                   _row(cogs)),
-            ("      SG&A",                   _row(sga)),
-            ("      EBITDA",                 _row(ebitda)),
-            ("      D&A",                    _row(da)),
-            (f"{ebit_dot}  EBIT",            _row(ebit)),
-            ("      Interest & non-op, net †", _row(intr)),
-            ("      Tax †",                  _row(tax)),
-            ("      Net income",             _row(ni)),
-            ("      CapEx",                  _row(capex)),
-            ("      Δ Net working capital †", _row(dnwc)),
-            ("      FCF",                    _row(fcf)),
+            (f"{rev_dot}  Revenue",          _row(rev, _bd)),
+            ("      ↳ YoY growth",           _row(_yoy(rev), _gpct)),
+            ("      COGS",                   _row(cogs, _bd)),
+            ("      SG&A",                   _row(sga, _bd)),
+            ("      EBITDA",                 _row(ebitda, _bd)),
+            ("      ↳ margin",               _row(_marg(ebitda), _mpct)),
+            ("      D&A",                    _row(da, _bd)),
+            (f"{ebit_dot}  EBIT",            _row(ebit, _bd)),
+            ("      ↳ margin",               _row(_marg(ebit), _mpct)),
+            ("      Interest & non-op, net †", _row(intr, _bd)),
+            ("      Tax †",                  _row(tax, _bd)),
+            ("      Net income",             _row(ni, _bd)),
+            ("      ↳ margin",               _row(_marg(ni), _mpct)),
+            ("      CapEx",                  _row(capex, _bd)),
+            ("      Δ Net working capital †", _row(dnwc, _bd)),
+            ("      FCF",                    _row(fcf, _bd)),
+            ("      ↳ margin",               _row(_marg(fcf), _mpct)),
+            ("      ↳ YoY growth",           _row(_yoy(fcf), _gpct)),
         ]
         caption = (
-            "All values $B (reported GAAP). † derived (raw interest/tax not cleaned "
+            "Values in $B (reported GAAP); ↳ rows are YoY growth (signed) and "
+            "margins (% of revenue). † derived (raw interest/tax not cleaned "
             "fields): Pretax = NI/(1−tax rate); Tax = Pretax − NI; Interest & non-op "
             "= EBIT − Pretax; Δ NWC = NOPAT + D&A − CapEx − FCFF. "
             "🟢 validated SEC/FMP within 1% · 🟡 within 5% · 🔴 >5% drift · "
@@ -467,8 +502,28 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
     # scrollbar. Streamlit renders ~35px rows + a ~38px header.
     _table_height = 38 + len(out) * 35 + 3
 
+    # Colour the ↳ sub-rows: growth green/red by sign, margins muted grey —
+    # so the trend reads at a glance and the $ waterfall stays the backbone.
+    def _style_row(row):
+        m = str(row["metric"])
+        if "↳" not in m:
+            return ["" for _ in out.columns]
+        css = []
+        for col in out.columns:
+            val = str(row[col])
+            if "growth" in m:
+                if val.startswith("+"):
+                    css.append("color: #059669;")
+                elif val.startswith("-"):
+                    css.append("color: #dc2626;")
+                else:
+                    css.append("color: #9ca3af;")
+            else:  # margin
+                css.append("color: #6b7280;")
+        return css
+
     st.dataframe(
-        out,
+        out.style.apply(_style_row, axis=1),
         use_container_width=True,
         hide_index=True,
         height=_table_height,
