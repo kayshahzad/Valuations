@@ -11,11 +11,13 @@ narrative blocks. This redesign:
     pillar reasoning rather than tiny right-aligned numbers.
   • 3-scenario DCF triangle — Bear / Base / Bull intrinsic-per-share with
     bar-graph layout, MoS markers, and width proportional to spread.
-  • Two-column body:
-      Left  — Moat (score + 4 dimensions + evidence), Value Chain,
-              Strategic Context
-      Right — Fundamentals (with validation badges), Reverse DCF chart,
-              Lead thesis narrative, Contrarian bear case
+  • Sectioned body (top-to-bottom, numbers → valuation → moat → context
+    → thesis vs bear):
+      1. Snapshot & valuation — Fundamentals row, Reverse DCF, adjustments
+      2. Moat & pricing power (full width; pricing power stated once)
+      3. Value chain & strategic context (full width)
+      4. Thesis vs bear case — lead/structured thesis | contrarian, the one
+         place two columns earn their keep (bull vs bear side by side)
   • Validation status visible everywhere a number is shown.
 
 Validation badges come from `aletheia.ui.validation_badge`. Status dots
@@ -919,9 +921,8 @@ def _value_chain_block(vc: Dict[str, Any]) -> None:
     if vc.get("top_substitutes"):
         _inline_label("Top substitutes")
         st.markdown(vc["top_substitutes"])
-    if vc.get("pricing_power_assessment"):
-        _inline_label("Pricing power assessment")
-        st.markdown(vc["pricing_power_assessment"])
+    # Pricing power is consolidated into the Moat & pricing-power section
+    # (see render body) so it's stated once, not split across two blocks.
 
 
 # ── Strategic context block ───────────────────────────────────────────────
@@ -2955,33 +2956,45 @@ def render_deep_dive_view(
     _saas_panel(p2v)
     _disclosure_panel(p2v, dcf)
 
-    # ── Two-column body ──────────────────────────────────────────────────
+    # ── Body: a sequential, sectioned flow ───────────────────────────────
+    # numbers → valuation → moat → context → thesis vs bear. Full-width
+    # sections (each internally coherent) rather than a rigid qual/quant
+    # two-column split whose mismatched heights broke the reading flow.
+
+    # § Snapshot & valuation — the numbers first, they anchor everything below.
     st.markdown("---")
-    left, right = st.columns([1, 1.4])
+    _fundamentals_row(ticker, fund)
+    st.markdown("<br>", unsafe_allow_html=True)
+    _reverse_dcf_chart(rdcf)
+    _rdcf_reasons(rdcf)
+    _adjustments_block(adj)
 
-    with left:
-        _moat_block(moat, universe_row)
-        st.markdown("<br>", unsafe_allow_html=True)
-        _value_chain_block(vc)
-        st.markdown("<br>", unsafe_allow_html=True)
-        _strategic_context_block(sc, (dcf or {}).get("business_analysis"))
+    # § Moat & pricing power — full width, pricing power stated once here.
+    st.markdown("---")
+    _moat_block(moat, universe_row)
+    if vc.get("pricing_power_assessment"):
+        _inline_label("Pricing power assessment")
+        st.markdown(vc["pricing_power_assessment"])
 
-    with right:
-        _fundamentals_row(ticker, fund)
-        st.markdown("<br>", unsafe_allow_html=True)
-        _reverse_dcf_chart(rdcf)
-        _rdcf_reasons(rdcf)
-        st.markdown("<br>", unsafe_allow_html=True)
-        _adjustments_block(adj)
-        st.markdown("<br>", unsafe_allow_html=True)
+    # § Value chain & strategic context — full width.
+    st.markdown("---")
+    _value_chain_block(vc)
+    st.markdown("<br>", unsafe_allow_html=True)
+    _strategic_context_block(sc, (dcf or {}).get("business_analysis"))
+
+    # § Thesis vs bear case — the one place two columns earn their keep:
+    # the bull thesis and the contrarian bear read side by side.
+    st.markdown("---")
+    st.markdown("#### Thesis vs. bear case")
+    tcol, ccol = st.columns(2)
+    with tcol:
         _thesis_narrative(investment_thesis.get("narrative") or "")
-        # Structured thesis from thesis_synthesizer (added in week-5
-        # consolidation). Renders nothing for tickers without a populated
-        # thesis_synthesis block (pre-consolidation reports / mock fallbacks).
+        # Structured thesis from thesis_synthesizer — renders nothing for
+        # tickers without a populated thesis_synthesis block.
         if thesis_synth.get("thesis_statement"):
             st.markdown("<br>", unsafe_allow_html=True)
             _structured_thesis_section(thesis_synth, dcf, p2v)
-        st.markdown("<br>", unsafe_allow_html=True)
+    with ccol:
         _contrarian_block(contrarian, dcf)
 
     # ── Reality Checks (new — Feature 1: GDP comparison) ─────────────────
