@@ -82,7 +82,19 @@ def _inline_label(label: str, color: Optional[str] = None) -> None:
 # ── Formatters ────────────────────────────────────────────────────────────
 
 def _money(v: Optional[float]) -> str:
-    return f"${v:,.0f}" if v else "—"
+    """Abbreviated USD — $X.XT / $X.XB / $X.XM for large figures, plain
+    dollars below a million (per-share IVs etc.). Sign-aware."""
+    if not v:
+        return "—"
+    a = abs(v)
+    sign = "-" if v < 0 else ""
+    if a >= 1e12:
+        return f"{sign}${a/1e12:,.1f}T"
+    if a >= 1e9:
+        return f"{sign}${a/1e9:,.1f}B"
+    if a >= 1e6:
+        return f"{sign}${a/1e6:,.1f}M"
+    return f"{sign}${a:,.0f}"
 
 
 def _bn(v: Optional[float], dp: int = 1) -> str:
@@ -549,7 +561,12 @@ def _disclosure_panel(p2v: Dict[str, Any], dcf: Optional[Dict[str, Any]] = None)
                            delta_color="off",
                            help="Revenue + Δ deferred revenue (bookings momentum)")
 
-    # Balance-sheet detail — debt-maturity ladder + leases + pension
+    # Balance-sheet detail — debt-maturity ladder + leases + pension.
+    # Escape '$' in markdown/caption strings: two-plus '$' on a line make
+    # Streamlit render '$…$' as LaTeX math (the number turns into a formula).
+    def _esc(s: str) -> str:
+        return s.replace("$", "\\$")
+
     dmn = dm.get("debt_maturity") or {}
     if dmn.get("available"):
         near = dmn.get("near_term_pct")
@@ -558,20 +575,20 @@ def _disclosure_panel(p2v: Dict[str, Any], dcf: Optional[Dict[str, Any]] = None)
             line += f", near-term (≤2y) {near*100:.0f}%"
         if dmn.get("wall_flag"):
             line += "  ⚠ near-term wall"
-        st.markdown(line)
+        st.markdown(_esc(line))
         buckets = dmn.get("buckets") or {}
         order = [("y1", "≤1y"), ("y2", "2y"), ("y3", "3y"),
                  ("y4", "4y"), ("y5", "5y"), ("thereafter", ">5y")]
         chips = [f"{lbl} {_money(buckets[k])}" for k, lbl in order if k in buckets]
         if chips:
-            st.caption("  ·  ".join(chips))
+            st.caption(_esc("  ·  ".join(chips)))
     le = dm.get("leases") or {}
     if le.get("available"):
         extra = f" (operating {_money(le['operating'])})" if le.get("operating") else ""
-        st.markdown(f"**Leases (ASC 842)** — total {_money(le.get('total'))}{extra}")
+        st.markdown(_esc(f"**Leases (ASC 842)** — total {_money(le.get('total'))}{extra}"))
     pe = dm.get("pension") or {}
     if pe.get("available"):
-        st.markdown(f"**Pension funded status** {_money(pe.get('funded_status'))}"
+        st.markdown(_esc(f"**Pension funded status** {_money(pe.get('funded_status'))}")
                     + (" ⚠ underfunded" if pe.get("underfunded") else ""))
 
     # (Revenue mix moved to the Bottom-Up tab, beside the segment themes.)
