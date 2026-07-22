@@ -513,6 +513,84 @@ def _saas_panel(p2v: Dict[str, Any]) -> None:
         st.caption("Disclosure gaps (NRR/RPO/billings need MD&A extraction): " + "; ".join(gaps))
 
 
+def _disclosure_panel(p2v: Dict[str, Any], dcf: Optional[Dict[str, Any]] = None) -> None:
+    """Structured disclosure signals (Phase 1): RPO, billings, debt-maturity
+    ladder, leases, pension, revenue mix — deterministic from SEC XBRL + FMP.
+    Universe-wide; each metric renders only when the filer discloses it.
+
+    Prefers the persisted phase2 value (refreshed by /rebuild), falling back
+    to the live /dcf payload so it shows without a rebuild on existing reports."""
+    dm = ((p2v or {}).get("disclosure_metrics")
+          or (dcf or {}).get("disclosure_metrics") or {})
+    if not dm.get("available"):
+        return
+    st.markdown("---")
+    st.markdown("##### Structured disclosure signals")
+    st.caption("Deterministic from SEC XBRL + FMP · each metric shown only when disclosed")
+
+    # Forward revenue — RPO + billings
+    rpo = dm.get("rpo") or {}
+    bl = dm.get("billings") or {}
+    if rpo.get("available") or bl.get("available"):
+        cols = st.columns(3)
+        i = 0
+        if rpo.get("available"):
+            cols[i].metric("RPO (backlog)", _money(rpo.get("value")),
+                           help="Remaining performance obligations — contracted, not-yet-recognized revenue")
+            i += 1
+            if rpo.get("coverage_ratio") is not None and i < 3:
+                cols[i].metric("RPO ÷ revenue", f"{rpo['coverage_ratio']:.2f}×",
+                               help="Forward-revenue coverage")
+                i += 1
+        if bl.get("available") and i < 3:
+            vr = bl.get("vs_revenue")
+            cols[i].metric("Billings", _money(bl.get("value")),
+                           delta=(f"{vr*100-100:+.0f}% vs revenue" if vr else None),
+                           delta_color="off",
+                           help="Revenue + Δ deferred revenue (bookings momentum)")
+
+    # Balance-sheet detail — debt-maturity ladder + leases + pension
+    dmn = dm.get("debt_maturity") or {}
+    if dmn.get("available"):
+        near = dmn.get("near_term_pct")
+        line = f"**Debt maturities** — total {_money(dmn.get('total'))}"
+        if near is not None:
+            line += f", near-term (≤2y) {near*100:.0f}%"
+        if dmn.get("wall_flag"):
+            line += "  ⚠ near-term wall"
+        st.markdown(line)
+        buckets = dmn.get("buckets") or {}
+        order = [("y1", "≤1y"), ("y2", "2y"), ("y3", "3y"),
+                 ("y4", "4y"), ("y5", "5y"), ("thereafter", ">5y")]
+        chips = [f"{lbl} {_money(buckets[k])}" for k, lbl in order if k in buckets]
+        if chips:
+            st.caption("  ·  ".join(chips))
+    le = dm.get("leases") or {}
+    if le.get("available"):
+        extra = f" (operating {_money(le['operating'])})" if le.get("operating") else ""
+        st.markdown(f"**Leases (ASC 842)** — total {_money(le.get('total'))}{extra}")
+    pe = dm.get("pension") or {}
+    if pe.get("available"):
+        st.markdown(f"**Pension funded status** {_money(pe.get('funded_status'))}"
+                    + (" ⚠ underfunded" if pe.get("underfunded") else ""))
+
+    # Revenue mix
+    rm = dm.get("revenue_mix") or {}
+    if rm.get("available"):
+        st.markdown(f"**Revenue mix** — {rm.get('n_segments')} segments · top "
+                    f"**{rm.get('top_segment')}** {rm.get('top_share', 0)*100:.0f}% · "
+                    f"concentration HHI {rm.get('hhi', 0):.2f}")
+        segs = rm.get("segments") or []
+        if segs:
+            import pandas as pd
+            _sdf = pd.DataFrame([{"Segment": s["name"], "Revenue": _money(s["revenue"]),
+                                  "Share": f"{s['share']*100:.0f}%"} for s in segs])
+            st.dataframe(_sdf, hide_index=True, use_container_width=True)
+
+    prov = dm.get("provenance") or {}
+    st.caption("Source: " + ", ".join(sorted(set(prov.values()))) + " · deterministic, no LLM")
+
+
 def _value_source_panel(p2v: Dict[str, Any]) -> None:
     """Value Source Decomposition (spec §3): 100%-stacked Operating/Financial/
     Multiple attribution + governance modifier + durability verdict. Gated on
@@ -2882,6 +2960,7 @@ def render_deep_dive_view(
     _bank_valuation_panel(p2v)
     _bank_metrics_panel(p2v)
     _saas_panel(p2v)
+    _disclosure_panel(p2v, dcf)
 
     # ── Two-column body ──────────────────────────────────────────────────
     st.markdown("---")

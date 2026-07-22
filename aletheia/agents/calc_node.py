@@ -392,6 +392,20 @@ def calc_node(state: Dict[str, Any]) -> Dict[str, Any]:
     except Exception as e:
         errors.append(f"SaaSMetrics failed: {e}")
 
+    # ── Step 6c.5: Secondary disclosure metrics (deterministic, Phase 1) ────
+    # RPO / billings / debt-maturity ladder / leases / revenue mix / R&D,
+    # hybrid-sourced (frame for provider-consistent lines, XBRL specialty
+    # tags via get_companyfact, FMP segmentation). Universe-wide; each metric
+    # self-suppresses when undisclosed. Fills §4/§6/§9. No LLM.
+    try:
+        from aletheia.tools.disclosure_metrics import build_disclosure_metrics
+        _dm = build_disclosure_metrics(calc_input)
+        if _dm.get("available"):
+            phase2["disclosure_metrics"] = _dm
+            print("  ✓ Disclosure metrics: RPO / debt-ladder / billings / leases")
+    except Exception as e:
+        errors.append(f"DisclosureMetrics failed: {e}")
+
     # ── Step 6d: CADS coverage (deterministic, §9 credit floor, Phase 2) ────
     # Cash available for debt service (EBITDA − CapEx). Catches the case where
     # the valuation looks fine but operations can't self-fund debt (EQIX

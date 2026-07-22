@@ -738,6 +738,16 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
     except Exception:
         _saas_payload = None
 
+    # Secondary disclosure metrics (Phase 1) — RPO / billings / debt-maturity
+    # ladder / leases / revenue mix / R&D; hybrid-sourced, self-suppressing.
+    _disclosure_payload = None
+    try:
+        from aletheia.tools.disclosure_metrics import build_disclosure_metrics as _bdm
+        _dm = _bdm(calc)
+        _disclosure_payload = _dm if _dm.get("available") else None
+    except Exception:
+        _disclosure_payload = None
+
     # CADS coverage (Phase 2) — credit floor / §9 trigger.
     _cads_payload = None
     try:
@@ -791,6 +801,7 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "market_context":         _market_context_payload(ticker),
         "value_source_decomposition": _vsd_payload,
         "saas_metrics":           _saas_payload,
+        "disclosure_metrics":     _disclosure_payload,
         "cads":                   _cads_payload,
         "capital_structure_flag": _csf_payload,
         "valuation_methods":      _vm_payload,
@@ -1430,6 +1441,7 @@ def _build_full_report(ticker: str) -> Optional[Dict[str, Any]]:
             "risk_free_rate":         dcf_payload.get("risk_free_rate"),
             "value_source_decomposition": dcf_payload.get("value_source_decomposition"),
             "saas_metrics":           dcf_payload.get("saas_metrics"),
+            "disclosure_metrics":     dcf_payload.get("disclosure_metrics"),
             "cads":                   dcf_payload.get("cads"),
             "capital_structure_flag": dcf_payload.get("capital_structure_flag"),
             "valuation_methods":      dcf_payload.get("valuation_methods"),
@@ -3127,6 +3139,16 @@ def rebuild_report(ticker: str):
                     refreshed.append("saas_metrics")
         except Exception as e:
             report.setdefault("_rebuild_warnings", []).append(f"saas_metrics: {e}")
+        # Secondary disclosure metrics (Phase 1) — RPO/billings/debt-ladder/etc.
+        try:
+            from aletheia.tools.disclosure_metrics import build_disclosure_metrics as _bdm
+            if _p2 is not None:
+                _dm = _bdm(_calc)
+                if _dm.get("available"):
+                    _p2["disclosure_metrics"] = _dm
+                    refreshed.append("disclosure_metrics")
+        except Exception as e:
+            report.setdefault("_rebuild_warnings", []).append(f"disclosure_metrics: {e}")
         # CADS coverage (Phase 2) — refresh the §9 credit floor.
         try:
             from aletheia.tools.cads_coverage import build_cads_coverage as _bcc
