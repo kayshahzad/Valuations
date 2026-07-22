@@ -264,6 +264,61 @@ def render_header(ticker: str, dcf: Dict[str, Any], df: pd.DataFrame) -> None:
 # Section 2 — 5-year fundamentals
 # ────────────────────────────────────────────────────────────────────────
 
+_FUND_CSS = """
+<style>
+.fund-wrap { overflow-x:auto; margin:2px 0 6px; }
+table.fund { border-collapse:collapse; width:100%; font-size:14px; }
+table.fund th, table.fund td { padding:7px 14px; white-space:nowrap;
+  border-bottom:1px solid rgba(128,128,128,0.13); }
+table.fund thead th { font-size:11.5px; text-transform:uppercase; letter-spacing:.03em;
+  opacity:.6; font-weight:600; text-align:right; vertical-align:bottom; line-height:1.35;
+  border-bottom:2px solid rgba(128,128,128,0.55); }
+table.fund thead th.lbl { text-align:left; }
+table.fund td.lbl { text-align:left; }
+table.fund td.num { text-align:right;
+  font-family:ui-monospace,'DM Mono',SFMono-Regular,Menlo,monospace;
+  font-variant-numeric:tabular-nums; }
+table.fund tr.subtotal td { border-top:2px solid rgba(128,128,128,0.55); font-weight:700; }
+table.fund tr.sub td.lbl { padding-left:34px; opacity:.6; font-size:12.5px; }
+table.fund tr.sub td.num { opacity:.7; font-size:12.5px; }
+table.fund tbody tr:hover td { background:rgba(128,128,128,0.06); }
+</style>
+"""
+
+
+def _fundamentals_html(headers: List[str], rows: List, subtotals: set) -> str:
+    """Excel-style ruled HTML table: thick rules above subtotals + under the
+    header, thin gridlines elsewhere, right-aligned mono numbers, ↳ sub-rows
+    (growth / margins) muted, growth coloured green/red by sign."""
+    from html import escape
+
+    def _is_subtotal(lbl: str) -> bool:
+        s = lbl.strip().lstrip("·🔴🟡🟢⚪ ").strip()
+        return any(s.startswith(k) for k in subtotals)
+
+    out = ['<div class="fund-wrap"><table class="fund"><thead><tr>',
+           '<th class="lbl">Metric</th>']
+    for h in headers:
+        out.append(f'<th class="num">{escape(h).replace(chr(10), "<br>")}</th>')
+    out.append('</tr></thead><tbody>')
+    for label, vals in rows:
+        s = label.strip()
+        is_sub = "↳" in s
+        is_growth = "growth" in s
+        cls = "sub" if is_sub else ("subtotal" if _is_subtotal(label) else "")
+        out.append(f'<tr class="{cls}"><td class="lbl">{escape(s)}</td>')
+        for v in vals:
+            v = escape(str(v))
+            style = ""
+            if is_sub and is_growth and v not in ("—", ""):
+                style = ' style="color:#059669"' if v.startswith("+") else (
+                    ' style="color:#dc2626"' if v.startswith("-") else "")
+            out.append(f'<td class="num"{style}>{v}</td>')
+        out.append('</tr>')
+    out.append('</tbody></table></div>')
+    return "".join(out)
+
+
 def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
     """5-year fundamentals — pivoted by FY for at-a-glance trend reading.
 
@@ -494,43 +549,12 @@ def render_trends_table(df: pd.DataFrame, ticker: Optional[str] = None) -> None:
             "🟢 validated SEC/FMP within 1% · 🟡 within 5% · 🔴 >5% drift · "
             "⚪ field absent · · not yet validated")
 
-    out = pd.DataFrame({"metric": [r[0] for r in rows]})
-    for i, h in enumerate(headers):
-        out[h] = [vals[i] for _, vals in rows]
-
-    # Size the height to the row count so every line is visible — no internal
-    # scrollbar. Streamlit renders ~35px rows + a ~38px header.
-    _table_height = 38 + len(out) * 35 + 3
-
-    # Colour the ↳ sub-rows: growth green/red by sign, margins muted grey —
-    # so the trend reads at a glance and the $ waterfall stays the backbone.
-    def _style_row(row):
-        m = str(row["metric"])
-        if "↳" not in m:
-            return ["" for _ in out.columns]
-        css = []
-        for col in out.columns:
-            val = str(row[col])
-            if "growth" in m:
-                if val.startswith("+"):
-                    css.append("color: #059669;")
-                elif val.startswith("-"):
-                    css.append("color: #dc2626;")
-                else:
-                    css.append("color: #9ca3af;")
-            else:  # margin
-                css.append("color: #6b7280;")
-        return css
-
-    st.dataframe(
-        out.style.apply(_style_row, axis=1),
-        use_container_width=True,
-        hide_index=True,
-        height=_table_height,
-        column_config={
-            "metric": st.column_config.TextColumn("Metric", width="medium"),
-        },
-    )
+    # Excel-style ruled HTML table (st.dataframe can't draw section borders):
+    # thick rules above the subtotals + under the header group the waterfall.
+    subtotals = ({"Net income", "Pre-tax income", "Total revenue"} if _is_bank
+                 else {"EBITDA", "EBIT", "Net income", "FCF"})
+    st.markdown(_FUND_CSS + _fundamentals_html(headers, rows, subtotals),
+                unsafe_allow_html=True)
     st.caption(caption)
 
 
