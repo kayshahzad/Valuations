@@ -803,16 +803,28 @@ def _shared_prelude():
             mos = report.get("4_valuation_synthesis", {}).get("phase2_valuation", {}).get("three_scenario_dcf", {}).get("base", {}).get("margin_of_safety", 0)
             mos_pct = f"{mos:+.1%}" if mos else "—"
             mos_color = "#10b981" if (mos is not None and mos > 0) else "#ef4444" if (mos is not None and mos < -0.1) else "#f59e0b"
-            
+
+            # Clean tier label + hover tooltip (no more mid-word truncation
+            # like MONITOR → "MONI"). (label, help) per position_tier.
+            _TIER_LABELS = {
+                "high_conviction": ("HIGH",    "High conviction — exceptional, all criteria met (score ≥ 23)"),
+                "conviction":      ("CONV",    "Conviction — strong, minor valuation/quality gap (20–22)"),
+                "monitor":         ("MONITOR", "Monitor — investable quality, but a price or risk concern (15–19)"),
+                "pass":            ("PASS",    "Pass — below the analytical threshold (< 15)"),
+                "not_scored":      ("N/A",     "Not scored yet"),
+            }
+            _tier_label, _tier_help = _TIER_LABELS.get(
+                (ps.get("position_tier") or "").lower(), ("—", "No conviction tier yet"))
+
             st.sidebar.markdown(f"""
                 <div style="display: flex; justify-content: space-between; padding: 12px 10px; background: rgba(128, 128, 128, 0.15); border-radius: 6px; margin-top: 12px;">
                     <div style="text-align: center;">
                         <div style="font-size: 11px; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Score</div>
                         <div style="font-size: 18px; font-weight: 700; color: var(--text-color); font-family: 'DM Mono', monospace;">{ps.get('capped_total','?')}/25</div>
                     </div>
-                    <div style="text-align: center;">
+                    <div style="text-align: center;" title="{_tier_help}">
                         <div style="font-size: 11px; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">Tier</div>
-                        <div style="font-size: 18px; font-weight: 700; color: var(--text-color); font-family: 'DM Mono', monospace;">{ps.get('position_tier','—').upper()[:4]}</div>
+                        <div style="font-size: 15px; font-weight: 700; color: var(--text-color); font-family: 'DM Mono', monospace; white-space: nowrap;">{_tier_label}</div>
                     </div>
                     <div style="text-align: center;">
                         <div style="font-size: 11px; color: var(--text-color); opacity: 0.7; margin-bottom: 4px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;">MoS</div>
