@@ -520,12 +520,18 @@ def _run_add_ticker_pipeline_ui(
         # though active_view doesn't bind to a key today — protects us
         # if it ever does.
         st.session_state._pending_active_ticker = final.ticker
-        st.session_state._pending_active_view = "◊  Quality Report"
+        # Analysis→Ops hop: route to the Data & Operations page and select
+        # the Quality Report tab (popped by _apply_pending_ops_view).
+        st.session_state._pending_ops_view = "◊  Quality Report"
         st.info(
-            f"**{final.ticker}** added. Switched view to **Quality Report** — "
-            "scroll down to see the full validation breakdown."
+            f"**{final.ticker}** added. Switched to **Data & Operations → "
+            "Quality Report** — scroll down for the full validation breakdown."
         )
-        st.rerun()
+        _ops_page = st.session_state.get("_ops_page_ref")
+        if _ops_page is not None:
+            st.switch_page(_ops_page)
+        else:
+            st.rerun()
 
 
 def _render_validation_table(payload: Optional[Dict[str, Any]], source: str) -> None:
@@ -634,11 +640,16 @@ def signal_html(s: str, small=False) -> str:
 # Main app
 # ─────────────────────────────────────────────────────────────────────────────
 
-def main():
+def _shared_prelude():
+    """Health + universe fetch, session/pending application, sidebar, and
+    header — the context every page shares. Renders the sidebar + header
+    and returns ``ranked`` (or None to abort the page on a failed fetch).
+    Called at the top of each st.navigation page so the sidebar renders
+    below the nav links."""
     # ── Check API health ──────────────────────────────────────────────────────
     health = fetch_health()
     if not health:
-        return
+        return None
 
     # ── Fetch universe ────────────────────────────────────────────────────────
     # The `/universe` endpoint returns the full union of ready + pending +
@@ -662,11 +673,8 @@ def main():
     # Dive (lead thesis, contrarian, value chain, moat, strategic context all
     # render there), and agent runs can be triggered from the Universe tab's
     # ▶ Run agents footer or the sidebar's per-ticker pipeline button.
-    views = ["▷  Dashboard", "◈  Universe", "◉  Deep Dive", "🔬  Bottom-Up", "▦  Financials", "◐  FMP Compare", "◇  Scenarios", "◧  Screening", "◨  Constitution", "◭  Qualitative", "📝  Thesis", "◩  Reports", "◊  Quality Report", "⚙  Pipeline Explorer", "⚙  Pipeline Status", "📐  Calc Framework", "🧪  Stage 3 (provider)"]
     if "active_ticker" not in st.session_state:
         st.session_state.active_ticker = available[0] if available else None
-    if "active_view" not in st.session_state:
-        st.session_state.active_view = views[0]
 
     # Apply any pending cross-rerun updates BEFORE the sidebar widget
     # renders. Code that runs AFTER the selectbox can't mutate
@@ -675,18 +683,6 @@ def main():
     # this block then applies it.
     if "_pending_active_ticker" in st.session_state:
         st.session_state.active_ticker = st.session_state.pop("_pending_active_ticker")
-    if "_pending_active_view" in st.session_state:
-        st.session_state.active_view = st.session_state.pop("_pending_active_view")
-        # The navigation widget binds with key="nav"; once instantiated
-        # it stores the user's last click in st.session_state.nav and
-        # ignores `default=`. Clearing it forces the widget to re-read
-        # `default=st.session_state.active_view` on next render, which
-        # is the value we just promoted from _pending_active_view.
-        # Without this, line 809 (st.session_state.active_view =
-        # active_view) silently clobbers the promotion with the widget's
-        # stale value.
-        if "nav" in st.session_state:
-            del st.session_state.nav
 
     # If the universe shrank (e.g. ticker removed mid-session) and the
     # stored value is no longer a valid option, reset before the widget
@@ -702,53 +698,25 @@ def main():
     def _format_ticker(t: str) -> str:
         return f"{_STATUS_ICON.get(status_by_ticker.get(t, 'ready'), '·')}  {t}"
 
-    # Search-as-you-type ticker picker.
-    #
-    # Streamlit doesn't have a single autocomplete widget, so the
-    # pattern is text_input → filter → selectbox. The text_input
-    # triggers a rerun on every keystroke, the selectbox options
-    # narrow live, and the user picks from the shortened list. This
-    # gives the autofill UX (typing "GOO" surfaces GOOGL) without
-    # adding an external streamlit-searchbox dependency.
-    search = st.sidebar.text_input(
-        "Search ticker",
-        key="ticker_search",
-        placeholder="🔍 Type to filter (e.g. GOO)",
-        label_visibility="collapsed",
-    )
-    if search.strip():
-        q = search.strip().upper()
-        matches = [t for t in available if q in t.upper()]
-    else:
-        matches = available
-
-    if matches:
-        # Streamlit's selectbox(key=...) reads st.session_state[key]
-        # as its initial value. When the search filter would exclude
-        # the currently-active ticker, we must reset BEFORE rendering
-        # the widget — otherwise Streamlit raises because key= refers
-        # to a value not in options.
-        if st.session_state.get("active_ticker") not in matches:
-            st.session_state.active_ticker = matches[0]
-
+    # Ticker picker — a single searchable selectbox. Streamlit's selectbox
+    # has built-in client-side typeahead (open it and type to filter, e.g.
+    # "GOO" → GOOGL), so the previous separate search text_input — which
+    # needed an Enter to commit and was decoupled from the dropdown — is
+    # redundant. One widget: type to search, click to select.
+    if available:
         # Bind directly to session_state via key= so Streamlit syncs
-        # widget ↔ state atomically. Avoids the stale-on-first-change
-        # behavior of the legacy
-        # ``st.session_state.X = st.selectbox(..., index=...)`` pattern.
+        # widget ↔ state atomically. active_ticker is guaranteed to be a
+        # valid option by the shrink guard above.
         st.sidebar.selectbox(
             "Select Ticker",
-            options=matches,
+            options=available,
             key="active_ticker",
             format_func=_format_ticker,
             label_visibility="collapsed",
-            help="🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
+            help="Type to search · 🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
         )
-        if search.strip() and len(matches) < len(available):
-            st.sidebar.caption(
-                f"{len(matches)} of {len(available)} ticker(s) match."
-            )
     else:
-        st.sidebar.caption(f"No ticker matches '{search}'.")
+        st.sidebar.caption("No tickers in the universe yet.")
 
     # ── Data source selector (P4: global, per-session sticky) ────────
     # Writes ``st.session_state["provider"]`` which the registry's
@@ -979,24 +947,12 @@ def main():
 
     st.markdown("---")
 
-    # ── Navigation (Replaces Tabs) ────────────────────────────────────────────
-    try:
-        active_view = st.segmented_control(
-            "Navigation", views,
-            default=st.session_state.active_view,
-            label_visibility="collapsed",
-            key="nav"
-        )
-    except AttributeError:
-        active_view = st.radio(
-            "Navigation", views,
-            index=views.index(st.session_state.active_view),
-            horizontal=True,
-            label_visibility="collapsed",
-            key="nav"
-        )
-    st.session_state.active_view = active_view
+    return ranked
 
+
+def _dispatch_view(active_view, ranked):
+    """Render the selected view's body. Holds every view branch; each
+    page's nav restricts which view strings actually reach here."""
     # ──────────────────────────────────────────────────────────────────────────
     # TAB 0 — DASHBOARD (Phase 5: per-ticker analyst dashboard)
     # ──────────────────────────────────────────────────────────────────────────
@@ -1970,6 +1926,95 @@ def main():
     elif active_view == "🧪  Stage 3 (provider)":
         from aletheia.ui.stage3_validation_view import render_stage3_validation
         render_stage3_validation(st.session_state.active_ticker)
+
+
+# ── Navigation: two pages (Analysis · Data & Operations) ────────────────────
+# Analysis holds the day-to-day research views (incl. Universe); Data &
+# Operations groups the pipeline/validation/framework surfaces. Each is a
+# st.navigation page rendering the shared prelude (sidebar + header) then
+# its own view radio → the single _dispatch_view above.
+_ANALYSIS_VIEWS = [
+    "▷  Dashboard", "◉  Deep Dive", "🔬  Bottom-Up",
+    "▦  Financials", "◇  Scenarios", "◧  Screening",
+    "◭  Qualitative", "📝  Thesis", "◩  Reports", "◈  Universe",
+]
+_OPS_VIEWS = [
+    "◐  FMP Compare", "◊  Quality Report", "⚙  Pipeline Explorer",
+    "⚙  Pipeline Status", "📐  Calc Framework", "◨  Constitution",
+    "🧪  Stage 3 (provider)",
+]
+
+
+def _view_radio(label, options, key):
+    """The horizontal view selector, keyed to session state so selection
+    persists. Prefers segmented_control, falls back to radio."""
+    if key not in st.session_state:
+        st.session_state[key] = options[0]
+    try:
+        return st.segmented_control(
+            label, options, key=key, label_visibility="collapsed")
+    except AttributeError:
+        return st.radio(
+            label, options, key=key, horizontal=True,
+            label_visibility="collapsed")
+
+
+def _apply_pending_ops_view():
+    """Pop a pending ops-view target (set by a cross-nav hop) into the ops
+    radio's session state. POP, not read — so a later rerun (a widget
+    click, refresh) doesn't snap the radio back to the hop target."""
+    pending = st.session_state.pop("_pending_ops_view", None)
+    if pending and pending in _OPS_VIEWS:
+        st.session_state["ops_active_view"] = pending
+
+
+def render_analysis_page():
+    ranked = _shared_prelude()
+    if ranked is None:
+        return
+    active_view = _view_radio("Navigation", _ANALYSIS_VIEWS, "analysis_nav")
+    _dispatch_view(active_view, ranked)
+
+
+def render_ops_page():
+    ranked = _shared_prelude()
+    if ranked is None:
+        return
+    _apply_pending_ops_view()
+    active_view = _view_radio("Data & Operations", _OPS_VIEWS, "ops_active_view")
+    _dispatch_view(active_view, ranked)
+
+
+def _authenticate() -> bool:
+    """Authentication gate (Workstream 2 seam). Pass-through until auth is
+    wired; returns False to block rendering for an unauthenticated user."""
+    return True
+
+
+def _user_role() -> str:
+    """Role for authorization (Workstream 2 seam). Full access until wired;
+    gates which pages _build_pages() exposes."""
+    return "admin"
+
+
+def _build_pages(role):
+    """Assemble the st.navigation page map. Stores the ops page reference in
+    session state so cross-page hops (st.switch_page) can target it. Data &
+    Operations is gated by role (the authz seam)."""
+    ops_page = st.Page(render_ops_page, title="Data & Operations", icon="⚙️")
+    st.session_state["_ops_page_ref"] = ops_page
+    pages = {"Analysis": [st.Page(render_analysis_page, title="Analysis",
+                                  icon="📊", default=True)]}
+    if role in ("admin", "ops"):
+        pages["Data & Operations"] = [ops_page]
+    return pages
+
+
+def main():
+    if not _authenticate():
+        return
+    pg = st.navigation(_build_pages(_user_role()))
+    pg.run()
 
 
 if __name__ == "__main__":

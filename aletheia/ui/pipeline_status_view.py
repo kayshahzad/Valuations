@@ -140,7 +140,9 @@ def _navigate_to_explorer(
     that section; falls back to the default panel layout when unset.
     """
     st.session_state._pending_active_ticker = ticker
-    st.session_state._pending_active_view = "⚙  Pipeline Explorer"
+    # Ops→Ops hop: select the Pipeline Explorer tab on the same
+    # Data & Operations page (popped by _apply_pending_ops_view).
+    st.session_state._pending_ops_view = "⚙  Pipeline Explorer"
     if focus_stage:
         st.session_state._pending_focus_stage = focus_stage
     st.rerun()
