@@ -698,25 +698,42 @@ def _shared_prelude():
     def _format_ticker(t: str) -> str:
         return f"{_STATUS_ICON.get(status_by_ticker.get(t, 'ready'), '·')}  {t}"
 
-    # Ticker picker — a single searchable selectbox. Streamlit's selectbox
-    # has built-in client-side typeahead (open it and type to filter, e.g.
-    # "GOO" → GOOGL), so the previous separate search text_input — which
-    # needed an Enter to commit and was decoupled from the dropdown — is
-    # redundant. One widget: type to search, click to select.
-    if available:
-        # Bind directly to session_state via key= so Streamlit syncs
-        # widget ↔ state atomically. active_ticker is guaranteed to be a
-        # valid option by the shrink guard above.
+    # Ticker picker — a visible search box that filters the dropdown, plus
+    # the selectbox itself. Type a ticker and press Enter to narrow the list
+    # (e.g. "GOO" → GOOGL); the filtered dropdown auto-selects the match.
+    # The selectbox also has its own built-in typeahead once opened.
+    search = st.sidebar.text_input(
+        "Search ticker",
+        key="ticker_search",
+        placeholder="🔍 Type a ticker + Enter (e.g. NVDA)",
+        label_visibility="collapsed",
+    )
+    if search.strip():
+        q = search.strip().upper()
+        matches = [t for t in available if q in t.upper()]
+    else:
+        matches = available
+
+    if matches:
+        # Streamlit's selectbox(key=...) reads st.session_state[key] as its
+        # initial value; if the filter excludes the active ticker we must
+        # reset BEFORE the widget renders (else key= points at a value not
+        # in options). Only fires when the current pick falls out of the
+        # filtered set, so it never snaps back on an explicit selection.
+        if st.session_state.get("active_ticker") not in matches:
+            st.session_state.active_ticker = matches[0]
         st.sidebar.selectbox(
             "Select Ticker",
-            options=available,
+            options=matches,
             key="active_ticker",
             format_func=_format_ticker,
             label_visibility="collapsed",
-            help="Type to search · 🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
+            help="🟢 ready (agents complete) · 🟡 pending agents · ⚪ not ingested",
         )
+        if search.strip() and len(matches) < len(available):
+            st.sidebar.caption(f"{len(matches)} of {len(available)} match.")
     else:
-        st.sidebar.caption("No tickers in the universe yet.")
+        st.sidebar.caption(f"No ticker matches '{search}'.")
 
     # ── Data source selector (P4: global, per-session sticky) ────────
     # Writes ``st.session_state["provider"]`` which the registry's
