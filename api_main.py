@@ -910,6 +910,7 @@ class DCFResponse(BaseModel):
     wacc_analysis: Optional[dict] = None
     business_analysis: Optional[dict] = None
     assumption_grounding: Optional[dict] = None
+    disclosure_metrics: Optional[dict] = None
     market_context: Optional[dict] = None
     specialized_inputs: Optional[dict] = None
 
@@ -1598,6 +1599,7 @@ def get_ticker_dcf(ticker: str, response: Response):
         wacc_analysis=payload.get("wacc_analysis"),
         business_analysis=payload.get("business_analysis"),
         assumption_grounding=payload.get("assumption_grounding"),
+        disclosure_metrics=payload.get("disclosure_metrics"),
         market_context=payload.get("market_context"),
     )
 

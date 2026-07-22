@@ -574,21 +574,10 @@ def _disclosure_panel(p2v: Dict[str, Any], dcf: Optional[Dict[str, Any]] = None)
         st.markdown(f"**Pension funded status** {_money(pe.get('funded_status'))}"
                     + (" ⚠ underfunded" if pe.get("underfunded") else ""))
 
-    # Revenue mix
-    rm = dm.get("revenue_mix") or {}
-    if rm.get("available"):
-        st.markdown(f"**Revenue mix** — {rm.get('n_segments')} segments · top "
-                    f"**{rm.get('top_segment')}** {rm.get('top_share', 0)*100:.0f}% · "
-                    f"concentration HHI {rm.get('hhi', 0):.2f}")
-        segs = rm.get("segments") or []
-        if segs:
-            import pandas as pd
-            _sdf = pd.DataFrame([{"Segment": s["name"], "Revenue": _money(s["revenue"]),
-                                  "Share": f"{s['share']*100:.0f}%"} for s in segs])
-            st.dataframe(_sdf, hide_index=True, use_container_width=True)
-
-    prov = dm.get("provenance") or {}
-    st.caption("Source: " + ", ".join(sorted(set(prov.values()))) + " · deterministic, no LLM")
+    # (Revenue mix moved to the Bottom-Up tab, beside the segment themes.)
+    prov = {k: v for k, v in (dm.get("provenance") or {}).items() if k != "revenue_mix"}
+    if prov:
+        st.caption("Source: " + ", ".join(sorted(set(prov.values()))) + " · deterministic, no LLM")
 
 
 def _value_source_panel(p2v: Dict[str, Any]) -> None:
@@ -2302,7 +2291,7 @@ def _business_analysis_panel(ba: Dict[str, Any], ag: Dict[str, Any]) -> None:
     gd = (ba or {}).get("growth_decomposition") or {}
     if gd.get("available") or (ag or {}).get("available"):
         with st.container(border=True):
-            st.markdown("#### 🔬 Bottom-up business analysis")
+            st.markdown("#### 🔬 Business snapshot")
             tpl = (ba or {}).get("sector_template") or {}
             if tpl.get("emphasis"):
                 st.caption(f"Sector emphasis ({tpl.get('label','')}): "
@@ -2321,36 +2310,23 @@ def _business_analysis_panel(ba: Dict[str, Any], ag: Dict[str, Any]) -> None:
                         f"{_p(gd.get('share_gain_pp'))} ({gd.get('share_label','')})")
             ex = (ba or {}).get("extracted") or {}
             if ex:
+                # Condensed summary — the full themes (TAM detail, unit
+                # economics, innovation, competitive positioning, evidence
+                # quotes) live on the dedicated Bottom-Up tab; Deep Dive shows
+                # only the essentials so the memo stays scannable.
                 prods = ex.get("product_lines") or []
                 if prods:
-                    st.markdown("**Product lines:** " + ", ".join(
-                        f"{p.get('name','')}" + (f" ({p.get('pricing_model')})" if p.get('pricing_model') else "")
-                        for p in prods[:5]))
+                    st.markdown("**Sells:** " + ", ".join(
+                        p.get("name", "") for p in prods[:3]))
                 custs = ex.get("major_customers") or []
                 if custs:
-                    st.markdown("**Major customers:** " + ", ".join(
-                        c.get("name", "") for c in custs[:5]))
+                    st.markdown("**Key customers:** " + ", ".join(
+                        c.get("name", "") for c in custs[:3]))
                 if ex.get("tam_estimate"):
-                    st.caption(f"TAM: {ex['tam_estimate']}"
-                               + (f" — {ex.get('tam_methodology')}" if ex.get('tam_methodology') else ""))
-                if ex.get("market_share"):
-                    st.caption(f"Market share: {ex['market_share']}")
-                if ex.get("whitespace_runway"):
-                    st.caption(f"Whitespace: {ex['whitespace_runway']}")
-                for label, key in (("Contract economics", "contract_economics"),
-                                   ("CAC/LTV", "cac_ltv"),
-                                   ("Segment margins", "segment_margin_trajectory"),
-                                   ("Operating leverage", "operating_leverage"),
-                                   ("R&D pipeline", "rd_pipeline"),
-                                   ("Trend positioning", "trend_positioning"),
-                                   ("Disruption risk", "disruption_risk"),
-                                   ("Acquisition strategy", "acquisition_strategy")):
-                    if ex.get(key):
-                        st.caption(f"{label}: {ex[key]}")
-                launches = ex.get("new_product_launches") or []
-                if launches:
-                    st.markdown("**New launches:** " + ", ".join(
-                        l.get("name", "") for l in launches[:5]))
+                    st.caption(f"TAM {ex['tam_estimate']}"
+                               + (f" · share {ex['market_share']}" if ex.get("market_share") else ""))
+                st.caption("→ Full bottom-up analysis — 6 themes · TAM · unit economics · "
+                           "competitive positioning · evidence — on the **Bottom-Up** tab.")
             if ba and ba.get("available"):
                 st.caption(f"Coverage: {ba.get('n_present','?')}/{ba.get('n_total','?')} "
                            "bottom-up dimensions populated (rest pending extraction)")

@@ -213,6 +213,28 @@ def _render_evidence_panel(ex: Dict[str, Any]) -> None:
             st.caption("No evidence quotes were captured on this extraction.")
 
 
+def _render_revenue_mix(dcf: Dict[str, Any]) -> None:
+    """Structured revenue disaggregation (XBRL/FMP) — segment mix + HHI
+    concentration. Deterministic; from the Phase-1 disclosure metrics.
+    Renders only when the filer discloses a product segmentation."""
+    rm = ((dcf or {}).get("disclosure_metrics") or {}).get("revenue_mix") or {}
+    if not rm.get("available"):
+        return
+    with st.container(border=True):
+        st.markdown("#### 📊 Revenue mix (structured)")
+        st.caption(f"{rm.get('n_segments')} segments · top **{rm.get('top_segment')}** "
+                   f"{rm.get('top_share', 0)*100:.0f}% · concentration HHI "
+                   f"{rm.get('hhi', 0):.2f} (0–1) · source: FMP segmentation")
+        segs = rm.get("segments") or []
+        if segs:
+            _df = pd.DataFrame([{
+                "Segment": s.get("name", ""),
+                "Revenue": (f"${s['revenue']/1e9:.2f}B" if s.get("revenue") else "—"),
+                "Share":   f"{s.get('share', 0)*100:.0f}%",
+            } for s in segs])
+            st.dataframe(_df, hide_index=True, use_container_width=True)
+
+
 def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
     """Render the bottom-up analysis tab for a ticker."""
     if not ticker:
@@ -287,6 +309,10 @@ def render_bottom_up_view(ticker: str, dcf: Dict[str, Any]) -> None:
 
     # Evidence trail — verbatim 10-K quotes grounding the factual claims.
     _render_evidence_panel(ex)
+
+    # Structured revenue disaggregation (Phase 1 disclosure metrics) — the
+    # deterministic XBRL/FMP counterpart to the LLM-extracted segment themes.
+    _render_revenue_mix(dcf)
 
     # Assumption grounding — the bottom-up → top-down bridge (keystone).
     if ag.get("available"):
