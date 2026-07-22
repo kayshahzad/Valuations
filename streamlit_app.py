@@ -1963,8 +1963,8 @@ def _dispatch_view(active_view, ranked):
 # st.navigation page rendering the shared prelude (sidebar + header) then
 # its own view radio → the single _dispatch_view above.
 _ANALYSIS_VIEWS = [
-    "▷  Dashboard", "◉  Deep Dive", "🔬  Bottom-Up",
-    "▦  Financials", "◇  Scenarios", "◧  Screening",
+    "▷  Dashboard", "▦  Financials", "◉  Deep Dive", "🔬  Bottom-Up",
+    "◇  Scenarios", "◧  Screening",
     "◭  Qualitative", "📝  Thesis", "◩  Reports", "◈  Universe",
 ]
 _OPS_VIEWS = [
