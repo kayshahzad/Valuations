@@ -1041,6 +1041,74 @@ def _render_current_state(cs: Dict[str, Any], ticker: str = "",
                        "Run the events agent for trial/regulatory/competitive coverage.")
 
 
+def _render_data_confidence_panel(ticker: str, latest_fy: Optional[int]) -> None:
+    """Phase 3.5 surfacing: composite per-field confidence vs the SEC filing.
+
+    Augments the row glyphs (locked "augment first" decision) with an explicit
+    level, so a number that BALANCES an identity but the filing contradicts
+    reads as 'suspect', not verified. Reuses the SEC cross-check (3.3/3.4) the
+    badge path already runs, plus field_confidence (3.5). Renders nothing when
+    no field could be cross-checked against SEC XBRL."""
+    try:
+        from scripts.validate_sec import validate_ticker
+        from aletheia.data.field_confidence import field_confidence, summarize
+    except Exception:
+        return
+    # The freshest row can be a TTM / not-yet-filed year with no SEC facts —
+    # fall back to recent annual FYs until one has SEC data to compare against.
+    res = None
+    start = latest_fy or 0
+    for y in (start, start - 1, start - 2):
+        try:
+            r = validate_ticker(ticker, y) if y else validate_ticker(ticker)
+        except Exception:
+            continue
+        if any(x.get("sec") is not None for x in (r.get("rows") or [])):
+            res = r
+            break
+    if res is None:
+        return
+    rows = res.get("rows") or []
+    if not rows:
+        return
+
+    _MAP = {"✓": "validated", "≈": "near", "✗": "drift"}
+    cmap: Dict[str, Any] = {}
+    detail = []
+    for r in rows:
+        sec, ours = r.get("sec"), r.get("ours")
+        xflag = ("sec_missing" if sec is None else
+                 "ours_missing" if ours is None else _MAP.get(r.get("flag"), "drift"))
+        # cross-source-checked fields are reported (raw) values.
+        lvl, score, _reasons = field_confidence(provenance="raw", cross_source_flag=xflag)
+        cmap[r["label"]] = {"level": lvl, "score": score}
+        detail.append((r["label"], lvl, score, sec, ours, r.get("drift"), xflag))
+
+    checked = [d for d in detail if d[6] not in ("sec_missing", "ours_missing")]
+    if not checked:
+        return
+    s = summarize({k: v for k, v in cmap.items()
+                   if k in {d[0] for d in checked}})
+    attn = s["needs_attention"]
+
+    _EMO = {"high": "🟢", "medium": "🟢", "low": "🟡", "near": "🟡",
+            "suspect": "🔴", "fabricated": "🔴", "missing": "⚪"}
+    hdr = f"Data confidence vs SEC filing: {s['mean_score']:.0f}/100 · {len(checked)} fields"
+    if attn:
+        hdr += f"  ·  ⚠ {len(attn)} need attention: {', '.join(attn)}"
+    with st.expander(hdr, expanded=bool(attn)):
+        st.caption(
+            "Composite per-field confidence (Phase 3.5): source authority × SEC "
+            "cross-source agreement (3.3/3.4). Augments the row glyphs — a value "
+            "that balances an identity but the filing contradicts reads 'suspect', "
+            "not verified. 🔴 suspect/fabricated · 🟡 low/near · 🟢 medium/high.")
+        for label, lvl, score, sec, ours, drift, _xf in sorted(checked, key=lambda d: d[2]):
+            dr = f"{drift * 100:+.1f}%" if isinstance(drift, (int, float)) else "—"
+            st.markdown(
+                f"{_EMO.get(lvl, '⚪')} **{label}** — {lvl} ({score}/100) · "
+                f"SEC-vs-ours drift {dr}")
+
+
 def render_financials_view(ticker: str, bundle: Dict[str, Any],
                            phase2: Dict[str, Any] = None) -> None:
     """Render the redesigned Financials tab for `ticker`. `bundle` is the
@@ -1263,6 +1331,8 @@ def render_financials_view(ticker: str, bundle: Dict[str, Any],
         # Phase 6 Step 2b: Data Quality panel sourced from
         # validate_cleaned_record_schema_contract persistence-time output.
         _render_schema_quality_panel(bundle.get("schema_violations") or {})
+        # Phase 3.5: composite per-field confidence vs the SEC filing.
+        _render_data_confidence_panel(ticker, ident.get("fiscal_year"))
 
     # ── Validation legend ─────────────────────────────────────────────────
     st.markdown("---")
