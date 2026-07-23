@@ -427,21 +427,31 @@ class MultipleDecomposition:
         result.market_ev = market_ev
 
         # ── Compute WACC ──────────────────────────────────────────────────────
+        # Route through the canonical WACC-input resolver so md / dcf_engine /
+        # reverse_dcf weight WACC off *identical* capital-structure numbers.
+        # md already reads the canonical (TTM-merged) row, so passing its own
+        # market_cap + tax_rate is a no-op here — the shared path just makes the
+        # consistency explicit and guaranteed by construction.
         if wacc_override:
             wacc = wacc_override
         else:
             from aletheia.tools.dcf_engine import (
-                _fetch_risk_free_rate, _compute_beta, compute_wacc
+                _fetch_risk_free_rate, _compute_beta, compute_wacc,
+                resolve_wacc_inputs,
             )
             rf = _fetch_risk_free_rate()
             beta = _compute_beta(ticker)
-            ltd = get("raw_LongTermDebt")
+            wi = resolve_wacc_inputs(
+                calc_input, ticker, fiscal_year=fy,
+                market_cap=market_cap, tax_rate=tax_rate,
+                tax_rate_source=tax_rate_source,
+            )
             wacc, _, _, _ = compute_wacc(
                 ticker=ticker,
-                total_equity=market_cap,
-                total_debt=max(net_debt + get("raw_Cash", 0), ltd),
-                interest_expense=ltd * 0.04,
-                tax_rate=tax_rate,
+                total_equity=wi.market_cap,
+                total_debt=wi.total_debt,
+                interest_expense=wi.interest_expense,
+                tax_rate=wi.tax_rate,
                 risk_free_rate=rf,
                 beta=beta,
             )

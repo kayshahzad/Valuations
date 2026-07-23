@@ -488,19 +488,30 @@ class ReverseDCF:
         if wacc_override:
             wacc = wacc_override
         else:
-            # Import from dcf_engine
+            # Route WACC through the canonical input resolver so this tool's
+            # discount rate matches dcf_engine / multiple_decomposition exactly.
+            # reverse_dcf's operating math is FY-based (its ``row`` is the FY
+            # row), but WACC is a forward-looking cost of capital that must be
+            # consistent across tools — so its capital-structure inputs come
+            # from the same TTM-merged canonical row the DCF discounts off.
+            # (Previously reverse_dcf read net_debt/cash off the FY row, which
+            # diverged from md/dcf by ~2bps.) Tax rate is resolved canonically
+            # here too, rather than passing this tool's FY-based rate.
             from aletheia.tools.dcf_engine import (
-                _fetch_risk_free_rate, _compute_beta, compute_wacc
+                _fetch_risk_free_rate, _compute_beta, compute_wacc,
+                resolve_wacc_inputs,
             )
             rf = _fetch_risk_free_rate()
             beta = _compute_beta(ticker)
-            long_term_debt = get("raw_LongTermDebt")
+            wi = resolve_wacc_inputs(
+                calc_input, ticker, fiscal_year=fy, market_cap=market_cap,
+            )
             wacc, _, _, _ = compute_wacc(
                 ticker=ticker,
-                total_equity=market_cap,
-                total_debt=max(net_debt + get("raw_Cash", 0), long_term_debt),
-                interest_expense=long_term_debt * 0.04,
-                tax_rate=tax_rate,
+                total_equity=wi.market_cap,
+                total_debt=wi.total_debt,
+                interest_expense=wi.interest_expense,
+                tax_rate=wi.tax_rate,
                 risk_free_rate=rf,
                 beta=beta,
             )

@@ -547,6 +547,102 @@ def compute_wacc(
     return float(wacc_val), float(ke or 0.0), float(kd or 0.0), float(b)
 
 
+@dataclass
+class WaccInputs:
+    """Canonical capital-structure inputs feeding ``compute_wacc``.
+
+    Resolved once, from one row, so every tool weights WACC off identical
+    numbers. ``total_debt`` and ``interest_expense`` are the exact arguments
+    ``compute_wacc`` expects; the raw components are carried for callers that
+    also need net_debt / market_cap (e.g. market_ev = market_cap + net_debt).
+    """
+    fiscal_year: int
+    net_debt: float
+    cash: float
+    long_term_debt: float
+    total_debt: float          # max(net_debt + cash, ltd) — the WACC debt weight
+    interest_expense: float    # ltd * 0.04 (proxy coupon)
+    market_cap: float
+    tax_rate: float
+    tax_rate_source: str
+
+
+def resolve_wacc_inputs(
+    calc_input: "CalculationInput",
+    ticker: str,
+    *,
+    fiscal_year: Optional[int] = None,
+    market_cap: Optional[float] = None,
+    tax_rate: Optional[float] = None,
+    tax_rate_source: Optional[str] = None,
+) -> WaccInputs:
+    """Single source of truth for the inputs that feed WACC across
+    ``dcf_engine`` / ``multiple_decomposition`` / ``reverse_dcf``.
+
+    All capital-structure inputs (net debt, cash, long-term debt, tax rate)
+    are read from ONE canonical row — the latest FY merged with the TTM
+    fallback (``_merge_ttm_with_fy_fallback``), the same row the DCF engine
+    discounts off. Before this helper, reverse_dcf resolved these off the raw
+    FY row while md/dcf used the TTM-merged row, so net_debt/cash diverged and
+    the three tools' WACC differed by ~2bps despite byte-identical formulas.
+    Routing every tool through here makes WACC identical *by construction*.
+
+    ``market_cap`` / ``tax_rate`` may be supplied by a caller that already
+    resolved them (the DCF engine passes an analyst tax override); otherwise
+    they are resolved here off the canonical row.
+    """
+    from aletheia.calculations import resolve_tax_rate
+
+    df = calc_input.df
+    df_fy = df[df["period"] == "FY"] if "period" in df.columns else df
+    df_ttm = (
+        df[df["period"] == "TTM"] if "period" in df.columns else df.iloc[0:0]
+    )
+    fy = fiscal_year or int(df_fy["fiscal_year"].max())
+    latest_fy_row = df_fy[df_fy["fiscal_year"] == fy].iloc[0]
+    if not df_ttm.empty:
+        row = _merge_ttm_with_fy_fallback(df_ttm.iloc[-1], latest_fy_row)
+    else:
+        row = latest_fy_row
+
+    def get(col, fallback=0.0):
+        val = row.get(col)
+        if val is not None and not (isinstance(val, float) and np.isnan(val)):
+            return float(val)
+        return fallback
+
+    net_debt = get("derived_NetDebt")
+    cash = get("raw_Cash", 0.0)
+    ltd = get("raw_LongTermDebt")
+
+    if tax_rate is None:
+        tax_rate, tax_rate_source = resolve_tax_rate(
+            ticker=ticker, fn="resolve_wacc_inputs",
+            df=df_fy, fy=fy,
+            cash_tax_rate=get("clean_CashTaxRate", None),
+            gaap_tax_rate=get("clean_GAAP_TaxRate", None),
+        )
+
+    if market_cap is None:
+        from aletheia.data.market_data import get_market_cap
+        try:
+            market_cap = get_market_cap(ticker)
+        except Exception:
+            market_cap = 0.0
+
+    return WaccInputs(
+        fiscal_year=fy,
+        net_debt=net_debt,
+        cash=cash,
+        long_term_debt=ltd,
+        total_debt=max(net_debt + cash, ltd),
+        interest_expense=ltd * 0.04,
+        market_cap=float(market_cap or 0.0),
+        tax_rate=tax_rate,
+        tax_rate_source=tax_rate_source or "",
+    )
+
+
 def wacc_at_beta(result: "DCFResult", beta: float) -> float:
     """Recompute the headline WACC at an alternate β WITHOUT mutating the
     result (Build 1 / R1). β enters WACC only through the equity leg
