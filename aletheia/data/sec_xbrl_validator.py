@@ -21,6 +21,7 @@ are exactly what the issuer XBRL-tagged in their 10-K.
 
 from __future__ import annotations
 
+import functools
 import json
 from dataclasses import dataclass
 from pathlib import Path
@@ -69,6 +70,29 @@ CANONICAL_TAGS: Dict[str, List[str]] = {
         "NetCashProvidedByUsedInOperatingActivities",
         "NetCashProvidedByUsedInOperatingActivitiesContinuingOperations",
     ],
+    # 3.4: widen the authoritative check beyond the 8 bottom-line totals so
+    # margins / EPS / capex / working-capital lines get a filing-backed dot
+    # instead of an FMP-agreement-only one.
+    "GrossProfit": ["GrossProfit"],
+    "OperatingIncome": ["OperatingIncomeLoss"],
+    "ResearchAndDevelopment": [
+        "ResearchAndDevelopmentExpense",
+        "ResearchAndDevelopmentExpenseExcludingAcquiredInProcessCost",
+    ],
+    "CapEx": [
+        "PaymentsToAcquirePropertyPlantAndEquipment",
+        "PaymentsToAcquireProductiveAssets",
+    ],
+    "Depreciation": [
+        "DepreciationDepletionAndAmortization",
+        "DepreciationAmortizationAndAccretionNet",
+        "DepreciationAndAmortization",
+    ],
+    "Inventory": ["InventoryNet"],
+    "AccountsReceivable": ["AccountsReceivableNetCurrent"],
+    "CurrentAssets": ["AssetsCurrent"],
+    # (EPS / diluted shares deferred — non-USD units; lookup_xbrl reads USD
+    #  facts only, so they need per-share/shares unit support first.)
 }
 
 
@@ -83,7 +107,11 @@ class XBRLFact:
     fp: str
 
 
+@functools.lru_cache(maxsize=8)
 def _load_companyfacts(cik: str) -> Optional[Dict[str, Any]]:
+    # Cached: build_cross_source_agreement calls lookup_xbrl once per field, so a
+    # single ticker's clean_all_years would otherwise re-read the (multi-MB)
+    # companyfacts JSON hundreds of times.
     path = _FACTS_DIR / f"CIK{cik.zfill(10)}.json"
     if not path.exists():
         return None
@@ -231,4 +259,48 @@ def lookup_canonical(ticker: str, fiscal_year: int) -> Dict[str, Optional[XBRLFa
     out: Dict[str, Optional[XBRLFact]] = {}
     for field in CANONICAL_TAGS:
         out[field] = lookup_xbrl(ticker, field, fiscal_year)
+    return out
+
+
+# 3.3: cross-source agreement — our cleaned value vs the authoritative SEC fact,
+# per field. Fields whose CANONICAL_TAGS key differs from the raw_json key.
+_FIELD_TO_OUR_KEY = {"ResearchAndDevelopment": "R&D"}
+_XSRC_TOL_OK = 0.01     # <1% → validated (byte-perfect vs the filing)
+_XSRC_TOL_NEAR = 0.05   # <5% → near
+
+
+def build_cross_source_agreement(
+    ticker: str, fiscal_year: int, our_raw: Dict[str, Any],
+) -> Dict[str, Dict[str, Any]]:
+    """Per-field SEC-vs-ours agreement map:
+    ``{field: {sec, ours, drift, flag, sec_tag}}``.
+
+    ``flag`` ∈ {validated, near, drift, sec_missing, ours_missing}. Only fields
+    with an authoritative SEC XBRL tag (CANONICAL_TAGS) are compared. Fields
+    absent on both sides are omitted. Deterministic + cache-only (reads the
+    local companyfacts JSON); safe to call at ingest/report time.
+    """
+    out: Dict[str, Dict[str, Any]] = {}
+    for field in CANONICAL_TAGS:
+        our_key = _FIELD_TO_OUR_KEY.get(field, field)
+        ov = our_raw.get(our_key)
+        try:
+            ov = float(ov) if ov is not None else None
+        except (TypeError, ValueError):
+            ov = None
+        fact = lookup_xbrl(ticker, field, fiscal_year)
+        sv = fact.value if fact else None
+        if sv is None and ov is None:
+            continue
+        if sv is None:
+            flag, drift = "sec_missing", None
+        elif ov is None:
+            flag, drift = "ours_missing", None
+        else:
+            drift = (ov - sv) / sv if sv else (0.0 if ov == 0 else 1.0)
+            ad = abs(drift)
+            flag = ("validated" if ad < _XSRC_TOL_OK
+                    else "near" if ad < _XSRC_TOL_NEAR else "drift")
+        out[field] = {"sec": sv, "ours": ov, "drift": drift, "flag": flag,
+                      "sec_tag": fact.tag if fact else None}
     return out

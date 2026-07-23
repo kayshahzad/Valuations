@@ -40,6 +40,15 @@ FIELDS_TO_VALIDATE: List[Tuple[str, str, str]] = [
     ("Cash",             "Cash",             "Cash"),
     ("Long-Term Debt",   "LongTermDebt",     "LongTermDebt"),
     ("Operating CF",     "OperatingCF",      "OperatingCF"),
+    # 3.4: expanded authoritative set (our_key = raw_json key).
+    ("Gross Profit",     "GrossProfit",         "GrossProfit"),
+    ("Operating Income", "OperatingIncome",     "OperatingIncome"),
+    ("R&D",              "ResearchAndDevelopment", "R&D"),
+    ("CapEx",            "CapEx",               "CapEx"),
+    ("D&A",              "Depreciation",        "Depreciation"),
+    ("Inventory",        "Inventory",           "Inventory"),
+    ("Accounts Rec.",    "AccountsReceivable",  "AccountsReceivable"),
+    ("Current Assets",   "CurrentAssets",       "CurrentAssets"),
 ]
 
 TOL_OK = 0.01

@@ -98,6 +98,25 @@ def _compute_record_fingerprint(
     return hashlib.sha256("|".join(parts).encode()).hexdigest()
 
 
+def _cross_source_for(cleaned_record) -> Dict[str, Any]:
+    """3.3: per-field SEC-vs-ours agreement from the in-flight cleaned record's
+    raw values (no DB round-trip). Fail-soft — SEC companyfacts absent → {}.
+    Matches on the period-end calendar year for non-calendar filers."""
+    try:
+        from aletheia.data.sec_xbrl_validator import build_cross_source_agreement
+        yr = cleaned_record.fiscal_year
+        pe = getattr(cleaned_record, "period_end_date", None)
+        try:
+            if pe and str(pe)[:4].isdigit():
+                yr = int(str(pe)[:4])
+        except Exception:
+            pass
+        return build_cross_source_agreement(cleaned_record.ticker, yr,
+                                            cleaned_record.raw or {})
+    except Exception:
+        return {}
+
+
 def _cleaned_record_to_validated(
     cleaned_record,
     *,
@@ -183,7 +202,8 @@ def _cleaned_record_to_validated(
             # record (was hardcoded {} → the DB defaulted fmp_validation_status to
             # 'not_run' → serving reports showed ingestion 'skipped').
             fmp_validation=dict(getattr(cleaned_record, "fmp_validation", {}) or {}),
-            cross_source_agreement={},
+            # 3.3: per-field SEC-vs-ours agreement (was reserved-but-empty).
+            cross_source_agreement=_cross_source_for(cleaned_record),
             overrides_applied=overrides_applied,
         ),
         record_fingerprint=record_fp,

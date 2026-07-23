@@ -1,0 +1,49 @@
+"""3.3 / 3.4 — expanded SEC canonical tags + cross-source agreement.
+
+3.4 widened CANONICAL_TAGS from the 8 bottom-line totals to 16 (adding
+gross profit, operating income, R&D, capex, D&A, inventory, AR, current
+assets). 3.3 compares our cleaned value to the authoritative SEC fact per field.
+"""
+from __future__ import annotations
+
+import pytest
+
+from aletheia.data.sec_xbrl_validator import (
+    CANONICAL_TAGS, build_cross_source_agreement, lookup_xbrl,
+)
+
+_EXPANDED = ("GrossProfit", "OperatingIncome", "ResearchAndDevelopment",
+             "CapEx", "Depreciation", "Inventory", "AccountsReceivable",
+             "CurrentAssets")
+
+
+def test_expanded_canonical_tags_present():
+    for f in _EXPANDED:
+        assert f in CANONICAL_TAGS, f"{f} missing from CANONICAL_TAGS (3.4)"
+    # non-USD-unit fields stay deferred (documented)
+    assert "EPSDiluted" not in CANONICAL_TAGS
+    assert "SharesDiluted" not in CANONICAL_TAGS
+
+
+def _aapl_cached() -> bool:
+    return lookup_xbrl("AAPL", "Revenue", 2024) is not None
+
+
+@pytest.mark.skipif(not _aapl_cached(), reason="AAPL companyfacts not cached")
+def test_cross_source_agreement_flags():
+    rev = lookup_xbrl("AAPL", "Revenue", 2024).value
+    # Revenue matches the filing exactly; GrossProfit deliberately way off.
+    our = {"Revenue": rev, "GrossProfit": 1.0}
+    xs = build_cross_source_agreement("AAPL", 2024, our)
+
+    assert xs["Revenue"]["flag"] == "validated"
+    assert xs["Revenue"]["sec_tag"]                       # authoritative tag recorded
+    assert xs["GrossProfit"]["flag"] == "drift"          # 1.0 vs the real value
+    # a field we didn't supply is ours_missing, not fabricated
+    assert xs["OperatingIncome"]["flag"] == "ours_missing"
+
+
+@pytest.mark.skipif(not _aapl_cached(), reason="AAPL companyfacts not cached")
+def test_both_absent_field_omitted():
+    xs = build_cross_source_agreement("AAPL", 1990, {})   # pre-history: no SEC, no ours
+    assert xs == {}
