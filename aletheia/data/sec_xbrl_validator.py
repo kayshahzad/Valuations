@@ -183,7 +183,28 @@ def _pick_fy_fact(usd_facts: List[Dict[str, Any]], fiscal_year: int) -> Optional
         ]
     if not candidates:
         return None
-    return sorted(candidates, key=lambda f: f.get("filed", ""), reverse=True)[0]
+    # Duration concepts (income statement / cash flow) carry BOTH a 12-month
+    # annual fact and 3-month quarterly facts under fp=FY in the same 10-K, with
+    # the same period-end (ACN FY2025: annual $69.7B vs Q4 $16.7B). A naive
+    # most-recently-filed pick grabs the quarter → a ~4x false "drift". Prefer
+    # the ~12-month fact; instant concepts (balance sheet) have no `start` and
+    # are unaffected.
+    annual = [f for f in candidates if _is_annual_duration(f)]
+    pool = annual or candidates
+    return sorted(pool, key=lambda f: f.get("filed", ""), reverse=True)[0]
+
+
+def _is_annual_duration(fact: Dict[str, Any]) -> bool:
+    """True for a ~12-month duration fact, or any instant fact (no `start`)."""
+    start, end = fact.get("start"), fact.get("end")
+    if not start or not end:
+        return True  # instant concept (balance sheet) — no duration ambiguity
+    try:
+        from datetime import date
+        days = (date.fromisoformat(end) - date.fromisoformat(start)).days
+        return 340 <= days <= 380
+    except Exception:
+        return True
 
 
 def _read_fact(facts: Dict[str, Any], tag: str, fiscal_year: int) -> Optional[XBRLFact]:

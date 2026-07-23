@@ -47,3 +47,26 @@ def test_cross_source_agreement_flags():
 def test_both_absent_field_omitted():
     xs = build_cross_source_agreement("AAPL", 1990, {})   # pre-history: no SEC, no ours
     assert xs == {}
+
+
+# ── duration-concept selection: annual, not quarterly (the ACN bug) ──
+from aletheia.data.sec_xbrl_validator import _pick_fy_fact  # noqa: E402
+
+
+def test_pick_fy_fact_prefers_annual_over_quarter():
+    # A 10-K carries both the 12-month annual and the 3-month Q4 under fp=FY with
+    # the same end (ACN). Must pick the annual, not the quarter.
+    facts = [
+        {"fp": "FY", "form": "10-K", "start": "2024-09-01", "end": "2025-08-31",
+         "val": 69.7e9, "filed": "2025-10-01"},                       # 12-month
+        {"fp": "FY", "form": "10-K", "start": "2025-06-01", "end": "2025-08-31",
+         "val": 16.7e9, "filed": "2025-10-01"},                       # 3-month Q4
+    ]
+    assert _pick_fy_fact(facts, 2025)["val"] == 69.7e9
+
+
+def test_pick_fy_fact_instant_concept_unaffected():
+    # Balance-sheet fact: no `start` (instant) — must still resolve.
+    facts = [{"fp": "FY", "form": "10-K", "end": "2025-08-31",
+              "val": 65e9, "filed": "2025-10-01"}]
+    assert _pick_fy_fact(facts, 2025)["val"] == 65e9
