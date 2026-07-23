@@ -1447,9 +1447,155 @@ def build_receipt_block(
     }
 
 
+# ─────────────────────────────────────────────────────────────────────────
+# Gate F — universe-level aggregation (fix-plan Phase 3.1)
+# ─────────────────────────────────────────────────────────────────────────
+# Reads every serving report's `_validation` block and applies a threshold
+# matrix, failing a regen when drift is systematic (a shared ingest bug) rather
+# than one-off. The core guard is the TIER FILTER: only `strict`/`standard`
+# blocking fields can FAIL. `definitional`/`sanity_only` fields (e.g. market_p_e
+# / market_ev_ebitda) drift by design — our methodology vs FMP's — so they are
+# reported for context but never gated. Calibrated by the 3.1.0 characterization
+# (docs/gate_f_plan.md).
+
+_GATE_F_THRESHOLDS = {
+    # Only fields at these tiers can cause a FAIL.
+    "gated_tiers": ("strict", "standard"),
+    # A gated field drifting (structural) on >= this fraction of the universe is
+    # a systematic ingest bug, not a one-off. PROVISIONAL — lock on the first
+    # fresh (post-regen) run; today's reports are stale, so staleness dominates
+    # price/market_cap drift and can't calibrate this.
+    "systematic_frac": 0.25,
+    # Calc-validation skip-rate above this means validation silently isn't
+    # running for much of the universe.
+    "skip_ceiling": 0.40,
+}
+
+
+def aggregate_universe(
+    serving_dir,
+    *,
+    thresholds: Optional[Dict[str, Any]] = None,
+    report_only: bool = False,
+) -> Dict[str, Any]:
+    """Gate F: aggregate every serving report's `_validation` block into a
+    universe-level verdict.
+
+    Returns a ``GateFResult`` dict: ``{verdict, effective_verdict, reasons,
+    universe_n, ingestion_status, calc_status, skip_rate, systematic_fields,
+    blocking_reports, gated_field_stats, context_fields, malformed, report_only,
+    thresholds}``.
+
+    ``verdict`` ∈ {PASS, WARN, FAIL}. ``report_only=True`` never changes the
+    computed verdict but caps ``effective_verdict`` at WARN so a caller wiring
+    exit codes won't abort a regen while thresholds are still being calibrated.
+    Only ``strict``/``standard`` blocking fields can drive a FAIL — the tier
+    filter that keeps by-design definitional drift from failing every regen.
+    """
+    import json
+    from pathlib import Path
+
+    th = {**_GATE_F_THRESHOLDS, **(thresholds or {})}
+    gated_tiers = set(th["gated_tiers"])
+
+    universe_n = 0
+    malformed = 0
+    skipped_calc = 0
+    ing_hist: Dict[str, int] = {}
+    calc_hist: Dict[str, int] = {}
+    gated_field_stats: Dict[str, Dict[str, Any]] = {}
+    context_fields: Dict[str, Dict[str, Any]] = {}
+    blocking_reports: List[Dict[str, Any]] = []
+
+    for rp in sorted(Path(serving_dir).glob("*_report.json")):
+        try:
+            d = json.loads(rp.read_text())
+        except Exception:
+            malformed += 1
+            continue
+        v = d.get("_validation")
+        if not isinstance(v, dict) or v.get("schema_version") != 2:
+            malformed += 1
+            continue
+
+        universe_n += 1
+        ticker = v.get("ticker") or rp.stem.split("_")[0]
+        ing_status = (v.get("ingestion") or {}).get("status")
+        calc_status = (v.get("calc") or {}).get("status")
+        ing_hist[ing_status] = ing_hist.get(ing_status, 0) + 1
+        calc_hist[calc_status] = calc_hist.get(calc_status, 0) + 1
+        if calc_status == "skipped":
+            skipped_calc += 1
+
+        gated_breaches: List[str] = []
+        for fname, fd in ((v.get("calc") or {}).get("fields") or {}).items():
+            if not isinstance(fd, dict) or fd.get("status") != "structural_drift":
+                continue
+            tier = fd.get("tier")
+            dp = fd.get("drift_pct")
+            adp = abs(dp) if isinstance(dp, (int, float)) else 0.0
+            if tier in gated_tiers and fd.get("blocking"):
+                fs = gated_field_stats.setdefault(
+                    fname, {"tier": tier, "structural": 0, "worst": 0.0, "offenders": []})
+                fs["structural"] += 1
+                fs["worst"] = max(fs["worst"], adp)
+                if len(fs["offenders"]) < 12:
+                    fs["offenders"].append(
+                        {"ticker": ticker, "drift_pct": round(dp, 4) if isinstance(dp, (int, float)) else None})
+                gated_breaches.append(fname)
+            else:
+                cf = context_fields.setdefault(fname, {"tier": tier, "structural": 0, "worst": 0.0})
+                cf["structural"] += 1
+                cf["worst"] = max(cf["worst"], adp)
+
+        if calc_status == "blocking_drift" and gated_breaches:
+            blocking_reports.append({"ticker": ticker, "fields": gated_breaches})
+
+    skip_rate = (skipped_calc / universe_n) if universe_n else 0.0
+    systematic_fields = [
+        f for f, s in gated_field_stats.items()
+        if universe_n and (s["structural"] / universe_n) >= th["systematic_frac"]
+    ]
+
+    reasons: List[str] = []
+    verdict = "PASS"
+    if blocking_reports:
+        verdict = "FAIL"
+        reasons.append(f"{len(blocking_reports)} report(s) with blocking_drift on a gated field")
+    if systematic_fields:
+        verdict = "FAIL"
+        reasons.append(f"systematic structural drift on gated field(s): {systematic_fields}")
+    if skip_rate > th["skip_ceiling"]:
+        verdict = "FAIL"
+        reasons.append(f"calc skip-rate {skip_rate:.0%} exceeds ceiling {th['skip_ceiling']:.0%}")
+    if verdict == "PASS" and any(s["structural"] > 0 for s in gated_field_stats.values()):
+        verdict = "WARN"
+        reasons.append("isolated (non-systematic) structural drift on gated field(s)")
+
+    effective_verdict = "WARN" if (report_only and verdict == "FAIL") else verdict
+
+    return {
+        "verdict": verdict,
+        "effective_verdict": effective_verdict,
+        "reasons": reasons,
+        "universe_n": universe_n,
+        "malformed": malformed,
+        "ingestion_status": ing_hist,
+        "calc_status": calc_hist,
+        "skip_rate": round(skip_rate, 4),
+        "systematic_fields": systematic_fields,
+        "blocking_reports": blocking_reports,
+        "gated_field_stats": gated_field_stats,
+        "context_fields": context_fields,   # definitional/sanity_only — reported, never gated
+        "report_only": report_only,
+        "thresholds": th,
+    }
+
+
 __all__ = [
     "IngestionValidationFailure",
     "validate_ingestion_record",
     "validate_calc_output",
     "build_receipt_block",
+    "aggregate_universe",
 ]
