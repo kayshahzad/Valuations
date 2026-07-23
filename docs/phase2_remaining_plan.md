@@ -1,5 +1,22 @@
 # Phase 2 — remaining tasks: detailed plan
 
+> **STATUS UPDATE (2026-07-23).** Audit-only portion COMPLETE:
+> 2.0 characterize · 2.1a A=L+E NCI alignment (178→1, `084efeb`) ·
+> 2.4 RE roll-forward from record + `was_skipped` (520→0, `4149d2b`) ·
+> 2.3a gross-profit tie (`e9b4049`) · 2.3b operating-income tie (`87bd31e`).
+> **2.2 — AUDIT-OUT:** exactly 1 TTM snapshot/ticker in the DB, so there is no
+> prior TTM to roll-forward against; roll-forward-on-TTM isn't buildable without
+> persisting historical TTM snapshots (out of scope). The single-period
+> identities DO cover TTM — balance-sheet + gross-profit + operating-income now
+> all run on the TTM row (was just balance-sheet).
+> **2.1b — DEFERRED to a dedicated pass:** blast radius measured at **499 records
+> / 37 tickers with MinorityInterest, 100 with >2% residual** (many structural,
+> e.g. ET MLP 30%+ that NCI won't fix). Value-touching across the universe →
+> needs the full re-ingest + oracle-diff + Schwab + golden re-lock guard; not a
+> session-tail change. **2.5 ΔNWC** — optional diagnostic, not started.
+
+
+
 Grounded in the **2.0 characterization** (universe identity baseline) and the
 friction discovered while building **2.1a**. Supersedes the task-level detail in
 `docs/phase2_plan.md` for the tasks not yet done.
