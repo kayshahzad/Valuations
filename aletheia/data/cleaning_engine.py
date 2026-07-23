@@ -390,6 +390,24 @@ class CleaningEngine:
             if temp_eq:
                 raw_wide["TemporaryEquityCarryingAmount"] = temp_eq
 
+        # 1c. Accounts-receivable trade-only reconciliation. FMP's netReceivables
+        # conflates trade + vendor non-trade receivables (AAPL FY2024: 66.2B vs
+        # 33.4B trade); for DSO / AR-vs-revenue-spread / NWC the standard is
+        # trade-only. Prefer the authoritative SEC AccountsReceivableNetCurrent
+        # when it materially diverges. Cache-only (lru-cached companyfacts);
+        # no-op for the universe's many filers without material non-trade AR.
+        _ar = raw_wide.get("AccountsReceivable")
+        if _ar:
+            try:
+                from aletheia.data.sec_xbrl_validator import lookup_xbrl
+                _yr = int(str(period_end_date)[:4]) if period_end_date else fiscal_year
+                _sec_ar = lookup_xbrl(ticker, "AccountsReceivable", _yr)
+                if (_sec_ar and _sec_ar.value
+                        and abs(_ar - _sec_ar.value) / _sec_ar.value > 0.05):
+                    raw_wide["AccountsReceivable"] = _sec_ar.value
+            except Exception:
+                pass
+
         # 2. Initialise record
         record = CleanedRecord(
             ticker=ticker,
