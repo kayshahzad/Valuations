@@ -95,6 +95,7 @@ IRA_EXCISE_TAX_RATE = 0.01
 
 TOLERANCE_THRESHOLDS: Dict[str, float] = {
     "balance_sheet_equation":         0.005,   # 0.5% of total assets
+    "gross_profit_reconciliation":    0.005,   # 0.5% of revenue (Rev − COGS − GP)
     "retained_earnings_rollforward":  0.02,    # 2% of beginning RE
     "cash_rollforward":               0.005,   # 0.5% — relaxed from theoretical 0.1% based on real-world rounding
     "ppe_rollforward":                0.05,    # 5% — M&A/impair widen
@@ -436,6 +437,57 @@ def check_balance_sheet_equation(
             "RedeemableNCI": redeemable_nci,
             "used_nci": used_nci,
         },
+        exception_category=exception_category,
+    )
+
+
+def check_gross_profit_reconciliation(
+    record: Dict[str, Any],
+) -> IdentityCheckResult:
+    """Identity 1b — Gross-profit tie: Revenue − COGS − GrossProfit ≈ 0.
+
+    A basic income-statement identity that had NO check anywhere (I4): when all
+    three are reported they must tie, so a mis-mapped COGS or gross-profit tag
+    (a wrong SG&A sum flowing to EBITDA/NOPAT) is caught here. Net-revenue
+    presenters — insurers (UNH), airlines (DAL), banks — don't split cost of
+    revenue, so COGS or GP reports ~0; those route to a passing exception
+    category rather than a failure.
+    """
+    name = "gross_profit_reconciliation"
+    ticker = record["ticker"]; fy = record["fiscal_year"]; period = record["period"]
+    tol = TOLERANCE_THRESHOLDS[name]
+
+    rev = _field(record, "Revenue")
+    cogs = _field(record, "COGS")
+    gp = _field(record, "GrossProfit")
+    if rev is None or cogs is None or gp is None:
+        return IdentityCheckResult.skipped(
+            ticker=ticker, fiscal_year=fy, period=period, identity_name=name,
+            reason=f"missing Rev={rev!r} COGS={cogs!r} GrossProfit={gp!r}",
+        )
+    if not rev:
+        return IdentityCheckResult.skipped(
+            ticker=ticker, fiscal_year=fy, period=period, identity_name=name,
+            reason="Revenue is 0",
+        )
+
+    disc_abs = rev - cogs - gp
+    disc_pct = disc_abs / rev * 100.0
+    passed = _passes(disc_abs, disc_pct, tol)
+
+    exception_category = None
+    if not passed:
+        # Net-revenue presenters don't split cost of revenue → COGS or GP ~0.
+        if abs(cogs) < 0.01 * abs(rev) or abs(gp) < 0.01 * abs(rev):
+            exception_category = "no_cogs_gp_split_reported"
+        else:
+            exception_category = "gross_profit_residual"
+    return IdentityCheckResult(
+        ticker=ticker, fiscal_year=fy, period=period,
+        identity_name=name, passed=passed,
+        discrepancy_abs=disc_abs, discrepancy_pct=disc_pct,
+        tolerance_pct=tol,
+        components={"Revenue": rev, "COGS": cogs, "GrossProfit": gp},
         exception_category=exception_category,
     )
 
@@ -1562,6 +1614,7 @@ def run_all_checks_for_ticker(
     # Single-period identities — every (FY, TTM) row.
     for r in records:
         out.append(check_balance_sheet_equation(r))
+        out.append(check_gross_profit_reconciliation(r))
 
     # Roll-forward identities — pairs of consecutive FY rows.
     for i, fy in enumerate(fys_sorted):
