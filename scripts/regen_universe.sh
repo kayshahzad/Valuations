@@ -362,5 +362,18 @@ if grep -q '"result": "FAIL"' valuation_data/serving/latest/_validation_summary.
     exit 1
 fi
 
+# ──────────────────────────────────────────────────────────────────
+# 6b. Gate F — universe validation-drift aggregation (fix-plan 3.1)
+#     The real aggregate_universe drift gate from fmp_validation.py's
+#     contract: reads every fresh report's _validation block and applies
+#     the tier-filtered threshold matrix (only strict/standard blocking
+#     fields can FAIL). Distinct from the completeness check above.
+#     WARN-only during rollout — --report-only records the verdict +
+#     writes audits/gate_f_<date>.json but never aborts. Drop the flag
+#     to enforce once thresholds are locked on a fresh regen (3.1.2).
+# ──────────────────────────────────────────────────────────────────
+echo_step "6b. Gate F — validation drift (aggregate_universe)"
+PYTHONPATH=. python3 scripts/gate_f.py --report-only 2>&1 | tee -a "$SUMMARY" || true
+
 echo -e "\n\033[1;32mAll done.\033[0m Logs: $LOG  ·  Summary: $SUMMARY"
 echo "Next: review the summary, then check Streamlit Reports tab for any ticker."
