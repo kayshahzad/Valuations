@@ -108,6 +108,24 @@ class CleanedRecord:
     # `blocking_drift` records are not persisted — caller skips the DB write.
     fmp_validation: Dict[str, Any] = field(default_factory=dict)
 
+    # ── Fallback instrumentation (fix-plan Phase-0 task 0.3) ─────────────────
+    # Records each falsy-fallback substitution as it fires — WITHOUT changing
+    # the value (exact `or` semantics preserved). Populates the blast-radius map
+    # that scopes the Phase-1 falsy-zero fix. `raw_zero` distinguishes a
+    # fabricated zero (the dangerous case) from a genuine missing value.
+    fallbacks_applied: List[Dict[str, Any]] = field(default_factory=list)
+
+    def _fb(self, value, const, field_name: str, site: str):
+        """Value-neutral fallback recorder: returns exactly `value or const`
+        while logging when the fallback branch is taken."""
+        if not value:
+            self.fallbacks_applied.append({
+                "site": site, "field": field_name, "const": const,
+                "raw_zero": (value == 0 and value is not None),
+            })
+            return const
+        return value
+
     def get_with_provenance(self, field_name: str) -> Tuple[Optional[float], str]:
         """
         Returns the value and its provenance ('raw', 'derived', or 'missing').
@@ -138,7 +156,13 @@ class CleanedRecord:
 
     def get(self, key: str, fallback: float = None) -> Optional[float]:
         """Convenience: cleaned value first, then raw, then fallback."""
-        return self.clean.get(key) or self.raw.get(key) or fallback
+        val = self.clean.get(key) or self.raw.get(key)
+        if not val and fallback is not None:
+            self.fallbacks_applied.append({
+                "site": "ce:get", "field": key, "const": fallback,
+                "raw_zero": (val == 0 and val is not None),
+            })
+        return val or fallback
 
     def add_flag(self, flag: CleaningFlag):
         self.flags.append(flag)
@@ -1717,7 +1741,7 @@ class CleaningEngine:
         if ebit is None:
             pretax = r.raw.get("PretaxIncome")
             if pretax is not None:
-                ebit = pretax + (r.raw.get("InterestExpense") or 0.0)
+                ebit = pretax + r._fb(r.raw.get("InterestExpense"), 0.0, "InterestExpense", "ce:ebit_bridge")
         dep_val, dep_prov = self._compute_depreciation_total(r)
         if dep_val is not None:
             r.derived["Depreciation_Total"] = dep_val
@@ -1731,15 +1755,17 @@ class CleaningEngine:
         if capex is not None:
             r.derived["CapEx"] = capex
         
-        delta_nwc = r.clean.get("DeltaNWC") or 0.0
-        cash_tax_rate = r.clean.get("CashTaxRate") or 0.21
+        delta_nwc = r._fb(r.clean.get("DeltaNWC"), 0.0, "DeltaNWC", "ce:derived_delta_nwc")
+        cash_tax_rate = r._fb(r.clean.get("CashTaxRate"), 0.21, "CashTaxRate", "ce:derived_tax_rate")
         nopat = r.clean.get("NOPAT")
-        total_assets = r.raw.get("TotalAssets") or 0.0
-        total_equity = r.raw.get("TotalEquity") or 1.0
-        long_term_debt = r.raw.get("LongTermDebt") or 0.0
-        net_income = r.raw.get("NetIncome") or 0.0
-        cash = r.raw.get("Cash") or 0.0
-        cash_ops = r.raw.get("OperatingCF") or r.raw.get("NetCashProvidedByUsedInOperatingActivities") or r.clean.get("OperatingCF") or 0.0
+        total_assets = r._fb(r.raw.get("TotalAssets"), 0.0, "TotalAssets", "ce:derived_total_assets")
+        total_equity = r._fb(r.raw.get("TotalEquity"), 1.0, "TotalEquity", "ce:derived_total_equity")
+        long_term_debt = r._fb(r.raw.get("LongTermDebt"), 0.0, "LongTermDebt", "ce:derived_ltd")
+        net_income = r._fb(r.raw.get("NetIncome"), 0.0, "NetIncome", "ce:derived_net_income")
+        cash = r._fb(r.raw.get("Cash"), 0.0, "Cash", "ce:derived_cash")
+        cash_ops = r._fb(
+            r.raw.get("OperatingCF") or r.raw.get("NetCashProvidedByUsedInOperatingActivities")
+            or r.clean.get("OperatingCF"), 0.0, "OperatingCF", "ce:derived_cash_ops")
 
         # EBITDA — central formula (Phase 3 mechanical consolidation).
         # Same formula as before; just routed through the central

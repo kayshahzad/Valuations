@@ -1,0 +1,1546 @@
+[
+  {
+    "file": "aletheia/calculations/_schema_contract.py",
+    "line": 107,
+    "function": "_override_covers_field",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "if field in (record.get(\"fields\") or []):"
+  },
+  {
+    "file": "aletheia/calculations/_schema_contract.py",
+    "line": 235,
+    "function": "_record_fy",
+    "kind": "numeric_fallback",
+    "const": 0,
+    "source": "return int(getattr(record, \"fiscal_year\", 0) or 0)"
+  },
+  {
+    "file": "aletheia/calculations/_schema_contract.py",
+    "line": 419,
+    "function": "validate_cleaned_record_schema_contract",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "_safe_record_field(record, \"raw\", \"RedeemableNoncontrollingInterest\")"
+  },
+  {
+    "file": "aletheia/calculations/_schema_contract.py",
+    "line": 445,
+    "function": "validate_cleaned_record_schema_contract",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "_safe_record_field(record, \"raw\", \"MinorityInterest\")"
+  },
+  {
+    "file": "aletheia/calculations/derivation_registry.py",
+    "line": 945,
+    "function": "_resolve_input",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "prior = bundle.get(\"prior_year_inputs\") or {}"
+  },
+  {
+    "file": "aletheia/calculations/derivation_registry.py",
+    "line": 952,
+    "function": "_resolve_input",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "upstream = bundle.get(\"upstream_inputs\") or {}"
+  },
+  {
+    "file": "aletheia/calculations/derivation_registry.py",
+    "line": 960,
+    "function": "_resolve_input",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "sub = bundle.get(sub_key) or {}"
+  },
+  {
+    "file": "aletheia/calculations/derivation_registry.py",
+    "line": 967,
+    "function": "_resolve_input",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "upstream = bundle.get(\"upstream_inputs\") or {}"
+  },
+  {
+    "file": "aletheia/calculations/derivation_registry.py",
+    "line": 973,
+    "function": "_resolve_input",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "config = bundle.get(\"config_inputs\") or {}"
+  },
+  {
+    "file": "aletheia/calculations/formulas/balance_sheet.py",
+    "line": 47,
+    "function": "gross_debt",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return sum(c or 0.0 for c in components)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/balance_sheet.py",
+    "line": 67,
+    "function": "liquid_assets",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return (cash or 0.0) + (short_term_investments or 0.0) + (long_term_investments or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/balance_sheet.py",
+    "line": 67,
+    "function": "liquid_assets",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return (cash or 0.0) + (short_term_investments or 0.0) + (long_term_investments or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/balance_sheet.py",
+    "line": 67,
+    "function": "liquid_assets",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return (cash or 0.0) + (short_term_investments or 0.0) + (long_term_investments or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/balance_sheet.py",
+    "line": 83,
+    "function": "net_debt",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return (gross_debt or 0.0) - (liquid_assets or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/balance_sheet.py",
+    "line": 83,
+    "function": "net_debt",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return (gross_debt or 0.0) - (liquid_assets or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/cash_flow.py",
+    "line": 39,
+    "function": "fcf",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return operating_cf - abs(capex or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/cost_of_capital.py",
+    "line": 115,
+    "function": "wacc",
+    "kind": "numeric_fallback",
+    "const": 0.04,
+    "source": "floor = max(WACC_FLOOR_MIN, (risk_free_rate or 0.04) + 0.01)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/derived_inputs.py",
+    "line": 76,
+    "function": "invested_capital",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cash = cash or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/formulas/derived_inputs.py",
+    "line": 77,
+    "function": "invested_capital",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "rev = revenue or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/formulas/income_statement.py",
+    "line": 28,
+    "function": "ebitda",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "return operating_income + (depreciation_total or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/formulas/residual_income.py",
+    "line": 85,
+    "function": "residual_income_value",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "iv = bvps0 + pv_explicit + (pv_terminal or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 230,
+    "function": "records",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "\"period\": row.get(\"period\") or \"FY\","
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 261,
+    "function": "xbrl_fact",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "key=lambda u: u.get(\"end\") or u.get(\"filed\") or \"\","
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 364,
+    "function": "check_balance_sheet_equation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "_field(record, \"RedeemableNoncontrollingInterest\")"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 502,
+    "function": "check_retained_earnings_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "div = _field(current, \"DividendsPaid\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 510,
+    "function": "check_retained_earnings_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "buybacks = _field(current, \"Buybacks\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 511,
+    "function": "check_retained_earnings_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "sbc = _field(current, \"SBC\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 512,
+    "function": "check_retained_earnings_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "tax_withhold = loader.xbrl_fact("
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 841,
+    "function": "check_ppe_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_beg = _field(prior, \"Goodwill\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 842,
+    "function": "check_ppe_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_end = _field(current, \"Goodwill\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 852,
+    "function": "check_ppe_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "revenue = _field(current, \"Revenue\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 926,
+    "function": "_total_debt_for_year",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ltd_nc = loader.xbrl_fact(ticker, \"LongTermDebtNoncurrent\", fiscal_year) or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 927,
+    "function": "_total_debt_for_year",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ltd_c = loader.xbrl_fact(ticker, \"LongTermDebtCurrent\", fiscal_year) or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 928,
+    "function": "_total_debt_for_year",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cp = loader.xbrl_fact(ticker, \"CommercialPaper\", fiscal_year) or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 929,
+    "function": "_total_debt_for_year",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "fl_c = loader.xbrl_fact(ticker, \"FinanceLeaseLiabilityCurrent\", fiscal_year) or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 930,
+    "function": "_total_debt_for_year",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "fl_nc = loader.xbrl_fact(ticker, \"FinanceLeaseLiabilityNoncurrent\", fiscal_year) or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 935,
+    "function": "_total_debt_for_year",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "total = (fallback_std or 0.0) + (fallback_ltd or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 935,
+    "function": "_total_debt_for_year",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "total = (fallback_std or 0.0) + (fallback_ltd or 0.0)"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 965,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "beg_std_fallback = _field(prior, \"ShortTermDebt\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 966,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "beg_ltd_fallback = _field(prior, \"LongTermDebt\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 967,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "end_std_fallback = _field(current, \"ShortTermDebt\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 968,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "end_ltd_fallback = _field(current, \"LongTermDebt\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 978,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "loader.xbrl_fact(ticker, \"ProceedsFromIssuanceOfLongTermDebt\", fy)"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 983,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "loader.xbrl_fact(ticker, \"RepaymentsOfLongTermDebt\", fy)"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 988,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cp_net = loader.xbrl_fact("
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1045,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_beg = _field(prior, \"Goodwill\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1046,
+    "function": "check_debt_rollforward",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_end = _field(current, \"Goodwill\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1138,
+    "function": "check_working_capital_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_beg = _field(prior, \"Goodwill\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1139,
+    "function": "check_working_capital_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_end = _field(current, \"Goodwill\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1329,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ar_b = _field(prior, \"AccountsReceivable\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1330,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ar_e = _field(current, \"AccountsReceivable\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1331,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "inv_b = _field(prior, \"Inventory\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1332,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "inv_e = _field(current, \"Inventory\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1333,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ap_b = _field(prior, \"AccountsPayable\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1334,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ap_e = _field(current, \"AccountsPayable\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1344,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "sbc = _field(current, \"SBC\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1448,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_beg = _field(prior, \"Goodwill\") or 0.0 if prior else 0.0"
+  },
+  {
+    "file": "aletheia/calculations/identity_checks.py",
+    "line": 1449,
+    "function": "check_fcf_pathway_reconciliation",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "gw_end = _field(current, \"Goodwill\") or 0.0"
+  },
+  {
+    "file": "aletheia/calculations/specialized_inputs.py",
+    "line": 104,
+    "function": "load_specialized_inputs",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "params=dict(entry.get(\"params\") or {}),"
+  },
+  {
+    "file": "aletheia/calculations/specialized_inputs.py",
+    "line": 107,
+    "function": "load_specialized_inputs",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "source=entry.get(\"source\") or \"\","
+  },
+  {
+    "file": "aletheia/calculations/specialized_inputs.py",
+    "line": 108,
+    "function": "load_specialized_inputs",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "analyst_notes=entry.get(\"analyst_notes\") or \"\","
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 141,
+    "function": "get",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "return self.clean.get(key) or self.raw.get(key) or fallback"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 414,
+    "function": "clean",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "sbc = record.clean.get(\"SBC\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 415,
+    "function": "clean",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fcf_final = record.derived.get(\"FCF\") or record.clean.get(\"FCF\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 806,
+    "function": "_domain2_jva_separation",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "clean_ebit = record.clean.get(f\"clean_{ebit_key}\") or record.clean.get(ebit_key)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 858,
+    "function": "_domain3_ebit_normalization",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "record.clean.get(f\"clean_{ebit_key}\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 863,
+    "function": "_domain3_ebit_normalization",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "revenue = record.clean.get(\"Revenue\") or record.raw.get(\"Revenue\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 871,
+    "function": "_domain3_ebit_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "normalized_ebit = pretax + (record.raw.get(\"InterestExpense\") or 0.0)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 886,
+    "function": "_domain3_ebit_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "other_income = record.raw.get(\"OtherNonoperatingIncomeExpense\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 887,
+    "function": "_domain3_ebit_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "revenue = record.clean.get(\"Revenue\") or record.raw.get(\"Revenue\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 903,
+    "function": "_domain3_ebit_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.21,
+    "source": "tax_rate = record.clean.get(\"CashTaxRate\") or 0.21"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 969,
+    "function": "_domain4_accounting_policy",
+    "kind": "numeric_fallback",
+    "const": 1.0,
+    "source": "revenue = record.raw.get(\"Revenue\") or 1.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1031,
+    "function": "_domain5_lease_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "op_lease_current = record.raw.get(\"OperatingLeaseLiabilityCurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1032,
+    "function": "_domain5_lease_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "op_lease_noncurrent = record.raw.get(\"OperatingLeaseLiabilityNoncurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1036,
+    "function": "_domain5_lease_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "op_lease_cost = record.raw.get(\"OperatingLeaseCost\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1039,
+    "function": "_domain5_lease_normalization",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "rou_asset = record.raw.get(\"OperatingLeaseRightOfUseAsset\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1046,
+    "function": "_domain5_lease_normalization",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "ebitda = record.clean.get(\"EBITDA\") or record.derived.get(\"EBITDA\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1079,
+    "function": "_domain5_lease_normalization",
+    "kind": "numeric_fallback",
+    "const": 1.0,
+    "source": "lease_ratio = total_op_lease / (record.raw.get(\"TotalAssets\") or 1.0)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1122,
+    "function": "_domain6_pension_cleaning",
+    "kind": "numeric_fallback",
+    "const": 1.0,
+    "source": "total_assets = record.raw.get(\"TotalAssets\") or 1.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1197,
+    "function": "_domain7_sbc_adjustment",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "sbc = record.raw.get(\"SBC\") or record.raw.get(\"ShareBasedCompensation\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1198,
+    "function": "_domain7_sbc_adjustment",
+    "kind": "numeric_fallback",
+    "const": 1.0,
+    "source": "revenue = record.raw.get(\"Revenue\") or 1.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1199,
+    "function": "_domain7_sbc_adjustment",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fcf = record.derived.get(\"FCF\") or record.clean.get(\"FCF\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1233,
+    "function": "_domain7_sbc_adjustment",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "shares_basic = record.raw.get(\"SharesOutstanding\") or record.raw.get(\"CommonStockSharesOutstanding\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1234,
+    "function": "_domain7_sbc_adjustment",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "shares_diluted = record.raw.get(\"SharesDiluted\") or record.raw.get(\"WeightedAverageNumberOfDilutedSharesOutstanding\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1242,
+    "function": "_domain7_sbc_adjustment",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "diluted_eps = (record.raw.get(\"DilutedEPS\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1279,
+    "function": "_domain7_sbc_adjustment",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "buybacks = record.raw.get(\"Buybacks\") or record.raw.get(\"PaymentsForRepurchaseOfCommonStock\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1312,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "revenue = record.raw.get(\"Revenue\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1313,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ar = record.raw.get(\"AccountsReceivable\") or record.raw.get(\"AccountsReceivableNetCurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1314,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "deferred_rev = record.raw.get(\"DeferredRevenue\") or record.raw.get(\"DeferredRevenueCurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1315,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cash_ops = record.raw.get(\"OperatingCF\") or record.raw.get(\"NetCashProvidedByUsedInOperatingActivities\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1321,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "prior_revenue = prior.raw.get(\"Revenue\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1322,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "prior_ar = prior.raw.get(\"AccountsReceivable\") or prior.raw.get(\"AccountsReceivableNetCurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1323,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "prior_deferred = prior.raw.get(\"DeferredRevenue\") or prior.raw.get(\"DeferredRevenueCurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1379,
+    "function": "_domain8_revenue_recognition",
+    "kind": "numeric_fallback",
+    "const": 0,
+    "source": "spread = record.clean.get(\"AR_RevGrowth_Spread\", 0) or 0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1396,
+    "function": "_domain9_working_capital",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "current_assets = record.raw.get(\"CurrentAssets\") or record.raw.get(\"AssetsCurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1397,
+    "function": "_domain9_working_capital",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "current_liab = record.raw.get(\"LiabilitiesCurrent\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1398,
+    "function": "_domain9_working_capital",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cash = record.raw.get(\"Cash\") or record.raw.get(\"CashAndCashEquivalentsAtCarryingValue\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1406,
+    "function": "_domain9_working_capital",
+    "kind": "numeric_fallback",
+    "const": 1.0,
+    "source": "revenue = record.raw.get(\"Revenue\") or 1.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1414,
+    "function": "_domain9_working_capital",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "prior_nwc = prior.clean.get(\"NWC\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1424,
+    "function": "_domain9_working_capital",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "capex = record.raw.get(\"CapEx\") or record.raw.get(\"capex\") or record.raw.get(\"PaymentsToAcquirePropertyPlantAndEquipment\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1487,
+    "function": "_domain10_tax_sustainability",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "record.raw.get(\"TaxExpense\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1492,
+    "function": "_domain10_tax_sustainability",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "record.raw.get(\"PretaxIncome\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1498,
+    "function": "_domain10_tax_sustainability",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cash_taxes = record.raw.get(\"CashTaxesPaid\") or record.raw.get(\"IncomeTaxesPaid\") or record.raw.get(\"IncomeTaxesPaidNet\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1540,
+    "function": "_domain10_tax_sustainability",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "nol = record.raw.get(\"OperatingLossCarryforwards\") or record.raw.get(\"DeferredTaxAssetsOperatingLossCarryforwards\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1600,
+    "function": "_compute_depreciation_total",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "record.raw.get(\"Depreciation_Tangible\") or 0.0,"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1601,
+    "function": "_compute_depreciation_total",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "record.raw.get(\"IntangibleAmortization\") or 0.0,"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1602,
+    "function": "_compute_depreciation_total",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "record.raw.get(\"FinanceLeaseAmortization\") or 0.0,"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1603,
+    "function": "_compute_depreciation_total",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "record.raw.get(\"CapitalizedSoftwareAmortization\") or 0.0,"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1678,
+    "function": "_compute_derived",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "sm = r.raw.get(\"SellingAndMarketing\") or r.raw.get(\"Marketing\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1680,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "r.derived[\"SGA_Combined\"] = (ga or 0.0) + (sm or 0.0)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1680,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "r.derived[\"SGA_Combined\"] = (ga or 0.0) + (sm or 0.0)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1695,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "rnd = r.raw.get(\"R&D\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1696,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "iprd = r.raw.get(\"AcquiredInProcessRnD\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1712,
+    "function": "_compute_derived",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "ebit = r.clean.get(\"NormalizedEBIT\") or r.derived.get(\"OperatingIncome\") or r.raw.get(\"OperatingIncome\") or r.raw.get(\"EBIT\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1720,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "ebit = pretax + (r.raw.get(\"InterestExpense\") or 0.0)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1729,
+    "function": "_compute_derived",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "capex_raw = r.clean.get(\"CapEx_Total\") or r.raw.get(\"CapEx\") or r.derived.get(\"CapEx\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1734,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "delta_nwc = r.clean.get(\"DeltaNWC\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1735,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.21,
+    "source": "cash_tax_rate = r.clean.get(\"CashTaxRate\") or 0.21"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1737,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "total_assets = r.raw.get(\"TotalAssets\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1738,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 1.0,
+    "source": "total_equity = r.raw.get(\"TotalEquity\") or 1.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1739,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "long_term_debt = r.raw.get(\"LongTermDebt\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1740,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "net_income = r.raw.get(\"NetIncome\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1741,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cash = r.raw.get(\"Cash\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1742,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "cash_ops = r.raw.get(\"OperatingCF\") or r.raw.get(\"NetCashProvidedByUsedInOperatingActivities\") or r.clean.get(\"OperatingCF\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1758,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "rd_expense = r.raw.get(\"R&D\") or r.raw.get(\"ResearchAndDevelopmentExpense\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1768,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "sbc = r.raw.get(\"SBC\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1786,
+    "function": "_compute_derived",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "adj_val = r.raw.get(\"FinanceLeasePrincipalPayments\") or r.raw.get(\"RepaymentsOfDebtAndFinanceLeaseObligations\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1820,
+    "function": "_compute_derived",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "cogs = r.raw.get(\"CostOfServices\") or r.raw.get(\"MedicalClaims\")"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1886,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "st_debt = r.raw.get(\"ShortTermDebt\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1887,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "current_lt_debt = r.raw.get(\"CurrentPortionLongTermDebt\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1901,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "finance_lease_total = (fl_curr or 0.0) + (fl_nc or 0.0)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1901,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "finance_lease_total = (fl_curr or 0.0) + (fl_nc or 0.0)"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1906,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "excess = r.raw.get(\"FinanceLeaseLiabilityUndiscountedExcessAmount\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1922,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "st_invest = r.raw.get(\"ShortTermInvestments\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1923,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "lt_invest = r.raw.get(\"LongTermInvestments\") or 0.0"
+  },
+  {
+    "file": "aletheia/data/cleaning_engine.py",
+    "line": 1947,
+    "function": "_compute_derived",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "short_term_debt = r.raw.get(\"ShortTermDebt\", 0.0) or 0.0"
+  },
+  {
+    "file": "aletheia/data/consensus_estimates.py",
+    "line": 135,
+    "function": "_enrich_with_fmp",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "d = str(e.get(\"date\") or \"\")"
+  },
+  {
+    "file": "aletheia/data/database.py",
+    "line": 785,
+    "function": "upsert_record",
+    "kind": "numeric_fallback",
+    "const": 0,
+    "source": "version = (existing or 0) + 1"
+  },
+  {
+    "file": "aletheia/data/database.py",
+    "line": 1123,
+    "function": "upsert_agent_run",
+    "kind": "numeric_fallback",
+    "const": 0,
+    "source": "version = (existing or 0) + 1"
+  },
+  {
+    "file": "aletheia/data/edgar_client.py",
+    "line": 517,
+    "function": "ingest",
+    "kind": "numeric_fallback",
+    "const": 0,
+    "source": "rev    = df[df.fiscal_year == df.fiscal_year.max()].iloc[0].get(\"clean_Revenue\", 0) or 0"
+  },
+  {
+    "file": "aletheia/data/fmp_client.py",
+    "line": 591,
+    "function": "get_for_fiscal_year",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "d = r.get(\"date\") or \"\""
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 273,
+    "function": "_add_ev_derived_checks",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "ev = (fmp_data or {}).get(\"enterprise_values\") or {}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 277,
+    "function": "_add_ev_derived_checks",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fmp_mc = ev.get(\"marketCapitalization\") or ev.get(\"marketCap\")"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 373,
+    "function": "_fetch_fmp_for_gate_a",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fmp_ccy = (inc_fy.get(\"reportedCurrency\") or \"\").upper()"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 873,
+    "function": "_add_ttm_ev_identity_check",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "mc = fmp_ev.get(\"marketCapitalization\") or fmp_ev.get(\"marketCap\")"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 973,
+    "function": "_add_ttm_quarterly_consistency_check",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "end = (rec.get(\"date\") or \"\")[:10]"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1007,
+    "function": "_add_ttm_quarterly_consistency_check",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "end = (q.get(\"end\") or \"\")[:10]"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1318,
+    "function": "_check_scenario_monotonicity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "p2 = (serving_report.get(\"4_valuation_synthesis\") or {}).get(\"phase2_valuation\") or {}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1318,
+    "function": "_check_scenario_monotonicity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "p2 = (serving_report.get(\"4_valuation_synthesis\") or {}).get(\"phase2_valuation\") or {}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1319,
+    "function": "_check_scenario_monotonicity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "dcf3 = p2.get(\"three_scenario_dcf\") or {}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1320,
+    "function": "_check_scenario_monotonicity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "bear_ips = (dcf3.get(\"bear\") or {}).get(\"intrinsic_per_share\")"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1321,
+    "function": "_check_scenario_monotonicity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "base_ips = (dcf3.get(\"base\") or {}).get(\"intrinsic_per_share\")"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1322,
+    "function": "_check_scenario_monotonicity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "bull_ips = (dcf3.get(\"bull\") or {}).get(\"intrinsic_per_share\")"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1337,
+    "function": "_check_narrative_fidelity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "val = serving_report.get(\"4_valuation_synthesis\") or {}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1338,
+    "function": "_check_narrative_fidelity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "narr = (val.get(\"investment_thesis\") or {}).get(\"narrative\") or \"\""
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1338,
+    "function": "_check_narrative_fidelity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "narr = (val.get(\"investment_thesis\") or {}).get(\"narrative\") or \"\""
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1339,
+    "function": "_check_narrative_fidelity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "p2 = val.get(\"phase2_valuation\") or {}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1340,
+    "function": "_check_narrative_fidelity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "rdcf = p2.get(\"reverse_dcf\") or {}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1342,
+    "function": "_check_narrative_fidelity",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "hist = rdcf.get(\"historical_cagr\") or rdcf.get(\"historical_cagr_5y\")"
+  },
+  {
+    "file": "aletheia/data/fmp_validation.py",
+    "line": 1408,
+    "function": "build_receipt_block",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "calc = state.get(\"_calc_validation\") or {\"status\": \"skipped\", \"skip_reason\": \"not_run\"}"
+  },
+  {
+    "file": "aletheia/data/fmp_validation_core.py",
+    "line": 317,
+    "function": "validate_ticker",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "raw_json = json.loads(our_row.get(\"raw_json\") or \"{}\")"
+  },
+  {
+    "file": "aletheia/data/fmp_validation_core.py",
+    "line": 344,
+    "function": "validate_ticker",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fmp_ccy = (inc.get(\"reportedCurrency\") or \"\").upper()"
+  },
+  {
+    "file": "aletheia/data/quantitative_screens.py",
+    "line": 239,
+    "function": "get",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "v = rec.raw.get(k) or rec.clean.get(k)"
+  },
+  {
+    "file": "aletheia/data/quantitative_screens.py",
+    "line": 433,
+    "function": "_sloan_accrual_ratio",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "net_income = record.raw.get(\"NetIncome\") or record.raw.get(\"NetIncomeLoss\")"
+  },
+  {
+    "file": "aletheia/data/quantitative_screens.py",
+    "line": 434,
+    "function": "_sloan_accrual_ratio",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "cash_ops = record.raw.get(\"OperatingCF\") or record.raw.get(\"NetCashProvidedByUsedInOperatingActivities\")"
+  },
+  {
+    "file": "aletheia/data/quantitative_screens.py",
+    "line": 435,
+    "function": "_sloan_accrual_ratio",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "cash_inv = record.raw.get(\"InvestingCF\") or record.raw.get(\"NetCashProvidedByUsedInInvestingActivities\")"
+  },
+  {
+    "file": "aletheia/data/quantitative_screens.py",
+    "line": 514,
+    "function": "_earnings_power_value",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "record.clean.get(\"NormalizedEBIT\")"
+  },
+  {
+    "file": "aletheia/data/quantitative_screens.py",
+    "line": 518,
+    "function": "_earnings_power_value",
+    "kind": "numeric_fallback",
+    "const": 0.21,
+    "source": "cash_tax_rate = record.clean.get(\"CashTaxRate\") or 0.21"
+  },
+  {
+    "file": "aletheia/data/quantitative_screens.py",
+    "line": 520,
+    "function": "_earnings_power_value",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "record.raw.get(\"WeightedAverageNumberOfDilutedSharesOutstanding\")"
+  },
+  {
+    "file": "aletheia/data/sec_quarterly.py",
+    "line": 512,
+    "function": "derive_ttm_from_sec",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "net_debt = (long_term_debt or 0.0) - (cash or 0.0)"
+  },
+  {
+    "file": "aletheia/data/sec_quarterly.py",
+    "line": 512,
+    "function": "derive_ttm_from_sec",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "net_debt = (long_term_debt or 0.0) - (cash or 0.0)"
+  },
+  {
+    "file": "aletheia/data/sec_quarterly.py",
+    "line": 527,
+    "function": "derive_ttm_from_sec",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "(total_equity or 0.0)"
+  },
+  {
+    "file": "aletheia/data/sec_quarterly.py",
+    "line": 528,
+    "function": "derive_ttm_from_sec",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "+ (long_term_debt or 0.0)"
+  },
+  {
+    "file": "aletheia/data/sec_quarterly.py",
+    "line": 529,
+    "function": "derive_ttm_from_sec",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "- (cash or 0.0)"
+  },
+  {
+    "file": "aletheia/data/sec_quarterly.py",
+    "line": 564,
+    "function": "derive_ttm_from_sec",
+    "kind": "numeric_fallback",
+    "const": 0,
+    "source": "fiscal_year=int(target_fy or 0),"
+  },
+  {
+    "file": "aletheia/data/sec_xbrl_validator.py",
+    "line": 167,
+    "function": "_read_fact",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "usd = ns[tag].get(\"units\", {}).get(\"USD\") or []"
+  },
+  {
+    "file": "aletheia/data/sec_xbrl_validator.py",
+    "line": 177,
+    "function": "_read_fact",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fy=int(fact.get(\"fy\") or fiscal_year),"
+  },
+  {
+    "file": "aletheia/data/sec_xbrl_validator.py",
+    "line": 201,
+    "function": "lookup_xbrl",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "tag_list = tags or CANONICAL_TAGS.get(field) or []"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 69,
+    "function": "_q_date",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "return (record.get(\"date\") or \"\")[:10]"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 130,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "real_income = [r for r in income_q if (_f(r.get(\"revenue\")) or 0.0) > 0.0]"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 156,
+    "function": "derive_ttm_from_fmp",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fmp_ccy = (income_last4[0].get(\"reportedCurrency\") or \"\").upper()"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 157,
+    "function": "derive_ttm_from_fmp",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fy_str  = str(income_last4[0].get(\"fiscalYear\") or income_last4[0].get(\"calendarYear\") or \"\")"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 235,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "net_debt = (long_term_debt or 0.0) + (short_term_debt or 0.0) - (cash or 0.0)"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 235,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "net_debt = (long_term_debt or 0.0) + (short_term_debt or 0.0) - (cash or 0.0)"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 235,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "net_debt = (long_term_debt or 0.0) + (short_term_debt or 0.0) - (cash or 0.0)"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 274,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "(total_equity or 0.0)"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 275,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "+ (long_term_debt or 0.0)"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 276,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "+ (short_term_debt or 0.0)"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 277,
+    "function": "derive_ttm_from_fmp",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "- (cash or 0.0)"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 285,
+    "function": "derive_ttm_from_fmp",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "period_end_date = (balance_latest.get(\"date\") or income_last4[0].get(\"date\") or \"\")[:10] or None"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 286,
+    "function": "derive_ttm_from_fmp",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "fy_str = str(income_last4[0].get(\"fiscalYear\") or income_last4[0].get(\"calendarYear\") or \"\")"
+  },
+  {
+    "file": "aletheia/data/ttm_derivation.py",
+    "line": 376,
+    "function": "derive_ttm_from_fmp",
+    "kind": "accessor_chain",
+    "const": null,
+    "source": "(latest_quarter_income or {}).get(\"date\") or \"\""
+  },
+  {
+    "file": "aletheia/data/utility_taxonomy.py",
+    "line": 98,
+    "function": "capex_from_construction_in_progress",
+    "kind": "numeric_fallback",
+    "const": 0.0,
+    "source": "completed = ppe_additions_complete or 0.0"
+  }
+]
