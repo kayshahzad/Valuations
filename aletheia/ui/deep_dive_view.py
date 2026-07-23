@@ -632,6 +632,30 @@ def _value_source_panel(p2v: Dict[str, Any]) -> None:
         "</div>",
         unsafe_allow_html=True,
     )
+    # Legend — pair each share with its actual annualized return contribution
+    # (%/yr) so the bar isn't read as bare proportions. Signed, so a de-rating
+    # multiple reads as the drag it is even though its *share* is positive (R17).
+    op_r = float(vsd.get("op_contrib") or 0.0)
+    fin_r = float(vsd.get("fin_contrib") or 0.0)
+    mult_r = float(vsd.get("mult_contrib_gate") or 0.0)
+    total_r = op_r + fin_r + mult_r
+
+    def _yr(v: float) -> str:
+        return f"{v * 100:+.1f}%/yr"
+
+    st.markdown(
+        "<div style='display:flex;flex-wrap:wrap;gap:16px;font-size:12px;margin-top:7px'>"
+        f"<span><span style='color:{_GREEN};font-weight:700'>●</span> Operating "
+        f"<b>{op*100:.0f}%</b> · {_yr(op_r)}</span>"
+        f"<span><span style='color:#3b82f6;font-weight:700'>●</span> Financial "
+        f"<b>{fin*100:.0f}%</b> · {_yr(fin_r)}</span>"
+        f"<span><span style='color:{_RED};font-weight:700'>●</span> Multiple "
+        f"<b>{mult*100:.0f}%</b> · {_yr(mult_r)}</span>"
+        f"<span style='color:#888;margin-left:auto'>Σ expected ≈ "
+        f"<b style='color:inherit'>{_yr(total_r)}</b></span>"
+        "</div>",
+        unsafe_allow_html=True,
+    )
     cur_mult = vsd.get("current_multiple") or "—"
     # R17 — signed direction so the multiple SHARE isn't misread as a positive
     # return when the contribution is a de-rating.
