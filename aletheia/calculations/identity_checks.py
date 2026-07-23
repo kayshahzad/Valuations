@@ -371,15 +371,25 @@ def check_balance_sheet_equation(
         or 0.0
     )
 
-    disc_no_nci   = assets - (liab + equity)
-    disc_with_nci = assets - (liab + equity + redeemable_nci)
-    # Choose the smaller-magnitude form
-    if abs(disc_with_nci) < abs(disc_no_nci):
-        disc_abs = disc_with_nci
-        used_nci = True
-    else:
-        disc_abs = disc_no_nci
-        used_nci = False
+    # Non-redeemable (permanent) NCI, i.e. MinorityInterest. The schema contract
+    # (_schema_contract.py) tries FOUR closure forms; this audit historically
+    # tried only two (none / +redeemable), so a record could pass the contract
+    # via the MinorityInterest form yet be flagged here as a residual (I3). Try
+    # all four and pick the smallest gap — the two systems now agree.
+    minority_nci = (
+        _field(record, "MinorityInterest")
+        or _field(record, "NoncontrollingInterest")
+        or 0.0
+    )
+    forms = {
+        "none":       assets - (liab + equity),
+        "redeemable": assets - (liab + equity + redeemable_nci),
+        "minority":   assets - (liab + equity + minority_nci),
+        "both":       assets - (liab + equity + redeemable_nci + minority_nci),
+    }
+    used_form = min(forms, key=lambda k: abs(forms[k]))
+    disc_abs = forms[used_form]
+    used_nci = used_form != "none"
     disc_pct = disc_abs / assets * 100.0
     passed = _passes(disc_abs, disc_pct, tol)
 
@@ -401,10 +411,10 @@ def check_balance_sheet_equation(
             exception_category = "bs_residual_within_materiality"
         else:
             exception_category = "balance_sheet_residual_complexity"
-    elif used_nci and redeemable_nci > 0:
-        # Identity closed BUT required NCI inclusion — flag as a
-        # specific (passing) annotation so the analyst sees that
-        # cleaning's TotalEquity for this filer excludes redeemable NCI.
+    elif used_nci:
+        # Identity closed BUT required NCI inclusion (redeemable and/or minority)
+        # — flag as a specific (passing) annotation so the analyst sees that
+        # cleaning's TotalEquity for this filer excludes that NCI.
         exception_category = "nci_inclusion_required"
     return IdentityCheckResult(
         ticker=ticker, fiscal_year=fy, period=period,
