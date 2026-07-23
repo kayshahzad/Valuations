@@ -588,6 +588,12 @@ class Orchestrator:
                     raw=dict(vr.raw),
                     clean=dict(vr.clean),
                     derived=dict(vr.derived),
+                    # 3.2: carry the validation receipt through to persist so
+                    # upsert_record writes a real fmp_validation_status instead of
+                    # defaulting to 'not_run'. Holds the Gate A receipt (legacy
+                    # clean path) or the provider's own — whichever produced it.
+                    fmp_validation=dict(
+                        getattr(getattr(vr, "validation", None), "fmp_validation", {}) or {}),
                 )
                 # Best-effort persist — schema-contract violations
                 # raise CalculationError; we swallow per-record errors

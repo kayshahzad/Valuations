@@ -179,7 +179,10 @@ def _cleaned_record_to_validated(
         blocking_errors=errors,
         validation=ValidationReceipt(
             schema_violations=schema_violations,
-            fmp_validation={},  # populated when fmp_validation Gate A receipt is wired in
+            # 3.2: propagate the Gate A receipt clean() already computed onto the
+            # record (was hardcoded {} → the DB defaulted fmp_validation_status to
+            # 'not_run' → serving reports showed ingestion 'skipped').
+            fmp_validation=dict(getattr(cleaned_record, "fmp_validation", {}) or {}),
             cross_source_agreement={},
             overrides_applied=overrides_applied,
         ),
