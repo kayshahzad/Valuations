@@ -515,7 +515,13 @@ class QuantitativeScreens:
             or record.raw.get("OperatingIncome")
             or record.raw.get("EBIT")
         )
-        cash_tax_rate = record.clean.get("CashTaxRate") or 0.21
+        # F4 (Phase 1): strict — a genuine 0% cash rate is preserved (not coerced
+        # to statutory); a missing rate falls to GAAP, then statutory last resort.
+        cash_tax_rate = record.get_strict("CashTaxRate")
+        if cash_tax_rate is None:
+            cash_tax_rate = record.get_strict("GAAP_TaxRate")
+        if cash_tax_rate is None:
+            cash_tax_rate = 0.21
         shares = (
             record.raw.get("WeightedAverageNumberOfDilutedSharesOutstanding")
             or record.raw.get("CommonStockSharesOutstanding")

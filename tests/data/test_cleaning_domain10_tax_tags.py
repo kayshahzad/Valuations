@@ -87,6 +87,30 @@ def test_domain10_reads_resolved_tax_tags():
     assert 0.10 <= cash <= 0.20
 
 
+def test_domain10_missing_cash_tax_falls_to_gaap_not_zero():
+    """F2 (Phase 1): a UNP-class filer whose cash-tax tags are ALL absent must
+    NOT fabricate a 0% (untaxed) NOPAT. Cash rate stays None; NOPAT falls to the
+    GAAP rate instead of leaving EBIT untaxed."""
+    ebit = 9_850_000_000.0
+    rec = _build_record(raw={
+        "TaxExpense": 2_028_000_000.0,       # UNP FY-actual
+        "PretaxIncome": 9_166_000_000.0,
+        # cash-tax tags deliberately absent (the UNP case)
+        "NormalizedEBIT": ebit,
+    })
+    rec.clean["NormalizedEBIT"] = ebit
+    engine = CleaningEngine(verbose=False)
+    engine._domain10_tax_sustainability(rec, prior=None)
+
+    # Missing cash-tax tags -> no fabricated 0% cash rate.
+    assert rec.clean.get("CashTaxRate") is None
+    gaap = rec.clean["GAAP_TaxRate"]
+    assert gaap == pytest.approx(2_028_000_000.0 / 9_166_000_000.0, rel=1e-9)
+    # NOPAT is taxed at the GAAP rate — NOT the fabricated untaxed EBIT.
+    assert rec.clean["NOPAT"] == pytest.approx(ebit * (1 - gaap), rel=1e-9)
+    assert rec.clean["NOPAT"] < ebit
+
+
 def test_domain10_falls_back_to_xbrl_raw_tag_names():
     """Older ingests / ADR-filer paths may bypass the canonical
     rename and present record.raw with the raw XBRL tag names.

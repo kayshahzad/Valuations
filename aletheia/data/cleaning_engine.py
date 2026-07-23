@@ -1517,34 +1517,40 @@ class CleaningEngine:
         # We read the resolved (PascalCase) name first and fall back
         # to the raw XBRL name for safety (older ingests, ADR filers
         # whose resolver path bypasses the rename).
-        tax_expense = (
-            record.raw.get("TaxExpense")
-            or record.raw.get("IncomeTaxExpenseBenefit")
-            or 0.0
-        )
-        pretax_income = (
-            record.raw.get("PretaxIncome")
-            or record.raw.get("IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest")
-            or 0.0
-        )
+        # F1/F2 (Phase 1): strict tag reads — a MISSING tax/cash-tax tag stays
+        # None, never a fabricated 0 that turns _safe_div into a 0% rate (which
+        # produced an untaxed, overstated NOPAT). A legitimately-reported 0 is
+        # still honoured. Perpetuity normalization of anomalous rates stays at
+        # calc-time (resolve_tax_rate has the multi-year df; this layer does not).
+        tax_expense = record.raw.get("TaxExpense")
+        if tax_expense is None:
+            tax_expense = record.raw.get("IncomeTaxExpenseBenefit")
+        pretax_income = record.raw.get("PretaxIncome")
+        if pretax_income is None:
+            pretax_income = record.raw.get(
+                "IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest")
+        cash_taxes = record.raw.get("CashTaxesPaid")
+        if cash_taxes is None:
+            cash_taxes = record.raw.get("IncomeTaxesPaid")
+        if cash_taxes is None:
+            cash_taxes = record.raw.get("IncomeTaxesPaidNet")
 
-        # Cash taxes paid (from cash flow statement)
-        cash_taxes = record.raw.get("CashTaxesPaid") or record.raw.get("IncomeTaxesPaid") or record.raw.get("IncomeTaxesPaidNet") or 0.0
-
-        # GAAP effective tax rate
-        gaap_tax_rate = _safe_div(tax_expense, pretax_income) if pretax_income != 0 else None
-
-        # Cash tax rate (preferred for DCF)
-        cash_tax_rate = _safe_div(cash_taxes, pretax_income) if pretax_income != 0 else None
+        # Rates only when the numerator is present AND pretax is non-zero.
+        _pt = pretax_income if pretax_income else None
+        gaap_tax_rate = _safe_div(tax_expense, _pt) if (tax_expense is not None and _pt) else None
+        cash_tax_rate = _safe_div(cash_taxes, _pt) if (cash_taxes is not None and _pt) else None
 
         if gaap_tax_rate is not None:
             record.clean["GAAP_TaxRate"] = gaap_tax_rate
         if cash_tax_rate is not None:
             record.clean["CashTaxRate"] = cash_tax_rate
-            # Update NOPAT with proper cash tax rate (corrects D3 placeholder)
-            normalized_ebit = record.clean.get("NormalizedEBIT")
-            if normalized_ebit is not None:
-                record.clean["NOPAT"] = normalized_ebit * (1 - cash_tax_rate)
+        # NOPAT: prefer the cash rate, then GAAP; a missing cash-tax tag now
+        # falls to GAAP instead of fabricating a 0% (untaxed) NOPAT. When neither
+        # rate exists the D3 statutory placeholder (0.21) stands.
+        _nopat_rate = cash_tax_rate if cash_tax_rate is not None else gaap_tax_rate
+        normalized_ebit = record.clean.get("NormalizedEBIT")
+        if normalized_ebit is not None and _nopat_rate is not None:
+            record.clean["NOPAT"] = normalized_ebit * (1 - _nopat_rate)
 
         # Divergence check: >500bps = investigate
         if gaap_tax_rate is not None and cash_tax_rate is not None:
@@ -1766,7 +1772,9 @@ class CleaningEngine:
             r.derived["CapEx"] = capex
         
         delta_nwc = r._fb(r.clean.get("DeltaNWC"), 0.0, "DeltaNWC", "ce:derived_delta_nwc")
-        cash_tax_rate = r._fb(r.clean.get("CashTaxRate"), 0.21, "CashTaxRate", "ce:derived_tax_rate")
+        # (Phase 1: removed vestigial `cash_tax_rate = CashTaxRate or 0.21` here —
+        # it was assigned but never consumed; NOPAT is read from clean["NOPAT"],
+        # which D10 computes via the cash→GAAP tax chain.)
         nopat = r.clean.get("NOPAT")
         total_assets = r._fb(r.raw.get("TotalAssets"), 0.0, "TotalAssets", "ce:derived_total_assets")
         # F3 (Phase 1): strict — a missing/zero equity tag propagates as None/0,
