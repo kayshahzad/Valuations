@@ -164,6 +164,16 @@ class CleanedRecord:
             })
         return val or fallback
 
+    def get_strict(self, key: str) -> Optional[float]:
+        """Strict counterpart to get() (fix-plan Phase 1): cleaned value first,
+        then raw, with `is None` semantics — a legitimate 0.0 is PRESERVED, never
+        coerced to a fallback constant. Use wherever a fabricated value would
+        contradict the missing signal (a real 0% tax rate, $0 equity)."""
+        v = self.clean.get(key)
+        if v is None:
+            v = self.raw.get(key)
+        return v
+
     def add_flag(self, flag: CleaningFlag):
         self.flags.append(flag)
 
@@ -1759,7 +1769,11 @@ class CleaningEngine:
         cash_tax_rate = r._fb(r.clean.get("CashTaxRate"), 0.21, "CashTaxRate", "ce:derived_tax_rate")
         nopat = r.clean.get("NOPAT")
         total_assets = r._fb(r.raw.get("TotalAssets"), 0.0, "TotalAssets", "ce:derived_total_assets")
-        total_equity = r._fb(r.raw.get("TotalEquity"), 1.0, "TotalEquity", "ce:derived_total_equity")
+        # F3 (Phase 1): strict — a missing/zero equity tag propagates as None/0,
+        # never a fabricated $1 denominator (which produced astronomical ROE and
+        # understated invested capital → inflated ROIC). ROE/InvestedCapital both
+        # return None on None equity; the ROE suppression below flags the reason.
+        total_equity = r.raw.get("TotalEquity")
         long_term_debt = r._fb(r.raw.get("LongTermDebt"), 0.0, "LongTermDebt", "ce:derived_ltd")
         net_income = r._fb(r.raw.get("NetIncome"), 0.0, "NetIncome", "ce:derived_net_income")
         cash = r._fb(r.raw.get("Cash"), 0.0, "Cash", "ce:derived_cash")
@@ -1893,7 +1907,12 @@ class CleaningEngine:
         roe_val = _roe(net_income=net_income, total_equity=total_equity)
         if roe_val is not None:
             r.derived["ROE"] = roe_val
-        elif total_equity is not None and total_equity <= 0:
+        elif total_equity is None:
+            # F3 (Phase 1): missing equity tag — no ROE rather than a fabricated
+            # denominator. Distinct reason so the map is analyst-legible.
+            r.derived["ROE"] = None
+            r.derived["ROE_suppressed_reason"] = "missing_book_equity"
+        elif total_equity <= 0:
             # Central formula returns None on non-positive equity; we
             # still want the analyst-facing suppression flag.
             r.derived["ROE"] = None
