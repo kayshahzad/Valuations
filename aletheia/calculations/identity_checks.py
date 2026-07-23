@@ -150,6 +150,13 @@ class IdentityCheckResult:
     # hyperscaler CIP, etc.). UI renders as ⚠️ "expected exception"
     # rather than ❌ "true failure".
     exception_category: Optional[str] = None
+    # Phase 2.4: distinct 'skipped' state — the check never ran (missing inputs),
+    # as opposed to ran-and-closed. `passed` stays True for backward-compat (a
+    # skip is not a failure), but `was_skipped=True` lets Gate F / the UI / the
+    # audit tally tell "ran & closed" from "never ran" (520 RE roll-forwards were
+    # silently counting as passes). Field name avoids colliding with the
+    # `skipped` classmethod below.
+    was_skipped: bool = False
 
     @classmethod
     def skipped(
@@ -163,6 +170,7 @@ class IdentityCheckResult:
             discrepancy_abs=None, discrepancy_pct=None,
             tolerance_pct=TOLERANCE_THRESHOLDS.get(identity_name, 0.0),
             components={}, notes=f"skipped: {reason}",
+            was_skipped=True,
         )
 
 
@@ -496,12 +504,19 @@ def check_retained_earnings_rollforward(
     ticker = current["ticker"]; fy = current["fiscal_year"]; period = current["period"]
     tol = TOLERANCE_THRESHOLDS[name]
 
-    # RetainedEarnings isn't currently materialised in clean/raw blobs;
-    # fall through to XBRL directly.
-    beg = loader.xbrl_fact(ticker, "RetainedEarningsAccumulatedDeficit",
-                          prior["fiscal_year"])
-    end = loader.xbrl_fact(ticker, "RetainedEarningsAccumulatedDeficit",
-                          fy)
+    # Phase 2.4: RetainedEarnings IS materialised in the cleaned record now
+    # (`RetainedEarnings`, 1488/1601 FY rows) — read it from the persisted
+    # record first, XBRL only as a fallback. Previously this read XBRL directly
+    # and `skipped` whenever companyfacts wasn't cached (520 silent skips).
+    # is-None (not `or`): RetainedEarnings is legitimately 0 or negative
+    # (accumulated deficit), so a falsy check would wrongly fall through.
+    beg = _field(prior, "RetainedEarnings", "RetainedEarningsAccumulatedDeficit")
+    if beg is None:
+        beg = loader.xbrl_fact(ticker, "RetainedEarningsAccumulatedDeficit",
+                               prior["fiscal_year"])
+    end = _field(current, "RetainedEarnings", "RetainedEarningsAccumulatedDeficit")
+    if end is None:
+        end = loader.xbrl_fact(ticker, "RetainedEarningsAccumulatedDeficit", fy)
     if beg is None or end is None:
         return IdentityCheckResult.skipped(
             ticker=ticker, fiscal_year=fy, period=period,
