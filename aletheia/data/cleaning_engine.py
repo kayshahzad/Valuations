@@ -1436,12 +1436,13 @@ class CleaningEngine:
         nwc = (current_assets - cash) - current_liab
         record.clean["NWC"] = nwc
 
-        # Revenue for structural WC ratio
-        revenue = record.raw.get("Revenue") or 1.0
-
-        # Structural NWC ≈ 2–5% of revenue (rough proxy for working capital floor)
-        structural_nwc_estimate = revenue * 0.03
-        record.clean["StructuralNWC_Estimate"] = structural_nwc_estimate
+        # Structural NWC ≈ 2–5% of revenue (rough proxy for working-capital
+        # floor). LATENT (Phase 1): strict — a missing Revenue tag skips the
+        # estimate rather than fabricating 1.0 × 0.03 sham NWC into the DCF.
+        revenue = record.raw.get("Revenue")
+        if revenue is not None:
+            structural_nwc_estimate = revenue * 0.03
+            record.clean["StructuralNWC_Estimate"] = structural_nwc_estimate
 
         # YoY NWC change
         if prior is not None:
