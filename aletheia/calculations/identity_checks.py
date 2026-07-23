@@ -96,6 +96,7 @@ IRA_EXCISE_TAX_RATE = 0.01
 TOLERANCE_THRESHOLDS: Dict[str, float] = {
     "balance_sheet_equation":         0.005,   # 0.5% of total assets
     "gross_profit_reconciliation":    0.005,   # 0.5% of revenue (Rev − COGS − GP)
+    "operating_income_reconciliation": 0.02,   # 2% of GP (GP − OpEx − OI; opex mix varies)
     "retained_earnings_rollforward":  0.02,    # 2% of beginning RE
     "cash_rollforward":               0.005,   # 0.5% — relaxed from theoretical 0.1% based on real-world rounding
     "ppe_rollforward":                0.05,    # 5% — M&A/impair widen
@@ -488,6 +489,58 @@ def check_gross_profit_reconciliation(
         discrepancy_abs=disc_abs, discrepancy_pct=disc_pct,
         tolerance_pct=tol,
         components={"Revenue": rev, "COGS": cogs, "GrossProfit": gp},
+        exception_category=exception_category,
+    )
+
+
+def check_operating_income_reconciliation(
+    record: Dict[str, Any],
+) -> IdentityCheckResult:
+    """Identity 1c — Operating-income waterfall: GrossProfit − OperatingExpenses
+    ≈ OperatingIncome (I4).
+
+    Ties the reported operating income to the derived waterfall so a mis-mapped
+    opex total (or a wrong SG&A/R&D sum that would flow to EBITDA/NOPAT) is
+    caught. Uses the rolled-up OperatingExpenses total (not SG&A+R&D, which
+    misses fulfillment/tech/other opex for names like AMZN). Net-revenue
+    presenters (GrossProfit ~0) route to the same passing exception as the
+    gross-profit tie.
+    """
+    name = "operating_income_reconciliation"
+    ticker = record["ticker"]; fy = record["fiscal_year"]; period = record["period"]
+    tol = TOLERANCE_THRESHOLDS[name]
+
+    gp = _field(record, "GrossProfit")
+    opex = _field(record, "OperatingExpenses")
+    oi = _field(record, "OperatingIncome")
+    if gp is None or opex is None or oi is None:
+        return IdentityCheckResult.skipped(
+            ticker=ticker, fiscal_year=fy, period=period, identity_name=name,
+            reason=f"missing GP={gp!r} OpEx={opex!r} OperatingIncome={oi!r}",
+        )
+    base = abs(gp) if gp else abs(oi)
+    if not base:
+        return IdentityCheckResult.skipped(
+            ticker=ticker, fiscal_year=fy, period=period, identity_name=name,
+            reason="GrossProfit and OperatingIncome both 0",
+        )
+
+    disc_abs = gp - opex - oi
+    disc_pct = disc_abs / base * 100.0
+    passed = _passes(disc_abs, disc_pct, tol)
+
+    exception_category = None
+    if not passed:
+        if abs(gp) < 0.01 * abs(_field(record, "Revenue") or gp or 1.0):
+            exception_category = "no_cogs_gp_split_reported"
+        else:
+            exception_category = "operating_income_residual"
+    return IdentityCheckResult(
+        ticker=ticker, fiscal_year=fy, period=period,
+        identity_name=name, passed=passed,
+        discrepancy_abs=disc_abs, discrepancy_pct=disc_pct,
+        tolerance_pct=tol,
+        components={"GrossProfit": gp, "OperatingExpenses": opex, "OperatingIncome": oi},
         exception_category=exception_category,
     )
 
@@ -1615,6 +1668,7 @@ def run_all_checks_for_ticker(
     for r in records:
         out.append(check_balance_sheet_equation(r))
         out.append(check_gross_profit_reconciliation(r))
+        out.append(check_operating_income_reconciliation(r))
 
     # Roll-forward identities — pairs of consecutive FY rows.
     for i, fy in enumerate(fys_sorted):

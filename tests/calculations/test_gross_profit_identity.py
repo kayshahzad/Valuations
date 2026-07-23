@@ -39,3 +39,30 @@ def test_net_revenue_presenter_is_exception_not_failure():
 def test_skipped_when_gross_profit_absent():
     res = check_gross_profit_reconciliation(_rec(Revenue=100e9, COGS=60e9))
     assert res.was_skipped
+
+
+# ── 2.3b: operating-income waterfall (GrossProfit − OperatingExpenses = OI) ──
+from aletheia.calculations.identity_checks import (  # noqa: E402
+    check_operating_income_reconciliation,
+)
+
+
+def test_operating_income_ties():
+    res = check_operating_income_reconciliation(
+        _rec(Revenue=100e9, GrossProfit=40e9, OperatingExpenses=25e9,
+             OperatingIncome=15e9))
+    assert res.passed and res.exception_category is None
+
+
+def test_operating_income_residual_flagged():
+    res = check_operating_income_reconciliation(
+        _rec(Revenue=100e9, GrossProfit=40e9, OperatingExpenses=25e9,
+             OperatingIncome=10e9))            # 40−25−10 = 5 (>2% of GP)
+    assert not res.passed
+    assert res.exception_category == "operating_income_residual"
+
+
+def test_operating_income_skipped_when_opex_absent():
+    res = check_operating_income_reconciliation(
+        _rec(GrossProfit=40e9, OperatingIncome=15e9))
+    assert res.was_skipped
