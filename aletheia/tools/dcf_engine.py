@@ -1227,7 +1227,8 @@ class DCFEngine:
                 raise
             return result
         long_term_debt = get("raw_LongTermDebt", 0.0)
-        total_equity_book = get("raw_TotalEquity", 0.0)
+        # (WACC uses market cap for the equity weight — see compute_wacc below;
+        # book equity is intentionally not read here.)
 
         da, da_prov = get_with_provenance("Depreciation_Total")
         capex, capex_prov = get_with_provenance("CapEx")

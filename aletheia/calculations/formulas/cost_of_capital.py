@@ -91,7 +91,13 @@ def wacc(
 ) -> float:
     """(E/V × Ke) + (D/V × Kd × (1 − tax_rate))
 
-    Standard book-value-weighted WACC. Bounds applied:
+    Weights by the equity VALUE passed as ``total_equity``. Every production
+    caller passes **market cap** (dcf_engine.compute_wacc, multiple_decomposition,
+    reverse_dcf, valuation_methods), so this is **market-value-weighted** in
+    practice — correct for high-MV/BV compounders where book equity (e.g. AAPL
+    ~$74B ≈ its debt) would wrongly weight WACC toward cheap debt. The formula
+    itself is weight-source-agnostic; the caller owns whether it's market or book.
+    Bounds applied:
       - Floor: ``max(WACC_FLOOR_MIN, Rf + 1%)``
       - Ceiling: ``WACC_CEILING``
       - Returns ``DEFAULT_WACC`` when capital structure is non-positive
