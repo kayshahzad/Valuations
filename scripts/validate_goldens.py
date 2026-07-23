@@ -49,28 +49,55 @@ GOLDEN_CANDIDATES = [
 
 # Per-field relative tolerance for the assert pass.
 TOL = {
-    "wacc_base": 0.005, "base_ips": 0.005, "ips_base": 0.005,
     "clean_NOPAT": 0.005, "clean_EBITDA": 0.005, "derived_ROIC": 0.01,
+    "wacc_base": 0.005, "base_ips": 0.005, "ips_base": 0.005,
     "justified_ev_ebitda": 0.01,
 }
 DEFAULT_TOL = 0.01
 
+# Only deterministic, code-driven cleaned fields are GATED. wacc_base / base_ips
+# / ips_base / justified_ev_ebitda are recomputed against LIVE price + beta
+# (beta from a rolling window), so they drift run-to-run regardless of code —
+# same finding as diff_oracle's valuation exclusion. They're captured for
+# reference but never fail the gate.
+_GATED_FIELDS = {"engine", "clean_NOPAT", "clean_EBITDA", "derived_ROIC"}
 
-def _extract(snap: dict) -> dict:
-    """Pull the locked invariants from a pure-state snapshot."""
+
+def _reclean_deterministic(ticker: str) -> dict:
+    """The GATED cleaned fields, from a fresh re-clean with CURRENT code — NOT
+    the DB (which is mixed-vintage: some tickers ingested with older code). This
+    makes the gate reflect the current cleaning engine deterministically, so a
+    code change moving these is caught and a stale DB row is irrelevant."""
+    import duckdb
+    from aletheia.data.cleaning_engine import CleaningEngine
+    con = duckdb.connect(str(ROOT / "valuation_data/database/investment.duckdb"), read_only=True)
+    try:
+        fy = con.execute("select max(fiscal_year) from company_records "
+                         "where ticker=? and period='FY'", [ticker]).fetchone()[0]
+    finally:
+        con.close()
+    rec = CleaningEngine(verbose=False).clean(ticker, int(fy), is_latest_fy=False)
+    return {
+        "clean_NOPAT": rec.clean.get("NOPAT"),
+        "clean_EBITDA": rec.derived.get("EBITDA") or rec.clean.get("EBITDA"),
+        "derived_ROIC": rec.derived.get("ROIC"),
+    }
+
+
+def _capture(ticker: str) -> dict:
+    """Golden invariants: gated cleaned fields from a fresh re-clean (current
+    code), market-driven valuation fields from the snapshot (informational)."""
+    snap = _snapshot_ticker(ticker, apply_overrides=False)
     val = snap.get("valuation", {}) or {}
-    cl_fy = (snap.get("cleaned", {}) or {}).get("latest_fy", {}) or {}
     base = val.get("base") or {}
     out = {
         "engine": val.get("engine"),
         "wacc_base": val.get("wacc_base"),
         "base_ips": base.get("ips"),
         "ips_base": val.get("ips_base"),
-        "clean_NOPAT": cl_fy.get("clean_NOPAT"),
-        "clean_EBITDA": cl_fy.get("clean_EBITDA"),
-        "derived_ROIC": cl_fy.get("derived_ROIC"),
         "justified_ev_ebitda": (val.get("multiple") or {}).get("justified_ev_ebitda"),
     }
+    out.update(_reclean_deterministic(ticker))     # gated fields override
     return out
 
 
@@ -88,7 +115,7 @@ def lock() -> int:
     exp = {"_note": "pure-state (apply_overrides=False) current baseline; "
                     "supersedes stale memory goldens", "tickers": {}}
     for t in _goldens():
-        exp["tickers"][t] = _extract(_snapshot_ticker(t, apply_overrides=False))
+        exp["tickers"][t] = _capture(t)
         print(f"  locked {t}: {exp['tickers'][t]}", file=sys.stderr)
     EXPECTED_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(EXPECTED_PATH, "w") as fh:
@@ -104,8 +131,10 @@ def check() -> int:
     exp = json.load(open(EXPECTED_PATH))["tickers"]
     breaches = []
     for t, want in exp.items():
-        got = _extract(_snapshot_ticker(t, apply_overrides=False))
+        got = _capture(t)
         for k, wv in want.items():
+            if k not in _GATED_FIELDS:
+                continue  # market-driven field — captured, not gated
             gv = got.get(k)
             if isinstance(wv, str) or wv is None or gv is None:
                 if wv != gv:
