@@ -1554,8 +1554,13 @@ class CleaningEngine:
         if cash_taxes is None:
             cash_taxes = record.raw.get("IncomeTaxesPaidNet")
 
-        # Rates only when the numerator is present AND pretax is non-zero.
-        _pt = pretax_income if pretax_income else None
+        # Rates only when the numerator is present AND pretax is strictly
+        # POSITIVE. A negative pretax (loss year) makes Tax/Pretax nonsensical —
+        # HPE FY2025 pretax −$285M gave cash rate −149% → NOPAT = EBIT×(1−(−1.49))
+        # = garbage. When pretax ≤ 0 the effective rate is meaningless; leave it
+        # None so NOPAT falls back to the D3 statutory placeholder, and the
+        # calc-time resolver normalizes the perpetuity rate from history.
+        _pt = pretax_income if (pretax_income and pretax_income > 0) else None
         gaap_tax_rate = _safe_div(tax_expense, _pt) if (tax_expense is not None and _pt) else None
         cash_tax_rate = _safe_div(cash_taxes, _pt) if (cash_taxes is not None and _pt) else None
 

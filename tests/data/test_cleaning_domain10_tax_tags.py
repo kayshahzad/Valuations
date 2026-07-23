@@ -111,6 +111,25 @@ def test_domain10_missing_cash_tax_falls_to_gaap_not_zero():
     assert rec.clean["NOPAT"] < ebit
 
 
+def test_domain10_negative_pretax_yields_no_rate():
+    """Loss year: a negative pretax must NOT produce a nonsensical negative tax
+    rate. HPE FY2025 (pretax −285M, cash taxes 425M) gave cash rate −149% →
+    NOPAT = EBIT×(1−(−1.49)) = garbage. Now the rate is left None (NOPAT falls to
+    the D3 statutory placeholder)."""
+    rec = _build_record(raw={
+        "TaxExpense": 342_000_000.0,
+        "PretaxIncome": -285_000_000.0,        # loss
+        "CashTaxesPaid": 425_000_000.0,
+        "NormalizedEBIT": -420_000_000.0,
+    })
+    rec.clean["NormalizedEBIT"] = -420_000_000.0
+    engine = CleaningEngine(verbose=False)
+    engine._domain10_tax_sustainability(rec, prior=None)
+
+    assert rec.clean.get("CashTaxRate") is None
+    assert rec.clean.get("GAAP_TaxRate") is None
+
+
 def test_domain10_falls_back_to_xbrl_raw_tag_names():
     """Older ingests / ADR-filer paths may bypass the canonical
     rename and present record.raw with the raw XBRL tag names.
