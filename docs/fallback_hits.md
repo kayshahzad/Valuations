@@ -8,4 +8,3 @@ Re-cleaned 62 records (1 FY/ticker × 62 tickers, 0 failed) with value-neutral i
 | `ce:derived_delta_nwc` | `DeltaNWC` | 58 | 58 | 0 | 58 |
 | `ce:derived_ltd` | `LongTermDebt` | 7 | 7 | 0 | 7 |
 | `ce:derived_cash` | `Cash` | 5 | 5 | 0 | 5 |
-| `ce:derived_tax_rate` | `CashTaxRate` | 3 | 3 | 1 | 2 |
