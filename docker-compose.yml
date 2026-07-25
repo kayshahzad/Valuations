@@ -1,0 +1,22 @@
+# Local parity with the Cloud Run deployment: one image running both
+# uvicorn (127.0.0.1:8000) and Streamlit (:8080), just like production.
+#
+#   docker compose up --build      → open http://localhost:8080
+#   docker compose run --rm app pipeline run AAPL   → one pipeline pass
+#
+# Bind-mounts ./valuation_data so the container reads your local DuckDB +
+# data (the prod analogue is the GCS FUSE mount at /app/valuation_data).
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"      # Streamlit UI (served)
+    volumes:
+      - ./valuation_data:/app/valuation_data
+    env_file:
+      - .env
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1

@@ -1,0 +1,71 @@
+# ─────────────────────────────────────────────────────────────────────
+# Build context excludes. Keeps the image small and — critically —
+# prevents baking `.env` (secrets) and ~1.1 GB of data into image layers.
+#
+# NOTE: runtime data comes from the GCS FUSE mount at /app/valuation_data
+# (seeded separately), so the whole valuation_data/ tree is excluded here,
+# INCLUDING valuation_data/macro/damodaran_*.csv — those live in the bucket.
+#
+# Do NOT add blanket *.csv / *.json / *.md rules: config/ and aletheia/
+# ship runtime data files (universe.csv, specialized_valuation_inputs.json,
+# fred_series.csv, *_METHODOLOGY.md, etc.) that must remain in the image.
+# ─────────────────────────────────────────────────────────────────────
+
+# ── Data & generated artifacts (mounted from GCS or regenerated) ──
+valuation_data/
+audits/
+baselines/
+scratch/
+logs/
+
+# ── Dead code quarantine ──
+archive/
+scripts/archive/
+
+# ── Secrets & local env (NEVER bake into the image) ──
+.env
+.env.*
+!.env.example
+
+# ── Root-level scratch outputs (loose logs / traces / PDFs) ──
+/*.txt
+!requirements.txt
+*.log
+*.pdf
+full_pipeline_trace.json
+tag_miss_audit_results.json
+
+# ── Known duplicate files ("foo 2.py" editor copies) ──
+* 2.py
+**/* 2.py
+
+# ── Tests / docs / notebooks (not needed at runtime) ──
+tests/
+docs/
+*.ipynb
+
+# ── VCS & tool caches ──
+.git/
+.gitignore
+.gitattributes
+**/__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ── Build / deploy metadata not needed inside the image ──
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+cloudbuild.yaml
+deploy/terraform/
+
+# ── Editor / OS cruft ──
+.DS_Store
+.vscode/
+.idea/
+.claude/

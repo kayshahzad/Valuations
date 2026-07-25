@@ -1,14 +1,41 @@
-langgraph
-langchain
-langchain-google-genai
-google-genai
-langchain-community
-yfinance
-duckduckgo-search
-edgartools
-streamlit
-plotly
-pandas
-numpy
-faiss-cpu
-reportlab>=4.4.0
+# Aletheia runtime dependencies — pinned to the versions currently in use.
+# Direct imports only; transitive deps (requests-toolbelt, bs4, lxml, …)
+# are resolved by pip. Regenerate pins from a known-good venv with:
+#   pip freeze | grep -iE '<name>='
+
+# ── Core LLM / agent stack (Google Gemini) ──
+langgraph==1.0.7
+langchain==1.2.8
+langchain-google-genai==4.2.0
+google-genai==1.61.0
+langchain-community==0.4.1
+
+# ── Data sources ──
+yfinance==1.1.0
+edgartools==5.13.1
+ddgs==9.10.0            # DuckDuckGo search (renamed from duckduckgo-search)
+requests==2.33.1
+
+# ── Compute / analytics ──
+pandas==3.0.2
+numpy==2.4.4
+scipy==1.17.1          # wacc_analysis, reverse_dcf
+duckdb==1.5.2
+faiss-cpu==1.13.2
+
+# ── UI / serving ──
+streamlit==1.53.1
+plotly==6.5.2
+fastapi==0.135.3       # was installed ad-hoc in the Dockerfile — now pinned
+uvicorn[standard]==0.40.0
+httpx==0.28.1
+
+# ── Reports / export ──
+reportlab==4.4.10
+openpyxl==3.1.5        # dcf_excel_exporter (was missing from requirements)
+
+# ── Auth (IAP JWT verification) ──
+google-auth==2.48.0     # verifies the Cloud Run IAP assertion (aletheia/auth)
+
+# ── Config ──
+python-dotenv==1.2.1

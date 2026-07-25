@@ -1,0 +1,72 @@
+# Build + push the single Aletheia image, then deploy the Cloud Run
+# service and update the pipeline Job. One image serves both roles
+# (see deploy/entrypoint.sh). Durable infra (bucket, secrets, IAP,
+# scheduler, IAM) is owned by deploy/terraform or the deploy/README runbook.
+#
+#   gcloud builds submit --config cloudbuild.yaml \
+#       --substitutions=_SERVICE_SA=aletheia-run@$PROJECT_ID.iam.gserviceaccount.com
+#
+# Tags each build with both the commit SHA and :latest.
+
+substitutions:
+  _LOCATION: 'us-central1'
+  _REPOSITORY: 'aletheia'
+  _IMAGE: 'app'
+  _SERVICE: 'aletheia'
+  _JOB: 'aletheia-pipeline'
+  _BUCKET: ''            # e.g. <project>-aletheia-data ; set at submit time
+  _SERVICE_SA: ''        # runtime service account email ; set at submit time
+
+steps:
+  # 1. Build (tag with commit SHA + latest)
+  - id: build
+    name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - '$_LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$SHORT_SHA'
+      - '-t'
+      - '$_LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:latest'
+      - '-f'
+      - 'Dockerfile'
+      - '.'
+
+  # 2. Push both tags
+  - id: push
+    name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '--all-tags', '$_LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE']
+
+  # 3. Deploy the Cloud Run service (revision uses the SHA-tagged image).
+  #    Volume, IAP, session affinity, secrets, min-instances are set once by
+  #    Terraform/the runbook; a plain deploy of a new image preserves them.
+  - id: deploy-service
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - '$_SERVICE'
+      - '--image=$_LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$SHORT_SHA'
+      - '--region=$_LOCATION'
+      - '--quiet'
+
+  # 4. Point the pipeline Job at the new image too.
+  - id: update-job
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'jobs'
+      - 'update'
+      - '$_JOB'
+      - '--image=$_LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$SHORT_SHA'
+      - '--region=$_LOCATION'
+      - '--quiet'
+
+images:
+  - '$_LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:$SHORT_SHA'
+  - '$_LOCATION-docker.pkg.dev/$PROJECT_ID/$_REPOSITORY/$_IMAGE:latest'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: 'E2_HIGHCPU_8'   # faster deps install for the fat ML image

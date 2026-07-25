@@ -1,0 +1,96 @@
+name: Deploy to Cloud Run
+
+# Build the image and roll it out to the existing Cloud Run service + pipeline
+# Job on every push to main. Auth is keyless (Workload Identity Federation) —
+# no service-account JSON in GitHub. One-time setup (WIF pool + deployer SA +
+# repo variables, and creating the service/Job) is in deploy/README.md.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'deploy/terraform/**'
+  workflow_dispatch: {}
+
+# Only one deploy at a time; a newer push supersedes an in-flight one.
+concurrency:
+  group: deploy-cloud-run
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write        # required for WIF OIDC token
+
+env:
+  REGION: us-central1
+  REPO: aletheia
+  IMAGE: app
+  SERVICE: aletheia
+  JOB: aletheia-pipeline
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud (WIF)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOYER_SA }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+
+      - name: Compute image ref
+        id: img
+        run: echo "ref=${REGION}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${REPO}/${IMAGE}" >> "$GITHUB_OUTPUT"
+
+      - name: Build & push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.img.outputs.ref }}:${{ github.sha }}
+            ${{ steps.img.outputs.ref }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # The service/Job must already exist with their volume/IAP/secrets/affinity
+      # config (see deploy/README.md §2–4). We only swap the image here, which
+      # preserves all other settings. Fail loudly if they're missing rather than
+      # silently creating a mis-configured bare service.
+      - name: Verify service & job exist
+        run: |
+          gcloud run services describe "$SERVICE" --region="$REGION" >/dev/null \
+            || { echo "::error::Cloud Run service '$SERVICE' not found — run deploy/README.md §3 first."; exit 1; }
+          gcloud run jobs describe "$JOB" --region="$REGION" >/dev/null \
+            || { echo "::error::Cloud Run job '$JOB' not found — run deploy/README.md §4 first."; exit 1; }
+
+      - name: Deploy service (new revision, keeps existing config)
+        run: |
+          gcloud run deploy "$SERVICE" \
+            --image="${{ steps.img.outputs.ref }}:${{ github.sha }}" \
+            --region="$REGION" --quiet
+
+      - name: Update pipeline Job image
+        run: |
+          gcloud run jobs update "$JOB" \
+            --image="${{ steps.img.outputs.ref }}:${{ github.sha }}" \
+            --region="$REGION" --quiet
+
+      - name: Summary
+        run: |
+          URL=$(gcloud run services describe "$SERVICE" --region="$REGION" --format='value(status.url)')
+          echo "### ✅ Deployed \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Service: $URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Job: $JOB updated" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars and fill in. terraform.tfvars is gitignored.
+project_id  = "aletheia-1234567890"          # from `gcloud projects create`
+region      = "us-central1"
+iap_members  = ["user:kayshahzad@gmail.com"] # who may sign in (IAP allow-list)
+admin_emails = ["kayshahzad@gmail.com"]      # RBAC Admins; others = read-only User
+# iap_audience = ""                          # optional: pin IAP JWT audience
+min_instances = 0                            # 0 = free-tier scale-to-zero
+# pipeline_schedule = "0 6 * * *"            # nightly refresh (UTC)
