@@ -339,8 +339,59 @@ def _validation_banner(ticker: str, fy: int, ident: Dict[str, Any]) -> None:
     errors = ident.get("error_count") or 0
     period_end_str = _fmt_period_end(ident.get("period_end_date"))
 
-    pass_pct = (n_validated + n_near) / total * 100 if total else 0
-    pass_color = "#10b981" if pass_pct >= 75 else "#f59e0b" if pass_pct >= 50 else "#ef4444"
+    # Fields that got an actual external verdict (matched or mismatched).
+    # The remainder are "missing" — no SEC/FMP source to compare against, which
+    # is *unverified*, NOT *failed*. Conflating those two was the old banner's
+    # core defect: it painted "0/16 cross-checked" bright red as if 16 fields
+    # had failed, when zero had actually drifted.
+    n_checked   = n_validated + n_near + n_drift
+    n_unchecked = max(total - n_checked, 0)
+
+    # Border/severity is driven by data-INTEGRITY only: hard errors, or fields
+    # that were checked against SEC/FMP and drifted. Unverified data stays
+    # neutral (grey, not red); a clean cross-check is green. Non-blocking
+    # cleaning warnings get their own amber chip below but do NOT escalate the
+    # border — nearly every ticker carries a routine note, so amber-everywhere
+    # would drain the signal from the border.
+    if errors > 0 or n_drift > 0:
+        accent = "#ef4444"       # red — genuine mismatch / error
+    elif n_checked > 0:
+        accent = "#10b981"       # green — cross-checked clean
+    else:
+        accent = "#6b7280"       # neutral grey — clean but unverified
+
+    # Cross-check chip: only frame it as a pass ratio when something was
+    # actually checked; otherwise say plainly that no external source was found.
+    if n_checked == 0:
+        xcheck_html = (
+            f'<span>Cross-check '
+            f'<strong style="color:#a1a1aa">none available</strong>'
+            f'<span style="color:#71717a"> ({total} fields, no SEC/FMP source)</span>'
+            f'</span>'
+        )
+    else:
+        drift_html = (
+            f'<span style="color:#ef4444"> · {n_drift} drift ⚠</span>'
+            if n_drift else ""
+        )
+        near_html = (
+            f'<span style="color:#f59e0b"> · {n_near} near ≈</span>'
+            if n_near else ""
+        )
+        unchecked_html = (
+            f'<span style="color:#71717a"> · {n_unchecked} unverified</span>'
+            if n_unchecked else ""
+        )
+        xcheck_html = (
+            f'<span>Cross-checked '
+            f'<strong style="color:{accent}">{n_validated + n_near}/{n_checked}</strong> '
+            f'<span style="color:#10b981">{n_validated} ✓</span>'
+            f'{near_html}{drift_html}{unchecked_html}'
+            f'</span>'
+        )
+
+    warn_color = "#f59e0b" if warnings else "#a1a1aa"
+    err_color = "#ef4444" if errors else "#a1a1aa"
 
     fy_display = f"FY{fy}"
     if period_end_str:
@@ -349,22 +400,20 @@ def _validation_banner(ticker: str, fy: int, ident: Dict[str, Any]) -> None:
     st.markdown(
         f"""
 <div style="
-    display:flex; gap:16px; align-items:center; padding:12px 16px;
-    background:rgba(128,128,128,0.08); border-left:3px solid {pass_color};
-    border-radius:4px; font-family:'DM Mono',monospace; font-size:12px;
-    color:#a1a1aa; margin:8px 0 16px 0;
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    padding:12px 16px; background:rgba(128,128,128,0.10);
+    border-left:3px solid {accent}; border-radius:4px;
+    font-family:'DM Mono',monospace; font-size:12.5px;
+    color:#c4c4cc; margin:8px 0 16px 0;
 ">
-    <span><strong style="color:#e5e5e5">{fy_display}</strong></span>
+    <span><strong style="color:#f4f4f5">{fy_display}</strong></span>
     <span style="color:#71717a">·</span>
-    <span>Quality <strong style="color:#e5e5e5">{quality:.2f}</strong></span>
+    <span>Quality <strong style="color:#f4f4f5">{quality:.2f}</strong></span>
     <span style="color:#71717a">·</span>
-    <span>Validation <strong style="color:{pass_color}">{n_validated + n_near}/{total}</strong>
-        <span style="color:#10b981">{n_validated} ✓</span>
-        <span style="color:#f59e0b">{n_near} ≈</span>
-        <span style="color:#ef4444">{n_drift} ⚠</span>
-    </span>
+    {xcheck_html}
     <span style="color:#71717a">·</span>
-    <span>{warnings} warnings · {errors} errors</span>
+    <span><strong style="color:{warn_color}">{warnings}</strong> warnings ·
+        <strong style="color:{err_color}">{errors}</strong> errors</span>
 </div>
         """,
         unsafe_allow_html=True,

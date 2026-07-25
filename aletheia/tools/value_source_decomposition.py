@@ -69,6 +69,28 @@ def _dividend_yield(calc_input, price: Optional[float]) -> Optional[float]:
     return max(dps[-1], 0.0) / price
 
 
+def _latest_fy_with_data(calc_input, col: str = "clean_Revenue") -> Optional[int]:
+    """Most-recent FY whose core operating field is actually populated.
+
+    The operating engine derives ``organic_cagr`` from the FY revenue series;
+    if the latest *populated* FY is years behind the current period, that growth
+    rate is stale. Returns None when the column/frame is unavailable.
+    """
+    df = getattr(calc_input, "df", None)
+    if df is None or "period" not in getattr(df, "columns", []):
+        return None
+    d = df[df["period"] == "FY"]
+    if col not in getattr(d, "columns", []) or d.empty:
+        return None
+    valid = d[d[col].notna()]
+    if valid.empty:
+        return None
+    try:
+        return int(valid["fiscal_year"].max())
+    except (TypeError, ValueError):
+        return None
+
+
 def _extract_contrarian_bias(state: Optional[dict]) -> Optional[str]:
     """Pull a normalized contrarian bias tag (for the R4 narrative override).
     Available only after the contrarian/bear agent has run; None at the
@@ -122,6 +144,49 @@ def build_value_source_decomposition(calc_input, dcf_result, p2: Optional[dict] 
         if sh:
             mcap = price * sh
     notes: List[str] = []
+
+    # ── stale-annual-data guard (R18) ────────────────────────────────────────
+    # The non-REIT operating engine derives organic_cagr from the FY revenue
+    # series. If the latest FY *with data* is years behind the current (TTM /
+    # latest) period — e.g. a foreign filer whose 20-F annuals never ingested
+    # while the TTM feed did (NVO: FY2021-2025 all NaN, TTM current at ~2.6×
+    # the last real FY) — organic_cagr is computed off a stale window, op_contrib
+    # is badly understated, and the multiple's share inflates into a FALSE
+    # de-rating read. Refuse rather than silently emit a misleading -X%/yr bar.
+    # REITs take growth from p2 specialized_inputs (not the FY series), so the
+    # guard is scoped to the non-REIT path.
+    if not is_reit:
+        df = getattr(calc_input, "df", None)
+        latest_data_fy = _latest_fy_with_data(calc_input)
+        ref_fy = None
+        if df is not None and "fiscal_year" in getattr(df, "columns", []):
+            try:
+                ref_fy = int(df["fiscal_year"].max())
+            except (TypeError, ValueError):
+                ref_fy = None
+        if latest_data_fy is not None and ref_fy is not None:
+            gap = ref_fy - latest_data_fy
+            # gap of 1 is normal (TTM sits ~1 year ahead of the last 10-K).
+            # gap >= 3 is never a mere filing lag — it is a genuine data hole.
+            if gap >= 3:
+                out["source"] = (
+                    f"stale annual data — latest FY with financials is "
+                    f"{latest_data_fy}, but the current period is {ref_fy} "
+                    f"({gap}y gap). The operating engine would run on a stale "
+                    "growth window, so the return decomposition is suppressed to "
+                    "avoid a misleading read. Common for foreign filers whose "
+                    "annual statements did not ingest — re-ingest the missing FYs."
+                )
+                out["stale_annual_data"] = True
+                out["annual_data_gap_years"] = gap
+                out["latest_annual_fy"] = latest_data_fy
+                out["current_period_fy"] = ref_fy
+                return out
+            if gap == 2:
+                notes.append(
+                    f"annual data 2y stale (latest FY {latest_data_fy} vs current "
+                    f"{ref_fy}) — organic growth may be understated"
+                )
 
     # ── op_contrib (R2 clamp + R11 share-neutral) ────────────────────────────
     share_gain_pp = None

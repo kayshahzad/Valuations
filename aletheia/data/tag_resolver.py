@@ -73,9 +73,12 @@ DA_COMPONENT_FIELDS = [
 ]
 
 # Currency units accepted from XBRL units sections.
-ACCEPTED_UNITS = ("USD", "shares", "pure", "EUR", "TWD", "CAD", "GBP", "JPY", "CHF")
+# DKK: Novo Nordisk (NVO) and other Danish filers report their 20-F under
+# IFRS in Danish kroner; without DKK here every financial fact is skipped and
+# the filer cleans to an empty record (the NVO FY2021-2025 hole).
+ACCEPTED_UNITS = ("USD", "shares", "pure", "EUR", "TWD", "CAD", "GBP", "JPY", "CHF", "DKK")
 # Composite per-share units (e.g. "USD/shares", "TWD/shares") — used for EPS facts.
-PER_SHARE_UNITS = ("USD/shares", "TWD/shares", "EUR/shares", "GBP/shares", "JPY/shares", "CAD/shares", "CHF/shares")
+PER_SHARE_UNITS = ("USD/shares", "TWD/shares", "EUR/shares", "GBP/shares", "JPY/shares", "CAD/shares", "CHF/shares", "DKK/shares")
 
 # Tags where SEC filings sometimes report a 9-12 month subset rather than full
 # fiscal year. Wider duration tolerance for these tags only.

@@ -193,8 +193,13 @@ def classify_from_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
         (no unlevered FCF; equity valued off book + ROE → bank convergent set)
       - industry contains "Insurance - Diversified" → residual_income_required
         (BRK-B-style conglomerate insurance — book + ROE, not a rate base)
-      - industry contains "Insurance" or "Healthcare Plans" or "Managed
-        Care" → ddm_required (float-based, dividend-discount appropriate)
+      - industry contains "Healthcare Plans" or "Managed Care" →
+        residual_income_required (health insurers pay ~no dividend so DDM is
+        undefined; valued on book + normalized ROE, like curated CNC)
+      - industry contains "Insurance - Life" → ddm_required (true life
+        insurers: embedded value + real dividends)
+      - industry contains "Insurance" (P&C / reinsurance / specialty /
+        brokers) → residual_income_required (book + ROE, no rate base)
       - sector == "Utilities" or industry contains "Regulated" →
         routing_required (rate-base + allowed-ROE model needed)
       - "Credit Services" WITH consumer-lending signals (card issuers / digital
@@ -234,8 +239,25 @@ def classify_from_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
         # BRK-B-style conglomerate insurance — book + ROE, not a rate base.
         # Curated BRK-B overrides to embedded_value_required.
         business_model = "residual_income_required"
-    elif "insurance" in i_lower or "healthcare plans" in i_lower or "managed care" in i_lower:
+    elif "healthcare plans" in i_lower or "managed care" in i_lower:
+        # Health insurers (HUM/UNH/ELV/CI/CNC): float-based, pay negligible or
+        # no dividend (DDM undefined), and FCFF mis-frames the ~pass-through
+        # premium revenue (thin margin on huge revenue + low WACC explodes the
+        # terminal value). Value on book + normalized ROE via residual income —
+        # matches the curated CNC entry. Previously fell to ddm_required, which
+        # is undefined for these no-dividend names → the "specialized" dead-end
+        # (the HUM bug: DDM produced nothing, UI showed "specialized").
+        business_model = "residual_income_required"
+    elif "insurance - life" in i_lower or "insurance—life" in i_lower or "life insurance" in i_lower:
+        # True life insurers carry an embedded value (PV of in-force policies)
+        # that book-value residual income can't capture, and they pay real
+        # dividends — keep them on the DDM / embedded-value track.
         business_model = "ddm_required"
+    elif "insurance" in i_lower:
+        # P&C / reinsurance / specialty / brokers: valued off book + ROE (no
+        # rate base, DDM ill-defined for the low-payout names). Residual income
+        # is the general insurance model — same rationale as banks above.
+        business_model = "residual_income_required"
     elif s_lower == "utilities" or "regulated" in i_lower:
         business_model = "routing_required"
     elif "credit services" in i_lower:
