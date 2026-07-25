@@ -21,6 +21,21 @@ functions are now covered by:
 | `valuation_node.py` | Folded into `calc_node.py` |
 | `value_chain.py` | Folded into `qualitative_synthesis_agent` |
 
+## archive/lib/
+
+Library modules that had zero importers anywhere in the live app (no
+production import, no test, no dynamic/registry reference) as of the
+2026-07-24 dead-code sweep. Verified via a repo-wide real-import-statement
+scan plus a dynamic-reference (string/importlib/`__init__` re-export) check.
+
+| Archived module | Former path | Why dead |
+|---|---|---|
+| `compare.py` | `aletheia/scenarios/compare.py` | Scenario-comparison helper; no callers |
+| `sensitivity.py` | `aletheia/scenarios/sensitivity.py` | Tornado/sensitivity render; no callers |
+| `universe_portfolio.py` | `aletheia/tools/universe_portfolio.py` | Superseded by the serving-layer universe endpoints |
+| `agents_view.py` | `aletheia/ui/agents_view.py` | Old Streamlit agents panel; superseded by `deep_dive_view` |
+| `config_loader.py` | `aletheia/utils/config_loader.py` | `load_valuation_config` unused; config read inline elsewhere |
+
 ## archive/scratch/
 
 Top-level scratch / one-off scripts that predate the
@@ -31,6 +46,7 @@ entry points.
 |---|---|
 | `fundamentalist_fixed.py` | `aletheia/pipeline/stage3_calculate.py` |
 | `run_valuation.py` | `python -m aletheia.cli.pipeline run TICKER` |
+| `check_coverage.py`, `extract_25.py`, `patch_deep_dive.py`, `query_nee.py`, `scratch_report_gen.py`, `tag_miss_audit.py`, `tag_resolver_final.py`, `validate_ui_data.py` | One-off audit / migration-patch scripts (2026-07-24 sweep); no importers, no CI wiring |
 
 ## What is NOT archived
 

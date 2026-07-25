@@ -20,3 +20,18 @@ valuation_data/macro/*
 *.log
 *.jsonl
 tag_miss_audit_results.json
+
+# Runtime audit/trace output (traces, guard logs, gate artifacts) — regenerable,
+# large (100s of MB). Never versioned. See archive/README for rationale.
+audits/
+# Generated PDF reports (rendered on demand).
+*.pdf
+# Editor/Finder duplicate artifacts ("foo 2.py").
+* 2.*
+
+# Terraform (deploy/terraform) — never commit state or secret-bearing tfvars
+**/.terraform/
+*.tfstate
+*.tfstate.*
+deploy/terraform/terraform.tfvars
+crash.log
