@@ -29,12 +29,15 @@ import streamlit as st
 import plotly.graph_objects as go
 import pandas as pd
 
+from aletheia.auth import current_identity, role_for
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Config
 # ─────────────────────────────────────────────────────────────────────────────
 
-API_BASE = "http://localhost:8000"
-TIMEOUT  = 15  # seconds
+import os
+API_BASE = os.getenv("API_BASE", "http://localhost:8000")
+TIMEOUT  = 30  # seconds (cold /universe recomputes all DCFs ~7s; margin for cold-start after a rebuild/restart)
 
 st.set_page_config(
     page_title="Aletheia · Investment Intelligence",
@@ -103,6 +106,42 @@ hr { border-color: rgba(128,128,128,0.2); margin: 16px 0; }
 """, unsafe_allow_html=True)
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Auth (Workstream 2) — identity comes from Cloud Run IAP; role is Admin/User.
+# ─────────────────────────────────────────────────────────────────────────────
+
+def _resolve_user() -> Optional[dict]:
+    """Resolve the signed-in user from the IAP-verified request headers and
+    cache it for the session. Returns {"email", "role"} or None."""
+    cached = st.session_state.get("_auth_user")
+    if cached is not None:
+        return cached or None  # {} sentinel means "resolved, but nobody"
+    try:
+        headers = st.context.headers  # IAP injects X-Goog-IAP-JWT-Assertion here
+    except Exception:
+        headers = None
+    ident = current_identity(headers)
+    user = {"email": ident.email, "role": role_for(ident.email)} if ident else {}
+    st.session_state["_auth_user"] = user
+    return user or None
+
+
+def _current_user() -> Optional[dict]:
+    return st.session_state.get("_auth_user") or _resolve_user()
+
+
+def _is_admin() -> bool:
+    u = _current_user()
+    return bool(u and u.get("role") == "admin")
+
+
+def _auth_headers() -> dict:
+    """Forward the verified identity to the localhost backend so its
+    require_admin dependency can re-check (defense in depth)."""
+    u = _current_user()
+    return {"X-Aletheia-User": u["email"]} if u else {}
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # API client
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -116,7 +155,7 @@ def api_get(path: str) -> Optional[Any]:
     surface to the user.
     """
     try:
-        r = httpx.get(f"{API_BASE}{path}", timeout=TIMEOUT)
+        r = httpx.get(f"{API_BASE}{path}", timeout=TIMEOUT, headers=_auth_headers())
         if r.status_code == 404:
             return None
         r.raise_for_status()
@@ -133,6 +172,17 @@ def api_get(path: str) -> Optional[Any]:
     except Exception as e:
         st.error(f"Request failed: {e}")
         return None
+
+
+def api_post(path: str, *, timeout: Optional[float] = None, **kwargs) -> httpx.Response:
+    """POST to the backend, forwarding the verified identity so require_admin
+    can re-check. Returns the raw response; callers handle status/JSON."""
+    return httpx.post(
+        f"{API_BASE}{path}",
+        timeout=timeout if timeout is not None else TIMEOUT,
+        headers={**_auth_headers(), **kwargs.pop("headers", {})},
+        **kwargs,
+    )
 
 
 @st.cache_data(ttl=30)
@@ -199,8 +249,8 @@ def render_thesis_staleness_banner(ticker: str, key_suffix: str = "") -> None:
             status.write("Computing fresh dashboard projection (DuckDB read)…")
             status.write("Calling thesis_synthesizer (one LLM call, ≈30 s)…")
             try:
-                resp = httpx.post(
-                    f"{API_BASE}/ticker/{ticker}/thesis_synthesis/refresh",
+                resp = api_post(
+                    f"/ticker/{ticker}/thesis_synthesis/refresh",
                     timeout=120,
                 )
                 if resp.status_code == 200:
@@ -298,7 +348,7 @@ def trigger_qualitative_recompute(ticker: str):
     """POST to recompute deterministic dimensions and invalidate the
     fetch caches so the UI reflects the new state on next render."""
     try:
-        r = httpx.post(f"{API_BASE}/qualitative/recompute/{ticker}", timeout=30)
+        r = api_post(f"/qualitative/recompute/{ticker}", timeout=30)
         r.raise_for_status()
         fetch_qualitative.clear()
         fetch_qualitative_categories.clear()
@@ -341,6 +391,9 @@ def _run_pipeline_subprocess(
     API + financials caches on completion so the next view fetch picks
     up the fresh DB state.
     """
+    if not _is_admin():
+        st.error("Admin role required to run the pipeline.")
+        return
     import os
     import subprocess
     import sys
@@ -435,6 +488,9 @@ def _run_add_ticker_pipeline_ui(
     4 — LLM extractors + HITL proposer pre-fill the qualitative dims so
     the analyst lands on a fully-scored ticker rather than blank cards.
     """
+    if not _is_admin():
+        st.error("Admin role required to add or run a ticker pipeline.")
+        return
     import time
     from aletheia.ui.add_ticker_pipeline import (
         run_add_ticker_pipeline, StepUpdate, PipelineResult,
@@ -691,6 +747,13 @@ def _shared_prelude():
     if available and st.session_state.active_ticker not in available:
         st.session_state.active_ticker = available[0]
 
+    # ── Signed-in identity badge ──────────────────────────────────────────────
+    _user = _current_user()
+    if _user:
+        _role = _user.get("role", "user")
+        _role_icon = "🛡️ Admin" if _role == "admin" else "👤 User"
+        st.sidebar.caption(f"{_role_icon} · {_user.get('email', '')}")
+
     # ── Sidebar Global Selector ───────────────────────────────────────────────
     st.sidebar.markdown("### 🎯 Target Company")
     _STATUS_ICON = {"ready": "🟢", "pending": "🟡", "not_ingested": "⚪"}
@@ -838,7 +901,7 @@ def _shared_prelude():
     # (aletheia.cli.pipeline). Stages 1-3 button refreshes ALL numeric
     # data + pipeline_status; Stage 4 button runs LLM agents on top
     # without re-running cached upstream stages.
-    if st.session_state.active_ticker:
+    if st.session_state.active_ticker and _is_admin():
         t = st.session_state.active_ticker
         st.sidebar.markdown("<hr style='margin: 16px 0'>", unsafe_allow_html=True)
         st.sidebar.markdown("### ⚡ Refresh")
@@ -1884,8 +1947,8 @@ def _dispatch_view(active_view, ranked):
                               "sections and re-render — no LLM cost. Failure "
                               "modes / pre-mortem need a full Stage 4."):
                 try:
-                    r = httpx.post(
-                        f"{API_BASE}/ticker/{report_ticker}/report/rebuild",
+                    r = api_post(
+                        f"/ticker/{report_ticker}/report/rebuild",
                         timeout=120)
                     if r.status_code == 200:
                         d = r.json()
@@ -2015,15 +2078,25 @@ def render_ops_page():
 
 
 def _authenticate() -> bool:
-    """Authentication gate (Workstream 2 seam). Pass-through until auth is
-    wired; returns False to block rendering for an unauthenticated user."""
-    return True
+    """Authentication gate. Behind Cloud Run IAP a verified identity is always
+    present; locally, ALETHEIA_DEV_USER / ALETHEIA_AUTH_DISABLED supply one.
+    Blocks rendering (returns False) when no identity can be resolved."""
+    user = _resolve_user()
+    if user:
+        return True
+    st.error(
+        "**Not authorized.** No verified identity was found. This app must be "
+        "reached through its authenticated URL. (For local development set "
+        "`ALETHEIA_DEV_USER` or `ALETHEIA_AUTH_DISABLED=true`.)"
+    )
+    return False
 
 
 def _user_role() -> str:
-    """Role for authorization (Workstream 2 seam). Full access until wired;
-    gates which pages _build_pages() exposes."""
-    return "admin"
+    """Role for authorization — 'admin' or 'user'. Drives _build_pages()
+    (the Data & Operations page is admin/ops only) and admin-control gating."""
+    user = _current_user()
+    return user.get("role", "user") if user else "user"
 
 
 def _build_pages(role):

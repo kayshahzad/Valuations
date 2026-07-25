@@ -45,8 +45,11 @@ except Exception:
 
 from fastapi import FastAPI, HTTPException, BackgroundTasks, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
+
+from aletheia.auth.identity import current_identity
+from aletheia.auth.rbac import role_for
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Config
@@ -108,6 +111,34 @@ async def _timing_middleware(request: Request, call_next):
             endpoint, ticker, response.status_code, elapsed_ms, source,
         )
     return response
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Authorization — Admin-only for every state-changing request (Workstream 2)
+# ─────────────────────────────────────────────────────────────────────────────
+# Secure-by-default: every write method requires an Admin role, so any future
+# mutating endpoint is protected automatically. Reads stay open to any
+# authenticated user. Identity arrives either as a verified IAP JWT or, over the
+# container's localhost boundary, as the X-Aletheia-User header forwarded by our
+# Streamlit process (see aletheia/auth/identity.py). ALETHEIA_AUTH_DISABLED
+# (local dev) bypasses the check entirely.
+_WRITE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+
+
+@app.middleware("http")
+async def _authz_middleware(request: Request, call_next):
+    if request.method in _WRITE_METHODS and not _auth_disabled():
+        ident = current_identity(request.headers)
+        if ident is None:
+            return JSONResponse(status_code=401, content={"detail": "authentication required"})
+        if role_for(ident.email) != "admin":
+            return JSONResponse(status_code=403, content={"detail": "admin role required"})
+    return await call_next(request)
+
+
+def _auth_disabled() -> bool:
+    import os
+    return os.environ.get("ALETHEIA_AUTH_DISABLED", "").strip().lower() in ("1", "true", "yes")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
