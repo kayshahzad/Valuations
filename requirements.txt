@@ -17,9 +17,11 @@ ddgs==9.10.0            # DuckDuckGo search (renamed from duckduckgo-search)
 requests==2.33.1
 
 # ── Compute / analytics ──
-pandas==3.0.2
-numpy==2.4.4
-scipy==1.17.1          # wacc_analysis, reverse_dcf
+# NOTE: pandas is capped <3 by streamlit 1.53.1 (`pandas<3`). Resolved set from a
+# clean pip solve; do not bump pandas to 3.x without also moving off streamlit's cap.
+pandas==2.3.3
+numpy==2.4.6
+scipy==1.18.0          # wacc_analysis, reverse_dcf
 duckdb==1.5.2
 faiss-cpu==1.13.2
 
