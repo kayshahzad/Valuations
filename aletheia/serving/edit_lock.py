@@ -28,7 +28,8 @@ def _ttl() -> float:
 class Holder(NamedTuple):
     email: str
     since: float          # epoch seconds (wall clock, for display)
-    acquired: float       # monotonic, for TTL
+    expires: float        # monotonic deadline (per-acquisition TTL)
+    reason: str           # "edit" | "pipeline" — for the UI message
 
 
 _lock = threading.Lock()
@@ -36,7 +37,7 @@ _holder: Optional[Holder] = None
 
 
 def _fresh(h: Optional[Holder], now: float) -> bool:
-    return h is not None and (now - h.acquired) < _ttl()
+    return h is not None and now < h.expires
 
 
 def holder() -> Optional[Holder]:
@@ -45,9 +46,12 @@ def holder() -> Optional[Holder]:
         return _holder if _fresh(_holder, time.monotonic()) else None
 
 
-def try_acquire(email: str) -> tuple[bool, Optional[Holder]]:
+def try_acquire(email: str, *, hold: Optional[float] = None,
+                reason: str = "edit") -> tuple[bool, Optional[Holder]]:
     """Acquire or refresh the lock for ``email``.
 
+    ``hold`` = seconds to hold (defaults to EDIT_LOCK_TTL). A pipeline run passes
+    a longer hold since it can't heartbeat while a blocking subprocess runs.
     Returns (True, holder) when the caller now holds it, or
     (False, current_holder) when someone else holds a live lock.
     """
@@ -55,13 +59,22 @@ def try_acquire(email: str) -> tuple[bool, Optional[Holder]]:
     if not email:
         return False, None
     now = time.monotonic()
+    ttl = float(hold) if hold else _ttl()
     global _holder
     with _lock:
         if _fresh(_holder, now) and _holder.email != email:
             return False, _holder
-        # free, expired, or already ours → (re)acquire + heartbeat
-        since = _holder.since if (_holder and _holder.email == email) else time.time()
-        _holder = Holder(email=email, since=since, acquired=now)
+        # free, expired, or already ours → (re)acquire + heartbeat.
+        same = _holder is not None and _holder.email == email
+        since = _holder.since if same else time.time()
+        expires = now + ttl
+        if same and _fresh(_holder, now):
+            # Don't let a short edit-refresh shrink a longer pipeline hold, and
+            # keep the stronger reason ("pipeline" outranks "edit").
+            expires = max(expires, _holder.expires)
+            if _holder.reason == "pipeline":
+                reason = "pipeline"
+        _holder = Holder(email=email, since=since, expires=expires, reason=reason)
         return True, _holder
 
 

@@ -139,25 +139,59 @@ async def _authz_middleware(request: Request, call_next):
         # the UI can show a friendly "X is editing" message. (See
         # aletheia/serving/edit_lock — valid at max-instances=1.)
         from aletheia.serving import edit_lock
-        ok, h = edit_lock.try_acquire(ident.email)
-        if not ok:
-            return JSONResponse(
-                status_code=423,
-                content={"detail": f"{h.email} is currently editing — try again in a moment.",
-                         "holder": h.email, "since": h.since},
-            )
+        # /pipeline/lock manages its own (longer) hold in the handler; let it
+        # through so the handler can set the pipeline TTL. All other writes take
+        # the standard edit lock here.
+        if request.url.path not in ("/pipeline/lock",):
+            ok, h = edit_lock.try_acquire(ident.email)
+            if not ok:
+                verb = "running a pipeline" if h.reason == "pipeline" else "editing"
+                return JSONResponse(
+                    status_code=423,
+                    content={"detail": f"{h.email} is currently {verb} — try again in a moment.",
+                             "holder": h.email, "since": h.since, "reason": h.reason},
+                )
     return await call_next(request)
+
+
+def _current_email(request: Request) -> Optional[str]:
+    ident = current_identity(request.headers)
+    return ident.email if ident else None
 
 
 @app.get("/edit-lock", tags=["System"])
 def edit_lock_status():
     """Who (if anyone) currently holds the single-editor lock. Read-only; the UI
-    polls this to show a 'X is editing' banner and gate edit controls."""
+    polls this to show a banner and gate edit controls."""
     from aletheia.serving import edit_lock
     h = edit_lock.holder()
-    return {"held": h is not None,
-            "holder": h.email if h else None,
-            "since": h.since if h else None}
+    return {"held": h is not None, "holder": h.email if h else None,
+            "since": h.since if h else None, "reason": h.reason if h else None}
+
+
+@app.post("/pipeline/lock", tags=["Pipeline"])
+def acquire_pipeline_lock(request: Request):
+    """Acquire the single-writer lock for a long-running pipeline/agents run
+    (held ~20 min since a blocking subprocess can't heartbeat). 423 if another
+    admin holds it. The UI calls this BEFORE spawning a Stage-4 subprocess so two
+    runs never collide on the single-writer DuckDB (or double-bill the LLM)."""
+    from aletheia.serving import edit_lock
+    email = _current_email(request)
+    ok, h = edit_lock.try_acquire(email, hold=1200.0, reason="pipeline")
+    if not ok:
+        verb = "running a pipeline" if h.reason == "pipeline" else "editing"
+        return JSONResponse(status_code=423,
+                            content={"detail": f"{h.email} is currently {verb} — try again shortly.",
+                                     "holder": h.email, "reason": h.reason})
+    return {"ok": True, "holder": h.email}
+
+
+@app.delete("/pipeline/lock", tags=["Pipeline"])
+def release_pipeline_lock(request: Request):
+    """Release the pipeline lock (UI calls this when the run finishes)."""
+    from aletheia.serving import edit_lock
+    edit_lock.release(_current_email(request) or "")
+    return {"ok": True}
 
 
 def _auth_disabled() -> bool:

@@ -153,6 +153,31 @@ def _edit_lock_other_holder() -> Optional[str]:
     return h if h and h != me else None
 
 
+def _acquire_pipeline_lock() -> tuple[bool, str]:
+    """Acquire the shared single-writer lock for a long pipeline/agents run so
+    two runs never collide on the single-writer DuckDB (or double-bill the LLM).
+    Returns (ok, message); message names the holder when ok is False. Fails OPEN
+    on a transient lock-API error (the DuckDB file lock is the backstop)."""
+    try:
+        r = api_post("/pipeline/lock", timeout=15)
+    except Exception:
+        return True, ""
+    if r.status_code == 423:
+        try:
+            return False, r.json().get("detail", "another run is in progress")
+        except Exception:
+            return False, "another run is in progress"
+    return (r.status_code < 400), ""
+
+
+def _release_pipeline_lock() -> None:
+    try:
+        httpx.request("DELETE", f"{API_BASE}/pipeline/lock",
+                      headers=_auth_headers(), timeout=15)
+    except Exception:
+        pass
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # API client
 # ─────────────────────────────────────────────────────────────────────────────
@@ -417,6 +442,11 @@ def _run_pipeline_subprocess(
     if not _is_admin():
         st.error("Admin role required to run the pipeline.")
         return
+    # Serialize with any other in-flight run/edit (single-writer DuckDB + LLM cost).
+    _lock_ok, _lock_msg = _acquire_pipeline_lock()
+    if not _lock_ok:
+        st.warning(f"🔒 {_lock_msg}")
+        return
     import os
     import subprocess
     import sys
@@ -498,6 +528,7 @@ def _run_pipeline_subprocess(
         "elapsed_s": elapsed,
         "log_tail": "\n".join(log_lines[-40:]),
     }
+    _release_pipeline_lock()
 
 
 def _run_add_ticker_pipeline_ui(
@@ -515,6 +546,11 @@ def _run_add_ticker_pipeline_ui(
     """
     if not _is_admin():
         st.error("Admin role required to add or run a ticker pipeline.")
+        return
+    # Serialize with any other in-flight run/edit (single-writer DuckDB).
+    _lock_ok, _lock_msg = _acquire_pipeline_lock()
+    if not _lock_ok:
+        st.warning(f"🔒 {_lock_msg}")
         return
     import time
     from aletheia.ui.add_ticker_pipeline import (
@@ -550,6 +586,8 @@ def _run_add_ticker_pipeline_ui(
             status.update(label=f"✓ {final.ticker} added in {elapsed:.1f}s", state="complete")
         else:
             status.update(label=f"✗ Pipeline did not complete", state="error")
+
+    _release_pipeline_lock()   # run finished — free the lock before navigation
 
     # Render validation results inline so the user sees them immediately
     if final and final.success:
