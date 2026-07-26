@@ -39,6 +39,7 @@ Usage:
 
 import datetime
 import json
+import os
 import threading
 import traceback
 from pathlib import Path
@@ -111,7 +112,9 @@ class InvestmentDatabase:
                 "DuckDB is required. Install with: pip install duckdb"
             )
 
-        self.db_path = Path(db_path or self.DEFAULT_DB_PATH)
+        # DUCKDB_PATH lets the serving container point at a fast local copy of
+        # the DB instead of the GCS FUSE mount (random reads over FUSE are slow).
+        self.db_path = Path(db_path or os.environ.get("DUCKDB_PATH") or self.DEFAULT_DB_PATH)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self.verbose = verbose
 

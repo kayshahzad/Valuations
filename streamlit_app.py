@@ -37,7 +37,8 @@ from aletheia.auth import current_identity, role_for
 
 import os
 API_BASE = os.getenv("API_BASE", "http://localhost:8000")
-TIMEOUT  = 30  # seconds (cold /universe recomputes all DCFs ~7s; margin for cold-start after a rebuild/restart)
+# /universe recomputes all DCFs; give cold starts headroom. Override with API_TIMEOUT.
+TIMEOUT  = int(os.getenv("API_TIMEOUT", "90"))
 
 st.set_page_config(
     page_title="Aletheia · Investment Intelligence",

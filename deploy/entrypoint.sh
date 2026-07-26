@@ -24,6 +24,23 @@ fi
 PORT="${PORT:-8080}"
 API_PORT="${API_PORT:-8000}"
 
+# Perf: DuckDB does many small random reads; over the GCS FUSE mount each is a
+# network round-trip, making /universe (recomputes every DCF) time out. The
+# serving path never writes the DB, so copy it to local disk once at startup and
+# point the app at that fast copy via DUCKDB_PATH. (The pipeline Job skips this —
+# it writes the canonical DB on the mount.)
+MOUNTED_DB="/app/valuation_data/database/investment.duckdb"
+LOCAL_DB="/tmp/investment.duckdb"
+if [[ -f "$MOUNTED_DB" ]]; then
+  echo "[entrypoint] copying DuckDB to local disk for fast reads…"
+  if cp "$MOUNTED_DB" "$LOCAL_DB"; then
+    export DUCKDB_PATH="$LOCAL_DB"
+    echo "[entrypoint] DUCKDB_PATH=$LOCAL_DB ($(du -h "$LOCAL_DB" | cut -f1))"
+  else
+    echo "[entrypoint] WARN: DB copy failed; falling back to FUSE-mounted DB" >&2
+  fi
+fi
+
 echo "[entrypoint] starting uvicorn on 127.0.0.1:${API_PORT}"
 uvicorn api_main:app --host 127.0.0.1 --port "${API_PORT}" &
 API_PID=$!
