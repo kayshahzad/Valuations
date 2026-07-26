@@ -754,6 +754,8 @@ def _shared_prelude():
         _role = _user.get("role", "user")
         _role_icon = "🛡️ Admin" if _role == "admin" else "👤 User"
         st.sidebar.caption(f"{_role_icon} · {_user.get('email', '')}")
+        if _stlogin_enabled():
+            st.sidebar.button("Sign out", key="_logout_btn", on_click=st.logout)
 
     # ── Sidebar Global Selector ───────────────────────────────────────────────
     st.sidebar.markdown("### 🎯 Target Company")
@@ -2078,10 +2080,19 @@ def render_ops_page():
     _dispatch_view(active_view, ranked)
 
 
+def _stlogin_enabled() -> bool:
+    """When AUTH_MODE=stlogin, the app gates itself with Streamlit's native
+    Google OIDC login (st.login). Otherwise it trusts an upstream identity
+    (Cloud Run IAP header / forwarded header / local dev user)."""
+    return os.getenv("AUTH_MODE", "").strip().lower() == "stlogin"
+
+
 def _authenticate() -> bool:
-    """Authentication gate. Behind Cloud Run IAP a verified identity is always
-    present; locally, ALETHEIA_DEV_USER / ALETHEIA_AUTH_DISABLED supply one.
-    Blocks rendering (returns False) when no identity can be resolved."""
+    """Authentication gate.
+    - AUTH_MODE=stlogin: require Google sign-in via st.login().
+    - otherwise: trust the resolved upstream identity (IAP / dev)."""
+    if _stlogin_enabled():
+        return _authenticate_stlogin()
     user = _resolve_user()
     if user:
         return True
@@ -2091,6 +2102,21 @@ def _authenticate() -> bool:
         "`ALETHEIA_DEV_USER` or `ALETHEIA_AUTH_DISABLED=true`.)"
     )
     return False
+
+
+def _authenticate_stlogin() -> bool:
+    """Google sign-in gate using Streamlit's built-in OIDC (st.login)."""
+    user_obj = getattr(st, "user", None)
+    if not (user_obj and getattr(user_obj, "is_logged_in", False)):
+        st.session_state.pop("_auth_user", None)
+        st.markdown("## 🔐 Aletheia · Investment Intelligence")
+        st.write("Sign in with your Google account to continue.")
+        st.button("Sign in with Google", type="primary", on_click=st.login)
+        st.stop()
+        return False
+    email = (getattr(user_obj, "email", "") or "").strip().lower()
+    st.session_state["_auth_user"] = {"email": email, "role": role_for(email)}
+    return True
 
 
 def _user_role() -> str:

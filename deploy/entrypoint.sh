@@ -41,6 +41,23 @@ if [[ -f "$MOUNTED_DB" ]]; then
   fi
 fi
 
+# st.login (Google OIDC) config — written from env/secrets only when enabled.
+# Keeps the client secret out of the image; the file lives in the ephemeral
+# container FS. Requires AUTH_MODE=stlogin + the AUTH_* vars (see deploy/README).
+if [[ "${AUTH_MODE:-}" == "stlogin" && -n "${AUTH_CLIENT_ID:-}" ]]; then
+  mkdir -p /app/.streamlit
+  cat > /app/.streamlit/secrets.toml <<EOF
+[auth]
+redirect_uri = "${AUTH_REDIRECT_URI}"
+cookie_secret = "${AUTH_COOKIE_SECRET}"
+client_id = "${AUTH_CLIENT_ID}"
+client_secret = "${AUTH_CLIENT_SECRET}"
+server_metadata_url = "https://accounts.google.com/.well-known/openid-configuration"
+EOF
+  chmod 600 /app/.streamlit/secrets.toml
+  echo "[entrypoint] wrote st.login auth config (AUTH_MODE=stlogin)"
+fi
+
 echo "[entrypoint] starting uvicorn on 127.0.0.1:${API_PORT}"
 uvicorn api_main:app --host 127.0.0.1 --port "${API_PORT}" &
 API_PID=$!

@@ -36,8 +36,9 @@ httpx==0.28.1
 reportlab==4.4.10
 openpyxl==3.1.5        # dcf_excel_exporter (was missing from requirements)
 
-# ── Auth (IAP JWT verification) ──
+# ── Auth ──
 google-auth==2.48.0     # verifies the Cloud Run IAP assertion (aletheia/auth)
+Authlib>=1.3.2          # OIDC backend for Streamlit st.login() (Google sign-in)
 
 # ── Config ──
 python-dotenv==1.2.1

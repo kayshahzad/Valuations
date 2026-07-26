@@ -26,6 +26,7 @@ Or from project root:
 import json
 import logging
 import math
+import os
 import subprocess
 import time
 from datetime import datetime, timezone
@@ -1326,8 +1327,28 @@ def _ticker_universe_union() -> List[str]:
     return sorted(out)
 
 
+# Server-side TTL cache: /universe recomputes every ticker's DCF (+ a yfinance
+# beta fetch each), which is tens of seconds cold. Cache the whole response so
+# only the first caller per window pays it; the pipeline Job refreshes the data
+# and this expires on its own. Override the window with UNIVERSE_CACHE_TTL.
+_UNIVERSE_CACHE: Dict[str, Any] = {"data": None, "ts": 0.0}
+_UNIVERSE_TTL = float(os.getenv("UNIVERSE_CACHE_TTL", "600"))
+
+
 @app.get("/universe", response_model=UniverseResponse, tags=["Universe"])
 def get_universe():
+    """Cached wrapper — first call computes, later calls within the TTL are instant."""
+    now = time.monotonic()
+    cached = _UNIVERSE_CACHE["data"]
+    if cached is not None and (now - _UNIVERSE_CACHE["ts"]) < _UNIVERSE_TTL:
+        return cached
+    resp = _compute_universe()
+    _UNIVERSE_CACHE["data"] = resp
+    _UNIVERSE_CACHE["ts"] = now
+    return resp
+
+
+def _compute_universe():
     """
     Full universe summary ranked by conviction → margin of safety.
     Returns the union of curated/runtime-classified tickers and tickers with
