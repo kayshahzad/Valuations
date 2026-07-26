@@ -332,9 +332,21 @@ def _compute_derived(rec: Dict[str, Any]) -> Dict[str, Optional[float]]:
     sbc = rec.get("SBC") or 0.0
     da = rec.get("Depreciation_Total")
     ebitda = rec.get("EBITDA")
-    if ebitda is None:
-        # Central synthesis: EBITDA = OperatingIncome + Depreciation_Total
-        ebitda = _ebitda(operating_income=op_inc, depreciation_total=da)
+    # FMP's reported ``ebitda`` is a net-income-derived "kitchen-sink" figure
+    # (see fmp_compare_view) that can fall BELOW operating income for filers
+    # with large operating / one-off items (LLY 2023-25, UNH 2024, HUM). But
+    # EBITDA = EBIT + D&A ⇒ EBITDA ≥ OperatingIncome by construction, so a
+    # reported value under OperatingIncome is structurally impossible. Fall
+    # back to the synthesized OperatingIncome + Depreciation_Total whenever the
+    # reported figure is missing OR violates that floor.
+    _synth = _ebitda(operating_income=op_inc, depreciation_total=da)
+    if ebitda is None or (op_inc is not None and ebitda < op_inc):
+        ebitda = _synth
+        # Overwrite the canonical value too so ``clean_EBITDA`` (and every
+        # downstream multiple: EV/EBITDA, net-debt/EBITDA, terminal value)
+        # uses the corrected figure, not FMP's structurally-impossible one.
+        if ebitda is not None:
+            rec["EBITDA"] = ebitda
     # Always mirror EBITDA into derived so ``derived_EBITDA`` column
     # populates regardless of whether FMP supplied the value directly
     # or we synthesized it from OpInc + D&A. Same FMP-adapter → DB

@@ -573,8 +573,12 @@ def _fiscal_history_table(history: List[Dict[str, Any]],
             "Period end":    r.get("period_end_date") or "",
             "Revenue":       (rev/1e9) if rev else None,
             "Rev Growth":    rev_growth,
-            "EBIT":          (r["EBIT"]/1e9) if r.get("EBIT") else None,
-            "EBIT %":        (r["EBIT"]/rev*100) if (r.get("EBIT") and rev) else None,
+            # Reported operating income; fall back to normalized EBIT when the
+            # reported field is absent for a year (some filer-years populate
+            # only the normalized value) so the column is never blank when an
+            # operating-income figure exists.
+            "EBIT":          ((r.get("EBIT") or r.get("NormEBIT"))/1e9) if (r.get("EBIT") or r.get("NormEBIT")) else None,
+            "EBIT %":        ((r.get("EBIT") or r.get("NormEBIT"))/rev*100) if ((r.get("EBIT") or r.get("NormEBIT")) and rev) else None,
             "Norm. EBIT":    (r["NormEBIT"]/1e9) if r.get("NormEBIT") else None,
             "EBITDA":        (r["EBITDA"]/1e9) if r["EBITDA"] else None,
             "Net Income":    (r["NetIncome"]/1e9) if r["NetIncome"] else None,
