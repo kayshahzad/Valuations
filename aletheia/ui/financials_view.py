@@ -99,6 +99,17 @@ def _is_admin() -> bool:
     return bool(u and u.get("role") == "admin")
 
 
+def _edit_lock_other_holder() -> Optional[str]:
+    """Return the email of ANOTHER admin currently holding the edit lock, or
+    None if free / held by us. Best-effort (never blocks rendering)."""
+    me = (_auth_user() or {}).get("email", "").strip().lower()
+    data, err = _dcf_api("GET", "/edit-lock")
+    if err or not data or not data.get("held"):
+        return None
+    holder = (data.get("holder") or "").strip().lower()
+    return holder if holder and holder != me else None
+
+
 def _dcf_api(method: str, path: str, body: Optional[dict] = None):
     """Minimal API client for the DCF-override endpoints. Returns
     (data, error_message). error_message is None on success. Forwards the
@@ -160,11 +171,15 @@ def _render_editable_assumptions(ticker: str, asn: Dict[str, Any]) -> None:
 
     # Editing DCF assumptions is an admin-only write; Users see the effective
     # values read-only (the backend also 403s a non-admin write).
-    if not _is_admin():
+    _other = _edit_lock_other_holder() if _is_admin() else None
+    if (not _is_admin()) or _other:
         ro = [{"Field": lbl, "Value": _pct(eff.get(k))} for lbl, k, _ in _DCF_EDITABLE] + \
              [{"Field": lbl, "Value": _pct(eff.get(k))} for lbl, k in _DCF_READONLY]
         st.dataframe(pd.DataFrame(ro), hide_index=True, use_container_width=True)
-        st.caption("🔒 View-only — editing assumptions requires an Admin role.")
+        if _other:
+            st.caption(f"🔒 **{_other}** is currently editing — try again in a moment.")
+        else:
+            st.caption("🔒 View-only — editing assumptions requires an Admin role.")
         return
 
     with st.form(f"dcf_assumptions_{ticker}"):

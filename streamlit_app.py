@@ -142,6 +142,17 @@ def _auth_headers() -> dict:
     return {"X-Aletheia-User": u["email"]} if u else {}
 
 
+def _edit_lock_other_holder() -> Optional[str]:
+    """Email of another user currently holding the single-editor lock, else None."""
+    u = _current_user()
+    me = (u or {}).get("email", "").strip().lower()
+    data = api_get("/edit-lock")
+    if not data or not data.get("held"):
+        return None
+    h = (data.get("holder") or "").strip().lower()
+    return h if h and h != me else None
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # API client
 # ─────────────────────────────────────────────────────────────────────────────
@@ -773,6 +784,11 @@ def _shared_prelude():
         st.sidebar.caption(f"{_role_icon} · {_user.get('email', '')}")
         if _stlogin_enabled():
             st.sidebar.button("Sign out", key="_logout_btn", on_click=st.logout)
+        # Single-editor awareness: warn when someone else is mid-edit.
+        if _role == "admin":
+            _busy = _edit_lock_other_holder()
+            if _busy:
+                st.sidebar.warning(f"🔒 {_busy} is editing — saves are paused for you.")
 
     # ── Sidebar Global Selector ───────────────────────────────────────────────
     st.sidebar.markdown("### 🎯 Target Company")

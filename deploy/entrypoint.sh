@@ -36,6 +36,10 @@ if [[ -f "$MOUNTED_DB" ]]; then
   if cp "$MOUNTED_DB" "$LOCAL_DB"; then
     export DUCKDB_PATH="$LOCAL_DB"
     echo "[entrypoint] DUCKDB_PATH=$LOCAL_DB ($(du -h "$LOCAL_DB" | cut -f1))"
+    # Overlay persisted analyst edits (DCF overrides / acknowledgments) so they
+    # survive restart/scale-to-zero (serving writes hit the ephemeral /tmp copy).
+    echo "[entrypoint] restoring persisted serving-state edits…"
+    python -m aletheia.serving.restore_state || echo "[entrypoint] restore skipped (non-fatal)"
   else
     echo "[entrypoint] WARN: DB copy failed; falling back to FUSE-mounted DB" >&2
   fi

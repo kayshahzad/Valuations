@@ -1465,6 +1465,56 @@ class InvestmentDatabase:
                 [ticker.upper()])
 
     # ─────────────────────────────────────────────────────────────────────────
+    # Serving-state durability
+    # ─────────────────────────────────────────────────────────────────────────
+    # The serving container reads a fast LOCAL /tmp copy of the DB (DUCKDB_PATH),
+    # so writes to it are ephemeral (lost on restart/scale-to-zero). These two
+    # tables hold pure analyst edits (never written by the pipeline), so we
+    # mirror them to the shared bucket after each write and overlay them back at
+    # startup — durable across restarts without clobbering pipeline-owned tables.
+    SERVING_STATE_DIR = "valuation_data/serving_state"
+    # Base tables (not the *_latest views, which regenerate from these).
+    SERVING_STATE_TABLES = ("dcf_assumption_overrides", "current_state_acknowledgments")
+
+    def persist_serving_state(self) -> None:
+        """Export the analyst-edit tables to the shared bucket (best-effort)."""
+        from pathlib import Path as _P
+        out = _P(self.SERVING_STATE_DIR)
+        try:
+            out.mkdir(parents=True, exist_ok=True)
+            for t in self.SERVING_STATE_TABLES:
+                exists = self._conn.execute(
+                    "SELECT 1 FROM information_schema.tables WHERE table_name = ?",
+                    [t]).fetchone()
+                if exists:
+                    self._conn.execute(
+                        f"COPY (SELECT * FROM {t}) TO '{out / (t + '.parquet')}' (FORMAT PARQUET)")
+        except Exception as exc:  # never fail the user's write on a persist hiccup
+            if self.verbose:
+                print(f"persist_serving_state warning: {exc}")
+
+    def restore_serving_state(self) -> None:
+        """Overlay persisted analyst-edit tables onto the DB (startup)."""
+        from pathlib import Path as _P
+        out = _P(self.SERVING_STATE_DIR)
+        for t in self.SERVING_STATE_TABLES:
+            f = out / (t + ".parquet")
+            if not f.exists():
+                continue
+            try:
+                # DELETE+INSERT (not CREATE OR REPLACE) so dependent *_latest
+                # views and the table schema survive the overlay.
+                self._conn.execute(f"DELETE FROM {t}")
+                self._conn.execute(
+                    f"INSERT INTO {t} SELECT * FROM read_parquet('{f}')")
+                if self.verbose:
+                    n = self._conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0]
+                    print(f"restore_serving_state: overlaid {t} ({n} rows)")
+            except Exception as exc:
+                if self.verbose:
+                    print(f"restore_serving_state warning ({t}): {exc}")
+
+    # ─────────────────────────────────────────────────────────────────────────
     # Read operations
     # ─────────────────────────────────────────────────────────────────────────
 

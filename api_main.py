@@ -134,7 +134,30 @@ async def _authz_middleware(request: Request, call_next):
             return JSONResponse(status_code=401, content={"detail": "authentication required"})
         if role_for(ident.email) != "admin":
             return JSONResponse(status_code=403, content={"detail": "admin role required"})
+        # Single-editor lock: one admin writes at a time. Acquire/refresh for
+        # this caller; if another admin holds a live lock, refuse with 423 so
+        # the UI can show a friendly "X is editing" message. (See
+        # aletheia/serving/edit_lock — valid at max-instances=1.)
+        from aletheia.serving import edit_lock
+        ok, h = edit_lock.try_acquire(ident.email)
+        if not ok:
+            return JSONResponse(
+                status_code=423,
+                content={"detail": f"{h.email} is currently editing — try again in a moment.",
+                         "holder": h.email, "since": h.since},
+            )
     return await call_next(request)
+
+
+@app.get("/edit-lock", tags=["System"])
+def edit_lock_status():
+    """Who (if anyone) currently holds the single-editor lock. Read-only; the UI
+    polls this to show a 'X is editing' banner and gate edit controls."""
+    from aletheia.serving import edit_lock
+    h = edit_lock.holder()
+    return {"held": h is not None,
+            "holder": h.email if h else None,
+            "since": h.since if h else None}
 
 
 def _auth_disabled() -> bool:
@@ -1881,6 +1904,7 @@ def put_dcf_overrides(ticker: str, body: DCFOverridesRequest):
             ticker, candidate,
             updated_by=(body.updated_by or "analyst"), note=body.note,
         )
+        db.persist_serving_state()   # durable across restart (shared bucket)
     finally:
         db.close()
     # Re-read from persisted state so provenance is populated in the response.
@@ -1896,6 +1920,7 @@ def delete_dcf_overrides(ticker: str):
     db = InvestmentDatabase(verbose=False)
     try:
         db.clear_dcf_overrides(ticker)
+        db.persist_serving_state()
     finally:
         db.close()
     return _build_dcf_assumptions_payload(ticker)
@@ -1938,6 +1963,7 @@ def put_flag_ack_endpoint(ticker: str, body: FlagAckRequest):
             ticker, body.flag_key, decision=body.decision,
             rationale=body.rationale, category=body.category,
             severity=body.severity, decided_by=(body.decided_by or "analyst"))
+        db.persist_serving_state()
         acks = db.get_flag_acks(ticker)
     finally:
         db.close()
@@ -1953,6 +1979,7 @@ def delete_flag_ack_endpoint(ticker: str, flag_key: Optional[str] = None):
     db = InvestmentDatabase(verbose=False)
     try:
         db.clear_flag_ack(ticker, flag_key)
+        db.persist_serving_state()
         acks = db.get_flag_acks(ticker)
     finally:
         db.close()
