@@ -1139,19 +1139,16 @@ def _dispatch_view(active_view, ranked):
                     use_container_width=True,
                     disabled=not new_ticker,
                 )
-            # Stage 4 opt-in. Default OFF — a fresh ticker ingests through
-            # Stages 1-3 (cleaning + DCF + validation) for free; the analyst
-            # explicitly opts in to the paid LLM agents. Toggle ON to also
-            # auto-fill the qualitative dims (HITL proposer + LLM extractors)
-            # in the same run.
-            run_agents = st.checkbox(
-                "Run Stage 4 agents after ingest (LLM ~$1-2; auto-fills "
-                "all qualitative dims)",
-                value=False,
-                key="universe_add_ticker_run_agents",
-            )
+            # Add always runs Stages 1-3 only (ingest → clean → DCF →
+            # validation). Stage 4 (paid LLM agents) is a separate, deliberate
+            # step AFTER the analyst has validated the data + DCF assumptions —
+            # run it from the "🧠 Run Stage 4 Agents" sidebar button or the
+            # "▶ Run agents" footer. (The old "run agents on ingest" checkbox was
+            # removed: running LLM before validating the numbers is never right.)
+            st.caption("Ingests Stages 1–3 (data + DCF + validation). Run Stage 4 "
+                       "LLM agents separately, after you've validated the ticker.")
         if add_clicked and new_ticker:
-            _run_add_ticker_pipeline_ui(new_ticker, auto_agents=run_agents)
+            _run_add_ticker_pipeline_ui(new_ticker, auto_agents=False)
             fetch_universe.clear()
             fetch_health.clear()
             st.rerun()
