@@ -85,13 +85,31 @@ _DCF_READONLY = [
 ]
 
 
+def _auth_user() -> Optional[dict]:
+    """The signed-in user resolved by streamlit_app (email + role), if any."""
+    try:
+        import streamlit as st
+        return st.session_state.get("_auth_user") or None
+    except Exception:
+        return None
+
+
+def _is_admin() -> bool:
+    u = _auth_user()
+    return bool(u and u.get("role") == "admin")
+
+
 def _dcf_api(method: str, path: str, body: Optional[dict] = None):
     """Minimal API client for the DCF-override endpoints. Returns
-    (data, error_message). error_message is None on success."""
+    (data, error_message). error_message is None on success. Forwards the
+    verified identity so the backend's admin-only write guard sees who is
+    calling (writes 401 without it)."""
     import httpx
+    u = _auth_user()
+    headers = {"X-Aletheia-User": u["email"]} if u and u.get("email") else {}
     try:
         r = httpx.request(method, f"{_FV_API_BASE}{path}",
-                          json=body, timeout=30)
+                          json=body, headers=headers, timeout=30)
     except httpx.RequestError as exc:
         return None, f"Cannot reach API: {exc}"
     if r.status_code >= 400:
@@ -139,6 +157,15 @@ def _render_editable_assumptions(ticker: str, asn: Dict[str, Any]) -> None:
         when = (prov.get("updated_at") or "")[:10]
         st.info(f"✎ Analyst overrides active on {len(overridden)} field(s) "
                 f"— set by {who}{(' on ' + when) if when else ''}.")
+
+    # Editing DCF assumptions is an admin-only write; Users see the effective
+    # values read-only (the backend also 403s a non-admin write).
+    if not _is_admin():
+        ro = [{"Field": lbl, "Value": _pct(eff.get(k))} for lbl, k, _ in _DCF_EDITABLE] + \
+             [{"Field": lbl, "Value": _pct(eff.get(k))} for lbl, k in _DCF_READONLY]
+        st.dataframe(pd.DataFrame(ro), hide_index=True, use_container_width=True)
+        st.caption("🔒 View-only — editing assumptions requires an Admin role.")
+        return
 
     with st.form(f"dcf_assumptions_{ticker}"):
         edits: Dict[str, float] = {}
