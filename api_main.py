@@ -1336,11 +1336,14 @@ _UNIVERSE_TTL = float(os.getenv("UNIVERSE_CACHE_TTL", "600"))
 
 
 @app.get("/universe", response_model=UniverseResponse, tags=["Universe"])
-def get_universe():
-    """Cached wrapper — first call computes, later calls within the TTL are instant."""
+def get_universe(refresh: bool = False):
+    """Cached wrapper — first call computes, later calls within the TTL are
+    instant. ``?refresh=1`` bypasses AND repopulates the cache; the UI calls it
+    after adding a ticker (which writes the DB in-process, out of band from this
+    cache) so the new ticker appears immediately instead of after the TTL."""
     now = time.monotonic()
     cached = _UNIVERSE_CACHE["data"]
-    if cached is not None and (now - _UNIVERSE_CACHE["ts"]) < _UNIVERSE_TTL:
+    if not refresh and cached is not None and (now - _UNIVERSE_CACHE["ts"]) < _UNIVERSE_TTL:
         return cached
     resp = _compute_universe()
     _UNIVERSE_CACHE["data"] = resp

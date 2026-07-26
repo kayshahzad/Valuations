@@ -175,6 +175,17 @@ def api_get(path: str) -> Optional[Any]:
         return None
 
 
+def _bust_server_universe_cache() -> None:
+    """Force the backend to recompute + repopulate its /universe TTL cache.
+    Call after an in-process mutation (add-ticker / pipeline run) so newly
+    added or changed tickers appear immediately rather than after the TTL."""
+    try:
+        httpx.get(f"{API_BASE}/universe", params={"refresh": "1"},
+                  timeout=TIMEOUT, headers=_auth_headers())
+    except Exception:
+        pass
+
+
 def api_post(path: str, *, timeout: Optional[float] = None, **kwargs) -> httpx.Response:
     """POST to the backend, forwarding the verified identity so require_admin
     can re-check. Returns the raw response; callers handle status/JSON."""
@@ -463,6 +474,8 @@ def _run_pipeline_subprocess(
             fetch_screening.clear()
             fetch_narrative.clear()
             fetch_financials_bundle.clear()
+            # Status can flip pending→ready; drop the server /universe cache.
+            _bust_server_universe_cache()
         except Exception:
             pass
     else:
@@ -546,6 +559,11 @@ def _run_add_ticker_pipeline_ui(
             fetch_dcf.clear()
             fetch_fundamentals.clear()
             fetch_screening.clear()
+            # Also drop the SERVER-side /universe TTL cache (separate uvicorn
+            # process) — the pipeline ran in-process here, so the backend cache
+            # doesn't know about the new ticker. Without this the selector can't
+            # find it and the page blanks.
+            _bust_server_universe_cache()
         except Exception:
             pass
 
@@ -577,16 +595,15 @@ def _run_add_ticker_pipeline_ui(
         # though active_view doesn't bind to a key today — protects us
         # if it ever does.
         st.session_state._pending_active_ticker = final.ticker
-        # Analysis→Ops hop: route to the Data & Operations page and select
-        # the Quality Report tab (popped by _apply_pending_ops_view).
-        st.session_state._pending_ops_view = "◊  Quality Report"
-        st.info(
-            f"**{final.ticker}** added. Switched to **Data & Operations → "
-            "Quality Report** — scroll down for the full validation breakdown."
-        )
-        _ops_page = st.session_state.get("_ops_page_ref")
-        if _ops_page is not None:
-            st.switch_page(_ops_page)
+        # Land the user on the NEW ticker's dashboard: the always-available
+        # Analysis page + Dashboard view (the role-gated ops page could be
+        # absent from the nav → st.switch_page to it blanks). The full
+        # validation breakdown was already rendered inline above.
+        st.session_state._pending_analysis_view = "▷  Dashboard"
+        st.info(f"**{final.ticker}** added — opening its dashboard.")
+        _analysis_page = st.session_state.get("_analysis_page_ref")
+        if _analysis_page is not None:
+            st.switch_page(_analysis_page)
         else:
             st.rerun()
 
@@ -2063,10 +2080,19 @@ def _apply_pending_ops_view():
         st.session_state["ops_active_view"] = pending
 
 
+def _apply_pending_analysis_view():
+    """Pop a pending analysis-view target (set by a cross-nav hop, e.g. after
+    add-ticker) into the analysis radio's session state. POP, not read."""
+    pending = st.session_state.pop("_pending_analysis_view", None)
+    if pending and pending in _ANALYSIS_VIEWS:
+        st.session_state["analysis_nav"] = pending
+
+
 def render_analysis_page():
     ranked = _shared_prelude()
     if ranked is None:
         return
+    _apply_pending_analysis_view()
     active_view = _view_radio("Navigation", _ANALYSIS_VIEWS, "analysis_nav")
     _dispatch_view(active_view, ranked)
 
@@ -2132,8 +2158,12 @@ def _build_pages(role):
     Operations is gated by role (the authz seam)."""
     ops_page = st.Page(render_ops_page, title="Data & Operations", icon="⚙️")
     st.session_state["_ops_page_ref"] = ops_page
-    pages = {"Analysis": [st.Page(render_analysis_page, title="Analysis",
-                                  icon="📊", default=True)]}
+    analysis_page = st.Page(render_analysis_page, title="Analysis",
+                            icon="📊", default=True)
+    # Stored so cross-nav hops (e.g. after add-ticker) can land on the
+    # always-available Analysis page — unlike the role-gated ops page.
+    st.session_state["_analysis_page_ref"] = analysis_page
+    pages = {"Analysis": [analysis_page]}
     if role in ("admin", "ops"):
         pages["Data & Operations"] = [ops_page]
     return pages
