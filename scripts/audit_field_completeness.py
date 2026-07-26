@@ -34,6 +34,14 @@ OPERATING_INCOME_ANY = ["derived_OperatingIncome", "clean_NormalizedEBIT"]
 # e.g. banks/insurers don't report COGS).
 SOFT_FIELDS = ["raw_COGS"]
 
+# Financial-sector tickers where EBITDA is ill-defined (valued by residual
+# income / DDM, not EV/EBITDA). Used to exempt the EBITDA>=EBIT sanity check
+# for names whose sector metadata is missing from universe_status/universe.csv.
+EBITDA_EXEMPT = {
+    "HUM", "UNH", "CI", "ELV", "CNC",          # health insurers / managed care
+    "JPM", "AXP", "V", "MA", "MCO", "BRK-B",   # banks / financials / card networks
+}
+
 
 def audit(db_path: str) -> Dict:
     con = duckdb.connect(db_path, read_only=True)
@@ -59,13 +67,45 @@ def audit(db_path: str) -> Dict:
     soft_blanks = {
         f: int(existed[f].isna().sum()) for f in SOFT_FIELDS if f in tracked
     }
+
+    # EBITDA >= EBIT sanity (EBITDA = EBIT + D&A, D&A >= 0). FMP's reported
+    # `ebitda` is net-income-derived and can violate this; the stage-3 adapter
+    # now floors it. Exempt financials (banks/insurers) — they report no COGS
+    # and EBITDA is ill-defined for them (valued by RI/DDM, not EV/EBITDA).
+    ebitda_bad = []
+    if {"clean_EBITDA", "clean_NormalizedEBIT"}.issubset(cols):
+        eb = con.execute(
+            "SELECT ticker, fiscal_year, clean_EBITDA, clean_NormalizedEBIT "
+            "FROM company_records_latest WHERE period='FY' "
+            "AND clean_EBITDA IS NOT NULL AND clean_NormalizedEBIT IS NOT NULL "
+            "AND clean_EBITDA < clean_NormalizedEBIT"
+        ).df()
+        # Sector-based exempt (when populated) …
+        try:
+            exempt = set(con.execute(
+                "SELECT DISTINCT ticker FROM universe_status WHERE "
+                "sector = 'Financials' "
+                "OR industry ILIKE '%Insurance%' OR industry ILIKE '%Bank%' "
+                "OR industry ILIKE '%Healthcare Plans%' OR industry ILIKE '%Managed Care%'"
+            ).df()["ticker"])
+        except Exception:
+            exempt = set()
+        # … plus an explicit financial-sector allow-list for tickers whose sector
+        # metadata is missing (extended-universe names not in universe.csv).
+        # EBITDA is ill-defined for banks/insurers; they're valued by RI/DDM.
+        exempt |= EBITDA_EXEMPT
+        for _, r in eb.iterrows():
+            if r["ticker"] not in exempt:  # non-financial → a real violation
+                ebitda_bad.append({"ticker": r["ticker"], "fiscal_year": int(r["fiscal_year"])})
+
     result = {
         "fy_rows": int(len(df)),
         "fy_rows_with_revenue": int(len(existed)),
         "hard_blank_count": len(hard_blanks),
         "hard_blanks": hard_blanks[:200],
         "soft_blank_counts": soft_blanks,
-        "clean": len(hard_blanks) == 0,
+        "ebitda_below_ebit_nonfinancial": ebitda_bad,
+        "clean": len(hard_blanks) == 0 and len(ebitda_bad) == 0,
     }
     return result
 
@@ -87,12 +127,17 @@ def main() -> int:
     if not args.quiet:
         print(f"FY rows: {res['fy_rows']} ({res['fy_rows_with_revenue']} with revenue)")
         print(f"soft (business-model) blanks: {res['soft_blank_counts']}")
+        eb = res.get("ebitda_below_ebit_nonfinancial", [])
+        print(f"EBITDA<EBIT (non-financial): {len(eb)}" + (f" — {eb[:10]}" if eb else ""))
         if res["clean"]:
-            print("✅ CLEAN — no unexplained blank core fields")
+            print("✅ CLEAN — no unexplained blank core fields, no EBITDA<EBIT (non-financial)")
         else:
-            print(f"❌ {res['hard_blank_count']} unexplained blank core-field rows:")
-            for b in res["hard_blanks"][:40]:
-                print(f"   {b['ticker']} FY{b['fiscal_year']}: {', '.join(b['missing'])}")
+            if res["hard_blank_count"]:
+                print(f"❌ {res['hard_blank_count']} unexplained blank core-field rows:")
+                for b in res["hard_blanks"][:40]:
+                    print(f"   {b['ticker']} FY{b['fiscal_year']}: {', '.join(b['missing'])}")
+            if eb:
+                print(f"❌ {len(eb)} non-financial rows with EBITDA<EBIT")
     return 0 if res["clean"] else 1
 
 
