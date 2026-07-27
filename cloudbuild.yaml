@@ -70,3 +70,7 @@ images:
 options:
   logging: CLOUD_LOGGING_ONLY
   machineType: 'E2_HIGHCPU_8'   # faster deps install for the fat ML image
+  # _BUCKET / _SERVICE_SA are declared above as runbook documentation of what
+  # Terraform/the runbook sets on the service; no build step references them, so
+  # allow them to go unmatched instead of failing the submit.
+  substitution_option: 'ALLOW_LOOSE'
