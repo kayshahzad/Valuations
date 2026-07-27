@@ -739,7 +739,9 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         if scenario is None:
             return None
         ev = float(scenario.enterprise_value)
-        ips = result.intrinsic_per_share(ev, result.net_debt)
+        # Suppressed headline (pre-profitability / degenerate base): never
+        # surface a fabricated per-share value. Keep the EV for transparency.
+        ips = None if result.iv_suppressed else result.intrinsic_per_share(ev, result.net_debt)
         mos = result.upside(ips) if ips else None
         return {
             "intrinsic_per_share": float(ips) if ips is not None else None,
@@ -880,6 +882,8 @@ def _compute_dcf_live(ticker: str) -> Dict[str, Any]:
         "bear":                   scenario_dict(result.bear),
         "base":                   scenario_dict(result.base),
         "bull":                   scenario_dict(result.bull),
+        "iv_suppressed":          bool(getattr(result, "iv_suppressed", False)),
+        "iv_suppressed_reason":   getattr(result, "iv_suppressed_reason", ""),
         "reverse_dcf":            reverse_dcf,
         "multiple_decomposition": multiple_decomposition,
         "downside_protection":    _downside_protection_payload(calc, result, multiple_decomposition),
@@ -981,6 +985,12 @@ class DCFResponse(BaseModel):
     bear: Optional[DCFScenario]
     base: Optional[DCFScenario]
     bull: Optional[DCFScenario]
+    # Headline-IV suppression (pre-profitability / degenerate base scenario).
+    # When True, every scenario's intrinsic_per_share is None by design — the
+    # FCFF DCF is not meaningful and consumers should show the reason, not a
+    # fabricated near-zero value.
+    iv_suppressed: bool = False
+    iv_suppressed_reason: str = ""
     reverse_dcf: Optional[dict]
     multiple_decomposition: Optional[dict]
     # Single-driver sensitivity band for specialized engines (bull/bear flexed

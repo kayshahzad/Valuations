@@ -224,6 +224,15 @@ class DCFResult:
     warnings: List[str] = field(default_factory=list)
     errors: List[str] = field(default_factory=list)
 
+    # Headline-IV suppression. Set when the FCFF DCF is structurally
+    # inappropriate (pre-profitability: negative operating income) or the base
+    # scenario produces a degenerate value (NaN / negative / <1% of price).
+    # Consumers MUST treat intrinsic_per_share as "not meaningful" when True and
+    # surface the reason instead of a fabricated tiny number. See guard block in
+    # run(). The scenarios remain available under engine_specific for context.
+    iv_suppressed: bool = False
+    iv_suppressed_reason: str = ""
+
     tax_rate_source: str = "statutory"  # cash | gaap | company_fy | statutory | analyst_override
 
     @property
@@ -311,13 +320,22 @@ class DCFResult:
             "roic": self.roic,
             "fcf": self.fcf,
             "net_debt": self.net_debt,
+            "iv_suppressed": self.iv_suppressed,
+            "iv_suppressed_reason": self.iv_suppressed_reason,
         }
         for sname, scenario in [("bull", self.bull),
                                   ("base", self.base),
                                   ("bear", self.bear)]:
             if scenario:
-                iv = self.intrinsic_per_share(
-                    scenario.enterprise_value, self.net_debt
+                # Suppressed headline (pre-profitability / degenerate base):
+                # persist EVs + diagnostics for transparency but NEVER a
+                # fabricated per-share value that downstream consumers would
+                # surface as a real IV.
+                iv = (
+                    None if self.iv_suppressed
+                    else self.intrinsic_per_share(
+                        scenario.enterprise_value, self.net_debt
+                    )
                 )
                 upside = self.upside(iv) if iv else None
                 d[f"{sname}_ev"] = scenario.enterprise_value
@@ -1865,6 +1883,31 @@ class DCFEngine:
                         "dcf_engine output sanity flag: %s", err.to_receipt()
                     )
                 result.errors.append(str(err))
+                # A degenerate BASE scenario means the headline IV itself is
+                # fabricated (e.g. NET at 0.9% of price). Mark it suppressed so
+                # consumers surface "not FCFF-valuable" instead of the tiny
+                # number. Bull/bear implausibility alone does NOT suppress —
+                # only the base case drives the headline.
+                if scn_name == "base" and not result.iv_suppressed:
+                    result.iv_suppressed = True
+                    result.iv_suppressed_reason = reason
+
+        # Pre-profitability guard (input-side): a negative normalized operating
+        # income makes an FCFF DCF structurally inappropriate — NOPAT < 0 seeds
+        # a meaningless projection. Suppress the headline IV rather than emit a
+        # fabricated figure. This cleanly targets pre-profitability names (e.g.
+        # NET) and never touches profitable-but-conservatively-valued tickers
+        # (TSLA/AMD/TXN have positive operating income → untouched).
+        if _guard_mode() != "off" and result.ebit is not None and result.ebit <= 0:
+            result.iv_suppressed = True
+            reason = (
+                f"negative/zero normalized operating income "
+                f"(EBIT={result.ebit:,.0f}) — pre-profitability; FCFF DCF "
+                "inappropriate, value on EV/revenue"
+            )
+            result.iv_suppressed_reason = reason
+            if reason not in " ".join(result.errors):
+                result.errors.append(f"IV suppressed: {reason}")
 
         return result
 

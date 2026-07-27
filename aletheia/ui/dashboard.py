@@ -1153,6 +1153,33 @@ def _render_specialized_model_notice(ticker: str, dcf: Dict[str, Any]) -> None:
     )
 
 
+def _render_iv_suppressed_notice(ticker: str, dcf: Dict[str, Any], df) -> None:
+    """Clean notice when an FCFF ticker's headline IV is suppressed as
+    degenerate — pre-profitability (negative operating income) or a base
+    scenario that produced a nonsensical value. Surfacing a fabricated tiny
+    per-share number (NET's old ~$2 vs a ~$262 price) is worse than showing
+    none, so we explain why and still render the financials."""
+    reason = dcf.get("iv_suppressed_reason") or "base DCF scenario is degenerate."
+    st.markdown(f"## {ticker}")
+    st.warning(
+        f"**FCFF DCF not meaningful for {ticker}.**\n\n"
+        f"{reason.capitalize()}\n\n"
+        "A discounted-cash-flow value requires positive, projectable operating "
+        "cash flow. When the company isn't yet profitable, the model would seed "
+        "a negative NOPAT and emit a fabricated near-zero per-share value — so "
+        "the headline intrinsic value is intentionally withheld rather than shown."
+    )
+    st.caption(
+        "For pre-profitability / high-growth names, value on an EV/revenue or "
+        "path-to-profitability basis instead of FCFF."
+    )
+    # The financials are still trustworthy and worth showing.
+    try:
+        render_trends_table(df, ticker=ticker)
+    except Exception:
+        pass
+
+
 # ────────────────────────────────────────────────────────────────────────
 # Top-level entry
 # ────────────────────────────────────────────────────────────────────────
@@ -1180,6 +1207,13 @@ def render_dashboard(ticker: str) -> None:
             _render_specialized_engine_dashboard(ticker, valuation, df)
             return
         _render_specialized_model_notice(ticker, dcf)
+        return
+
+    # Pre-profitability / degenerate-DCF tickers (e.g. NET): the FCFF headline
+    # IV was suppressed upstream. Show a clean explanation instead of scenario
+    # cards full of $0.00 / fabricated near-zero per-share values.
+    if isinstance(dcf, dict) and dcf.get("iv_suppressed"):
+        _render_iv_suppressed_notice(ticker, dcf, df)
         return
 
     # 1. Header strip — ticker, classification, price, business description,

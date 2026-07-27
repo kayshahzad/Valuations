@@ -65,7 +65,13 @@ def cached_dcf_summary(ticker: str) -> Dict[str, Any]:
     def _scenario(s, label: str) -> Optional[Dict[str, Any]]:
         if s is None:
             return None
-        ips = result.intrinsic_per_share(s.enterprise_value, result.net_debt) or 0.0
+        # Headline IV suppressed (pre-profitability / degenerate base scenario):
+        # do NOT surface a fabricated per-share number for any scenario. The
+        # projections are structurally meaningless when NOPAT seeds negative.
+        if result.iv_suppressed:
+            ips = 0.0
+        else:
+            ips = result.intrinsic_per_share(s.enterprise_value, result.net_debt) or 0.0
         a = s.assumptions
         upside = (
             (ips - result.current_price) / result.current_price
@@ -106,6 +112,8 @@ def cached_dcf_summary(ticker: str) -> Dict[str, Any]:
         "bull": _scenario(result.bull, "Bull"),
         "base": _scenario(result.base, "Base"),
         "bear": _scenario(result.bear, "Bear"),
+        "iv_suppressed":        bool(result.iv_suppressed),
+        "iv_suppressed_reason": result.iv_suppressed_reason,
         "warnings":       list(result.warnings or []),
         "errors":         list(result.errors or []),
     }

@@ -50,12 +50,16 @@ class FcffEngine:
         # demand from the scenario's EV plus the firm's net debt.
         # Same pattern the existing serving-report writer uses.
         base = result.base
-        if base is not None:
+        if base is not None and not result.iv_suppressed:
             ev = base.enterprise_value
             intrinsic = result.intrinsic_per_share(ev, result.net_debt)
             equity = result.ev_to_equity(ev, result.net_debt) if ev else None
             mos = result.upside(intrinsic) if intrinsic else None
         else:
+            # No meaningful base scenario, or the headline IV was suppressed as
+            # degenerate/pre-profitability (see DCFResult.iv_suppressed). Do NOT
+            # surface a fabricated tiny number — leave the headline empty and let
+            # the note/warnings explain why.
             intrinsic = equity = mos = None
 
         # Scenarios snapshot — surface bull/bear alongside base so the
@@ -83,12 +87,20 @@ class FcffEngine:
                 "net_debt":      result.net_debt,
                 "base_period":   result.base_period,
             },
-            notes="Standard FCFF DCF (bull / base / bear); see engine_specific.scenarios for projections.",
+            notes=(
+                f"FCFF DCF not meaningful — {result.iv_suppressed_reason}. "
+                "Headline intrinsic value suppressed; see engine_specific.scenarios "
+                "for the raw (degenerate) projections."
+                if result.iv_suppressed else
+                "Standard FCFF DCF (bull / base / bear); see engine_specific.scenarios for projections."
+            ),
             warnings=list(result.warnings or []) + list(result.errors or []),
             engine_specific={
                 "dcf_result": result,   # full DCFResult for legacy consumers
                 "scenarios":  scenarios,
                 "confidence": result.confidence,
+                "iv_suppressed": result.iv_suppressed,
+                "iv_suppressed_reason": result.iv_suppressed_reason,
             },
         )
 
