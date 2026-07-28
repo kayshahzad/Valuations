@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -117,7 +118,12 @@ def _save_cache(series: str, blob: Dict[str, Any]) -> None:
 
 def _http_get_csv(series: str) -> Optional[str]:
     """GET the keyless fredgraph CSV. Uses ``requests`` (bundled certifi) so it
-    works on macOS dev boxes where bare urllib fails cert verification."""
+    works on macOS dev boxes where bare urllib fails cert verification.
+
+    NOTE: for the ICE BofA (BAML*) series this endpoint license-restricts output
+    to a trailing ~3-year window — enough for the current level, not for a
+    full-history percentile. The keyed observations API (below) has no such cap.
+    """
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series}"
     try:
         import requests
@@ -127,6 +133,72 @@ def _http_get_csv(series: str) -> Optional[str]:
     except Exception as e:
         logger.warning("FRED fetch failed for %s: %s", series, e)
         return None
+
+
+def _api_key() -> Optional[str]:
+    """FRED_API_KEY from env, falling back to a .env line (no dotenv dep).
+    Returns None when unset → callers fall back to the keyless + reference path.
+    """
+    key = os.environ.get("FRED_API_KEY")
+    if not key:
+        env_path = Path(".env")
+        if env_path.exists():
+            for line in env_path.read_text().splitlines():
+                if line.strip().startswith("FRED_API_KEY="):
+                    key = line.split("=", 1)[1].strip().strip("'\"")
+                    break
+    return key or None
+
+
+def _fetch_full_history(series: str) -> Optional[List[Tuple[str, float]]]:
+    """Full-history (date, value) via the keyed observations API — no window
+    cap, so real percentiles back to the series start (~1996). Returns None if
+    no key or the call fails (caller then uses the keyless level + reference)."""
+    key = _api_key()
+    if not key:
+        return None
+    url = (
+        "https://api.stlouisfed.org/fred/series/observations"
+        f"?series_id={series}&api_key={key}&file_type=json"
+        "&observation_start=1990-01-01"
+    )
+    try:
+        import requests
+        r = requests.get(url, timeout=_TIMEOUT)
+        r.raise_for_status()
+        obs = r.json().get("observations", [])
+    except Exception as e:
+        logger.warning("FRED API fetch failed for %s: %s", series, e)
+        return None
+    pairs: List[Tuple[str, float]] = []
+    for o in obs:
+        v = o.get("value")
+        if v in (".", "", None):
+            continue
+        try:
+            pairs.append((o["date"], float(v)))
+        except (ValueError, KeyError):
+            continue
+    return pairs or None
+
+
+def _live_percentiles(pairs: List[Tuple[str, float]]) -> Optional[Dict[str, Any]]:
+    """Latest level + full-history and trailing-10y percentiles from real history."""
+    if not pairs:
+        return None
+    as_of, latest = pairs[-1]
+    vals = [v for _, v in pairs]
+    pctile_full = round(100.0 * sum(1 for v in vals if v <= latest) / len(vals), 1)
+    try:
+        cutoff = f"{int(as_of[:4]) - 10}{as_of[4:]}"
+    except ValueError:
+        cutoff = ""
+    vals_10y = [v for d, v in pairs if d >= cutoff]
+    pctile_10y = (round(100.0 * sum(1 for v in vals_10y if v <= latest) / len(vals_10y), 1)
+                  if vals_10y else None)
+    return {"latest": latest, "as_of": as_of, "start_year": pairs[0][0][:4],
+            "pctile_full": pctile_full, "pctile_10y": pctile_10y,
+            "n_obs": len(vals), "source": "api"}
 
 
 def _pairs(csv_text: str) -> List[Tuple[str, float]]:
@@ -162,11 +234,20 @@ def _series(series: str) -> Optional[Dict[str, Any]]:
     fresh = _load_fresh_cache(series)
     if fresh is not None:
         return fresh
+    # Prefer the keyed observations API (real full history → live percentiles).
+    hist = _fetch_full_history(series)
+    if hist:
+        parsed = _live_percentiles(hist)
+        if parsed is not None:
+            _save_cache(series, parsed)
+            return parsed
+    # No key / API failure → keyless CSV gives the current level only.
     csv_text = _http_get_csv(series)
     if csv_text is None:
         return _load_stale_cache(series)        # bounded stale fallback
     parsed = _parse_series(csv_text)
     if parsed is not None:
+        parsed["source"] = "keyless"
         _save_cache(series, parsed)
     return parsed
 
@@ -176,15 +257,15 @@ def get_credit_regime() -> Optional[Dict[str, Any]]:
     unreachable and no sufficiently-fresh cache exists (dashboard then shows no
     credit line).
 
-    Current levels are LIVE (FRED keyless). The percentile/regime are placed
-    against the STATIC long-run reference (``_LONGRUN_REF``, 1996-2024) because
-    the keyless endpoint only serves a trailing ~3-year window for these
-    license-restricted ICE BofA series — too short for a meaningful percentile.
+    With FRED_API_KEY set, the percentile/regime come from REAL live full
+    history (~1996-present) plus a trailing-10y percentile, and a divergence
+    between the two is surfaced as a composition/regime hint. Without a key the
+    keyless CSV gives only a ~3y window, so we fall back to placing the live
+    level against the static 1996-2024 reference distribution.
 
-    Keys: ig_oas, hy_oas (%, e.g. 2.79 == 2.79%), hy_ref_pctile, ig_ref_pctile,
-    ref_window, live_window_start (the ~3y the live series actually spans),
-    regime ('tight'|'normal'|'stressed'), position (direction-explicit phrase),
-    as_of, caveat (str|None).
+    Keys: ig_oas, hy_oas (%), hy_pctile, hy_pctile_10y, ig_pctile, basis
+    ('live 1996-present' | '1996-2024 reference'), regime, position, as_of,
+    caveat.
     """
     ig = _series(IG_SERIES)
     hy = _series(HY_SERIES)
@@ -193,41 +274,74 @@ def get_credit_regime() -> Optional[Dict[str, Any]]:
 
     hy_oas = hy["latest"]
     ig_oas = ig["latest"] if ig else None
-    live_window_start = hy.get("start_year")   # what the live series really spans
-    ref_window = f"{_REF_START}-{_REF_END}"
 
-    # Regime + percentile from the long-run reference, not the 3y live window.
-    ref_pctile = _ref_percentile("HY", hy_oas)
-    ig_ref_pctile = _ref_percentile("IG", ig_oas) if ig_oas is not None else None
-    if ref_pctile is None:                      # reference missing → no regime
-        return None
+    # Use LIVE percentiles only when the series actually carries enough history.
+    # The FRED API key returns full history for most series, but ICE BofA
+    # license-restricts the BAML* credit series to a trailing ~3y window even
+    # WITH a key (verified) — too short for a meaningful percentile, so those
+    # fall through to the static reference distribution below.
+    def _span_years(s: Dict[str, Any]) -> int:
+        try:
+            return int(s["as_of"][:4]) - int(s["start_year"])
+        except Exception:
+            return 0
 
-    if ref_pctile <= _TIGHT_PCTL:
-        regime = "tight"
-        position = f"tighter than {100 - ref_pctile:.0f}% of {ref_window} history"
-        caveat = (
-            f"HY OAS {hy_oas:.2f}% — {position} (long-run median ~4.9%). Some "
-            "tightness is compositional (today's HY index is higher-quality than "
-            "pre-2010), so read as cheap credit / easy curve, not zero risk — "
-            "financial-resilience scores are being graded generously."
+    live = (
+        hy.get("source") == "api"
+        and hy.get("pctile_full") is not None
+        and _span_years(hy) >= 10
+    )
+
+    if live:
+        # Real full-history percentile — direction stated explicitly.
+        pctile = hy["pctile_full"]
+        pctile_10y = hy.get("pctile_10y")
+        start = hy.get("start_year", "1996")
+        basis = f"live {start}-present"
+        ig_pctile = ig.get("pctile_full") if (ig and ig.get("source") == "api") else None
+        window_phrase = f"history since {start}"
+        # 10y-vs-full divergence → composition/regime hint (don't overclaim).
+        diverge_note = (
+            f" (vs {pctile_10y:.0f}th over 10y — divergence is part composition, "
+            "part regime)"
+            if (pctile_10y is not None and abs(pctile - pctile_10y) >= 20) else ""
         )
-    elif ref_pctile >= _STRESS_PCTL:
-        regime = "stressed"
-        position = f"wider than {ref_pctile:.0f}% of {ref_window} history"
+    else:
+        # Keyless: place the live level against the static reference.
+        pctile = _ref_percentile("HY", hy_oas)
+        if pctile is None:
+            return None
+        pctile_10y = None
+        ig_pctile = _ref_percentile("IG", ig_oas) if ig_oas is not None else None
+        basis = f"{_REF_START}-{_REF_END} reference"
+        window_phrase = f"{_REF_START}-{_REF_END} history"
+        diverge_note = ""
+
+    if pctile <= _TIGHT_PCTL:
+        regime = "tight"
+        position = f"tighter than {100 - pctile:.0f}% of {window_phrase}"
         caveat = (
-            f"HY OAS {hy_oas:.2f}% — {position}; financing is tightening and "
-            "refinancing risk is repricing."
+            f"HY OAS {hy_oas:.2f}% — {position}{diverge_note}. Some tightness is "
+            "compositional (today's HY index is higher-quality than pre-2010), so "
+            "read as cheap credit / easy curve, not zero risk — financial-resilience "
+            "scores are being graded generously."
+        )
+    elif pctile >= _STRESS_PCTL:
+        regime = "stressed"
+        position = f"wider than {pctile:.0f}% of {window_phrase}"
+        caveat = (
+            f"HY OAS {hy_oas:.2f}% — {position}{diverge_note}; financing is "
+            "tightening and refinancing risk is repricing."
         )
     else:
         regime = "normal"
-        position = f"mid-range ({ref_pctile:.0f}th pctile of {ref_window})"
+        position = f"mid-range ({pctile:.0f}th pctile of {window_phrase})"
         caveat = None
 
     return {
         "ig_oas": ig_oas, "hy_oas": hy_oas,
-        "hy_ref_pctile": ref_pctile, "ig_ref_pctile": ig_ref_pctile,
-        "ref_window": ref_window, "live_window_start": live_window_start,
-        "regime": regime, "position": position,
+        "hy_pctile": pctile, "hy_pctile_10y": pctile_10y, "ig_pctile": ig_pctile,
+        "basis": basis, "regime": regime, "position": position,
         "as_of": hy.get("as_of"), "caveat": caveat,
     }
 
