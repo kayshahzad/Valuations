@@ -85,6 +85,34 @@ def test_accumulated_deficit_with_coverage_is_actionable_distress():
     assert r.actionable_distress is True
 
 
+def test_wayfair_real_data_fires_actionable_distress():
+    """Live falsifier, FROZEN from Wayfair's SEC filings (FY2024). Negative book
+    equity from ACCUMULATED DEFICIT (12y of losses, no buybacks) -> scores and
+    fires actionable distress. The mirror of LOW (negative equity from buybacks
+    -> abstains): same symptom, opposite correct verdict, proving the
+    ΣNI > 3·|RE| discriminator on real data. Corroboration comes from interest
+    coverage (0.1×), NOT EBIT/TA — EBIT is barely positive — which is exactly the
+    retail-safe path (negative WC can't corroborate distress in internet retail)."""
+    latest = dict(
+        ticker="W", fiscal_year=2024,
+        raw_TotalAssets=2.87e9, raw_TotalLiabilities=5.71e9,
+        raw_RetainedEarnings=-4.93e9, raw_TotalEquity=-2.84e9,
+        raw_CurrentAssets=1.568e9, raw_LiabilitiesCurrent=2.055e9,
+        clean_NormalizedEBIT=0.02e9,
+        raw_LongTermDebt=2.931e9, raw_CurrentPortionLongTermDebt=0.039e9,
+    )
+    ni_history = [-0.414e9] * 12          # 12y of losses, sum ~ -4.97B
+    cls = {"ticker": "W", "sector": "Consumer Discretionary",
+           "industry": "Internet Retail", "business_model": "fcff_compatible"}
+    r = screen_distress(latest, ni_history, cls, interest_expense=0.17e9)
+    assert r.scoreable and r.classification == "accumulated_deficit"
+    assert r.zone == "distress"
+    assert r.leverage_gated and r.corroborated
+    assert r.actionable_distress is True
+    # corroboration must come from coverage, not EBIT/TA (EBIT is positive here)
+    assert r.facts["ebit_positive"] is True and r.facts["interest_coverage"] < 2.0
+
+
 def test_short_history_negative_term_abstains_insufficient():
     """RIVN-class (5y history): can't classify a negative RE -> insufficient_history."""
     r = screen_distress(
