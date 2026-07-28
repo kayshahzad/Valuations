@@ -272,6 +272,21 @@ def cached_macro_context() -> Dict[str, Any]:
 
 
 @st.cache_data(ttl=_TTL_SEC, show_spinner=False)
+def cached_distress_screen(ticker: str) -> Optional[Dict[str, Any]]:
+    """Altman distress screen (Phase 1a) as a JSON-safe dict for the Deep Dive
+    capital-risk section. Fail-soft: returns {'error': ...} on failure so the
+    caller can skip the block rather than break the page."""
+    from dataclasses import asdict
+    try:
+        from aletheia.data.database import InvestmentDatabase
+        from aletheia.tools.altman_screen import screen_ticker
+        db = InvestmentDatabase(verbose=False)
+        return asdict(screen_ticker(db, ticker))
+    except Exception as e:  # never break the page on a screen failure
+        return {"error": type(e).__name__, "message": str(e)}
+
+
+@st.cache_data(ttl=_TTL_SEC, show_spinner=False)
 def cached_classification(ticker: str) -> Dict[str, Any]:
     """Read the ticker's static classification (sector, industry, lifecycle)."""
     from config.ticker_classification import UNIVERSE

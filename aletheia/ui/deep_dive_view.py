@@ -1805,6 +1805,65 @@ def _reality_checks_section(
 
 # ── Capital structure & risk ──────────────────────────────────────────────
 
+def _distress_screen_block(ticker: str) -> None:
+    """Altman distress screen (Phase 1a). Leads with the *actionable* verdict
+    (zone AND levered AND corroborated), not the raw Z'' zone — so a levered-but-
+    healthy name (ORCL) whose raw zone is 'distress' never reads as a scary
+    headline when the corroboration guard has vetoed it."""
+    from aletheia.ui.cache import cached_distress_screen
+    s = cached_distress_screen(ticker)
+    if not s or s.get("error"):
+        return
+
+    st.markdown("##### Financial distress screen · Altman")
+
+    if not s.get("scoreable"):
+        # Exclusions / abstentions — neutral tone, with the corroborating facts.
+        reason = s.get("reason") or "not applicable"
+        st.caption(f"◌ Not scored — {reason}")
+        f = s.get("facts") or {}
+        if f:
+            bits = []
+            if f.get("ebit_positive") is not None:
+                bits.append("EBIT positive" if f["ebit_positive"] else "EBIT negative")
+            if f.get("net_debt_ebitda") is not None:
+                bits.append(f"net-debt/EBITDA {f['net_debt_ebitda']}")
+            if f.get("re_ta") is not None:
+                bits.append(f"RE/TA {f['re_ta']:+.0%}")
+            if bits:
+                st.caption("  ·  ".join(bits))
+        return
+
+    z2 = s.get("z_double_prime")
+    zone = s.get("zone")
+    actionable = s.get("actionable_distress")
+    conf = s.get("confidence")
+
+    if actionable:
+        st.error(
+            f"⚠ **Actionable distress signal** — Z″ {z2:.2f} ({zone}), levered and "
+            f"corroborated ({s.get('classification')})."
+        )
+    else:
+        note = f"✓ No actionable distress — Z″ {z2:.2f}"
+        if zone != "safe":
+            note += f" (raw zone *{zone}*, but "
+            note += "not levered" if not s.get("leverage_gated") else "not corroborated"
+            note += " — signal vetoed)"
+        st.caption(note + (f"  ·  confidence: {conf}" if conf == "low" else ""))
+
+    # Secondary detail — the facts behind the verdict.
+    f = s.get("facts") or {}
+    cols = st.columns(4)
+    cols[0].metric("Z″ (authoritative)", f"{z2:.2f}", delta=zone, delta_color="off")
+    cols[1].metric("Levered", "yes" if s.get("leverage_gated") else "no (net-cash)")
+    cols[2].metric("Corroborated", "yes" if s.get("corroborated") else "no")
+    cov = f.get("interest_coverage")
+    cols[3].metric("Interest coverage", f"{cov:.1f}×" if cov is not None else "—")
+    if s.get("z_original") is not None:
+        st.caption(f"Advisory (manufacturer) original Z: {s['z_original']:.2f} — cross-read only, not authoritative.")
+
+
 def _capital_risk_section(section3: Dict[str, Any]) -> None:
     """Render section 3_capital_structure_risk — liquidity, leverage,
     downside floors, and concentration risk. Previously absent from Deep
@@ -3045,6 +3104,10 @@ def render_deep_dive_view(
     if section3:
         st.markdown("---")
         _capital_risk_section(section3)
+
+    # ── Altman distress screen (Phase 1a) — independent of agent section3 ──
+    st.markdown("---")
+    _distress_screen_block(ticker)
 
     # ── Constitution checks (compact) ─────────────────────────────────────
     checks = investment_thesis.get("constitution_checks") or []
