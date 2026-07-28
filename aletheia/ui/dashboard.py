@@ -268,9 +268,12 @@ def render_header(ticker: str, dcf: Dict[str, Any], df: pd.DataFrame) -> None:
         ig = credit.get("ig_oas")
         regime = credit.get("regime", "normal")
         glyph = {"tight": "🟢", "normal": "⚪", "stressed": "🔴"}.get(regime, "⚪")
+        # Direction-explicit: "tighter than 81% of history", never a bare
+        # "19th percentile" that a reader could parse as "not extreme".
         bits = []
         if hy is not None:
-            bits.append(f"HY OAS {hy:.2f}% ({credit.get('hy_pctile', 0):.0f}th pctile)")
+            phrase = credit.get("position", "")
+            bits.append(f"HY OAS {hy:.2f}%" + (f", {phrase}" if phrase else ""))
         if ig is not None:
             bits.append(f"IG OAS {ig:.2f}%")
         line = f"{glyph} Credit regime: **{regime}** — " + " · ".join(bits)
