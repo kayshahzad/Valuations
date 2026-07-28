@@ -33,9 +33,33 @@ def test_healthy_name_scores_safe_not_actionable():
     assert r.actionable_distress is False
 
 
-def test_financial_excluded():
-    r = screen_distress(_base(), [8.0] * 10, _FIN)
-    assert not r.scoreable and "non_fcff" in r.reason
+def test_genuine_financials_excluded():
+    """Banks / lenders / card issuers / insurers / diversified financials are
+    Altman-undefined."""
+    for cls in (
+        {"sector": "Financials", "industry": "Banks"},                    # JPM
+        {"sector": "Financials", "industry": "Payments & Cards"},          # AXP (lender)
+        {"sector": "Financial Services", "industry": "Financial - Credit Services"},  # SOFI
+        {"sector": "Financials", "industry": "Diversified"},              # BRK-B
+    ):
+        r = screen_distress(_base(), [8.0] * 10, cls)
+        assert not r.scoreable and "financial" in r.reason, cls
+
+
+def test_specialized_but_definable_are_NOT_excluded():
+    """Utilities / REITs / MLPs / payment networks / rating agencies / managed
+    care route to specialized VALUATION engines but have definable Altman inputs
+    — they must be scored, not excluded (the split fix)."""
+    for cls in (
+        {"sector": "Utilities", "industry": "Utilities"},                 # NEE
+        {"sector": "Real Estate", "industry": "Data Center REIT"},        # EQIX
+        {"sector": "Energy", "industry": "Oil & Gas Midstream"},          # ET
+        {"sector": "Financials", "industry": "Payments"},                 # V (network, not lender)
+        {"sector": "Financials", "industry": "Credit Ratings"},           # MCO
+        {"sector": "Healthcare Plans", "industry": "Managed Care"},       # CNC / UNH
+    ):
+        r = screen_distress(_base(), [8.0] * 10, cls)
+        assert r.scoreable, f"{cls} was wrongly excluded"
 
 
 def test_capital_return_negative_equity_abstains():
@@ -85,39 +109,60 @@ def test_accumulated_deficit_with_coverage_is_actionable_distress():
     assert r.actionable_distress is True
 
 
-def test_wayfair_real_data_fires_actionable_distress():
-    """Live falsifier, FROZEN from Wayfair's SEC filings (FY2024). Negative book
-    equity from ACCUMULATED DEFICIT (12y of losses, no buybacks) -> scores and
-    fires actionable distress. The mirror of LOW (negative equity from buybacks
-    -> abstains): same symptom, opposite correct verdict, proving the
-    ΣNI > 3·|RE| discriminator on real data. Corroboration comes from interest
-    coverage (0.1×), NOT EBIT/TA — EBIT is barely positive — which is exactly the
-    retail-safe path (negative WC can't corroborate distress in internet retail)."""
-    latest = dict(
-        ticker="W", fiscal_year=2024,
-        raw_TotalAssets=2.87e9, raw_TotalLiabilities=5.71e9,
-        raw_RetainedEarnings=-4.93e9, raw_TotalEquity=-2.84e9,
-        raw_CurrentAssets=1.568e9, raw_LiabilitiesCurrent=2.055e9,
-        clean_NormalizedEBIT=0.02e9,
-        raw_LongTermDebt=2.931e9, raw_CurrentPortionLongTermDebt=0.039e9,
-    )
-    ni_history = [-0.414e9] * 12          # 12y of losses, sum ~ -4.97B
-    cls = {"ticker": "W", "sector": "Consumer Discretionary",
-           "industry": "Internet Retail", "business_model": "fcff_compatible"}
-    r = screen_distress(latest, ni_history, cls, interest_expense=0.17e9)
-    assert r.scoreable and r.classification == "accumulated_deficit"
-    assert r.zone == "distress"
-    assert r.leverage_gated and r.corroborated
-    assert r.actionable_distress is True
-    # corroboration must come from coverage, not EBIT/TA (EBIT is positive here)
+from aletheia.tools.altman_validation import VALIDATION_CASES, screen_case
+
+
+@pytest.mark.parametrize("case", VALIDATION_CASES, ids=lambda c: c["ticker"])
+def test_validation_universe_stays_actionable(case):
+    """Live canary — real distressed names (frozen from SEC filings) that must
+    ALWAYS fire actionable distress. If a regression breaks the firing path,
+    these flip to safe/abstain and this test fails immediately. Includes the
+    Wayfair falsifier (neg equity from deficit, coverage-corroborated) and RIVN
+    (5y young-and-losing, proving the deficit-window fix)."""
+    r = screen_case(case)
+    assert r.scoreable, f"{case['ticker']} stopped scoring: {r.reason}"
+    assert r.classification == case["expect_classification"]
+    assert r.actionable_distress is True, f"{case['ticker']} no longer actionable"
+
+
+def test_wayfair_corroboration_via_coverage_not_ebit():
+    """Wayfair-specific: EBIT is barely positive, so corroboration must come from
+    interest coverage (<2×), NOT EBIT/TA — the retail-safe path."""
+    r = screen_case(VALIDATION_CASES[0])   # Wayfair
     assert r.facts["ebit_positive"] is True and r.facts["interest_coverage"] < 2.0
 
 
-def test_short_history_negative_term_abstains_insufficient():
-    """RIVN-class (5y history): can't classify a negative RE -> insufficient_history."""
+def test_five_year_deficit_now_scores_actionable():
+    """RIVN-class (5y of losses): net cumulative losses are unambiguous, so the
+    8y floor no longer gates them — scores accumulated_deficit, not abstain.
+    Young-and-losing-money is exactly the target profile."""
+    r = screen_distress(
+        _base(raw_TotalAssets=15.0, raw_RetainedEarnings=-27.0, raw_TotalEquity=8.0,
+              clean_NormalizedEBIT=-3.0, derived_EBITDA=-2.0,
+              raw_LongTermDebt=4.0, raw_CurrentPortionLongTermDebt=0.5, derived_NetDebt=3.0),
+        [-5.0] * 5,                         # 5y of losses -> ΣNI < 0
+        _TECH,
+    )
+    assert r.scoreable and r.classification == "accumulated_deficit"
+    assert r.actionable_distress is True
+
+
+def test_two_year_deficit_below_floor_abstains():
+    """Below the 3y deficit floor -> insufficient_history (not enough to trust)."""
     r = screen_distress(
         _base(raw_RetainedEarnings=-27.0, clean_NormalizedEBIT=-3.0),
-        [-5.0] * 5,                         # only 5y coverage
+        [-5.0] * 2,
+        _TECH,
+    )
+    assert not r.scoreable and "insufficient_history" in r.reason
+
+
+def test_short_history_positive_sigma_negative_equity_abstains():
+    """Positive cumulative income but negative equity and <8y — can't confirm
+    capital_return, so abstain (the 8y floor still gates THIS branch)."""
+    r = screen_distress(
+        _base(raw_TotalEquity=-2.0, raw_RetainedEarnings=-5.0, clean_NormalizedEBIT=4.0),
+        [1.0] * 5,                          # ΣNI > 0, only 5y
         _TECH,
     )
     assert not r.scoreable and "insufficient_history" in r.reason
@@ -142,8 +187,12 @@ def db():
 @pytest.mark.parametrize("ticker,expect", [
     ("LOW",  "abstain_capital_structure"),
     ("AAPL", "safe_not_actionable"),
-    ("JPM",  "financial"),
+    ("JPM",  "financial"),        # genuine bank -> excluded
+    ("BRK-B", "financial"),       # diversified financial -> excluded
     ("ORCL", "scoreable_not_actionable"),
+    ("NEE",  "scoreable"),        # utility now evaluated (split fix), not excluded
+    ("CNC",  "scoreable"),        # managed care now evaluated
+    ("V",    "scoreable"),        # payment network now evaluated
 ])
 def test_db_acceptance(db, ticker, expect):
     if db.get_latest(ticker).empty:
@@ -152,8 +201,10 @@ def test_db_acceptance(db, ticker, expect):
     if expect == "abstain_capital_structure":
         assert not r.scoreable and "capital_structure" in (r.reason or "")
     elif expect == "financial":
-        assert not r.scoreable and "non_fcff" in (r.reason or "")
+        assert not r.scoreable and "financial" in (r.reason or "")
     elif expect == "safe_not_actionable":
         assert r.scoreable and r.zone == "safe" and not r.actionable_distress
     elif expect == "scoreable_not_actionable":
         assert r.scoreable and not r.actionable_distress   # corroboration guard vetoes
+    elif expect == "scoreable":
+        assert r.scoreable   # evaluated, not wrongly excluded as "financial"

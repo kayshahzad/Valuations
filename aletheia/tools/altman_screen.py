@@ -53,13 +53,29 @@ _Z2_SAFE, _Z2_DISTRESS = 2.6, 1.1
 _Z_SAFE, _Z_DISTRESS = 2.99, 1.81
 
 _RE_NOISE_FRAC = 0.10          # |RE|/TA below this is noise -> score raw
-_MIN_NI_YEARS = 8             # coverage floor for classification
+_MIN_NI_YEARS = 8             # coverage floor to CONFIRM capital_return
+_MIN_DEFICIT_YEARS = 3        # light floor for accumulated_deficit (losses are unambiguous)
 _LEV_NETDEBT_EBITDA = 1.0
 _LEV_DEBT_TA = 0.15
 _COVERAGE_DISTRESS = 2.0      # interest coverage below this corroborates
 _CURRENT_RATIO_DISTRESS = 0.8
 
-_FINANCIAL_KEYS = ("financ", "insur", "bank")
+# Genuinely Altman-undefined: financial INTERMEDIARIES where leverage IS the
+# business and there is no operating working-capital cycle — banks, lenders,
+# card issuers, insurers, brokers, diversified financials. This is INDEPENDENT
+# of which valuation engine a ticker routes to. Utilities (rate_base), REITs,
+# MLPs, payment networks, rating agencies, and managed care all have definable
+# Altman inputs and route to a specialized VALUATION model for reasons unrelated
+# to distress applicability, so they are NOT excluded. (business_model is
+# deliberately NOT used here — conflating valuation-routing with Altman
+# applicability was the original over-exclusion bug.)
+_UNDEFINED_INDUSTRY_KEYS = (
+    "bank", "credit service", "cards", "insurance", "reinsurance",
+    "capital market", "asset manage", "broker", "mortgage", "thrift",
+)
+# Managed care reads as Healthcare but has a definable claims-payable working-
+# capital cycle → includable despite carrying float.
+_MANAGED_CARE_KEYS = ("managed care", "health plan")
 _RETAIL_KEYS = ("retail", "restaurant", "grocery", "apparel", "store",
                 "home improvement", "consumer defensive")
 _MANUFACTURER_KEYS = ("industrial", "material", "machinery", "auto",
@@ -104,13 +120,20 @@ def _zone_from_z2(z: float) -> str:
 
 
 def _is_financial(cls: Dict[str, Any]) -> bool:
-    bm = (cls.get("business_model") or "").lower()
-    text = f"{cls.get('sector','')} {cls.get('industry','')}".lower()
-    # Any non-FCFF business model routes to a specialized/float-based engine;
-    # Altman is undefined there. Plus an explicit sector keyword backstop.
-    if bm and bm != "fcff_compatible":
+    """True only for genuine financial intermediaries (Altman-undefined) —
+    banks, lenders, card issuers, insurers, brokers, diversified financials.
+    Utilities / REITs / MLPs / payment networks / rating agencies / managed care
+    are NOT financial for this purpose even though they route to specialized
+    valuation engines."""
+    sector = (cls.get("sector") or "").lower()
+    industry = (cls.get("industry") or "").lower()
+    text = f"{sector} {industry}"
+    if any(k in text for k in _MANAGED_CARE_KEYS):
+        return False                                      # includable despite float
+    if any(k in text for k in _UNDEFINED_INDUSTRY_KEYS):
         return True
-    return any(k in text for k in _FINANCIAL_KEYS)
+    # Diversified financials (e.g. BRK-B: Financials / Diversified).
+    return sector == "financials" and "diversified" in industry
 
 
 def _is_retail(cls: Dict[str, Any]) -> bool:
@@ -140,9 +163,11 @@ def screen_distress(
     fy = int(_num(latest.get("fiscal_year")) or 0)
     out = AltmanScreen(ticker=tkr, fiscal_year=fy, scoreable=False)
 
-    # 0. Exclude financials / float-based / specialized-model tickers.
+    # 0. Exclude genuine financial intermediaries (Altman-undefined). NOT
+    #    utilities / REITs / MLPs / payment networks / rating agencies / managed
+    #    care — those route to specialized valuation but have definable inputs.
     if _is_financial(cls):
-        out.reason = "not_applicable(non_fcff): Altman undefined for financial/float-based balance sheets"
+        out.reason = "not_applicable(financial): Altman undefined for bank/insurer/lender balance sheets"
         return out
 
     # 1. Inputs (from promoted, validated columns).
@@ -173,18 +198,33 @@ def screen_distress(
                or (gross_debt / ta > _LEV_DEBT_TA))
     out.leverage_gated = bool(levered)
 
-    # 3. Classify a negative RE before scoring.
+    # 3. Classify a negative RE before scoring. The >=8y floor gates ONLY the
+    #    capital_return determination — distinguishing "returned more than
+    #    retained" from real losses needs a confirmed profitable history. Net
+    #    cumulative LOSSES are unambiguous distress even at short history (a
+    #    young, money-losing company is exactly the target profile), so
+    #    accumulated_deficit needs only a light sanity floor.
     re_ta = re / ta
     if re >= 0:
         out.classification = "none"
         out.re_reason = "re_positive"
     else:
-        n = len([x for x in ni_history if x is not None])
-        sigma_ni = sum(x for x in ni_history if x is not None)
-        if n < _MIN_NI_YEARS:
+        vals = [x for x in ni_history if x is not None]
+        n = len(vals)
+        sigma_ni = sum(vals)
+        if sigma_ni < 0:
+            # Net cumulative losses -> accumulated_deficit (unambiguous).
+            if n < _MIN_DEFICIT_YEARS:
+                out.classification = "unknown"
+                out.reason = (f"not_applicable(insufficient_history): {n}y coverage "
+                              f"below the {_MIN_DEFICIT_YEARS}y floor")
+                return out
+            out.classification = "accumulated_deficit"
+        elif n < _MIN_NI_YEARS:
+            # Positive cumulative income but negative RE, too little history to
+            # confirm capital_return -> abstain if any other term is negative.
             out.classification = "unknown"
-            # Any negative term with unknown cause -> abstain.
-            neg_term = (re < 0) or (ebit < 0) or (eq < 0) or (wc is not None and wc < 0)
+            neg_term = (ebit < 0) or (eq < 0) or (wc is not None and wc < 0)
             if neg_term:
                 out.reason = f"not_applicable(insufficient_history): {n}y net-income coverage, cannot classify negative RE"
                 return out
