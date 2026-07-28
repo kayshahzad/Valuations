@@ -84,8 +84,13 @@ def _pct_to_decimal(v: float) -> float:
 
 
 FRED_SERIES: Dict[str, "SeriesSpec"] = {
-    # Channel A — moves IV. Daily → 5-day staleness (covers Thanksgiving→Monday).
-    "DGS10": SeriesSpec("DGS10", "A", "daily", 5, _pct_to_decimal,
+    # Channel A — moves IV, and its failure is fail-loud (refuse to value), so it
+    # needs real staleness headroom, NOT a tight bound. Empirically the largest
+    # gap in 36y of DGS10 is 4 calendar days (3-day-weekend holidays); with T+1
+    # publishing, a normal check can already read 4d old (Fri obs on a Tue). 7d
+    # gives margin against a holiday-gap + publish-timing stack while still
+    # catching a genuine FRED outage (7+ days is really broken).
+    "DGS10": SeriesSpec("DGS10", "A", "daily", 7, _pct_to_decimal,
                         "10Y Treasury constant maturity (risk-free rate)", bounds=(0.0, 0.20)),
     # Channel B — conviction. OAS in percent (no transform).
     "BAMLH0A0HYM2": SeriesSpec("BAMLH0A0HYM2", "B", "daily", 5, None,
