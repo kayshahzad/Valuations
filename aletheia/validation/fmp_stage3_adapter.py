@@ -191,6 +191,9 @@ _ASSET_IMPAIRMENT_CHILDREN = (
     "ImpairmentOfLongLivedAssetsHeldForUse",
 )
 _RESTRUCTURING_TAG = "RestructuringCharges"
+# Additive one-time charges, same class as restructuring (never part of the
+# impairment umbrella, so summed on top — not MAX'd).
+_ADDITIVE_UNUSUAL_TAGS = ("RestructuringCharges", "LitigationSettlementExpense")
 
 # Back-compat alias (a few call sites / tests enumerate the full tag set).
 _IMPAIRMENT_TAGS = (
@@ -235,12 +238,12 @@ def _asset_impairment_addback(rec: Dict[str, Any]):
         candidates.append(sum(children))
     asset_impairment = max(candidates) if candidates else None
 
-    restructuring = rec.get(_RESTRUCTURING_TAG)
-    restructuring = abs(restructuring) if restructuring is not None else None
+    additive = sum(abs(rec[k]) for k in _ADDITIVE_UNUSUAL_TAGS if rec.get(k) is not None)
+    additive = additive if additive else None
 
-    if asset_impairment is None and restructuring is None:
+    if asset_impairment is None and additive is None:
         return None
-    return (asset_impairment or 0.0) + (restructuring or 0.0)
+    return (asset_impairment or 0.0) + (additive or 0.0)
 
 
 def _ex_impairment_addback(rec: Dict[str, Any]):

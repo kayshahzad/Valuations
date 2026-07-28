@@ -49,6 +49,10 @@ _SPECIALTY_TAGS = (
     "IntangibleAssetImpairmentCharge",
     "ImpairmentOfLongLivedAssetsHeldForUse",   # alternate impairment tag
     "RestructuringCharges",
+    # Additive one-time charges of the same class — a litigation settlement is
+    # as much an accounting event as an impairment. Widening the capture closes
+    # the generic hole rather than the CNC-specific one.
+    "LitigationSettlementExpense",
 
     # Equity-bridge identity (A=L+E). NEE-class utility filers report
     # accumulated deficit / regulatory liabilities under tags FMP doesn't
