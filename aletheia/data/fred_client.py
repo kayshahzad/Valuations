@@ -1,23 +1,34 @@
-"""FRED credit-regime series — IG / HY option-adjusted spreads (Layer 11).
+"""FRED macro series — registry-driven, three structurally-isolated channels.
 
-Uses FRED's *keyless* CSV endpoint (fredgraph.csv) — one call per series, no
-API key, no CUSIP mapping, no cleaning. Cached to
-``valuation_data/macro/fred/<series>.json`` with a 1-day TTL. Fail-soft: any
-network/parse error returns ``None`` so the dashboard degrades to "no credit
-line" rather than erroring — but bounded: a stale cache older than
-``_MAX_STALE_SECONDS`` is discarded rather than displayed, so we never show a
-week-old spread during the exact market stress when the number matters most.
+The organizing constraint (design doc): the channels must not leak into each
+other. Two accessors exist FOR A REASON — do not collapse them:
 
-Two series:
-  BAMLC0A0CM   — ICE BofA US Corporate (investment-grade) Index OAS, %
-  BAMLH0A0HYM2 — ICE BofA US High Yield Index OAS, %
+  Channel A — MOVES INTRINSIC VALUE (rf → WACC, terminal growth, cycle
+    detection). Held to the SAME rigor as any cleaned financial field: every
+    Channel-A series carries a plausibility band + a staleness bound
+    (``validate_registry`` enforces this), and a stale/invalid value MUST NOT
+    reach the valuation — the consumer fails loud and refuses to value (the D&A
+    precedent). No silent fallback. Channel A cannot fall back to a reference
+    distribution the way the ICE series can, so it needs the live source.
 
-Regime read is a *history percentile*, stated with an explicit direction
-("tighter than X% of history since YYYY") so it can't be misread. We compute
-BOTH a full-history and a trailing-10-year percentile: when they diverge
-materially, the divergence is itself informative — part of the tightness is
-compositional (today's HY index carries more BB / less CCC than the 2000-2010
-index), not pure risk appetite, and the caveat says so rather than overclaiming.
+  Channel B — CALIBRATES CONVICTION (credit-regime cohorts). Stale/invalid →
+    lower confidence / omit the read.  ``get_credit_regime`` lives here.
+
+  Channel C — DISPLAY ONLY, and NEVER read by an agent or calc module. The
+    architecture test asserts nothing outside ``aletheia/ui/`` imports the
+    Channel-C accessor. Stale → hide the line.
+
+Series are declared in ``FRED_SERIES`` (a ``SeriesSpec`` each: channel, native
+frequency, staleness bound, unit transform, plausibility bounds). Adding a
+series is a config line, not code. The unit ``transform`` is the 100× landmine:
+FRED returns 4.42 for 4.42%, so a rate feeding WACC needs ÷100 → 0.0442; a
+missed conversion is a 100× WACC error the validator's bounds catch.
+
+Fetch: keyed observations API (full history) with the keyless fredgraph CSV as
+fallback. Cached under ``valuation_data/macro/fred/``. NOTE: FRED license-
+restricts the ICE BofA (BAML*) credit series to a trailing ~3y window even with
+a key, so the credit regime places the current level against a static 1996-2024
+reference distribution; DGS*/UMCSENT return true full history.
 """
 from __future__ import annotations
 
@@ -25,8 +36,10 @@ import json
 import logging
 import os
 import time
+from dataclasses import dataclass
+from datetime import date
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -35,15 +48,84 @@ _TTL_SECONDS = 24 * 3600            # daily series → 1-day fresh cache
 _MAX_STALE_SECONDS = 3 * 24 * 3600  # never serve a cache older than this
 _TIMEOUT = 20
 
-IG_SERIES = "BAMLC0A0CM"
-HY_SERIES = "BAMLH0A0HYM2"
-
 # HY-OAS full-history-percentile thresholds for the regime label. Percentile =
 # share of historical observations at or below the current level; a *low*
 # percentile means unusually tight spreads (current is tighter than most of the
 # record).
 _TIGHT_PCTL = 20.0
 _STRESS_PCTL = 80.0
+
+
+# ── Series registry ───────────────────────────────────────────────────────────
+# Three structurally-isolated channels (see module docstring):
+#   A — moves intrinsic value (rf → WACC, terminal growth). SAME rigor as a
+#       cleaned financial field: MUST carry bounds + a staleness bound, and a
+#       stale/invalid value MUST NOT reach the valuation (the consumer fails
+#       loud and refuses to value — the D&A precedent). No silent fallback.
+#   B — calibrates conviction (credit-regime cohorts). Stale/invalid → lower
+#       confidence / omit the read.
+#   C — display only, NEVER read by an agent/calc module. Stale → hide the line.
+@dataclass(frozen=True)
+class SeriesSpec:
+    series_id: str
+    channel: str                                    # "A" | "B" | "C"
+    freq: str                                       # "daily" | "monthly"
+    staleness_days: int
+    transform: Optional[Callable[[float], float]]   # native FRED units → consumer units
+    description: str
+    bounds: Optional[Tuple[float, float]] = None    # plausibility band on the TRANSFORMED value
+
+
+# The transform is the 100× landmine: FRED returns 4.42 for 4.42%, so a rate
+# feeding WACC needs ÷100 → 0.0442. OAS series stay in percent — their consumer
+# (the credit regime + reference distribution) works in percent.
+def _pct_to_decimal(v: float) -> float:
+    return v / 100.0
+
+
+FRED_SERIES: Dict[str, "SeriesSpec"] = {
+    # Channel A — moves IV. Daily → 5-day staleness (covers Thanksgiving→Monday).
+    "DGS10": SeriesSpec("DGS10", "A", "daily", 5, _pct_to_decimal,
+                        "10Y Treasury constant maturity (risk-free rate)", bounds=(0.0, 0.20)),
+    # Channel B — conviction. OAS in percent (no transform).
+    "BAMLH0A0HYM2": SeriesSpec("BAMLH0A0HYM2", "B", "daily", 5, None,
+                               "ICE BofA US High Yield OAS, %", bounds=(0.5, 30.0)),
+    "BAMLC0A0CM": SeriesSpec("BAMLC0A0CM", "B", "daily", 5, None,
+                             "ICE BofA US Investment-Grade OAS, %", bounds=(0.2, 15.0)),
+    # Channel C — display only. DGS2 pairs with DGS10 for the T10Y2Y curve spread.
+    "DGS2": SeriesSpec("DGS2", "C", "daily", 5, _pct_to_decimal,
+                       "2Y Treasury (curve: T10Y2Y = DGS10 − DGS2)", bounds=(0.0, 0.20)),
+    "UMCSENT": SeriesSpec("UMCSENT", "C", "monthly", 45, None,
+                          "U. Michigan consumer sentiment index", bounds=(0.0, 200.0)),
+}
+
+# Legacy aliases (existing callers).
+IG_SERIES = "BAMLC0A0CM"
+HY_SERIES = "BAMLH0A0HYM2"
+
+
+def validate_registry() -> List[str]:
+    """Registry-integrity guard (asserted by tests): every Channel-A series MUST
+    carry bounds + a positive staleness bound, so a careless Channel-A addition
+    can't ship without the rigor that channel demands. Returns a list of
+    violations (empty = clean)."""
+    problems: List[str] = []
+    for sid, spec in FRED_SERIES.items():
+        if spec.channel not in ("A", "B", "C"):
+            problems.append(f"{sid}: invalid channel {spec.channel!r}")
+        if spec.staleness_days <= 0:
+            problems.append(f"{sid}: staleness_days must be positive")
+        if spec.channel == "A" and spec.bounds is None:
+            problems.append(f"{sid}: Channel-A series must declare bounds")
+    return problems
+
+
+def _days_since(iso_date: str) -> Optional[int]:
+    try:
+        y, m, d = (int(x) for x in iso_date.split("-"))
+        return (date.today() - date(y, m, d)).days
+    except Exception:
+        return None
 
 # --- Long-run reference distribution -----------------------------------------
 # FRED's keyless CSV license-restricts ICE BofA index series (BAML*) to a
@@ -252,6 +334,33 @@ def _series(series: str) -> Optional[Dict[str, Any]]:
     return parsed
 
 
+def get_series(series_id: str) -> Optional[Dict[str, Any]]:
+    """Registry-driven accessor: fetch a REGISTERED series in CONSUMER units with
+    per-series staleness + bounds validation. Keys: series_id, channel, latest
+    (transformed), raw, as_of, age_days, stale, valid, source, pairs. Returns
+    None only when no data at all is available. Channel POLICY (fail-loud for A,
+    hide for C) is applied by the CONSUMER — this returns the facts to gate on."""
+    spec = FRED_SERIES.get(series_id)
+    if spec is None:
+        raise KeyError(f"{series_id!r} not in FRED_SERIES registry")
+    pairs = _fetch_full_history(series_id)      # keyed API → full history
+    source = "api"
+    if not pairs:
+        csv = _http_get_csv(series_id)          # keyless CSV fallback
+        pairs = _pairs(csv) if csv else None
+        source = "keyless"
+    if not pairs:
+        return None
+    as_of, raw = pairs[-1]
+    latest = spec.transform(raw) if spec.transform else float(raw)
+    age = _days_since(as_of)
+    stale = age is not None and age > spec.staleness_days
+    valid = spec.bounds is None or (spec.bounds[0] <= latest <= spec.bounds[1])
+    return {"series_id": series_id, "channel": spec.channel, "latest": latest,
+            "raw": raw, "as_of": as_of, "age_days": age, "stale": stale,
+            "valid": valid, "source": source, "pairs": pairs}
+
+
 def get_credit_regime() -> Optional[Dict[str, Any]]:
     """Market-wide credit regime from IG + HY OAS. Returns None if FRED is
     unreachable and no sufficiently-fresh cache exists (dashboard then shows no
@@ -267,55 +376,25 @@ def get_credit_regime() -> Optional[Dict[str, Any]]:
     ('live 1996-present' | '1996-2024 reference'), regime, position, as_of,
     caveat.
     """
-    ig = _series(IG_SERIES)
-    hy = _series(HY_SERIES)
+    # Channel B — current OAS levels via the registry (percent, no transform).
+    # ICE license-restricts the BAML* series to a trailing ~3y window even with a
+    # key (verified), so the percentile is placed against the STATIC 1996-2024
+    # reference distribution rather than a too-short live window.
+    hy = get_series(HY_SERIES)
     if hy is None:                              # HY is the regime driver
         return None
-
+    ig = get_series(IG_SERIES)
     hy_oas = hy["latest"]
     ig_oas = ig["latest"] if ig else None
 
-    # Use LIVE percentiles only when the series actually carries enough history.
-    # The FRED API key returns full history for most series, but ICE BofA
-    # license-restricts the BAML* credit series to a trailing ~3y window even
-    # WITH a key (verified) — too short for a meaningful percentile, so those
-    # fall through to the static reference distribution below.
-    def _span_years(s: Dict[str, Any]) -> int:
-        try:
-            return int(s["as_of"][:4]) - int(s["start_year"])
-        except Exception:
-            return 0
-
-    live = (
-        hy.get("source") == "api"
-        and hy.get("pctile_full") is not None
-        and _span_years(hy) >= 10
-    )
-
-    if live:
-        # Real full-history percentile — direction stated explicitly.
-        pctile = hy["pctile_full"]
-        pctile_10y = hy.get("pctile_10y")
-        start = hy.get("start_year", "1996")
-        basis = f"live {start}-present"
-        ig_pctile = ig.get("pctile_full") if (ig and ig.get("source") == "api") else None
-        window_phrase = f"history since {start}"
-        # 10y-vs-full divergence → composition/regime hint (don't overclaim).
-        diverge_note = (
-            f" (vs {pctile_10y:.0f}th over 10y — divergence is part composition, "
-            "part regime)"
-            if (pctile_10y is not None and abs(pctile - pctile_10y) >= 20) else ""
-        )
-    else:
-        # Keyless: place the live level against the static reference.
-        pctile = _ref_percentile("HY", hy_oas)
-        if pctile is None:
-            return None
-        pctile_10y = None
-        ig_pctile = _ref_percentile("IG", ig_oas) if ig_oas is not None else None
-        basis = f"{_REF_START}-{_REF_END} reference"
-        window_phrase = f"{_REF_START}-{_REF_END} history"
-        diverge_note = ""
+    pctile = _ref_percentile("HY", hy_oas)
+    if pctile is None:
+        return None
+    pctile_10y = None
+    ig_pctile = _ref_percentile("IG", ig_oas) if ig_oas is not None else None
+    basis = f"{_REF_START}-{_REF_END} reference"
+    window_phrase = f"{_REF_START}-{_REF_END} history"
+    diverge_note = ""
 
     if pctile <= _TIGHT_PCTL:
         regime = "tight"
@@ -346,4 +425,5 @@ def get_credit_regime() -> Optional[Dict[str, Any]]:
     }
 
 
-__all__ = ["get_credit_regime", "IG_SERIES", "HY_SERIES"]
+__all__ = ["SeriesSpec", "FRED_SERIES", "get_series", "validate_registry",
+           "get_credit_regime", "IG_SERIES", "HY_SERIES"]
