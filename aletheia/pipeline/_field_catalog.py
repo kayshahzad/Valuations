@@ -304,6 +304,15 @@ _BALANCE = [
         fmp_source="balance", fmp_keys=["retainedEarnings"],
     ),
     FieldSpec(
+        # Altman WC term (CurrentAssets - CurrentLiabilities). Previously flowed
+        # into record.raw as "CurrentAssets" but was never a cataloged field or
+        # a materialized column; formalized here for provenance + bounds.
+        label="Current Assets", category="Balance Sheet", tier="critical",
+        xbrl_clean_keys=["CurrentAssets"], xbrl_raw_keys=["CurrentAssets"],
+        xbrl_fallback_tags=["AssetsCurrent"],
+        fmp_source="balance", fmp_keys=["totalCurrentAssets"],
+    ),
+    FieldSpec(
         label="Treasury Stock", category="Balance Sheet", tier="important",
         xbrl_clean_keys=["TreasuryStock"], xbrl_raw_keys=["TreasuryStock"],
         xbrl_fallback_tags=["TreasuryStockValue", "TreasuryStockCommonValue"],

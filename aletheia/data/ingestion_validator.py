@@ -108,13 +108,43 @@ class IngestionValidator:
             description="CapEx typically 0.1% - 30% of Revenue (bypassed for financials)"
         ),
         RelativeContract(
-            field="derived_EBITDA", 
-            relative_to="raw_Revenue", 
-            min_pct=4.0, 
-            max_pct=100.0, 
+            field="derived_EBITDA",
+            relative_to="raw_Revenue",
+            min_pct=4.0,
+            max_pct=100.0,
             archetype_overrides={"retail": (1.0, 100.0), "healthcare": (1.0, 100.0)},
             bypass_sectors=["bank", "financials", "insurance"],
             description="EBITDA margin typically >= 4%"
+        ),
+        # Altman-input plausibility (Phase 1a). Purpose is catching gross
+        # tag-resolution / unit errors at ingest, NOT flagging real distress.
+        # Bounds were widened after a universe sweep showed legitimate values
+        # the naive limits would have quarantined:
+        #   RE/TA: TXN +2.2 (asset-light, cash-rich), AMD -2.4 (2015 deficit),
+        #          TSLA -4.0 (early-stage) are all real → cap at 10x, which
+        #          only trips on unit errors (~1000x) or gross mis-resolution.
+        #   CurrentAssets ⊆ TotalAssets is an accounting identity → hard 0..TA.
+        #   CurrentLiabilities CAN exceed TA when equity is negative (TSLA 2008
+        #          CL/TA 1.7 is real) → require positive, cap generously at 3x.
+        RelativeContract(
+            field="raw_RetainedEarnings",
+            relative_to="raw_TotalAssets",
+            min_pct=-1000.0, max_pct=1000.0,
+            description="|RetainedEarnings| above 10x TotalAssets indicates a unit/tag error"
+        ),
+        RelativeContract(
+            field="raw_CurrentAssets",
+            relative_to="raw_TotalAssets",
+            min_pct=0.0, max_pct=102.0,   # 2% slack for rounding/snapshot timing on the CA⊆TA identity
+            bypass_sectors=["bank", "financials", "insurance"],
+            description="CurrentAssets is a subset of TotalAssets: must be ~0..TA"
+        ),
+        RelativeContract(
+            field="raw_LiabilitiesCurrent",
+            relative_to="raw_TotalAssets",
+            min_pct=0.0, max_pct=300.0,
+            bypass_sectors=["bank", "financials", "insurance"],
+            description="CurrentLiabilities positive; can exceed TA on negative equity, but >3x is an error"
         ),
     ]
 

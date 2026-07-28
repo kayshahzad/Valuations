@@ -232,6 +232,8 @@ class InvestmentDatabase:
                 raw_OperatingIncome     DOUBLE,
                 raw_TotalLiabilities    DOUBLE,
                 raw_LiabilitiesCurrent  DOUBLE,
+                raw_RetainedEarnings    DOUBLE,
+                raw_CurrentAssets       DOUBLE,
                 raw_SharesDiluted       DOUBLE,
                 raw_SharesOutstanding   DOUBLE,
                 clean_SharesDiluted     DOUBLE,
@@ -270,6 +272,13 @@ class InvestmentDatabase:
             "clean_EPS_Diluted",
             "clean_DividendsPerShare",
             "clean_PayoutRatio",
+            # Altman distress-screen inputs (Phase 1a). RetainedEarnings was
+            # cataloged but never materialized; CurrentAssets lived only in the
+            # raw_json blob. Promote both to first-class columns so the screen
+            # reads validated values (get_strict / provenance / bounds) instead
+            # of routing around the cleaning gate via the blob.
+            "raw_RetainedEarnings",
+            "raw_CurrentAssets",
         ):
             self._conn.execute(
                 f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} DOUBLE"
@@ -901,6 +910,8 @@ class InvestmentDatabase:
             "raw_OperatingIncome": record.raw.get("OperatingIncome"),
             "raw_TotalLiabilities": record.raw.get("TotalLiabilities"),
             "raw_LiabilitiesCurrent": record.raw.get("LiabilitiesCurrent"),
+            "raw_RetainedEarnings": record.raw.get("RetainedEarnings"),
+            "raw_CurrentAssets": record.raw.get("CurrentAssets"),
             "raw_SharesDiluted": record.raw.get("SharesDiluted"),
             "raw_SharesOutstanding": record.raw.get("SharesOutstanding"),
             "clean_SharesDiluted": record.clean.get("SharesDiluted"),
