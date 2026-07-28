@@ -1208,6 +1208,98 @@ def _render_iv_suppressed_notice(ticker: str, dcf: Dict[str, Any], df) -> None:
 # Top-level entry
 # ────────────────────────────────────────────────────────────────────────
 
+def _render_ev_split(ticker: str, dcf: Dict[str, Any], df: pd.DataFrame) -> None:
+    """Simple Enterprise Value composition: EV = Equity (market cap) + Net Debt.
+    Shows how the whole-firm value is shared between equity and debt holders.
+    Net debt is the valuation-consistent figure (gross debt − cash), so EV here
+    matches the EV the DCF/engines use. Renders for every ticker; degrades to
+    nothing when market cap or net debt can't be sourced."""
+    # Banks / insurers / float-based names: deposits and policy reserves are
+    # operating liabilities, not corporate debt, so EV = Equity + Debt is not a
+    # meaningful decomposition (Berkshire nets to "equity 211%", a bank to EV<0).
+    # Skip them by business model.
+    bm = (cached_classification(ticker) or {}).get("business_model") or ""
+    if bm.lower() in ("ddm_required", "embedded_value_required", "residual_income_required"):
+        return
+
+    def _f(x):
+        try:
+            v = float(x)
+            return v if v == v else None      # NaN -> None
+        except (TypeError, ValueError):
+            return None
+
+    latest = df.sort_values("fiscal_year").iloc[-1] if (df is not None and not df.empty) else None
+
+    # Equity value (market cap): dcf dict for FCFF/suppressed; router for specialized.
+    mkt_cap = _f(dcf.get("market_cap")) if isinstance(dcf, dict) else None
+    if mkt_cap is None:
+        v = cached_valuation(ticker)
+        if isinstance(v, dict) and not v.get("error"):
+            snap = v.get("inputs_snapshot") or {}
+            mkt_cap = _f(v.get("market_cap"))
+            if mkt_cap is None:
+                px, sh = _f(v.get("current_price")), _f(snap.get("shares_diluted"))
+                mkt_cap = px * sh if (px and sh) else None
+
+    # Net debt — prefer the valuation's figure so EV ties out to the model.
+    net_debt = _f(dcf.get("net_debt")) if isinstance(dcf, dict) else None
+    if net_debt is None and latest is not None:
+        net_debt = _f(latest.get("derived_NetDebt"))
+
+    if mkt_cap is None or net_debt is None:
+        return
+    ev = mkt_cap + net_debt
+    if ev <= 0:
+        return
+    # Banks / insurers: their "net debt" is deposits / policy reserves — operating
+    # liabilities, not corporate leverage — so EV = Equity + Debt is not meaningful.
+    # Skip when net debt dwarfs equity (a reliable tell) rather than show nonsense.
+    if abs(net_debt) > 3.0 * mkt_cap:
+        return
+
+    # Gross debt + cash for context (net debt = gross debt − cash).
+    gross_debt = cash = None
+    if latest is not None:
+        parts = [(_f(latest.get(k)) or 0.0) for k in
+                 ("raw_LongTermDebt", "raw_CurrentPortionLongTermDebt", "raw_ShortTermDebt")]
+        gross_debt = sum(parts) if any(parts) else None
+        cash = _f(latest.get("raw_Cash"))
+
+    eq_pct = 100.0 * mkt_cap / ev
+    debt_pct = 100.0 * net_debt / ev
+    net_cash = net_debt < 0
+
+    st.markdown("##### Enterprise Value = Equity + Debt")
+    cols = st.columns(3)
+    cols[0].metric("Enterprise Value", _bn(ev))
+    cols[1].metric("Equity (market cap)", _bn(mkt_cap),
+                   delta=f"{eq_pct:.0f}% of EV", delta_color="off")
+    cols[2].metric("Net Debt" if not net_cash else "Net Cash",
+                   _bn(abs(net_debt)), delta=f"{debt_pct:.0f}% of EV", delta_color="off")
+
+    # Split bar (equity vs debt). Net-cash names are all-equity (EV < market cap).
+    eq_w = max(0.0, min(100.0, eq_pct))
+    debt_w = max(0.0, min(100.0, debt_pct))
+    debt_seg = (f'<div style="width:{debt_w}%;background:#C9820A;display:flex;align-items:center;'
+                f'justify-content:center;">Debt {debt_pct:.0f}%</div>') if debt_w > 0 else ""
+    st.markdown(
+        f'<div style="display:flex;height:22px;border-radius:4px;overflow:hidden;'
+        f'font-size:11px;color:#fff;font-weight:600;margin:2px 0 6px;">'
+        f'<div style="width:{eq_w}%;background:#2E7D32;display:flex;align-items:center;'
+        f'justify-content:center;">Equity {eq_pct:.0f}%</div>{debt_seg}</div>',
+        unsafe_allow_html=True,
+    )
+    ctx = []
+    if gross_debt is not None:
+        ctx.append(f"gross debt {_bn(gross_debt)}")
+    if cash is not None:
+        ctx.append(f"cash {_bn(cash)}")
+    tail = ("  ·  " + " − ".join(ctx) + " = net debt") if len(ctx) == 2 else ""
+    note = " (net cash — equity value exceeds EV)" if net_cash else ""
+    st.caption(f"EV = Equity (market cap) + Net Debt{note}{tail}")
+
+
 def render_dashboard(ticker: str) -> None:
     """Main dashboard entry point. Called from streamlit_app.py routing."""
     if not ticker:
@@ -1229,8 +1321,12 @@ def render_dashboard(ticker: str) -> None:
                 and not valuation.get("error")
                 and valuation.get("intrinsic_per_share") is not None):
             _render_specialized_engine_dashboard(ticker, valuation, df)
+            st.markdown("---")
+            _render_ev_split(ticker, dcf, df)
             return
         _render_specialized_model_notice(ticker, dcf)
+        st.markdown("---")
+        _render_ev_split(ticker, dcf, df)
         return
 
     # Pre-profitability / degenerate-DCF tickers (e.g. NET): the FCFF headline
@@ -1238,11 +1334,17 @@ def render_dashboard(ticker: str) -> None:
     # cards full of $0.00 / fabricated near-zero per-share values.
     if isinstance(dcf, dict) and dcf.get("iv_suppressed"):
         _render_iv_suppressed_notice(ticker, dcf, df)
+        st.markdown("---")
+        _render_ev_split(ticker, dcf, df)
         return
 
     # 1. Header strip — ticker, classification, price, business description,
     #    quality, macro context.
     render_header(ticker, dcf, df)
+
+    # 1b. Enterprise Value composition — how EV splits between equity and debt.
+    st.markdown("---")
+    _render_ev_split(ticker, dcf, df)
 
     # 2. 5-year fundamentals — pivoted by FY with status dots inline.
     st.markdown("---")
