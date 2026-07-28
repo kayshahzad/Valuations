@@ -89,6 +89,7 @@ class InvestmentDatabase:
     """
 
     DEFAULT_DB_PATH = "valuation_data/database/investment.duckdb"
+    _altman_backfill_done = False   # process-once guard for the Phase-1a column backfill
 
     # Per-process record of which DB files have already had their schema
     # initialized. Schema init runs `CREATE OR REPLACE VIEW`, which holds
@@ -327,6 +328,30 @@ class InvestmentDatabase:
         self._conn.execute(
             "UPDATE company_records SET period='FY' WHERE period IS NULL"
         )
+
+        # One-time backfill (Phase 1a): populate the promoted Altman columns
+        # (raw_RetainedEarnings / raw_CurrentAssets) from each row's already-
+        # cleaned raw_json where NULL — e.g. the prod served copy, which is
+        # schema-migrated (ALTER above) but not re-ingested. Runs once per
+        # process (class flag). Safe: fills ONLY NULLs from the row's own blob,
+        # never overwrites data. Best-effort — the distress screen fails soft if
+        # the columns stay null.
+        if not InvestmentDatabase._altman_backfill_done:
+            try:
+                try:
+                    self._conn.execute("LOAD json")
+                except Exception:
+                    pass
+                for _col, _key in (("raw_RetainedEarnings", "RetainedEarnings"),
+                                   ("raw_CurrentAssets", "CurrentAssets")):
+                    self._conn.execute(
+                        f"UPDATE company_records SET {_col} = "
+                        f"TRY_CAST(json_extract_string(raw_json, '$.{_key}') AS DOUBLE) "
+                        f"WHERE {_col} IS NULL AND raw_json IS NOT NULL"
+                    )
+                InvestmentDatabase._altman_backfill_done = True
+            except Exception:
+                pass  # screen fails soft if columns remain null
 
         self._conn.execute("""
             CREATE TABLE IF NOT EXISTS cleaning_flags (
