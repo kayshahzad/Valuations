@@ -259,6 +259,27 @@ def render_header(ticker: str, dcf: Dict[str, Any], df: pd.DataFrame) -> None:
             delta_color="off",
         )
 
+    # Layer-11 credit regime (market-wide, portfolio-level — not per-ticker).
+    # A tight regime is itself a risk signal: default is being underwritten
+    # cheaply, so any financial-resilience read is graded on an easy curve.
+    credit = macro.get("credit") or {}
+    if credit:
+        hy = credit.get("hy_oas")
+        ig = credit.get("ig_oas")
+        regime = credit.get("regime", "normal")
+        glyph = {"tight": "🟢", "normal": "⚪", "stressed": "🔴"}.get(regime, "⚪")
+        bits = []
+        if hy is not None:
+            bits.append(f"HY OAS {hy:.2f}% ({credit.get('hy_pctile', 0):.0f}th pctile)")
+        if ig is not None:
+            bits.append(f"IG OAS {ig:.2f}%")
+        line = f"{glyph} Credit regime: **{regime}** — " + " · ".join(bits)
+        if credit.get("as_of"):
+            line += f"  ·  as of {credit['as_of']}"
+        st.caption(line)
+        if credit.get("caveat"):
+            st.caption(f"⚠️ {credit['caveat']}")
+
 
 # ────────────────────────────────────────────────────────────────────────
 # Section 2 — 5-year fundamentals

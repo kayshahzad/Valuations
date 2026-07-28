@@ -245,7 +245,7 @@ def cached_library_scenario(ticker: str, scenario_name: str) -> Optional[Dict[st
 
 
 @st.cache_data(ttl=_TTL_SEC, show_spinner=False)
-def cached_macro_context() -> Dict[str, float]:
+def cached_macro_context() -> Dict[str, Any]:
     """Current Rf, ERP — the dashboard header context strip. Must match what the
     valuation engines use, NOT the historical parquet: rf comes from the live
     10-year (market_data.get_risk_free_rate, ^TNX); erp from the Damodaran
@@ -255,10 +255,20 @@ def cached_macro_context() -> Dict[str, float]:
     from aletheia.data.market_data import get_risk_free_rate as _live_rf
     from aletheia.data.historical_macro import get_equity_risk_premium
     today = date.today()
-    return {
+    out: Dict[str, Any] = {
         "rf":  _live_rf(),
         "erp": get_equity_risk_premium(today),
     }
+    # Layer-11 credit regime (IG/HY OAS from FRED). Fail-soft: absent → no
+    # credit line on the header, never an error.
+    try:
+        from aletheia.data.fred_client import get_credit_regime
+        regime = get_credit_regime()
+        if regime is not None:
+            out["credit"] = regime
+    except Exception:
+        pass
+    return out
 
 
 @st.cache_data(ttl=_TTL_SEC, show_spinner=False)
