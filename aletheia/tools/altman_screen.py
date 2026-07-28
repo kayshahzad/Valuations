@@ -97,6 +97,7 @@ class AltmanScreen:
     leverage_gated: bool = False                # True = levered enough to act on
     corroborated: Optional[bool] = None
     actionable_distress: bool = False           # zone==distress AND levered AND corroborated
+    float_distorted: bool = False               # float archetype: raw zone understated (claims-payable)
     confidence: str = "normal"                  # normal | low
     facts: Dict[str, Any] = field(default_factory=dict)
     inputs: Dict[str, Any] = field(default_factory=dict)
@@ -136,14 +137,28 @@ def _is_financial(cls: Dict[str, Any]) -> bool:
     return sector == "financials" and "diversified" in industry
 
 
-def _is_retail(cls: Dict[str, Any]) -> bool:
+def _archetype(cls: Dict[str, Any]) -> str:
+    """Single source of truth for archetype-specific screen behavior. Returns
+    'float' | 'retail' | 'manufacturer' | 'default'. Corroboration validity and
+    the advisory model key off this, so a new archetype is added HERE once rather
+    than as scattered inline exceptions (which don't scale past a couple)."""
     text = f"{cls.get('sector','')} {cls.get('industry','')}".lower()
-    return any(k in text for k in _RETAIL_KEYS)
+    if any(k in text for k in _MANAGED_CARE_KEYS):
+        return "float"          # claims-payable inflates current liabilities
+    if any(k in text for k in _RETAIL_KEYS):
+        return "retail"         # supplier financing -> negative WC is structural
+    if any(k in text for k in _MANUFACTURER_KEYS):
+        return "manufacturer"
+    return "default"
 
 
-def _is_manufacturer(cls: Dict[str, Any]) -> bool:
-    text = f"{cls.get('sector','')} {cls.get('industry','')}".lower()
-    return any(k in text for k in _MANUFACTURER_KEYS)
+# Archetypes where negative working capital / a low current ratio is STRUCTURAL,
+# not distress — so liquidity-based signals may NOT corroborate. EBIT/TA and
+# interest coverage (which mean the same in every sector) remain the only paths
+# to actionable. A new WC-inverted archetype joins this set; the corroboration
+# logic itself never grows. This makes the managed-care veto STRUCTURAL rather
+# than incidental on the leverage gate.
+_WC_STRUCTURAL_ARCHETYPES = {"retail", "float"}
 
 
 def screen_distress(
@@ -261,21 +276,33 @@ def screen_distress(
     out.z_double_prime = round(z2, 3)
     out.zone = _zone_from_z2(z2)
     out.scoreable = True
+    archetype = _archetype(cls)
+    # For float archetypes (managed care), claims-payable inflates current
+    # liabilities and drags WC/TA negative, understating Z''. Flag it so the raw
+    # zone reads honestly until the claims-payable source fix (net it out of CL)
+    # lands. The corroboration guard below already refuses to act on this.
+    out.float_distorted = archetype == "float"
 
     # Advisory original Z for manufacturers (never sets the zone).
-    if _is_manufacturer(cls) and sales and price and shares:
+    if archetype == "manufacturer" and sales and price and shares:
         mkt_eq = price * shares
         z = (1.2 * wc_ta + 1.4 * re_ta + 3.3 * (ebit / ta)
              + 0.6 * (mkt_eq / tl) + 1.0 * (sales / ta))
         out.z_original = round(z, 3)
 
-    # 6. Corroboration guard — confirm distress only with a non-capital-structure term.
+    # 6. Corroboration guard — confirm distress only with a non-capital-structure
+    #    term. Liquidity/WC signals corroborate ONLY where negative WC is not
+    #    structural (archetype-parameterized) — so managed care and retail can
+    #    reach actionable only via EBIT/TA or interest coverage, which mean the
+    #    same in every sector. This makes the veto structural, not a side effect
+    #    of the leverage gate happening to be closed.
     coverage = (ebit / abs(interest_expense)) if (interest_expense not in (None, 0)) else None
     current_ratio = (ca / cl) if (ca and cl and cl != 0) else None
     st_rising = (prior_short_term_debt is not None and cpltd > prior_short_term_debt)
+    liquidity_can_corroborate = archetype not in _WC_STRUCTURAL_ARCHETYPES
     corr_ebit = ebit / ta < 0
     corr_cov = coverage is not None and coverage < _COVERAGE_DISTRESS
-    corr_liq = (not _is_retail(cls) and current_ratio is not None
+    corr_liq = (liquidity_can_corroborate and current_ratio is not None
                 and current_ratio < _CURRENT_RATIO_DISTRESS and st_rising)
     out.corroborated = bool(corr_ebit or corr_cov or corr_liq)
     facts["interest_coverage"] = round(coverage, 2) if coverage is not None else None

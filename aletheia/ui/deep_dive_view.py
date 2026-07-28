@@ -1860,6 +1860,13 @@ def _distress_screen_block(ticker: str) -> None:
     cols[2].metric("Corroborated", "yes" if s.get("corroborated") else "no")
     cov = f.get("interest_coverage")
     cols[3].metric("Interest coverage", f"{cov:.1f}×" if cov is not None else "—")
+    if s.get("float_distorted"):
+        st.caption(
+            "⚠ Managed-care float: medical claims payable inflates current "
+            "liabilities and understates Z″ — read the zone via EBIT/coverage, "
+            "not the raw score. Liquidity signals are structurally barred from "
+            "flagging distress here."
+        )
     if s.get("z_original") is not None:
         st.caption(f"Advisory (manufacturer) original Z: {s['z_original']:.2f} — cross-read only, not authoritative.")
 

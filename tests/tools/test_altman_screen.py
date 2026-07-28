@@ -169,6 +169,34 @@ def test_short_history_positive_sigma_negative_equity_abstains():
     assert r.classification == "unknown"
 
 
+def test_managed_care_liquidity_cannot_corroborate():
+    """Float archetype (managed care): claims-payable makes current ratio < 0.8
+    structurally, so it must NOT corroborate distress. Only EBIT/TA or coverage
+    can. The veto is structural, not incidental on the leverage gate."""
+    _CARE = {"sector": "Healthcare Plans", "industry": "Managed Care",
+             "business_model": "residual_income_required"}
+    # Low current ratio + rising ST-debt (would corroborate for a normal name),
+    # but EBIT positive and coverage healthy -> must NOT corroborate for float.
+    r = screen_distress(
+        _base(raw_CurrentAssets=15.0, raw_LiabilitiesCurrent=40.0,  # current ratio 0.375
+              raw_CurrentPortionLongTermDebt=5.0, clean_NormalizedEBIT=12.0),
+        [8.0] * 10, _CARE,
+        interest_expense=1.0, prior_short_term_debt=1.0,   # ST-debt rising 1->5
+    )
+    assert r.scoreable and r.float_distorted is True
+    assert r.corroborated is False        # liquidity barred, EBIT+ and coverage fine
+
+
+def test_managed_care_still_corroborates_on_real_ebit_loss():
+    """Structural veto is on LIQUIDITY only — a genuine operating loss (EBIT/TA<0)
+    still corroborates for managed care."""
+    _CARE = {"sector": "Healthcare Plans", "industry": "Managed Care",
+             "business_model": "residual_income_required"}
+    r = screen_distress(_base(clean_NormalizedEBIT=-5.0), [8.0] * 10, _CARE)
+    assert r.scoreable and r.float_distorted is True
+    assert r.corroborated is True         # EBIT/TA < 0 is a real signal, not float
+
+
 def test_manufacturer_gets_advisory_z_original():
     r = screen_distress(_base(), [8.0] * 10, _MFG, price=100.0, shares=10.0)
     assert r.model_authoritative == "Z''"
