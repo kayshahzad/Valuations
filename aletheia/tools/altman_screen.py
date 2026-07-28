@@ -107,7 +107,8 @@ def _num(x: Any) -> Optional[float]:
     try:
         if x is None or x == "":
             return None
-        return float(x)
+        v = float(x)
+        return v if v == v else None       # NaN -> None (NaN is silently truthy)
     except (TypeError, ValueError):
         return None
 
@@ -192,7 +193,16 @@ def screen_distress(
     eq = _num(latest.get("raw_TotalEquity"))
     ca = _num(latest.get("raw_CurrentAssets"))
     cl = _num(latest.get("raw_LiabilitiesCurrent"))
-    ebit = _num(latest.get("clean_NormalizedEBIT")) or _num(latest.get("derived_OperatingIncome"))
+    # Operating earning power for the distress read should EXCLUDE one-time
+    # charges — a goodwill impairment is an accounting event, not operating
+    # distress, and would otherwise false-corroborate EBIT/TA in the writedown
+    # year. Prefer the ex-unusual figure when the cleaning engine has stripped
+    # it; fall back to normalized/reported. (Ex-unusual is currently NaN for
+    # several names — a cleaning-engine gap to close before the S&P-500
+    # expansion, where impairment years are common.)
+    ebit = (_num(latest.get("clean_OperatingIncome_ExUnusual"))
+            or _num(latest.get("clean_NormalizedEBIT"))
+            or _num(latest.get("derived_OperatingIncome")))
     sales = _num(latest.get("clean_Revenue")) or _num(latest.get("raw_Revenue"))
     ebitda = _num(latest.get("derived_EBITDA"))
     net_debt = _num(latest.get("derived_NetDebt"))
