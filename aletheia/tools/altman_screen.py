@@ -104,6 +104,8 @@ class AltmanScreen:
     actionable_distress: bool = False           # zone==distress AND levered AND corroborated
     float_distorted: bool = False               # float archetype: raw zone understated (claims-payable)
     confidence: str = "normal"                  # normal | low
+    period_evaluated: Optional[str] = None      # e.g. "FY2025" — which period was scored (explicit, since
+                                                # the page's TTM financials may be a different period)
     facts: Dict[str, Any] = field(default_factory=dict)
     inputs: Dict[str, Any] = field(default_factory=dict)
 
@@ -170,13 +172,24 @@ def _archetype(cls: Dict[str, Any],
     return "default"
 
 
-# Archetypes where negative working capital / a low current ratio is STRUCTURAL,
-# not distress — so liquidity-based signals may NOT corroborate. EBIT/TA and
-# interest coverage (which mean the same in every sector) remain the only paths
-# to actionable. A new WC-inverted archetype joins this set; the corroboration
-# logic itself never grows. This makes the managed-care veto STRUCTURAL rather
-# than incidental on the leverage gate.
-_WC_STRUCTURAL_ARCHETYPES = {"retail", "float", "capital_intensive"}
+# Which corroboration signals are VALID per archetype — the archetype-
+# parameterized guard. A new archetype adds one row here; the corroboration
+# logic itself never grows.
+#   ebit      : EBIT/TA < 0 (a real operating loss) — universal, means the same
+#               in every sector.
+#   coverage  : interest coverage < 2x — structural for capital-intensive names
+#               (utilities/REITs/MLPs run thin coverage vs stable regulated cash
+#               flows), so excluded there.
+#   liquidity : current ratio < 0.8 + rising ST-debt — structural where negative
+#               WC is by design (retail supplier float, managed-care claims float,
+#               capital-intensive refinancing), so excluded there.
+_VALID_CORROBORATORS = {
+    "default":           {"ebit", "coverage", "liquidity"},
+    "manufacturer":      {"ebit", "coverage", "liquidity"},
+    "retail":            {"ebit", "coverage"},
+    "float":             {"ebit", "coverage"},
+    "capital_intensive": {"ebit"},
+}
 
 
 def screen_distress(
@@ -337,10 +350,10 @@ def screen_distress(
     # to current-portion-of-LTD only when ShortTermDebt is absent.
     _std_now = short_term_debt if short_term_debt is not None else cpltd
     st_rising = (prior_short_term_debt is not None and _std_now > prior_short_term_debt)
-    liquidity_can_corroborate = archetype not in _WC_STRUCTURAL_ARCHETYPES
-    corr_ebit = ebit / ta < 0
-    corr_cov = coverage is not None and coverage < _COVERAGE_DISTRESS
-    corr_liq = (liquidity_can_corroborate and current_ratio is not None
+    valid = _VALID_CORROBORATORS.get(archetype, {"ebit", "coverage", "liquidity"})
+    corr_ebit = "ebit" in valid and ebit / ta < 0
+    corr_cov = "coverage" in valid and coverage is not None and coverage < _COVERAGE_DISTRESS
+    corr_liq = ("liquidity" in valid and current_ratio is not None
                 and current_ratio < _CURRENT_RATIO_DISTRESS and st_rising)
     out.corroborated = bool(corr_ebit or corr_cov or corr_liq)
     facts["interest_coverage"] = round(coverage, 2) if coverage is not None else None
@@ -365,8 +378,18 @@ def screen_ticker(db, ticker: str) -> AltmanScreen:
         return AltmanScreen(ticker=ticker, fiscal_year=0, scoreable=False,
                             reason="not_applicable(no_data)")
     df = df.sort_values("fiscal_year")
-    latest = df.iloc[-1].to_dict()
-    ni_history = [(_num(v)) for v in df.get("raw_NetIncome", [])]
+    # Option B: score the latest AUDITED ANNUAL, not a TTM — a distress read on a
+    # completed, audited year is more defensible, and it sidesteps attributing an
+    # annual one-time charge (e.g. an impairment) to a partial TTM window. Fall
+    # back to whatever's latest only if there are no annual rows.
+    if "period" in df.columns:
+        annual = df[df["period"].isin(["FY", None]) | df["period"].isna()]
+        src_df = annual if not annual.empty else df
+    else:
+        src_df = df
+    latest = src_df.iloc[-1].to_dict()
+    latest_fy = int(_num(latest.get("fiscal_year")) or 0)
+    ni_history = [(_num(v)) for v in src_df.get("raw_NetIncome", [])]
     ni_history = [x for x in ni_history if x is not None]
 
     c = UNIVERSE.get(ticker)
@@ -391,13 +414,33 @@ def screen_ticker(db, ticker: str) -> AltmanScreen:
             price = None
     shares = _num(latest.get("raw_SharesDiluted")) or _num(latest.get("clean_SharesDiluted"))
     prior_std = None
-    if len(df) >= 2:
-        prev = df.iloc[-2].to_dict()
+    if len(src_df) >= 2:
+        prev = src_df.iloc[-2].to_dict()
         prior_std = (_num(prev.get("raw_ShortTermDebt"))
                      or _num(prev.get("raw_CurrentPortionLongTermDebt")))
 
-    return screen_distress(latest, ni_history, cls, price=price, shares=shares,
-                           interest_expense=interest_expense, prior_short_term_debt=prior_std)
+    out = screen_distress(latest, ni_history, cls, price=price, shares=shares,
+                          interest_expense=interest_expense, prior_short_term_debt=prior_std)
+
+    # Make the evaluated period explicit — the page may show TTM financials, so a
+    # reader must not assume the screen scored the same period.
+    out.period_evaluated = f"FY{latest_fy}" if latest_fy else None
+
+    # Staleness bound: the latest audited annual can be up to ~5 quarters behind.
+    # That's fine for distress (slow-moving), but not unbounded — past ~18 months
+    # the read is downgraded to low confidence. Matters at S&P-500 scale where
+    # filing dates scatter across the calendar.
+    pe = latest.get("period_end_date")
+    if pe is not None:
+        try:
+            import pandas as pd
+            months_stale = (pd.Timestamp.now() - pd.to_datetime(pe)).days / 30.44
+            out.inputs = {**(out.inputs or {}), "months_stale": round(months_stale, 1)}
+            if months_stale > 18:
+                out.confidence = "low"
+        except Exception:
+            pass
+    return out
 
 
 __all__ = ["AltmanScreen", "screen_distress", "screen_ticker"]

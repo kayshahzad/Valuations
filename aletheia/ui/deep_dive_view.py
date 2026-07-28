@@ -1816,6 +1816,15 @@ def _distress_screen_block(ticker: str) -> None:
         return
 
     st.markdown("##### Financial distress screen · Altman")
+    # Make the evaluated period explicit — the screen scores the latest AUDITED
+    # ANNUAL, which may differ from the TTM financials shown elsewhere on the page.
+    period = s.get("period_evaluated")
+    months_stale = (s.get("inputs") or {}).get("months_stale")
+    if period:
+        line = f"Evaluated on **{period}** (latest audited annual)"
+        if s.get("confidence") == "low" and months_stale is not None:
+            line += f" — ⚠ {months_stale:.0f} months stale, **low confidence**"
+        st.caption(line)
 
     if not s.get("scoreable"):
         # Exclusions / abstentions — neutral tone, with the corroborating facts.

@@ -205,13 +205,17 @@ def test_capital_intensive_liquidity_cannot_corroborate():
     for cls in ({"sector": "Utilities", "industry": "Utilities"},
                 {"sector": "Real Estate", "industry": "Data Center REIT"},
                 {"sector": "Energy", "industry": "Oil & Gas Midstream"}):
+        # thin current ratio + rising ST-debt AND low coverage (1.5x) — both would
+        # corroborate for a normal name, but both are structural here. Only EBIT/TA
+        # (positive) is left, so it must NOT corroborate. (Regression for NEE, which
+        # false-fired on coverage 1.81x once the annual/coverage read went live.)
         r = screen_distress(
             _base(raw_CurrentAssets=15.0, raw_LiabilitiesCurrent=40.0,   # current ratio 0.375
-                  raw_ShortTermDebt=5.0, clean_NormalizedEBIT=10.0),
+                  raw_ShortTermDebt=5.0, clean_NormalizedEBIT=6.0),
             [8.0] * 10, cls,
-            interest_expense=3.0, prior_short_term_debt=1.0,             # ST-debt rising
+            interest_expense=4.0, prior_short_term_debt=1.0,             # coverage 1.5x, ST-debt rising
         )
-        assert r.scoreable and r.corroborated is False, cls   # liquidity barred, EBIT+ & coverage fine
+        assert r.scoreable and r.corroborated is False, cls   # liquidity + coverage barred, EBIT+
 
 
 def test_manufacturer_gets_advisory_z_original():
@@ -231,7 +235,8 @@ def db():
 
 @pytest.mark.parametrize("ticker,expect", [
     ("LOW",  "abstain_capital_structure"),
-    ("AAPL", "safe_not_actionable"),
+    ("AAPL", "scoreable_not_actionable"),   # buyback-heavy -> grey Z'' but never a false distress signal
+    ("MSFT", "safe_not_actionable"),        # net-cash, clean -> safe
     ("JPM",  "financial"),        # genuine bank -> excluded
     ("BRK-B", "financial"),       # diversified financial -> excluded
     ("ORCL", "scoreable_not_actionable"),
