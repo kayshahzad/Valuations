@@ -235,6 +235,11 @@ class InvestmentDatabase:
                 raw_LiabilitiesCurrent  DOUBLE,
                 raw_RetainedEarnings    DOUBLE,
                 raw_CurrentAssets       DOUBLE,
+                raw_Inventory           DOUBLE,
+                raw_PPE                 DOUBLE,
+                raw_ShortTermDebt       DOUBLE,
+                raw_InterestExpense     DOUBLE,
+                raw_TreasuryStock       DOUBLE,
                 raw_SharesDiluted       DOUBLE,
                 raw_SharesOutstanding   DOUBLE,
                 clean_SharesDiluted     DOUBLE,
@@ -280,6 +285,15 @@ class InvestmentDatabase:
             # of routing around the cleaning gate via the blob.
             "raw_RetainedEarnings",
             "raw_CurrentAssets",
+            # Pre-expansion field batch (all already in record.raw -> blob
+            # backfill below): manufacturer gate (Inventory/PP&E), corroboration
+            # (ShortTermDebt), coverage (InterestExpense, was blob-read), and the
+            # deferred buyback-reconstruction path (TreasuryStock).
+            "raw_Inventory",
+            "raw_PPE",
+            "raw_ShortTermDebt",
+            "raw_InterestExpense",
+            "raw_TreasuryStock",
         ):
             self._conn.execute(
                 f"ALTER TABLE company_records ADD COLUMN IF NOT EXISTS {col} DOUBLE"
@@ -343,7 +357,12 @@ class InvestmentDatabase:
                 except Exception:
                     pass
                 for _col, _key in (("raw_RetainedEarnings", "RetainedEarnings"),
-                                   ("raw_CurrentAssets", "CurrentAssets")):
+                                   ("raw_CurrentAssets", "CurrentAssets"),
+                                   ("raw_Inventory", "Inventory"),
+                                   ("raw_PPE", "PPE"),
+                                   ("raw_ShortTermDebt", "ShortTermDebt"),
+                                   ("raw_InterestExpense", "InterestExpense"),
+                                   ("raw_TreasuryStock", "TreasuryStock")):
                     self._conn.execute(
                         f"UPDATE company_records SET {_col} = "
                         f"TRY_CAST(json_extract_string(raw_json, '$.{_key}') AS DOUBLE) "
@@ -937,6 +956,11 @@ class InvestmentDatabase:
             "raw_LiabilitiesCurrent": record.raw.get("LiabilitiesCurrent"),
             "raw_RetainedEarnings": record.raw.get("RetainedEarnings"),
             "raw_CurrentAssets": record.raw.get("CurrentAssets"),
+            "raw_Inventory": record.raw.get("Inventory"),
+            "raw_PPE": record.raw.get("PPE"),
+            "raw_ShortTermDebt": record.raw.get("ShortTermDebt"),
+            "raw_InterestExpense": record.raw.get("InterestExpense"),
+            "raw_TreasuryStock": record.raw.get("TreasuryStock"),
             "raw_SharesDiluted": record.raw.get("SharesDiluted"),
             "raw_SharesOutstanding": record.raw.get("SharesOutstanding"),
             "clean_SharesDiluted": record.clean.get("SharesDiluted"),

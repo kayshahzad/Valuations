@@ -146,6 +146,21 @@ class IngestionValidator:
             bypass_sectors=["bank", "financials", "insurance"],
             description="CurrentLiabilities positive; can exceed TA on negative equity, but >3x is an error"
         ),
+        # Pre-expansion field batch. Inventory / PP&E are subsets of TA (0..TA
+        # with slack); ShortTermDebt / InterestExpense are positive and modest
+        # vs assets. Generous caps -> catch only gross tag/unit errors.
+        RelativeContract(field="raw_Inventory", relative_to="raw_TotalAssets",
+                         min_pct=0.0, max_pct=102.0, bypass_sectors=["bank", "financials", "insurance"],
+                         description="Inventory is a subset of TotalAssets"),
+        RelativeContract(field="raw_PPE", relative_to="raw_TotalAssets",
+                         min_pct=0.0, max_pct=102.0, bypass_sectors=["bank", "financials", "insurance"],
+                         description="Net PP&E is a subset of TotalAssets"),
+        RelativeContract(field="raw_ShortTermDebt", relative_to="raw_TotalAssets",
+                         min_pct=0.0, max_pct=200.0, bypass_sectors=["bank", "financials", "insurance"],
+                         description="ShortTermDebt positive; >2x TA is an error"),
+        RelativeContract(field="raw_InterestExpense", relative_to="raw_TotalAssets",
+                         min_pct=0.0, max_pct=50.0, bypass_sectors=["bank", "financials", "insurance"],
+                         description="InterestExpense positive and small vs assets"),
     ]
 
     # Contract: Accounting Identities

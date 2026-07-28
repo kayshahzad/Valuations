@@ -76,6 +76,11 @@ _UNDEFINED_INDUSTRY_KEYS = (
 # Managed care reads as Healthcare but has a definable claims-payable working-
 # capital cycle → includable despite carrying float.
 _MANAGED_CARE_KEYS = ("managed care", "health plan")
+# Capital-intensive, continuously-refinancing archetypes — utilities, REITs,
+# MLPs/midstream. They run structurally thin current ratios and roll short-term
+# debt by design, so liquidity signals are NOT distress for them (same class as
+# retail WC / managed-care float).
+_CAPITAL_INTENSIVE_KEYS = ("utilit", "reit", "real estate", "midstream", "pipeline", "mlp")
 _RETAIL_KEYS = ("retail", "restaurant", "grocery", "apparel", "store",
                 "home improvement", "consumer defensive")
 _MANUFACTURER_KEYS = ("industrial", "material", "machinery", "auto",
@@ -138,18 +143,30 @@ def _is_financial(cls: Dict[str, Any]) -> bool:
     return sector == "financials" and "diversified" in industry
 
 
-def _archetype(cls: Dict[str, Any]) -> str:
+def _archetype(cls: Dict[str, Any],
+               inventory_ta: Optional[float] = None,
+               ppe_ta: Optional[float] = None) -> str:
     """Single source of truth for archetype-specific screen behavior. Returns
     'float' | 'retail' | 'manufacturer' | 'default'. Corroboration validity and
     the advisory model key off this, so a new archetype is added HERE once rather
-    than as scattered inline exceptions (which don't scale past a couple)."""
+    than as scattered inline exceptions (which don't scale past a couple).
+
+    Float/retail are industry-driven (checked first, so a retailer never reaches
+    the manufacturer test). Manufacturer is STRUCTURAL — inventory- or PP&E-heavy
+    (Inventory/TA > 5% or PP&E/TA > 20%) — with the industry keyword as a fallback
+    when the ratios aren't available. It only drives the advisory Z, never the zone.
+    """
     text = f"{cls.get('sector','')} {cls.get('industry','')}".lower()
     if any(k in text for k in _MANAGED_CARE_KEYS):
         return "float"          # claims-payable inflates current liabilities
     if any(k in text for k in _RETAIL_KEYS):
         return "retail"         # supplier financing -> negative WC is structural
-    if any(k in text for k in _MANUFACTURER_KEYS):
+    if any(k in text for k in _CAPITAL_INTENSIVE_KEYS):
+        return "capital_intensive"   # utilities/REITs/MLPs: structural thin liquidity + refinancing
+    if (inventory_ta is not None and inventory_ta > 0.05) or (ppe_ta is not None and ppe_ta > 0.20):
         return "manufacturer"
+    if inventory_ta is None and ppe_ta is None and any(k in text for k in _MANUFACTURER_KEYS):
+        return "manufacturer"   # keyword fallback when ratios unavailable
     return "default"
 
 
@@ -159,7 +176,7 @@ def _archetype(cls: Dict[str, Any]) -> str:
 # to actionable. A new WC-inverted archetype joins this set; the corroboration
 # logic itself never grows. This makes the managed-care veto STRUCTURAL rather
 # than incidental on the leverage gate.
-_WC_STRUCTURAL_ARCHETYPES = {"retail", "float"}
+_WC_STRUCTURAL_ARCHETYPES = {"retail", "float", "capital_intensive"}
 
 
 def screen_distress(
@@ -209,6 +226,12 @@ def screen_distress(
     ltd = _num(latest.get("raw_LongTermDebt")) or 0.0
     cpltd = _num(latest.get("raw_CurrentPortionLongTermDebt")) or 0.0
     gross_debt = ltd + cpltd
+    inventory = _num(latest.get("raw_Inventory"))
+    ppe = _num(latest.get("raw_PPE"))
+    short_term_debt = _num(latest.get("raw_ShortTermDebt"))
+    # interest_expense arg wins (callers may pass it); else the promoted column.
+    if interest_expense is None:
+        interest_expense = _num(latest.get("raw_InterestExpense"))
 
     if not ta or ta <= 0 or re is None or eq is None or ebit is None or tl is None:
         out.reason = "not_applicable(insufficient_data): missing a required balance-sheet input"
@@ -286,7 +309,9 @@ def screen_distress(
     out.z_double_prime = round(z2, 3)
     out.zone = _zone_from_z2(z2)
     out.scoreable = True
-    archetype = _archetype(cls)
+    archetype = _archetype(cls,
+                           inventory_ta=(inventory / ta) if inventory is not None else None,
+                           ppe_ta=(ppe / ta) if ppe is not None else None)
     # For float archetypes (managed care), claims-payable inflates current
     # liabilities and drags WC/TA negative, understating Z''. Flag it so the raw
     # zone reads honestly until the claims-payable source fix (net it out of CL)
@@ -308,7 +333,10 @@ def screen_distress(
     #    of the leverage gate happening to be closed.
     coverage = (ebit / abs(interest_expense)) if (interest_expense not in (None, 0)) else None
     current_ratio = (ca / cl) if (ca and cl and cl != 0) else None
-    st_rising = (prior_short_term_debt is not None and cpltd > prior_short_term_debt)
+    # Rising short-term borrowings: prefer the real ShortTermDebt line; fall back
+    # to current-portion-of-LTD only when ShortTermDebt is absent.
+    _std_now = short_term_debt if short_term_debt is not None else cpltd
+    st_rising = (prior_short_term_debt is not None and _std_now > prior_short_term_debt)
     liquidity_can_corroborate = archetype not in _WC_STRUCTURAL_ARCHETYPES
     corr_ebit = ebit / ta < 0
     corr_cov = coverage is not None and coverage < _COVERAGE_DISTRESS
@@ -347,17 +375,26 @@ def screen_ticker(db, ticker: str) -> AltmanScreen:
            "industry": getattr(c, "industry", None),
            "business_model": getattr(c, "business_model", None)}
 
-    raw = {}
-    try:
-        raw = json.loads(latest.get("raw_json") or "{}")
-    except Exception:
-        raw = {}
-    interest_expense = _num(raw.get("InterestExpense"))
-    price = _num(latest.get("current_price")) or _num(raw.get("Price"))
+    # Interest expense from the promoted column (falls back to the blob only for
+    # rows not yet backfilled). Price is still blob/quote-sourced.
+    interest_expense = _num(latest.get("raw_InterestExpense"))
+    if interest_expense is None:
+        try:
+            interest_expense = _num(json.loads(latest.get("raw_json") or "{}").get("InterestExpense"))
+        except Exception:
+            interest_expense = None
+    price = _num(latest.get("current_price"))
+    if price is None:
+        try:
+            price = _num(json.loads(latest.get("raw_json") or "{}").get("Price"))
+        except Exception:
+            price = None
     shares = _num(latest.get("raw_SharesDiluted")) or _num(latest.get("clean_SharesDiluted"))
     prior_std = None
     if len(df) >= 2:
-        prior_std = _num(df.iloc[-2].to_dict().get("raw_CurrentPortionLongTermDebt"))
+        prev = df.iloc[-2].to_dict()
+        prior_std = (_num(prev.get("raw_ShortTermDebt"))
+                     or _num(prev.get("raw_CurrentPortionLongTermDebt")))
 
     return screen_distress(latest, ni_history, cls, price=price, shares=shares,
                            interest_expense=interest_expense, prior_short_term_debt=prior_std)

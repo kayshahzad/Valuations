@@ -197,6 +197,23 @@ def test_managed_care_still_corroborates_on_real_ebit_loss():
     assert r.corroborated is True         # EBIT/TA < 0 is a real signal, not float
 
 
+def test_capital_intensive_liquidity_cannot_corroborate():
+    """Utilities/REITs/MLPs run structurally thin current ratios and roll ST debt
+    by design, so liquidity may NOT corroborate distress (same class as float/
+    retail). Only EBIT/TA or coverage can. (Regression for NEE false-firing once
+    ShortTermDebt was promoted and made the liquidity branch live.)"""
+    for cls in ({"sector": "Utilities", "industry": "Utilities"},
+                {"sector": "Real Estate", "industry": "Data Center REIT"},
+                {"sector": "Energy", "industry": "Oil & Gas Midstream"}):
+        r = screen_distress(
+            _base(raw_CurrentAssets=15.0, raw_LiabilitiesCurrent=40.0,   # current ratio 0.375
+                  raw_ShortTermDebt=5.0, clean_NormalizedEBIT=10.0),
+            [8.0] * 10, cls,
+            interest_expense=3.0, prior_short_term_debt=1.0,             # ST-debt rising
+        )
+        assert r.scoreable and r.corroborated is False, cls   # liquidity barred, EBIT+ & coverage fine
+
+
 def test_manufacturer_gets_advisory_z_original():
     r = screen_distress(_base(), [8.0] * 10, _MFG, price=100.0, shares=10.0)
     assert r.model_authoritative == "Z''"
